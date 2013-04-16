@@ -56,6 +56,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 
 	private slots:
 		void addColumn(int lin_idx);
+		void clearColumnsTable(void);
 		void handleArgument(int lin_idx);
 		void editArgument(int lin_idx);
 		void updateColumnsCombo(void);

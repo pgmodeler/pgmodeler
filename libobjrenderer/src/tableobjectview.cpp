@@ -228,6 +228,9 @@ void TableObjectView::configureObject(void)
 			if(str_constr.indexOf(TXT_UNIQUE)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + ", ";
 
+			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
+				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + ", ";
+
 			if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				atribs_tip+="not null";
 		}
@@ -288,7 +291,7 @@ void TableObjectView::configureObject(void)
 
 				atribs_tip+=(~trigger->getFiringType()).toLower() + ", ";
 
-				for(unsigned i=EventType::on_insert; i < EventType::on_truncate; i++)
+				for(unsigned i=EventType::on_insert; i <= EventType::on_truncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
 					{

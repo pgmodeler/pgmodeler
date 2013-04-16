@@ -90,7 +90,16 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::DEFER_TYPE]="";
 	attributes[ParsersAttributes::TABLE_NAME]="";
 	attributes[ParsersAttributes::SPECIAL_PK_COLS]="";
-
+	attributes[ParsersAttributes::RELATIONSHIP_NN]="";
+	attributes[ParsersAttributes::RELATIONSHIP_GEN]="";
+	attributes[ParsersAttributes::RELATIONSHIP_DEP]="";
+	attributes[ParsersAttributes::RELATIONSHIP_1N]="";
+	attributes[ParsersAttributes::RELATIONSHIP_11]="";
+	attributes[ParsersAttributes::CONSTRAINTS]="";
+	attributes[ParsersAttributes::TABLE]="";
+	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
+	attributes[ParsersAttributes::COPY_OPTIONS]="";
+	attributes[ParsersAttributes::COPY_MODE]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -351,13 +360,17 @@ void BaseRelationship::setRelationshipAttributes(void)
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
 }
 
-QString BaseRelationship::getCodeDefinition(void)
+QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
-	bool reduced_form;
-
-	setRelationshipAttributes();
-	reduced_form=attributes[ParsersAttributes::POINTS].isEmpty();
-	return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		return("");
+	else
+	{
+		bool reduced_form;
+		setRelationshipAttributes();
+		reduced_form=attributes[ParsersAttributes::POINTS].isEmpty();
+		return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+	}
 }
 
 void BaseRelationship::setPoints(const vector<QPointF> &points)

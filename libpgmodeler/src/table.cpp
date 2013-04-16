@@ -445,6 +445,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					{
 						Trigger *trig;
 						trig=dynamic_cast<Trigger *>(tab_obj);
+						trig->validateTrigger();
 						trig->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 					}
 

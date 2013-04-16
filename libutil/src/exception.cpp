@@ -206,6 +206,14 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_OPFAM_OPCLSELEM", QT_TR_NOOP("Only operator families which uses 'btree' as indexing method is accepted by operator class elements!")},
 	{"ERR_REF_INV_LIKE_OP_TYPE", QT_TR_NOOP("Reference to an invalid copy table option!")},
 	{"ERR_COPY_REL_TAB_DEFINED", QT_TR_NOOP("Copy relationship between tables '%1' and '%2' cannot be done because the first one already copies attributes from '%3'! Tables can have only one copy table!")},
+	{"ERR_TABLE_TRIG_INSTEADOF_FIRING",QT_TR_NOOP("The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers!")},
+	{"ERR_TRIGGER_INV_TRUNCATE_USAGE",QT_TR_NOOP("The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table!")},
+	{"ERR_TRIGGER_INV_INSTEADOF_USAGE",QT_TR_NOOP("The INSTEAD OF mode cannot be used on view triggers that executes for each statement!")},
+	{"ERR_CONST_TRIG_NOT_AFTER_ROW",QT_TR_NOOP("Constraint triggers can only be executed on AFTER events and for each row!")},
+	{"ERR_VIEW_TRIG_INV_AFTBFR_USAGE",QT_TR_NOOP("A view trigger cannot be AFTER/BEFORE when it executes for each row!")},
+	{"ERR_TRIGGER_INV_INSTEADOF_UPDATE",QT_TR_NOOP("A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event!")},
+	{"ERR_ASG_COLUMN_NO_PARENT",QT_TR_NOOP("Assignment of a column which has no parent table to the object '%1' (%2)!")},
+	{"ERR_TRIG_USING_CONSTRIG_ATRIBS",QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 };
 
 Exception::Exception(void)

@@ -105,15 +105,6 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 
 		rejected_col_count=0;
 		setIdentifier(identifier);
-
-		attributes[ParsersAttributes::CONSTRAINTS]="";
-		attributes[ParsersAttributes::TABLE]="";
-		attributes[ParsersAttributes::RELATIONSHIP_NN]="";
-		attributes[ParsersAttributes::RELATIONSHIP_GEN]="";
-		attributes[ParsersAttributes::RELATIONSHIP_1N]="";
-		attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-		attributes[ParsersAttributes::COPY_OPTIONS]="";
-		attributes[ParsersAttributes::COPY_MODE]="";
 	}
 	catch(Exception &e)
 	{

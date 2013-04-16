@@ -384,7 +384,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 				if(op_type==Operation::OBJECT_REMOVED)
 					tab_obj->setParentTable(parent_tab);
 
-				operation->xml_definition=model->validateObjectDefinition(tab_obj, SchemaParser::XML_DEFINITION);
+				operation->xml_definition=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
 			}
 
 			operation->parent_obj=parent_obj;
@@ -701,7 +701,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				orig_obj=model->getObject(oper->object_idx, obj_type);
 
 			if(aux_obj)
-				oper->xml_definition=model->validateObjectDefinition(orig_obj, SchemaParser::SQL_DEFINITION);
+				oper->xml_definition=orig_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 			/* The original object (obtained from the table, relationship or model) will have its
 				previous values restored with the existing copy on the pool. After restoring the object

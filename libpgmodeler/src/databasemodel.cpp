@@ -131,39 +131,6 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(NULL);
 }
 
-QString DatabaseModel::validateObjectDefinition(BaseObject *object, unsigned def_type)
-{
-	ObjectType obj_type;
-	QString obj_def;
-
-	if(object)
-	{
-		try
-		{
-			obj_type=object->getObjectType();
-
-			if(obj_type==BASE_RELATIONSHIP && def_type==SchemaParser::XML_DEFINITION)
-				obj_def=dynamic_cast<BaseRelationship *>(object)->getCodeDefinition();
-			else if(obj_type==OBJ_TEXTBOX && def_type==SchemaParser::XML_DEFINITION)
-				obj_def=dynamic_cast<Textbox *>(object)->getCodeDefinition();
-			else
-				obj_def=object->getCodeDefinition(def_type);
-		}
-		catch(Exception &e)
-		{
-			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
-				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(Utf8String::create(object->getName(true)))
-												.arg(object->getTypeName()),
-												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-		}
-	}
-
-	return(obj_def);
-}
-
 void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 {
 	ObjectType obj_type;
@@ -385,10 +352,14 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		}
 	}
 
-	//Raises an error if there is an object with the same name
-	if((obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)) ||
-		 (obj_type==OBJ_FUNCTION &&
-			getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)))
+	/* Raises an error if there is an object with the same name.
+		 Special cases are for: functions/operator that are search by signature and views
+		 that are search on tables and views list */
+	if((obj_type==OBJ_VIEW &&	(getObject(object->getName(true), obj_type, idx) ||
+														 getObject(object->getName(true), OBJ_TABLE, idx))) ||
+		 (obj_type==OBJ_FUNCTION &&	getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)) ||
+		 (obj_type==OBJ_OPERATOR &&	getObject(dynamic_cast<Operator *>(object)->getSignature(), obj_type, idx)) ||
+		 (obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)))
 	{
 		QString str_aux;
 
@@ -403,7 +374,10 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
 	try
 	{
-		DatabaseModel::validateObjectDefinition(object, SchemaParser::SQL_DEFINITION);
+		if(obj_type==OBJ_TEXTBOX || obj_type==BASE_RELATIONSHIP)
+			object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+		else
+			object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 	}
 	catch(Exception &e)
 	{
@@ -1541,7 +1515,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 
 						if(rel)
 						{
-							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition();
+							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XML_DEFINITION);
 							removeRelationship(rel);
 							delete(rel);
 						}
@@ -4315,7 +4289,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			constr->setReferencedTable(ref_table);
+			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table));
 		}
 		else if(constr_type==ConstraintType::check)
 		{
@@ -4727,24 +4701,21 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 
 		setBasicAttributes(trigger);
 
+		trigger->setConstraint(attribs[ParsersAttributes::CONSTRAINT]==ParsersAttributes::_TRUE_);
+
 		trigger->setEvent(EventType::on_insert,
-											(attribs[ParsersAttributes::INS_EVENT]==
-											ParsersAttributes::_TRUE_));
+											(attribs[ParsersAttributes::INS_EVENT]==ParsersAttributes::_TRUE_));
 
 		trigger->setEvent(EventType::on_delete,
-											(attribs[ParsersAttributes::DEL_EVENT]==
-											ParsersAttributes::_TRUE_));
+											(attribs[ParsersAttributes::DEL_EVENT]==ParsersAttributes::_TRUE_));
 
 		trigger->setEvent(EventType::on_update,
-											(attribs[ParsersAttributes::UPD_EVENT]==
-											ParsersAttributes::_TRUE_));
+											(attribs[ParsersAttributes::UPD_EVENT]==ParsersAttributes::_TRUE_));
 
 		trigger->setEvent(EventType::on_truncate,
-											(attribs[ParsersAttributes::TRUNC_EVENT]==
-											ParsersAttributes::_TRUE_));
+											(attribs[ParsersAttributes::TRUNC_EVENT]==ParsersAttributes::_TRUE_));
 
-		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==
-				ParsersAttributes::_TRUE_);
+		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==ParsersAttributes::_TRUE_);
 
 		trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
 
@@ -4763,7 +4734,7 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 			trigger->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
 		ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
-		trigger->setReferecendTable(ref_table);
+		trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5692,7 +5663,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
 					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
+					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
 
 					//Increments the generated definition count and emits the signal
 					gen_defs_count++;
@@ -5918,14 +5889,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 			else
 			{
-				if(object->isSystemObject()
-					 /*(obj_type==OBJ_LANGUAGE &&
-						(object->getName()==~LanguageType("c") ||
-						 object->getName()==~LanguageType("sql") ||
-						 object->getName()==~LanguageType("plpgsql")))*/)
+				if(object->isSystemObject())
 					attribs_aux[attrib]+="";
 				else
-					attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
+					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
 			}
 
 			gen_defs_count++;
@@ -5938,16 +5905,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 														object->getObjectType());
 			}
 		}
-
-		//Creates the SQL definition for user added foreign keys
-		/* if(def_type==SchemaParser::SQL_DEFINITION)
-		{
-			while(!fks.empty())
-			{
-				attribs_aux[attrib]+=fks.back()->getCodeDefinition(def_type, true);
-				fks.pop_back();
-			}
-		} */
 
 		//Creates the code definition for user added foreign keys
 		while(!fks.empty())
@@ -6052,7 +6009,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 	{
 		deps.push_back(object);
 
-
 		if((deps.size()==1 && !inc_indirect_deps) || inc_indirect_deps)
 		{
 			ObjectType obj_type=object->getObjectType();
@@ -6117,8 +6073,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
 				unsigned count, i;
 
-				/* if(func->getLanguage()->getName()!=~LanguageType("c") &&
-					 func->getLanguage()->getName()!=~LanguageType("sql")) */
 				if(!func->isSystemObject())
 					getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
 
@@ -6267,7 +6221,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Trigger *trig=NULL;
 				Index *index=NULL;
 				Column *col=NULL;
-				unsigned count, count1, i, i1;
+				unsigned count, i, count1, i1;
 
 				count=tab->getColumnCount();
 				for(i=0; i < count; i++)
@@ -6283,6 +6237,17 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				for(i=0; i < count; i++)
 				{
 					constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
+					count1=constr->getExcludeElementCount();
+
+					for(i1=0; i1 < count1; i1++)
+					{
+						if(constr->getExcludeElement(i1).getOperator())
+							getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
+
+						if(constr->getExcludeElement(i1).getOperatorClass())
+							getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+					}
+
 					if(inc_indirect_deps &&
 						 !constr->isAddedByLinking() &&
 						 constr->getConstraintType()==ConstraintType::foreign_key)
@@ -6313,13 +6278,17 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 					{
 						if(index->getIndexElement(i1).getOperatorClass())
 							getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-						else if(index->getIndexElement(i1).getColumn())
+
+						if(index->getIndexElement(i1).getColumn())
 						{
 							usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
 
 							if(usr_type)
 								getObjectDependecies(usr_type, deps, inc_indirect_deps);
 						}
+
+						if(index->getIndexElement(i1).getCollation())
+							getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
 					}
 				}
 			}

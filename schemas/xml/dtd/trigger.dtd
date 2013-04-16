@@ -16,3 +16,4 @@
 <!ATTLIST trigger defer-type CDATA #IMPLIED>
 <!ATTLIST trigger ref-table CDATA #IMPLIED>
 <!ATTLIST trigger table CDATA #IMPLIED>
+<!ATTLIST trigger constraint (false|true) "false">

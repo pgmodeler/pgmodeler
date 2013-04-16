@@ -214,7 +214,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	attributes[attrib]=str_cols;
 }
 
-void Constraint::setReferencedTable(BaseObject *tab_ref)
+void Constraint::setReferencedTable(BaseTable *tab_ref)
 {
 	this->ref_table=tab_ref;
 }
@@ -303,7 +303,7 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
 	else return(NULL);
 }
 
-BaseObject *Constraint::getReferencedTable(void)
+BaseTable *Constraint::getReferencedTable(void)
 {
 	return(ref_table);
 }

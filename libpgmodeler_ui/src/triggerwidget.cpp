@@ -23,9 +23,6 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 	try
 	{
 		QStringList list;
-		map<QString, vector<QWidget *> > field_map;
-		map<QWidget *, vector<QString> > value_map;
-		QFrame *frame=NULL;
 
 		Ui_TriggerWidget::setupUi(this);
 
@@ -43,8 +40,10 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		trigger_grid->addWidget(function_sel, 5, 1, 1, 2);
-		trigger_grid->addWidget(ref_table_sel, 6, 1, 1, 2);
+		ref_table_sel->setEnabled(false);
+
+		trigger_grid->addWidget(function_sel, 2, 2, 1, 1);
+		trigger_grid->addWidget(ref_table_sel, 6, 2, 1, 1);
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
@@ -52,8 +51,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
 		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(arguments_tab, 1,0,1,3);
+		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
+		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
 
 		DeferralType::getTypes(list);
 		deferral_type_cmb->addItems(list);
@@ -61,22 +60,11 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		FiringType::getTypes(list);
 		firing_mode_cmb->addItems(list);
 
-/*		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(cond_expr_lbl);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(column_lbl);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(firing_mode_lbl);
-		value_map[firing_mode_lbl].push_back(firing_mode_cmb->itemText(firing_mode_cmb->count()-1));
-
-		frame=generateVersionWarningFrame(field_map, &value_map);
-		trigger_grid->addWidget(frame, trigger_grid->count()+1, 0, 1, 0);
-		frame->setParent(this); */
-
 		configureFormLayout(trigger_grid, OBJ_TRIGGER);
-		parent_form->setMinimumSize(600, 640);
+		parent_form->setMinimumSize(580, 580);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
-		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_lbl, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
 		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(updateColumnsCombo(void)));
@@ -84,6 +72,13 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
 		connect(constr_trig_chk, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
+		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(clearColumnsTable(void)));
+		connect(update_chk, SIGNAL(toggled(bool)), arg_cols_tbw->widget(1), SLOT(setEnabled(bool)));
+
+		setRequiredField(event_lbl);
+		setRequiredField(firing_mode_lbl);
+		setRequiredField(function_lbl);
+		setRequiredField(function_sel);
 	}
 	catch(Exception &e)
 	{
@@ -91,14 +86,25 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 	}
 }
 
+void TriggerWidget::clearColumnsTable(void)
+{
+	if(!update_chk->isChecked())
+		columns_tab->removeRows();
+}
+
 void TriggerWidget::setConstraintTrigger(bool value)
 {
 	exec_per_row_chk->setEnabled(!value);
 	exec_per_row_chk->setChecked(value);
 	ref_table_sel->setEnabled(value);
+	ref_table_lbl->setEnabled(value);
+	deferrable_chk->setEnabled(value);
 
 	if(!value)
+	{
 		ref_table_sel->clearSelector();
+		deferrable_chk->setChecked(false);
+	}
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -200,6 +206,8 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 
 	function_sel->clearSelector();
 	ref_table_sel->clearSelector();
+
+	arg_cols_tbw->setCurrentIndex(0);
 }
 
 void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, OperationList *op_list, Trigger *trigger)
@@ -217,7 +225,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 
 	if(trigger)
 	{
-		constr_trig_chk->setChecked(trigger->getReferencedTable());
+		constr_trig_chk->setChecked(trigger->isConstraint());
 		cond_expr_txt->setPlainText(Utf8String::create(trigger->getCondition()));
 		deferrable_chk->setChecked(trigger->isDeferrable());
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
@@ -267,6 +275,7 @@ void TriggerWidget::applyConfiguration(void)
 		startConfiguration<Trigger>();
 
 		trigger=dynamic_cast<Trigger *>(this->object);
+		trigger->setConstraint(constr_trig_chk->isChecked());
 		trigger->setFiringType(FiringType(firing_mode_cmb->currentText()));
 		trigger->setExecutePerRow(exec_per_row_chk->isChecked());
 		trigger->setDeferrable(deferrable_chk->isChecked());
@@ -291,6 +300,9 @@ void TriggerWidget::applyConfiguration(void)
 			column=reinterpret_cast<Column *>(columns_tab->getRowData(i).value<void *>());
 			trigger->addColumn(column);
 		}
+
+		if(!this->new_object)
+			trigger->validateTrigger();
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

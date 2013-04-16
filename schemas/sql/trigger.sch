@@ -6,7 +6,7 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
 [CREATE ] 
-%if @{ref-table} %then [CONSTRAINT ]%end
+%if @{constraint} %then [CONSTRAINT ]%end
 [TRIGGER ] @{name} $br
 $tb @{firing-type} $sp @{events} $br
 

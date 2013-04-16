@@ -25,7 +25,7 @@ Trigger::Trigger(void)
 											EventType::on_update, EventType::on_truncate};
 
 	function=NULL;
-	is_exec_per_row=false;
+	is_exec_per_row=is_constraint=is_deferrable=false;
 	obj_type=OBJ_TRIGGER;
 	referenced_table=NULL;
 
@@ -48,6 +48,7 @@ Trigger::Trigger(void)
 	attributes[ParsersAttributes::DEFER_TYPE]="";
 	attributes[ParsersAttributes::DEFERRABLE]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
+	attributes[ParsersAttributes::CONSTRAINT]="";
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -120,6 +121,11 @@ void Trigger::addColumn(Column *column)
 {
 	if(!column)
 		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
+										.arg(this->getName(true))
+										.arg(this->getTypeName()),
+										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(!column->getParentTable())
+		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_COLUMN_NO_PARENT))
 										.arg(this->getName(true))
 										.arg(this->getTypeName()),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -221,7 +227,7 @@ void Trigger::removeColumns(void)
 	upd_columns.clear();
 }
 
-void Trigger::setReferecendTable(BaseObject *ref_table)
+void Trigger::setReferecendTable(BaseTable *ref_table)
 {
 	//If the referenced table isn't valid raises an error
 	if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
@@ -240,7 +246,7 @@ void Trigger::setDeferrable(bool valor)
 	is_deferrable=valor;
 }
 
-BaseObject *Trigger::getReferencedTable(void)
+BaseTable *Trigger::getReferencedTable(void)
 {
 	return(referenced_table);
 }
@@ -253,6 +259,16 @@ DeferralType Trigger::getDeferralType(void)
 bool Trigger::isDeferrable(void)
 {
 	return(is_deferrable);
+}
+
+void Trigger::setConstraint(bool value)
+{
+	is_constraint=value;
+}
+
+bool Trigger::isConstraint(void)
+{
+	return(is_constraint);
 }
 
 bool Trigger::isReferRelationshipAddedColumn(void)
@@ -297,6 +313,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 			{
 				count=upd_columns.size();
 				attributes[ParsersAttributes::COLUMNS]="";
+
 				for(i1=0; i1 < count; i1++)
 				{
 					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
@@ -308,6 +325,10 @@ void Trigger::setBasicAttributes(unsigned def_type)
 	}
 
 	if(str_aux!="") str_aux.remove(str_aux.size()-3,3);
+
+	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
+		str_aux+=" OF " + attributes[ParsersAttributes::COLUMNS];
+
 	attributes[ParsersAttributes::EVENTS]=str_aux;
 
 	if(function)
@@ -331,10 +352,11 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(this->parent_table)
 		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
+	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? "1" : "");
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !referenced_table) || referenced_table ? "1" : "");
+	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? "1" : "");
 
 	attributes[ParsersAttributes::CONDITION]=condition;
 
@@ -348,3 +370,43 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+void Trigger::validateTrigger(void)
+{
+	if(parent_table)
+	{
+		ObjectType parent_type=parent_table->getObjectType();
+
+		if(!is_constraint)
+		{
+			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
+			if(firing_type==FiringType::instead_of && parent_type==OBJ_TABLE)
+				throw Exception(ERR_TABLE_TRIG_INSTEADOF_FIRING,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement
+			else if(firing_type==FiringType::instead_of && parent_type==OBJ_VIEW && !is_exec_per_row)
+				throw Exception(ERR_TRIGGER_INV_INSTEADOF_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
+			else if(firing_type==FiringType::instead_of && events[EventType::on_update])
+				throw Exception(ERR_TRIGGER_INV_INSTEADOF_UPDATE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
+			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==OBJ_VIEW))
+				throw Exception(ERR_TRIGGER_INV_TRUNCATE_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//A view trigger cannot be AFTER/BEFORE when it executes for each row
+			else if(parent_type==OBJ_VIEW && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
+				throw Exception(ERR_VIEW_TRIG_INV_AFTBFR_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//Only constraint triggers can be deferrable or reference another table
+			else if(referenced_table || is_deferrable)
+				throw Exception(ERR_TRIG_USING_CONSTRIG_ATRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+		//Constraint triggers can only be executed on AFTER events and for each row
+		else
+		{
+			if(firing_type!=FiringType::after && !is_exec_per_row)
+				throw Exception(ERR_VIEW_TRIG_INV_AFTBFR_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+	}
+}

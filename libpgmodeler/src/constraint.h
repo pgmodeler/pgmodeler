@@ -70,7 +70,7 @@ class Constraint: public TableObject{
 		QString check_expr;
 
 		//! \brief Stores the referenced table (only for foreign keys)
-		BaseObject *ref_table;
+		BaseTable *ref_table;
 
 		//! \brief Formats the string for constraint columns to be used by the SchemaParser
 		void setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel=false);
@@ -118,7 +118,7 @@ class Constraint: public TableObject{
 		void setCheckExpression(const QString &expr);
 
 		//! \brief Defines the referenced table (only for foreign key)
-		void setReferencedTable(BaseObject *tab_ref);
+		void setReferencedTable(BaseTable *tab_ref);
 
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
 		void setTablespace(Tablespace *tabspc);
@@ -168,7 +168,7 @@ class Constraint: public TableObject{
 		QString getCheckExpression(void);
 
 		//! \brief Returns the referenced table
-		BaseObject *getReferencedTable(void);
+		BaseTable *getReferencedTable(void);
 
 		//! \brief Returns the constraint's deferral type
 		DeferralType getDeferralType(void);

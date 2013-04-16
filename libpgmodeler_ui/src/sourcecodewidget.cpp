@@ -117,13 +117,13 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 
 			SchemaParser::setPgSQLVersion(version_cmb->currentText());
-			sqlcode_txt->setPlainText(Utf8String::create(DatabaseModel::validateObjectDefinition(object, SchemaParser::SQL_DEFINITION)));
+			sqlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::SQL_DEFINITION)));
 		}
 
 		if(sqlcode_txt->toPlainText()=="")
 			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
-		xmlcode_txt->setPlainText(Utf8String::create(DatabaseModel::validateObjectDefinition(object, SchemaParser::XML_DEFINITION)));
+		xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
 
 		setSourceCodeTab();
 		task_prog_wgt->close();

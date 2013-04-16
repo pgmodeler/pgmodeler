@@ -30,7 +30,7 @@
 #include "function.h"
 
 class Trigger: public TableObject{
-	protected:
+	private:
 		//! \brief Arguments passed to the function that trigger executes
 		vector<QString> arguments;
 
@@ -55,10 +55,13 @@ class Trigger: public TableObject{
 		bool is_exec_per_row;
 
 		//! \brief Table referecend by the trigger (only for constraint trigger)
-		BaseObject *referenced_table;
+		BaseTable *referenced_table;
+
+		//! \brief Indicates if the trigger is a constraint trigger
+		bool is_constraint,
 
 		//! \brief Indicates whether the trigger is deferrable (only for constraint trigger)
-		bool is_deferrable;
+		is_deferrable;
 
 		//! \brief Deferral type for the trigger (only for constraint trigger)
 		DeferralType deferral_type;
@@ -68,7 +71,6 @@ class Trigger: public TableObject{
 
 		//! \brief Format the function arguments to be used by the SchemaParser
 		void setArgumentAttribute(unsigned tipo_def);
-
 
 	public:
 		Trigger(void);
@@ -90,7 +92,7 @@ class Trigger: public TableObject{
 		void setCondition(const QString &cond);
 
 		//! \brief Defines the referenced table (only for constraint trigger)
-		void setReferecendTable(BaseObject *ref_table);
+		void setReferecendTable(BaseTable *ref_table);
 
 		//! \brief Defines the deferral type
 		void setDeferralType(DeferralType tipo);
@@ -104,8 +106,11 @@ class Trigger: public TableObject{
 		//! \brief Defines the moment when the trigger must be executed
 		void setFiringType(FiringType firing_type);
 
-		//! \brief Define wheter the trigger executes per row
+		//! \brief Defines wheter the trigger executes per row
 		void setExecutePerRow(bool value);
+
+		//! \brief Defines if the trigger is constraint
+		void setConstraint(bool value);
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
@@ -141,13 +146,16 @@ class Trigger: public TableObject{
 		void removeColumns(void);
 
 		//! \brief Returns the referenced table
-		BaseObject *getReferencedTable(void);
+		BaseTable *getReferencedTable(void);
 
 		//! \brief Returns the deferral type of the constraint trigger
 		DeferralType getDeferralType(void);
 
 		//! \brief Returns if the constraint trigger is deferrable or not
 		bool isDeferrable(void);
+
+		//! \brief Returns if the trigger is configured as a constraint trigger
+		bool isConstraint(void);
 
 		/*! \brief Returns whether the trigger references columns added
 		 by relationship. This method is used as auxiliary
@@ -158,6 +166,11 @@ class Trigger: public TableObject{
 
 		//! \brief Returns the SQL / XML definition for the trigger
 		QString getCodeDefinition(unsigned def_type);
+
+		/*! \brief Validates the trigger attributes according to the docs.
+		This method is executed whenever the trigger is added to a table or view.
+		Normally the user don't need to call it explicitly */
+		void validateTrigger(void);
 };
 
 #endif

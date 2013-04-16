@@ -38,12 +38,6 @@ class Textbox: public BaseGraphicObject{
 		//! \brief Color used to draw the text
 		QColor text_color;
 
-		/*! \brief Since textboxes doesn't has SQL code definition the base class method that
-		 generates SQL or XML code is hidden. In replacement the method
-		 getCodeDefinition(void) must be used in order to get the XML code definition
-		 of this type of object */
-		QString getCodeDefinition(unsigned){ return(""); }
-
 	public:
 		//! \brief Constants used to configure the text attributes
 		static const unsigned ITALIC_TXT=0,
@@ -61,8 +55,9 @@ class Textbox: public BaseGraphicObject{
 		//! \brief Sets the color used to draw the text of textbox
 		void setTextColor(const QColor &color);
 
-		//! \brief Returns the XML code definition of the textbox
-		QString getCodeDefinition(void);
+		/*! \brief Since textboxes doesn't has SQL code definition this method will return a empty
+		definition whenever the user try to generate a SQL for this object. */
+		QString getCodeDefinition(unsigned def_type);
 
 		//! \brief Returns the current state of the passed text attribute
 		bool getTextAttribute(unsigned attrib);

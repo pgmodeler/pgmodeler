@@ -31,10 +31,7 @@
 #include "schema.h"
 #include <cmath>
 
-class BaseRelationship: public BaseGraphicObject {
-	private:
-		QString getCodeDefinition(unsigned){ return(""); }
-
+class BaseRelationship: public BaseGraphicObject  {
 	protected:
 		//! \brief Represents the points added by the user on the relationship line
 		vector<QPointF> points;
@@ -126,8 +123,9 @@ class BaseRelationship: public BaseGraphicObject {
 		//! \brief Returns the relationship connection state
 		bool isRelationshipConnected(void);
 
-		//! \brief Returns the XML definition for the relationship
-		QString getCodeDefinition(void);
+		/*! \brief Since base relationships doesn't has SQL code definition this method will return a empty
+		definition whenever the user try to generate a SQL for this object. */
+		QString getCodeDefinition(unsigned def_type);
 
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
 		bool isSelfRelationship(void);

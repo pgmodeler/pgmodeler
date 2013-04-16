@@ -28,23 +28,28 @@ Textbox::Textbox(void)
 	attributes[ParsersAttributes::COLOR]="";
 }
 
-QString Textbox::getCodeDefinition(void)
+QString Textbox::getCodeDefinition(unsigned def_type)
 {
-	setPositionAttribute();
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		return("");
+	else
+	{
+		setPositionAttribute();
 
-	if(text_attributes[ITALIC_TXT])
-		attributes[ParsersAttributes::ITALIC]="1";
+		if(text_attributes[ITALIC_TXT])
+			attributes[ParsersAttributes::ITALIC]="1";
 
-	if(text_attributes[BOLD_TXT])
-		attributes[ParsersAttributes::BOLD]="1";
+		if(text_attributes[BOLD_TXT])
+			attributes[ParsersAttributes::BOLD]="1";
 
-	if(text_attributes[UNDERLINE_TXT])
-		attributes[ParsersAttributes::UNDERLINE]="1";
+		if(text_attributes[UNDERLINE_TXT])
+			attributes[ParsersAttributes::UNDERLINE]="1";
 
-	if(text_color.name()!="#000000")
-		attributes[ParsersAttributes::COLOR]=text_color.name();
+		if(text_color.name()!="#000000")
+			attributes[ParsersAttributes::COLOR]=text_color.name();
 
-	return(this->BaseObject::__getCodeDefinition(SchemaParser::XML_DEFINITION));
+		return(this->BaseObject::__getCodeDefinition(SchemaParser::XML_DEFINITION));
+	}
 }
 
 void Textbox::operator = (Textbox &txtbox)

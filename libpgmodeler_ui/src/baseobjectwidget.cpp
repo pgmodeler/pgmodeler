@@ -684,8 +684,13 @@ void BaseObjectWidget::finishConfiguration(void)
 			new_object=false;
 		}
 		else
+		{
 			//If the object is being updated, validates its SQL definition
-			model->validateObjectDefinition(this->object, SchemaParser::SQL_DEFINITION);
+			if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX)
+				this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			else
+				this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+		}
 
 		this->accept();
 		parent_form->hide();
@@ -730,13 +735,15 @@ void BaseObjectWidget::cancelConfiguration(void)
 
 	if(new_object)
 	{
+		TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
+
 		//Removes the object from its parent
-		if(!table)
+		if(!table && !tab_obj && model->getObjectIndex(this->object) >= 0)
 			model->removeObject(this->object);
-		else if(table)
-			table->removeObject(dynamic_cast<TableObject *>(this->object));
-		else if(relationship)
-			relationship->removeObject(dynamic_cast<TableObject *>(this->object));
+		else if(table && table->getObjectIndex(tab_obj) >= 0)
+			table->removeObject(tab_obj);
+		else if(relationship && relationship->getObjectIndex(tab_obj) >= 0)
+			relationship->removeObject(tab_obj);
 
 		//Deallocate the object if it isn't a table or relationship
 		if(obj_type!=OBJ_TABLE && obj_type!=OBJ_RELATIONSHIP)

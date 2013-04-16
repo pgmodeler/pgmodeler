@@ -468,7 +468,7 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
-			constr->setReferencedTable(ref_table_sel->getSelectedObject());
+			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));
 
 		constr->removeColumns();
 		for(col_id=Constraint::SOURCE_COLS; col_id <= Constraint::REFERENCED_COLS; col_id++)
