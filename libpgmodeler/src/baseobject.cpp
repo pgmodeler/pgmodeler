@@ -666,7 +666,14 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			SchemaParser::restartParser();
 			clearAttributes();
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+
+			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
+				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+												.arg(Utf8String::create(this->getName(true)))
+												.arg(this->getTypeName()),
+												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			else
+				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 	}
 

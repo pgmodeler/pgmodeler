@@ -25,8 +25,7 @@ Schema::Schema(void)
 	obj_type=OBJ_SCHEMA;
 	object_id=Schema::schema_id++;
 	fill_color=QColor(225,225,225, 80);
-	rect_visible=true;
-
+	rect_visible=false;
 	attributes[ParsersAttributes::FILL_COLOR]="";
 	attributes[ParsersAttributes::RECT_VISIBLE]="";
 }

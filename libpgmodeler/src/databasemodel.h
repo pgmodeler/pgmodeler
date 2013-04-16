@@ -141,9 +141,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Validates all the relationship, propagating all column modifications over the tables
 		void validateRelationships(void);
 
-		//! \brief Validates the code definition for the passed object
-		static QString validateObjectDefinition(BaseObject *object, unsigned def_type);
-
 		//! \brief Returns the list of objects that belongs to the passed schema
 		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
 

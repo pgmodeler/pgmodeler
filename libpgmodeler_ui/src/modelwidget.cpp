@@ -1755,8 +1755,8 @@ void ModelWidget::pasteObjects(void)
 			 objects because they are ALWAYS pasted on the model */
 			if(aux_object &&
 				 (dynamic_cast<BaseGraphicObject *>(object) ||
-					(db_model->validateObjectDefinition(aux_object, SchemaParser::SchemaParser::XML_DEFINITION) !=
-					 db_model->validateObjectDefinition(object, SchemaParser::SchemaParser::XML_DEFINITION))))
+					 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
+						object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)
@@ -1823,7 +1823,7 @@ void ModelWidget::pasteObjects(void)
 																	object->getObjectType());
 
 		//Stores the XML definition on a xml buffer map
-		xml_objs[object]=db_model->validateObjectDefinition(object, SchemaParser::XML_DEFINITION);
+		xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 	}
 
 	//The fourth step is the restoration of original names of the copied objects
@@ -2406,7 +2406,9 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
-			popup_menu.addAction(action_deps_refs);
+
+			if(!tab_obj)
+				popup_menu.addAction(action_deps_refs);
 		}
 	}
 
