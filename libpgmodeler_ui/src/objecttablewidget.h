@@ -106,6 +106,9 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		no row is found returns -1 */
 		int getRowIndex(const QVariant &data);
 
+		//! \brief Clears the specified cell text
+		void clearCellText(unsigned row_idx, unsigned col_idx);
+
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
 		void setButtonConfiguration(unsigned button_conf);
 

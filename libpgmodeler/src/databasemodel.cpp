@@ -3349,6 +3349,70 @@ Parameter DatabaseModel::createParameter(void)
 	return(param);
 }
 
+TypeAttribute DatabaseModel::createTypeAttribute(void)
+{
+	TypeAttribute tpattrib;
+	map<QString, QString> attribs;
+	QString elem;
+	BaseObject *collation=NULL;
+
+	try
+	{
+		XMLParser::savePosition();
+		XMLParser::getElementAttributes(attribs);
+
+		tpattrib.setName(attribs[ParsersAttributes::NAME]);
+
+		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				{
+					elem=XMLParser::getElementName();
+
+					if(elem==ParsersAttributes::TYPE)
+					{
+						tpattrib.setType(createPgSQLType());
+					}
+					else if(elem==ParsersAttributes::COLLATION)
+					{
+						XMLParser::getElementAttributes(attribs);
+
+						collation=getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION);
+
+						//Raises an error if the operator class doesn't exists
+						if(!collation)
+						{
+							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+															.arg(Utf8String::create(tpattrib.getName()))
+															.arg(Utf8String::create(tpattrib.getTypeName()))
+															.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+															.arg(BaseObject::getTypeName(OBJ_COLLATION)),
+															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						tpattrib.setCollation(collation);
+					}
+				}
+			}
+			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+		XMLParser::restorePosition();
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+							 .arg(XMLParser::getCurrentElement()->line);
+		XMLParser::restorePosition();
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+	}
+
+	return(tpattrib);
+}
+
 PgSQLType DatabaseModel::createPgSQLType(void)
 {
 	map<QString, QString> attribs;
@@ -3405,7 +3469,6 @@ Type *DatabaseModel::createType(void)
 	int count, i;
 	QStringList enums;
 	QString elem, str_aux;
-	Parameter param;
 	BaseObject *func=NULL;
 	PgSQLType copy_type;
 
@@ -3477,11 +3540,9 @@ Type *DatabaseModel::createType(void)
 							type->addEnumeration(enums[i]);
 					}
 					//Specific operations for COMPOSITE types
-					else if(elem==ParsersAttributes::PARAMETER)
+					else if(elem==ParsersAttributes::TYPE_ATTRIBUTE)
 					{
-						//The attributes is configured on XML as <parameter> tags
-						param=createParameter();
-						type->addAttribute(param);
+						type->addAttribute(createTypeAttribute());
 					}
 					//Specific operations for BASE type
 					else if(elem==ParsersAttributes::TYPE)
@@ -7002,15 +7063,16 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 		if(obj_type==OBJ_COLLATION)
 		{
-			ObjectType  obj_types[]={ OBJ_DOMAIN, OBJ_COLLATION },
-									tab_obj_types[]={OBJ_COLUMN, OBJ_INDEX };
-			unsigned i, count = 2;
+			ObjectType  obj_types[]={ OBJ_DOMAIN, OBJ_COLLATION, OBJ_TYPE },
+									tab_obj_types[]={ OBJ_COLUMN, OBJ_INDEX };
+			unsigned i, count;
 			vector<BaseObject *> *obj_list=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<TableObject *> *tab_obj_list=NULL;
 			vector<TableObject *>::iterator tab_itr, tab_itr_end;
 			TableObject *tab_obj=NULL;
 
+			count=sizeof(obj_types)/sizeof(ObjectType);
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
 				obj_list=getObjectList(obj_types[i]);
@@ -7029,6 +7091,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				}
 			}
 
+			count=sizeof(tab_obj_types)/sizeof(ObjectType);
 			obj_list=getObjectList(OBJ_TABLE);
 			itr=obj_list->begin();
 			itr_end=obj_list->end();

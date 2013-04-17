@@ -17,18 +17,14 @@
 */
 
 #include "typewidget.h"
-#include "parameterwidget.h"
-
-extern ParameterWidget *parameter_wgt;
 
 TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 {
 	try
 	{
 		QGridLayout *grid=NULL;
-		QFrame *frame=NULL;
 		QSpacerItem *spacer=NULL;
-		map<QString, vector<QWidget *> > field_map;
+		QFrame *frame=NULL;
 		QStringList list;
 		unsigned i;
 
@@ -53,32 +49,30 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																					ObjectTableWidget::EDIT_BUTTON, false, this);
+																					 ObjectTableWidget::EDIT_BUTTON, true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
 
-		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																					ObjectTableWidget::UPDATE_BUTTON, false, this);
-		attributes_tab->setColumnCount(2);
+		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		attributes_tab->setColumnCount(3);
 		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
 		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"),1);
 		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+		attributes_tab->setHeaderLabel(trUtf8("Collation"),2);
+		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
 
-		grid=new QGridLayout;
-		grid->setContentsMargins(2,2,2,2);
-		grid->addWidget(attributes_tab,0,0);
-		attributes_gb->setLayout(grid);
+		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
+
+		attrib_collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+		grid->addWidget(attrib_collation_sel, 1,1,1,2);
+
+		attrib_type_wgt=new PgSQLTypeWidget(this);
+		grid->addWidget(attrib_type_wgt,2,0,1,2);
+
+		grid->addWidget(attributes_tab,3,0,1,2);
 		attributes_gb->setVisible(false);
-
-/*		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(enumeration_rb);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(category_lbl);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(preferred_lbl);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(like_type);
-		frame=generateVersionWarningFrame(field_map);
-		type_grid->addWidget(frame, type_grid->count()+1, 0, 1, 0);
-		frame->setParent(this); */
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
@@ -91,8 +85,9 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
 		connect(enumerations_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleEnumeration(int)));
 		connect(enumerations_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleEnumeration(int)));
-		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showAttributeForm(void)));
-		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAttributeForm(void)));
+		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
+		connect(attributes_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleAttribute(int)));
+		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editAttribute(int)));
 
 		parent_form->setMinimumSize(625, 765);
 
@@ -127,7 +122,6 @@ void TypeWidget::hideEvent(QHideEvent *event)
 	alignment_cmb->setCurrentIndex(0);
 	base_attribs_twg->setCurrentIndex(0);
 
-	disconnect(parameter_wgt,NULL,this,NULL);
 	BaseObjectWidget::hideEvent(event);
 }
 
@@ -149,56 +143,60 @@ void TypeWidget::handleEnumeration(int row)
 		enumerations_tab->removeRow(row);
 }
 
-void TypeWidget::showAttributeData(int res)
+void TypeWidget::showAttributeData(TypeAttribute attrib, int row)
 {
-	int row;
-	Parameter param;
+	attributes_tab->setCellText(Utf8String::create(attrib.getName()), row, 0);
+	attributes_tab->setCellText(Utf8String::create(*attrib.getType()), row, 1);
 
-	row=attributes_tab->getSelectedRow();
+	if(attrib.getCollation())
+		attributes_tab->setCellText(Utf8String::create(attrib.getCollation()->getName(true)), row, 2);
+	else
+		attributes_tab->clearCellText(row,2);
 
-	//Case the user clicked apply on the attribute form
-	if(res==QDialog::Accepted)
-	{
-		//Get the configured attribute
-		param=parameter_wgt->getParameter();
-
-		//Add some information of it onto table
-		attributes_tab->setCellText(Utf8String::create(param.getName()), row, 0);
-		attributes_tab->setCellText(Utf8String::create(*param.getType()), row, 1);
-		attributes_tab->setRowData(QVariant::fromValue<Parameter>(param), row);
-	}
-	else if(res==QDialog::Rejected)
-	{
-		if(attributes_tab->getCellText(row,0).isEmpty())
-			attributes_tab->removeRow(row);
-	}
+	attributes_tab->setRowData(QVariant::fromValue<TypeAttribute>(attrib), row);
 }
 
-void TypeWidget::showAttributeForm(void)
+void TypeWidget::editAttribute(int row)
 {
-	int row;
+	TypeAttribute attrib=attributes_tab->getRowData(row).value<TypeAttribute>();
 
-	//Disables the fields not used for type attributes on the form
-	parameter_wgt->param_in_chk->setEnabled(false);
-	parameter_wgt->param_out_chk->setEnabled(false);
-	parameter_wgt->default_value_edt->setEnabled(false);
-	row=attributes_tab->getSelectedRow();
+	attrib_name_edt->setText(Utf8String::create(attrib.getName()));
+	attrib_collation_sel->setSelectedObject(attrib.getCollation());
+	attrib_type_wgt->setAttributes(attrib.getType(), this->model);
+}
 
-	if(row >= 0)
-		parameter_wgt->setAttributes(attributes_tab->getRowData(row).value<Parameter>(), this->model);
+void TypeWidget::handleAttribute(int row)
+{
+	try
+	{
+		TypeAttribute attrib;
 
-	parameter_wgt->show();
+		attrib.setName(attrib_name_edt->text().toUtf8());
+		attrib.setType(attrib_type_wgt->getPgSQLType());
+		attrib.setCollation(attrib_collation_sel->getSelectedObject());
+		showAttributeData(attrib, row);
+
+		attrib_name_edt->clear();
+		attrib_collation_sel->clearSelector();
+	}
+	catch(Exception &e)
+	{
+		if(attributes_tab->getCellText(row,0).isEmpty())
+				attributes_tab->removeRow(row);
+
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *type)
 {
 	PgSQLType like_tp, elem_tp;
 	unsigned type_conf, i, count;
-	Parameter param;
-
-	connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(showAttributeData(int)));
 
 	BaseObjectWidget::setAttributes(model, op_list, type, schema);
+
+	attrib_collation_sel->setModel(model);
+	attrib_type_wgt->setAttributes(PgSQLType(), model);
 
 	for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		functions_sel[i]->setModel(model);
@@ -216,11 +214,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			for(i=0; i < count; i++)
 			{
 				attributes_tab->addRow();
-
-				param=type->getAttribute(i);
-				attributes_tab->setCellText(Utf8String::create(param.getName()), i, 0);
-				attributes_tab->setCellText(Utf8String::create(*param.getType()), i, 1);
-				attributes_tab->setRowData(QVariant::fromValue<Parameter>(param), i);
+				showAttributeData(type->getAttribute(i),i);
 			}
 
 			attributes_tab->blockSignals(false);
@@ -296,7 +290,7 @@ void TypeWidget::applyConfiguration(void)
 
 			count=attributes_tab->getRowCount();
 			for(i=0; i < count; i++)
-				type->addAttribute(attributes_tab->getRowData(i).value<Parameter>());
+				type->addAttribute(attributes_tab->getRowData(i).value<TypeAttribute>());
 		}
 		//Configuring a base type
 		else

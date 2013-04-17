@@ -52,7 +52,7 @@ $sp
    %end
  %end
 
- %if @{elements} %then  @{elements} %end
+ %if @{typeattrib} %then  @{typeattrib} %end
  
  %if @{base} %then  
    %if @{like-type} %then

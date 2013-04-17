@@ -34,34 +34,7 @@
 #include "trigger.h"
 #include "function.h"
 #include "role.h"
-
-//! \brief Auxiliary class that helps to control LIKE (Copy tables) options
-class CopyOptions {
-	private:
-		unsigned copy_mode, copy_op_ids;
-
-	public:
-		static const unsigned DEFAULTS=1,
-													CONSTRAINTS=2,
-													INDEXES=4,
-													STORAGE=8,
-													COMMENTS=16,
-													ALL=31,
-													INCLUDING=64,
-													EXCLUDING=128;
-
-		CopyOptions(void);
-		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);
-
-		unsigned getCopyMode(void);
-		unsigned getCopyOptionsIds(void);
-
-		bool isOptionSet(unsigned op);
-		bool isIncluding(void);
-		bool isExcluding(void);
-
-		QString getSQLDefinition(void);
-};
+#include "copyoptions.h"
 
 class Table: public BaseTable {
 	private:
@@ -75,15 +48,11 @@ class Table: public BaseTable {
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;
 
-		//! \brief Stores the tables that 'this' object clones the attributes
-		//vector<Table *> copy_tables;
-
-		//! \brief Controls the LIKE options for each copy table
-		//map<Table *, LikeOption >  copy_tables;
-
+		//! \brief Specifies the table from which columns are copied
 		Table *copy_table;
 
-		CopyOptions like_op;
+		//! \brief Specifies the copy table options
+		CopyOptions copy_op;
 
 		//! \brief Indicates if the table accepts OIDs
 		bool with_oid;
@@ -160,7 +129,7 @@ class Table: public BaseTable {
 		void setCopyTable(Table *tab);
 
 		//! \brief Configures the copy table options
-		void setCopyTableOptions(CopyOptions like_op);
+		void setCopyTableOptions(CopyOptions copy_op);
 
 		//! \brief Returns the copy table
 		Table *getCopyTable(void);

@@ -326,6 +326,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Language *createLanguage(void);
 		Function *createFunction(void);
 		Parameter createParameter(void);
+		TypeAttribute createTypeAttribute(void);
 		Type *createType(void);
 		Domain *createDomain(void);
 		Cast *createCast(void);

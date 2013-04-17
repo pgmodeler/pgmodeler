@@ -360,7 +360,8 @@ namespace ParsersAttributes {
 	NO_INHERIT="no-inherit",
 	COPY_TABLE="copy-table",
 	COPY_MODE="copy-mode",
-	COPY_OPTIONS="copy-options";
+	COPY_OPTIONS="copy-options",
+	TYPE_ATTRIBUTE="typeattrib";
 }
 
 #endif

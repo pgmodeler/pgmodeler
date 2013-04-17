@@ -18,86 +18,6 @@
 
 #include "table.h"
 
-CopyOptions::CopyOptions(void)
-{
-	copy_mode = copy_op_ids = 0;
-}
-
-CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
-{
- if((copy_mode!=0 && copy_mode!=INCLUDING && copy_mode!=EXCLUDING) || copy_op_ids > ALL)
-	throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
- this->copy_mode = copy_mode;
- this->copy_op_ids = copy_op_ids;
-}
-
-unsigned CopyOptions::getCopyMode(void)
-{
-	return(copy_mode);
-}
-
-bool CopyOptions::isOptionSet(unsigned op)
-{
-	if(op > ALL)
-		throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	return((copy_op_ids & op) == op);
-}
-
-bool CopyOptions::isIncluding(void)
-{
-	return(copy_mode & INCLUDING);
-}
-
-bool CopyOptions::isExcluding(void)
-{
-	return(copy_mode & EXCLUDING);
-}
-
-unsigned CopyOptions::getCopyOptionsIds(void)
-{
-	return(copy_op_ids);
-}
-
-QString CopyOptions::getSQLDefinition(void)
-{
-	QString def, mode, op_name;
-	unsigned op_id,
-					 ids[]={ALL, DEFAULTS, CONSTRAINTS,
-									INDEXES, STORAGE, COMMENTS },
-					 cnt = sizeof(ids) / sizeof(unsigned);
-
-	mode = (copy_mode == INCLUDING ? " INCLUDING" : " EXCLUDING");
-	if(copy_mode!=0 && copy_op_ids!=0)
-	{
-		for(unsigned i=0; i < cnt; i++)
-		{
-			op_id = copy_op_ids & ids[i];
-
-			switch(op_id)
-			{
-				case ALL: op_name=" ALL"; break;
-				case DEFAULTS: op_name=" DEFAULTS"; break;
-				case CONSTRAINTS: op_name=" CONSTRAINTS"; break;
-				case INDEXES: op_name=" INDEXES"; break;
-				case STORAGE: op_name=" STORAGE"; break;
-				case COMMENTS: op_name=" COMMENTS"; break;
-			}
-
-			if(!op_name.isEmpty())
-			{
-				def += mode + op_name;
-				op_name.clear();
-			}
-
-			if(op_id==ALL) break;
-		}
-	}
-
-	return(def);
-}
-
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
@@ -533,13 +453,13 @@ void Table::setCopyTable(Table *tab)
 	copy_table=tab;
 
 	if(!copy_table)
-		like_op=CopyOptions(0,0);
+		copy_op=CopyOptions(0,0);
 }
 
 void Table::setCopyTableOptions(CopyOptions like_op)
 {
 	if(copy_table)
-		this->like_op=like_op;
+		this->copy_op=like_op;
 }
 
 Table *Table::getCopyTable(void)
@@ -549,7 +469,7 @@ Table *Table::getCopyTable(void)
 
 CopyOptions Table::getCopyTableOptions(void)
 {
-	return(like_op);
+	return(copy_op);
 }
 
 void Table::removeObject(BaseObject *obj)
@@ -1078,7 +998,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::COPY_TABLE]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
-		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + like_op.getSQLDefinition();
+		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
 	(copy_table ? copy_table->getName(true) : "");
 

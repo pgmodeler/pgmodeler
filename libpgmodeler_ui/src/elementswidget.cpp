@@ -225,13 +225,13 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
 	}
 
-	elements_tab->setCellText("", elem_idx, 2);
+	elements_tab->clearCellText(elem_idx, 2);
 	if(idxelem && idxelem->getCollation())
 		elements_tab->setCellText(Utf8String::create(idxelem->getCollation()->getName(true)), elem_idx, 2);
 	else if(excelem && excelem->getOperator())
 		elements_tab->setCellText(Utf8String::create(excelem->getOperator()->getSignature(true)), elem_idx, 2);
 
-	elements_tab->setCellText("", elem_idx, 3);
+	elements_tab->clearCellText(elem_idx, 3);
 	if(elem->getOperatorClass())
 		elements_tab->setCellText(Utf8String::create(elem->getOperatorClass()->getName(true)), elem_idx, 3);
 
@@ -249,8 +249,8 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 	}
 	else
 	{
-		elements_tab->setCellText("", elem_idx, 4);
-		elements_tab->setCellText("", elem_idx, 5);
+		elements_tab->clearCellText(elem_idx, 4);
+		elements_tab->clearCellText(elem_idx, 5);
 	}
 
 	if(dynamic_cast<IndexElement *>(elem))

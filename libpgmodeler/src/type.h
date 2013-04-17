@@ -30,6 +30,7 @@
 #include "schema.h"
 #include "function.h"
 #include "role.h"
+#include "typeattribute.h"
 
 class Type: public BaseObject {
 	private:
@@ -39,7 +40,7 @@ class Type: public BaseObject {
 		unsigned config;
 
 		//! \brief Attributes for composite type
-		vector<Parameter> attributes;
+		vector<TypeAttribute> attributes;
 
 		//! \brief Enumerations of enumeration type
 		vector<QString> enumerations;
@@ -122,7 +123,7 @@ class Type: public BaseObject {
 		void setConfiguration(unsigned conf);
 
 		//! \brief Adds an attribute to the type (only for composite type)
-		void addAttribute(Parameter attrib);
+		void addAttribute(TypeAttribute attrib);
 
 		//! \brief Removes an attribute from the type (only for composite type)
 		void removeAttribute(unsigned attrib_idx);
@@ -172,7 +173,7 @@ class Type: public BaseObject {
 		//! \brief Sets the type that will be used as template (only for base type)
 		void setLikeType(PgSQLType like_type);
 
-		Parameter getAttribute(unsigned attrib_idx);
+		TypeAttribute getAttribute(unsigned attrib_idx);
 		unsigned getAttributeCount(void);
 		QString getEnumeration(unsigned idx_enum);
 		unsigned getEnumerationCount(void);

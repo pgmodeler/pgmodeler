@@ -53,11 +53,7 @@ class Operator: public BaseObject {
 													RIGHT_ARG=1,
 
 													OPER_COMMUTATOR=0,
-													OPER_NEGATOR=1;//,
-													//OPER_SORT1=2,
-													//OPER_SORT2=3,
-													//OPER_LESS=4,
-													//OPER_GREATER=5;
+													OPER_NEGATOR=1;
 
 		Operator(void);
 

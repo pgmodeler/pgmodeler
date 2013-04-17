@@ -165,7 +165,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 			elements_tab->setCellText(trUtf8("No"), lin_idx, 3);
 	}
 	else
-		elements_tab->setCellText("", lin_idx, 3);
+		elements_tab->clearCellText(lin_idx, 3);
 
 	//Define as the line data the element itself
 	elements_tab->setRowData(QVariant::fromValue<OperatorClassElement>(elem), lin_idx);

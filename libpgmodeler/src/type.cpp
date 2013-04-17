@@ -38,7 +38,7 @@ Type::Type(void)
 
 	BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
 	BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::ELEMENTS]="";
+	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
 	BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="";
 	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]="";
 	BaseObject::attributes[ParsersAttributes::INPUT_FUNC]="";
@@ -87,7 +87,7 @@ void Type::setSchema(BaseObject *schema)
 
 bool Type::isAttributeExists(const QString &attrib_name)
 {
-	vector<Parameter>::iterator itr, itr_end;
+	vector<TypeAttribute>::iterator itr, itr_end;
 	bool found=false;
 
 	itr=attributes.begin();
@@ -102,7 +102,7 @@ bool Type::isAttributeExists(const QString &attrib_name)
 	return(found);
 }
 
-void Type::addAttribute(Parameter attrib)
+void Type::addAttribute(TypeAttribute attrib)
 {
 	//Raises an error if the attribute has an empty name or null type
 	if(attrib.getName()=="" || attrib.getType()==PgSQLType::null)
@@ -392,27 +392,17 @@ void Type::setDelimiter(char delim)
 
 void Type::setElementsAttribute(unsigned def_type)
 {
-	Parameter param;
 	QString str_elem;
 	unsigned i, count;
 
 	count=Type::attributes.size();
 	for(i=0; i < count; i++)
-	{
-		param=Type::attributes[i];
+		str_elem+=Type::attributes[i].getCodeDefinition(def_type);
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
-		{
-			str_elem+=param.getName() + " " + (*param.getType());
-			if(i < (count-1)) str_elem+=",";
-		}
-		else
-		{
-			str_elem+=param.getCodeDefinition(def_type);
-		}
-	}
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
-	BaseObject::attributes[ParsersAttributes::ELEMENTS]=str_elem;
+	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
 }
 
 void Type::setEnumerationsAttribute(unsigned def_type)
@@ -453,7 +443,7 @@ void Type::setLikeType(PgSQLType like_type)
 	this->like_type=like_type;
 }
 
-Parameter Type::getAttribute(unsigned attrib_idx)
+TypeAttribute Type::getAttribute(unsigned attrib_idx)
 {
 	if(attrib_idx >= attributes.size())
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);

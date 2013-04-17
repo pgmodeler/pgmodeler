@@ -25,35 +25,9 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "baseobject.h"
 #include "schema.h"
 #include "role.h"
-#include "column.h"
-
-class Parameter: public Column {
-	private:
-		/*! \brief This attributes indicates whether the parameter
-		is in, out or both (IN, OUT, INOUT) */
-		bool is_in, is_out;
-
-	public:
-		Parameter(void);
-
-		void setType(PgSQLType type);
-
-		void setIn(bool value);
-		void setOut(bool value);
-
-		bool isIn(void);
-		bool isOut(void);
-
-		//! \brief Returns the SQL / XML code definition for the parameter
-		QString getCodeDefinition(unsigned def_type);
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
-
-		void operator = (const Parameter &param);
-};
-
+#include "parameter.h"
 
 class Function: public BaseObject {
 	private:

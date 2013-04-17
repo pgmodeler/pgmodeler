@@ -64,6 +64,7 @@ enum ObjectType {
 	OBJ_TEXTBOX,
 	OBJ_PERMISSION,
 	OBJ_PARAMETER,
+	OBJ_TYPE_ATTRIBUTE,
 	BASE_RELATIONSHIP,
 	BASE_OBJECT,
 	BASE_TABLE
@@ -77,7 +78,7 @@ class BaseObject {
 	protected:
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
 		 As object instances are created this value ​​are incremented. In some classes
-		 like Schema, DBModel, Tablespace, Role, Type and Function id generators are
+		 like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
 		 used each with a custom different numbering range (see cited classes declaration). */
 		static unsigned global_id;
 
@@ -88,8 +89,8 @@ class BaseObject {
 		 in which the objects were created */
 		unsigned object_id;
 
-		//! \brief Objects type count declared on enum ObjectType.
-		static const int OBJECT_TYPE_COUNT=28;
+		//! \brief Objects type count declared on enum ObjectType (excluding BASE_OBJECT and BASE_TABLE).
+		static const int OBJECT_TYPE_COUNT=29;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

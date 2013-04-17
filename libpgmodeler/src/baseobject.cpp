@@ -29,8 +29,8 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"relationship","textbox",
-	"permission","parameter","relationship"
+	"relationship","textbox",	"permission", "parameter",
+	"typeattribute","relationship"
 };
 
 
@@ -44,7 +44,7 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Relationship"),
 	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
-	QT_TR_NOOP("Relationship")
+	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -387,7 +387,7 @@ bool BaseObject::acceptsTablespace(void)
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
 	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_COLUMN  ||
-				 obj_type==OBJ_COLLATION);
+				 obj_type==OBJ_COLLATION || obj_type==OBJ_TYPE_ATTRIBUTE);
 }
 
 bool BaseObject::acceptsCollation(void)

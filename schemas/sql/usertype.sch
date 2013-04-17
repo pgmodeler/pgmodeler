@@ -10,10 +10,10 @@
 %if @{reduced-form} %then
 ; $br
 %else
-   %if @{base} %then [ (] $br %else $br AS %end
+   %if @{base} %then [ (] $br %else [ AS] $br %end
 
    # Configuração para tipo composto
-   %if @{composite} %then $sp (@{elements}); %end
+   %if @{composite} %then ( $br @{typeattrib} $br ); %end
 
    # Configuração para tipo enumeração
    %if @{enumeration} %then

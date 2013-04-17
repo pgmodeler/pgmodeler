@@ -148,6 +148,18 @@ void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsig
 	item->setText(text);
 }
 
+void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
+{
+ try
+	{
+		setCellText("", row_idx, col_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
 {
 	QTableWidgetItem *item=NULL;

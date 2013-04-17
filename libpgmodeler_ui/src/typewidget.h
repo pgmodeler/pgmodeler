@@ -30,10 +30,10 @@
 #include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
-/* Declaring the Parameter class as a Qt metatype in order to permit
+/* Declaring the TypeAttribute class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
-Q_DECLARE_METATYPE(Parameter)
+Q_DECLARE_METATYPE(TypeAttribute)
 
 class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
@@ -46,9 +46,15 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		PgSQLTypeWidget *like_type,
 										*element_type;
 
-		//! \brief Tabelas para armazenamento das enumerações e atributos de tipos compostos
+		//! \brief Tables that store enumaration elementas and composite attributes
 		ObjectTableWidget *enumerations_tab,
 											*attributes_tab;
+
+		//! \brief Composite type attribute collation selector
+		ObjectSelectorWidget *attrib_collation_sel;
+
+		//! \brief Composite type attribute datatype configurator
+		PgSQLTypeWidget *attrib_type_wgt;
 
 		void hideEvent(QHideEvent *event);
 
@@ -64,11 +70,14 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		//! \brief Handles the type enumarations
 		void handleEnumeration(int row);
 
-		//! \brief Shows the form used to edit/create type attributes
-		void showAttributeForm(void);
+		//! \brief Create/Updated an attribute based upon values of the form
+		void handleAttribute(int row);
+
+		//! \brief Exposes on form the values of the currently selected attribute
+		void editAttribute(int row);
 
 		//! \brief Shows the attribute configured onto the attributes table
-		void showAttributeData(int res);
+		void showAttributeData(TypeAttribute attrib, int row);
 
 	public slots:
 		void applyConfiguration(void);
