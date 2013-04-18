@@ -1026,15 +1026,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"/>
 
-<relationship name="table_A4_inherits_table_B2"
+<!--<relationship name="table_A4_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_2"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
-	 dst-table="&quot;schema_A&quot;.&quot;table_A4&quot;"/>
+	 dst-table="&quot;schema_A&quot;.&quot;table_A4&quot;"/>-->
 
-<relationship name="table_A3_inherits_table_B2"
+<!--<relationship name="table_A3_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
@@ -1045,9 +1045,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<position x="558" y="731"/>
 	<position x="560" y="1073"/>
 	</line>
-</relationship>
+</relationship>-->
 
-<relationship name="table_B2_copies_table_A1"
+<!--<relationship name="table_B2_copies_table_A1"
 	 type="reldep"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
@@ -1059,7 +1059,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<position x="462" y="733"/>
 	</line>
 	<special-pk-cols indexes="4"/>
-</relationship>
+</relationship>-->
 
 <relationship name="table_B2_has_one_table_B2"
 	 type="rel11"
@@ -1174,7 +1174,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <trigger name="gatilho_restricao_teste_4c" firing-type="AFTER" per-line="true"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
-	 deferrable="true" defer-type="INITIALLY DEFERRED" ref-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 table="public.&quot;tabela_B_4c&quot;">
 		<comment>Gatilho teste na tabela teste</comment>
 		<function signature="public.funcao_teste()"/>

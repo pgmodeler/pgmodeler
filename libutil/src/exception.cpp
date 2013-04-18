@@ -214,6 +214,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_TRIGGER_INV_INSTEADOF_UPDATE",QT_TR_NOOP("A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event!")},
 	{"ERR_ASG_COLUMN_NO_PARENT",QT_TR_NOOP("Assignment of a column which has no parent table to the object '%1' (%2)!")},
 	{"ERR_TRIG_USING_CONSTRIG_ATRIBS",QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
+	{"ERR_REF_FUNCTION_INV_TYPE_CONF", QT_TR_NOOP("Reference to a function id which is incompatible whit the user define type configuration!")},
+	{"ERR_ASG_INV_OPCLASS_OBJ", QT_TR_NOOP("The operator class assigned to the object '%1' (%2) must use 'btree' as indexing method!")},
 };
 
 Exception::Exception(void)

@@ -31,12 +31,13 @@
 #include "function.h"
 #include "role.h"
 #include "typeattribute.h"
+#include "operatorclass.h"
 
 class Type: public BaseObject {
 	private:
 		static unsigned type_id;
 
-		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE)
+		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
 		unsigned config;
 
 		//! \brief Attributes for composite type
@@ -46,37 +47,46 @@ class Type: public BaseObject {
 		vector<QString> enumerations;
 
 		//! \brief Functions used by the base type
-		Function *functions[7];
+		Function *functions[9];
 
 		//! \brief Type's internal length ( > 0 - Fixed length, 0 - Variable length)
 		unsigned internal_len; //! \brief INTERNALLENGTH
 
 		//! \brief Indicates that the type can be passed by value
-		bool by_value; //! \brief PASSEDBYVALUE
+		bool by_value, // PASSEDBYVALUE
 
-		//! \brief Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
-		PgSQLType alignment, //! \brief ALIGNMENT
-							element; //! \brief ELEMENT
-
-		//! \brief Type's storage
-		StorageType storage; //! \brief STORAGE
-
-		//! \brief Default value for the type
-		QString default_value; //! \brief DEFAULT
-
-		//! \brief Type's category (only for base type) - Default 'U'
-		CategoryType category; //! \brief CATEGORY
+		//! \brief Indicates if type can use collations
+		collatable, //COLLATABLE
 
 		//! \brief Used with the category attribute (only for base type) - Default FALSE
-		bool preferred; //! \brief PREFERRED
+		preferred; //PREFERRED
+
+		//! \brief Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
+		PgSQLType alignment, //ALIGNMENT
+							element; //ELEMENT
+
+		//! \brief Type's storage
+		StorageType storage; //STORAGE
+
+		//! \brief Default value for the type
+		QString default_value; //DEFAULT
+
+		//! \brief Type's category (only for base type) - Default 'U'
+		CategoryType category; //CATEGORY
 
 		/*! \brief Type which will have some of its attributes copied to the current type
 		 (only for base type). If like_type is 'any' means that the
 		 current type does not copy attributes of any type */
-		PgSQLType like_type; //! \brief LIKE
+		PgSQLType like_type,  //LIKE
+
+		//! \brief Subtype used by a range type
+		subtype; //SUBTYPE
 
 		//! \brief Character used as value delimiter when the type is used as array
-		char delimiter; //! \brief DELIMITER
+		char delimiter; //DELIMITER
+
+		//! \brief Operator class associated to the subtype (only for range type)
+		OperatorClass *subtype_opclass;
 
 		//! \brief Checks if the named attribute exists
 		bool isAttributeExists(const QString &attrib_name);
@@ -99,8 +109,9 @@ class Type: public BaseObject {
 
 	public:
 		static const unsigned BASE_TYPE=10,
-		ENUMERATION_TYPE=20,
-		COMPOSITE_TYPE=30;
+		ENUMERATION_TYPE=11,
+		COMPOSITE_TYPE=12,
+		RANGE_TYPE=13;
 
 		static const unsigned INPUT_FUNC=0,
 		OUTPUT_FUNC=1,
@@ -108,7 +119,9 @@ class Type: public BaseObject {
 		SEND_FUNC=3,
 		TPMOD_IN_FUNC=4,
 		TPMOD_OUT_FUNC=5,
-		ANALYZE_FUNC=6;
+		ANALYZE_FUNC=6,
+		CANONICAL_FUNC=7,
+		SUBTYPE_DIFF_FUNC=8;
 
 		Type(void);
 		~Type(void);
@@ -119,7 +132,9 @@ class Type: public BaseObject {
 		//! \brief Sets the type schema
 		void setSchema(BaseObject *schema);
 
-		//! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE)
+		/*! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE | RANGE).
+		Calling this method causes all attribute to be reset, so it may be executed before
+		any other attribute of the type be defined. */
 		void setConfiguration(unsigned conf);
 
 		//! \brief Adds an attribute to the type (only for composite type)
@@ -149,6 +164,9 @@ class Type: public BaseObject {
 		//! \brief Sets if the type can be passed by value (only for base type)
 		void setByValue(bool value);
 
+		//! \brief Sets if the type can use collation (only for base type)
+		void setCollatable(bool value);
+
 		//! \brief Sets the alignment for the type (only for base type)
 		void setAlignment(PgSQLType type);
 
@@ -173,6 +191,14 @@ class Type: public BaseObject {
 		//! \brief Sets the type that will be used as template (only for base type)
 		void setLikeType(PgSQLType like_type);
 
+		//! \brief Sets the subtype that will be used by the range (only for range type)
+		void setSubtype(PgSQLType subtype);
+
+		//! \brief Sets the subtype operator class (only for range type)
+		void setSubtypeOpClass(OperatorClass *opclass);
+
+		PgSQLType getSubtype(void);
+		OperatorClass *getSubtypeOpClass(void);
 		TypeAttribute getAttribute(unsigned attrib_idx);
 		unsigned getAttributeCount(void);
 		QString getEnumeration(unsigned idx_enum);
@@ -184,6 +210,7 @@ class Type: public BaseObject {
 		Function *getFunction(unsigned func_id);
 		unsigned getInternalLength(void);
 		bool isByValue(void);
+		bool isCollatable(void);
 		PgSQLType getAlignment(void);
 		StorageType getStorage(void);
 		QString getDefaultValue(void);

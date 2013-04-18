@@ -24,20 +24,11 @@ Type::Type(void)
 {
 	object_id=Type::type_id++;
 	obj_type=OBJ_TYPE;
-	config=ENUMERATION_TYPE;
-
-	alignment="integer";
-	delimiter='\0';
-	storage=StorageType::plain;
-	element="any";
-	internal_len=0;
-
-	category=CategoryType::userdefined;
-	preferred=false;
-	like_type="any";
+	setConfiguration(ENUMERATION_TYPE);
 
 	BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
 	BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
+	BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="";
 	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
 	BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="";
 	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]="";
@@ -59,6 +50,11 @@ Type::Type(void)
 	BaseObject::attributes[ParsersAttributes::CATEGORY]="";
 	BaseObject::attributes[ParsersAttributes::PREFERRED]="";
 	BaseObject::attributes[ParsersAttributes::LIKE_TYPE]="";
+	BaseObject::attributes[ParsersAttributes::COLLATABLE]="";
+	BaseObject::attributes[ParsersAttributes::SUBTYPE]="";
+	BaseObject::attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]="";
+	BaseObject::attributes[ParsersAttributes::CANONICAL_FUNC]="";
+	BaseObject::attributes[ParsersAttributes::OP_CLASS]="";
 }
 
 Type::~Type(void)
@@ -179,33 +175,27 @@ void Type::removeEnumerations(void)
 
 void Type::setConfiguration(unsigned conf)
 {
-	unsigned idx;
-
 	//Raises an error if the configuration type is invalid
-	if(conf < BASE_TYPE || conf > COMPOSITE_TYPE)
+	if(conf < BASE_TYPE || conf > RANGE_TYPE)
 		throw Exception(ERR_ASG_INV_TYPE_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(conf!=BASE_TYPE)
-	{
-		if(conf==ENUMERATION_TYPE)
-			attributes.clear();
-		else
-			enumerations.clear();
+	attributes.clear();
+	enumerations.clear();
 
-		for(idx=0; idx < 7; idx++)
-			functions[idx]=NULL;
+	for(unsigned idx=0; idx < sizeof(functions)/sizeof(Function *); idx++)
+		functions[idx]=NULL;
 
-		default_value="";
-		element="any";
-		delimiter='\0';
-		by_value=false;
-		internal_len=0;
-	}
-	else
-	{
-		attributes.clear();
-		enumerations.clear();
-	}
+	setCollation(NULL);
+	subtype_opclass=NULL;
+
+	alignment="integer";
+	delimiter='\0';
+	storage=StorageType::plain;
+	element="any";
+	internal_len=0;
+	category=CategoryType::userdefined;
+	preferred=collatable=by_value=false;
+	like_type="any";
 
 	this->config=conf;
 }
@@ -215,17 +205,23 @@ void Type::setFunction(unsigned func_id, Function *func)
 	unsigned param_count;
 	LanguageType lang;
 	lang=LanguageType::c;
+	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
-	if(func_id > ANALYZE_FUNC)
+	if(func_id >= funcs_len)
 		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(func)
 		param_count=func->getParameterCount();
 
+	/* Raises an error if the user try to reference a function id which is incompatible according
+	to the type's configuraiton */
+	if((config==BASE_TYPE && func_id >= CANONICAL_FUNC) ||
+		 (config==RANGE_TYPE && func_id <= ANALYZE_FUNC))
+		throw Exception(ERR_REF_FUNCTION_INV_TYPE_CONF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function isn't defined and the function id is INPUT or OUTPUT,
 		because this function is mandatory for base types */
-	if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
+	else if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
 										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_TYPE)),
@@ -235,23 +231,25 @@ void Type::setFunction(unsigned func_id, Function *func)
 	{
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
-		if(func->getLanguage()->getName()!=(~lang))
+		if((func_id!=CANONICAL_FUNC && func_id!=SUBTYPE_DIFF_FUNC) &&
+				func->getLanguage()->getName()!=(~lang))
 			throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the parameter count for INPUT and RECV functions
 		 is different from 1 or 3. */
 		else if((param_count!=1 && param_count!=3 &&
 						 (func_id==INPUT_FUNC || func_id==RECV_FUNC)) ||
+						(param_count!=2 && func_id==SUBTYPE_DIFF_FUNC) ||
 						(param_count!=1 &&
 						 (func_id==OUTPUT_FUNC   || func_id==SEND_FUNC ||
 							func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
-							func_id==ANALYZE_FUNC)))
+							func_id==ANALYZE_FUNC  || func_id==CANONICAL_FUNC)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Checking the return types of function in relation to type.
-		 INPUT and RECV functions must return the data type that is being defined according to the
+		 INPUT, RECV and CANONICAL functions must return the data type that is being defined according to the
 		 documentation, but to facilitate the implementation the function must return data type
 		 'any' which will be replaced by the defined type name at the moment of generation of SQL.
 		 OUTPUT and TPMOD_OUT should return cstring.
@@ -263,7 +261,9 @@ void Type::setFunction(unsigned func_id, Function *func)
 						(func_id==SEND_FUNC && func->getReturnType()!="bytea") ||
 						(func_id==TPMOD_IN_FUNC && func->getReturnType()!="integer") ||
 						(func_id==TPMOD_OUT_FUNC && func->getReturnType()!="cstring") ||
-						(func_id==ANALYZE_FUNC && func->getReturnType()!="boolean"))
+						(func_id==ANALYZE_FUNC && func->getReturnType()!="boolean") ||
+						(func_id==CANONICAL_FUNC && func->getReturnType()!="any") ||
+						(func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!="double precision"))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
@@ -271,7 +271,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 
 		/* Validating the parameter types of function in relation to the type configuration.
 		 The INPUT function must have parameters with type (cstring, oid, integer).
-		 SEND and OUTPUT must have a parameter of the same type being defined
+		 SEND, OUTPUT, CANONICAL must have a parameter of the same type being defined
 		 in this case, to facilitate implementation simply use a type parameter "any".
 		 The RECV function must have parameters (internal, oid, integer).
 		 The function TPMOD_IN must have a type parameter (ctring []).
@@ -283,17 +283,22 @@ void Type::setFunction(unsigned func_id, Function *func)
 							(param_count==3 &&
 							 (func->getParameter(1).getType()!="oid" ||
 								func->getParameter(2).getType()!="integer")))) ||
-						(func_id==OUTPUT_FUNC && func->getParameter(0).getType()!="any") ||
 						(func_id==RECV_FUNC &&
 						 (func->getParameter(0).getType()!="internal" ||
 							(param_count==3 &&
 							 (func->getParameter(1).getType()!="oid" ||
 								func->getParameter(2).getType()!="integer")))) ||
-						(func_id==SEND_FUNC && func->getParameter(0).getType()!="any") ||
+						((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!="any") ||
 						(func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!="cstring[]") ||
 						(func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!="integer") ||
-						(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!="internal"))
-			throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!="internal") ||
+						(func_id==SUBTYPE_DIFF_FUNC &&
+							(func->getParameter(0).getType()!=this->subtype ||
+							 func->getParameter(1).getType()!=this->subtype)))
+			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
+											.arg(Utf8String::create(this->getName()))
+											.arg(Utf8String::create(this->getTypeName())),
+											ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		func->setProtected(false);
 	}
@@ -434,6 +439,11 @@ void Type::setPreferred(bool value)
 	this->preferred=value;
 }
 
+void Type::setCollatable(bool value)
+{
+	this->collatable=value;
+}
+
 void Type::setLikeType(PgSQLType like_type)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
@@ -441,6 +451,26 @@ void Type::setLikeType(PgSQLType like_type)
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->like_type=like_type;
+}
+
+void Type::setSubtype(PgSQLType subtype)
+{
+	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !subtype)
+		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->subtype=subtype;
+}
+
+void Type::setSubtypeOpClass(OperatorClass *opclass)
+{
+	if(opclass && opclass->getIndexingType()!=IndexingType::btree)
+		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OPCLASS_OBJ)
+										.arg(Utf8String::create(this->getName(true)))
+										.arg(Utf8String::create(this->getTypeName())),
+										ERR_ASG_INV_OPCLASS_OBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	subtype_opclass=opclass;
 }
 
 TypeAttribute Type::getAttribute(unsigned attrib_idx)
@@ -471,7 +501,7 @@ unsigned Type::getEnumerationCount(void)
 
 Function *Type::getFunction(unsigned func_id)
 {
-	if(func_id > ANALYZE_FUNC)
+	if(func_id >= sizeof(functions)/sizeof(Function *))
 		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_id]);
@@ -527,9 +557,24 @@ bool Type::isPreferred(void)
 	return(preferred);
 }
 
+bool Type::isCollatable(void)
+{
+	return(collatable);
+}
+
 PgSQLType Type::getLikeType(void)
 {
 	return(like_type);
+}
+
+PgSQLType Type::getSubtype(void)
+{
+	return(subtype);
+}
+
+OperatorClass *Type::getSubtypeOpClass(void)
+{
+	return(subtype_opclass);
 }
 
 QString Type::getCodeDefinition(unsigned def_type)
@@ -549,32 +594,22 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
 		setElementsAttribute(def_type);
 	}
+	else if(config==RANGE_TYPE)
+	{
+		BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="1";
+		BaseObject::attributes[ParsersAttributes::SUBTYPE]=(*subtype);
+
+		if(subtype_opclass)
+		{
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
+			else
+				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
+		}
+	}
 	else
 	{
-		unsigned i;
-		QString func_attrib[7]={ParsersAttributes::INPUT_FUNC,
-														ParsersAttributes::OUTPUT_FUNC,
-														ParsersAttributes::RECV_FUNC,
-														ParsersAttributes::SEND_FUNC,
-														ParsersAttributes::TPMOD_IN_FUNC,
-														ParsersAttributes::TPMOD_OUT_FUNC,
-														ParsersAttributes::ANALYZE_FUNC};
-
 		BaseObject::attributes[ParsersAttributes::BASE_TYPE]="1";
-
-		for(i=0; i < 7; i++)
-		{
-			if(functions[i])
-			{
-				if(def_type==SchemaParser::SQL_DEFINITION)
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getName();
-				else
-				{
-					functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attrib[i]);
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
-				}
-			}
-		}
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
 			BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
@@ -595,9 +630,38 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		BaseObject::attributes[ParsersAttributes::CATEGORY]=~(category);
 
 		BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
+		BaseObject::attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
 
 		if(like_type!="any")
 			BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
+	}
+
+	if(config==BASE_TYPE || config==RANGE_TYPE)
+	{
+		unsigned i;
+		QString func_attrib[]={ParsersAttributes::INPUT_FUNC,
+														ParsersAttributes::OUTPUT_FUNC,
+														ParsersAttributes::RECV_FUNC,
+														ParsersAttributes::SEND_FUNC,
+														ParsersAttributes::TPMOD_IN_FUNC,
+														ParsersAttributes::TPMOD_OUT_FUNC,
+														ParsersAttributes::ANALYZE_FUNC,
+														ParsersAttributes::CANONICAL_FUNC,
+														ParsersAttributes::SUBTYPE_DIFF_FUNC};
+
+		for(i=0; i < sizeof(functions)/sizeof(Function *); i++)
+		{
+			if(functions[i])
+			{
+				if(def_type==SchemaParser::SQL_DEFINITION)
+					BaseObject::attributes[func_attrib[i]]=functions[i]->getName();
+				else
+				{
+					functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attrib[i]);
+					BaseObject::attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
+				}
+			}
+		}
 	}
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
@@ -624,8 +688,11 @@ void Type::operator = (Type &type)
 	this->preferred=type.preferred;
 	this->like_type=type.like_type;
 	this->delimiter=type.delimiter;
+	this->collatable=type.collatable;
+	this->subtype=type.subtype;
+	this->subtype_opclass=type.subtype_opclass;
 
-	while(i < 7)
+	while(i < sizeof(functions)/sizeof(Function *))
 	{
 		this->functions[i]=type.functions[i];
 		i++;

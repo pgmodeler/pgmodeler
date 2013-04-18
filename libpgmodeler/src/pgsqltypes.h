@@ -614,8 +614,8 @@ class FiringType: public BaseType{
 
 	public:
 		static const unsigned before=offset;
-		static const unsigned after=offset;
-		static const unsigned instead_of=offset+1;
+		static const unsigned after=offset+1;
+		static const unsigned instead_of=offset+2;
 
 		FiringType(const QString &type_name);
 		FiringType(unsigned type_id);

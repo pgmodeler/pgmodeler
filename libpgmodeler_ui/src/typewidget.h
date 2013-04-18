@@ -39,12 +39,16 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Function selectors widgets
-		ObjectSelectorWidget *functions_sel[7];
+		//! \brief Type functions selectors widgets
+		ObjectSelectorWidget *functions_sel[9],
 
-		//! \brief Type configuration widgets, used to handle "like type" and "element type"
+		//! \brief Range type operator class selector widget
+		*opclass_sel;
+
+		//! \brief Type configuration widgets, used to handle "like type", "element type" and "range subtype"
 		PgSQLTypeWidget *like_type,
-										*element_type;
+										*element_type,
+										*range_subtype;
 
 		//! \brief Tables that store enumaration elementas and composite attributes
 		ObjectTableWidget *enumerations_tab,

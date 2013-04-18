@@ -3469,8 +3469,9 @@ Type *DatabaseModel::createType(void)
 	int count, i;
 	QStringList enums;
 	QString elem, str_aux;
-	BaseObject *func=NULL;
-	PgSQLType copy_type;
+	BaseObject *func=NULL, *collation=NULL;
+	OperatorClass *op_class=NULL;
+	PgSQLType aux_type;
 
 	try
 	{
@@ -3518,8 +3519,14 @@ Type *DatabaseModel::createType(void)
 		}
 		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
 			type->setConfiguration(Type::COMPOSITE_TYPE);
-		else
+		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::ENUM_TYPE)
 			type->setConfiguration(Type::ENUMERATION_TYPE);
+		else
+		{
+			type->setConfiguration(Type::RANGE_TYPE);
+			func_types[ParsersAttributes::CANONICAL_FUNC]=Type::CANONICAL_FUNC;
+			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SUBTYPE_DIFF_FUNC;
+		}
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -3544,11 +3551,51 @@ Type *DatabaseModel::createType(void)
 					{
 						type->addAttribute(createTypeAttribute());
 					}
-					//Specific operations for BASE type
+					//Specific operations for BASE / RANGE type
 					else if(elem==ParsersAttributes::TYPE)
 					{
-						copy_type=createPgSQLType();
-						type->setLikeType(copy_type);
+						aux_type=createPgSQLType();
+
+						if(type->getConfiguration()==Type::RANGE_TYPE)
+							type->setSubtype(aux_type);
+						else
+							type->setLikeType(aux_type);
+					}
+					else if(elem==ParsersAttributes::COLLATION)
+					{
+						XMLParser::getElementAttributes(attribs);
+						collation=getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION);
+
+						//Raises an error if the operator class doesn't exists
+						if(!collation)
+						{
+							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+															.arg(Utf8String::create(type->getName()))
+															.arg(Utf8String::create(type->getTypeName()))
+															.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+															.arg(BaseObject::getTypeName(OBJ_COLLATION)),
+															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						type->setCollation(collation);
+					}
+					if(elem==ParsersAttributes::OP_CLASS)
+					{
+						XMLParser::getElementAttributes(attribs);
+						op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
+
+						//Raises an error if the operator class doesn't exists
+						if(!op_class)
+						{
+							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+															.arg(Utf8String::create(type->getName()))
+															.arg(Utf8String::create(type->getTypeName()))
+															.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+															.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
+															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						type->setSubtypeOpClass(op_class);
 					}
 					//Configuring the functions used by the type (only for BASE type)
 					else if(elem==ParsersAttributes::FUNCTION)
@@ -3570,8 +3617,7 @@ Type *DatabaseModel::createType(void)
 						else if(func_types.count(attribs[ParsersAttributes::REF_TYPE])==0)
 							throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						type->setFunction(func_types[attribs[ParsersAttributes::REF_TYPE]],
-								dynamic_cast<Function *>(func));
+						type->setFunction(func_types[attribs[ParsersAttributes::REF_TYPE]],	dynamic_cast<Function *>(func));
 					}
 				}
 			}
@@ -6084,6 +6130,9 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
 			if(object->getOwner() /*&& inc_indirect_deps*/)
 				getObjectDependecies(object->getOwner(), deps, inc_indirect_deps);
+
+			if(object->getCollation() /*&& inc_indirect_deps*/)
+				getObjectDependecies(object->getCollation(), deps, inc_indirect_deps);
 
 			//** Getting the dependecies for operator class **
 			if(obj_type==OBJ_OPCLASS)

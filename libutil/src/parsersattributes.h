@@ -97,6 +97,9 @@ namespace ParsersAttributes {
 	TRANSITION_FUNC="transition",
 	VALIDATOR_FUNC="validator",
 	OPERATOR_FUNC="operfunc",
+	CANONICAL_FUNC="canonical",
+	SUBTYPE_DIFF_FUNC="subtypediff",
+	SUBTYPE="subtype",
 	FUNCTION="function",
 	TRIGGER_FUNC="trigger-func",
 	TRIGGERS="triggers",
@@ -119,11 +122,8 @@ namespace ParsersAttributes {
 	OBJECTS="objects",
 	OIDS="oids",
 	COMMUTATOR_OP="commutator-op",
-	//GREATER_OP="greater-op",
-	//LESS_OP="less-op",
 	NEGATOR_OP="negator-op",
 	SORT_OP="sort-op",
-	//SORT2_OP="sort2-op",
 	OPERATOR="operator",
 	DEFAULT="default",
 	ADMIN_ROLES="admin-roles",
@@ -140,7 +140,6 @@ namespace ParsersAttributes {
 	OWNER_COLUMN="owner",
 	PRECISION="precision",
 	ROW_AMOUNT="row-amount",
-	//RECHECK="recheck",
 	REFER="refer",
 	RULES="rules",
 	CK_CONSTR="ck-constr",
@@ -178,7 +177,6 @@ namespace ParsersAttributes {
 	SECURITY_TYPE="security-type",
 	TYPE="type",
 	TYPES="types",
-	//SYSID="sysid",
 	UNIQUE="unique",
 	VALIDITY="validity",
 	MAX_VALUE="max-value",
@@ -361,7 +359,9 @@ namespace ParsersAttributes {
 	COPY_TABLE="copy-table",
 	COPY_MODE="copy-mode",
 	COPY_OPTIONS="copy-options",
-	TYPE_ATTRIBUTE="typeattrib";
+	TYPE_ATTRIBUTE="typeattrib",
+	COLLATABLE="collatable",
+	RANGE_TYPE="range";
 }
 
 #endif

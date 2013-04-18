@@ -12,7 +12,7 @@
 <!ATTLIST function execution-cost CDATA #IMPLIED>
 <!ATTLIST function row-amount CDATA #IMPLIED>
 <!ATTLIST function signature CDATA #IMPLIED>
-<!ATTLIST function ref-type (none|validator|handler|inline|input|output|receive|send|tpmodin|tpmodout|analyze|join|restriction|final|transition|operfunc) "none">
+<!ATTLIST function ref-type (none|validator|handler|inline|input|output|receive|send|tpmodin|tpmodout|analyze|canonical|subtypediff|join|restriction|final|transition|operfunc) "none">
 <!ATTLIST function protected (false|true) "false">
 
 <!ELEMENT parameter (type)>

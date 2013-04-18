@@ -33,7 +33,6 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"typeattribute","relationship"
 };
 
-
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
 	QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
@@ -387,7 +386,8 @@ bool BaseObject::acceptsTablespace(void)
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
 	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_COLUMN  ||
-				 obj_type==OBJ_COLLATION || obj_type==OBJ_TYPE_ATTRIBUTE);
+				 obj_type==OBJ_COLLATION || obj_type==OBJ_TYPE ||
+				 obj_type==OBJ_TYPE_ATTRIBUTE);
 }
 
 bool BaseObject::acceptsCollation(void)
