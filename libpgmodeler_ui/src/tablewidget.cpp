@@ -291,9 +291,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	}
 	catch(Exception &e)
 	{
-		if(this->new_object && table)
-			delete(table);
-
+		/*if(this->new_object && table)
+			delete(table); */
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -435,10 +434,9 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		trigger=dynamic_cast<Trigger *>(object);
 
 		//Column 1: Table referenced by the trigger (constraint trigger)
+		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
 			tab->setCellText(Utf8String::create(trigger->getReferencedTable()->getName(true)),row,1);
-		else
-			tab->setCellText(QString("-"),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);

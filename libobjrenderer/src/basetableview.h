@@ -35,21 +35,42 @@ class BaseTableView: public BaseObjectView {
 		Q_OBJECT
 
 	protected:
+		//! \brief Item groups that stores columns and extended attributes, respectively
+		QGraphicsItemGroup *columns,
+
+		*ext_attribs;
+
 		//! \brief Polygonal object that defines the table body
-		QGraphicsPolygonItem *body;
+		QGraphicsPolygonItem *body,
+
+		//! \brief Extended table attributes (indexes, rules, triggers) section body
+		*ext_attribs_body;
+
+		//! \brief Stores the reference to the child object currently selected on table
+		TableObject *sel_child_obj;
 
 		//! \brief Table title
 		TableTitleView *title;
+
+		//! \brief Stores the original table's tool tip
+		QString table_tooltip;
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 	public:
 		BaseTableView(BaseTable *base_tab);
-		~BaseTableView(void);
+		virtual ~BaseTableView(void);
+
+		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
+
+		//! \brief Signal emitted when the user right-click a focused table child object
+		void s_childObjectSelected(TableObject *);
 };
 
 #endif

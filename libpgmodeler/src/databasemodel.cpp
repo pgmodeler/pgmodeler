@@ -852,6 +852,9 @@ void DatabaseModel::addView(View *view, int obj_idx)
 		try
 		{
 			__addObject(view, obj_idx);
+
+			PgSQLType::addUserType(view->getName(true), view, this, UserTypeConfig::VIEW_TYPE);
+
 			updateViewRelationships(view);
 			dynamic_cast<Schema *>(view->getSchema())->setModified(true);
 		}
@@ -872,10 +875,10 @@ void DatabaseModel::removeView(View *view, int obj_idx)
 	if(view)
 	{
 		__removeObject(view, obj_idx);
+		PgSQLType::removeUserType(view->getName(true), view);
 		updateViewRelationships(view);
 	}
 }
-
 
 void DatabaseModel::updateTableFKRelationships(Table *table)
 {
@@ -4773,7 +4776,7 @@ Rule *DatabaseModel::createRule(void)
 	return(rule);
 }
 
-Trigger *DatabaseModel::createTrigger(Table *table)
+Trigger *DatabaseModel::createTrigger(BaseTable *table)
 {
 	map<QString, QString> attribs;
 	Trigger *trigger=NULL;
@@ -4793,7 +4796,8 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 		else if(!table && !attribs[ParsersAttributes::TABLE].isEmpty())
 		{
 			inc_trig_table=true;
-			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
 			if(!table)
 				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
 												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
@@ -4835,13 +4839,31 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 				trigger->addArgument(list_aux[i]);
 		}
 
-		trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==
-				ParsersAttributes::_TRUE_);
+		trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+
 		if(trigger->isDeferrable())
 			trigger->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
-		ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
-		trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
+		if(!attribs[ParsersAttributes::REF_TABLE].isEmpty())
+		{
+			ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
+
+			if(!ref_table)
+				ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_VIEW);
+
+			//Raises an error if the trigger is referencing a inexistent table
+			if(!ref_table)
+			{
+				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+												.arg(Utf8String::create(trigger->getName()))
+												.arg(Utf8String::create(trigger->getTypeName()))
+												.arg(Utf8String::create(attribs[ParsersAttributes::REF_TABLE]))
+												.arg(BaseObject::getTypeName(OBJ_TABLE)),
+												ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
+		}
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4887,10 +4909,10 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 
 						for(i=0; i < count; i++)
 						{
-							column=table->getColumn(list_aux[i]);
+							column=dynamic_cast<Column *>(table->getObject(list_aux[i], OBJ_COLUMN));
 
-							if(!column)
-								column=table->getColumn(list_aux[i], true);
+							if(!column && dynamic_cast<Table *>(table))
+								column=dynamic_cast<Table *>(table)->getColumn(list_aux[i], true);
 
 							trigger->addColumn(column);
 						}
@@ -5121,6 +5143,10 @@ View *DatabaseModel::createView(void)
 
 						XMLParser::restorePosition();
 					}
+					else if(elem==BaseObject::getSchemaName(OBJ_RULE))
+						view->addRule(createRule());
+					else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
+						view->addTrigger(createTrigger(view));
 				}
 			}
 			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
@@ -6443,6 +6469,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 					if(view->getReference(i).getTable())
 						getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
 				}
+
+				for(i=0; i < view->getTriggerCount(); i++)
+					getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
+
+				for(i=0; i < view->getTriggerCount(); i++)
+				{
+					if(view->getTrigger(i)->getReferencedTable())
+						getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
+				}
 			}
 		}
 	}
@@ -7294,23 +7329,27 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSQLType type)
 	switch(type.getUserTypeConfig())
 	{
 		case UserTypeConfig::BASE_TYPE:
-		return(this->getObject(*type, OBJ_TYPE));
+			return(this->getObject(*type, OBJ_TYPE));
 		break;
 
 		case UserTypeConfig::DOMAIN_TYPE:
-		return(this->getObject(*type, OBJ_DOMAIN));
+			return(this->getObject(*type, OBJ_DOMAIN));
 		break;
 
 		case UserTypeConfig::TABLE_TYPE:
-		return(this->getObject(*type, OBJ_TABLE));
+			return(this->getObject(*type, OBJ_TABLE));
+		break;
+
+		case UserTypeConfig::VIEW_TYPE:
+			return(this->getObject(*type, OBJ_VIEW));
 		break;
 
 		case UserTypeConfig::SEQUENCE_TYPE:
-		return(this->getObject(*type, OBJ_SEQUENCE));
+			return(this->getObject(*type, OBJ_SEQUENCE));
 		break;
 
 		default:
-		return(NULL);
+			return(NULL);
 		break;
 	}
 }

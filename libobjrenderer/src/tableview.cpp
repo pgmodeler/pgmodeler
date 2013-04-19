@@ -21,55 +21,16 @@
 TableView::TableView(Table *table) : BaseTableView(table)
 {
 	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
-
-	sel_child_obj=NULL;
-	ext_attribs_body=new QGraphicsPolygonItem;
-	columns=new QGraphicsItemGroup;
-	ext_attribs=new QGraphicsItemGroup;
-
-	columns->setZValue(1);
-	ext_attribs->setZValue(1);
-
-	this->addToGroup(columns);
-	this->addToGroup(ext_attribs);
-	this->addToGroup(ext_attribs_body);
+	//sel_child_obj=NULL;
 	this->configureObject();
-
-	this->setAcceptHoverEvents(true);
 }
 
 TableView::~TableView(void)
 {
 	disconnect(this, SLOT(configureObject(void)));
-
-	this->removeFromGroup(ext_attribs_body);
-	this->removeFromGroup(columns);
-	this->removeFromGroup(ext_attribs);
-
-	delete(ext_attribs_body);
-	delete(columns);
-	delete(ext_attribs);
 }
 
-void TableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	//Emit a signal containing the select child object if the user right-click the focused item
-	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj)
-	{
-		if(this->scene())
-		 this->scene()->clearSelection();
-
-		/* Deactivate the table in order not to hide the child object selection.
-			 The table object is reativated when the context menu is hidden */
-		this->setEnabled(false);
-
-		emit s_childObjectSelected(sel_child_obj);
-	}
-	else
-		BaseObjectView::mousePressEvent(event);
-}
-
-QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)
+/* QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	if(change==ItemSelectedHasChanged)
 	{
@@ -78,72 +39,7 @@ QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)
 	}
 
 	return(BaseTableView::itemChange(change, value));
-}
-
-void TableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
-{
-	if(!this->isSelected() && obj_selection->isVisible())
-		obj_selection->setVisible(false);
-
-	sel_child_obj=NULL;
-}
-
-void TableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-	/* Case the table itself is not selected shows the child selector
-		at mouse position */
-	if(!this->isSelected())
-	{
-		QList<QGraphicsItem *> items;
-		float cols_height;
-		float item_idx;
-		QRectF rect, rect1;
-
-		items.append(columns->children());
-		items.append(ext_attribs->children());
-
-		//Calculates the default item height
-		cols_height=roundf((columns->boundingRect().height() +
-												ext_attribs->boundingRect().height()) / static_cast<float>(items.size()));
-
-		//Calculates the item index based upon the mouse position
-		rect=this->mapRectToItem(title, title->boundingRect());
-		item_idx=(event->pos().y() - rect.bottom()) / cols_height;
-
-		//If the index is invalid clears the selection
-		if(item_idx < 0 || item_idx >= items.size())
-		{
-			this->hoverLeaveEvent(event);
-			this->setToolTip(this->table_tooltip);
-		}
-		else if(!items.isEmpty())
-		{
-			QPolygonF pol;
-			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
-
-			//Configures the selection with the item's dimension
-			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
-			{
-				pol.append(QPointF(0.0f,0.0f));
-				pol.append(QPointF(1.0f,0.0f));
-				pol.append(QPointF(1.0f,1.0f));
-				pol.append(QPointF(0.0f,1.0f));
-				this->resizePolygon(pol, title->boundingRect().width() - (2.5 * HORIZ_SPACING),
-														item->boundingRect().height());
-				obj_selection->setPolygon(pol);
-			}
-
-			//Sets the selection position as same as item's position
-			rect1=this->mapRectToItem(item, item->boundingRect());
-			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HORIZ_SPACING,-rect1.top()));
-
-			//Stores the selected child object
-			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
-			this->setToolTip(item->toolTip());
-		}
-	}
-}
+} */
 
 void TableView::configureObject(void)
 {
@@ -156,8 +52,8 @@ void TableView::configureObject(void)
 	QList<QGraphicsItem *> subitems;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=NULL;
-	QGraphicsItemGroup *grupos[]={ columns, ext_attribs };
-	QGraphicsPolygonItem *corpos[]={ body, ext_attribs_body };
+	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
+	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 
@@ -187,16 +83,16 @@ void TableView::configureObject(void)
 		}
 
 		//Gets the subitems of the current group
-		subitems=grupos[idx]->children();
-		grupos[idx]->moveBy(-grupos[idx]->scenePos().x(),
-												-grupos[idx]->scenePos().y());
+		subitems=groups[idx]->children();
+		groups[idx]->moveBy(-groups[idx]->scenePos().x(),
+												-groups[idx]->scenePos().y());
 		count=tab_objs.size();
 
 		//Special case: if there is no item on extended attributes, the extended body is hidden
 		if(idx==1)
 		{
-			grupos[idx]->setVisible(count > 0);
-			corpos[idx]->setVisible(count > 0);
+			groups[idx]->setVisible(count > 0);
+			bodies[idx]->setVisible(count > 0);
 		}
 
 		for(i=0; i < count; i++)
@@ -237,7 +133,7 @@ void TableView::configureObject(void)
 		while(i > count-1)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
-			grupos[idx]->removeFromGroup(col_item);
+			groups[idx]->removeFromGroup(col_item);
 			delete(col_item);
 			i--;
 		}
@@ -246,7 +142,7 @@ void TableView::configureObject(void)
 		while(!col_items.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(col_items.front());
-			grupos[idx]->removeFromGroup(col_item);
+			groups[idx]->removeFromGroup(col_item);
 			col_items.pop_front();
 
 			//Positioning the type label
@@ -254,7 +150,7 @@ void TableView::configureObject(void)
 
 			//Positioning the constraints label
 			col_item->setChildObjectXPos(3, px + type_width);
-			grupos[idx]->addToGroup(col_item);
+			groups[idx]->addToGroup(col_item);
 		}
 	}
 
@@ -283,21 +179,21 @@ void TableView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(idx=0; idx < 2; idx++)
 	{
-		this->resizePolygon(pol, width, grupos[idx]->boundingRect().height() + (2 * VERT_SPACING));
-		corpos[idx]->setPolygon(pol);
-		corpos[idx]->setBrush(this->getFillStyle(atribs[idx]));
+		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
+		bodies[idx]->setPolygon(pol);
+		bodies[idx]->setBrush(this->getFillStyle(atribs[idx]));
 		pen=this->getBorderStyle(atribs[idx]);
-		corpos[idx]->setPen(pen);
+		bodies[idx]->setPen(pen);
 
 		if(idx==0)
-			corpos[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
-			corpos[idx]->setPos(title->pos().x(),
+			bodies[idx]->setPos(title->pos().x(),
 													title->boundingRect().height() +
-													corpos[0]->boundingRect().height() - 2);
-		grupos[idx]->setPos(corpos[idx]->pos());
+													bodies[0]->boundingRect().height() - 2);
+		groups[idx]->setPos(bodies[idx]->pos());
 
-		subitems=grupos[idx]->children();
+		subitems=groups[idx]->children();
 		while(!subitems.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
@@ -308,7 +204,7 @@ void TableView::configureObject(void)
 	}
 
 	//Set the protected icon position to the top-right on the title
-	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.925f,
+	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
 												 2 * VERT_SPACING);
 
 	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());

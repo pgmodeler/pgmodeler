@@ -81,6 +81,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::COLLATION]="";
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
+	this->setName(QApplication::translate("BaseObject","new_object","",QApplication::UnicodeUTF8, -1));
 }
 
 unsigned BaseObject::getGlobalId(void)

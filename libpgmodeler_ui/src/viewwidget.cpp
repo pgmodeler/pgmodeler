@@ -17,12 +17,23 @@
 */
 
 #include "viewwidget.h"
+#include "rulewidget.h"
+#include "triggerwidget.h"
+
+extern RuleWidget *rule_wgt;
+extern TriggerWidget *trigger_wgt;
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
 	{
+		ObjectTableWidget *tab=NULL;
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		QGridLayout *grid=NULL;
+
 		Ui_ViewWidget::setupUi(this);
+
+		operation_count=0;
 
 		expression_hl=new SyntaxHighlighter(expression_txt, false);
 		expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -59,6 +70,40 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
 		referencias_grid->addWidget(references_tab, 7,0,2,0);
 
+		//Configuring the table objects that stores the triggers and rules
+		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
+		{
+			tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																(ObjectTableWidget::UPDATE_BUTTON  | ObjectTableWidget::MOVE_BUTTONS), true, this);
+
+			objects_tab_map[types[i]]=tab;
+
+			grid=new QGridLayout;
+			grid->addWidget(tab, 0,0,1,1);
+			grid->setContentsMargins(4,4,4,4);
+			tabWidget->widget(tab_id)->setLayout(grid);
+
+			connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
+			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
+			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+		}
+
+		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/table.png"),1);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/trigger.png"),2);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
+
+		objects_tab_map[OBJ_RULE]->setColumnCount(3);
+		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
+		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
+
 		configureFormLayout(view_grid, OBJ_VIEW);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
@@ -87,12 +132,246 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	}
 }
 
+ObjectTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
+{
+	if(objects_tab_map.count(obj_type) > 0)
+		return(objects_tab_map[obj_type]);
+	else
+		return(NULL);
+}
+
+void ViewWidget::showTableObjectForm(ObjectType obj_type)
+{
+	TableObject *object=NULL;
+	ObjectTableWidget *obj_table=NULL;
+	View *view=NULL;
+
+	obj_table=getObjectTable(obj_type);
+
+	if(obj_table->getSelectedRow()>=0)
+		object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
+
+	view=dynamic_cast<View *>(this->object);
+
+	switch(obj_type)
+	{
+		case OBJ_TRIGGER:
+			trigger_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
+			trigger_wgt->show();
+		break;
+
+		default:
+		case OBJ_RULE:
+			rule_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
+			rule_wgt->show();
+		break;
+	}
+}
+
+void ViewWidget::handleObject(void)
+{
+	ObjectType obj_type=BASE_OBJECT;
+
+	try
+	{
+		obj_type=getObjectType(sender());
+		showTableObjectForm(obj_type);
+		listObjects(obj_type);
+	}
+	catch(Exception &e)
+	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ViewWidget::removeObjects(void)
+{
+	View *view=NULL;
+	unsigned count, op_count=0, i;
+	BaseObject *object=NULL;
+	ObjectType obj_type=getObjectType(sender());
+
+	try
+	{
+		view=dynamic_cast<View *>(this->object);
+		op_count=op_list->getCurrentSize();
+
+		while(view->getObjectCount(obj_type) > 0)
+		{
+			object=view->getObject(0, obj_type);
+			view->removeObject(object);
+			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
+		}
+	}
+	catch(Exception &e)
+	{
+		if(op_count < op_list->getCurrentSize())
+		{
+			count=op_list->getCurrentSize()-op_count;
+			op_list->ignoreOperationChain(true);
+
+			for(i=0; i < count; i++)
+			{
+				op_list->undoOperation();
+				op_list->removeLastOperation();
+			}
+
+			op_list->ignoreOperationChain(false);
+		}
+
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ViewWidget::removeObject(int row)
+{
+	View *view=NULL;
+	BaseObject *object=NULL;
+	ObjectType obj_type=getObjectType(sender());
+
+	try
+	{
+		view=dynamic_cast<View *>(this->object);
+		object=view->getObject(row, obj_type);
+		view->removeObject(object);
+		op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+	}
+	catch(Exception &e)
+	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+ObjectType ViewWidget::getObjectType(QObject *sender)
+{
+	ObjectType obj_type=BASE_OBJECT;
+
+	if(sender)
+	{
+		map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+
+		itr=objects_tab_map.begin();
+		itr_end=objects_tab_map.end();
+
+		while(itr!=itr_end && obj_type==BASE_OBJECT)
+		{
+			if(itr->second==sender)
+				obj_type=itr->first;
+
+			itr++;
+		}
+	}
+
+	return(obj_type);
+}
+
+void ViewWidget::showObjectData(TableObject *object, int row)
+{
+	ObjectTableWidget *tab=NULL;
+	Trigger *trigger=NULL;
+	Rule *rule=NULL;
+	ObjectType obj_type;
+	QString str_aux;
+	unsigned i;
+	EventType events[]={ EventType::on_insert, EventType::on_delete,
+											 EventType::on_truncate,	EventType::on_update };
+
+	obj_type=object->getObjectType();
+	tab=objects_tab_map[obj_type];
+
+	//Column 0: Object name
+	tab->setCellText(Utf8String::create(object->getName()),row,0);
+
+	if(obj_type==OBJ_TRIGGER)
+	{
+		trigger=dynamic_cast<Trigger *>(object);
+
+		//Column 1: Table referenced by the trigger (constraint trigger)
+		tab->clearCellText(row,1);
+		if(trigger->getReferencedTable())
+			tab->setCellText(Utf8String::create(trigger->getReferencedTable()->getName(true)),row,1);
+
+		//Column 2: Trigger firing type
+		tab->setCellText(~trigger->getFiringType(),row,2);
+
+		//Column 3: Events that fires the trigger
+		for(i=0; i < sizeof(events)/sizeof(EventType); i++)
+		{
+			if(trigger->isExecuteOnEvent(events[i]))
+				str_aux+=~events[i] + QString(", ");
+		}
+
+		str_aux.remove(str_aux.size()-2, 2);
+		tab->setCellText(str_aux ,row,3);
+	}
+	else if(obj_type==OBJ_RULE)
+	{
+		rule=dynamic_cast<Rule *>(object);
+
+		//Column 1: Rule execution type
+		tab->setCellText(~rule->getExecutionType(),row,1);
+
+		//Column 2: Rule event type
+		tab->setCellText(~rule->getEventType(),row,2);
+	}
+
+	tab->setRowData(QVariant::fromValue<void *>(object), row);
+}
+
+void ViewWidget::listObjects(ObjectType obj_type)
+{
+	ObjectTableWidget *tab=NULL;
+	unsigned count, i;
+	View *view=NULL;
+
+	try
+	{
+		//Gets the object table related to the object type
+		tab=objects_tab_map[obj_type];
+		view=dynamic_cast<View *>(this->object);
+
+		tab->blockSignals(true);
+		tab->removeRows();
+
+		count=view->getObjectCount(obj_type);
+		for(i=0; i < count; i++)
+		{
+			tab->addRow();
+			showObjectData(dynamic_cast<TableObject*>(view->getObject(i, obj_type)), i);
+		}
+		tab->clearSelection();
+		tab->blockSignals(false);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void ViewWidget::hideEvent(QHideEvent *evento)
 {
+	View *view=dynamic_cast<View *>(this->object);
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+
 	references_tab->removeRows();
 	tabWidget->setCurrentIndex(0);
 	cte_expression_txt->clear();
+
 	clearReferenceForm();
+
+	for(unsigned i=0; i < sizeof(types)/sizeof(ObjectType); i++)
+	{
+		objects_tab_map[types[i]]->blockSignals(true);
+		objects_tab_map[types[i]]->removeRows();
+		objects_tab_map[types[i]]->blockSignals(false);
+	}
+
+	if(this->new_object && !view->isModified())
+		this->cancelConfiguration();
+
 	BaseObjectWidget::hideEvent(evento);
 }
 
@@ -285,44 +564,77 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 
 	refer.setDefinitionExpression(view_def);
 	references_tab->setRowData(QVariant::fromValue<Reference>(refer), row);
-	updateCodePreview();
 }
 
 void ViewWidget::updateCodePreview(void)
 {
-	Reference refer;
-	QString str_aux;
-	unsigned i, count, i1, expr_type[4]={Reference::SQL_REFER_SELECT,
-																			 Reference::SQL_REFER_FROM,
-																			 Reference::SQL_REFER_WHERE,
-																			 Reference::SQL_VIEW_DEFINITION};
 	try
 	{
-		//Clears the auxiliary view
-		aux_view.removeReferences();
-		aux_view.BaseObject::setName(name_edt->text().toUtf8());
-		aux_view.setSchema(schema_sel->getSelectedObject());
-		aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
-
-		count=references_tab->getRowCount();
-		for(i=0; i < count; i++)
+		if(tabWidget->currentIndex()==tabWidget->count()-1)
 		{
-			refer=references_tab->getRowData(i).value<Reference>();
+			View aux_view;
+			Reference refer;
+			QString str_aux;
+			TableObject *tab_obj=NULL;
+			map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+			unsigned i, count, i1, expr_type[]={Reference::SQL_REFER_SELECT,
+																					Reference::SQL_REFER_FROM,
+																					Reference::SQL_REFER_WHERE,
+																					Reference::SQL_VIEW_DEFINITION};
 
-			//Get the SQL application string for the current reference
-			str_aux=references_tab->getCellText(i,3);
+			aux_view.BaseObject::setName(name_edt->text().toUtf8());
+			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
+			aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 
-			for(i1=0; i1 < 4; i1++)
+			count=references_tab->getRowCount();
+			for(i=0; i < count; i++)
 			{
-				if(str_aux[i1]=='1')
-					aux_view.addReference(refer, expr_type[i1]);
-			}
-		}
+				refer=references_tab->getRowData(i).value<Reference>();
 
-		code_txt->setPlainText(Utf8String::create(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+				//Get the SQL application string for the current reference
+				str_aux=references_tab->getCellText(i,3);
+
+				for(i1=0; i1 < sizeof(expr_type)/sizeof(unsigned); i1++)
+				{
+					if(str_aux[i1]=='1')
+						aux_view.addReference(refer, expr_type[i1]);
+				}
+			}
+
+			itr=objects_tab_map.begin();
+			itr_end=objects_tab_map.end();
+
+			//Inserts the triggers / rules into the auxiliary view
+			while(itr!=itr_end)
+			{
+				count=itr->second->getRowCount();
+
+				//Make a copy of each view objects (rule/trigger) to the auxiliary view
+				for(i=0; i < count; i++)
+				{
+					if(itr->first==OBJ_TRIGGER)
+					{
+						tab_obj=new Trigger;
+						(*dynamic_cast<Trigger *>(tab_obj))=
+								(*reinterpret_cast<Trigger *>(itr->second->getRowData(i).value<void *>()));
+					}
+					else
+					{
+						tab_obj=new Rule;
+						(*dynamic_cast<Rule *>(tab_obj))=
+								(*reinterpret_cast<Rule *>(itr->second->getRowData(i).value<void *>()));
+					}
+					aux_view.addObject(tab_obj);
+				}
+
+				itr++;
+			}
+			code_txt->setPlainText(Utf8String::create(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+		}
 	}
 	catch(Exception &e)
 	{
+		QString str_aux;
 		//In case of error no code is outputed, showing a error message in the code preview widget
 		str_aux=trUtf8("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
@@ -336,7 +648,25 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	bool sel_from, from_where, after_where, view_def;
 	Reference refer;
 
+	if(!view)
+	{
+		view=new View;
+
+		if(schema)
+			view->setSchema(schema);
+
+		/* Sets the 'new_object' flag as true indicating that the alocated table must be treated
+			 as a recently created object */
+		this->new_object=true;
+	}
+
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
+
+	op_list->startOperationChain();
+	operation_count=op_list->getCurrentSize();
+
+	if(this->new_object)
+		op_list->registerObject(view, Operation::OBJECT_CREATED);
 
 	column_sel->setModel(model);
 	table_sel->setModel(model);
@@ -363,6 +693,9 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 		references_tab->blockSignals(false);
 		references_tab->clearSelection();
+
+		listObjects(OBJ_TRIGGER);
+		listObjects(OBJ_RULE);
 	}
 }
 
@@ -371,22 +704,62 @@ void ViewWidget::applyConfiguration(void)
 	try
 	{
 		View *view=NULL;
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
+													 Reference::SQL_REFER_FROM,
+													 Reference::SQL_REFER_WHERE,
+													 Reference::SQL_VIEW_DEFINITION};
+		Reference refer;
+		QString str_aux;
 
-		startConfiguration<View>();
-
-		view=dynamic_cast<View *>(this->object);
-		(*view)=aux_view;
+		if(!this->new_object)
+			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
 
 		BaseObjectWidget::applyConfiguration();
 
-		this->model->updateViewRelationships(view);
+		view=dynamic_cast<View *>(this->object);
+		view->removeObjects();
+		view->removeReferences();
+		view->setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 
+		for(unsigned i=0; i < references_tab->getRowCount(); i++)
+		{
+			refer=references_tab->getRowData(i).value<Reference>();
+
+			//Get the SQL application string for the current reference
+			str_aux=references_tab->getCellText(i,3);
+			for(unsigned i=0; i < sizeof(expr_type)/sizeof(unsigned); i++)
+			{
+				if(str_aux[i]=='1')
+					view->addReference(refer, expr_type[i]);
+			}
+		}
+
+		//Adds the auxiliary view objects into configured view
+		for(unsigned type_id=0; type_id < sizeof(types)/sizeof(ObjectType); type_id++)
+		{
+			for(unsigned i=0; i < objects_tab_map[types[type_id]]->getRowCount(); i++)
+				view->addObject(reinterpret_cast<TableObject *>(objects_tab_map[types[type_id]]->getRowData(i).value<void *>()));
+		}
+
+		op_list->finishOperationChain();
+		this->model->updateViewRelationships(view);
 		finishConfiguration();
 	}
 	catch(Exception &e)
 	{
-		cancelConfiguration();
+		op_list->ignoreOperationChain(true);
+		this->cancelConfiguration();
+		op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
+void ViewWidget::cancelConfiguration(void)
+{
+	if(op_list->isOperationChainStarted())
+		op_list->finishOperationChain();
+
+	if(operation_count < op_list->getCurrentSize())
+		BaseObjectWidget::cancelConfiguration();
+}

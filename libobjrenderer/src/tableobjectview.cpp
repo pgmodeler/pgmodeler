@@ -235,7 +235,12 @@ void TableObjectView::configureObject(void)
 				atribs_tip+="not null";
 		}
 		else
-			fmt=font_config[tab_obj->getSchemaName()];
+		{
+			if(!tab_obj->isProtected())
+				fmt=font_config[tab_obj->getSchemaName()];
+			else
+				fmt=font_config[ParsersAttributes::PROT_COLUMN];
+		}
 
 		configureDescriptor(constr_type);
 

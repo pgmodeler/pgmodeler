@@ -72,8 +72,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
 		connect(constr_trig_chk, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(clearColumnsTable(void)));
-		connect(update_chk, SIGNAL(toggled(bool)), arg_cols_tbw->widget(1), SLOT(setEnabled(bool)));
+		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent(void)));
 
 		setRequiredField(event_lbl);
 		setRequiredField(firing_mode_lbl);
@@ -86,10 +85,15 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 	}
 }
 
-void TriggerWidget::clearColumnsTable(void)
+void TriggerWidget::selectUpdateEvent(void)
 {
 	if(!update_chk->isChecked())
 		columns_tab->removeRows();
+
+	/* Disable the columns tab when the trigger belongs to a view.
+	pgModeler does not support triggers reference view columns (yet) */
+	arg_cols_tbw->widget(1)->setEnabled(update_chk->isChecked() &&
+																			table->getObjectType()==OBJ_TABLE);
 }
 
 void TriggerWidget::setConstraintTrigger(bool value)
@@ -142,21 +146,24 @@ void TriggerWidget::updateColumnsCombo(void)
 
 	try
 	{
-		col_count=table->getColumnCount();
-		column_cmb->clear();
-
-		for(i=0; i < col_count; i++)
+		if(this->table->getObjectType()==OBJ_TABLE)
 		{
-			column=table->getColumn(i);
+			col_count=table->getObjectCount(OBJ_COLUMN);
+			column_cmb->clear();
 
-			if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
+			for(i=0; i < col_count; i++)
 			{
-				column_cmb->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")",
-														QVariant::fromValue<void *>(column));
-			}
-		}
+				column=dynamic_cast<Column *>(table->getObject(i, OBJ_COLUMN));
 
-		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
+				{
+					column_cmb->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")",
+															QVariant::fromValue<void *>(column));
+				}
+			}
+
+			columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		}
 	}
 	catch(Exception &e)
 	{
@@ -210,7 +217,7 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 	arg_cols_tbw->setCurrentIndex(0);
 }
 
-void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, OperationList *op_list, Trigger *trigger)
+void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger)
 {
 	unsigned count=0, i;
 	Column *column=NULL;
@@ -218,8 +225,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 	if(!parent_table)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
-
+	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);		
 	ref_table_sel->setModel(model);
 	function_sel->setModel(model);
 

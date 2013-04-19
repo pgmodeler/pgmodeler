@@ -233,7 +233,7 @@ class Table: public BaseTable {
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
 		//! \brief Returns the index for the specified table object
-		int getObjectIndex(TableObject *obj);
+		int getObjectIndex(BaseObject *obj);
 
 		//! \brief Returns the primary key of the table. Returns NULL when it doesn't exists
 		Constraint *getPrimaryKey(void);

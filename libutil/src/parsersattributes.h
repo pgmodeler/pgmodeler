@@ -299,6 +299,7 @@ namespace ParsersAttributes {
 	VIEW_TITLE="view-title",
 	TABLE_BODY="table-body",
 	VIEW_BODY="view-body",
+	VIEW_EXT_BODY="table-ext-body",
 	TABLE_EXT_BODY="table-ext-body",
 	NN_COLUMN="nn-column",
 	FK_COLUMN="fk-column",

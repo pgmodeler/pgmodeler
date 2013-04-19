@@ -27,6 +27,63 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::FROM_EXP]="";
 	attributes[ParsersAttributes::SIMPLE_EXP]="";
 	attributes[ParsersAttributes::CTE_EXPRESSION]="";
+	attributes[ParsersAttributes::TRIGGERS]="";
+	attributes[ParsersAttributes::RULES]="";
+}
+
+View::~View(void)
+{
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+	vector<TableObject *> *list=NULL;
+
+	for(unsigned i=0; i < 2; i++)
+	{
+		list=getObjectList(types[i]);
+		while(!list->empty())
+		{
+			delete(list->back());
+			list->pop_back();
+		}
+	}
+}
+
+void View::setName(const QString &name)
+{
+	QString prev_name=this->getName(true);
+	BaseObject::setName(name);
+	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+}
+
+void View::setSchema(BaseObject *schema)
+{
+	QString prev_name=this->getName(true);
+	BaseObject::setSchema(schema);
+	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+}
+
+void View::setProtected(bool value)
+{
+	ObjectType obj_types[]={ OBJ_RULE, OBJ_TRIGGER };
+	unsigned i;
+	vector<TableObject *>::iterator itr, itr_end;
+	vector<TableObject *> *list=NULL;
+
+	//Protected the table child objects
+	for(i=0; i < sizeof(obj_types)/sizeof(ObjectType); i++)
+	{
+		list=getObjectList(obj_types[i]);
+		itr=list->begin();
+		itr_end=list->end();
+
+		while(itr!=itr_end)
+		{
+			(*itr)->setProtected(value);
+			itr++;
+		}
+	}
+
+	//Protects the view itself
+	BaseGraphicObject::setProtected(value);
 }
 
 void View::setCommomTableExpression(const QString &expr)
@@ -410,6 +467,8 @@ bool View::isReferencingColumn(Column *col)
 
 QString View::getCodeDefinition(unsigned def_type)
 {
+	unsigned count, i;
+
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -420,7 +479,305 @@ QString View::getCodeDefinition(unsigned def_type)
 		setReferencesAttribute();
 	}
 
+	count=triggers.size();
+	for(i=0; i < count; i++)
+		attributes[ParsersAttributes::TRIGGERS]+=triggers[i]->getCodeDefinition(def_type);
+
+	count=rules.size();
+	for(i=0; i < count; i++)
+		attributes[ParsersAttributes::RULES]+=rules[i]->getCodeDefinition(def_type);
+
+
 	return(BaseObject::__getCodeDefinition(def_type));
+}
+
+int View::getObjectIndex(BaseObject *obj)
+{
+	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+
+	if(!obj || (tab_obj && tab_obj->getParentTable()!=this))
+		return(-1);
+	else
+	{
+		vector<TableObject *>::iterator itr, itr_end;
+		vector<TableObject *> *obj_list=getObjectList(obj->getObjectType());
+		bool found=false;
+
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && !found)
+		{
+			found=((*itr)==tab_obj);
+			if(!found) itr++;
+		}
+
+		if(found)
+			return(itr - obj_list->begin());
+		else
+			return(-1);
+	}
+}
+
+int View::getObjectIndex(const QString &name, ObjectType obj_type)
+{
+	if(name.isEmpty())
+		return(-1);
+	else
+	{
+		vector<TableObject *>::iterator itr, itr_end;
+		vector<TableObject *> *obj_list=getObjectList(obj_type);
+		bool found=false, format=name.contains("\"");
+
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && !found)
+		{
+			found=((*itr)->getName(format)==name);
+			if(!found) itr++;
+		}
+
+		if(found)
+			return(itr - obj_list->begin());
+		else
+			return(-1);
+	}
+}
+
+void View::addObject(BaseObject *obj, int obj_idx)
+{
+	if(!obj)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else
+	{
+		try
+		{
+			vector<TableObject *> *obj_list = getObjectList(obj->getObjectType());
+			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+
+			//Raises an error if already exists a object with the same name and type
+			if(getObjectIndex(obj->getName(), tab_obj->getObjectType()) >= 0)
+			{
+				throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+												.arg(obj->getName(true))
+												.arg(obj->getTypeName())
+												.arg(this->getName(true))
+												.arg(this->getTypeName()),
+												ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			//Validates the object definition
+			tab_obj->setParentTable(this);
+			tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+			//Make a additional validation if the object is a trigger
+			if(tab_obj->getObjectType()==OBJ_TRIGGER)
+				dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
+
+			//Inserts the object at specified position
+			if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+				obj_list->push_back(tab_obj);
+			else
+				obj_list->insert(obj_list->begin() + obj_idx, tab_obj);
+		}
+		catch(Exception &e)
+		{
+			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
+				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+												.arg(Utf8String::create(obj->getName()))
+												.arg(Utf8String::create(obj->getTypeName())),
+												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			else
+				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+	}
+}
+
+void View::addTrigger(Trigger *trig, int obj_idx)
+{
+	try
+	{
+		addObject(trig, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void View::addRule(Rule *rule, int obj_idx)
+{
+	try
+	{
+		addObject(rule, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void View::removeObject(unsigned obj_idx, ObjectType obj_type)
+{
+	vector<TableObject *> *obj_list = getObjectList(obj_type);
+	vector<TableObject *>::iterator itr;
+
+	//Raises an error if the object index is out of bound
+	if(obj_idx >= obj_list->size())
+		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	itr=obj_list->begin() + obj_idx;
+	(*itr)->setParentTable(NULL);
+	obj_list->erase(itr);
+}
+
+void View::removeObject(BaseObject *obj)
+{
+	try
+	{
+		removeObject(getObjectIndex(obj), obj->getObjectType());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void View::removeObject(const QString &name, ObjectType obj_type)
+{
+	try
+	{
+		removeObject(getObjectIndex(name, obj_type), obj_type);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void View::removeTrigger(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_TRIGGER);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void View::removeRule(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_RULE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
+{
+ vector<TableObject *> *obj_list=getObjectList(obj_type);
+
+	//Raises an error if the object index is out of bound
+	if(obj_idx >= obj_list->size())
+		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(obj_list->at(obj_idx));
+}
+
+
+TableObject *View::getObject(const QString &name, ObjectType obj_type)
+{
+	try
+	{
+		int idx=getObjectIndex(name, obj_type);
+
+		if(idx >= 0)
+			return(getObject(idx, obj_type));
+		else
+			return(NULL);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Trigger *View::getTrigger(unsigned obj_idx)
+{
+	try
+	{
+		return(dynamic_cast<Trigger *>(getObject(obj_idx, OBJ_TRIGGER)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Rule *View::getRule(unsigned obj_idx)
+{
+	try
+	{
+		return(dynamic_cast<Rule *>(getObject(obj_idx, OBJ_RULE)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+unsigned View::getObjectCount(ObjectType obj_type, bool)
+{
+	try
+	{
+		return(getObjectList(obj_type)->size());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+unsigned View::getTriggerCount(void)
+{
+	return(triggers.size());
+}
+
+unsigned View::getRuleCount(void)
+{
+	return(rules.size());
+}
+
+vector<TableObject *> *View::getObjectList(ObjectType obj_type)
+{
+	if(obj_type==OBJ_TRIGGER)
+		return(&triggers);
+	else if(obj_type==OBJ_RULE)
+		return(&rules);
+	else
+		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+}
+
+void View::removeObjects(void)
+{
+	while(!triggers.empty())
+	{
+		triggers.back()->setParentTable(NULL);
+		triggers.pop_back();
+	}
+
+	while(!rules.empty())
+	{
+		rules.back()->setParentTable(NULL);
+		rules.pop_back();
+	}
 }
 
 void View::operator = (View &view)

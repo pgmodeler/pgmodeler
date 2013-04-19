@@ -22,4 +22,4 @@
 <!ATTLIST object border-color CDATA #REQUIRED>
 <!ATTLIST object id (table-title|table-body|textbox|view-title|view-body|label|relationship|
                      attribute|column|pk-column|uq-column|fk-column|nn-column|rule|trigger|index|
-                     locker-body|locker-arc|obj-selection|reference|table-ext-body|pos-info) "table-title">
+		     locker-body|locker-arc|obj-selection|reference|view-ext-body|table-ext-body|pos-info) "table-title">

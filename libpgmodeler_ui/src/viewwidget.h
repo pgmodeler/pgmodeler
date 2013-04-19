@@ -41,11 +41,15 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		QFrame *frame_info;
 
-		//! \brief Auxiliary view used to validate all the attributes configured on the form
-		View aux_view;
+		/*! \brief Operation list element count before editing the view. This attribute
+		is used to know, in case of cancel the edition, the operation (count) that is needed to
+		be removed. See: cancelConfiguration() */
+		unsigned operation_count;
 
 		//! \brief Stores all the view references
 		ObjectTableWidget *references_tab;
+
+		map<ObjectType, ObjectTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *expression_hl,
 											*code_hl,
@@ -59,7 +63,16 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 													 bool after_where, bool view_def, unsigned row);
 
 		void clearReferenceForm(void);
+
 		void hideEvent(QHideEvent *);
+
+		//! \brief Returns the object table according with the child type
+		ObjectTableWidget *getObjectTable(ObjectType obj_type);
+		ObjectType getObjectType(QObject *sender);
+
+		void showObjectData(TableObject *object, int row);
+
+		void listObjects(ObjectType obj_type);
 
 	public:
 		ViewWidget(QWidget * parent = 0);
@@ -82,8 +95,20 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Updates the sql code filed of the view form
 		void updateCodePreview(void);
 
+		void showTableObjectForm(ObjectType obj_type);
+
+		//! \brief Adds or edit a object on the object table that calls the slot
+		void handleObject(void);
+
+		//! \brief Removes the selected object from the table that calls the slot
+		void removeObject(int row);
+
+		//! \brief Removes all objects from the table that calls the slot
+		void removeObjects(void);
+
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration(void);		
+		void cancelConfiguration(void);
 };
 
 #endif

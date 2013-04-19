@@ -222,7 +222,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 			means that the column is from a table */
 			if(!this->relationship)
 			{
-				table=this->table;
+				table=dynamic_cast<Table *>(this->table);
 				count=table->getColumnCount();
 			}
 			else
@@ -368,23 +368,25 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	obj_type=parent_obj->getObjectType();
+	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_RELATIONSHIP)
+		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
 
 	info_frm->setVisible(this->table!=NULL);
 	ref_table_sel->setModel(model);
 
-	obj_type=parent_obj->getObjectType();
-
-	if(obj_type==OBJ_TABLE)
-		count=table->getColumnCount();
+	if(this->table)
+		count=table->getObjectCount(OBJ_COLUMN);
 	else
 		count=relationship->getAttributeCount();
 
 	columns_tab->blockSignals(true);
 	for(i=0, row=0; i < count; i++)
 	{
-		if(obj_type==OBJ_TABLE)
-			column=table->getColumn(i);
+		if(this->table)
+			column=dynamic_cast<Column *>(table->getObject(i, OBJ_COLUMN));
 		else
 			column=relationship->getAttribute(i);
 
@@ -506,7 +508,7 @@ void ConstraintWidget::applyConfiguration(void)
 
 		//For the foreign keys, updates the fk relationships on the model
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
-			this->model->updateTableFKRelationships(this->table);
+			this->model->updateTableFKRelationships(dynamic_cast<Table *>(this->table));
 	}
 	catch(Exception &e)
 	{

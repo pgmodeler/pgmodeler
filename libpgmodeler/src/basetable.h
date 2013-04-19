@@ -33,6 +33,34 @@ class BaseTable: public BaseGraphicObject {
 		BaseTable(void);
 		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
+		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
+		virtual void addObject(BaseObject *obj, int obj_idx=-1)=0;
+
+		//! \brief Gets a object from table through its index and type
+		virtual BaseObject *getObject(unsigned obj_idx, ObjectType obj_type)=0;
+
+		//! \brief Gets a object from table through its name and type
+		virtual BaseObject *getObject(const QString &name, ObjectType obj_type)=0;
+
+		//! \brief Removes a object from table through its index and type
+		virtual void removeObject(unsigned obj_idx, ObjectType obj_type)=0;
+
+		//! \brief Removes a object from table through its name and type
+		virtual void removeObject(const QString &name, ObjectType obj_type)=0;
+
+		//! \brief Removes the specified object from table
+		virtual void removeObject(BaseObject *obj)=0;
+
+		/*! \brief Gets the the count for the specified object type. The boolean parameter indicates
+		 that objects added by relationship must be counted */
+		virtual unsigned getObjectCount(ObjectType obj_type, bool inc_added_by_rel=true)=0;
+
+		//! \brief Gets the object index using its name and type
+		virtual int getObjectIndex(const QString &name, ObjectType obj_type)=0;
+
+		//! \brief Returns the index for the specified table object
+		virtual int getObjectIndex(BaseObject *obj)=0;
+
 		friend class RelacionamentoBase;
 		friend class DatabaseModel;
 };

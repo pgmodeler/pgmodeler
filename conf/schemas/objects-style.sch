@@ -41,6 +41,7 @@ $br
 [  <object id="label" fill-color="] @{label-color} [" border-color="] @{label-bcolor} ["/>] $br
 [  <object id="view-title" fill-color="] @{view-title-color} [" border-color="]  @{view-title-bcolor} ["/>] $br
 [  <object id="view-body" fill-color="] @{view-body-color} [" border-color="] @{view-body-bcolor} ["/>] $br
+[  <object id="view-ext-body" fill-color="] @{view-ext-body-color} [" border-color="] @{view-ext-body-bcolor} ["/>] $br
 [  <object id="textbox" fill-color="] @{textbox-color} [" border-color="] @{textbox-bcolor} ["/>] $br
 [  <object id="relationship" fill-color="] @{relationship-color} [" border-color="] @{relationship-bcolor} ["/>] $br
 [  <object id="attribute" fill-color="] @{attribute-color} [" border-color="] @{attribute-bcolor} ["/>] $br

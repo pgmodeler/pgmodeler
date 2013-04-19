@@ -174,7 +174,7 @@ void OperationList::removeOperations(void)
 {
 	BaseObject *object=NULL;
 	TableObject *tab_obj=NULL;
-	Table *tab=NULL;
+	BaseTable *tab=NULL;
 
 	//Destroy the operations
 	while(!operations.empty())
@@ -204,7 +204,7 @@ void OperationList::removeOperations(void)
 		}
 		else if(tab_obj && unallocated_objs.count(tab_obj)==0)
 		{
-			tab=dynamic_cast<Table *>(tab_obj->getParentTable());
+			tab=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
 
 			//Deletes the object if its not unallocated already or referenced by some table
 			if(!tab ||
@@ -294,8 +294,10 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 {
 	ObjectType obj_type;
 	Operation *operation=NULL;
-	Table *parent_tab=NULL;
+	BaseTable *parent_tab=NULL;
 	Relationship *parent_rel=NULL;
+	TableObject *tab_obj=NULL;
+	tab_obj=dynamic_cast<TableObject *>(object);
 	int obj_idx=-1;
 
 	try
@@ -305,17 +307,16 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		obj_type=object->getObjectType();
-		if((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
-				obj_type==OBJ_INDEX || obj_type==OBJ_TRIGGER ||
-				obj_type==OBJ_RULE) && !parent_obj)
+		if(tab_obj && !parent_obj)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		else if(parent_obj &&
 						(((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 							(parent_obj->getObjectType()!=OBJ_RELATIONSHIP && parent_obj->getObjectType()!=OBJ_TABLE)) ||
 
-						 ((obj_type==OBJ_INDEX || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) &&
-							parent_obj->getObjectType()!=OBJ_TABLE)))
+						 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) && !dynamic_cast<BaseTable *>(parent_obj)) ||
+
+						 (obj_type==OBJ_INDEX && parent_obj->getObjectType()!=OBJ_TABLE)))
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation
@@ -361,17 +362,12 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 		 If the object has a parent object, it must be discovered
 		 and moreover it is necessary to find and store the index of the object
 		 in the list on the parent object */
-		if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
-			 obj_type==OBJ_INDEX || obj_type==OBJ_TRIGGER ||
-			 obj_type==OBJ_RULE)
+		if(tab_obj)
 		{
-			TableObject *tab_obj=NULL;
-			tab_obj=dynamic_cast<TableObject *>(object);
-
-			if(parent_obj->getObjectType()==OBJ_TABLE)
-				parent_tab=dynamic_cast<Table *>(parent_obj);
-			else
+			if(parent_obj->getObjectType()==OBJ_RELATIONSHIP)
 				parent_rel=dynamic_cast<Relationship *>(parent_obj);
+			else
+				parent_tab=dynamic_cast<BaseTable *>(parent_obj);
 
 			/* Specific case to columns: on removal operations the permissions of the objects
 			must be removed too */
@@ -636,23 +632,23 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 	{
 		BaseObject *orig_obj=NULL, *bkp_obj=NULL, *object=NULL, *aux_obj=NULL;
 		ObjectType obj_type;
-		Table *parent_tab=NULL;
+		BaseTable *parent_tab=NULL;
 		Relationship *parent_rel=NULL;
 
 		object=oper->pool_obj;
 		obj_type=object->getObjectType();
 
 		/* Converting the parent object, if any, to the correct class according
-			to the type of the parent object. If OBJ_TABLE, the pointer
-			'parent_tab' get the reference to table and will be used as referential
+			to the type of the parent object. If OBJ_TABLE|OBJ_VIEW, the pointer
+			'parent_tab' get the reference to table/view and will be used as referential
 			in the operations below. If the parent object is a relationship, the pointer
 					'parent_rel' get the reference to the relationship */
 		if(oper->parent_obj)
 		{
-			if(oper->parent_obj->getObjectType()==OBJ_TABLE)
-				parent_tab=dynamic_cast<Table *>(oper->parent_obj);
-			else
+			if(oper->parent_obj->getObjectType()==OBJ_RELATIONSHIP)
 				parent_rel=dynamic_cast<Relationship *>(oper->parent_obj);
+			else
+				parent_tab=dynamic_cast<BaseTable *>(oper->parent_obj);
 		}
 
 		/* If the XML definition of object is set indicates that it is referencing a column
@@ -670,7 +666,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(obj_type==OBJ_TRIGGER)
 				aux_obj=model->createTrigger(parent_tab);
 			else if(obj_type==OBJ_INDEX)
-				aux_obj=model->createIndex(parent_tab);
+				aux_obj=model->createIndex(dynamic_cast<Table *>(parent_tab));
 			else if(obj_type==OBJ_CONSTRAINT)
 				aux_obj=model->createConstraint(oper->parent_obj);
 			else if(obj_type==OBJ_SEQUENCE)
@@ -732,7 +728,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 				if(object->getObjectType()==OBJ_CONSTRAINT &&
 					 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-					model->updateTableFKRelationships(parent_tab);
+					model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 			}
 			else if(parent_rel)
 				parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
@@ -769,11 +765,11 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 (object->getObjectType()==OBJ_COLUMN ||
 					object->getObjectType()==OBJ_CONSTRAINT))
 			{
-				model->validateRelationships(dynamic_cast<TableObject *>(object), parent_tab);
+				model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
 
 				if(object->getObjectType()==OBJ_CONSTRAINT &&
 					 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-					model->updateTableFKRelationships(parent_tab);
+					model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 			}
 			else if(parent_rel)
 				model->validateRelationships();

@@ -26,10 +26,6 @@ TableObject::TableObject(void)
 
 void TableObject::setParentTable(BaseTable *table)
 {
-	//Raises an error if the parent object is not a table
-	if(table && table->getObjectType()!=OBJ_TABLE)
-		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	parent_table=table;
 }
 

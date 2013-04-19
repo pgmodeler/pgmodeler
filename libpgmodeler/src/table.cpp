@@ -296,20 +296,18 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 	{
 		int idx;
 		obj_type=obj->getObjectType();
-		ConstraintType constr_type;
-		QString str_aux;
 
 		try
 		{
 			//Raises an error if already exists a object with the same name and type
 			if(getObject(obj->getName(),obj_type,idx))
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-								.arg(obj->getName(true))
-								.arg(obj->getTypeName())
-								.arg(this->getName(true))
-								.arg(this->getTypeName());
-				throw Exception(str_aux,ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+												.arg(obj->getName(true))
+												.arg(obj->getTypeName())
+												.arg(this->getName(true))
+												.arg(this->getTypeName()),
+												ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
@@ -336,46 +334,19 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Validates the object SQL code befor insert on table
-					if(obj_type==OBJ_COLUMN)
+					obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+					if(obj_type==OBJ_CONSTRAINT)
 					{
-						Column *col;
-						col=dynamic_cast<Column *>(tab_obj);
-						col->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					}
-					else if(obj_type==OBJ_CONSTRAINT)
-					{
-						Constraint *constr;
-						constr=dynamic_cast<Constraint *>(tab_obj);
-						constr->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-						constr_type=constr->getConstraintType();
-					}
-					else if(obj_type==OBJ_INDEX)
-					{
-						Index *ind;
-						ind=dynamic_cast<Index *>(tab_obj);
-						ind->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					}
-					else if(obj_type==OBJ_RULE)
-					{
-						Rule *rule;
-						rule=dynamic_cast<Rule *>(tab_obj);
-						rule->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						//Raises a error if the user try to add a second primary key on the table
+						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::primary_key &&
+							 this->getPrimaryKey())
+							throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_TRIGGER)
-					{
-						Trigger *trig;
-						trig=dynamic_cast<Trigger *>(tab_obj);
-						trig->validateTrigger();
-						trig->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					}
+						dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
 
 					obj_list=getObjectList(obj_type);
-
-					//Raises a error if the user try to add a second primary key on the table
-					if(obj_type==OBJ_CONSTRAINT &&
-						 constr_type==ConstraintType::primary_key &&
-						 this->getPrimaryKey())
-						throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Adds the object to the table
 					if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
@@ -420,32 +391,74 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 void Table::addColumn(Column *col, int idx)
 {
-	addObject(col, idx);
+	try
+	{
+		addObject(col, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::addTrigger(Trigger *trig, int idx)
 {
-	addObject(trig, idx);
+	try
+	{
+		addObject(trig, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::addIndex(Index *ind, int idx)
 {
-	addObject(ind, idx);
+	try
+	{
+		addObject(ind, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::addRule(Rule *reg, int idx_reg)
 {
-	addObject(reg, idx_reg);
+	try
+	{
+		addObject(reg, idx_reg);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::addConstraint(Constraint *constr, int idx)
 {
-	addObject(constr, idx);
+	try
+	{
+		addObject(constr, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::addAncestorTable(Table *tab, int idx)
 {
-	addObject(tab, idx);
+	try
+	{
+		addObject(tab, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::setCopyTable(Table *tab)
@@ -474,14 +487,21 @@ CopyOptions Table::getCopyTableOptions(void)
 
 void Table::removeObject(BaseObject *obj)
 {
-	if(obj)
+	try
 	{
-		TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+		if(obj)
+		{
+			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
 
-		if(tab_obj)
-			removeObject(getObjectIndex(tab_obj), obj->getObjectType());
-		else
-			removeObject(obj->getName(), OBJ_TABLE);
+			if(tab_obj)
+				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
+			else
+				removeObject(obj->getName(), OBJ_TABLE);
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -561,62 +581,146 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 void Table::removeColumn(const QString &name)
 {
-	removeObject(name,OBJ_COLUMN);
+	try
+	{
+		removeObject(name,OBJ_COLUMN);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeColumn(unsigned idx)
 {
-	removeObject(idx,OBJ_COLUMN);
+	try
+	{
+		removeObject(idx,OBJ_COLUMN);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeTrigger(const QString &name)
 {
-	removeObject(name,OBJ_TRIGGER);
+	try
+	{
+		removeObject(name,OBJ_TRIGGER);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeTrigger(unsigned idx)
 {
-	removeObject(idx,OBJ_TRIGGER);
+	try
+	{
+		removeObject(idx,OBJ_TRIGGER);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeIndex(const QString &name)
 {
-	removeObject(name,OBJ_INDEX);
+	try
+	{
+		removeObject(name,OBJ_INDEX);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeIndex(unsigned idx)
 {
-	removeObject(idx,OBJ_INDEX);
+	try
+	{
+		removeObject(idx,OBJ_INDEX);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeRule(const QString &name)
 {
-	removeObject(name,OBJ_RULE);
+	try
+	{
+		removeObject(name,OBJ_RULE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeRule(unsigned idx)
 {
-	removeObject(idx,OBJ_RULE);
+	try
+	{
+		removeObject(idx,OBJ_RULE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeConstraint(const QString &name)
 {
-	removeObject(name,OBJ_CONSTRAINT);
+	try
+	{
+		removeObject(name,OBJ_CONSTRAINT);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeConstraint(unsigned idx)
 {
-	removeObject(idx,OBJ_CONSTRAINT);
+	try
+	{
+		removeObject(idx,OBJ_CONSTRAINT);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeAncestorTable(const QString &name)
 {
-	removeObject(name,OBJ_TABLE);
+	try
+	{
+		removeObject(name,OBJ_TABLE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Table::removeAncestorTable(unsigned idx)
 {
-	removeObject(idx,OBJ_TABLE);
+	try
+	{
+		removeObject(idx,OBJ_TABLE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 int Table::getObjectIndex(const QString &name, ObjectType obj_type)
@@ -626,34 +730,31 @@ int Table::getObjectIndex(const QString &name, ObjectType obj_type)
 	return(idx);
 }
 
-int Table::getObjectIndex(TableObject *obj)
+int Table::getObjectIndex(BaseObject *obj)
 {
+	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+
 	if(!obj)
 		return(-1);
 	else
 	{
-		if(obj->getParentTable()!=this)
-			return(-1);
-		else
+		vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
+		vector<TableObject *>::iterator itr, itr_end;
+		bool found=false;
+
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && !found)
 		{
-			vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
-			vector<TableObject *>::iterator itr, itr_end;
-			bool found=false;
-
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && !found)
-			{
-				found=((*itr)==obj);
-				if(!found) itr++;
-			}
-
-			if(found)
-				return(itr-obj_list->begin());
-			else
-				return(-1);
+			found=((*itr)==tab_obj);
+			if(!found) itr++;
 		}
+
+		if(found)
+			return(itr-obj_list->begin());
+		else
+			return(-1);
 	}
 }
 

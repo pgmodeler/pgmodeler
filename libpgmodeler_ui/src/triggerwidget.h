@@ -52,11 +52,11 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	public:
 		TriggerWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, Table *parent_table, OperationList *op_list, Trigger *trigger);
+		void setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger);
 
 	private slots:
 		void addColumn(int lin_idx);
-		void clearColumnsTable(void);
+		void selectUpdateEvent(void);
 		void handleArgument(int lin_idx);
 		void editArgument(int lin_idx);
 		void updateColumnsCombo(void);

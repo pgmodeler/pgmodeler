@@ -65,6 +65,9 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		//! \brief Updates only a table tree starting from the 'root' item
 		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);
 
+		//! \brief Updates only a view tree starting from the 'root' item
+		void updateViewTree(QTreeWidgetItem *root, BaseObject *schema);
+
 		//! \brief Updates the whole database object tree
 		void updateDatabaseTree(void);
 

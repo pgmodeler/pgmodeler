@@ -34,34 +34,12 @@ class TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
-		//! \brief Extended table attributes (indexes, rules, triggers) section body
-		QGraphicsPolygonItem  *ext_attribs_body;
-
-		//! \brief Item groups that stores columns and extended attributes, respectively
-		QGraphicsItemGroup *columns, *ext_attribs;
-
-		//! \brief Stores the reference to the child object currently selected on table
-		TableObject *sel_child_obj;
-
-		//! \brief Stores the original table's tool tip
-		QString table_tooltip;
-
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
 	public:
 		TableView(Table *table);
 		~TableView(void);
 
-		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-
 	private slots:
 		void configureObject(void);
-
-	signals:
-		//! \brief Signal emitted when the user right-click a focused table child object
-		void s_childObjectSelected(TableObject *);
 };
 
 #endif

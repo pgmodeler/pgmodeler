@@ -31,7 +31,6 @@
 class GraphicalView: public BaseTableView {
 	private:
 		Q_OBJECT
-		QGraphicsItemGroup *references;
 
 	public:
 		GraphicalView(View *view);

@@ -266,7 +266,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 	if(item)
 	{
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		TableView *tab=dynamic_cast<TableView *>(item);
+		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
 
 		if(rel)
@@ -292,7 +292,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 	{
 		BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		TableView *tab=dynamic_cast<TableView *>(item);
+		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 
 		if(rel)
 		{

@@ -39,6 +39,9 @@ class View: public BaseTable {
 											exp_from,
 											exp_where;
 
+		vector<TableObject *> triggers;
+		vector<TableObject *> rules;
+
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
@@ -59,12 +62,75 @@ class View: public BaseTable {
 
 	public:
 		View(void);
+		~View(void);
+
+		void setName(const QString &name);
+		void setSchema(BaseObject *schema);
+		void setProtected(bool value);
 
 		/*! \brief Adds a reference to the view specifying the SQL expression type for it
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
 		 index where the reference must be inserted. By defaul the method always adds
 		 new references at the end of the list */
 		void addReference(Reference &refer, unsigned sql_type, int expr_id=-1);
+
+		/*! \brief Adds a trigger or rule into the view. If the index is specified ( obj_idx >= 0)
+		inserts the object at the position */
+		void addObject(BaseObject *obj, int obj_idx=-1);
+
+		//! \brief Adds a trigger into the view
+		void addTrigger(Trigger *trig, int obj_idx=-1);
+
+		//! \brief Adds a rule into the view
+		void addRule(Rule *rule, int obj_idx=-1);
+
+		//! \brief Remove a object from view using its reference
+		void removeObject(BaseObject *obj);
+
+		//! \brief Removes the object using the index and type
+		void removeObject(unsigned obj_idx, ObjectType obj_type);
+
+		//! \brief Removes the object using the name and type
+		void removeObject(const QString &name, ObjectType obj_type);
+
+		//! \brief Remove a trigger from view using its index
+		void removeTrigger(unsigned idx);
+
+		//! \brief Remove a rule from view using its index
+		void removeRule(unsigned idx);
+
+		//! \brief Returns the object index searching by its reference
+		int getObjectIndex(BaseObject *obj);
+
+		//! \brief Returns the object index searching by its index and type
+		int getObjectIndex(const QString &name, ObjectType obj_type);
+
+		//! \brief Returns the view's child object using its index and type
+		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
+
+		//! \brief Returns the view's child object using its name and type
+		TableObject *getObject(const QString &name, ObjectType obj_type);
+
+		//! \brief Returns a trigger searching by its index
+		Trigger *getTrigger(unsigned obj_idx);
+
+		//! \brief Returns a rule searching by its index
+		Rule *getRule(unsigned obj_idx);
+
+		//! \brief Returns the view's child object count
+		unsigned getObjectCount(ObjectType obj_type, bool=false);
+
+		//! \brief Returns the view's trigger count
+		unsigned getTriggerCount(void);
+
+		//! \brief Returns the view's rule count
+		unsigned getRuleCount(void);
+
+		//! \brief Removes all objects (triggers / roles) from view
+		void removeObjects(void);
+
+		//! \brief Returns the object list according to specified type
+		vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		//! \brief Sets the commom table expression for the view
 		void setCommomTableExpression(const QString &expr);

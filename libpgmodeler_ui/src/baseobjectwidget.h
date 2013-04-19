@@ -61,8 +61,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		//! \brief Reference database model
 		DatabaseModel *model;
 
-		//! \brief Reference table (used only when editing table objects)
-		Table *table;
+		//! \brief Reference table/view (used only when editing table objects)
+		BaseTable *table;
 
 		//! \brief Stores the object previous name (used to validate schema renaming)
 		QString prev_name;

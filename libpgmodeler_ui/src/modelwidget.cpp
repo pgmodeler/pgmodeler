@@ -1259,13 +1259,13 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			break;
 
 			case OBJ_RULE:
-				rule_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
+				rule_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
 				rule_wgt->show();
 				res=(rule_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TRIGGER:
-				trigger_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
+				trigger_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
 				trigger_wgt->show();
 				res=(trigger_wgt->result()==QDialog::Accepted);
 			break;
@@ -1928,8 +1928,8 @@ void ModelWidget::removeObjects(void)
 {
 	int obj_idx=-1;
 	unsigned count, op_count=0;
-	Table *table=NULL;
-	BaseTable *src_table=NULL, *dst_table=NULL;
+	Table *aux_table=NULL;
+	BaseTable *table=NULL, *src_table=NULL, *dst_table=NULL;
 	BaseRelationship *rel=NULL;
 	TableObject *tab_obj=NULL;
 	ObjectType obj_type;
@@ -1954,12 +1954,17 @@ void ModelWidget::removeObjects(void)
 			if(selected_objects.size() > 1)
 			{
 				msg_box.show(trUtf8("Confirmation"),
-												trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?"),
+												trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 			}
 			else
 			{
-				msg_box.show(trUtf8("Confirmation"),
+				if(selected_objects[0]->getObjectType()==OBJ_RELATIONSHIP)
+					msg_box.show(trUtf8("Confirmation"),
+													trUtf8("CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?"),
+													MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+				else
+					msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Do you really want to delete the selected object?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 			}
@@ -1985,8 +1990,8 @@ void ModelWidget::removeObjects(void)
 							rel=dynamic_cast<BaseRelationship *>(object);
 							if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 							{
-								table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
-								dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,table);
+								aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+								dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false, aux_table);
 
 								//Adds the fks to the map of objects to be removed
 								while(!constrs.empty())
@@ -2047,7 +2052,7 @@ void ModelWidget::removeObjects(void)
 
 						if(tab_obj)
 						{
-							table=dynamic_cast<Table *>(tab_obj->getParentTable());
+							table=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
 							obj_idx=table->getObjectIndex(tab_obj->getName(true), obj_type);
 
 							try
@@ -2062,13 +2067,15 @@ void ModelWidget::removeObjects(void)
 								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
 
-								if(obj_type==OBJ_CONSTRAINT &&
+								aux_table=dynamic_cast<Table *>(table);
+								if(aux_table && obj_type==OBJ_CONSTRAINT &&
 									 dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
-									db_model->updateTableFKRelationships(table);
+									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);
 
-								db_model->validateRelationships(tab_obj, table);
+								if(aux_table)
+									db_model->validateRelationships(tab_obj, aux_table);
 							}
 							catch(Exception &e)
 							{
@@ -2147,7 +2154,7 @@ void ModelWidget::removeObjects(void)
 
 void ModelWidget::showObjectMenu(void)
 {
-	TableView *tab=NULL;
+	BaseTableView *tab=NULL;
 
 	/* When the popup is hidden check if there is a table object (colum, constraint, etc) selected,
 		 if so, is necessary to reenable the table view deactivated before the menu activation */
@@ -2158,7 +2165,7 @@ void ModelWidget::showObjectMenu(void)
 
 		if(tab_obj && tab_obj->getParentTable())
 			//Get the graphical representation for table
-			tab=dynamic_cast<TableView *>(tab_obj->getParentTable()->getReceiverObject());
+			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getReceiverObject());
 	}
 
 	popup_menu.exec(QCursor::pos());

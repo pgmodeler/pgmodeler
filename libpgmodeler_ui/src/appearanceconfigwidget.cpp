@@ -23,7 +23,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	setupUi(this);
 
 	QString conf_ids[]={
-		ParsersAttributes::GLOBAL, ParsersAttributes::CONSTRAINTS, ParsersAttributes::OBJ_SELECTION,
+		ParsersAttributes::GLOBAL,ParsersAttributes::CONSTRAINTS, ParsersAttributes::OBJ_SELECTION,
 		ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
 		ParsersAttributes::OBJECT_TYPE, ParsersAttributes::LOCKER_ARC, ParsersAttributes::LOCKER_BODY,
 		ParsersAttributes::TABLE_SCHEMA_NAME, ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_BODY,
@@ -31,7 +31,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 		BaseObject::getSchemaName(OBJ_RULE), BaseObject::getSchemaName(OBJ_INDEX),
 		BaseObject::getSchemaName(OBJ_INDEX), BaseObject::getSchemaName(OBJ_TRIGGER),
 		BaseObject::getSchemaName(OBJ_TRIGGER), ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
-		ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_TITLE, ParsersAttributes::ALIAS,
+		ParsersAttributes::VIEW_BODY /*21*/, ParsersAttributes::VIEW_EXT_BODY /*22*/, ParsersAttributes::VIEW_TITLE /*23*/, ParsersAttributes::ALIAS,
 		ParsersAttributes::REF_COLUMN, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
 		BaseObject::getSchemaName(OBJ_TEXTBOX), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
 		ParsersAttributes::INH_COLUMN, ParsersAttributes::PROT_COLUMN, ParsersAttributes::PK_COLUMN,
@@ -41,8 +41,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 		ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE };
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
-			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22,
-														26, 27, 29, 33, 35, 37, 39, 40, 42, 44 };
+			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22, 23,
+														27, 28, 30, 34, 36, 38, 40, 41, 43, 45 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);

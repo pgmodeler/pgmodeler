@@ -215,8 +215,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		parent_type=parent_obj->getObjectType();
 
-		if(parent_type==OBJ_TABLE)
-			this->table=dynamic_cast<Table *>(parent_obj);
+		if(parent_type==OBJ_TABLE || parent_type==OBJ_VIEW)
+			this->table=dynamic_cast<BaseTable *>(parent_obj);
 		else if(parent_type==OBJ_RELATIONSHIP)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
 		else if(parent_type!=OBJ_DATABASE && parent_type!=OBJ_SCHEMA)
@@ -563,7 +563,7 @@ void BaseObjectWidget::applyConfiguration(void)
 
 			object->setSQLDisabled(disable_sql_chk->isChecked());
 
-			if(schema_sel->getSelectedObject())
+			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
 				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;
 
 			//Checking the object duplicity
@@ -746,7 +746,9 @@ void BaseObjectWidget::cancelConfiguration(void)
 			relationship->removeObject(tab_obj);
 
 		//Deallocate the object if it isn't a table or relationship
-		if(obj_type!=OBJ_TABLE && obj_type!=OBJ_RELATIONSHIP)
+		if(obj_type!=OBJ_TABLE &&
+			 obj_type!=OBJ_VIEW &&
+			 obj_type!=OBJ_RELATIONSHIP)
 		{
 			delete(this->object);
 			this->object=NULL;

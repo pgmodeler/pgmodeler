@@ -95,7 +95,7 @@ void RuleWidget::handleCommand(int row)
 		commands_tab->removeRow(row);
 }
 
-void RuleWidget::setAttributes(DatabaseModel *model, Table *parent_tab, OperationList *op_list, Rule *rule)
+void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, OperationList *op_list, Rule *rule)
 {
 	unsigned qtd, i;
 

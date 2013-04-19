@@ -15,19 +15,22 @@
  @{references}
 
  %if @{select-exp} %then
-  [<expression type="select-exp">] @{select-exp} </expression> $br
+  $tb [<expression type="select-exp">] @{select-exp} </expression> $br
  %end
 
  %if @{from-exp} %then
-  [<expression type="from-exp">] @{from-exp} </expression> $br
+  $tb [<expression type="from-exp">] @{from-exp} </expression> $br
  %end
 
  %if @{simple-exp} %then
-  [<expression type="simple-exp">] @{simple-exp} </expression> $br
+  $tb [<expression type="simple-exp">] @{simple-exp} </expression> $br
  %end
 
  %if @{cte-exp} %then
-  [<expression type="cte-exp">] <! $ob CDATA $ob @{cte-exp} $cb $cb ></expression> $br
+  $tb [<expression type="cte-exp">] <! $ob CDATA $ob @{cte-exp} $cb $cb ></expression> $br
  %end
+
+ %if @{triggers} %then @{triggers} %end
+ %if @{rules} %then @{rules} %end
 
 </view> $br $br

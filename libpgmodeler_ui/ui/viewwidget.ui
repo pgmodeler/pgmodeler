@@ -58,7 +58,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Type:</string>
+          <string>Reference Type:</string>
          </property>
         </widget>
        </item>
@@ -258,6 +258,16 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Triggers</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Rules</string>
+      </attribute>
      </widget>
      <widget class="QWidget" name="CTE">
       <attribute name="title">

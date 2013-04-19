@@ -346,7 +346,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseRelationship *createRelationship(void);
 		Constraint *createConstraint(BaseObject *parent_obj);
 		Index *createIndex(Table *table);
-		Trigger *createTrigger(Table *table);
+		Trigger *createTrigger(BaseTable *table);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view);

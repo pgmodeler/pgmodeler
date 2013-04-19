@@ -147,6 +147,11 @@
      </item>
      <item>
       <property name="text">
+       <string>View: Extended attributes box</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>View: Title box</string>
       </property>
      </item>
