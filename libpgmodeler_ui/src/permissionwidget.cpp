@@ -25,12 +25,12 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	QFont font;
 	QCheckBox *check=NULL;
 	unsigned i;
-	QString privs[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-											 ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-											 ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-											 ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-											 ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-											 ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+	QString privs[]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
+										ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+										ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+										ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+										ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+										ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
 	Ui_PermissionWidget::setupUi(this);
 
@@ -148,7 +148,6 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	{
 		unsigned priv;
 		QCheckBox *chk=NULL, *chk1=NULL;
-		ObjectType obj_type;
 
 		connect(objectselection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
@@ -156,7 +155,6 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 		name_edt->setText(Utf8String::create(object->getName(true)));
 		comment_edt->setText(Utf8String::create(object->getTypeName()));
-		obj_type=object->getObjectType();
 
 		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
 		{
@@ -168,38 +166,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			chk1->setChecked(false);
 
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
-			if(((priv==Permission::PRIV_SELECT || priv==Permission::PRIV_UPDATE) &&
-					(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_SEQUENCE)) ||
-
-				 ((priv==Permission::PRIV_INSERT || priv==Permission::PRIV_DELETE) &&
-					(obj_type==OBJ_TABLE)) ||
-
-				 ((priv==Permission::PRIV_INSERT) && (obj_type==OBJ_COLUMN)) ||
-
-				 ((priv==Permission::PRIV_TRUNCATE || priv==Permission::PRIV_TRIGGER) &&
-					(obj_type==OBJ_TABLE)) ||
-
-				 (priv==Permission::PRIV_REFERENCES &&
-					(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN)) ||
-
-				 (priv==Permission::PRIV_CREATE &&
-					(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLESPACE)) ||
-
-				 ((priv==Permission::PRIV_CONNECT || priv==Permission::PRIV_TEMPORARY) &&
-					(obj_type==OBJ_DATABASE)) ||
-
-				 (priv==Permission::PRIV_EXECUTE &&
-					(obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE)) ||
-
-				 (priv==Permission::PRIV_USAGE &&
-					(obj_type==OBJ_SEQUENCE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA)) ||
-
-				 (priv==Permission::PRIV_SELECT && obj_type==OBJ_VIEW))
-			{
-				privileges_tbw->setRowHidden(priv, false);
-			}
-			else
-				privileges_tbw->setRowHidden(priv, true);
+			privileges_tbw->setRowHidden(priv, !Permission::objectAcceptsPermission(object->getObjectType(), priv));
 		}
 
 

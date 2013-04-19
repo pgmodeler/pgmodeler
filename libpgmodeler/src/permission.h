@@ -142,7 +142,7 @@ class Permission: public BaseObject {
 		bool isCascade(void);
 
 		//! \brief Returns if the passed object type accepts permission
-		static bool objectAcceptsPermission(ObjectType obj_type);
+		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
 		QString getCodeDefinition(unsigned def_type);

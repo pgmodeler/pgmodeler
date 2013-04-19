@@ -49,12 +49,66 @@ Permission::Permission(BaseObject *obj)
 	attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
-bool Permission::objectAcceptsPermission(ObjectType obj_type)
+bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 {
-	return(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
-				 obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
-				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
-				 obj_type==OBJ_TABLESPACE);
+	bool result=false;
+	unsigned priv_id=static_cast<unsigned>(privilege);
+
+	result=(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
+					obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
+					obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
+					obj_type==OBJ_TABLESPACE);
+
+
+	//Validating privilege
+	if(result && priv_id <= PRIV_USAGE)
+	{
+
+		/* Some privileges are valid only for certain types
+			of objects. If the user try to assign a privilege P
+			for an object that does not accept this privilege the same
+			is ignored. The schema below shows the privileges for
+			each object:
+
+			Table:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
+			Column:   SELECT | INSERT | UPDATE | REFERENCES
+			Sequence:  USAGE | SELECT | UPDATE
+			Database: CREATE | CONNECT | TEMPORARY | TEMP
+			Function: EXECUTE
+			Aggregate: EXECUTE
+			Linguage: USAGE
+			Schema: CREATE | USAGE
+			Tablespace: CREATE
+			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER */
+		result=result &&
+
+		(((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+			 (priv_id==PRIV_SELECT || priv_id==PRIV_INSERT ||
+				priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
+				priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
+
+		 (obj_type==OBJ_TABLE && priv_id==PRIV_TRUNCATE) ||
+
+		 (obj_type==OBJ_COLUMN &&
+			(priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||
+			 priv_id==PRIV_UPDATE || priv_id==PRIV_REFERENCES)) ||
+
+		 (obj_type==OBJ_SEQUENCE &&
+			(priv_id==PRIV_USAGE || priv_id==PRIV_SELECT ||	priv_id==PRIV_UPDATE)) ||
+
+		 (obj_type==OBJ_DATABASE &&
+			(priv_id==PRIV_CREATE || priv_id==PRIV_CONNECT ||	priv_id==PRIV_TEMPORARY)) ||
+
+		 ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id==PRIV_EXECUTE) ||
+
+		 (obj_type==OBJ_LANGUAGE && priv_id==PRIV_USAGE) ||
+
+		 (obj_type==OBJ_SCHEMA && (priv_id==PRIV_USAGE || priv_id==PRIV_CREATE)) ||
+
+		 (obj_type==OBJ_TABLESPACE && priv_id==PRIV_CREATE));
+	}
+
+	return(result);
 }
 
 bool Permission::isRoleExists(Role *role)
@@ -92,54 +146,11 @@ void Permission::addRole(Role *role)
 
 void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 {
-	ObjectType obj_type;
-
 	//Caso o tipo de privilégio sejá inválido dispara uma exceção
 	if(priv_id > PRIV_USAGE)
 		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	obj_type=object->getObjectType();
-
-	/* Some privileges are valid only for certain types
-		of objects. If the user try to assign a privilege P
-		for an object that does not accept this privilege the same
-		is ignored. The schema below shows the privileges for
-		each object:
-
-		Table:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
-		Column:   SELECT | INSERT | UPDATE | REFERENCES
-		Sequence:  USAGE | SELECT | UPDATE
-		Database: CREATE | CONNECT | TEMPORARY | TEMP
-		Function: EXECUTE
-		Aggregate: EXECUTE
-		Linguage: USAGE
-		Schema: CREATE | USAGE
-		Tablespace: CREATE
-		View: SELECT */
-	if((obj_type==OBJ_TABLE && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
-			priv_id!=PRIV_UPDATE && priv_id!=PRIV_DELETE &&
-			priv_id!=PRIV_TRUNCATE && priv_id!=PRIV_REFERENCES &&
-			priv_id!=PRIV_TRIGGER) ||
-
-		 (obj_type==OBJ_COLUMN && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
-			priv_id!=PRIV_UPDATE && priv_id!=PRIV_REFERENCES) ||
-
-		 (obj_type==OBJ_SEQUENCE && priv_id!=PRIV_USAGE && priv_id!=PRIV_SELECT &&
-			priv_id!=PRIV_UPDATE) ||
-
-		 (obj_type==OBJ_DATABASE && priv_id!=PRIV_CREATE && priv_id!=PRIV_CONNECT &&
-			priv_id!=PRIV_TEMPORARY) ||
-
-		 ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id!=PRIV_EXECUTE) ||
-
-		 (obj_type==OBJ_LANGUAGE && priv_id!=PRIV_USAGE) ||
-
-		 (obj_type==OBJ_SCHEMA && priv_id!=PRIV_USAGE && priv_id!=PRIV_CREATE) ||
-
-		 (obj_type==OBJ_TABLESPACE && priv_id!=PRIV_CREATE) ||
-
-		 (obj_type==OBJ_VIEW && priv_id!=PRIV_SELECT))
-
+	if(!objectAcceptsPermission(object->getObjectType(), priv_id))
 		//Raises an error if the privilege is invalid according to the object type
 		throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
