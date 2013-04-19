@@ -30,17 +30,6 @@ TableView::~TableView(void)
 	disconnect(this, SLOT(configureObject(void)));
 }
 
-/* QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-	if(change==ItemSelectedHasChanged)
-	{
-		this->setToolTip(this->table_tooltip);
-		BaseObjectView::configureObjectSelection();
-	}
-
-	return(BaseTableView::itemChange(change, value));
-} */
-
 void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
