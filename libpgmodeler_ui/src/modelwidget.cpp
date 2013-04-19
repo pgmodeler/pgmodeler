@@ -781,8 +781,8 @@ void ModelWidget::convertRelationshipNN(void)
 					op_list->startOperationChain();
 
 					//Removes the many-to-many relationship from the model
-					db_model->removeObject(rel);
 					op_list->registerObject(rel, Operation::OBJECT_REMOVED);
+					db_model->removeObject(rel);
 
 					//The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
@@ -1460,6 +1460,7 @@ void ModelWidget::editPermissions(void)
 
 	permission_wgt->setAttributes(this->db_model, NULL, obj);
 	permission_wgt->show();
+	this->setModified(true);
 }
 
 void ModelWidget::editObject(void)
@@ -2061,11 +2062,11 @@ void ModelWidget::removeObjects(void)
 								if(obj_type==OBJ_COLUMN)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
-								db_model->removePermissions(tab_obj);
-
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
+
+								db_model->removePermissions(tab_obj);
 
 								aux_table=dynamic_cast<Table *>(table);
 								if(aux_table && obj_type==OBJ_CONSTRAINT &&

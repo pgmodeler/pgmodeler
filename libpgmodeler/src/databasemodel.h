@@ -306,6 +306,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
 
+		//! \brief Inserts a list of permissions into the model
+		void addPermissions(vector<Permission *> &perms);
+
 		//! \brief Removes all the permission related to the passed object
 		void removePermissions(BaseObject *object);
 

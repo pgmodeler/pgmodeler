@@ -26,6 +26,7 @@
 #define OPERATION_H
 
 #include "baseobject.h"
+#include "permission.h"
 #include <QString>
 
 class Operation {
@@ -55,6 +56,9 @@ class Operation {
 
 		//! \brief Object index inside the list on its parent object
 		int object_idx;
+
+		//! \brief Stores the object's permission before it's removal
+		vector<Permission *> permissions;
 
 	public:
 		//! \brief Constants used to reference the type of operations

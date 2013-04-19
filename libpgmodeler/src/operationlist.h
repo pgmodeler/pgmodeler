@@ -134,7 +134,7 @@ class OperationList: public QObject {
 		//! \brief Sets the maximum size for the list
 		static void setMaximumSize(unsigned max);
 
-		/*! \brief Registers in the list of operations that the object passed suffered some kind
+		/*! \brief Registers in the list of operations that the passed object suffered some kind
 		 of modification (modified, removed, inserted, moved) in addition the method stores
 		 its original content.
 		 This method should ALWAYS be called before the object in question

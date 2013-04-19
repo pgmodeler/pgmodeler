@@ -505,8 +505,8 @@ void TableWidget::removeObjects(void)
 			if(!object->isProtected() &&
 				 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
-				table->removeObject(object);
 				op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
+				table->removeObject(object);
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -553,8 +553,8 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 			 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			table->removeObject(object);
 			op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+			table->removeObject(object);
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)

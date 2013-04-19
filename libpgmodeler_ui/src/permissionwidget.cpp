@@ -56,8 +56,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	configureFormLayout(permission_grid, OBJ_PERMISSION);
 
 	roles_tab=new ObjectTableWidget(ObjectTableWidget::ADD_BUTTON |
-																		 ObjectTableWidget::REMOVE_BUTTON |
-																		 ObjectTableWidget::EDIT_BUTTON, false, this);
+																	ObjectTableWidget::REMOVE_BUTTON |
+																	ObjectTableWidget::EDIT_BUTTON, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(trUtf8("Role"),0);
 	roles_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
@@ -68,8 +68,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	roles_gb->setLayout(grid);
 
 	permissions_tab=new ObjectTableWidget(ObjectTableWidget::REMOVE_BUTTON |
-																				 ObjectTableWidget::EDIT_BUTTON |
-																				 ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
+																				ObjectTableWidget::EDIT_BUTTON |
+																				ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
 	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
@@ -149,6 +149,26 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=NULL, *chk1=NULL;
 
+		//Disables the permission editing when the object is protected or added by relationship
+		/*if((object->getObjectType()==OBJ_COLUMN && dynamic_cast<TableObject *>(object)->isAddedByRelationship()) ||
+			 (object->isProtected()))
+		{
+			roles_tab->setButtonConfiguration(ObjectTableWidget::NO_BUTTONS);
+			permissions_tab->setButtonConfiguration(ObjectTableWidget::EDIT_BUTTON);
+			privileges_tbw->setEnabled(false);
+		}
+		//Enable permission editing
+		else
+		{
+			roles_tab->setButtonConfiguration(ObjectTableWidget::ADD_BUTTON |
+																				ObjectTableWidget::REMOVE_BUTTON |
+																				ObjectTableWidget::EDIT_BUTTON);
+			permissions_tab->setButtonConfiguration(ObjectTableWidget::REMOVE_BUTTON |
+																							ObjectTableWidget::EDIT_BUTTON |
+																							ObjectTableWidget::REMOVE_ALL_BUTTON);
+			privileges_tbw->setEnabled(true);
+		} */
+
 		connect(objectselection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
@@ -168,7 +188,6 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
 			privileges_tbw->setRowHidden(priv, !Permission::objectAcceptsPermission(object->getObjectType(), priv));
 		}
-
 
 		listPermissions();
 		permissions_tab->clearSelection();

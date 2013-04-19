@@ -423,6 +423,43 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
 			throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
+			vector<BaseObject *> refs;
+
+			//Get the table references
+			getObjectReferences(object, refs, true);
+
+			//If there are objects referencing the table
+			if(!refs.empty())
+			{
+				ErrorType err_type;
+
+				//Raises an error indicating the object that is referencing the table
+				if(!dynamic_cast<TableObject *>(refs[0]))
+				{
+					err_type=ERR_REM_DIRECT_REFERENCE;
+					throw Exception(QString(Exception::getErrorMessage(err_type))
+													.arg(Utf8String::create(object->getName(true)))
+													.arg(Utf8String::create(object->getTypeName()))
+													.arg(Utf8String::create(refs[0]->getName(true)))
+							.arg(Utf8String::create(refs[0]->getTypeName())),
+							err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+				else
+				{
+					BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
+
+					err_type=ERR_REM_INDIRECT_REFERENCE;
+					throw Exception(QString(Exception::getErrorMessage(err_type))
+													.arg(Utf8String::create(object->getName(true)))
+													.arg(Utf8String::create(object->getTypeName()))
+													.arg(Utf8String::create(refs[0]->getName(true)))
+							.arg(Utf8String::create(refs[0]->getTypeName()))
+							.arg(Utf8String::create(ref_obj_parent->getName(true)))
+							.arg(Utf8String::create(ref_obj_parent->getTypeName())),
+							err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+			}
+
 			if(obj_idx < 0)
 			{
 				if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
@@ -702,60 +739,15 @@ Table *DatabaseModel::getTable(unsigned obj_idx)
 
 void DatabaseModel::removeTable(Table *table, int obj_idx)
 {
-	if(table)
+	try
 	{
-		vector<BaseObject *> refs;
-		QString str_aux;
-
-		//Get the table references
-		getObjectReferences(table, refs, true);
-
-		//If there are objects referencing the table
-		if(!refs.empty())
-		{
-			ErrorType err_type;
-			unsigned i=0, count=refs.size();
-
-			while(i < count)
-			{
-				//Raises an error indicating the object that is referencing the table
-				if(!dynamic_cast<TableObject *>(refs[i]))
-				{
-					err_type=ERR_REM_DIRECT_REFERENCE;
-					str_aux=QString(Exception::getErrorMessage(err_type))
-									.arg(Utf8String::create(table->getName(true)))
-									.arg(Utf8String::create(table->getTypeName()))
-									.arg(Utf8String::create(refs[0]->getName(true)))
-									.arg(Utf8String::create(refs[0]->getTypeName()));
-
-					throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				}
-				else
-				{
-					BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[i])->getParentTable();
-
-					if(ref_obj_parent != table)
-					{
-						err_type=ERR_REM_INDIRECT_REFERENCE;
-						str_aux=QString(Exception::getErrorMessage(err_type))
-										.arg(Utf8String::create(table->getName(true)))
-										.arg(Utf8String::create(table->getTypeName()))
-										.arg(Utf8String::create(refs[0]->getName(true)))
-								.arg(Utf8String::create(refs[0]->getTypeName()))
-								.arg(Utf8String::create(ref_obj_parent->getName(true)))
-								.arg(Utf8String::create(ref_obj_parent->getTypeName()));
-
-						throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					}
-				}
-
-				i++;
-			}
-		}
-
 		__removeObject(table, obj_idx);
 		PgSQLType::removeUserType(table->getName(true), table);
 		updateTableFKRelationships(table);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -779,9 +771,13 @@ Sequence *DatabaseModel::getSequence(unsigned obj_idx)
 
 void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
 {
-	if(sequence)
+	try
 	{
 		removeUserType(sequence, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -806,37 +802,6 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 {
 	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(collation, refs, true);
-
-		if(!refs.empty())
-		{
-			//Raises an error indicating the object that is referencing the table
-			if(!dynamic_cast<TableObject *>(refs[0]))
-			{
-				throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-												.arg(Utf8String::create(collation->getName(true)))
-												.arg(Utf8String::create(collation->getTypeName()))
-												.arg(Utf8String::create(refs[0]->getName(true)))
-												.arg(Utf8String::create(refs[0]->getTypeName())),
-												ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
-			else
-			{
-				BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
-
-				throw Exception(QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
-													.arg(Utf8String::create(collation->getName(true)))
-													.arg(Utf8String::create(collation->getTypeName()))
-													.arg(Utf8String::create(refs[0]->getName(true)))
-													.arg(Utf8String::create(refs[0]->getTypeName()))
-													.arg(Utf8String::create(ref_obj_parent->getName(true)))
-													.arg(Utf8String::create(ref_obj_parent->getTypeName())),
-													ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
-		}
-
 		__removeObject(collation, obj_idx);
 	}
 	catch(Exception &e)
@@ -847,21 +812,18 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 
 void DatabaseModel::addView(View *view, int obj_idx)
 {
-	if(view)
+	try
 	{
-		try
-		{
-			__addObject(view, obj_idx);
+		__addObject(view, obj_idx);
 
-			PgSQLType::addUserType(view->getName(true), view, this, UserTypeConfig::VIEW_TYPE);
+		PgSQLType::addUserType(view->getName(true), view, this, UserTypeConfig::VIEW_TYPE);
 
-			updateViewRelationships(view);
-			dynamic_cast<Schema *>(view->getSchema())->setModified(true);
-		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-		}
+		updateViewRelationships(view);
+		dynamic_cast<Schema *>(view->getSchema())->setModified(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -872,11 +834,15 @@ View *DatabaseModel::getView(unsigned obj_idx)
 
 void DatabaseModel::removeView(View *view, int obj_idx)
 {
-	if(view)
+	try
 	{
 		__removeObject(view, obj_idx);
 		PgSQLType::removeUserType(view->getName(true), view);
 		updateViewRelationships(view);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1394,6 +1360,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	unsigned count, i, type_id;
 	vector<BaseObject *>::iterator itr, itr_end;
 	Sequence *sequence=NULL;
+	Permission *permission=NULL;
 	Table *table=NULL;
 	TableObject *tab_obj=NULL;
 	Constraint *constr=NULL;
@@ -1529,6 +1496,23 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				delete(view);
 			}
 		}
+
+		itr=permissions.begin();
+		itr_end=permissions.end();
+
+		while(itr!=itr_end)
+		{
+			permission=dynamic_cast<Permission *>(*itr);
+			tab_obj=dynamic_cast<TableObject *>(permission->getObject());
+			itr++;
+
+			if(tab_obj)
+			{
+				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				removePermission(permission);
+				delete(permission);
+			}
+		}
 	}
 	catch(Exception &e)
 	{
@@ -1559,6 +1543,8 @@ void DatabaseModel::createSpecialObject(const QString &xml_def, unsigned obj_id)
 			addSequence(dynamic_cast<Sequence *>(object));
 		else if(obj_type==OBJ_VIEW)
 			addView(dynamic_cast<View *>(object));
+		else if(obj_type==OBJ_PERMISSION)
+			addPermission(createPermission());
 
 		/* When the special object is recreated it receive a new id but to maintain
 		 the correct creation order, the object has its id restored with the passed
@@ -1578,7 +1564,6 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 	{
 		BaseTable *tab1=NULL, *tab2=NULL;
 		QString msg;
-
 
 		if(rel)
 		{
@@ -1719,7 +1704,14 @@ void DatabaseModel::addTextbox(Textbox *txtbox, int obj_idx)
 
 void DatabaseModel::removeTextbox(Textbox *txtbox, int obj_idx)
 {
-	__removeObject(txtbox, obj_idx);
+	try
+	{
+		__removeObject(txtbox, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 Textbox *DatabaseModel::getTextbox(unsigned obj_idx)
@@ -1746,24 +1738,13 @@ Schema *DatabaseModel::getSchema(unsigned obj_idx)
 
 void DatabaseModel::removeSchema(Schema *schema, int obj_idx)
 {
-	if(schema)
+	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(schema, refs, true);
-
-		//Raises an error if there is some object referencing the schema to be removed
-		if(!refs.empty())
-		{
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(schema->getName(true))
-											.arg(schema->getTypeName())
-											.arg(refs[0]->getName(true))
-					.arg(refs[0]->getTypeName()),
-					ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(schema, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1786,24 +1767,13 @@ Role *DatabaseModel::getRole(unsigned obj_idx)
 
 void DatabaseModel::removeRole(Role *role, int obj_idx)
 {
-	if(role)
+	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(role, refs, true);
-
-		//Raises an error if there is some object referencing the role to be removed
-		if(!refs.empty())
-		{
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(role->getName(true))
-											.arg(role->getTypeName())
-											.arg(refs[0]->getName(true))
-					.arg(refs[0]->getTypeName()),
-					ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(role, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1826,46 +1796,13 @@ Tablespace *DatabaseModel::getTablespace(unsigned obj_idx)
 
 void DatabaseModel::removeTablespace(Tablespace *tabspc, int obj_idx)
 {
-	if(tabspc)
+	try
 	{
-		vector<BaseObject *> refs;
-		QString str_aux;
-
-		getObjectReferences(tabspc, refs, true);
-
-		//Raises an error if there is some object referencing the tablespace to be removed
-		if(!refs.empty())
-		{
-			ErrorType err_type;
-
-			if(!dynamic_cast<TableObject *>(refs[0]))
-			{
-				err_type=ERR_REM_DIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(tabspc->getName(true))
-								.arg(tabspc->getTypeName())
-								.arg(refs[0]->getName(true))
-						.arg(refs[0]->getTypeName());
-			}
-			else
-			{
-				BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
-
-				err_type=ERR_REM_INDIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(tabspc->getName(true))
-								.arg(tabspc->getTypeName())
-								.arg(refs[0]->getName(true))
-						.arg(refs[0]->getTypeName())
-						.arg(ref_obj_parent->getName(true))
-						.arg(ref_obj_parent->getTypeName());
-
-			}
-
-			throw Exception(str_aux,err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(tabspc, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1883,7 +1820,14 @@ void DatabaseModel::addCast(Cast *cast, int obj_idx)
 
 void DatabaseModel::removeCast(Cast *cast, int obj_idx)
 {
-	__removeObject(cast, obj_idx);
+	try
+	{
+		__removeObject(cast, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 Cast *DatabaseModel::getCast(unsigned obj_idx)
@@ -1905,7 +1849,14 @@ void DatabaseModel::addConversion(Conversion *conv, int obj_idx)
 
 void DatabaseModel::removeConversion(Conversion *conv, int obj_idx)
 {
-	__removeObject(conv, obj_idx);
+	try
+	{
+		__removeObject(conv, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 Conversion *DatabaseModel::getConversion(unsigned obj_idx)
@@ -1933,24 +1884,13 @@ Language *DatabaseModel::getLanguage(unsigned obj_idx)
 
 void DatabaseModel::removeLanguage(Language *lang, int obj_idx)
 {
-	if(lang)
+	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(lang, refs, true);
-
-		//Raises an error if there is some object referencing the language to be removed
-		if(!refs.empty())
-		{
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(lang->getName(true))
-											.arg(lang->getTypeName())
-											.arg(dynamic_cast<Function *>(refs[0])->getSignature())
-					.arg(refs[0]->getTypeName()),
-					ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(lang, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1973,47 +1913,13 @@ Function *DatabaseModel::getFunction(unsigned obj_idx)
 
 void DatabaseModel::removeFunction(Function *func, int obj_idx)
 {
-	if(func)
+	try
 	{
-		vector<BaseObject *> refs;
-		QString str_aux;
-
-		getObjectReferences(func, refs, true);
-
-		//Raises an error if there is some object referencing the function to be removed
-		if(!refs.empty())
-		{
-			ErrorType err_type;
-
-			if(!dynamic_cast<TableObject *>(refs[0]))
-			{
-				err_type=ERR_REM_DIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-								.arg(func->getSignature())
-								.arg(func->getTypeName())
-								.arg(refs[0]->getName(true))
-						.arg(refs[0]->getTypeName());
-
-			}
-			else
-			{
-				BaseObject *ref_parent_obj=dynamic_cast<TableObject *>(refs[0])->getParentTable();
-
-				err_type=ERR_REM_INDIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
-								.arg(func->getSignature())
-								.arg(func->getTypeName())
-								.arg(refs[0]->getName(true))
-						.arg(refs[0]->getTypeName())
-						.arg(ref_parent_obj->getName(true))
-						.arg(ref_parent_obj->getTypeName());
-
-			}
-
-			throw Exception(str_aux,err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(func, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2036,7 +1942,14 @@ Aggregate *DatabaseModel::getAggregate(unsigned obj_idx)
 
 void DatabaseModel::removeAggregate(Aggregate *aggreg, int obj_idx)
 {
-	__removeObject(aggreg, obj_idx);
+	try
+	{
+		__removeObject(aggreg, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void DatabaseModel::addDomain(Domain *domain, int obj_idx)
@@ -2118,23 +2031,13 @@ OperatorFamily *DatabaseModel::getOperatorFamily(unsigned obj_idx)
 
 void DatabaseModel::removeOperatorFamily(OperatorFamily *op_family, int obj_idx)
 {
-	if(op_family)
+	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(op_family, refs, true);
-
-		if(!refs.empty())
-		{
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(op_family->getName(true))
-											.arg(op_family->getTypeName())
-											.arg(refs[0]->getName(true))
-					.arg(refs[0]->getTypeName()),
-					ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(op_family, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2152,7 +2055,14 @@ void DatabaseModel::addOperatorClass(OperatorClass *op_class, int obj_idx)
 
 void DatabaseModel::removeOperatorClass(OperatorClass *op_class, int obj_idx)
 {
-	__removeObject(op_class, obj_idx);
+	try
+	{
+		__removeObject(op_class, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 OperatorClass *DatabaseModel::getOperatorClass(unsigned obj_idx)
@@ -2174,24 +2084,13 @@ void DatabaseModel::addOperator(Operator *oper, int obj_idx)
 
 void DatabaseModel::removeOperator(Operator *oper, int obj_idx)
 {
-	if(oper)
+	try
 	{
-		vector<BaseObject *> refs;
-
-		getObjectReferences(oper, refs, true);
-
-		if(!refs.empty())
-		{
-
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(oper->getSignature(true))
-											.arg(oper->getTypeName())
-											.arg(refs[0]->getName(true))
-					.arg(refs[0]->getTypeName()),
-					ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(oper, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2261,47 +2160,44 @@ Type *DatabaseModel::getType(unsigned obj_idx)
 
 void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 {
-	if(object)
+	try
 	{
-		vector<BaseObject *> refs;
-		QString str_aux;
-
-		getObjectReferences(object, refs, true);
-
-		if(!refs.empty())
-		{
-			ErrorType err_type;
-
-			if(!dynamic_cast<TableObject *>(refs[0]))
-			{
-				err_type=ERR_REM_DIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(Utf8String::create(object->getName(true)))
-								.arg(object->getTypeName())
-								.arg(Utf8String::create(refs[0]->getName(true)))
-						.arg(refs[0]->getTypeName());
-			}
-			else
-			{
-				BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(refs[0])->getParentTable();
-
-				err_type=ERR_REM_INDIRECT_REFERENCE;
-				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(Utf8String::create(object->getName(true)))
-								.arg(object->getTypeName())
-								.arg(Utf8String::create(refs[0]->getName(true)))
-						.arg(refs[0]->getTypeName())
-						.arg(Utf8String::create(obj_ref_pai->getName(true)))
-						.arg(obj_ref_pai->getTypeName());
-			}
-
-			throw Exception(str_aux,err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
 		__removeObject(object, obj_idx);
 
 		//Removes the user type from the list of base types of pgsql
 		PgSQLType::removeUserType(object->getName(true), object);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::addPermissions(vector<Permission *> &perms)
+{
+	vector<Permission *>::iterator itr=perms.begin(), itr_end=perms.end();
+
+	try
+	{
+		while(itr!=itr_end)
+		{
+			addPermission(*itr);
+			itr++;
+		}
+	}
+	catch(Exception &e)
+	{
+		//In case of errors removes the added permissions
+		itr=perms.begin();
+		itr_end=perms.end();
+
+		while(itr!=itr_end)
+		{
+			removePermission(*itr);
+			itr++;
+		}
+
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2312,6 +2208,8 @@ void DatabaseModel::addPermission(Permission *perm)
 		if(!perm)
 			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		TableObject *tab_obj=dynamic_cast<TableObject *>(perm->getObject());
+
 		if(getPermissionIndex(perm) >=0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
@@ -2319,6 +2217,15 @@ void DatabaseModel::addPermission(Permission *perm)
 											.arg(perm->getObject()->getTypeName()),
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
+		//Raises an error if the permission is referencing an object that does not exists on model
+		else if((tab_obj && (getObjectIndex(tab_obj->getParentTable()) < 0)) ||
+						(!tab_obj && (getObjectIndex(perm->getObject()) < 0)))
+			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+											.arg(Utf8String::create(perm->getName()))
+											.arg(Utf8String::create(perm->getObject()->getTypeName()))
+											.arg(Utf8String::create(perm->getObject()->getName()))
+											.arg(Utf8String::create(perm->getObject()->getTypeName())),
+											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		permissions.push_back(perm);
 	}
@@ -2338,9 +2245,13 @@ void DatabaseModel::addPermission(Permission *perm)
 
 void DatabaseModel::removePermission(Permission *perm)
 {
-	if(perm)
+	try
 	{
 		__removeObject(perm);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2363,8 +2274,6 @@ void DatabaseModel::removePermissions(BaseObject *object)
 		if(perm->getObject()==object)
 		{
 			permissions.erase(itr);
-			delete(perm);
-
 			itr=itr_end=permissions.end();
 
 			if(!permissions.empty())
@@ -6489,10 +6398,27 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 	if(object)
 	{
+		vector<BaseObject *>::iterator itr_perm, itr_perm_end;
 		ObjectType obj_type=object->getObjectType();
 		bool refer=false;
+		Permission *perm=NULL;
 
-		if(obj_type==OBJ_TABLE)
+		//Get the permissions thata references the object
+		itr_perm=permissions.begin();
+		itr_perm_end=permissions.end();
+
+		while(itr_perm!=itr_perm_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			perm=dynamic_cast<Permission *>(*itr_perm);
+			if(perm->getObject()==object)
+			{
+				refer=true;
+				refs.push_back(perm);
+			}
+			itr_perm++;
+		}
+
+		if(obj_type==OBJ_TABLE && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			Table *table=dynamic_cast<Table *>(object);
 			Sequence *seq=NULL;
@@ -6588,7 +6514,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_FUNCTION)
+		if(obj_type==OBJ_FUNCTION && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			Function *func=dynamic_cast<Function *>(object);
 			vector<BaseObject *> *obj_list=NULL;
@@ -6721,7 +6647,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_SCHEMA)
+		if(obj_type==OBJ_SCHEMA && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -6749,8 +6675,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN ||
-			 obj_type==OBJ_SEQUENCE || obj_type==OBJ_TABLE)
+		if((obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN || obj_type==OBJ_SEQUENCE || obj_type==OBJ_TABLE)
+			 && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -6924,7 +6850,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_ROLE)
+		if(obj_type==OBJ_ROLE && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -6985,7 +6911,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_TABLESPACE)
+		if(obj_type==OBJ_TABLESPACE && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *>::iterator itr, itr_end;
 			unsigned i, count;
@@ -7038,7 +6964,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_LANGUAGE)
+		if(obj_type==OBJ_LANGUAGE && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *>::iterator itr, itr_end;
 			Function *func=NULL;
@@ -7058,7 +6984,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_OPERATOR)
+		if(obj_type==OBJ_OPERATOR && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -7126,7 +7052,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_OPFAMILY)
+		if(obj_type==OBJ_OPFAMILY && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *>::iterator itr, itr_end;
 			OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
@@ -7145,7 +7071,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_COLLATION)
+		if(obj_type==OBJ_COLLATION && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			ObjectType  obj_types[]={ OBJ_DOMAIN, OBJ_COLLATION, OBJ_TYPE },
 									tab_obj_types[]={ OBJ_COLUMN, OBJ_INDEX };
@@ -7205,7 +7131,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==OBJ_COLUMN && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			Column *column=dynamic_cast<Column *>(object);
 			vector<BaseObject *> *obj_list=NULL;

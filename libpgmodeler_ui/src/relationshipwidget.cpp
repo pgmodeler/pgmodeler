@@ -674,8 +674,8 @@ void RelationshipWidget::removeObjects(void)
 		for(i=0; i < count; i++)
 		{
 			object=rel->getObject(0, obj_type);
-			rel->removeObject(object);
 			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
+			rel->removeObject(object);
 		}
 	}
 	catch(Exception &e)
@@ -715,8 +715,8 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=OBJ_CONSTRAINT;
 
 		object=rel->getObject(row, obj_type);
-		rel->removeObject(object);
 		op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
+		rel->removeObject(object);
 	}
 	catch(Exception &e)
 	{

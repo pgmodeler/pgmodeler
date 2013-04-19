@@ -73,10 +73,17 @@ void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 	remove_tb->setVisible(rem_btn);
 	update_tb->setVisible(upd_btn);
 
-	if(!edt_btn && !move_btn && !add_btn && !rem_all_btn && !rem_btn && !upd_btn)
+	//Disabling the horizontal spacers when no buttons are visible
+	if(button_conf==NO_BUTTONS)
 	{
-		tabelaobj_grid->removeWidget(table_tbw);
-		tabelaobj_grid->addWidget(table_tbw,0,0,1,10);
+		left_spc->changeSize(0,0,QSizePolicy::Ignored,QSizePolicy::Ignored);
+		right_spc->changeSize(0,0,QSizePolicy::Ignored,QSizePolicy::Ignored);
+	}
+	//Restoring the horizontal spacers when some buttons are visible
+	else
+	{
+		left_spc->changeSize(10,10,QSizePolicy::Expanding,QSizePolicy::Preferred);
+		right_spc->changeSize(10,10,QSizePolicy::Expanding,QSizePolicy::Preferred);
 	}
 }
 

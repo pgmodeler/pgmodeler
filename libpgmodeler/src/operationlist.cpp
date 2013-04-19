@@ -355,6 +355,10 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 		//Assigns the pool object to the operation
 		operation->pool_obj=object_pool.back();
 
+		//Stores the object's permission befor its removal
+		if(op_type==Operation::OBJECT_REMOVED)
+			model->getPermissions(object, operation->permissions);
+
 		if(next_op_chain==Operation::CHAIN_START)
 			next_op_chain=Operation::CHAIN_MIDDLE;
 
@@ -371,9 +375,10 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 
 			/* Specific case to columns: on removal operations the permissions of the objects
 			must be removed too */
-			if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
-				model->removePermissions(tab_obj);
-			else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+			//if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
+				//model->removePermissions(tab_obj);
+			//else
+				if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 							 (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 							 (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
 			{
@@ -736,6 +741,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				if(dynamic_cast<Table *>(object))
 					dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 			model->addObject(object, oper->object_idx);
+
+			if(oper->op_type==Operation::OBJECT_REMOVED)
+				model->addPermissions(oper->permissions);
 		}
 		/* If the operation is a previously created object or if the object
 			was removed and wants to redo the operation it'll be
