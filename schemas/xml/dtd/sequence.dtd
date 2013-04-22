@@ -12,4 +12,5 @@
 <!ATTLIST sequence cycle (true|false) "false">
 <!ATTLIST sequence owner CDATA #IMPLIED>
 <!ATTLIST sequence protected (false|true) "false">
+<!ATTLIST sequence sql-disabled (false|true) "false">
 

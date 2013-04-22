@@ -88,8 +88,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
 
 		layout->addItem(spacer);
-		layout->addWidget(edt_perms_tb);
 		layout->addWidget(disable_sql_chk);
+		layout->addWidget(edt_perms_tb);
 
 		baseobject_grid->addLayout(layout,9,0,1,5);
 		baseobject_grid->addWidget(div1_ln, 10, 0, 1, 5);
@@ -300,7 +300,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
-	bool /*show_schema, show_owner, show_tabspc,*/ show_comment;
+	bool show_comment;
 
 	if(grid)
 	{
@@ -333,9 +333,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-
-	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE)// && obj_type!=OBJ_COLLATION)
-		disable_sql_chk->setVisible(false);
+	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION);
 
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&

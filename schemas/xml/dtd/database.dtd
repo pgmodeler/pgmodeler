@@ -9,3 +9,4 @@
 <!ATTLIST database template CDATA #IMPLIED>
 <!ATTLIST database lc-collate CDATA #IMPLIED>
 <!ATTLIST database lc-ctype CDATA #IMPLIED>
+<!ATTLIST database sql-disabled (false|true) "false">

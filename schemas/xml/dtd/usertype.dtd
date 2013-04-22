@@ -16,6 +16,7 @@
 <!ATTLIST usertype preferred CDATA "false">
 <!ATTLIST usertype collatable CDATA "false">
 <!ATTLIST usertype protected (false|true) "false">
+<!ATTLIST usertype sql-disabled (false|true) "false">
 
 <!ELEMENT enumeration EMPTY>
 <!ATTLIST enumeration values CDATA #REQUIRED>

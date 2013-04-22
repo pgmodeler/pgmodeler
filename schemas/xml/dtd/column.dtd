@@ -7,3 +7,4 @@
 <!ATTLIST column not-null (true | false) "false">
 <!ATTLIST column default-value CDATA #IMPLIED>
 <!ATTLIST column protected (false|true) "false">
+<!ATTLIST column sql-disabled (false|true) "false">

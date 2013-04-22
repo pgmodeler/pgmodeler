@@ -5,10 +5,6 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
-%if @{sql-disabled} %then
-[/* The SQL code for this object was disabled.] $br
-%end
-
 [CREATE ROLE ] @{name} [ WITH ]
 
 %if @{superuser} %then
@@ -40,10 +36,6 @@
 ; $br
 
 %if @{comment} %then @{comment} %end
-
-%if @{sql-disabled} %then
-[ */] $br
-%end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!

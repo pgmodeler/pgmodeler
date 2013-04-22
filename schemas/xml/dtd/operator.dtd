@@ -9,3 +9,4 @@
 <!ATTLIST operator hashes (true|false) "false">
 <!ATTLIST operator merges (true|false) "false">
 <!ATTLIST operator protected (false|true) "false">
+<!ATTLIST operator sql-disabled (false|true) "false">

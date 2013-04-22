@@ -19,6 +19,7 @@
 <!ELEMENT permission (object,roles?,privileges)>
 <!ATTLIST permission revoke (false|true) "false">
 <!ATTLIST permission cascade (false|true) "false">
+<!ATTLIST permission sql-disabled (false|true) "false">
 
 <!ELEMENT object EMPTY>
 <!ATTLIST object name CDATA #REQUIRED>

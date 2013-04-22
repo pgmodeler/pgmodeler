@@ -6,3 +6,4 @@
 <!ATTLIST aggregate name CDATA #REQUIRED>
 <!ATTLIST aggregate initial-cond CDATA #IMPLIED>
 <!ATTLIST aggregate protected (false|true) "false">
+<!ATTLIST aggregate sql-disabled (false|true) "false">

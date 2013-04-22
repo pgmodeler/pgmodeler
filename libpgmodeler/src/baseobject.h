@@ -33,6 +33,7 @@
 #include <map>
 #include <QRegExp>
 #include <QStringList>
+#include <QTextStream>
 
 using namespace ParsersAttributes;
 

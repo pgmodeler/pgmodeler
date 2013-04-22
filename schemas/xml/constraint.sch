@@ -33,6 +33,10 @@
   [ protected="true"]
  %end
  
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
  %if @{table} %then 
   [ table=] "@{table}"
  %end

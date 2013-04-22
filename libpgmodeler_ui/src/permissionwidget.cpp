@@ -149,26 +149,6 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=NULL, *chk1=NULL;
 
-		//Disables the permission editing when the object is protected or added by relationship
-		/*if((object->getObjectType()==OBJ_COLUMN && dynamic_cast<TableObject *>(object)->isAddedByRelationship()) ||
-			 (object->isProtected()))
-		{
-			roles_tab->setButtonConfiguration(ObjectTableWidget::NO_BUTTONS);
-			permissions_tab->setButtonConfiguration(ObjectTableWidget::EDIT_BUTTON);
-			privileges_tbw->setEnabled(false);
-		}
-		//Enable permission editing
-		else
-		{
-			roles_tab->setButtonConfiguration(ObjectTableWidget::ADD_BUTTON |
-																				ObjectTableWidget::REMOVE_BUTTON |
-																				ObjectTableWidget::EDIT_BUTTON);
-			permissions_tab->setButtonConfiguration(ObjectTableWidget::REMOVE_BUTTON |
-																							ObjectTableWidget::EDIT_BUTTON |
-																							ObjectTableWidget::REMOVE_ALL_BUTTON);
-			privileges_tbw->setEnabled(true);
-		} */
-
 		connect(objectselection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
@@ -384,6 +364,7 @@ void PermissionWidget::editPermission(void)
 		roles_tab->blockSignals(true);
 		roles_tab->removeRows();
 
+		perm_disable_sql_chk->setChecked(permission->isSQLDisabled());
 		perm_id_edt->setText(permission->getName());
 		revoke_rb->setChecked(permission->isRevoke());
 		cascade_chk->setChecked(permission->isCascade());
@@ -433,6 +414,7 @@ void PermissionWidget::configurePermission(Permission *perm)
 		unsigned count, i, priv;
 		QCheckBox *chk=NULL, *chk1=NULL;
 
+		perm->setSQLDisabled(perm_disable_sql_chk->isChecked());
 		perm->setCascade(cascade_chk->isChecked());
 		perm->setRevoke(revoke_rb->isChecked());
 
@@ -474,6 +456,7 @@ void PermissionWidget::cancelOperation(void)
 	enableEditButtons();
 	cancel_tb->setEnabled(false);
 	permissions_tab->clearSelection();
+	perm_disable_sql_chk->setChecked(false);
 }
 
 void PermissionWidget::checkPrivilege(void)

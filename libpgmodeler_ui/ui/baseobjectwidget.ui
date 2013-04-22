@@ -369,6 +369,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="toolTip">
+    <string>Disables the generated SQL code using comment tokens (--)</string>
+   </property>
    <property name="text">
     <string>Disable SQL code</string>
    </property>

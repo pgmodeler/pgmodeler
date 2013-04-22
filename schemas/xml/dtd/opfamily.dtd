@@ -6,3 +6,4 @@
 <!ATTLIST opfamily name CDATA #REQUIRED>
 <!ATTLIST opfamily index-type (btree | rtree | gist | hash | gin) "btree">
 <!ATTLIST opfamily protected (false|true) "false">
+<!ATTLIST opfamily sql-disabled (false|true) "false">

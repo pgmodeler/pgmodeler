@@ -660,7 +660,22 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		try
 		{
-			code_def=SchemaParser::getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
+			code_def+=SchemaParser::getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
+
+			//Internally disabling the SQL definition
+			if(sql_disabled && def_type==SchemaParser::SQL_DEFINITION)
+			{
+				//Creates a text stream and insert an comment start token on each line
+				QTextStream ts(&code_def);
+				QString buf;
+
+				while(!ts.atEnd())
+					buf+="-- " + ts.readLine() + "\n";
+
+				//The entire commented buffer will be returned
+				code_def=buf;
+			}
+
 			clearAttributes();
 		}
 		catch(Exception &e)

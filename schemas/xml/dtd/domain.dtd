@@ -8,3 +8,4 @@
 <!ATTLIST domain default CDATA #IMPLIED>
 <!ATTLIST domain constraint CDATA #IMPLIED>
 <!ATTLIST domain protected (false|true) "false">
+<!ATTLIST domain sql-disabled (false|true) "false">

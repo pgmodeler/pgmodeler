@@ -11,6 +11,7 @@
 <!ATTLIST index factor CDATA #REQUIRED>
 <!ATTLIST index table CDATA #IMPLIED>
 <!ATTLIST index protected (false|true) "false">
+<!ATTLIST index sql-disabled (false|true) "false">
 
 <!ELEMENT idxelement ((column|expression),collation?,opclass?)>
 <!ATTLIST idxelement nulls-first (true | false) "false">

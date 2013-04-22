@@ -8,6 +8,10 @@ $tb [<rule name=] "@{name}" [ event-type=] "@{event-type}" $br
   [ protected=] "true"
  %end
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
  > $br
 
  %if @{comment} %then $tb @{comment} %end

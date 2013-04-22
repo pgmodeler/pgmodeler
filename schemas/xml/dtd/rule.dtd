@@ -7,6 +7,7 @@
 <!ATTLIST rule event-type CDATA #REQUIRED>
 <!ATTLIST rule exec-type CDATA #REQUIRED>
 <!ATTLIST rule protected (false|true) "false">
+<!ATTLIST rule sql-disabled (false|true) "false">
 
 <!ELEMENT commands (#PCDATA)>
 

@@ -247,6 +247,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
 	}
 
+	disable_sql_chk->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP);
 	table1_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" is required"));
 	table2_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" is required"));
 

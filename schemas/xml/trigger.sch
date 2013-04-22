@@ -38,6 +38,10 @@
    $br $tb [ table=] "@{table}"
  %end
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
  > $br
  %if @{comment} %then $tb @{comment} %end
 

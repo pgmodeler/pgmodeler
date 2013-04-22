@@ -6,3 +6,4 @@
 <!ATTLIST cast cast-type (implicit|assignment) "implicit">
 <!ATTLIST cast protected (false|true) "false">
 <!ATTLIST cast io-cast (false|true) "false">
+<!ATTLIST cast sql-disabled (false|true) "false">

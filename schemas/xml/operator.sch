@@ -19,6 +19,11 @@
   %if @{protected} %then 
    [ protected=] "true"
   %end
+
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
   > $br
 
   @{schema}

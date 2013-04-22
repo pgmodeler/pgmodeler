@@ -19,6 +19,10 @@
   %if @{fill-color} %then 
    [ fill-color=] "@{fill-color}"
   %end
+
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
   
   > $br
 

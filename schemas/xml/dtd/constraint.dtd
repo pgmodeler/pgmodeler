@@ -15,6 +15,7 @@
 <!ATTLIST constraint table CDATA #IMPLIED>
 <!ATTLIST constraint factor CDATA #IMPLIED>
 <!ATTLIST constraint protected (false|true) "false">
+<!ATTLIST constraint sql-disabled (false|true) "false">
 
 
 <!ELEMENT excelement ((column|expression),opclass?, operator?)>

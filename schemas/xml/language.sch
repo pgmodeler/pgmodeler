@@ -8,6 +8,10 @@
    [ protected=] "true"
   %end
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
 %if @{reduced-form} %then
 [/>] $br
 %else

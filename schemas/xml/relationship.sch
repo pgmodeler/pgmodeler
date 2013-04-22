@@ -5,6 +5,10 @@
 $tb
 [ type=] "@{type}"
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true" $br
+  %end
+
  %if @{protected} %then 
   [ protected=] "true"
  %end $br

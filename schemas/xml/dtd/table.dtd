@@ -17,3 +17,4 @@
 <!ATTLIST table name CDATA #REQUIRED>
 <!ATTLIST table oids (true | false) "false">
 <!ATTLIST table protected (false|true) "false">
+<!ATTLIST table sql-disabled (false|true) "false">

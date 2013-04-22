@@ -5,11 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
-%if @{sql-disabled} %then
-[/* The SQL code for this object was disabled.] $br $br
-%end
-
-%if @{comment} %then 
+%if @{comment} %then
  -- @{comment} -- $br
 %end
 
@@ -20,10 +16,6 @@ $tb [OWNER] @{owner} $br
 %end
 
 $tb [LOCATION ] @{directory}; $br
-
-%if @{sql-disabled} %then
-[*/] $br
-%end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!

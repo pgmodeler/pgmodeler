@@ -26,6 +26,10 @@
   [ protected=] "true"
  %end
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
 > $br
 
  %if @{tablespace} %then $tb @{tablespace} %end

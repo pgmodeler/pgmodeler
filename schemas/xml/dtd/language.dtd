@@ -6,3 +6,4 @@
 <!ATTLIST language name CDATA #REQUIRED>
 <!ATTLIST language trusted (true | false) "false">
 <!ATTLIST language protected (false|true) "false">
+<!ATTLIST language sql-disabled (false|true) "false">

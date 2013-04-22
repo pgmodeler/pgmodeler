@@ -12,6 +12,11 @@
   %if @{encoding} %then [ encoding=] "@{encoding}" %end
   %if @{lc-collate} %then [ lc-collate=] "@{lc-collate}" %end
   %if @{lc-ctype} %then [ lc-ctype=] "@{lc-ctype}" %end
+
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
   > $br
 
   %if @{schema} %then @{schema} %end

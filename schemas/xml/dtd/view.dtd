@@ -5,6 +5,7 @@
 <!ELEMENT view (schema,comment?,position,reference+,expression*,trigger*,rule*)>
 <!ATTLIST view name CDATA #REQUIRED>
 <!ATTLIST view protected (false|true) "false">
+<!ATTLIST view sql-disabled (false|true) "false">
 
 <!ELEMENT reference (expression?)>
 <!ATTLIST reference alias CDATA #IMPLIED>

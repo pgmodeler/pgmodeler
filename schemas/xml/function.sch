@@ -22,6 +22,10 @@
    [ protected=] "true"
   %end
 
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
+
   $br
   $tb $tb window-func=%if @{window-func} %then "true" %else "false" %end $br
   $tb $tb returns-setof=%if @{returns-setof} %then "true" %else "false" %end $br
