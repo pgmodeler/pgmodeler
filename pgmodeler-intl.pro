@@ -6,6 +6,8 @@ include(libpgmodeler/libpgmodeler.pro)
 include(libpgmodeler_ui/libpgmodeler_ui.pro)
 include(crashhandler/crashhandler.pro)
 include(main/main.pro)
+include(main-cli/main-cli.pro)
+
 
 TRANSLATIONS = lang/pt_BR.ts \
                lang/zh_CN.ts \
