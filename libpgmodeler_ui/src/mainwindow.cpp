@@ -531,7 +531,6 @@ void MainWindow::addModel(const QString &filename)
 	ModelWidget *model_tab=NULL;
 	QString obj_name, tab_name, str_aux;
 	Schema *public_sch=NULL;
-	//Language *lang=NULL;
 	QLayout *layout=NULL;
 
 	//Set a name for the tab widget
@@ -551,28 +550,6 @@ void MainWindow::addModel(const QString &filename)
 	layout->setContentsMargins(4,4,4,4);
 
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
-	/* if(filename.isEmpty())
-	{
-		public_sch=new Schema;
-		public_sch->setName("public");
-		public_sch->setSystemObject(true);
-		model_tab->db_model->addObject(public_sch);
-	}*/
-
-	/*lang=new Language;
-	lang->BaseObject::setName(~LanguageType(LanguageType::c));
-	lang->setSystemObject(true);
-	model_tab->db_model->addObject(lang);
-
-	lang=new Language;
-	lang->BaseObject::setName(~LanguageType(LanguageType::sql));
-	lang->setSystemObject(true);
-	model_tab->db_model->addObject(lang);
-
-	lang=new Language;
-	lang->BaseObject::setName(~LanguageType(LanguageType::plpgsql));
-	lang->setSystemObject(true);
-	model_tab->db_model->addObject(lang);*/
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
 
 	if(!filename.isEmpty())

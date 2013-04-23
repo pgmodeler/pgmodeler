@@ -2218,8 +2218,9 @@ void DatabaseModel::addPermission(Permission *perm)
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		//Raises an error if the permission is referencing an object that does not exists on model
-		else if((tab_obj && (getObjectIndex(tab_obj->getParentTable()) < 0)) ||
-						(!tab_obj && (getObjectIndex(perm->getObject()) < 0)))
+		else if(perm->getObject()!=this &&
+						((tab_obj && (getObjectIndex(tab_obj->getParentTable()) < 0)) ||
+						 (!tab_obj && (getObjectIndex(perm->getObject()) < 0))))
 			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
 											.arg(Utf8String::create(perm->getName()))
 											.arg(Utf8String::create(perm->getObject()->getTypeName()))
