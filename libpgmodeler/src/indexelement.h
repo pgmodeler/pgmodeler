@@ -36,6 +36,7 @@ class IndexElement: public Element {
 
 	public:
 		IndexElement(void);
+        virtual ~IndexElement(void){}
 
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);

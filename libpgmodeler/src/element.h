@@ -57,6 +57,7 @@ class Element {
 													NULLS_FIRST=1;
 
 		Element(void);
+        virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
 		void setColumn(Column *column);

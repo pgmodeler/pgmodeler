@@ -90,8 +90,7 @@ void startCrashHandler(int signal)
 		cmd=QString("open ") + cmd;
 	#endif
 
-	system(cmd.toStdString().c_str());
-	exit(1);
+    exit(1 + system(cmd.toStdString().c_str()));
 }
 
 int main(int argc, char **argv)

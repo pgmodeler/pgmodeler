@@ -32,6 +32,7 @@ class ExcludeElement: public Element {
 
 	public:
 		ExcludeElement(void);
+        virtual ~ExcludeElement(void) {}
 
 		//! \brief Defines the operator used by the exclude element
 		void setOperator(Operator *oper);
