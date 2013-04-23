@@ -595,7 +595,7 @@ void RelationshipWidget::addObject(void)
 
 void RelationshipWidget::editObject(int row)
 {
-	ObjectType obj_type;
+	ObjectType obj_type=OBJ_COLUMN;
 
 	try
 	{

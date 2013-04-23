@@ -4,7 +4,7 @@ TEMPLATE = lib
 TARGET = pgmodeler_ui
 DESTDIR = ../build/lib
 
-LIBS = $$DESTDIR/$$LIBUTIL \
+LIBS = $$DESTDIR/$$LIBUTILS \
        $$DESTDIR/$$LIBPARSERS \
        $$DESTDIR/$$LIBDBCONNECT \
        $$DESTDIR/$$LIBOBJRENDERER \

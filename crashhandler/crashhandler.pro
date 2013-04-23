@@ -4,7 +4,7 @@ TEMPLATE = app
 TARGET = crashhandler
 DESTDIR = ../build
 
-LIBS += $$DESTDIR/lib/$$LIBUTIL \
+LIBS += $$DESTDIR/lib/$$LIBUTILS \
         $$DESTDIR/lib/$$LIBPARSERS \
         $$DESTDIR/lib/$$LIBDBCONNECT \
         $$DESTDIR/lib/$$LIBOBJRENDERER \

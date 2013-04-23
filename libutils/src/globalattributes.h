@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libutil
+\ingroup libutils
 \namespace GlobalAttributes
 \brief Definition of GlobalAttributes namespace wich stores a series of static strings constants used
  to reference the global configuration attributes of the software.

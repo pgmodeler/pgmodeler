@@ -712,7 +712,7 @@ void Relationship::addColumnsRelGen(void)
 	vector<Column *> columns;
 	ObjectType types[2]={OBJ_TABLE, BASE_TABLE};
 	ErrorType err_type=ERR_CUSTOM;
-	bool duplic=false, cond,
+	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
 						 1 -> Column created by copy relationship */
 			src_flags[2]={false,false},

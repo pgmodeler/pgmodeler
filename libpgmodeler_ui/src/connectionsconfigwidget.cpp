@@ -56,9 +56,6 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
 	DBConnection *conn=NULL;
 
-	//Regexp used to validate the host address
-	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
-
 	key_attribs.push_back(ParsersAttributes::ALIAS);
 	BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
 
@@ -69,11 +66,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	{
 		conn=new DBConnection;
 
-		if(ip_regexp.exactMatch(itr->second[DBConnection::PARAM_SERVER_FQDN]))
-			conn->setConnectionParam(DBConnection::PARAM_SERVER_IP, itr->second[DBConnection::PARAM_SERVER_FQDN]);
-		else
-			conn->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, itr->second[DBConnection::PARAM_SERVER_FQDN]);
-
+		conn->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, itr->second[DBConnection::PARAM_SERVER_FQDN]);
 		conn->setConnectionParam(DBConnection::PARAM_PORT, itr->second[DBConnection::PARAM_PORT]);
 		conn->setConnectionParam(DBConnection::PARAM_USER, itr->second[DBConnection::PARAM_USER]);
 		conn->setConnectionParam(DBConnection::PARAM_PASSWORD,itr->second[DBConnection::PARAM_PASSWORD]);
@@ -260,13 +253,7 @@ void ConnectionsConfigWidget::configurarConexao(DBConnection *conn)
 {
 	if(conn)
 	{
-		QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
-
-		if(ip_regexp.exactMatch(host_edt->text()))
-			conn->setConnectionParam(DBConnection::PARAM_SERVER_IP, host_edt->text());
-		else
-			conn->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, host_edt->text());
-
+		conn->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(DBConnection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(DBConnection::PARAM_USER, user_edt->text());
 		conn->setConnectionParam(DBConnection::PARAM_PASSWORD, passwd_edt->text());

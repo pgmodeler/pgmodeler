@@ -31,9 +31,11 @@ QString PgModelerCLI::SHOW_DELIMITERS="--show-delimiters";
 QString PgModelerCLI::IGNORE_DUPLICATES="--ignore-duplicates";
 QString PgModelerCLI::CONN_ALIAS="--conn-alias";
 QString PgModelerCLI::HOST="--host";
+QString PgModelerCLI::PORT="--port";
 QString PgModelerCLI::USER="--user";
 QString PgModelerCLI::PASSWD="--passwd";
 QString PgModelerCLI::INITIAL_DB="--initial-db";
+QString PgModelerCLI::SILENT="--silent";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -42,6 +44,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		QString op, value;
 		bool accepts_val=false;
 		int eq_pos=-1;
+		map<QString, QString> opts;
 
 		model=NULL;
 		scene=NULL;
@@ -74,42 +77,75 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 
 					//Raises an error if the option is not recognized
 					if(!isOptionRecognized(op, accepts_val))
-						throw Exception(QString("Unrecognized option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Unrecognized option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
-						throw Exception(QString("Value not specified for option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Value not specified for option '%1'.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					else if(!accepts_val && !value.isEmpty())
-						throw Exception(QString("Option '%1' does not accept values.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Option '%1' does not accept values.").arg(op), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-					parsed_opts[op]=value;
+					opts[op]=value;
 				}
 			}
 		}
 
 		//Validates and executes the options
-		parserOptions(parsed_opts);
-		model=new DatabaseModel;
+		parserOptions(opts);
 
-		//If the export is to png image loads additional configurations
-		if(parsed_opts.count(EXPORT_TO_PNG))
+		if(!parsed_opts.empty())
 		{
-			connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
+			model=new DatabaseModel;
+			silent_mode=(parsed_opts.count(SILENT));
 
-			//Creates a scene to
-			scene=new ObjectsScene;
-			scene->setParent(this);
-			scene->setSceneRect(QRectF(0,0,2000,2000));
+			//If the export is to png image loads additional configurations
+			if(parsed_opts.count(EXPORT_TO_PNG))
+			{
+				connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 
-			//Load the general configuration including grid and delimiter options
-			GeneralConfigWidget conf_wgt;
-			conf_wgt.loadConfiguration();
+				//Creates a scene to
+				scene=new ObjectsScene;
+				scene->setParent(this);
+				scene->setSceneRect(QRectF(0,0,2000,2000));
 
-			//Load the objects styles
-			BaseObjectView::loadObjectsStyle();
+				//Load the general configuration including grid and delimiter options
+				GeneralConfigWidget conf_wgt;
+				conf_wgt.loadConfiguration();
+
+				//Load the objects styles
+				BaseObjectView::loadObjectsStyle();
+			}
+			else if(parsed_opts.count(EXPORT_TO_DBMS))
+			{
+				ConnectionsConfigWidget conn_conf;
+				map<QString, DBConnection *> connections;
+
+				conn_conf.loadConfiguration();
+				conn_conf.getConnections(connections);
+
+				//Getting the connection using its alias
+				if(parsed_opts.count(CONN_ALIAS))
+				{
+					if(!connections.count(parsed_opts[CONN_ALIAS]))
+						throw Exception(trUtf8("Connection aliased as '%1' was not found on configuration file.").arg(parsed_opts[CONN_ALIAS]),
+														ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+					//Make a copy of the named connection
+					connection=(*connections[parsed_opts[CONN_ALIAS]]);
+				}
+				else
+				{
+					connection.setConnectionParam(DBConnection::PARAM_SERVER_FQDN, parsed_opts[HOST]);
+					connection.setConnectionParam(DBConnection::PARAM_USER, parsed_opts[USER]);
+					connection.setConnectionParam(DBConnection::PARAM_PORT, parsed_opts[PORT]);
+					connection.setConnectionParam(DBConnection::PARAM_PASSWORD, parsed_opts[PASSWD]);
+					connection.setConnectionParam(DBConnection::PARAM_DB_NAME, parsed_opts[INITIAL_DB]);
+				}
+			}
+
+			if(!silent_mode)
+				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 		}
-
-		connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 	}
 	catch(Exception &e)
 	{
@@ -137,6 +173,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[IGNORE_DUPLICATES]=false;
 	long_opts[CONN_ALIAS]=true;
 	long_opts[HOST]=true;
+	long_opts[PORT]=true;
 	long_opts[USER]=true;
 	long_opts[PASSWD]=true;
 	long_opts[INITIAL_DB]=true;
@@ -153,9 +190,11 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[IGNORE_DUPLICATES]="-I";
 	short_opts[CONN_ALIAS]="-c";
 	short_opts[HOST]="-H";
+	short_opts[PORT]="-P";
 	short_opts[USER]="-u";
-	short_opts[PASSWD]="-P";
+	short_opts[PASSWD]="-w";
 	short_opts[INITIAL_DB]="-D";
+	short_opts[SILENT]="-s";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -187,13 +226,14 @@ the need to load them on graphical interface. All available exporting\n\
 modes are described below.") << endl;
 	out << endl;
 	out << trUtf8("Options: ") << endl;
-	out << trUtf8("   %1, %2=[FILE]\t Input model file (.dbm).").arg(short_opts[INPUT]).arg(INPUT) << endl;
-	out << trUtf8("   %1, %2=[FILE]\t Output file. Available only on export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
-	out << trUtf8("   %1, %2\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
-	out << trUtf8("   %1, %2\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
-	out << trUtf8("   %1, %2\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
+	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm).").arg(short_opts[INPUT]).arg(INPUT) << endl;
+	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Available only on export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
+	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
+	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
+	out << trUtf8("   %1, %2\t\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
 	out << trUtf8("   %1, %2\t\t Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
-	out << trUtf8("   %1, %2\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
+	out << trUtf8("   %1, %2\t\t\t Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
+	out << trUtf8("   %1, %2\t\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
 	out << endl;
 	out << trUtf8("PNG export options: ") << endl;
 	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
@@ -203,6 +243,7 @@ modes are described below.") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
 	out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
 	out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
+	out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
 	out << trUtf8("   %1, %2=[USER]\t\t PosrgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
 	out << trUtf8("   %1, %2=[PASSWORD]\t PosrgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
 	out << trUtf8("   %1, %2=[DBNAME]\t Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
@@ -217,6 +258,7 @@ void PgModelerCLI::parserOptions(map<QString, QString> &opts)
 	{
 		int mode_cnt=0;
 
+		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
 		mode_cnt+=opts.count(EXPORT_TO_PNG);
 		mode_cnt+=opts.count(EXPORT_TO_DBMS);
@@ -245,32 +287,48 @@ int PgModelerCLI::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-			out << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
-			out << trUtf8("Starting model export...") << endl;
-			out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
+			if(!silent_mode)
+			{
+				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
+				out << trUtf8("Starting model export...") << endl;
+				out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
+			}
 
+			//Create the systems objects on model before loading it
 			model->createSystemObjects(false);
+
+			//Load the model file
 			model->loadModel(parsed_opts[INPUT]);
 
+			//Export to PNG
 			if(parsed_opts.count(EXPORT_TO_PNG))
 			{
-				out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
+				if(!silent_mode)
+					out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
+
 				export_hlp.exportToPNG(scene, parsed_opts[OUTPUT],
 															 parsed_opts.count(SHOW_GRID) > 0,
 															 parsed_opts.count(SHOW_DELIMITERS) > 0);
 			}
+			//Export to SQL file
 			else if(parsed_opts.count(EXPORT_TO_FILE))
 			{
-				out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
+				if(!silent_mode)
+					out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
+
 				export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
 			}
+			//Export to DBMS
 			else
 			{
-				out << trUtf8("Export to DBMS: ") << parsed_opts[OUTPUT] << endl;
-				//export_hlp.exportToDBMS(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
+				if(!silent_mode)
+					out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
+
+				export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], !parsed_opts[IGNORE_DUPLICATES].isEmpty());
 			}
 
-			out << trUtf8("Export successfully ended!") << endl;
+			if(!silent_mode)
+				out << trUtf8("Export successfully ended!") << endl << endl;
 		}
 
 		return(0);
@@ -281,9 +339,12 @@ int PgModelerCLI::exec(void)
 	}
 }
 
-void PgModelerCLI::updateProgress(int, QString msg)
+void PgModelerCLI::updateProgress(int progress, QString msg)
 {
-	out << msg << endl;
+	if(progress > 0)
+		out << msg <<  "(" << progress << "%)" << endl;
+	else
+		out << msg << endl;
 }
 
 void PgModelerCLI::handleObjectAddition(BaseObject *object)

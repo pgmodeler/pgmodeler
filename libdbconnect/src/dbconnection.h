@@ -28,6 +28,7 @@
 
 #include "resultset.h"
 #include <map>
+#include <QRegExp>
 
 class DBConnection {
 	private:

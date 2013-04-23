@@ -9,7 +9,7 @@ DESTDIR = ../build
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
-LIBS += $$DESTDIR/lib/$$LIBUTIL \
+LIBS += $$DESTDIR/lib/$$LIBUTILS \
         $$DESTDIR/lib/$$LIBPARSERS \
         $$DESTDIR/lib/$$LIBDBCONNECT \
         $$DESTDIR/lib/$$LIBOBJRENDERER \

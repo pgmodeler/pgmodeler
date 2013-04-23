@@ -66,12 +66,23 @@ DBConnection::~DBConnection(void)
 
 void DBConnection::setConnectionParam(const QString &param, const QString &value)
 {
+	//Regexp used to validate the host address
+	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+
 	//Raise an error in case the param name is empty
 	if(param=="")
 		throw Exception(ERR_ASG_INV_CONN_PARAM, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	//Set the value to the specified param on the map and generates the connection string
-	connection_params[param]=value;
+	/* Set the value to the specified param on the map.
+
+	One special case is treated here, if user use the parameter SERVER_FQDN and the value
+	is a IP address, the method will assign the value to the SERVER_IP parameter */
+	if(param==PARAM_SERVER_FQDN && ip_regexp.exactMatch(value))
+		connection_params[DBConnection::PARAM_SERVER_IP]=value;
+	else
+		connection_params[param]=value;
+
+	//Updates the connection string
 	generateConnectionString();
 }
 

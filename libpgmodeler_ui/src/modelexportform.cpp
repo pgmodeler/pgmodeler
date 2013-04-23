@@ -119,7 +119,7 @@ void ModelExportForm::exportModel(void)
 			{
 				progress_lbl->setText(trUtf8("Initializing model export..."));
 				progress_lbl->repaint();
-				connect(&export_hlp, SIGNAL(s_objectExported(int,QString)), this, SLOT(updateProgress(int,QString)));
+				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 
 				//Exporting to sql file
 				if(export_to_file_rb->isChecked())

@@ -32,8 +32,10 @@ class ExportHelper: public QObject {
 	private:
 		Q_OBJECT
 
+		int progress, sql_gen_progress;
+
 	public:
-		ExportHelper(QObject *parent = 0) : QObject(parent){}
+		ExportHelper(QObject *parent = 0) : QObject(parent){ progress=0; }
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
@@ -50,6 +52,10 @@ class ExportHelper: public QObject {
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString object_id);
+
+	private slots:
+		//! \brief Updates the exporting progress with the internal progress of sql generation of objects
+		void updateProgress(int progress, QString object_id, unsigned);
 };
 
 #endif

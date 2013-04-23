@@ -6,7 +6,7 @@ DESTDIR = ../build
 
 INCLUDEPATH += ../main/src
 
-LIBS += $$DESTDIR/lib/$$LIBUTIL \
+LIBS += $$DESTDIR/lib/$$LIBUTILS \
         $$DESTDIR/lib/$$LIBPARSERS \
         $$DESTDIR/lib/$$LIBDBCONNECT \
         $$DESTDIR/lib/$$LIBOBJRENDERER \

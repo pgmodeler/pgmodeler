@@ -81,7 +81,7 @@ unix:LIB_EXT = so
 windows:LIB_EXT = dll
 macx:LIB_EXT = dylib
 
-SUBDIRS = libutil \
+SUBDIRS = libutils \
           libparsers \
           libdbconnect \
           libpgmodeler \
@@ -93,14 +93,14 @@ SUBDIRS = libutil \
 	  plugins/dummyplugin
 
 
-LIBUTIL=$${LIB_PREFIX}util.$${LIB_EXT}
+LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
 LIBPARSERS=$${LIB_PREFIX}parsers.$${LIB_EXT}
 LIBDBCONNECT=$${LIB_PREFIX}dbconnect.$${LIB_EXT}
 LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 
-QT += core gui #qt3support
+QT += core gui
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -108,7 +108,7 @@ UI_DIR = src
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
-               $$PWD/libutil/src \
+	       $$PWD/libutils/src \
                $$PWD/libdbconnect/src \
                $$PWD/libparsers/src \
                $$PWD/libpgmodeler/src \
@@ -121,15 +121,7 @@ pgmodeler.path = $$PWD/build/
 pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 
 unix {
- pgmodeler.files += start-pgmodeler.sh
-}
-
-macx {
- pgmodeler.files += start-pgmodeler-mac.sh
-}
-
-windows {
- pgmodeler.files += start-pgmodeler.bat
+ pgmodeler.files += pgmodeler.sh
 }
 
 INSTALLS += pgmodeler

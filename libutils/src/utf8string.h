@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libutil
+\ingroup libutils
 \class Utf8String
 \brief Implements a simple UTF-8 string creator. Since pgModeler handles a lot of UTF8 string mainly
 on internationalized error messages and the <code>QString::fromUtf8()</code> only works with the const char *

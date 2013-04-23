@@ -33,6 +33,7 @@
 #include "modelwidget.h"
 #include "exporthelper.h"
 #include "generalconfigwidget.h"
+#include "connectionsconfigwidget.h"
 
 class PgModelerCLI: public QApplication {
 	private:
@@ -47,6 +48,9 @@ class PgModelerCLI: public QApplication {
 		//Graphical scene used to export the model to png
 		ObjectsScene *scene;
 
+		//Stores the configured connection
+		DBConnection connection;
+
 		//Creates an standard out to handles QStrings
 		static QTextStream out;
 
@@ -58,6 +62,9 @@ class PgModelerCLI: public QApplication {
 
 		//Stores the parsed options names and values.
 		map<QString, QString> parsed_opts;
+
+		//Indicates if the cli must run in silent mode
+		bool silent_mode;
 
 		//Option names constants
 		static QString INPUT,
@@ -72,9 +79,11 @@ class PgModelerCLI: public QApplication {
 		IGNORE_DUPLICATES,
 		CONN_ALIAS,
 		HOST,
+		PORT,
 		USER,
 		PASSWD,
-		INITIAL_DB;
+		INITIAL_DB,
+		SILENT;
 
 		//Parsers the options and executes the action specified by them
 		void parserOptions(map<QString, QString> &parsed_opts);
@@ -95,7 +104,7 @@ class PgModelerCLI: public QApplication {
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int, QString msg);
+		void updateProgress(int progress, QString msg);
 };
 
 #endif

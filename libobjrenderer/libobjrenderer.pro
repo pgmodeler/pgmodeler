@@ -3,7 +3,7 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = objrenderer
 DESTDIR = ../build/lib
-LIBS += $$DESTDIR/$$LIBUTIL \
+LIBS += $$DESTDIR/$$LIBUTILS \
         $$DESTDIR/$$LIBPARSERS \
         $$DESTDIR/$$LIBPGMODELER
 

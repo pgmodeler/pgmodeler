@@ -4,7 +4,7 @@ TEMPLATE = lib
 TARGET = pgmodeler
 DESTDIR = ../build/lib
 
-LIBS += $$DESTDIR/$$LIBUTIL \
+LIBS += $$DESTDIR/$$LIBUTILS \
         $$DESTDIR/$$LIBPARSERS
 
 HEADERS += $$PWD/src/textbox.h \

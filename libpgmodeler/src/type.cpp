@@ -202,7 +202,7 @@ void Type::setConfiguration(unsigned conf)
 
 void Type::setFunction(unsigned func_id, Function *func)
 {
-	unsigned param_count;
+	unsigned param_count=0;
 	LanguageType lang;
 	lang=LanguageType::c;
 	unsigned funcs_len=sizeof(functions)/sizeof(Function *);

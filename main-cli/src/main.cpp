@@ -39,8 +39,9 @@ int main(int argc, char **argv)
 	}
 	catch(Exception &e)
 	{
+		out << endl;
 		out << e.getExceptionsText();
-		out << "** pgmodeler-cli aborted due critical error(s). **\n";
+		out << "** pgmodeler-cli aborted due to critical error(s). **" << endl << endl;
 		return(e.getErrorType()==ERR_CUSTOM ? -1 : e.getErrorType());
 	}
 }

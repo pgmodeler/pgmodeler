@@ -60,13 +60,17 @@ QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_92;
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
-	if(pgsql_ver < PGSQL_VERSION_90 || pgsql_ver > PGSQL_VERSION_92)
+	if(!pgsql_ver.isEmpty() &&
+		 (pgsql_ver < PGSQL_VERSION_90 || pgsql_ver > PGSQL_VERSION_92))
 		throw Exception(Exception::getErrorMessage(ERR_INV_POSTGRESQL_VERSION)
 										.arg(pgsql_ver)
 										.arg(PGSQL_VERSION_90 + ", " + PGSQL_VERSION_91 + ", " + PGSQL_VERSION_92),
 										ERR_INV_POSTGRESQL_VERSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	SchemaParser::pgsql_version=pgsql_version;
+	if(!pgsql_ver.isEmpty())
+		SchemaParser::pgsql_version=pgsql_ver;
+	else
+		SchemaParser::pgsql_version=PGSQL_VERSION_92;
 }
 
 QString SchemaParser::getPgSQLVersion(void)

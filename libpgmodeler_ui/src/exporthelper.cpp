@@ -5,15 +5,23 @@ void ExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename,
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+
 	try
 	{
+		progress=sql_gen_progress=0;
 		SchemaParser::setPgSQLVersion(pgsql_ver);
+		emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 version code generation...").arg(SchemaParser::getPgSQLVersion()));
+		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
 	}
 	catch(Exception &e)
 	{
+		disconnect(db_model, NULL, this, NULL);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+
+	disconnect(db_model, NULL, this, NULL);
 }
 
 void ExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
@@ -69,7 +77,7 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 	DBConnection new_db_conn;
 	unsigned i, count;
 	bool db_created=false;
-	int objs_idx[]={-1, -1}, progress=0;
+	int objs_idx[]={-1, -1};
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=NULL;
 	vector<Exception> errors;
@@ -90,8 +98,11 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+
 	try
 	{
+		progress=sql_gen_progress=0;
 		conn.connect();
 
 		//Retrive the DBMS version in order to generate the correct code
@@ -99,9 +110,18 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())
+		{
 			SchemaParser::setPgSQLVersion(pgsql_ver);
+			emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1...").arg(pgsql_ver));
+		}
 		else
+		{
 			SchemaParser::setPgSQLVersion(version);
+			emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected...").arg(version));
+		}
+
+		if(ignore_dup)
+			emit s_progressUpdated(progress, trUtf8("Ignoring object duplication error..."));
 
 		//Creates the roles and tablespaces separately from the other objects
 		for(type_id=0; type_id < 2; type_id++)
@@ -176,6 +196,8 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 		/* Extract each SQL command from the buffer and execute them separately. This is done
 			 to permit the user, in case of error, identify what object is wrongly configured. */
 		ts.setString(&sql_buf);
+		i=1;
+		progress+=(sql_gen_progress/progress);
 
 		while(!ts.atEnd())
 		{
@@ -194,8 +216,8 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 						new_db_conn.executeDDLCommand(sql_cmd);
 
 					sql_cmd.clear();
-					progress+=(i/static_cast<float>(count)) * 10;
-					emit s_progressUpdated(progress,
+					i++;
+					emit s_progressUpdated(progress + (i/progress),
 																 trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(db_model->getName())));
 				}
 			}
@@ -210,10 +232,13 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 					errors.push_back(e);
 			}
 		}
+
+		disconnect(db_model, NULL, this, NULL);
 	}
 	catch(Exception &e)
 	{
 		QString drop_cmd=QString("DROP %1 %2;");
+		disconnect(db_model, NULL, this, NULL);
 
 		//In case of error during the export all created object are removed
 		if(db_created || objs_idx[0] >= 0 || objs_idx[1] >= 0)
@@ -253,4 +278,12 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 			throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 		}
 	}
+}
+
+void ExportHelper::updateProgress(int prog, QString object_id, unsigned)
+{
+	int aux_prog=progress + (prog/progress);
+	sql_gen_progress=prog;
+	if(aux_prog > 100) aux_prog=100;
+	emit s_progressUpdated(aux_prog, object_id);
 }
