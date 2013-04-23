@@ -386,6 +386,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the previous schema name must be informed in order to rename the types correctly */
 		void validateSchemaRenaming(Schema *schema, const QString &prev_sch_name);
 
+		/*! \brief Creates the system objects: public schema and languages C, SQL and plpgsql. This method ignores one of these
+		objects if some of them already exists */
+		void createSystemObjects(bool create_public);
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *objeto);
@@ -394,7 +398,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void s_objectRemoved(BaseObject *objeto);
 
 		//! \brief Signal emitted when an object is created from a xml code
-		void s_objectLoaded(int progresso, QString object_id, unsigned id_icone);
+		void s_objectLoaded(int progress, QString object_id, unsigned icon_id);
 };
 
 #endif

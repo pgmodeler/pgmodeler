@@ -89,8 +89,8 @@ SUBDIRS = libutil \
           libpgmodeler_ui \
           crashhandler \
 	  main \
-	  plugins/dummyplugin #\
-	  #tests
+	  main-cli \
+	  plugins/dummyplugin
 
 
 LIBUTIL=$${LIB_PREFIX}util.$${LIB_EXT}

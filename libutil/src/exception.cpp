@@ -216,6 +216,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_TRIG_USING_CONSTRIG_ATRIBS",QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 	{"ERR_REF_FUNCTION_INV_TYPE_CONF", QT_TR_NOOP("Reference to a function id which is incompatible whit the user define type configuration!")},
 	{"ERR_ASG_INV_OPCLASS_OBJ", QT_TR_NOOP("The operator class assigned to the object '%1' (%2) must use 'btree' as indexing method!")},
+	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Invalid PostgreSQL version '%1' assigned to the schema parser! Valid versions are: %2")},
 };
 
 Exception::Exception(void)

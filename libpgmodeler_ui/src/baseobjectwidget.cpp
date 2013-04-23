@@ -333,7 +333,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION);
+	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX);
 
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&

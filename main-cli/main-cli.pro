@@ -1,13 +1,10 @@
 include(../pgmodeler.pro)
 
 TEMPLATE = app
-TARGET = pgmodeler
+TARGET = pgmodeler-cli
 DESTDIR = ../build
 
-#QMAKE_CXXFLAGS += -Wl,-rdynamic
-
-windows:RC_FILE=res/windows_ico.qrc
-windows:RCC_DIR=src/
+INCLUDEPATH += ../main/src
 
 LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPARSERS \
@@ -16,5 +13,7 @@ LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPGMODELER \
         $$DESTDIR/lib/$$LIBPGMODELERUI
 
-HEADERS += $$PWD/src/application.h
-SOURCES += $$PWD/src/main.cpp
+SOURCES += $$PWD/src/main.cpp \
+	   $$PWD/src/pgmodelercli.cpp
+
+HEADERS += $$PWD/src/pgmodelercli.h

@@ -44,11 +44,6 @@ const QString SchemaParser::TOKEN_META_TB="tb";
 const QString SchemaParser::TOKEN_META_OB="ob";
 const QString SchemaParser::TOKEN_META_CB="cb";
 
-const QString SchemaParser::PGSQL_VERSION_80="8.0";
-const QString SchemaParser::PGSQL_VERSION_81="8.1";
-const QString SchemaParser::PGSQL_VERSION_82="8.2";
-const QString SchemaParser::PGSQL_VERSION_83="8.3";
-const QString SchemaParser::PGSQL_VERSION_84="8.4";
 const QString SchemaParser::PGSQL_VERSION_90="9.0";
 const QString SchemaParser::PGSQL_VERSION_91="9.1";
 const QString SchemaParser::PGSQL_VERSION_92="9.2";
@@ -63,8 +58,14 @@ bool SchemaParser::ignore_unk_atribs=false;
 
 QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_92;
 
-void SchemaParser::setPgSQLVersion(const QString &pgsql_version)
+void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
+	if(pgsql_ver < PGSQL_VERSION_90 || pgsql_ver > PGSQL_VERSION_92)
+		throw Exception(Exception::getErrorMessage(ERR_INV_POSTGRESQL_VERSION)
+										.arg(pgsql_ver)
+										.arg(PGSQL_VERSION_90 + ", " + PGSQL_VERSION_91 + ", " + PGSQL_VERSION_92),
+										ERR_INV_POSTGRESQL_VERSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	SchemaParser::pgsql_version=pgsql_version;
 }
 

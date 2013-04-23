@@ -113,6 +113,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		void selectObject(void);
 		void showObjectMenu(void);
 		void editObject(void);
+		void collapseAll(void);
 
 	signals:
 		void s_visibilityChanged(BaseObject *,bool);

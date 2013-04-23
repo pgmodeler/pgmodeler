@@ -36,7 +36,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=197;
+const int ERROR_COUNT=198;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -247,7 +247,8 @@ enum ErrorType {
 	ERR_ASG_COLUMN_NO_PARENT,
 	ERR_TRIG_USING_CONSTRIG_ATRIBS,
 	ERR_REF_FUNCTION_INV_TYPE_CONF,
-	ERR_ASG_INV_OPCLASS_OBJ
+	ERR_ASG_INV_OPCLASS_OBJ,
+	ERR_INV_POSTGRESQL_VERSION
 };
 
 class Exception {

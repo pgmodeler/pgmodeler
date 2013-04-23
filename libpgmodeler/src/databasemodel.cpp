@@ -7324,3 +7324,34 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 		list.pop_back();
 	}
 }
+
+
+void DatabaseModel::createSystemObjects(bool create_public)
+{
+	Schema *public_sch=NULL;
+	Language *lang=NULL;
+	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
+
+
+	/* The particular case is for public schema that is created only when the flag
+	is set. This because the public schema is written on model file even being
+	a system object. This strategy permits the user controls the schema rectangle behavior */
+	if(create_public && getObjectIndex("public", OBJ_SCHEMA) < 0)
+	{
+		public_sch=new Schema;
+		public_sch->setName("public");
+		public_sch->setSystemObject(true);
+		addObject(public_sch);
+	}
+
+	for(unsigned i=0; i < sizeof(lang_types)/sizeof(LanguageType); i++)
+	{
+		if(getObjectIndex(~LanguageType(lang_types[i]), OBJ_LANGUAGE) < 0)
+		{
+			lang=new Language;
+			lang->BaseObject::setName(~LanguageType(lang_types[i]));
+			lang->setSystemObject(true);
+			addObject(lang);
+		}
+	}
+}

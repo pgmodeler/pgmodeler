@@ -73,6 +73,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 
 	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject(void)));
 	connect(objectslist_tbw,SIGNAL(itemPressed(QTableWidgetItem*)),this, SLOT(selectObject(void)));
+	connect(expand_all_tb, SIGNAL(clicked(void)), objectstree_tw, SLOT(expandAll(void)));
+	connect(collapse_all_tb, SIGNAL(clicked(void)), this, SLOT(collapseAll(void)));
 
 	if(!simplified_view)
 	{
@@ -269,6 +271,18 @@ void ModelObjectsWidget::changeObjectsView(void)
 		if(!options_tb->isChecked())
 			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
 	}
+
+	expand_all_tb->setEnabled(tree_view_tb->isChecked());
+	collapse_all_tb->setEnabled(tree_view_tb->isChecked());
+}
+
+void ModelObjectsWidget::collapseAll(void)
+{
+	QTreeWidgetItem *root=objectstree_tw->topLevelItem(0);
+	objectstree_tw->collapseAll();
+
+	if(root)
+		root->setExpanded(true);
 }
 
 void ModelObjectsWidget::updateObjectsView(void)

@@ -130,15 +130,8 @@ class SchemaParser {
 
 	public:
 
-		/*! \brief Constants used to refernce PostgreSQL versions. Created for convenience only
-		 because the versions will be detected by the presence of directories versions
-		 within the schemas directory */
-		static const QString  PGSQL_VERSION_80,
-													PGSQL_VERSION_81,
-													PGSQL_VERSION_82,
-													PGSQL_VERSION_83,
-													PGSQL_VERSION_84,
-													PGSQL_VERSION_90,
+		//! \brief Constants used to refernce PostgreSQL versions.
+		static const QString  PGSQL_VERSION_90,
 													PGSQL_VERSION_91,
 													PGSQL_VERSION_92;
 
@@ -150,7 +143,7 @@ class SchemaParser {
 		 the definition of the objects. This function should always be called at
 		 software startup or when the user wants to change the default version
 		 of the database */
-		static void setPgSQLVersion(const QString &db_version);
+		static void setPgSQLVersion(const QString &pgsql_ver);
 
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL

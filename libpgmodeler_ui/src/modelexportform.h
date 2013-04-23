@@ -28,11 +28,13 @@
 #include "ui_modelexportform.h"
 #include "schemaparser.h"
 #include "modelwidget.h"
+#include "exporthelper.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 
+		//! \brief Stores the model widget which will be exported
 		ModelWidget *model;
 
 	public:
@@ -46,7 +48,8 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void enableExportType(void);
 		void exportModel(void);
 		void selectOutputFile(void);
-		void hideExportProgress(void);
+		void hideProgress(void);
+		void updateProgress(int progress, QString msg);
 };
 
 #endif
