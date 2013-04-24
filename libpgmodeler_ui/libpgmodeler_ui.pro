@@ -175,5 +175,4 @@ FORMS += $$PWD/ui/mainwindow.ui \
          $$PWD/ui/pluginsconfigwidget.ui \
          $$PWD/ui/schemawidget.ui \
 	 $$PWD/ui/collationwidget.ui \
-	 $$PWD/ui/elementswidget.ui \
-	 $$PWD/ui/modelvalidationwidget.ui
+	 $$PWD/ui/elementswidget.ui
