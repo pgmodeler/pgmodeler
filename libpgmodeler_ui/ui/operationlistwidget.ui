@@ -13,6 +13,18 @@
     <height>304</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>

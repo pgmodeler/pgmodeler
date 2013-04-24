@@ -406,7 +406,7 @@ void Trigger::validateTrigger(void)
 		else
 		{
 			if(firing_type!=FiringType::after && !is_exec_per_row)
-				throw Exception(ERR_VIEW_TRIG_INV_AFTBFR_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ERR_CONST_TRIG_NOT_AFTER_ROW,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }

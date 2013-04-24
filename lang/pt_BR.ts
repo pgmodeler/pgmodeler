@@ -34,7 +34,7 @@
 The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
 
 Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
-        <translation>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+        <translation type="obsolete">Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
 O projeto pgModeler trata de uma ferramenta CASE para a criação de modelos de bancos de dados relacionais para o SGDB PostgreSQL através do uso de técnicas de modelagem de diagramas entidade-relacionamento, como também mesclando conceitos implementados pelo próprio PostgreSQL.
 
@@ -51,6 +51,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <source>Version %1</source>
         <translation>Versão %1</translation>
+    </message>
+    <message>
+        <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+
+The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -333,6 +339,10 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <source>Underline</source>
         <translation>Sublinhado</translation>
     </message>
+    <message>
+        <source>View: Extended attributes box</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Application</name>
@@ -493,6 +503,21 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <source>Parameter</source>
         <translation>Parâmetro</translation>
     </message>
+    <message>
+        <source>Collation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type Attribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>new_object</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>BaseObjectWidget</name>
@@ -526,7 +551,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Permissions:</source>
-        <translation>Permissões:</translation>
+        <translation type="obsolete">Permissões:</translation>
     </message>
     <message>
         <source>Edit Permissions</source>
@@ -550,7 +575,38 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation>O(s) campo(s) ou valor(es) destacado(s) no formulário é(são) de uso exclusivo e/ou obrigatório em versões específicas do PostgreSQL. O não preenchimento do(s) mesmo(s) pode ocasionar erros na geração de código SQL de cada versão indicada nas dicas de ferramenta dos campos destacados.</translation>
+        <translation type="obsolete">O(s) campo(s) ou valor(es) destacado(s) no formulário é(são) de uso exclusivo e/ou obrigatório em versões específicas do PostgreSQL. O não preenchimento do(s) mesmo(s) pode ocasionar erros na geração de código SQL de cada versão indicada nas dicas de ferramenta dos campos destacados.</translation>
+    </message>
+    <message>
+        <source>Edit permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disables the generated SQL code using comment tokens (--)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable SQL code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required field. Leaving this empty will raise errors!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on field&apos;s tooltips pgModeler will ignore it&apos;s values.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BaseRelationship</name>
+    <message>
+        <source>rel_%1_%2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -750,6 +806,37 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <source>-- SQL code unavailable for this type of object --</source>
         <translation type="obsolete">-- Código SQL não disponível para este tipo de objeto. --</translation>
+    </message>
+</context>
+<context>
+    <name>CollationWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locale:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encoding:</source>
+        <translation type="unfinished">Codificação:</translation>
+    </message>
+    <message>
+        <source>LC_COLLATE:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LC_CTYPE:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The fields &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; are mutually exclusive, so you have to set only one of them in order to properly handle a collation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not defined</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1469,7 +1556,19 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
-        <translation>Colunas as quais foram incluídas por relacionamento não podem ser adicionadas/removidas  manualmente das chaves-primárias. Caso isso ocorra tais alterações serão ignoradas. Para criar chaves-primárias  usando colunas incluídas por relacionamentos utilize o recurso de atributos, restrições e chave-primária no formulário de edição relacionamentos.</translation>
+        <translation type="obsolete">Colunas as quais foram incluídas por relacionamento não podem ser adicionadas/removidas  manualmente das chaves-primárias. Caso isso ocorra tais alterações serão ignoradas. Para criar chaves-primárias  usando colunas incluídas por relacionamentos utilize o recurso de atributos, restrições e chave-primária no formulário de edição relacionamentos.</translation>
+    </message>
+    <message>
+        <source>No inherit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exclude Elements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes &amp; constraints tab or primary key tab on the relationship form.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1545,16 +1644,16 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Codificação Destino:</translation>
     </message>
     <message>
-        <source>Conversion Function:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Default Conversion:</source>
         <translation>Conversão Padrão:</translation>
     </message>
     <message>
         <source>The function to be assigned to an encoding conversion must have the following signature: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</source>
         <translation>A função a ser atribuída a uma conversão de codificação deve possuir a seguinte assinatura:                                    &lt;em&gt;void funcao(integer, integer, cstring, internal, integer)&lt;/em&gt;.</translation>
+    </message>
+    <message>
+        <source>Conversion Func.:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1716,6 +1815,89 @@ Tamanho: %2 bytes
     <message>
         <source>Not Null:</source>
         <translation type="obsolete">Não Nulo:</translation>
+    </message>
+</context>
+<context>
+    <name>ElementsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column:</source>
+        <translation type="unfinished">Coluna:</translation>
+    </message>
+    <message>
+        <source>Expression:</source>
+        <translation type="unfinished">Expressão:</translation>
+    </message>
+    <message>
+        <source>Collation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator Class:</source>
+        <translation type="unfinished">Classe Operadores:</translation>
+    </message>
+    <message>
+        <source>Operator:</source>
+        <translation type="unfinished">Operador:</translation>
+    </message>
+    <message>
+        <source>Sorting:</source>
+        <translation type="unfinished">Ordenação: </translation>
+    </message>
+    <message>
+        <source>Ascending</source>
+        <translation type="unfinished">Ascendente</translation>
+    </message>
+    <message>
+        <source>Descending</source>
+        <translation type="unfinished">Descendente</translation>
+    </message>
+    <message>
+        <source>Nulls first</source>
+        <translation type="unfinished">Nulos primeiro</translation>
+    </message>
+    <message>
+        <source>Element</source>
+        <translation type="unfinished">Elemento</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Tipo</translation>
+    </message>
+    <message>
+        <source>Operator Class</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorting</source>
+        <translation type="unfinished">Ordenação</translation>
+    </message>
+    <message>
+        <source>Nulls First</source>
+        <translation type="unfinished">Nulos Primeiro</translation>
+    </message>
+    <message>
+        <source>Collation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator</source>
+        <translation type="unfinished">Operador</translation>
+    </message>
+    <message>
+        <source>Expression</source>
+        <translation type="unfinished">Expressão</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Sim</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Não</translation>
     </message>
 </context>
 <context>
@@ -2444,583 +2626,471 @@ Mensagem retornada pelo SGBD: %1</translation>
     <name>Exception</name>
     <message>
         <source>Insufficient memory space to allocate the object!</source>
-        <translation>Espaço em memória insuficiente para alocar o objeto!</translation>
+        <translation type="obsolete">Espaço em memória insuficiente para alocar o objeto!</translation>
     </message>
     <message>
         <source>Assignment of a pseudo-type to the type of the column!</source>
-        <translation>Atribuição de um pseudo-tipo ao tipo da coluna!</translation>
+        <translation type="obsolete">Atribuição de um pseudo-tipo ao tipo da coluna!</translation>
     </message>
     <message>
         <source>Zero length assignment!</source>
-        <translation>Atribuição de comprimento igual a zero!</translation>
+        <translation type="obsolete">Atribuição de comprimento igual a zero!</translation>
     </message>
     <message>
         <source>Assignment of a precision greater than the length of the type!</source>
-        <translation>Atribuição de precisão maior do que o comprimento do tipo!</translation>
+        <translation type="obsolete">Atribuição de precisão maior do que o comprimento do tipo!</translation>
     </message>
     <message>
         <source>Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!</source>
-        <translation>Atribuição de precisão inválida a um tipo time, timestamp ou interval. A precisão neste caso deve ser igual ou inferior a 6!</translation>
+        <translation type="obsolete">Atribuição de precisão inválida a um tipo time, timestamp ou interval. A precisão neste caso deve ser igual ou inferior a 6!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated column to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de coluna não alocada ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de coluna não alocada ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Reference to a column which index is out of the capacity of the column list!</source>
-        <translation>Referência a uma coluna com índice fora da capacidade da lista de colunas!</translation>
+        <translation type="obsolete">Referência a uma coluna com índice fora da capacidade da lista de colunas!</translation>
     </message>
     <message>
         <source>Assignment of not allocated object!</source>
-        <translation>Atribuição de um objeto não alocado!</translation>
+        <translation type="obsolete">Atribuição de um objeto não alocado!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated schema to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de um esquema não alocado ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de um esquema não alocado ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) has inconsistent configuration (invalid SQL/XML definition)!</source>
-        <translation>O objeto &apos;%1&apos; (%2) possui configuração inconsistente (definição SQL/XML inválida)!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) possui configuração inconsistente (definição SQL/XML inválida)!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) already exists in the list of elements of the same type in the object &apos;%3&apos; (%4)!</source>
-        <translation>O objeto &apos;%1&apos; (%2) já existente na lista de elementos desse mesmo tipo no objeto &apos;%3&apos; (%4)!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) já existente na lista de elementos desse mesmo tipo no objeto &apos;%3&apos; (%4)!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can&apos;t be assigned because there is already exists in the container object &apos;%3&apos;!</source>
-        <translation>O objeto &apos;%1&apos; (%2) não pode ser atribuído pois já existe no container de objetos &apos;%3&apos;!</translation>
-    </message>
-    <message>
-        <source>Assigning object of an invalid type!</source>
-        <translation></translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) não pode ser atribuído pois já existe no container de objetos &apos;%3&apos;!</translation>
     </message>
     <message>
         <source>Removing an object of an invalid type!</source>
-        <translation>Remoção de objeto de tipo inválido!</translation>
+        <translation type="obsolete">Remoção de objeto de tipo inválido!</translation>
     </message>
     <message>
         <source>Obtaining an object of an invalid type!</source>
-        <translation>Obtenção de um objeto com tipo inválido!</translation>
+        <translation type="obsolete">Obtenção de um objeto com tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of empty name to table return type!</source>
-        <translation>Atribuição de nome vazio ao tipo de retorno de tabela!</translation>
+        <translation type="obsolete">Atribuição de nome vazio ao tipo de retorno de tabela!</translation>
     </message>
     <message>
         <source>The insertion of the parameter &apos;%1&apos; will not be possible because there is another parameter with same name in the function &apos;%2&apos;!</source>
-        <translation>A inserção do parâmetro &apos;%1&apos; não será possível pois já existe outro parâmetro com mesmo nome na função &apos;%2&apos;!</translation>
+        <translation type="obsolete">A inserção do parâmetro &apos;%1&apos; não será possível pois já existe outro parâmetro com mesmo nome na função &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>The insertion of the table return type &apos;%1&apos; will not be possible because there is another return type with the same name in the &apos;%2&apos;!</source>
-        <translation>A inserção do tipo de retorno de tabela &apos;%1&apos; não será possível pois já existe outro tipo de retorno com mesmo nome na função &apos;%2&apos;!</translation>
-    </message>
-    <message>
-        <source>Reference to a parameter which index is out of the parameter list bounds!</source>
-        <translation></translation>
+        <translation type="obsolete">A inserção do tipo de retorno de tabela &apos;%1&apos; não será possível pois já existe outro tipo de retorno com mesmo nome na função &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>Reference to an event which does not belongs to trigger!</source>
-        <translation>Referência a um evento não pertecente ao gatilho!</translation>
-    </message>
-    <message>
-        <source>The column &apos;%1&apos; can&apos;t be assigned to the trigger &apos;%2&apos; because does not belongs to the trigger&apos;s parent table!</source>
-        <translation></translation>
+        <translation type="obsolete">Referência a um evento não pertecente ao gatilho!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated function to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de função não alocada ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de função não alocada ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of a function which return type is different from &apos;trigger&apos;!</source>
-        <translation>Atribuição de função com tipo de retorno diferente de &apos;trigger&apos;!</translation>
+        <translation type="obsolete">Atribuição de função com tipo de retorno diferente de &apos;trigger&apos;!</translation>
     </message>
     <message>
         <source>Assignment of a function which parameter count is invalid to the object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de função com número de parâmetros inválido ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de função com número de parâmetros inválido ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of a function which language is invalid!</source>
-        <translation>Atribuição de função com linguagem inválida!</translation>
+        <translation type="obsolete">Atribuição de função com linguagem inválida!</translation>
     </message>
     <message>
         <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de tabela não alocada ao objeto &apos;%1&apos; (%2)!</translation>
-    </message>
-    <message>
-        <source>Reference to an argument which index is out of argument list bounds!</source>
-        <translation></translation>
+        <translation type="obsolete">Atribuição de tabela não alocada ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Insertion of a column which name is already registered to another column of the object!</source>
-        <translation>Inserção de coluna com nome já registrado em outra coluna do objeto!</translation>
+        <translation type="obsolete">Inserção de coluna com nome já registrado em outra coluna do objeto!</translation>
     </message>
     <message>
         <source>Assignment of empty name to an object!</source>
-        <translation>Atribuição de nome vazio a um objeto!</translation>
+        <translation type="obsolete">Atribuição de nome vazio a um objeto!</translation>
     </message>
     <message>
         <source>Assignment of invalid name to an object!</source>
-        <translation>Atribuição de nome inválido a um objeto!</translation>
+        <translation type="obsolete">Atribuição de nome inválido a um objeto!</translation>
     </message>
     <message>
         <source>Assignment of schema object which type is invalid!</source>
-        <translation>Atribuição de um objeto esquema com tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de um objeto esquema com tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of tablespace object with invalid type!</source>
-        <translation>Atribuição de objeto espaço de tabela com tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de objeto espaço de tabela com tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of tablespace to an invalid object!</source>
-        <translation>Atribuição de um espaço de tabela a um objeto de tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de um espaço de tabela a um objeto de tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of tablespace to a constraint which type is invalid! To belong to a tablespace the constraint must be a primary key or unique!</source>
-        <translation>Atribuição de um objeto espaço de tabela a uma restrição de tipo inválido! A restrição deve ser uma chave-primária ou única para pode pertencer a um espaço de tabela!</translation>
+        <translation type="obsolete">Atribuição de um objeto espaço de tabela a uma restrição de tipo inválido! A restrição deve ser uma chave-primária ou única para pode pertencer a um espaço de tabela!</translation>
     </message>
     <message>
         <source>Assignment of owner object which type is invalid!</source>
-        <translation>Atribuição de um objeto papel com tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de um objeto papel com tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of owner to an invalid object!</source>
-        <translation>Atribuição de um dono a um objeto de tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de um dono a um objeto de tipo inválido!</translation>
     </message>
     <message>
         <source>Reference to a function with invalid type!</source>
-        <translation>Referência a uma função com tipo inválido!</translation>
+        <translation type="obsolete">Referência a uma função com tipo inválido!</translation>
     </message>
     <message>
         <source>Reference to an argument of the operator with invalid type!</source>
-        <translation>Referência a um argumento do operador com tipo inválido!</translation>
+        <translation type="obsolete">Referência a um argumento do operador com tipo inválido!</translation>
     </message>
     <message>
         <source>Reference to an operator with invalid type!</source>
-        <translation>Referência a um operador com tipo inválido!</translation>
-    </message>
-    <message>
-        <source>Assignment of value to an invalid option type on role!</source>
-        <translation></translation>
+        <translation type="obsolete">Referência a um operador com tipo inválido!</translation>
     </message>
     <message>
         <source>Reference to an invalid role type!</source>
-        <translation>Referência a um tipo de papel inválido!</translation>
+        <translation type="obsolete">Referência a um tipo de papel inválido!</translation>
     </message>
     <message>
         <source>The insertion of the role &apos;%1&apos; is not possible because this is already being referenced by role &apos;%2&apos;!</source>
-        <translation>A inserção do papel &apos;%1&apos; não será possível pois este já está sendo referenciado pelo papel &apos;%2&apos;!</translation>
-    </message>
-    <message>
-        <source>Reference redundancy detected by having the role &apos;%1&apos; referencing the role &apos;%2&apos;!</source>
-        <translation></translation>
+        <translation type="obsolete">A inserção do papel &apos;%1&apos; não será possível pois este já está sendo referenciado pelo papel &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>The role &apos;%1&apos; can not be listed as a member of itself!</source>
-        <translation>O papel &apos;%1&apos; não pode ser relacionado com um membro dele mesmo!</translation>
-    </message>
-    <message>
-        <source>Reference to a role which index is out of role list bounds!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Insertion of empty command to the rule!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Reference to a command which index is out of the command list bounds!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Is not possible to create a self generalization/copy relationship! The table can not inherit or copy their own attributes!</source>
-        <translation></translation>
+        <translation type="obsolete">O papel &apos;%1&apos; não pode ser relacionado com um membro dele mesmo!</translation>
     </message>
     <message>
         <source>Assignment of an object that already belongs to another table!</source>
-        <translation>Atribuição de um objeto o qual já pertence a outra tabela!</translation>
+        <translation type="obsolete">Atribuição de um objeto o qual já pertence a outra tabela!</translation>
     </message>
     <message>
         <source>Assignment of a schema to the sequence which differs from the schema of the owner table!</source>
-        <translation>Atribuição de esquema à seqüência o qual difere do esquema da tabela possuidora!</translation>
+        <translation type="obsolete">Atribuição de esquema à seqüência o qual difere do esquema da tabela possuidora!</translation>
     </message>
     <message>
         <source>Assignment of an invalid value to one of the sequence attributes!</source>
-        <translation>Atribuição de valor inválido a um dos atributos da seqüência!</translation>
+        <translation type="obsolete">Atribuição de valor inválido a um dos atributos da seqüência!</translation>
     </message>
     <message>
         <source>Assignment of a minimum value to the sequence which is greater than the maximum value!</source>
-        <translation>Atribuição de valor mínimo da seqüência maior do que o valor máximo!</translation>
-    </message>
-    <message>
-        <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values!</source>
-        <translation></translation>
+        <translation type="obsolete">Atribuição de valor mínimo da seqüência maior do que o valor máximo!</translation>
     </message>
     <message>
         <source>Assignment of a null increment value to the sequence!</source>
-        <translation>Atribuição de incremento de seqüência com valor nulo!</translation>
+        <translation type="obsolete">Atribuição de incremento de seqüência com valor nulo!</translation>
     </message>
     <message>
         <source>Assignment of null cache value to the sequence!</source>
-        <translation>Atribuição de cache de seqüência com valor nulo!</translation>
+        <translation type="obsolete">Atribuição de cache de seqüência com valor nulo!</translation>
     </message>
     <message>
         <source>Assignment of owner table which is not in the same schema as the sequence &apos;%1&apos;!</source>
-        <translation>Atribuição de tabela possuidora a qual não faz parte do mesmo esquema da seqüência &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de tabela possuidora a qual não faz parte do mesmo esquema da seqüência &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of owner table which does not belong to the same owner of the sequence &apos;%1&apos;!</source>
-        <translation>Atribuição de tabela possuidora a qual não pertence ao mesmo dono da seqüência  &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de tabela possuidora a qual não pertence ao mesmo dono da seqüência  &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of a nonexistent owner column to the sequence &apos;%1&apos;!</source>
-        <translation>Atribuição de coluna possuidora inexistente à seqüência &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de coluna possuidora inexistente à seqüência &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of an owner column to the sequence &apos;%1&apos; that is not related to any table!</source>
-        <translation>Atribuição de uma coluna possuidora a sequencia &apos;%1&apos; a qual não está relacionada a nenhuma tabela!</translation>
-    </message>
-    <message>
-        <source>Reference to a label which index is out of labels list bounds!</source>
-        <translation></translation>
+        <translation type="obsolete">Atribuição de uma coluna possuidora a sequencia &apos;%1&apos; a qual não está relacionada a nenhuma tabela!</translation>
     </message>
     <message>
         <source>Allocation of object with invalid type!</source>
-        <translation>Alocação de objeto com tipo inválido!</translation>
+        <translation type="obsolete">Alocação de objeto com tipo inválido!</translation>
     </message>
     <message>
         <source>Assignment of a function with invalid return type to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de função com tipo de retorno inválido ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de função com tipo de retorno inválido ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of a function with invalid parameter(s) type(s) to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de função com tipo de parâmetro(s) inválido(s) ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de função com tipo de parâmetro(s) inválido(s) ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of not allocated language!</source>
-        <translation>Atribuição de linguagem não alocada!</translation>
+        <translation type="obsolete">Atribuição de linguagem não alocada!</translation>
     </message>
     <message>
         <source>Assignment of language object which type is invalid!</source>
-        <translation>Atribuição de linguagem com tipo inválido!</translation>
+        <translation type="obsolete">Atribuição de linguagem com tipo inválido!</translation>
     </message>
     <message>
         <source>Reference to data type with an index outside the capacity of data types list!</source>
-        <translation>Referência a tipo de dado com índice fora da capacidade da lista de tipos de dados!</translation>
+        <translation type="obsolete">Referência a tipo de dado com índice fora da capacidade da lista de tipos de dados!</translation>
     </message>
     <message>
         <source>Assignment of a null type to to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de tipo nulo ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de tipo nulo ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of invalid type to the object!</source>
-        <translation>Atribuição de um tipo inválido ao objeto!</translation>
+        <translation type="obsolete">Atribuição de um tipo inválido ao objeto!</translation>
     </message>
     <message>
         <source>Assignment of an empty directory to object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de um diretório vazio ao objeto: &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de um diretório vazio ao objeto: &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Obtaining types with invalid quantity!</source>
-        <translation>Obtenção de tipos com quantidade inválida!</translation>
+        <translation type="obsolete">Obtenção de tipos com quantidade inválida!</translation>
     </message>
     <message>
         <source>Insertion of item which already exists in the attributes list of the type!</source>
-        <translation>Inserção de item já existente na lista de atibutos do tipo!</translation>
+        <translation type="obsolete">Inserção de item já existente na lista de atibutos do tipo!</translation>
     </message>
     <message>
         <source>Insertion of invalid item in the attributes list of the type!</source>
-        <translation>Inserção de item inválido na lista de atibutos do tipo!</translation>
+        <translation type="obsolete">Inserção de item inválido na lista de atibutos do tipo!</translation>
     </message>
     <message>
         <source>Insertion of item which already exists in the enumarations list of the type!</source>
-        <translation>Inserção de item já existente na lista de enumerações do tipo!</translation>
+        <translation type="obsolete">Inserção de item já existente na lista de enumerações do tipo!</translation>
     </message>
     <message>
         <source>Insertion of invalid item in the enumerations list of the type!</source>
-        <translation>Inserção de item inválido na lista de emumerações do tipo!</translation>
-    </message>
-    <message>
-        <source>Reference to an attribute which index is out of the attributes list bounds!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Reference to an enumeration which index is out of the enumerations list bounds!</source>
-        <translation></translation>
+        <translation type="obsolete">Inserção de item inválido na lista de emumerações do tipo!</translation>
     </message>
     <message>
         <source>Assignment of invalid configuration to the type!</source>
-        <translation>Atribuição de configuração inválida ao tipo!</translation>
+        <translation type="obsolete">Atribuição de configuração inválida ao tipo!</translation>
     </message>
     <message>
         <source>The data type &apos;%1&apos; can not be assigned because it already exists in the types list of the aggregate function &apos;%2&apos;!</source>
-        <translation>O tipo de dado &apos;%1&apos; não pode ser atribuído pois o mesmo já existente na lista de tipos da função de agregação &apos;%2&apos;!</translation>
-    </message>
-    <message>
-        <source>Assignment of an operator which input type count is invalid to aggregate function!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Assignment of an operator which types of arguments is invalid!</source>
-        <translation></translation>
+        <translation type="obsolete">O tipo de dado &apos;%1&apos; não pode ser atribuído pois o mesmo já existente na lista de tipos da função de agregação &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>Assignment of system reserved name to the object &apos;%1&apos; (%2)!</source>
-        <translation>Atribuição de nome reservado pelo sistema ao objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Atribuição de nome reservado pelo sistema ao objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>One function with invalid configuration is been used by the object &apos;%1&apos; (%2)!</source>
-        <translation>Uma função de configuração inválida está sendo usada pelo objeto &apos;%1&apos; (%2)!</translation>
+        <translation type="obsolete">Uma função de configuração inválida está sendo usada pelo objeto &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <source>Assignment of invalid id to the user!</source>
-        <translation>Atribuição de id de usuário inválido!</translation>
+        <translation type="obsolete">Atribuição de id de usuário inválido!</translation>
     </message>
     <message>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
-        <translation>Atribuição de valor inválido ao número de estratégia/suporte do elemento de classe de operadores!</translation>
+        <translation type="obsolete">Atribuição de valor inválido ao número de estratégia/suporte do elemento de classe de operadores!</translation>
     </message>
     <message>
         <source>Insertion of element which already exists in the element list!</source>
-        <translation>Inserção de elemento já existente na lista de elementos!</translation>
-    </message>
-    <message>
-        <source>Reference to an element which index is out of element list bounds!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Reference to an object which index is out of object list bounds!</source>
-        <translation></translation>
+        <translation type="obsolete">Inserção de elemento já existente na lista de elementos!</translation>
     </message>
     <message>
         <source>Removal of an object not allocated!</source>
-        <translation>Remoção de objeto não alocado!</translation>
+        <translation type="obsolete">Remoção de objeto não alocado!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be removed because it is being referenced by object &apos;%3&apos; (%4)!</source>
-        <translation>O objeto &apos;%1&apos; (%2) não pode ser removido pois está sendo referenciado pelo objeto &apos;%3&apos; (%4)!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) não pode ser removido pois está sendo referenciado pelo objeto &apos;%3&apos; (%4)!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be removed because it is being referenced by object &apos;%3&apos; (%4) that belongs to &apos;%5&apos; (%6)!</source>
-        <translation>O objeto &apos;%1&apos; (%2) não pode ser removido pois está sendo referenciado pelo objeto &apos;%3&apos; (%4) pertecente à &apos;%5&apos; (%6)!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) não pode ser removido pois está sendo referenciado pelo objeto &apos;%3&apos; (%4) pertecente à &apos;%5&apos; (%6)!</translation>
     </message>
     <message>
         <source>Operation with object(s) which type(s) is invalid!</source>
-        <translation>Operação com objeto(s) de tipo(s) inválido(s)!</translation>
+        <translation type="obsolete">Operação com objeto(s) de tipo(s) inválido(s)!</translation>
     </message>
     <message>
         <source>Reference to object with invalid type!</source>
-        <translation>Referência a um objeto com tipo inválido!</translation>
+        <translation type="obsolete">Referência a um objeto com tipo inválido!</translation>
     </message>
     <message>
         <source>Operation with object not allocated!</source>
-        <translation>Operação com objeto não alocado!</translation>
+        <translation type="obsolete">Operação com objeto não alocado!</translation>
     </message>
     <message>
         <source>The creation of the relationship &apos;%1&apos; between the table &apos;%2&apos; and &apos;%3&apos; can not be done because one does not have a primary key. If the relationship is of the type n-n both tables must have primary keys!</source>
-        <translation>A criação do relacionamento &apos;%1&apos; entre as tabela &apos;%2&apos; e &apos;%3&apos; não pode ser feito pois uma delas não possui uma chave primária. Caso o relacionamento seja do tipo n-n ambas as tabelas devem possuir chaves primárias!</translation>
+        <translation type="obsolete">A criação do relacionamento &apos;%1&apos; entre as tabela &apos;%2&apos; e &apos;%3&apos; não pode ser feito pois uma delas não possui uma chave primária. Caso o relacionamento seja do tipo n-n ambas as tabelas devem possuir chaves primárias!</translation>
     </message>
     <message>
         <source>The relationship of the type 1-1 where both tables are mandatory participation is not implemented because it requires fusion between the tables that breaks the modeling done by the user!</source>
-        <translation>O relacionamento do tipo 1-1 onde ambas as tabelas são de participação obrigatória não é implementado por necessitar de fusão entre tabelas o que quebra a modelagem feita pelo usuário!</translation>
+        <translation type="obsolete">O relacionamento do tipo 1-1 onde ambas as tabelas são de participação obrigatória não é implementado por necessitar de fusão entre tabelas o que quebra a modelagem feita pelo usuário!</translation>
     </message>
     <message>
         <source>Assignment of an invalid expression to the object!</source>
-        <translation>Atribuição de expressão inválida ao objeto!</translation>
+        <translation type="obsolete">Atribuição de expressão inválida ao objeto!</translation>
     </message>
     <message>
         <source>Assignment of a primary key to a table which already has one!</source>
-        <translation>Atribuição de chave primária à uma tabela a qual já possui uma!</translation>
-    </message>
-    <message>
-        <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Unable to create a copy relationship because the column &apos;%1&apos; in table &apos;%2&apos; already exists in table &apos;%3&apos;!</source>
-        <translation></translation>
+        <translation type="obsolete">Atribuição de chave primária à uma tabela a qual já possui uma!</translation>
     </message>
     <message>
         <source>Unable to create the generalization relationship because the column &apos;%1&apos; in table &apos;%2&apos; can not be merged with the column &apos;%3&apos; of table &apos;%4&apos; because they have incompatible types!</source>
-        <translation>Impossível criar o relacionamento de generalização pois a coluna &apos;%1&apos; da tabela &apos;%2&apos; não pode ser fundida com a coluna &apos;%3&apos; da tabela &apos;%4&apos; por serem de tipos incompatíveis!</translation>
-    </message>
-    <message>
-        <source>An attribute can not be added to a copy or generalization relationship!</source>
-        <translation></translation>
+        <translation type="obsolete">Impossível criar o relacionamento de generalização pois a coluna &apos;%1&apos; da tabela &apos;%2&apos; não pode ser fundida com a coluna &apos;%3&apos; da tabela &apos;%4&apos; por serem de tipos incompatíveis!</translation>
     </message>
     <message>
         <source>A foreign key can not be added to a relationship because is created automatically when this is connected!</source>
-        <translation>Uma chave estrangeira não pode ser adicionado a um relacionamento pois esta é criada automaticamente no momento da ligação do mesmo!</translation>
+        <translation type="obsolete">Uma chave estrangeira não pode ser adicionado a um relacionamento pois esta é criada automaticamente no momento da ligação do mesmo!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) is referencing the object &apos;%3&apos; (%4) which was not found in the list of objects of the same type in the model!</source>
-        <translation>O objeto &apos;%1&apos; (%2) está referenciando o objeto &apos;%3&apos; (%4) o qual não foi encontrado na lista de objetos de mesmo tipo no modelo!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) está referenciando o objeto &apos;%3&apos; (%4) o qual não foi encontrado na lista de objetos de mesmo tipo no modelo!</translation>
     </message>
     <message>
         <source>Reference to an user-defined data type that not exists in the model!</source>
-        <translation>Referência a tipo de dado definido pelo usuário o qual não existe no modelo!</translation>
+        <translation type="obsolete">Referência a tipo de dado definido pelo usuário o qual não existe no modelo!</translation>
     </message>
     <message>
         <source>Assignment of invalid maximum size to operation list!</source>
-        <translation>Atribuição de tamanho máximo inválido à lista de operações!</translation>
+        <translation type="obsolete">Atribuição de tamanho máximo inválido à lista de operações!</translation>
     </message>
     <message>
         <source>Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!</source>
-        <translation>Não foi possível salvar o arquivo %1! Certifique-se de que o diretório existe ou se o usuário tem permissão de acesso ao mesmo!</translation>
+        <translation type="obsolete">Não foi possível salvar o arquivo %1! Certifique-se de que o diretório existe ou se o usuário tem permissão de acesso ao mesmo!</translation>
     </message>
     <message>
         <source>Unable to write the model in the file %1 due to one or more errors in the definition generation process!</source>
-        <translation>Não foi possível gravar o modelo no arquivo %1 devido a um ou mais erros no processo de geração da definição do mesmo!</translation>
+        <translation type="obsolete">Não foi possível gravar o modelo no arquivo %1 devido a um ou mais erros no processo de geração da definição do mesmo!</translation>
     </message>
     <message>
         <source>There is already a relationship between &apos;%1&apos; (%2) and &apos;%3&apos; (%4) in the model!</source>
-        <translation>Já existe um relacionamento entre &apos;%1&apos; (%2) and &apos;%3&apos; (%4) no modelo!</translation>
-    </message>
-    <message>
-        <source>The configuration of the relationship &apos;%1&apos; generates a redundancy between the relationships &apos;%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
-        <translation></translation>
+        <translation type="obsolete">Já existe um relacionamento entre &apos;%1&apos; (%2) and &apos;%3&apos; (%4) no modelo!</translation>
     </message>
     <message>
         <source>One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!</source>
-        <translation>Um ou mais objetos foram invalidados e automaticamente removidos pois os mesmos referenciavam colunas de tabelas as quais foram incluídas através de relacionamentos e que deixaram de existir devido a desconexão ou exclusão dos relacionamentos geradores de tais colunas!</translation>
+        <translation type="obsolete">Um ou mais objetos foram invalidados e automaticamente removidos pois os mesmos referenciavam colunas de tabelas as quais foram incluídas através de relacionamentos e que deixaram de existir devido a desconexão ou exclusão dos relacionamentos geradores de tais colunas!</translation>
     </message>
     <message>
         <source>The primary key &apos;%1&apos; can only be allocated if declared within a block of code that defines a table or relationship!</source>
-        <translation>A chave-primária &apos;%1&apos; só pode ser alocada caso a mesma esteja declarada dentro de um bloco de código que define uma tabela ou relacionamento!</translation>
+        <translation type="obsolete">A chave-primária &apos;%1&apos; só pode ser alocada caso a mesma esteja declarada dentro de um bloco de código que define uma tabela ou relacionamento!</translation>
     </message>
     <message>
         <source>Reference to an invalid privilege type!</source>
-        <translation>Referência a um tipo de privilégio inválido!</translation>
-    </message>
-    <message>
-        <source>Insertion of a role which already exists in the role list of the permission!</source>
-        <translation></translation>
+        <translation type="obsolete">Referência a um tipo de privilégio inválido!</translation>
     </message>
     <message>
         <source>Assignment of privilege incompatible with the type of object referenced by permission!</source>
-        <translation>Atribuição de privilégio incompatível com o tipo do objeto referenciado pela permissão!</translation>
+        <translation type="obsolete">Atribuição de privilégio incompatível com o tipo do objeto referenciado pela permissão!</translation>
     </message>
     <message>
         <source>There is already a permission on object &apos;%1&apos; (%2) which has one or more equal roles from those present on permission to be assigned to the object!</source>
-        <translation>Já existe uma permissão sobre o objeto &apos;%1&apos; (%2) a qual possui um ou mais papéis iguais aos presentes na permissão a ser atribuída ao objeto!</translation>
+        <translation type="obsolete">Já existe uma permissão sobre o objeto &apos;%1&apos; (%2) a qual possui um ou mais papéis iguais aos presentes na permissão a ser atribuída ao objeto!</translation>
     </message>
     <message>
         <source>A permission is referencing the object &apos;%1&apos; (%2) which was not found in the model!</source>
-        <translation>Uma permissão está referenciando o objeto &apos;%1&apos; (%2) o qual não foi encontrado no modelo!</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be created because its not being assigned to any schema!</source>
-        <translation></translation>
+        <translation type="obsolete">Uma permissão está referenciando o objeto &apos;%1&apos; (%2) o qual não foi encontrado no modelo!</translation>
     </message>
     <message>
         <source>The tablespace &apos;%1&apos; can not be inserted into the model because it points to the same directory as the tablespace &apos;%2&apos;!</source>
-        <translation>O espaço de tabela &apos;%1&apos; não pode ser inserido no modelo pois o mesmo aponta para o mesmo diretório que o espaço de tabela &apos;%2&apos;!</translation>
+        <translation type="obsolete">O espaço de tabela &apos;%1&apos; não pode ser inserido no modelo pois o mesmo aponta para o mesmo diretório que o espaço de tabela &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>It is not possible to create arrays of domains or sequences (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</source>
-        <translation>Não é possível criar arrays de domínios ou sequências (dimensão &gt;= 1)! O PostgreSQL ainda não implementa esta funcionalidade!</translation>
+        <translation type="obsolete">Não é possível criar arrays de domínios ou sequências (dimensão &gt;= 1)! O PostgreSQL ainda não implementa esta funcionalidade!</translation>
     </message>
     <message>
         <source>The function &apos;%1&apos; can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!</source>
-        <translation>A função &apos;%1&apos; não pode receber um código-fonte como definição pois sua linguagem está definida como C. Os atributos símbolo e biblioteca dinâmica é que devem ser utilizados!</translation>
+        <translation type="obsolete">A função &apos;%1&apos; não pode receber um código-fonte como definição pois sua linguagem está definida como C. Os atributos símbolo e biblioteca dinâmica é que devem ser utilizados!</translation>
     </message>
     <message>
         <source>The function &apos;%1&apos; can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!</source>
-        <translation>A função &apos;%1&apos; só pode ter os atributos de símbolo e biblioteca configurados caso sua linguagem esteja definida como C. Para os demais casos é necessário especificar um código-fonte que a define o SGBD!</translation>
+        <translation type="obsolete">A função &apos;%1&apos; só pode ter os atributos de símbolo e biblioteca configurados caso sua linguagem esteja definida como C. Para os demais casos é necessário especificar um código-fonte que a define o SGBD!</translation>
     </message>
     <message>
         <source>The operator &apos;%1&apos; can not be assigned as a comutator of operator &apos;%2&apos; because it has incompatible settings!</source>
-        <translation>O operador &apos;%1&apos; não pode ser atribuído como comutador do operador &apos;%2&apos; pois possui configuração incompatível!</translation>
+        <translation type="obsolete">O operador &apos;%1&apos; não pode ser atribuído como comutador do operador &apos;%2&apos; pois possui configuração incompatível!</translation>
     </message>
     <message>
         <source>The operator &apos;%1&apos; can not be assigned as negator of operator &apos;%2&apos; because it has incompatible settings!</source>
-        <translation>O operador &apos;%1&apos; não pode ser atribuído como negador do operador &apos;%2&apos; pois possui configuração incompatível!</translation>
+        <translation type="obsolete">O operador &apos;%1&apos; não pode ser atribuído como negador do operador &apos;%2&apos; pois possui configuração incompatível!</translation>
     </message>
     <message>
         <source>The type &apos;%1&apos; can not self refer in the attributes &apos;element&apos; or &apos;copy type&apos; or be used as a data type of an attribute in the configuration of a composite type!</source>
-        <translation>O tipo &apos;%1&apos; não pode se referenciar nos atributos &apos;elemento&apos; ou &apos;tipo cópia&apos; ou ser usado como tipo de dado de um atributo na configuração de tipo composto!</translation>
+        <translation type="obsolete">O tipo &apos;%1&apos; não pode se referenciar nos atributos &apos;elemento&apos; ou &apos;tipo cópia&apos; ou ser usado como tipo de dado de um atributo na configuração de tipo composto!</translation>
     </message>
     <message>
         <source>Assignment of invalid element to type &apos;%1&apos;!</source>
-        <translation>Atribuição de elemento inválido ao tipo &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de elemento inválido ao tipo &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of invalid alignment to type &apos;%1&apos;!</source>
-        <translation>Atribuição de alinhamento inválido ao tipo &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de alinhamento inválido ao tipo &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of invalid name to the table generated from N-N relationship!</source>
-        <translation>Atribuição de nome inválido à tabela gerada por relacionamento N-N!</translation>
-    </message>
-    <message>
-        <source>The relationship &apos;%1&apos; can not make use of the special primary key. Only generalization/copy relationships have access to this resource!</source>
-        <translation></translation>
+        <translation type="obsolete">Atribuição de nome inválido à tabela gerada por relacionamento N-N!</translation>
     </message>
     <message>
         <source>Assignment of invalid suffix to the relationship &apos;%1&apos;!</source>
-        <translation>Atribuição de sufixo inválido ao relacionamento &apos;%1&apos;!</translation>
+        <translation type="obsolete">Atribuição de sufixo inválido ao relacionamento &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be edited or deleted because it was automatically included through a relationship! To manipulate the object is necessary to make it from the edit form of the relationship that holds it.</source>
-        <translation>O objeto &apos;%1&apos; (%2) não pode ser editado ou excluído por ter sido incluído automaticamente através de relacionamento! Para manipular o objeto é necessário fazê-lo a partir do formulário de edição do relacionamento que o detém.</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) não pode ser editado ou excluído por ter sido incluído automaticamente através de relacionamento! Para manipular o objeto é necessário fazê-lo a partir do formulário de edição do relacionamento que o detém.</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be deleted because it is protected!</source>
-        <translation>O objeto &apos;%1&apos; (%2) não pode ser excluído por estar protegido!</translation>
+        <translation type="obsolete">O objeto &apos;%1&apos; (%2) não pode ser excluído por estar protegido!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; has already been declared earlier!</source>
-        <translation>O grupo &apos;%1&apos; já foi declarado anteriormente!</translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; já foi declarado anteriormente!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; can not be built in the groups declaration block (&apos;%2&apos;)!</source>
-        <translation>O grupo &apos;%1&apos; não pode ser construído no bloco de declaração de grupos (&apos;%2&apos;)!</translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; não pode ser construído no bloco de declaração de grupos (&apos;%2&apos;)!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; was built but not declared in the groups declaration block (&apos;%2&apos;)!</source>
-        <translation>O grupo &apos;%1&apos; foi construído porém não declarado no bloco de declaração de grupos (&apos;%2&apos;)!</translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; foi construído porém não declarado no bloco de declaração de grupos (&apos;%2&apos;)!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; can not be built without possessing child elements!</source>
-        <translation>O grupo &apos;%1&apos; não pode ser construído sem possuir elementos filhos!</translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; não pode ser construído sem possuir elementos filhos!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; can not be built once more because this was done in previous blocks!</source>
-        <translation>O grupo &apos;%1&apos; não pode ser construído novamente pois já foi construído em blocos anteriores!</translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; não pode ser construído novamente pois já foi construído em blocos anteriores!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; has been declared but not built!</source>
-        <translation>O grupo &apos;%1&apos; foi declarado porém não construído!</translation>
-    </message>
-    <message>
-        <source>Reference to a column of the objects table with invalid index!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Reference to a row of the objects table with invalid index!</source>
-        <translation></translation>
+        <translation type="obsolete">O grupo &apos;%1&apos; foi declarado porém não construído!</translation>
     </message>
     <message>
         <source>The schema public and the languages plpgsql, c and sql can not be manipulated because they are reserved to PostgreSQL! They are present in the model database only as a reference!</source>
-        <translation>O esquema &apos;public&apos; e as linguagens &apos;plpgsql&apos;, &apos;c&apos; e &apos;sql&apos; não podem ser manipuladas por serem reservados ao PostgreSQL! Os mesmos estão presentes no modelo de banco de dados apenas como referência!</translation>
+        <translation type="obsolete">O esquema &apos;public&apos; e as linguagens &apos;plpgsql&apos;, &apos;c&apos; e &apos;sql&apos; não podem ser manipuladas por serem reservados ao PostgreSQL! Os mesmos estão presentes no modelo de banco de dados apenas como referência!</translation>
     </message>
     <message>
         <source>The new configuration function invalidates the object &apos;%1&apos; (%2)! In this case it is needed to undo the relationship between the affected object and function so that the new configuration of the latter to take effect!</source>
-        <translation>A nova configuração da função invalida o objeto &apos;%1&apos; (%2) o qual a referencia! Neste caso é necessário desfazer a relação entre o objeto afetado e a função para que a nova configuração desta última seja efetivada!</translation>
-    </message>
-    <message>
-        <source>A vision reference must have at least one SQL scope: SELECT, FROM, FROM-WHERE or After WHERE!</source>
-        <translation></translation>
+        <translation type="obsolete">A nova configuração da função invalida o objeto &apos;%1&apos; (%2) o qual a referencia! Neste caso é necessário desfazer a relação entre o objeto afetado e a função para que a nova configuração desta última seja efetivada!</translation>
     </message>
     <message>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
-        <translation>Restrições do tipo chave-primária, chave-estrangeira ou única devem possuir pelo menos uma coluna relacionada às mesmas! Para chaves-estrangeira devem ser selecionadas, adicionalmente, as colunas referenciadas!</translation>
+        <translation type="obsolete">Restrições do tipo chave-primária, chave-estrangeira ou única devem possuir pelo menos uma coluna relacionada às mesmas! Para chaves-estrangeira devem ser selecionadas, adicionalmente, as colunas referenciadas!</translation>
     </message>
     <message>
         <source>Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!</source>
-        <translation>Não foi possível carregar um ou mais arquivos de configuração! Por favor, cheque se os arquivos existem na pasta de configurações e se o mesmos não estão corrompidos para que este erro não se repita na próxima inicialização!</translation>
+        <translation type="obsolete">Não foi possível carregar um ou mais arquivos de configuração! Por favor, cheque se os arquivos existem na pasta de configurações e se o mesmos não estão corrompidos para que este erro não se repita na próxima inicialização!</translation>
     </message>
     <message>
         <source>Could not find the default settings file &apos;%1&apos;! To restore default settings check the existence of the file and try again!</source>
-        <translation>Não foi possível encontrar o arquivo de configurações padrão &apos;%1&apos;! Para restaurar as configurações padrão cheque a existência do referido arquivo e tente novamente!</translation>
+        <translation type="obsolete">Não foi possível encontrar o arquivo de configurações padrão &apos;%1&apos;! Para restaurar as configurações padrão cheque a existência do referido arquivo e tente novamente!</translation>
     </message>
     <message>
         <source>The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!
@@ -3028,7 +3098,7 @@ Mensagem retornada pelo SGBD: %1</translation>
 ** Executed SQL command: **
 
 %1</source>
-        <translation>O processo de exportação falhou devido a um erro disparado pelo servidor PostgreSQL na tentativa de execução de um comando SQL. Para obter mais detalhes sobre erro cheque a pilha de exceções!
+        <translation type="obsolete">O processo de exportação falhou devido a um erro disparado pelo servidor PostgreSQL na tentativa de execução de um comando SQL. Para obter mais detalhes sobre erro cheque a pilha de exceções!
 
 ** Comando SQL executado: **
 
@@ -3036,123 +3106,158 @@ Mensagem retornada pelo SGBD: %1</translation>
     </message>
     <message>
         <source>Could not load the plugin &apos;%1&apos; from the library &apos;%2&apos;! Message returned by plugin manager: &apos;%3&apos;</source>
-        <translation>Não foi possível carregar o plugin &apos;%1&apos; a partir da biblioteca &apos;%2&apos;! Mensagem retornada pelo gerenciador de plugins: &apos;%3&apos;</translation>
+        <translation type="obsolete">Não foi possível carregar o plugin &apos;%1&apos; a partir da biblioteca &apos;%2&apos;! Mensagem retornada pelo gerenciador de plugins: &apos;%3&apos;</translation>
     </message>
     <message>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation>Um ou mais plugins não foram ativados devido a erros no processo de carregamento! Verifique a pilha de exceções para mais detalhes.</translation>
+        <translation type="obsolete">Um ou mais plugins não foram ativados devido a erros no processo de carregamento! Verifique a pilha de exceções para mais detalhes.</translation>
     </message>
     <message>
         <source>Invalid syntax in file %1, line %2, column %3!</source>
-        <translation>Sintaxe inválida no arquivo %1, linha %2, coluna %3!</translation>
+        <translation type="obsolete">Sintaxe inválida no arquivo %1, linha %2, coluna %3!</translation>
     </message>
     <message>
         <source>Invalid conditional instruction &apos;%1&apos; on file %2, line %3, column %4!</source>
-        <translation>Instrução condicional &apos;%1&apos; inválida no arquivo %2, linha %3, coluna %4!</translation>
+        <translation type="obsolete">Instrução condicional &apos;%1&apos; inválida no arquivo %2, linha %3, coluna %4!</translation>
     </message>
     <message>
         <source>Unknown attribute &apos;%1&apos; in file %2, line %3, column %4!</source>
-        <translation>Atributo &apos;%1&apos; desconhecido no arquivo %2, linha %3, coluna %4!</translation>
+        <translation type="obsolete">Atributo &apos;%1&apos; desconhecido no arquivo %2, linha %3, coluna %4!</translation>
     </message>
     <message>
         <source>Invalid metacharacter &apos;%1&apos; in file %2, line %3, column %4!</source>
-        <translation>Metacaractere &apos;%1&apos; inválido no arquivo %2, linha %3, coluna %4!</translation>
+        <translation type="obsolete">Metacaractere &apos;%1&apos; inválido no arquivo %2, linha %3, coluna %4!</translation>
     </message>
     <message>
         <source>Attribute &apos;%1&apos; with an undefined value in file %2, line %3, column %4!</source>
-        <translation>Atributo &apos;%1&apos; com valor indefinido no arquivo %2, linha %3, coluna %4!</translation>
+        <translation type="obsolete">Atributo &apos;%1&apos; com valor indefinido no arquivo %2, linha %3, coluna %4!</translation>
     </message>
     <message>
         <source>Assignment of empty XML buffer to parser!</source>
-        <translation>Atribuição de buffer de código XML vazio ao parser!</translation>
+        <translation type="obsolete">Atribuição de buffer de código XML vazio ao parser!</translation>
     </message>
     <message>
         <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
-        <translation>Não foi possível acessar o arquivo ou diretório %1! Certifique-se de que o mesmo existe e o usuário possui permissões de acesso a ele!</translation>
+        <translation type="obsolete">Não foi possível acessar o arquivo ou diretório %1! Certifique-se de que o mesmo existe e o usuário possui permissões de acesso a ele!</translation>
     </message>
     <message>
         <source>Assignment of empty DTD file name!</source>
-        <translation>Atribuição de nome de arquivo DTD vazio!</translation>
+        <translation type="obsolete">Atribuição de nome de arquivo DTD vazio!</translation>
     </message>
     <message>
         <source>Assignment of empty name to the DTD declaration!</source>
-        <translation>Atribuição de nome vazio à declaração DTD!</translation>
+        <translation type="obsolete">Atribuição de nome vazio à declaração DTD!</translation>
     </message>
     <message>
         <source>Error while interpreting XML buffer at line %1 column %2.
 Message generated by the parser: &apos;%3&apos;. %4</source>
-        <translation>Erro ao interpretar buffer XML na linha %1 coluna %2.
+        <translation type="obsolete">Erro ao interpretar buffer XML na linha %1 coluna %2.
  Mensagem gerada pelo parser: &apos;%3&apos;. %4</translation>
     </message>
     <message>
         <source>Operation on unallocated element tree! It is necessary to load the XML parser buffer and interpret it so that the tree is generated!</source>
-        <translation>Operação sobre árvore de elementos não alocada! É necessário carregar o buffer XML do parser e interpretá-lo para que a árvore seja gerada!</translation>
+        <translation type="obsolete">Operação sobre árvore de elementos não alocada! É necessário carregar o buffer XML do parser e interpretá-lo para que a árvore seja gerada!</translation>
     </message>
     <message>
         <source>Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
-        <translation>Não foi possível carregar o arquivo %1. O mesmo parece estar inconsistente ou uma de suas dependências (arquivos DTD) possui erros ou está ausente!</translation>
+        <translation type="obsolete">Não foi possível carregar o arquivo %1. O mesmo parece estar inconsistente ou uma de suas dependências (arquivos DTD) possui erros ou está ausente!</translation>
     </message>
     <message>
         <source>Operation with unallocated tree element!</source>
-        <translation>Operação com elemento de árvore de elementos não alocado!</translation>
+        <translation type="obsolete">Operação com elemento de árvore de elementos não alocado!</translation>
     </message>
     <message>
         <source>Operation with element which does not exists in the element tree currently loaded!</source>
-        <translation>Operação com elemento o qual não faz parte da árvore de elementos carregada atualmente!</translation>
+        <translation type="obsolete">Operação com elemento o qual não faz parte da árvore de elementos carregada atualmente!</translation>
     </message>
     <message>
         <source>Assignment of a value to an invalid connection parameter!</source>
-        <translation>Atribuição de valor a um parâmetro de conexão inválido!</translation>
+        <translation type="obsolete">Atribuição de valor a um parâmetro de conexão inválido!</translation>
     </message>
     <message>
         <source>Operation on connection not established!</source>
-        <translation>Operação sobre conexão não estabelecida!</translation>
+        <translation type="obsolete">Operação sobre conexão não estabelecida!</translation>
     </message>
     <message>
         <source>Attempt to connect without define configuration parameters!</source>
-        <translation>Tentativa de conexão sem parâmetros de configuração definidos!</translation>
+        <translation type="obsolete">Tentativa de conexão sem parâmetros de configuração definidos!</translation>
     </message>
     <message>
         <source>Could not connect to the database.
 Message returned: &apos;%1&apos;</source>
-        <translation>Não foi possível estabelecer conexão com o banco de dados.
+        <translation type="obsolete">Não foi possível estabelecer conexão com o banco de dados.
 Mensagem retornada: &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Assignment of not allocated SQL command result!</source>
-        <translation>Atribuição de resultado de comando SQL não alocado!</translation>
+        <translation type="obsolete">Atribuição de resultado de comando SQL não alocado!</translation>
     </message>
     <message>
         <source>Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!</source>
-        <translation>Não foi possível alocar o resultado do comando SQL pois a resposta do SGBD não foi compreendida pelo cliente!</translation>
+        <translation type="obsolete">Não foi possível alocar o resultado do comando SQL pois a resposta do SGBD não foi compreendida pelo cliente!</translation>
     </message>
     <message>
         <source>Unable to allocate command result for the SQL because the server has generated a fatal error!
 Message returned by the DBMS: %1</source>
-        <translation>Não foi possível alocar o resultado do comando SQL pois o servidor gerou um erro fatal!
+        <translation type="obsolete">Não foi possível alocar o resultado do comando SQL pois o servidor gerou um erro fatal!
 Mensagem retornada pelo SGBD: %1</translation>
     </message>
     <message>
         <source>Unable to allocate the result of the SQL command because the command passed was an empty SQL!</source>
-        <translation>Não foi possível alocar o resultado do comando SQL pois o comando passado foi uma SQL vazia!</translation>
+        <translation type="obsolete">Não foi possível alocar o resultado do comando SQL pois o comando passado foi uma SQL vazia!</translation>
     </message>
     <message>
         <source>Reference to a column of tuple with invalid index!</source>
-        <translation>Referência à uma coluna da tupla com índice inválido!</translation>
+        <translation type="obsolete">Referência à uma coluna da tupla com índice inválido!</translation>
     </message>
     <message>
         <source>Reference to a column of tuple with invalid name!</source>
-        <translation>Referência à uma coluna da tupla com nome inválido!</translation>
+        <translation type="obsolete">Referência à uma coluna da tupla com nome inválido!</translation>
     </message>
     <message>
         <source>Reference to a tuple with index invalid or the result is empty (no tuples)!</source>
-        <translation>Referência à uma tupla com índice inválido ou o resultado está vazio (sem tuplas)!</translation>
+        <translation type="obsolete">Referência à uma tupla com índice inválido ou o resultado está vazio (sem tuplas)!</translation>
     </message>
     <message>
         <source>Could not execute the SQL command.
  Message returned: %1</source>
-        <translation>Não foi possível executar o comando SQL.
+        <translation type="obsolete">Não foi possível executar o comando SQL.
  Mensagem retornada: %1</translation>
+    </message>
+</context>
+<context>
+    <name>ExportHelper</name>
+    <message>
+        <source>PostgreSQL %1 version code generation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostgreSQL version detection overrided. Using version %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostgreSQL %1 server detected...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignoring object duplication error...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating object &apos;%1&apos; (%2)...</source>
+        <translation type="unfinished">Criando objeto &apos;%1&apos; (%2)...</translation>
+    </message>
+    <message>
+        <source>Creating database &apos;%1&apos;...</source>
+        <translation type="unfinished">Criando banco de dados &apos;%1&apos;...</translation>
+    </message>
+    <message>
+        <source>Connecting to database &apos;%1&apos;...</source>
+        <translation type="unfinished">Conectando ao banco de dados &apos;%1&apos;...</translation>
+    </message>
+    <message>
+        <source>Creating objects on database &apos;%1&apos;...</source>
+        <translation type="unfinished">Criando objetos No banco de dados &apos;%1&apos;...</translation>
     </message>
 </context>
 <context>
@@ -4182,63 +4287,63 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Column:</source>
-        <translation>Coluna:</translation>
+        <translation type="obsolete">Coluna:</translation>
     </message>
     <message>
         <source>Expression:</source>
-        <translation>Expressão:</translation>
+        <translation type="obsolete">Expressão:</translation>
     </message>
     <message>
         <source>Operator Class:</source>
-        <translation>Classe Operadores:</translation>
+        <translation type="obsolete">Classe Operadores:</translation>
     </message>
     <message>
         <source>Ascending</source>
-        <translation>Ascendente</translation>
+        <translation type="obsolete">Ascendente</translation>
     </message>
     <message>
         <source>Descending</source>
-        <translation>Descendente</translation>
+        <translation type="obsolete">Descendente</translation>
     </message>
     <message>
         <source>Nulls first</source>
-        <translation>Nulos primeiro</translation>
+        <translation type="obsolete">Nulos primeiro</translation>
     </message>
     <message>
         <source>Sorting:</source>
-        <translation>Ordenação: </translation>
+        <translation type="obsolete">Ordenação: </translation>
     </message>
     <message>
         <source>Element</source>
-        <translation>Elemento</translation>
+        <translation type="obsolete">Elemento</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipo</translation>
-    </message>
-    <message>
-        <source>Operator Class</source>
-        <translation></translation>
+        <translation type="obsolete">Tipo</translation>
     </message>
     <message>
         <source>Sorting</source>
-        <translation>Ordenação</translation>
+        <translation type="obsolete">Ordenação</translation>
     </message>
     <message>
         <source>Nulls First</source>
-        <translation>Nulos Primeiro</translation>
+        <translation type="obsolete">Nulos Primeiro</translation>
     </message>
     <message>
         <source>Expression</source>
-        <translation>Expressão</translation>
+        <translation type="obsolete">Expressão</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Sim</translation>
+        <translation type="obsolete">Sim</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Não</translation>
+        <translation type="obsolete">Não</translation>
+    </message>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished">Atributos</translation>
     </message>
 </context>
 <context>
@@ -4785,6 +4890,22 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <source>This action will open a web browser window! Want to proceed?</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ctrl+Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F10</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageBox</name>
@@ -4945,7 +5066,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Generating source code...</source>
-        <translation>Gerando código-fonte...</translation>
+        <translation type="obsolete">Gerando código-fonte...</translation>
     </message>
     <message>
         <source>Initializing model export...</source>
@@ -4957,19 +5078,19 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Creating object &apos;%1&apos; (%2)...</source>
-        <translation>Criando objeto &apos;%1&apos; (%2)...</translation>
+        <translation type="obsolete">Criando objeto &apos;%1&apos; (%2)...</translation>
     </message>
     <message>
         <source>Creating database &apos;%1&apos;...</source>
-        <translation>Criando banco de dados &apos;%1&apos;...</translation>
+        <translation type="obsolete">Criando banco de dados &apos;%1&apos;...</translation>
     </message>
     <message>
         <source>Connecting to database &apos;%1&apos;...</source>
-        <translation>Conectando ao banco de dados &apos;%1&apos;...</translation>
+        <translation type="obsolete">Conectando ao banco de dados &apos;%1&apos;...</translation>
     </message>
     <message>
         <source>Creating objects on database &apos;%1&apos;...</source>
-        <translation>Criando objetos No banco de dados &apos;%1&apos;...</translation>
+        <translation type="obsolete">Criando objetos No banco de dados &apos;%1&apos;...</translation>
     </message>
     <message>
         <source>Exporting process sucessfuly ended!</source>
@@ -5053,6 +5174,18 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>List view</source>
         <translation>Visão em lista</translation>
+    </message>
+    <message>
+        <source>Expands all items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapses all items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
     </message>
 </context>
 <context>
@@ -5180,10 +5313,6 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <translation>Recortar o(s) objeto(s) selecionado(s)</translation>
     </message>
     <message>
-        <source>Depend. / Refer.</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Displays objects that reference and that are dependent of the selected object</source>
         <translation>Exibe os objetos que referenciam e os que são dependência do objeto selecionado</translation>
     </message>
@@ -5289,7 +5418,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
-        <translation>ATENÇÃO: Remover vários objetos de uma só vez pode provocar invalidações irreversíveis de outros objetos no modelo. Tem certeza de que deseja excluir TODOS os objetos selecionados?</translation>
+        <translation type="obsolete">ATENÇÃO: Remover vários objetos de uma só vez pode provocar invalidações irreversíveis de outros objetos no modelo. Tem certeza de que deseja excluir TODOS os objetos selecionados?</translation>
     </message>
     <message>
         <source>Do you really want to delete the selected object?</source>
@@ -5302,6 +5431,18 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>Constraints</source>
         <translation>Restrições</translation>
+    </message>
+    <message>
+        <source>Dependencies</source>
+        <translation type="unfinished">Dependências</translation>
+    </message>
+    <message>
+        <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5962,7 +6103,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Elemente Type:</source>
-        <translation>Tipo de Elemento:</translation>
+        <translation type="obsolete">Tipo de Elemento:</translation>
     </message>
     <message>
         <source>Operator</source>
@@ -5990,11 +6131,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Recheck</source>
-        <translation>Rechecar</translation>
+        <translation type="obsolete">Rechecar</translation>
     </message>
     <message>
         <source>Family:</source>
-        <translation>Família:</translation>
+        <translation type="obsolete">Família:</translation>
     </message>
     <message>
         <source>Storage Type</source>
@@ -6019,6 +6160,18 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>No</source>
         <translation>Não</translation>
+    </message>
+    <message>
+        <source>Element Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Op. Family:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FOR ORDER BY</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6056,47 +6209,43 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Functions</source>
-        <translation>Funções</translation>
+        <translation type="obsolete">Funções</translation>
     </message>
     <message>
         <source>Join:</source>
         <translation>Junção:</translation>
     </message>
     <message>
-        <source>Constraint:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Operator:</source>
-        <translation>Operador:</translation>
+        <translation type="obsolete">Operador:</translation>
     </message>
     <message>
         <source>Operators</source>
-        <translation>Operadores</translation>
+        <translation type="obsolete">Operadores</translation>
     </message>
     <message>
         <source>Commutation:</source>
-        <translation>Comutação:</translation>
+        <translation type="obsolete">Comutação:</translation>
     </message>
     <message>
         <source>Negation:</source>
-        <translation>Negação:</translation>
+        <translation type="obsolete">Negação:</translation>
     </message>
     <message>
         <source>Sort (1):</source>
-        <translation>Ordenação (1):</translation>
+        <translation type="obsolete">Ordenação (1):</translation>
     </message>
     <message>
         <source>Sort (2):</source>
-        <translation>Ordenação (2):</translation>
+        <translation type="obsolete">Ordenação (2):</translation>
     </message>
     <message>
         <source>Less than:</source>
-        <translation>Menor que:</translation>
+        <translation type="obsolete">Menor que:</translation>
     </message>
     <message>
         <source>Greater then:</source>
-        <translation>Maior que:</translation>
+        <translation type="obsolete">Maior que:</translation>
     </message>
     <message>
         <source>Right Argument Type</source>
@@ -6109,6 +6258,26 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
         <translation>Para a criação de um operador unário é necessário especificar como &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt;                                     um de seus argumentos. Adicionalmente, a função que define o operador deve possuir apenas uma parâmetro                                     e este, por sua vez, deve ter o tipo de dado igual ao tipo de dado do argumento do operador unário.</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restrict:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Commutator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Negator:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator Func.:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6300,6 +6469,195 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>Id</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Disable SQL code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revoke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cascade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PgModelerCLI</name>
+    <message>
+        <source>Unrecognized option &apos;%1&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Value not specified for option &apos;%1&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Option &apos;%1&apos; does not accept values.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection aliased as &apos;%1&apos; was not found on configuration file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usage: pgmodeler-cli [OPTIONS]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> command line interface.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostgreSQL Database Modeler Project - pgmodeler.com.br</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copyright 2006-2013 Raphael A. Silva &lt;rkhaotix@gmail.com&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This tool provides a way to export pgModeler&apos;s database models without
+the need to load them on graphical interface. All available exporting
+modes are described below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[FILE]		 Input model file (.dbm).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[FILE]		 Output file. Available only on export to file or png.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Export to a sql script file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Export to a png image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Export directly to a PostgreSQL server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Version of generated SQL code. Only for file or dbms export.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2			 Silent execution. Only critical errors are shown during process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2			 Show this help menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PNG export options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Draws the grid on the exported png image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2	 Draws the page delimiters on the exported png image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DBMS export options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2	 Ignores errors related to duplicated objects that eventually exists on server side.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[ALIAS]	 Connection configuration alias to be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[HOST]		 PostgreSQL host which export will operate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[PORT]		 PostgreSQL host listening port.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[USER]		 PosrgreSQL username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[PASSWORD]	 PosrgreSQL user password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No export mode specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple export mode especified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No input file specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No output file specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input file must be different from output!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incomplete connection information!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starting model export...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading input file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to PNG image: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to SQL script file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to DBMS: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export successfully ended!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6493,13 +6851,6 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>SQL command</source>
         <translation type="obsolete">Comando SQL</translation>
-    </message>
-</context>
-<context>
-    <name>RelacionamentoBase</name>
-    <message>
-        <source>rel_%1_%2</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -6818,6 +7169,62 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <source>Receiver Table:</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Copy Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>INDEXES</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>COMMENTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>INCLUDING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DEFAULTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXCLUDING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CONSTRAINTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ALL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>STORAGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference Suffix:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table 1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Suffix:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table 2 </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RestricaoWidget</name>
@@ -6881,16 +7288,12 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <translation></translation>
     </message>
     <message>
-        <source>SysID:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Password:</source>
         <translation>Senha:</translation>
     </message>
     <message>
         <source>Validity:</source>
-        <translation>Validade:</translation>
+        <translation type="obsolete">Validade:</translation>
     </message>
     <message>
         <source>yyyy-MMM-dd hh:mm</source>
@@ -6914,7 +7317,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Create Database</source>
-        <translation>Criar Banco de Dados</translation>
+        <translation type="obsolete">Criar Banco de Dados</translation>
     </message>
     <message>
         <source>Can Login</source>
@@ -6922,11 +7325,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Create Users/Groups</source>
-        <translation>Criar Usuários/Grupos</translation>
+        <translation type="obsolete">Criar Usuários/Grupos</translation>
     </message>
     <message>
         <source>Encrypted Password</source>
-        <translation>Senha Criptografada</translation>
+        <translation type="obsolete">Senha Criptografada</translation>
     </message>
     <message>
         <source>Members</source>
@@ -6945,12 +7348,28 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <translation>Papel</translation>
     </message>
     <message>
-        <source>SysID</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Validity</source>
         <translation>Validade</translation>
+    </message>
+    <message>
+        <source>Can create Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can create Role</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can use Replication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7300,11 +7719,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Ancestor Tables:</source>
-        <translation>Tabelas Ancestrais:</translation>
+        <translation type="obsolete">Tabelas Ancestrais:</translation>
     </message>
     <message>
         <source>Copied Tables:</source>
-        <translation>Tabelas Copiadas:</translation>
+        <translation type="obsolete">Tabelas Copiadas:</translation>
     </message>
     <message>
         <source>Name</source>
@@ -7353,6 +7772,18 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>Indexing</source>
         <translation>Indexação</translation>
+    </message>
+    <message>
+        <source>Schema</source>
+        <translation type="unfinished">Esquema</translation>
+    </message>
+    <message>
+        <source>Parent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">Copiar</translation>
     </message>
 </context>
 <context>
@@ -7533,12 +7964,8 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <translation></translation>
     </message>
     <message>
-        <source>Firing Mode:</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Execute per row</source>
-        <translation>Executar por linha</translation>
+        <translation type="obsolete">Executar por linha</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -7566,15 +7993,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Deferral:</source>
-        <translation>Postergação:</translation>
+        <translation type="obsolete">Postergação:</translation>
     </message>
     <message>
         <source>Referenced Table:</source>
-        <translation>Tab. Referenciada:</translation>
+        <translation type="obsolete">Tab. Referenciada:</translation>
     </message>
     <message>
         <source>Conditional Expr.:</source>
-        <translation>Expr. Condicional:</translation>
+        <translation type="obsolete">Expr. Condicional:</translation>
     </message>
     <message>
         <source>Columns</source>
@@ -7598,7 +8025,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Constraint Trigger:</source>
-        <translation>Gatilho Restrição:</translation>
+        <translation type="obsolete">Gatilho Restrição:</translation>
     </message>
     <message>
         <source>Column</source>
@@ -7607,6 +8034,30 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <message>
         <source>Type</source>
         <translation>Tipo</translation>
+    </message>
+    <message>
+        <source>Constraint</source>
+        <translation type="unfinished">Restrição</translation>
+    </message>
+    <message>
+        <source>FOR EACH ROW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refer. Table:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Condition:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options:</source>
+        <translation type="unfinished">Opções:</translation>
+    </message>
+    <message>
+        <source>Excution:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7653,7 +8104,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>By Value:</source>
-        <translation>Por Valor: </translation>
+        <translation type="obsolete">Por Valor: </translation>
     </message>
     <message>
         <source>Category:</source>
@@ -7661,7 +8112,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Preferred:</source>
-        <translation>Preferido:</translation>
+        <translation type="obsolete">Preferido:</translation>
     </message>
     <message>
         <source>Delimiter:</source>
@@ -7743,6 +8194,58 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
         <translation>As funções a serem atribuídas ao tipo devem ser todas escritas em linguagem C e possuirem, respectivamente, as seguintes assinaturas:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any funcao(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta funcao(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any funcao(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer funcao(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean funcao(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
+    <message>
+        <source>Range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options:</source>
+        <translation type="unfinished">Opções:</translation>
+    </message>
+    <message>
+        <source>By value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preferred</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collatable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished">Nome:</translation>
+    </message>
+    <message>
+        <source>Collation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtype Diff Func.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator Class:</source>
+        <translation type="unfinished">Classe Operadores:</translation>
+    </message>
+    <message>
+        <source>Canonical Func.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtype</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The functions to be assigned to a range type should have the following signatures:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ViewWidget</name>
@@ -7756,7 +8259,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Type:</source>
-        <translation>Tipo:</translation>
+        <translation type="obsolete">Tipo:</translation>
     </message>
     <message>
         <source>Column</source>
@@ -7823,16 +8326,64 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
         <translation></translation>
     </message>
     <message>
-        <source>SF FW AW</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
         <translation>Para se referenciar todas as colunas de uma tabela (*) basta não preencher                                     o campo &lt;strong&gt;Coluna&lt;/strong&gt;, isso é equivalente a se                                      escrever &lt;em&gt;&lt;strong&gt;[esquema].[tabela].*&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
     <message>
         <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
-        <translation>-- Impossível gerar código. Verifique se todos os atributos foram preenchidos corretamente! --</translation>
+        <translation type="obsolete">-- Impossível gerar código. Verifique se todos os atributos foram preenchidos corretamente! --</translation>
+    </message>
+    <message>
+        <source>Reference Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Triggers</source>
+        <translation type="unfinished">Gatilhos</translation>
+    </message>
+    <message>
+        <source>Rules</source>
+        <translation type="unfinished">Rules</translation>
+    </message>
+    <message>
+        <source>Table Expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flags: SF FW AW VD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Refer. Table</source>
+        <translation type="unfinished">Tab. Refer.</translation>
+    </message>
+    <message>
+        <source>Firing</source>
+        <translation type="unfinished">Disparo</translation>
+    </message>
+    <message>
+        <source>Events</source>
+        <translation type="unfinished">Eventos</translation>
+    </message>
+    <message>
+        <source>Execution</source>
+        <translation type="unfinished">Execução</translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished">Evento</translation>
+    </message>
+    <message>
+        <source>/* Could not generate the SQL code. Make sure all attributes are correctly filled! </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

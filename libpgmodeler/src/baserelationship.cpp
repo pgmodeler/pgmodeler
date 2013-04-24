@@ -104,42 +104,35 @@ void BaseRelationship::configureRelationship(void)
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
 	{
-		try
-		{
-			//Raises an error if one of the tables is not allocated
-			if(!src_table || !dst_table)
-				throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
-												.arg(Utf8String::create(this->getName()))
-												.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
-												ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		//Raises an error if one of the tables is not allocated
+		if(!src_table || !dst_table)
+			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
+											.arg(Utf8String::create(this->getName()))
+											.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
+											ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			/* Raises an error if the relationship type is generalization or dependency
+		/* Raises an error if the relationship type is generalization or dependency
 			and the source and destination table are the same. */
-			if((rel_type==RELATIONSHIP_GEN ||
-					rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
-				throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if((rel_type==RELATIONSHIP_GEN ||
+				rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
+			throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			//Allocates the textbox for the name label
-			lables[LABEL_REL_NAME]=new Textbox;
-			lables[LABEL_REL_NAME]->setTextAttribute(Textbox::ITALIC_TXT, true);
+		//Allocates the textbox for the name label
+		lables[LABEL_REL_NAME]=new Textbox;
+		lables[LABEL_REL_NAME]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
-			//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
-			if(rel_type!=RELATIONSHIP_GEN &&
-				 rel_type!=RELATIONSHIP_DEP)
-			{
-				lables[LABEL_SRC_CARD]=new Textbox;
-				lables[LABEL_DST_CARD]=new Textbox;
-				lables[LABEL_SRC_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
-				lables[LABEL_DST_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
-
-				//Configures the mandatory participation for both tables
-				setMandatoryTable(SRC_TABLE,src_mandatory);
-				setMandatoryTable(DST_TABLE,dst_mandatory);
-			}
-		}
-		catch(bad_alloc &e)
+		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
+		if(rel_type!=RELATIONSHIP_GEN &&
+			 rel_type!=RELATIONSHIP_DEP)
 		{
-			throw Exception(ERR_GLOBAL_OBJBADALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			lables[LABEL_SRC_CARD]=new Textbox;
+			lables[LABEL_DST_CARD]=new Textbox;
+			lables[LABEL_SRC_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[LABEL_DST_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
+
+			//Configures the mandatory participation for both tables
+			setMandatoryTable(SRC_TABLE,src_mandatory);
+			setMandatoryTable(DST_TABLE,dst_mandatory);
 		}
 	}
 	else
