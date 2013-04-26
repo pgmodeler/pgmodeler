@@ -21,7 +21,7 @@
 
 extern TaskProgressWidget *task_prog_wgt;
 
-OperationListWidget::OperationListWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
+OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setModel(NULL);
@@ -53,7 +53,7 @@ void OperationListWidget::updateOperationList(void)
 	if(!model_wgt)
 	{
 		operations_tw->clear();
-		dockWidgetContents->setEnabled(false);
+		this->setEnabled(false);
 		op_count_lbl->setText("-");
 		current_pos_lbl->setText("-");
 	}
@@ -66,7 +66,7 @@ void OperationListWidget::updateOperationList(void)
 		QFont font=this->font();
 		bool value=false;
 
-		dockWidgetContents->setEnabled(true);
+		this->setEnabled(true);
 		op_count_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentSize()));
 		current_pos_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentIndex()));
 		redo_tb->setEnabled(model_wgt->op_list->isRedoAvailable());

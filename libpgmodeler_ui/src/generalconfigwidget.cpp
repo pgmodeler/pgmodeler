@@ -42,9 +42,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
 }
@@ -66,7 +64,6 @@ void GeneralConfigWidget::loadConfiguration(void)
 	autosave_interv_spb->setValue(interv);
 	autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
 
-	save_wgts_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]==ParsersAttributes::_TRUE_);
 	save_session_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]==ParsersAttributes::_TRUE_);
 
 	print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
@@ -91,16 +88,10 @@ void GeneralConfigWidget::saveConfiguration()
 	try
 	{
 		map<QString, map<QString, QString> >::iterator itr, itr_end;
-		QString widget_sch, file_sch, root_dir;
+		QString file_sch, root_dir;
 
 		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR;
-
-		widget_sch=root_dir +
-							 GlobalAttributes::SCHEMAS_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 ParsersAttributes::WIDGET +
-							 GlobalAttributes::SCHEMA_EXT;
 
 		file_sch=root_dir +
 						 GlobalAttributes::SCHEMAS_DIR +
@@ -121,12 +112,9 @@ void GeneralConfigWidget::saveConfiguration()
 																																										 .arg(bottom_marg->value());
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(autosave_interv_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]=(save_wgts_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
-
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -140,14 +128,6 @@ void GeneralConfigWidget::saveConfiguration()
 			{
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
 						SchemaParser::getCodeDefinition(file_sch, itr->second);
-			}
-			else if(save_wgts_chk->isChecked() &&
-							(itr->first).contains(QRegExp(QString("(") +
-																						ParsersAttributes::WIDGET +
-																						QString(")([0-9]+)"))))
-			{
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]+=
-						SchemaParser::getCodeDefinition(widget_sch, itr->second);
 			}
 
 			itr++;

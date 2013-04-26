@@ -18,7 +18,7 @@
 
 #include "modelobjectswidget.h"
 
-ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
+ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
 	ObjectType type[]={  OBJ_DATABASE, OBJ_TABLE, OBJ_FUNCTION, OBJ_VIEW, OBJ_DOMAIN,
 												OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
@@ -90,11 +90,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 	else
 	{
 		setWindowModality(Qt::ApplicationModal);
-		setAllowedAreas(Qt::NoDockWidgetArea);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
-		setFeatures(QDockWidget::DockWidgetClosable);
-		setFloating(true);
-
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
 		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
 		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
@@ -193,10 +189,6 @@ void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 			visible_objs_map[OBJ_TABLE]=visible_objs_map[OBJ_SCHEMA]=true;
 
 		if(BaseObject::acceptsSchema(obj_type))
-			 /*obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_FUNCTION ||
-			 obj_type==OBJ_AGGREGATE || obj_type==OBJ_DOMAIN || obj_type==OBJ_TYPE ||
-			 obj_type==OBJ_CONVERSION || obj_type==OBJ_OPERATOR || obj_type==OBJ_OPFAMILY ||
-			 obj_type==OBJ_OPCLASS || obj_type==OBJ_SEQUENCE) */
 			visible_objs_map[OBJ_SCHEMA]=true;
 	}
 }
@@ -1231,7 +1223,7 @@ void ModelObjectsWidget::close(void)
 		selected_object=reinterpret_cast<BaseObject *>(data.value<void *>());
 	}
 
-	QDockWidget::close();
+	QWidget::close();
 }
 
 void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
@@ -1247,9 +1239,9 @@ void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 	this->db_model=db_model;
 
 	if(db_model)
-		dockWidgetContents->setEnabled(true);
+		this->setEnabled(true);
 	else
-		dockWidgetContents->setEnabled(false);
+		this->setEnabled(false);
 
 	updateObjectsView();
 	visaoobjetos_stw->setEnabled(true);

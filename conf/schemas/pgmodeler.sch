@@ -21,13 +21,7 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [		print-grid="] %if @{print-grid} %then true %else false %end ["] $br
 [		print-pg-num="] %if @{print-pg-num} %then true %else false %end ["] $br
 [		save-session="] %if @{save-session} %then true %else false %end ["] $br
-[		save-widgets="] %if @{save-widgets} %then true %else false %end ["/>] $br
-
-%if @{widget} %then
- $sp <widget-conf> $br
- $sp @{widget}
- $sp </widget-conf> $br
-%end
+[/>] $br
 
 %if @{file} %then
  $sp <session> $br

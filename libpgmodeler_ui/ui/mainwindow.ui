@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1275</width>
+    <width>1118</width>
     <height>600</height>
    </rect>
   </property>
@@ -53,34 +53,278 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="margin">
-     <number>6</number>
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QTabWidget" name="models_tbw">
-      <property name="minimumSize">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
        <size>
         <width>0</width>
-        <height>0</height>
+        <height>513</height>
        </size>
       </property>
-      <property name="mouseTracking">
+     </spacer>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSplitter" name="h_splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
        <bool>true</bool>
       </property>
-      <property name="tabPosition">
-       <enum>QTabWidget::North</enum>
-      </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="documentMode">
+      <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <property name="tabsClosable">
+      <widget class="QWidget" name="models_tbw_parent" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="models_tbw">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="tabPosition">
+           <enum>QTabWidget::North</enum>
+          </property>
+          <property name="tabShape">
+           <enum>QTabWidget::Triangular</enum>
+          </property>
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <property name="documentMode">
+           <bool>false</bool>
+          </property>
+          <property name="tabsClosable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="right_wgt_bar" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QSplitter" name="v_splitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="model_objs_parent" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>270</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+          <widget class="QWidget" name="oper_list_parent" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>270</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QWidget" name="action_bar_wgt" native="true">
+      <property name="enabled">
        <bool>true</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>982</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="objects_btn">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Objects</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="validation_btn">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Validation</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/view.png</normaloff>:/icones/icones/view.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="operations_btn">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Operations</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -93,9 +337,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1275</width>
+     <width>1118</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
    </property>
    <property name="defaultUp">
     <bool>false</bool>
@@ -145,7 +392,6 @@
     </widget>
     <addaction name="action_show_grid"/>
     <addaction name="action_show_delimiters"/>
-    <addaction name="action_fullscreen"/>
     <addaction name="separator"/>
     <addaction name="action_normal_zoom"/>
     <addaction name="action_inc_zoom"/>
@@ -167,170 +413,127 @@
    <addaction name="plugins_menu"/>
    <addaction name="about_menu"/>
   </widget>
-  <widget class="QToolBar" name="file_tb">
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle">
-    <string>File</string>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>22</width>
-     <height>22</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <property name="floatable">
-    <bool>false</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="action_new_model"/>
-   <addaction name="action_load_model"/>
-   <addaction name="action_close_model"/>
-   <addaction name="action_save_model"/>
-   <addaction name="separator"/>
-   <addaction name="action_export"/>
-   <addaction name="separator"/>
-   <addaction name="action_print"/>
-  </widget>
-  <widget class="QToolBar" name="show_tb">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle">
-    <string>View</string>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>22</width>
-     <height>22</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="action_inc_zoom"/>
-   <addaction name="action_normal_zoom"/>
-   <addaction name="action_dec_zoom"/>
-   <addaction name="action_alin_objs_grade"/>
-   <addaction name="action_show_grid"/>
-   <addaction name="action_show_delimiters"/>
-   <addaction name="action_overview"/>
-   <addaction name="action_fullscreen"/>
-   <addaction name="separator"/>
-   <addaction name="action_previous"/>
-   <addaction name="action_next"/>
-  </widget>
-  <widget class="QToolBar" name="edit_tb">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle">
-    <string>Edit</string>
-   </property>
-   <property name="movable">
-    <bool>true</bool>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>22</width>
-     <height>22</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <property name="floatable">
-    <bool>false</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="action_undo"/>
-   <addaction name="action_redo"/>
-  </widget>
-  <widget class="QToolBar" name="model_tb">
+  <widget class="QToolBar" name="plugins_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle">
-    <string>Model</string>
-   </property>
-   <property name="iconSize">
+   <property name="minimumSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>0</width>
+     <height>0</height>
     </size>
    </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <property name="floatable">
-    <bool>true</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>BottomToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="plugins_tb">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="font">
     <font>
-     <pointsize>8</pointsize>
+     <pointsize>7</pointsize>
     </font>
    </property>
    <property name="windowTitle">
     <string>Plugins</string>
    </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
    <property name="iconSize">
     <size>
-     <width>22</width>
-     <height>22</height>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="control_tb">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="action_close_model"/>
+   <addaction name="separator"/>
+   <addaction name="action_next"/>
+   <addaction name="action_previous"/>
+   <addaction name="action_normal_zoom"/>
+   <addaction name="action_dec_zoom"/>
+   <addaction name="action_inc_zoom"/>
+   <addaction name="action_show_delimiters"/>
+   <addaction name="action_show_grid"/>
+   <addaction name="action_alin_objs_grade"/>
+   <addaction name="action_overview"/>
+  </widget>
+  <widget class="QToolBar" name="model_tb">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -342,6 +545,46 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QToolBar" name="general_tb">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_configuration"/>
+   <addaction name="action_plugins"/>
+   <addaction name="action_export"/>
+   <addaction name="action_wiki"/>
+   <addaction name="action_css"/>
   </widget>
   <action name="action_new_model">
    <property name="icon">
@@ -597,6 +840,9 @@
    <property name="text">
     <string>Close model</string>
    </property>
+   <property name="toolTip">
+    <string>Close current model</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
    </property>
@@ -640,27 +886,6 @@
     <string>Ctrl+H</string>
    </property>
   </action>
-  <action name="action_fullscreen">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/telacheia.png</normaloff>:/icones/icones/telacheia.png</iconset>
-   </property>
-   <property name="text">
-    <string>Fullscreen</string>
-   </property>
-   <property name="toolTip">
-    <string>Show the model on fullscreen mode</string>
-   </property>
-   <property name="shortcut">
-    <string>F11</string>
-   </property>
-  </action>
   <action name="action_show_delimiters">
    <property name="checkable">
     <bool>true</bool>
@@ -691,7 +916,7 @@
      <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
    </property>
    <property name="text">
-    <string>Configurations</string>
+    <string>Settings</string>
    </property>
   </action>
   <action name="actionWidgets">
@@ -734,10 +959,40 @@
      <normaloff>:/icones/icones/help.png</normaloff>:/icones/icones/help.png</iconset>
    </property>
    <property name="text">
-    <string>pgModeler Wiki</string>
+    <string>Wiki</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="action_new_obj">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/novoobjeto.png</normaloff>:/icones/icones/novoobjeto.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="action_css">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
+   </property>
+   <property name="text">
+    <string>CSS</string>
+   </property>
+  </action>
+  <action name="action_plugins">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/plugins.png</normaloff>:/icones/icones/plugins.png</iconset>
+   </property>
+   <property name="text">
+    <string>Plugins</string>
+   </property>
+   <property name="toolTip">
+    <string>Access the list of loaded plugins</string>
    </property>
   </action>
  </widget>

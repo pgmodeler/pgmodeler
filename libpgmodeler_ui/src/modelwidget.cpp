@@ -170,7 +170,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
 
-	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source code"), this);
+	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
 	action_source_code->setShortcut(QKeySequence("Alt+S"));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
@@ -191,7 +191,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_select_all->setShortcut(QKeySequence("Ctrl+A"));
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
-	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert rel. n-n"), this);
+	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert"), this);
 	action_convert_relnn->setToolTip(trUtf8("Converts the n-n relationship into table"));
 
 	action_copy=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
@@ -206,13 +206,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));
 	action_cut->setToolTip(trUtf8("Cut the selected object(s)"));
 
-	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Dependencies"), this);
+	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Depend"), this);
 	action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
-	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New object"), this);
+	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
 
-	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick actions"), this);
+	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
 	action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);

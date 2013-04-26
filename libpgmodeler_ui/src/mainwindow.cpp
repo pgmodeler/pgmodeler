@@ -201,8 +201,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationListUpdated(void)), this, SLOT(__updateToolsState(void)));
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
-
-	connect(action_fullscreen, SIGNAL(toggled(bool)), this, SLOT(showFullScreen(bool)));
 	connect(models_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeModel(int)));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
@@ -240,24 +238,34 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(updateModelsConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
-
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 
-	tools_menu->addAction(model_objs_wgt->toggleViewAction());
-	tools_menu->addAction(oper_list_wgt->toggleViewAction());
-	tools_menu->addSeparator();
-	tools_menu->addAction(file_tb->toggleViewAction());
-	tools_menu->addAction(show_tb->toggleViewAction());
-	tools_menu->addAction(edit_tb->toggleViewAction());
-	tools_menu->addAction(model_tb->toggleViewAction());
-	tools_menu->addAction(plugins_tb->toggleViewAction());
+	connect(action_css, SIGNAL(triggered(bool)), this, SLOT(loadCSS(void)));
 
+	#warning "Code temporary disabled!"
+	plugins_tb->setVisible(false);
+	model_tb->setVisible(false);
 	current_model=NULL;
-
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
-	this->addDockWidget(Qt::RightDockWidgetArea, model_objs_wgt);
-	this->addDockWidget(Qt::RightDockWidgetArea, oper_list_wgt);
+	models_tbw->setVisible(false);
+	model_objs_parent->setVisible(false);
+	oper_list_parent->setVisible(false);
+
+	QVBoxLayout *vlayout=new QVBoxLayout;
+	vlayout->addWidget(model_objs_wgt);
+	model_objs_parent->setLayout(vlayout);
+
+	vlayout=new QVBoxLayout;
+	vlayout->addWidget(oper_list_wgt);
+	oper_list_parent->setLayout(vlayout);
+
+	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
+	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
+	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
+	hideRightWidgetsBar();
 
 	try
 	{
@@ -265,23 +273,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		plugins_conf_wgt->installPluginsActions(plugins_tb, plugins_menu, this, SLOT(executePlugin(void)));
-
-		dock_areas[ParsersAttributes::LEFT]=Qt::LeftDockWidgetArea;
-		dock_areas[ParsersAttributes::RIGHT]=Qt::RightDockWidgetArea;
-		dock_areas[ParsersAttributes::BOTTOM]=Qt::BottomDockWidgetArea;
-		dock_areas[ParsersAttributes::TOP]=Qt::TopDockWidgetArea;
-		dock_wgts[ParsersAttributes::OBJECTS_DOCK]=model_objs_wgt;
-		dock_wgts[ParsersAttributes::OPERATIONS_DOCK]=oper_list_wgt;
-
-		toolbar_areas[ParsersAttributes::LEFT]=Qt::LeftToolBarArea;
-		toolbar_areas[ParsersAttributes::RIGHT]=Qt::RightToolBarArea;
-		toolbar_areas[ParsersAttributes::BOTTOM]=Qt::BottomToolBarArea;
-		toolbar_areas[ParsersAttributes::TOP]=Qt::TopToolBarArea;
-		toolbars[ParsersAttributes::FILE_TOOLBAR]=file_tb;
-		toolbars[ParsersAttributes::EDIT_TOOLBAR]=edit_tb;
-		toolbars[ParsersAttributes::VIEW_TOOLBAR]=show_tb;
-		toolbars[ParsersAttributes::PLUGINS_TOOLBAR]=plugins_tb;
-		toolbars[ParsersAttributes::MODEL_TOOLBAR]=model_tb;
+		action_plugins->setMenu(plugins_menu);
+		action_plugins->setEnabled(!plugins_menu->isEmpty());
+		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
 		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
 		confs=conf_wgt->getConfigurationParams();
@@ -293,28 +287,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		while(itr!=itr_end)
 		{
 			attribs=itr->second;
-			type=attribs[ParsersAttributes::TYPE];
-
-			if(type==ParsersAttributes::OBJECTS_DOCK ||
-				 type==ParsersAttributes::OPERATIONS_DOCK)
-			{
-				this->addDockWidget(dock_areas[attribs[ParsersAttributes::POSITION]], dock_wgts[type]);
-				dock_wgts[type]->setVisible(attribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
-			}
-			else if(type==ParsersAttributes::FILE_TOOLBAR ||
-							type==ParsersAttributes::EDIT_TOOLBAR ||
-							type==ParsersAttributes::VIEW_TOOLBAR ||
-							type==ParsersAttributes::MODEL_TOOLBAR ||
-							type==ParsersAttributes::PLUGINS_TOOLBAR)
-			{
-				if(toolbars[type]==plugins_tb)
-					toolbars[type]->setVisible(attribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_ && !plugins_tb->actions().isEmpty());
-				else
-					toolbars[type]->setVisible(attribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
-				this->addToolBar(toolbar_areas[attribs[ParsersAttributes::POSITION]], toolbars[type]);
-			}
-			//Store the previous model filenames if there is no temporary models to be loaded
-			else if(attribs.count(ParsersAttributes::PATH)!=0)
+			if(attribs.count(ParsersAttributes::PATH)!=0)
 			{
 				try
 				{
@@ -391,11 +364,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	save_interval=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
 }
 
+void MainWindow::hideRightWidgetsBar(void)
+{
+	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
+}
+
 MainWindow::~MainWindow(void)
 {
 	restoration_form->removeTemporaryModels();
-	delete(oper_list_wgt);
-	delete(model_objs_wgt);
+	//delete(oper_list_wgt);
+	//delete(model_objs_wgt);
 	delete(overview_wgt);
 	delete(about_form);
 }
@@ -440,62 +418,6 @@ void MainWindow::closeEvent(QCloseEvent *)
 	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	confs=conf_wgt->getConfigurationParams();
 	conf_wgt->removeConfigurationParams();
-
-	//Case the user marked at configurations to save the widget positions
-	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS].isEmpty())
-	{
-		int i, count;
-		QString param_id;
-		map<QString, QString> attribs;
-		map<Qt::DockWidgetArea, QString> dock_areas;
-		map<Qt::ToolBarArea, QString> toolbar_areas;
-		map<QWidget *, QString> wgts_ids;
-		QWidget *wgts[]={ file_tb, edit_tb, show_tb,
-											plugins_tb, model_tb, model_objs_wgt, oper_list_wgt };
-		QToolBar *toolbar=NULL;
-		QDockWidget *dock=NULL;
-
-		save_conf=true;
-
-		wgts_ids[model_objs_wgt]=ParsersAttributes::OBJECTS_DOCK;
-		wgts_ids[oper_list_wgt]=ParsersAttributes::OPERATIONS_DOCK;
-		wgts_ids[file_tb]=ParsersAttributes::FILE_TOOLBAR;
-		wgts_ids[edit_tb]=ParsersAttributes::EDIT_TOOLBAR;
-		wgts_ids[show_tb]=ParsersAttributes::VIEW_TOOLBAR;
-		wgts_ids[plugins_tb]=ParsersAttributes::PLUGINS_TOOLBAR;
-		wgts_ids[model_tb]=ParsersAttributes::MODEL_TOOLBAR;
-
-		dock_areas[Qt::LeftDockWidgetArea]=ParsersAttributes::LEFT;
-		dock_areas[Qt::RightDockWidgetArea]=ParsersAttributes::RIGHT;
-		dock_areas[Qt::BottomDockWidgetArea]=ParsersAttributes::BOTTOM;
-		dock_areas[Qt::TopDockWidgetArea]=ParsersAttributes::TOP;
-
-		toolbar_areas[Qt::LeftToolBarArea]=ParsersAttributes::LEFT;
-		toolbar_areas[Qt::RightToolBarArea]=ParsersAttributes::RIGHT;
-		toolbar_areas[Qt::BottomToolBarArea]=ParsersAttributes::BOTTOM;
-		toolbar_areas[Qt::TopToolBarArea]=ParsersAttributes::TOP;
-
-		count=sizeof(wgts)/sizeof(QWidget *);
-		for(i=0; i < count; i++)
-		{
-			toolbar=dynamic_cast<QToolBar *>(wgts[i]);
-			dock=dynamic_cast<QDockWidget *>(wgts[i]);
-
-			param_id=QString("%1%2").arg(ParsersAttributes::WIDGET).arg(i);
-			attribs[ParsersAttributes::TYPE]=wgts_ids[wgts[i]];
-			attribs[ParsersAttributes::ID]=param_id;
-			attribs[ParsersAttributes::VISIBLE]=(wgts[i]->isVisible() ?
-																						ParsersAttributes::_TRUE_ :  ParsersAttributes::_FALSE_);
-
-			if(dock)
-				attribs[ParsersAttributes::POSITION]=dock_areas[this->dockWidgetArea(dock)];
-			else
-				attribs[ParsersAttributes::POSITION]=toolbar_areas[this->toolBarArea(toolbar)];
-
-			conf_wgt->addConfigurationParam(param_id, attribs);
-			attribs.clear();
-		}
-	}
 
 	//Case is needed to save the session
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
@@ -593,14 +515,11 @@ void MainWindow::setCurrentModel(void)
 	QObject *object=NULL;
 
 	object=sender();
+	models_tbw->setVisible(models_tbw->count() > 0);
 
 	model_tb->clear();
-	edit_tb->clear();
+	model_tb->setVisible(false);
 	edit_menu->clear();
-
-	edit_tb->addAction(action_undo);
-	edit_tb->addAction(action_redo);
-	edit_tb->addSeparator();
 	edit_menu->addAction(action_undo);
 	edit_menu->addAction(action_redo);
 	edit_menu->addSeparator();
@@ -625,6 +544,8 @@ void MainWindow::setCurrentModel(void)
 
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
+
+		model_tb->setVisible(true);
 		model_tb->addAction(current_model->action_new_object);
 		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
 
@@ -633,16 +554,11 @@ void MainWindow::setCurrentModel(void)
 
 		model_tb->addAction(current_model->action_edit);
 		model_tb->addAction(current_model->action_source_code);
-		model_tb->addAction(current_model->action_convert_relnn);
-		model_tb->addAction(current_model->action_deps_refs);
-		model_tb->addAction(current_model->action_protect);
-		model_tb->addAction(current_model->action_unprotect);
+		//model_tb->addAction(current_model->action_convert_relnn);
+		//model_tb->addAction(current_model->action_deps_refs);
+		//model_tb->addAction(current_model->action_protect);
+		//model_tb->addAction(current_model->action_unprotect);
 		model_tb->addAction(current_model->action_select_all);
-
-		edit_tb->addAction(current_model->action_copy);
-		edit_tb->addAction(current_model->action_cut);
-		edit_tb->addAction(current_model->action_paste);
-		edit_tb->addAction(current_model->action_remove);
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
@@ -730,65 +646,6 @@ void MainWindow::applyZoom(void)
 	}
 }
 
-void MainWindow::showFullScreen(bool fullscreen)
-{
-	//Toolbars and widgets that are hidden when in fullscreen mode
-	main_menu_mb->setVisible(!fullscreen);
-	file_tb->setVisible(!fullscreen);
-	edit_tb->setVisible(!fullscreen);
-	oper_list_wgt->setVisible(!fullscreen);
-	model_objs_wgt->setVisible(!fullscreen);
-
-	//Restore the toolbars when not in fullscreen
-	if(!fullscreen)
-	{
-		file_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, file_tb);
-
-		edit_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, edit_tb);
-
-		show_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, show_tb);
-
-		plugins_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, plugins_tb);
-
-		model_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::BottomToolBarArea, model_tb);
-	}
-	else
-	{
-		//If in fullscreen configures the toolbars in floating mode
-		file_tb->setParent(NULL);
-		file_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		file_tb->setVisible(true);
-		file_tb->setAllowedAreas(Qt::NoToolBarArea);
-		file_tb->adjustSize();
-
-		edit_tb->setParent(NULL);
-		this->removeToolBar(edit_tb);
-
-		model_tb->setParent(NULL);
-		model_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		model_tb->setVisible(true);
-		model_tb->setAllowedAreas(Qt::NoToolBarArea);
-		model_tb->adjustSize();
-
-		show_tb->setParent(NULL);
-		show_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		show_tb->setVisible(true);
-		show_tb->setAllowedAreas(Qt::NoToolBarArea);
-		show_tb->adjustSize();
-
-		plugins_tb->setParent(NULL);
-		plugins_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		plugins_tb->setVisible(true);
-		plugins_tb->setAllowedAreas(Qt::NoToolBarArea);
-		plugins_tb->adjustSize();
-	}
-}
-
 void MainWindow::closeModel(int model_id)
 {
 	QWidget *tab=NULL;
@@ -836,7 +693,8 @@ void MainWindow::closeModel(int model_id)
 	if(models_tbw->count()==0)
 	{
 		current_model=NULL;
-		this->showFullScreen(false);
+#warning "Code temporary disabled!"
+		//this->showFullScreen(false);
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(NULL));
 		oper_list_wgt->setModel(static_cast<ModelWidget *>(NULL));
 		updateToolsState(true);
@@ -1061,7 +919,6 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_inc_zoom->setEnabled(enabled);
 	action_dec_zoom->setEnabled(enabled);
 	action_alin_objs_grade->setEnabled(enabled);
-	action_fullscreen->setEnabled(enabled);
 	action_undo->setEnabled(enabled);
 	action_redo->setEnabled(enabled);
 
@@ -1133,4 +990,29 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
+}
+
+void MainWindow::loadCSS(void)
+{
+	QFile ui_style("/root/pgmodeler/conf/" +
+								 GlobalAttributes::UI_STYLE_CONF +
+								 GlobalAttributes::CONFIGURATION_EXT);
+	QString style;
+
+	//Loading app style sheet
+	ui_style.open(QFile::ReadOnly);
+
+	//Raises an error if ui style is not found
+	if(!ui_style.isOpen())
+	{
+	 MessageBox msg;
+	 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
+											 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+	}
+	else
+		style=ui_style.readAll();
+
+	qApp->setStyleSheet(style);
+	this->repaint();
+	this->update();
 }
