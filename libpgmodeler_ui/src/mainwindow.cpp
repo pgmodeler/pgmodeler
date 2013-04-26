@@ -93,11 +93,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, map<QString, QString> >confs;
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
 	map<QString, QString> attribs;
-	map<QString, Qt::DockWidgetArea> dock_areas;
-	map<QString, Qt::ToolBarArea> toolbar_areas;
-	map<QString, QDockWidget *> dock_wgts;
-	map<QString, QToolBar *> toolbars;
-	QString type;
 	QStringList prev_session_files;
 	BaseConfigWidget *conf_wgt=NULL;
 	PluginsConfigWidget *plugins_conf_wgt=NULL;
@@ -206,7 +201,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
 
-
 	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 	connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
@@ -240,14 +234,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 
-	connect(action_css, SIGNAL(triggered(bool)), this, SLOT(loadCSS(void)));
-
-	#warning "Code temporary disabled!"
-	plugins_tb->setVisible(false);
-	model_tb->setVisible(false);
-	current_model=NULL;
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
+
+	model_tb->setVisible(false);
+	current_model=NULL;
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
@@ -272,9 +263,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
-		plugins_conf_wgt->installPluginsActions(plugins_tb, plugins_menu, this, SLOT(executePlugin(void)));
-		action_plugins->setMenu(plugins_menu);
+		plugins_conf_wgt->installPluginsActions(NULL, plugins_menu, this, SLOT(executePlugin(void)));
+		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
+		action_plugins->setMenu(plugins_menu);
 		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
 		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
@@ -372,8 +364,6 @@ void MainWindow::hideRightWidgetsBar(void)
 MainWindow::~MainWindow(void)
 {
 	restoration_form->removeTemporaryModels();
-	//delete(oper_list_wgt);
-	//delete(model_objs_wgt);
 	delete(overview_wgt);
 	delete(about_form);
 }
@@ -554,10 +544,6 @@ void MainWindow::setCurrentModel(void)
 
 		model_tb->addAction(current_model->action_edit);
 		model_tb->addAction(current_model->action_source_code);
-		//model_tb->addAction(current_model->action_convert_relnn);
-		//model_tb->addAction(current_model->action_deps_refs);
-		//model_tb->addAction(current_model->action_protect);
-		//model_tb->addAction(current_model->action_unprotect);
 		model_tb->addAction(current_model->action_select_all);
 
 		edit_menu->addAction(current_model->action_copy);
@@ -693,8 +679,6 @@ void MainWindow::closeModel(int model_id)
 	if(models_tbw->count()==0)
 	{
 		current_model=NULL;
-#warning "Code temporary disabled!"
-		//this->showFullScreen(false);
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(NULL));
 		oper_list_wgt->setModel(static_cast<ModelWidget *>(NULL));
 		updateToolsState(true);
@@ -935,9 +919,6 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_normal_zoom->setEnabled(current_model->currentZoom()!=0);
 		action_dec_zoom->setEnabled(current_model->currentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
 	}
-
-	plugins_tb->setEnabled(models_tbw->count() > 0);
-	plugins_menu->setEnabled(models_tbw->count() > 0);
 }
 
 void MainWindow::updateDockWidgets(void)
@@ -990,29 +971,4 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
-}
-
-void MainWindow::loadCSS(void)
-{
-	QFile ui_style("/root/pgmodeler/conf/" +
-								 GlobalAttributes::UI_STYLE_CONF +
-								 GlobalAttributes::CONFIGURATION_EXT);
-	QString style;
-
-	//Loading app style sheet
-	ui_style.open(QFile::ReadOnly);
-
-	//Raises an error if ui style is not found
-	if(!ui_style.isOpen())
-	{
-	 MessageBox msg;
-	 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
-											 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-	}
-	else
-		style=ui_style.readAll();
-
-	qApp->setStyleSheet(style);
-	this->repaint();
-	this->update();
 }

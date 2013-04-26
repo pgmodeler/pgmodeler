@@ -153,6 +153,10 @@
         <file>imagens/model2png.png</file>
         <file>imagens/pgmodeler_logo.png</file>
         <file>imagens/pgmodeler_name.png</file>
-        <file>imagens/pgmodeler_bg_logo.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>styles/pgmodeler_bg_logo.png</file>
+        <file>styles/h_splitter.png</file>
+        <file>styles/v_splitter.png</file>
     </qresource>
 </RCC>

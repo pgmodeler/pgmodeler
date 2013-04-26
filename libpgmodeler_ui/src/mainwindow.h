@@ -151,10 +151,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
-
 		void hideRightWidgetsBar(void);
-
-		void loadCSS(void);
 };
 
 #endif
