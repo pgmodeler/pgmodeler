@@ -137,7 +137,6 @@
         <file>icones/quickactions.png</file>
         <file>icones/movetoschema.png</file>
         <file>icones/changeowner.png</file>
-        <file>icones/plugins.png</file>
         <file>icones/relationshipfk.png</file>
         <file>icones/help.png</file>
         <file>icones/permission.png</file>
@@ -145,6 +144,7 @@
         <file>icones/collation_grp.png</file>
         <file>icones/collation.png</file>
         <file>icones/constraint_ex.png</file>
+        <file>icones/plugins.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -153,5 +153,10 @@
         <file>imagens/model2png.png</file>
         <file>imagens/pgmodeler_logo.png</file>
         <file>imagens/pgmodeler_name.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>styles/pgmodeler_bg_logo.png</file>
+        <file>styles/h_splitter.png</file>
+        <file>styles/v_splitter.png</file>
     </qresource>
 </RCC>

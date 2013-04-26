@@ -657,9 +657,9 @@ void RelationshipView::configureDescriptor(void)
 
 	obj_shadow->setPolygon(pol);
 	obj_shadow->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	obj_shadow->setPos(x + 1.5f, y + 2.5f);
-	obj_shadow->setPen(QColor(0,0,0,100));
-	obj_shadow->setBrush(QColor(0,0,0,100));
+	obj_shadow->setPos(x + 2.5f, y + 3.5f);
+	obj_shadow->setPen(Qt::NoPen);
+	obj_shadow->setBrush(QColor(50,50,50,60));
 
 	this->configureAttributes();
 	this->configurePositionInfo();

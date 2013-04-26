@@ -136,9 +136,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Applies the zoom to the currently focused model
 		void applyZoom(void);
 
-		//! \brief Toggle the fullscreen mode
-		void showFullScreen(bool fullscreen);
-
 		//! \brief Execute the plugin represented by the action that calls the slot
 		void executePlugin(void);
 
@@ -154,6 +151,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
+		void hideRightWidgetsBar(void);
 };
 
 #endif

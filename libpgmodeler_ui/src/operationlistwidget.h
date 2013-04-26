@@ -30,7 +30,7 @@
 #include "modelwidget.h"
 #include "messagebox.h"
 
-class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
+class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	private:
 		Q_OBJECT
 
@@ -40,7 +40,7 @@ class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
 		void notifyUpdateOnModel(void);
 
 	public:
-		OperationListWidget(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		OperationListWidget(QWidget * parent = 0);
 
 	public slots:
 		void updateOperationList(void);

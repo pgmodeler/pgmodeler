@@ -103,6 +103,11 @@ int main(int argc, char **argv)
 
 		Application app(argc,argv);
 		QTranslator translator;
+		QFile ui_style(GlobalAttributes::CONFIGURATIONS_DIR +
+									 GlobalAttributes::DIR_SEPARATOR +
+									 GlobalAttributes::UI_STYLE_CONF +
+									 GlobalAttributes::CONFIGURATION_EXT);
+		QString style;
 
 		app.addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
@@ -143,6 +148,20 @@ int main(int argc, char **argv)
 		//Indicating that the splash screen must be closed when the main window is shown
 		splash.finish(&fmain);
 
+		//Loading app style sheet
+		ui_style.open(QFile::ReadOnly);
+
+		//Raises an error if ui style is not found
+		if(!ui_style.isOpen())
+		{
+		 MessageBox msg;
+		 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
+												 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+		}
+		else
+			style=ui_style.readAll();
+
+		app.setStyleSheet(style);
 		fmain.showMaximized();
 		app.exec();
 

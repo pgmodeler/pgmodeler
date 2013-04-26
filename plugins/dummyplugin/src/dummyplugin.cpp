@@ -46,7 +46,7 @@ DummyPlugin::DummyPlugin(void)
 
 QString DummyPlugin::getPluginTitle(void)
 {
-	return(trUtf8("Dummy Plugin"));
+	return(trUtf8("Dummy"));
 }
 
 

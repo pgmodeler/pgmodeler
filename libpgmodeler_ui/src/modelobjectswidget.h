@@ -30,7 +30,7 @@
 #include "modelwidget.h"
 #include "messagebox.h"
 
-class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
+class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	private:
 		Q_OBJECT
 
@@ -85,7 +85,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
 
 		BaseObject *getSelectedObject(void);
 

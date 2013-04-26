@@ -86,7 +86,8 @@ namespace GlobalAttributes {
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
 
-	EXAMPLE_MODEL="example.dbm"; //! \brief Default name for the sample model loaded on appearence configuration form
+	EXAMPLE_MODEL="example.dbm", //! \brief Default name for the sample model loaded on appearence configuration form
+	UI_STYLE_CONF="ui-style"; //! \brief Configuration file ui style
 }
 
 #endif

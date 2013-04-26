@@ -443,15 +443,15 @@ void BaseObjectView::configureObjectShadow(void)
 
 		ret=this->boundingRect();
 		pol.append(QPointF(ret.right()-1, ret.top()+7.5));
-		pol.append(QPointF(ret.right()+2.5f, ret.top()+7.5f));
-		pol.append(QPointF(ret.right()+2.5f, ret.bottom()+2.5f));
-		pol.append(QPointF(ret.left()+7.5f, ret.bottom()+2.5f));
+		pol.append(QPointF(ret.right()+3.5f, ret.top()+7.5f));
+		pol.append(QPointF(ret.right()+3.5f, ret.bottom()+3.5f));
+		pol.append(QPointF(ret.left()+7.5f, ret.bottom()+3.5f));
 		pol.append(QPointF(ret.left()+7.5f, ret.bottom()-1));
 		pol.append(QPointF(ret.right()-1, ret.bottom()-1));
 		obj_shadow->setPolygon(pol);
 		obj_shadow->setPos(0,0);
-		obj_shadow->setPen(QColor(0,0,0,100));
-		obj_shadow->setBrush(QColor(0,0,0,100));
+		obj_shadow->setPen(Qt::NoPen);
+		obj_shadow->setBrush(QColor(50,50,50,60));
 	}
 }
 
