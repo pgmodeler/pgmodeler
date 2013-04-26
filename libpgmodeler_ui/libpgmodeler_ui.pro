@@ -67,7 +67,8 @@ SOURCES += $$PWD/src/mainwindow.cpp \
            $$PWD/src/pluginsconfigwidget.cpp \
 	   $$PWD/src/collationwidget.cpp \
 	   $$PWD/src/elementswidget.cpp \
-	   $$PWD/src/exporthelper.cpp
+	   $$PWD/src/exporthelper.cpp \
+	   $$PWD/src/modelvalidationwidget.cpp
 
 
 HEADERS += $$PWD/src/mainwindow.h \
@@ -124,7 +125,8 @@ HEADERS += $$PWD/src/mainwindow.h \
            $$PWD/src/pluginsconfigwidget.h \
 	   $$PWD/src/collationwidget.h \
 	   $$PWD/src/elementswidget.h \
-	   $$PWD/src/exporthelper.h
+	   $$PWD/src/exporthelper.h \
+	   $$PWD/src/modelvalidationwidget.h
 
 FORMS += $$PWD/ui/mainwindow.ui \
 	 $$PWD/ui/aboutform.ui \
@@ -175,4 +177,5 @@ FORMS += $$PWD/ui/mainwindow.ui \
          $$PWD/ui/pluginsconfigwidget.ui \
          $$PWD/ui/schemawidget.ui \
 	 $$PWD/ui/collationwidget.ui \
-	 $$PWD/ui/elementswidget.ui
+	 $$PWD/ui/elementswidget.ui \
+	 $$PWD/ui/modelvalidationwidget.ui

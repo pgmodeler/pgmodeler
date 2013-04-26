@@ -44,8 +44,9 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void saveConfiguration(void);
 		void loadConfiguration(void);
 
-		//! \brief Fills the passed map with all the loaded connections
-		void getConnections(map<QString, DBConnection *> &conns);
+		/*! \brief Fills the passed map with all the loaded connections. The boolean paramenter
+		make the method concatenate the hostname/ip on each map key */
+		void getConnections(map<QString, DBConnection *> &conns, bool inc_hostname=false);
 
 	public slots:
 		void restoreDefaults(void);
@@ -55,7 +56,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void handleConnection(void);
 		void editConnection(void);
 		void testConnection(void);
-		void removeConexao(void);
+		void removeConnection(void);
 		void enableCertificates(void);
 		void enableConnectionTest(void);
 		void applyConfiguration(void){}

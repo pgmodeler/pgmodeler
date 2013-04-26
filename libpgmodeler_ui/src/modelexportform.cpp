@@ -58,7 +58,7 @@ void ModelExportForm::show(ModelWidget *model)
 		this->model=model;
 
 		//Get the current connections configured on the connections widget
-		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);
+		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections, true);
 
 		connections_cmb->clear();
 		itr=connections.begin();
@@ -66,13 +66,7 @@ void ModelExportForm::show(ModelWidget *model)
 		//Add the connections to the combo
 		while(itr!=connections.end())
 		{
-			host=(itr->second)->getConnectionParam(DBConnection::PARAM_SERVER_FQDN);
-
-			if(host.isEmpty())
-				host=(itr->second)->getConnectionParam(DBConnection::PARAM_SERVER_IP);
-
-			connections_cmb->addItem(itr->first + QString(" (%1)").arg(host),
-														QVariant::fromValue<void *>(itr->second));
+			connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
 			itr++;
 		}
 

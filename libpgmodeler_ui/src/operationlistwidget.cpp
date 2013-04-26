@@ -50,10 +50,11 @@ void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
 
 void OperationListWidget::updateOperationList(void)
 {
+	this->setEnabled(this->model_wgt!=NULL);
+
 	if(!model_wgt)
 	{
 		operations_tw->clear();
-		this->setEnabled(false);
 		op_count_lbl->setText("-");
 		current_pos_lbl->setText("-");
 	}
@@ -66,7 +67,6 @@ void OperationListWidget::updateOperationList(void)
 		QFont font=this->font();
 		bool value=false;
 
-		this->setEnabled(true);
 		op_count_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentSize()));
 		current_pos_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentIndex()));
 		redo_tb->setEnabled(model_wgt->op_list->isRedoAvailable());

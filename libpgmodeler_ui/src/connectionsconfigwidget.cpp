@@ -31,7 +31,7 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(par
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
 	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection(void)));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConexao(void)));
+	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection(void)));
 
 	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
 	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
@@ -47,7 +47,7 @@ ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
 {
 	//Destroy all the loaded connections
 	while(connections_cmb->count() > 0)
-		this->removeConexao();
+		this->removeConnection();
 }
 
 void ConnectionsConfigWidget::loadConfiguration(void)
@@ -183,7 +183,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::removeConexao(void)
+void ConnectionsConfigWidget::removeConnection(void)
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
@@ -325,7 +325,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
-			this->removeConexao();
+			this->removeConnection();
 
 		//Reloads the configuration
 		this->loadConfiguration();
@@ -384,15 +384,32 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	}
 }
 
-void ConnectionsConfigWidget::getConnections(map<QString, DBConnection *> &conns)
+void ConnectionsConfigWidget::getConnections(map<QString, DBConnection *> &conns, bool inc_hostname)
 {
 	int i, count;
+	QString host;
+	DBConnection *conn=NULL;
 
 	conns.clear();
 	count=connections_cmb->count();
 
 	for(i=0; i < count; i++)
-		conns[connections_cmb->itemText(i)]=reinterpret_cast<DBConnection *>(connections_cmb->itemData(i).value<void *>());
+	{
+		conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(i).value<void *>());
+
+		if(inc_hostname)
+		{
+			host=conn->getConnectionParam(DBConnection::PARAM_SERVER_FQDN);
+
+			if(host.isEmpty())
+				host=conn->getConnectionParam(DBConnection::PARAM_SERVER_IP);
+
+			if(!host.isEmpty())
+				host=QString(" (%1)").arg(host);
+		}
+
+		conns[connections_cmb->itemText(i) + host]=conn;
+	}
 }
 
 

@@ -35,7 +35,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	model_wgt=NULL;
 	db_model=NULL;
-	this->setModel(db_model);
+	this->setEnabled(false);
 
 	this->simplified_view=simplified_view;
 	this->save_tree_state=!simplified_view;
@@ -1237,12 +1237,7 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 {
 	this->db_model=db_model;
-
-	if(db_model)
-		this->setEnabled(true);
-	else
-		this->setEnabled(false);
-
+	this->setEnabled(db_model!=NULL);
 	updateObjectsView();
 	visaoobjetos_stw->setEnabled(true);
 }

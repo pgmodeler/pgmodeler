@@ -128,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
+		model_valid_wgt=new ModelValidationWidget;
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -229,7 +230,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
-	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(updateModelsConfigurations(void)));
+	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
@@ -242,6 +243,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
+	bottom_wgt_bar->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->addWidget(model_objs_wgt);
@@ -251,8 +253,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	vlayout->addWidget(oper_list_wgt);
 	oper_list_parent->setLayout(vlayout);
 
+	vlayout=new QVBoxLayout;
+	vlayout->addWidget(model_valid_wgt);
+	bottom_wgt_bar->setLayout(vlayout);
+
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
+	connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
 	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
@@ -353,7 +360,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 
 	//Initializes the auto save interval (in miliseconds)
-	save_interval=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
+	//save_interval=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
+	applyConfigurations();
 }
 
 void MainWindow::hideRightWidgetsBar(void)
@@ -589,6 +597,7 @@ void MainWindow::setCurrentModel(void)
 
 	oper_list_wgt->setModel(current_model);
 	model_objs_wgt->setModel(current_model);
+	model_valid_wgt->setModel(current_model);
 
 	if(current_model)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
@@ -698,9 +707,11 @@ void MainWindow::updateModelTabName(void)
 	}
 }
 
-void MainWindow::updateModelsConfigurations(void)
+void MainWindow::applyConfigurations(void)
 {
 	GeneralConfigWidget *conf_wgt=NULL;
+	ConnectionsConfigWidget *conn_cfg_wgt=NULL;
+	map<QString, DBConnection *> connections;
 	int count, i;
 
 	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
@@ -722,7 +733,12 @@ void MainWindow::updateModelsConfigurations(void)
 	count=models_tbw->count();
 	for(i=0; i < count; i++)
 		dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
+
+	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+	conn_cfg_wgt->getConnections(connections, true);
+	model_valid_wgt->updateConnections(connections);
 }
+
 
 void MainWindow::saveAllModels(void)
 {
@@ -875,7 +891,6 @@ void MainWindow::loadModel(void)
 	catch(Exception &e)
 	{
 		closeModel(models_tbw->currentIndex());
-		//throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		msg_box.show(e);
 	}
 }

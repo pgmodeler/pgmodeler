@@ -36,6 +36,7 @@
 #include "modelobjectswidget.h"
 #include "pgmodelerplugin.h"
 #include "modeloverviewwidget.h"
+#include "modelvalidationwidget.h"
 
 using namespace std;
 
@@ -54,6 +55,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
+
+		//! \brief Model validation widget
+		ModelValidationWidget *model_valid_wgt;
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;
@@ -131,7 +135,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void exportModel(void);
 
 		//! \brief Updates the opened models with new configurations
-		void updateModelsConfigurations(void);
+		void applyConfigurations(void);
 
 		//! \brief Applies the zoom to the currently focused model
 		void applyZoom(void);
