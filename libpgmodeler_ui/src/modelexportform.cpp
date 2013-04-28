@@ -94,7 +94,7 @@ void ModelExportForm::exportModel(void)
 {
 	try
 	{
-		ExportHelper export_hlp(this->model);
+		ModelExportHelper export_hlp(this->model);
 
 		this->resize(this->maximumSize());
 

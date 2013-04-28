@@ -1,6 +1,6 @@
-#include "exporthelper.h"
+#include "modelexporthelper.h"
 
-void ExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
 {
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -24,7 +24,7 @@ void ExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename,
 	disconnect(db_model, NULL, this, NULL);
 }
 
-void ExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -70,7 +70,7 @@ void ExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, boo
 	}
 }
 
-void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup)
 {
 	int type_id;
 	QString  version, sql_buf, sql_cmd;
@@ -280,7 +280,7 @@ void ExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, con
 	}
 }
 
-void ExportHelper::updateProgress(int prog, QString object_id, unsigned)
+void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned)
 {
 	int aux_prog=progress + (prog/progress);
 	sql_gen_progress=prog;

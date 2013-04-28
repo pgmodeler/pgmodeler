@@ -28,14 +28,14 @@
 #include "modelwidget.h"
 #include "dbconnection.h"
 
-class ExportHelper: public QObject {
+class ModelExportHelper: public QObject {
 	private:
 		Q_OBJECT
 
 		int progress, sql_gen_progress;
 
 	public:
-		ExportHelper(QObject *parent = 0) : QObject(parent){ progress=0; }
+		ModelExportHelper(QObject *parent = 0) : QObject(parent){ progress=0; }
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);

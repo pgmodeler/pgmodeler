@@ -31,7 +31,7 @@
 #include "exception.h"
 #include "globalattributes.h"
 #include "modelwidget.h"
-#include "exporthelper.h"
+#include "modelexporthelper.h"
 #include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
 
@@ -40,7 +40,7 @@ class PgModelerCLI: public QApplication {
 		Q_OBJECT
 
 		//Export helper object
-		ExportHelper export_hlp;
+		ModelExportHelper export_hlp;
 
 		//Reference database model
 		DatabaseModel *model;

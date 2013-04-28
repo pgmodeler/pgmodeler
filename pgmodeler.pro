@@ -73,6 +73,7 @@ macx | windows {
 # Main variables settings #
 ###########################
 CONFIG += ordered qt stl rtti exceptions warn_on
+macx:CONFIG -= app_bundle
 unix:CONFIG += x11
 windows:CONFIG += windows
 unix:LIB_PREFIX = lib

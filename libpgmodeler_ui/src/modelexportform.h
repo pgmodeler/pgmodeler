@@ -28,7 +28,7 @@
 #include "ui_modelexportform.h"
 #include "schemaparser.h"
 #include "modelwidget.h"
-#include "exporthelper.h"
+#include "modelexporthelper.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
