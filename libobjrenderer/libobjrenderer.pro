@@ -2,10 +2,6 @@ include(../pgmodeler.pro)
 
 TEMPLATE = lib
 TARGET = objrenderer
-DESTDIR = ../build/lib
-LIBS += $$DESTDIR/$$LIBUTILS \
-        $$DESTDIR/$$LIBPARSERS \
-        $$DESTDIR/$$LIBPGMODELER
 
 HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/textboxview.h \
@@ -16,7 +12,7 @@ HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/tableobjectview.h \
             $$PWD/src/basetableview.h \
             $$PWD/src/objectsscene.h \
-    src/schemaview.h
+	    $$PWD/src/schemaview.h
 
 SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/textboxview.cpp \
@@ -27,4 +23,4 @@ SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/tableobjectview.cpp \
             $$PWD/src/basetableview.cpp \
             $$PWD/src/objectsscene.cpp \
-    src/schemaview.cpp
+	    $$PWD/src/schemaview.cpp

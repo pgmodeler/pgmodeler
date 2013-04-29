@@ -2,7 +2,6 @@ include(../pgmodeler.pro)
 
 TEMPLATE = lib
 TARGET = utils
-DESTDIR = ../build/lib
 
 HEADERS += $$PWD/src/exception.h \
            $$PWD/src/globalattributes.h \

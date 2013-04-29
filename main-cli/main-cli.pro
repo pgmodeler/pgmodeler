@@ -2,16 +2,14 @@ include(../pgmodeler.pro)
 
 TEMPLATE = app
 TARGET = pgmodeler-cli
-DESTDIR = ../build
-
 INCLUDEPATH += ../main/src
 
-LIBS += $$DESTDIR/lib/$$LIBUTILS \
-        $$DESTDIR/lib/$$LIBPARSERS \
-        $$DESTDIR/lib/$$LIBDBCONNECT \
-        $$DESTDIR/lib/$$LIBOBJRENDERER \
-        $$DESTDIR/lib/$$LIBPGMODELER \
-        $$DESTDIR/lib/$$LIBPGMODELERUI
+LIBS += $$DESTDIR/$$LIBUTILS \
+	$$DESTDIR/$$LIBPARSERS \
+	$$DESTDIR/$$LIBDBCONNECT \
+	$$DESTDIR/$$LIBOBJRENDERER \
+	$$DESTDIR/$$LIBPGMODELER \
+	$$DESTDIR/$$LIBPGMODELERUI
 
 SOURCES += $$PWD/src/main.cpp \
 	   $$PWD/src/pgmodelercli.cpp

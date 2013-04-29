@@ -2,14 +2,13 @@ include(../pgmodeler.pro)
 
 TEMPLATE = app
 TARGET = crashhandler
-DESTDIR = ../build
 
-LIBS += $$DESTDIR/lib/$$LIBUTILS \
-        $$DESTDIR/lib/$$LIBPARSERS \
-        $$DESTDIR/lib/$$LIBDBCONNECT \
-        $$DESTDIR/lib/$$LIBOBJRENDERER \
-        $$DESTDIR/lib/$$LIBPGMODELER \
-        $$DESTDIR/lib/$$LIBPGMODELERUI
+LIBS += $$DESTDIR/$$LIBUTILS \
+	$$DESTDIR/$$LIBPARSERS \
+	$$DESTDIR/$$LIBDBCONNECT \
+	$$DESTDIR/$$LIBOBJRENDERER \
+	$$DESTDIR/$$LIBPGMODELER \
+	$$DESTDIR/$$LIBPGMODELERUI
 
 FORMS += $$PWD/ui/crashhandler.ui
 

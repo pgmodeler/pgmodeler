@@ -2,14 +2,6 @@ include(../pgmodeler.pro)
 
 TEMPLATE = lib
 TARGET = pgmodeler_ui
-DESTDIR = ../build/lib
-
-LIBS = $$DESTDIR/$$LIBUTILS \
-       $$DESTDIR/$$LIBPARSERS \
-       $$DESTDIR/$$LIBDBCONNECT \
-       $$DESTDIR/$$LIBOBJRENDERER \
-       $$DESTDIR/$$LIBPGMODELER
-
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 

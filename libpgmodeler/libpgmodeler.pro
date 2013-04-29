@@ -2,10 +2,6 @@ include(../pgmodeler.pro)
 
 TEMPLATE = lib
 TARGET = pgmodeler
-DESTDIR = ../build/lib
-
-LIBS += $$DESTDIR/$$LIBUTILS \
-        $$DESTDIR/$$LIBPARSERS
 
 HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/cast.h \

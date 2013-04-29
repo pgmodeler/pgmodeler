@@ -72,7 +72,7 @@ macx | windows {
 ###########################
 # Main variables settings #
 ###########################
-CONFIG += ordered qt stl rtti exceptions warn_on
+CONFIG += ordered qt stl rtti exceptions warn_on plugin
 macx:CONFIG -= app_bundle
 unix:CONFIG += x11
 windows:CONFIG += windows
@@ -106,6 +106,7 @@ TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
+DESTDIR = $$PWD/build
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
@@ -117,6 +118,7 @@ INCLUDEPATH += $$XML_INC \
                $$PWD/libpgmodeler_ui/src
 
 LIBS = $$XML_LIB $$PGSQL_LIB
+QMAKE_LFLAGS_SHLIB += -L$$DESTDIR
 
 pgmodeler.path = $$PWD/build/
 pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png

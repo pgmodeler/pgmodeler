@@ -1,10 +1,9 @@
 PGMODELER_SRC_DIR=../../
-PGMODELER_LIB_DIR=$$PGMODELER_SRC_DIR/build/lib
+PGMODELER_LIB_DIR=../../build
 PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 !exists($$PGMODELER_SRC_DIR) {
- warning("pt_BR: O diretório de código fonte do pgModeler '$$PGMODELER_SRC_DIR' não foi encontrado! Certifique-se de que a variável PGMODELER_SRC_DIR aponta para uma localização válida!")
- warning("en_US: The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
+ warning("The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
  error("qmake aborted.")
 }
 
@@ -23,13 +22,6 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = build
-
-LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
-       $$PGMODELER_LIB_DIR/$$LIBPARSERS \
-       $$PGMODELER_LIB_DIR/$$LIBDBCONNECT \
-       $$PGMODELER_LIB_DIR/$$LIBPGMODELER \
-       $$PGMODELER_LIB_DIR/$$LIBOBJRENDERER \
-       $$PGMODELER_LIB_DIR/$$LIBPGMODELERUI
 
 HEADERS += src/dummyplugin.h
 SOURCES += src/dummyplugin.cpp
