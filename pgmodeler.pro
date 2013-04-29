@@ -118,8 +118,7 @@ INCLUDEPATH += $$XML_INC \
                $$PWD/libpgmodeler_ui/src
 
 LIBS = $$XML_LIB $$PGSQL_LIB
-
-QMAKE_LFLAGS += -L$$DESTDIR
+unix:QMAKE_LFLAGS += -L$$DESTDIR
 
 pgmodeler.path = $$PWD/build/
 pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png

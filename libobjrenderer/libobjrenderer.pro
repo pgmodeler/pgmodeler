@@ -3,6 +3,12 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = objrenderer
 
+windows {
+ LIBS += $$DESTDIR/$$LIBUTILS \
+         $$DESTDIR/$$LIBPARSERS \
+         $$DESTDIR/$$LIBPGMODELER
+}
+
 HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/textboxview.h \
             $$PWD/src/tableview.h \

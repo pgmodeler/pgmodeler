@@ -3,7 +3,15 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
-windows:RCC_DIR += src
+
+windows {
+ RCC_DIR += src
+ LIBS = $$DESTDIR/$$LIBUTILS \
+        $$DESTDIR/$$LIBPARSERS \
+        $$DESTDIR/$$LIBDBCONNECT \
+        $$DESTDIR/$$LIBOBJRENDERER \
+        $$DESTDIR/$$LIBPGMODELER
+}
 
 SOURCES += $$PWD/src/mainwindow.cpp \
 	   $$PWD/src/modelwidget.cpp \

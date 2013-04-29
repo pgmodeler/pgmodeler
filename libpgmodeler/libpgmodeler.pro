@@ -3,6 +3,11 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = pgmodeler
 
+windows {
+  LIBS += $$DESTDIR/$$LIBUTILS \
+          $$DESTDIR/$$LIBPARSERS
+}
+
 HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/cast.h \
            $$PWD/src/function.h \

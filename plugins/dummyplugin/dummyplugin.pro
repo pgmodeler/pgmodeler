@@ -23,7 +23,16 @@ OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = build
 
-QMAKE_LFLAGS += -L$$DESTDIR
+unix:QMAKE_LFLAGS += -L$$DESTDIR
+
+windows {
+ LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
+         $$PGMODELER_LIB_DIR/$$LIBPARSERS \
+         $$PGMODELER_LIB_DIR/$$LIBDBCONNECT \
+         $$PGMODELER_LIB_DIR/$$LIBOBJRENDERER \
+         $$PGMODELER_LIB_DIR/$$LIBPGMODELER \
+         $$PGMODELER_LIB_DIR/$$LIBPGMODELERUI
+}
 
 HEADERS += src/dummyplugin.h
 SOURCES += src/dummyplugin.cpp
