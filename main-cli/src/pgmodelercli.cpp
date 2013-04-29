@@ -36,6 +36,7 @@ QString PgModelerCLI::USER="--user";
 QString PgModelerCLI::PASSWD="--passwd";
 QString PgModelerCLI::INITIAL_DB="--initial-db";
 QString PgModelerCLI::SILENT="--silent";
+QString PgModelerCLI::LIST_CONNS="--list-conns";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -117,12 +118,6 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 			}
 			else if(parsed_opts.count(EXPORT_TO_DBMS))
 			{
-				ConnectionsConfigWidget conn_conf;
-				map<QString, DBConnection *> connections;
-
-				conn_conf.loadConfiguration();
-				conn_conf.getConnections(connections);
-
 				//Getting the connection using its alias
 				if(parsed_opts.count(CONN_ALIAS))
 				{
@@ -177,6 +172,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[USER]=true;
 	long_opts[PASSWD]=true;
 	long_opts[INITIAL_DB]=true;
+	long_opts[LIST_CONNS]=false;
 
 	short_opts[INPUT]="-i";
 	short_opts[OUTPUT]="-o";
@@ -195,6 +191,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[PASSWD]="-w";
 	short_opts[INITIAL_DB]="-D";
 	short_opts[SILENT]="-s";
+	short_opts[LIST_CONNS]="-L";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -225,12 +222,13 @@ void PgModelerCLI::showMenu(void)
 the need to load them on graphical interface. All available exporting\n\
 modes are described below.") << endl;
 	out << endl;
-	out << trUtf8("Options: ") << endl;
+	out << trUtf8("General options: ") << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm).").arg(short_opts[INPUT]).arg(INPUT) << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Available only on export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
 	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
 	out << trUtf8("   %1, %2\t\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
+	out << trUtf8("   %1, %2\t\t List available connections on %3 file.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
 	out << trUtf8("   %1, %2\t\t Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
 	out << trUtf8("   %1, %2\t\t\t Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
 	out << trUtf8("   %1, %2\t\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
@@ -252,8 +250,33 @@ modes are described below.") << endl;
 
 void PgModelerCLI::parserOptions(map<QString, QString> &opts)
 {
+	//Loading connections
+	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
+	{
+		conn_conf.loadConfiguration();
+		conn_conf.getConnections(connections);
+	}
+
 	if(opts.empty() || opts.count(HELP))
 		showMenu();
+	//Listing connections
+	else if(opts.count(LIST_CONNS))
+	{
+		map<QString, DBConnection *>::iterator itr=connections.begin();
+
+		if(connections.empty())
+			out << endl <<  trUtf8("There is no connections configured.") << endl << endl;
+		else
+		{
+			out << endl << trUtf8("Available connections (alias : conn. string)") << endl;
+			while(itr != connections.end())
+			{
+				out << itr->first << " : " << itr->second->getConnectionString() << endl;
+				itr++;
+			}
+			out << endl;
+		}
+	}
 	else
 	{
 		int mode_cnt=0;

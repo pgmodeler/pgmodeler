@@ -51,6 +51,12 @@ class PgModelerCLI: public QApplication {
 		//Stores the configured connection
 		DBConnection connection;
 
+		//Loaded connections
+		map<QString, DBConnection *> connections;
+
+		//Connection configuration widget used to load available connections from file
+		ConnectionsConfigWidget conn_conf;
+
 		//Creates an standard out to handles QStrings
 		static QTextStream out;
 
@@ -83,7 +89,8 @@ class PgModelerCLI: public QApplication {
 		USER,
 		PASSWD,
 		INITIAL_DB,
-		SILENT;
+		SILENT,
+		LIST_CONNS;
 
 		//Parsers the options and executes the action specified by them
 		void parserOptions(map<QString, QString> &parsed_opts);
