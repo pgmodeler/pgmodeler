@@ -73,11 +73,16 @@ macx | windows {
 # Main variables settings #
 ###########################
 CONFIG += ordered qt stl rtti exceptions warn_on plugin
+
+#Avoiding the generation of app bundle on MacOSX
 macx:CONFIG -= app_bundle
+
+#Additional configs on unix / windows
 unix:CONFIG += x11
 windows:CONFIG += windows
-unix:LIB_PREFIX = lib
 
+#Libraries extension and preffix for each platform
+unix:LIB_PREFIX = lib
 unix:LIB_EXT = so
 windows:LIB_EXT = dll
 macx:LIB_EXT = dylib
@@ -94,6 +99,7 @@ SUBDIRS = libutils \
 	  plugins/dummyplugin
 
 
+#Creating the project's libraries names based upon the running OS
 LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
 LIBPARSERS=$${LIB_PREFIX}parsers.$${LIB_EXT}
 LIBDBCONNECT=$${LIB_PREFIX}dbconnect.$${LIB_EXT}
@@ -117,9 +123,13 @@ INCLUDEPATH += $$XML_INC \
                $$PWD/libobjrenderer/src \
                $$PWD/libpgmodeler_ui/src
 
+#Adding xml and PostgreSQL libs
 LIBS = $$XML_LIB $$PGSQL_LIB
+
+#Unix specific: passing the library search path to the linker
 unix:QMAKE_LFLAGS += -L$$DESTDIR
 
+#Deployment configurations
 pgmodeler.path = $$PWD/build/
 pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 
