@@ -23,9 +23,11 @@ OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = build
 
-unix:QMAKE_LFLAGS += -L$$DESTDIR
+unix & !macx {
+ QMAKE_LFLAGS += -L$$DESTDIR
+}
 
-windows {
+windows | macx {
  LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
          $$PGMODELER_LIB_DIR/$$LIBPARSERS \
          $$PGMODELER_LIB_DIR/$$LIBDBCONNECT \

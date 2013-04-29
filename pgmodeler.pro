@@ -127,7 +127,9 @@ INCLUDEPATH += $$XML_INC \
 LIBS = $$XML_LIB $$PGSQL_LIB
 
 #Unix specific: passing the library search path to the linker
-unix:QMAKE_LFLAGS += -L$$DESTDIR
+unix & !macx {
+ QMAKE_LFLAGS += -L$$DESTDIR
+}
 
 #Deployment configurations
 pgmodeler.path = $$PWD/build/

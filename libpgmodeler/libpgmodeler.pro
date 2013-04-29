@@ -3,9 +3,9 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = pgmodeler
 
-#Windows specific: the QMAKE_LFLAGS does not work properly with MingW so it's necessary
-#to pass manually all the used libraries to the linker
-windows {
+# The QMAKE_LFLAGS does not work properly with MingW (Windows) or Xcode (MacOSX)
+# so it's necessary to pass manually all the used libraries to the linker
+windows | macx {
   LIBS += $$DESTDIR/$$LIBUTILS \
           $$DESTDIR/$$LIBPARSERS
 }
