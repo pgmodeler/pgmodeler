@@ -8,3 +8,4 @@ HEADERS += $$PWD/src/schemaparser.h \
 
 SOURCES += $$PWD/src/schemaparser.cpp \
            $$PWD/src/xmlparser.cpp
+

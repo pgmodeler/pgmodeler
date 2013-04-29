@@ -53,7 +53,6 @@ void ModelExportForm::show(ModelWidget *model)
 	{
 		map<QString, DBConnection *> connections;
 		map<QString, DBConnection *>::iterator itr;
-		QString host;
 
 		this->model=model;
 

@@ -22,8 +22,8 @@
 \brief Implements the base operations to export models
 */
 
-#ifndef EXPORT_HELPER_H
-#define EXPORT_HELPER_H
+#ifndef MODEL_EXPORT_HELPER_H
+#define MODEL_EXPORT_HELPER_H
 
 #include "modelwidget.h"
 #include "dbconnection.h"

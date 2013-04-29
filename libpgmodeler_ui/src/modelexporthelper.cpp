@@ -139,7 +139,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 
 				try
 				{
-					conn.executeDDLCommand(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+					sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					conn.executeDDLCommand(sql_cmd);
 				}
 				catch(Exception &e)
 				{
@@ -149,7 +150,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 						 (ignore_dup &&
 							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
 						throw Exception(e.getErrorMessage(),
-														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 					else
 						//If the object is duplicated store the error on a vector
 						errors.push_back(e);
@@ -163,7 +164,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		{
 			//Creating the database on the DBMS
 			emit s_progressUpdated(progress, trUtf8("Creating database '%1'...").arg(Utf8String::create(db_model->getName())));
-			conn.executeDDLCommand(db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION));
+			sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			conn.executeDDLCommand(sql_cmd);
 			db_created=true;
 		}
 		catch(Exception &e)
@@ -174,7 +176,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 				 (ignore_dup &&
 					std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
 				throw Exception(e.getErrorMessage(),
-												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 			else
 				errors.push_back(e);
 		}
@@ -227,7 +229,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 					 (ignore_dup &&
 						std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
 					throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
-													ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+													ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 				else
 					errors.push_back(e);
 			}

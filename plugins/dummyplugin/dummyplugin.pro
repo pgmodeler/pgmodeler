@@ -23,6 +23,8 @@ OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = build
 
+QMAKE_LFLAGS += -L$$DESTDIR
+
 HEADERS += src/dummyplugin.h
 SOURCES += src/dummyplugin.cpp
 
