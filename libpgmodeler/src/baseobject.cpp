@@ -61,7 +61,8 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
 	 are respectively assigned to objects of classes Role, Tablespace
 	 DBModel, Schema, Collation, Function and Type */
-unsigned BaseObject::global_id=60000;
+//unsigned BaseObject::global_id=60000;
+unsigned BaseObject::global_id=30000;
 
 BaseObject::BaseObject(void)
 {

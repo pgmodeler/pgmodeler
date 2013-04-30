@@ -25,7 +25,59 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 
 	try
 	{
+		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
+												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
+												OBJ_COLLATION, OBJ_TABLE /*,	OBJ_COLUMN*/ };
+		unsigned i, count=sizeof(types)/sizeof(ObjectType);
+		BaseObject *object=NULL, *refer_obj=NULL;
+		vector<BaseObject *> refs, refs_aux, *obj_list=NULL;
+		vector<BaseObject *>::iterator itr;
+		TableObject *tab_obj=NULL;
 
+		/*Step 1: Validating broken references. This situation happens when a object references another
+		whose id is smaller than the id of the first one. */
+		for(i=0; i < count; i++)
+		{
+			obj_list=model->getObjectList(types[i]);
+			itr=obj_list->begin();
+
+			while(itr!=obj_list->end())
+			{
+				object=(*itr);
+				itr++;
+
+				//Excluding the validation of system objects (created automatically)
+				if(!object->isSystemObject())
+				{
+					model->getObjectReferences(object, refs);
+					refs_aux.clear();
+					while(!refs.empty())
+					{
+						tab_obj=dynamic_cast<TableObject *>(refs.back());
+
+						if(object != refs.back() &&
+							 ((refs.back()->getObjectId() <= object->getObjectId()) ||
+								(tab_obj && tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))
+						{
+							if(tab_obj)
+								refer_obj=tab_obj->getParentTable();
+							else
+								refer_obj=refs.back();
+
+							if(std::find(refs_aux.begin(), refs_aux.end(), refer_obj)==refs_aux.end())
+								refs_aux.push_back(refer_obj);
+						}
+
+						refs.pop_back();
+					}
+
+					if(!refs_aux.empty())
+						emit s_validationInfoGenerated(ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux));
+				}
+			}
+
+			emit s_updateProgress(((i+1)/static_cast<float>(count))*100);
+		}
 
 	}
 	catch(Exception &e)

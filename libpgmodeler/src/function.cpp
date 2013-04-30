@@ -22,7 +22,9 @@ unsigned Function::function_id=50000;
 
 Function::Function(void)
 {
-	object_id=Function::function_id++;
+	#warning "Code temporarily disabled!"
+	//object_id=Function::function_id++;
+
 	return_type=PgSQLType("void");
 	language=NULL;
 	returns_setof=false;

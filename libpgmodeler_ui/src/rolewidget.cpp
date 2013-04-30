@@ -18,7 +18,6 @@
 
 #include "rolewidget.h"
 #include "modelobjectswidget.h"
-extern ModelObjectsWidget *selecaoobjetos_wgt;
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
@@ -78,6 +77,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	}
 
 	parent_form->setMinimumSize(580, 650);
+
+	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 }
 
 void RoleWidget::uncheckOptions(void)
@@ -119,10 +120,8 @@ void RoleWidget::hideEvent(QHideEvent *event)
 {
 	unsigned i;
 
-	disconnect(object_selection_wgt,0,this,0);
-
 	for(i=0; i < 3; i++)
-		members_tab[i]->blockSignals(true);
+			members_tab[i]->blockSignals(true);
 
 	for(i=0; i < 3; i++)
 	{
@@ -165,7 +164,6 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 	BaseObjectWidget::setAttributes(model, op_list, role);
 
 	fillMembersTable();
-	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 	configureRoleSelection();
 }
 
@@ -224,7 +222,7 @@ void RoleWidget::fillMembersTable(void)
 				showRoleData(aux_role, type_id, i);
 			}
 
-			members_tab[type_id]->blockSignals(true);
+			members_tab[type_id]->blockSignals(false);
 			members_tab[type_id]->clearSelection();
 		}
 	}
@@ -235,6 +233,7 @@ void RoleWidget::showSelectedRoleData(void)
 	unsigned idx_tab;
 	int lin, idx_lin=-1;
 	BaseObject *obj_sel=NULL;
+	MessageBox msg_box;
 
 	//Get the selected role
 	obj_sel=object_selection_wgt->getSelectedObject();
@@ -249,10 +248,15 @@ void RoleWidget::showSelectedRoleData(void)
 	//Raises an error if the user try to assign the role as member of itself
 	if(obj_sel && obj_sel==this->object)
 	{
-		throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
+		/* If the current row does not has a value indicates that it is recently added and does not have
+			 data, in this case it will be removed */
+		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
+			members_tab[idx_tab]->removeRow(lin);
+
+		msg_box.show(Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
 										.arg(Utf8String::create(obj_sel->getName()))
 										.arg(Utf8String::create(name_edt->text())),
-										ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
 	else if(obj_sel && idx_lin < 0)
@@ -267,10 +271,10 @@ void RoleWidget::showSelectedRoleData(void)
 		//Raises an error if the role already is in the table
 		if(obj_sel && idx_lin >= 0)
 		{
-			throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
+			msg_box.show( Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
 											.arg(Utf8String::create(obj_sel->getName()))
 											.arg(Utf8String::create(name_edt->text())),
-											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 }

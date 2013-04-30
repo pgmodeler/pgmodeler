@@ -22,7 +22,9 @@ unsigned Collation::collation_id=40000;
 
 Collation::Collation(void)
 {
-	object_id=Collation::collation_id++;
+	#warning "Code temporarily disabled!"
+	//object_id=Collation::collation_id++;
+
 	obj_type=OBJ_COLLATION;
 	encoding=BaseType::null;
 

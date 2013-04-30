@@ -28,16 +28,22 @@
 #include "ui_modelvalidationwidget.h"
 #include "dbconnection.h"
 #include "modelwidget.h"
+#include "modelvalidationhelper.h"
 
 class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 		ModelWidget *model_wgt;
+		ModelValidationHelper validation_helper;
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
 		void setModel(ModelWidget *model_wgt);
 		void updateConnections(map<QString, DBConnection *> &conns);
+
+	private slots:
+		void validateModel(void);
+		void updateValidation(ValidationInfo val_info);
 };
 
 #endif

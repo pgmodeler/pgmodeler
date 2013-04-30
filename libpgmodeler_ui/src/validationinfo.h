@@ -50,7 +50,7 @@ class ValidationInfo {
 													BROKEN_REFERENCE=1,
 													SQL_VALIDATION_ERR=2;
 
-		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references, QString sql_error);
+		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references=vector<BaseObject *>(), QString sql_error="");
 
 		//! \brief Returns the validation type
 		unsigned getValidationType(void);

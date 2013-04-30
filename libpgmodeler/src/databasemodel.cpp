@@ -6683,8 +6683,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *>::iterator itr, itr_end;
 			ObjectType obj_types[]={OBJ_TABLE, OBJ_OPCLASS, OBJ_CAST,
 															OBJ_DOMAIN, OBJ_FUNCTION, OBJ_AGGREGATE,
-															OBJ_OPERATOR, OBJ_TYPE };
-			unsigned i, i1, count;
+															OBJ_OPERATOR, OBJ_TYPE, OBJ_RELATIONSHIP };
+			unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
 			OperatorClass *op_class=NULL;
 			Table *tab=NULL;
 			Column *col=NULL;
@@ -6694,6 +6694,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Aggregate *aggreg=NULL;
 			Operator *oper=NULL;
 			Type *type=NULL;
+			Relationship *rel=NULL;
 			void *ptr_pgsqltype=NULL;
 
 			switch(obj_type)
@@ -6704,13 +6705,36 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
 			}
 
-			for(i=0; i < 8 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+			for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
 				obj_list=getObjectList(obj_types[i]);
 				itr=obj_list->begin();
 				itr_end=obj_list->end();
 
-				if(obj_types[i]==OBJ_TABLE)
+				if(obj_types[i]==OBJ_RELATIONSHIP)
+				{
+					bool added;
+
+					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						added=false;
+						rel=dynamic_cast<Relationship *>(*itr);
+						itr++;
+
+						count=rel->getAttributeCount();
+						for(i1=0; i1 < count && !added; i1++)
+						{
+							col=rel->getAttribute(i1);
+
+							if(col->getType()==object)
+							{
+								added=refer=true;
+								refs.push_back(rel);
+							}
+						}
+					}
+				}
+				else if(obj_types[i]==OBJ_TABLE)
 				{
 					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{
@@ -6722,7 +6746,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=tab->getColumn(i1);
 
-							if(col->getType()==object)
+							if(!col->isAddedByRelationship() && col->getType()==object)
 							{
 								refer=true;
 								refs.push_back(col);

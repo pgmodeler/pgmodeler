@@ -42,7 +42,8 @@ class ModelValidationHelper: public QObject {
 		void validateModel(DatabaseModel *model, DBConnection *conn);
 
 	signals:
-		void s_validationUpdated(ValidationInfo);
+		void s_validationInfoGenerated(ValidationInfo val_info);
+		void s_updateProgress(int prog);
 };
 
 #endif

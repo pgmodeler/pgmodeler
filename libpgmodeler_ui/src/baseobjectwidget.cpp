@@ -206,6 +206,14 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 {
 	ObjectType obj_type, parent_type=BASE_OBJECT;
 
+	/* Reseting the objects attributes in order to force them to be redefined
+	every time this method is called */
+	this->object=NULL;
+	this->model=NULL;
+	this->op_list=NULL;
+	this->relationship=NULL;
+	this->table=NULL;
+
 	if(!model || (uses_op_list && !op_list))
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
