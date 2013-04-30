@@ -48,6 +48,7 @@ class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 		void undoOperation(void);
 		void redoOperation(void);
 		void removeOperations(void);
+		void hide(void);
 
 	private slots:
 		void selectItem(QTreeWidgetItem *item, int coluna);
@@ -55,6 +56,7 @@ class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	signals:
 		void s_operationExecuted(void);
 		void s_operationListUpdated(void);
+		void s_visibilityChanged(bool);
 };
 
 #endif

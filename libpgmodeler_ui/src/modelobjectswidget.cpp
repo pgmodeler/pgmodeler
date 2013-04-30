@@ -32,11 +32,11 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	QString str_aux;
 
 	setupUi(this);
-
 	model_wgt=NULL;
 	db_model=NULL;
-	this->setEnabled(false);
+	setModel(db_model);
 
+	title_wgt->setVisible(!simplified_view);
 	this->simplified_view=simplified_view;
 	this->save_tree_state=!simplified_view;
 
@@ -86,6 +86,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		connect(clear_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject(void)));
 		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject(void)));
+		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
 	}
 	else
 	{
@@ -100,6 +101,13 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 }
+
+void ModelObjectsWidget::hide(void)
+{
+	QWidget::hide();
+	emit s_visibilityChanged(false);
+}
+
 
 void ModelObjectsWidget::showObjectMenu(void)
 {
@@ -1237,7 +1245,7 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 {
 	this->db_model=db_model;
-	this->setEnabled(db_model!=NULL);
+	content_wgt->setEnabled(db_model!=NULL);
 	updateObjectsView();
 	visaoobjetos_stw->setEnabled(true);
 }

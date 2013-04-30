@@ -44,6 +44,12 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private slots:
 		void validateModel(void);
 		void updateValidation(ValidationInfo val_info);
+
+	public slots:
+		void hide(void);
+
+	signals:
+		void s_visibilityChanged(bool);
 };
 
 #endif

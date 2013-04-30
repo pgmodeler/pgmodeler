@@ -258,10 +258,21 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	bottom_wgt_bar->setLayout(vlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
-	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
-	connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
+	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	connect(model_objs_wgt, SIGNAL(s_visibilityChanged(bool)), objects_btn, SLOT(setChecked(bool)));
+	connect(model_objs_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(hideRightWidgetsBar()));
+
+	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
+	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_wgt, SLOT(setVisible(bool)));
 	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), operations_btn, SLOT(setChecked(bool)));
+	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(hideRightWidgetsBar()));
+
+	connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
+	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
+	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), validation_btn, SLOT(setChecked(bool)));
+
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 	hideRightWidgetsBar();
 

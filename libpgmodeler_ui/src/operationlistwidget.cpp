@@ -30,8 +30,14 @@ OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation(void)));
 	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation(void)));
 	connect(rem_operations_tb,SIGNAL(clicked()),this,SLOT(removeOperations(void)));
-	connect(operations_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-					this,SLOT(selectItem(QTreeWidgetItem *, int)));
+	connect(operations_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(selectItem(QTreeWidgetItem *, int)));
+	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+}
+
+void OperationListWidget::hide(void)
+{
+	QWidget::hide();
+	emit s_visibilityChanged(false);
 }
 
 void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
@@ -50,7 +56,7 @@ void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
 
 void OperationListWidget::updateOperationList(void)
 {
-	this->setEnabled(this->model_wgt!=NULL);
+	content_wgt->setEnabled(this->model_wgt!=NULL);
 
 	if(!model_wgt)
 	{

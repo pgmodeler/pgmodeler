@@ -22,22 +22,40 @@
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	model_wgt=NULL;
-	this->setEnabled(false);
+	this->setModel(NULL);
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), connection_lbl, SLOT(setEnabled(bool)));
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 	connect(&validation_helper, SIGNAL(s_updateProgress(int)), validation_prog_pb, SLOT(setValue(int)));
+	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+}
+
+void ModelValidationWidget::hide(void)
+{
+	QWidget::hide();
+	emit s_visibilityChanged(false);
 }
 
 void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 {
-	this->setEnabled(model_wgt!=NULL);
+	bool enable=model_wgt!=NULL;
+
 	this->model_wgt=model_wgt;
+
+	output_trw->setEnabled(enable);
+	validate_btn->setEnabled(enable);
+	sql_validation_chk->setEnabled(enable);
+
+	if(sql_validation_chk->isChecked())
+	{
+		connection_lbl->setEnabled(enable);
+		connections_cmb->setEnabled(enable);
+	}
+
 	output_trw->clear();
 	validation_prog_pb->setValue(0);
-	validation_prog_pb->setVisible(false);
+	prog_info_wgt->setVisible(false);
 }
 
 void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conns)
@@ -105,7 +123,7 @@ void ModelValidationWidget::validateModel(void)
 	{
 		output_trw->clear();
 		validation_prog_pb->setValue(0);
-		validation_prog_pb->setVisible(true);
+		prog_info_wgt->setVisible(true);
 		validate_btn->setEnabled(false);
 		model_wgt->setEnabled(false);
 

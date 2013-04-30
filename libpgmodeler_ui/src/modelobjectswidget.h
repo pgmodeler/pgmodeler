@@ -106,6 +106,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void updateObjectsView(void);
 		void setObjectVisible(ObjectType obj_type, bool visible);
 		void close(void);
+		void hide(void);
 
 	private slots:
 		void setObjectVisible(QListWidgetItem *item);
@@ -117,6 +118,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 	signals:
 		void s_visibilityChanged(BaseObject *,bool);
+		void s_visibilityChanged(bool);
 
 		friend class MainWindow;
 };
