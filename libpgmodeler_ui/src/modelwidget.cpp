@@ -47,6 +47,7 @@
 #include "quickrenamewidget.h"
 #include "permissionwidget.h"
 #include "collationwidget.h"
+#include "extensionwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -74,6 +75,7 @@ extern IndexWidget *index_wgt;
 extern RelationshipWidget *relationship_wgt;
 extern TableWidget *table_wgt;
 extern CollationWidget *collation_wgt;
+extern ExtensionWidget *extension_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
@@ -97,8 +99,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 											 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
 											 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
-											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE };
-	unsigned i, obj_cnt=23,
+											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
+											 OBJ_COLLATION, OBJ_EXTENSION };
+	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
 												BaseRelationship::RELATIONSHIP_GEN };
@@ -1307,6 +1310,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				res=(collation_wgt->result()==QDialog::Accepted);
 			break;
 
+			case OBJ_EXTENSION:
+				extension_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
+				extension_wgt->show();
+				res=(collation_wgt->result()==QDialog::Accepted);
+			break;
+
 			default:
 			case OBJ_DATABASE:
 				database_wgt->setAttributes(db_model);
@@ -2327,10 +2336,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		{
 			ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
-													 OBJ_OPFAMILY, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLESPACE };
+													 OBJ_OPFAMILY, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLESPACE, OBJ_COLLATION, OBJ_EXTENSION };
+
+			unsigned cnt = sizeof(types)/sizeof(ObjectType);
 
 			//Configures the "New object" menu with the types at database level
-			for(i=0; i < 18; i++)
+			for(i=0; i < cnt; i++)
 				new_object_menu.addAction(actions_new_objects[types[i]]);
 
 			action_new_object->setMenu(&new_object_menu);
@@ -2360,16 +2371,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			ObjectType obj_type=obj->getObjectType(),
 					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
 										OBJ_RULE, OBJ_INDEX },
-					sch_types[]={ OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_DOMAIN,
+					sch_types[]={ OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_DOMAIN, OBJ_COLLATION, OBJ_EXTENSION,
 												OBJ_FUNCTION, OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY,
 												OBJ_SEQUENCE, OBJ_TABLE, OBJ_TYPE, OBJ_VIEW };
+			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
+							 sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
 
-			if(!obj->isProtected() &&
-				 (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA))
+			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
+				 (!obj->isProtected() && (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
 			{
 				if(obj_type == OBJ_TABLE)
 				{
-					for(i=0; i < 5; i++)
+					for(i=0; i < tab_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 				}
@@ -2387,7 +2400,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 				else if(obj_type == OBJ_SCHEMA)
 				{
-					for(i=0; i < 11; i++)
+					for(i=0; i < sch_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 				}

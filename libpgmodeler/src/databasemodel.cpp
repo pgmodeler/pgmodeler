@@ -127,6 +127,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&permissions);
 	else if(obj_type==OBJ_COLLATION)
 		return(&collations);
+	else if(obj_type==OBJ_EXTENSION)
+		return(&extensions);
 	else
 		return(NULL);
 }
@@ -180,6 +182,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 				addSequence(dynamic_cast<Sequence *>(object), obj_idx);
 			else if(obj_type==OBJ_COLLATION)
 				addCollation(dynamic_cast<Collation *>(object), obj_idx);
+			else if(obj_type==OBJ_EXTENSION)
+				addExtension(dynamic_cast<Extension *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				addPermission(dynamic_cast<Permission *>(object));
 		}
@@ -689,8 +693,9 @@ void DatabaseModel::destroyObjects(void)
 		OBJ_SEQUENCE, OBJ_CONVERSION,
 		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_PERMISSION };
+		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
+		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
+		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION };
 	vector<BaseObject *> *list=NULL;
 	BaseObject *object=NULL;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
@@ -803,6 +808,41 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 	try
 	{
 		__removeObject(collation, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::addExtension(Extension *extension, int obj_idx)
+{
+	try
+	{
+		__addObject(extension, obj_idx);
+
+		if(extension->handlesType())
+			PgSQLType::addUserType(extension->getName(true), extension, this, UserTypeConfig::EXTENSION_TYPE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+Extension *DatabaseModel::getExtension(unsigned obj_idx)
+{
+	return(dynamic_cast<Extension *>(getObject(obj_idx, OBJ_COLLATION)));
+}
+
+void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
+{
+	try
+	{
+		if(extension->handlesType())
+			removeUserType(extension, obj_idx);
+		else
+			__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
 	{
@@ -2697,6 +2737,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createRelationship();
 		else if(obj_type==OBJ_COLLATION)
 			object=createCollation();
+		else if(obj_type==OBJ_EXTENSION)
+			object=createExtension();
 	}
 
 	return(object);
@@ -5157,6 +5199,33 @@ Collation *DatabaseModel::createCollation(void)
 	return(collation);
 }
 
+Extension *DatabaseModel::createExtension(void)
+{
+	Extension *extension=NULL;
+	map<QString, QString> attribs;
+
+	try
+	{
+		extension=new Extension;
+		XMLParser::getElementAttributes(attribs);
+		setBasicAttributes(extension);
+
+		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::_TRUE_);
+		extension->setVersion(Extension::CUR_VERSION, attribs[ParsersAttributes::CUR_VERSION]);
+		extension->setVersion(Extension::OLD_VERSION, attribs[ParsersAttributes::OLD_VERSION]);
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+							 .arg(XMLParser::getCurrentElement()->line);
+
+		if(extension) delete(extension);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+	}
+
+	return(extension);
+}
 
 Textbox *DatabaseModel::createTextbox(void)
 {
@@ -6676,7 +6745,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-		if((obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN || obj_type==OBJ_SEQUENCE || obj_type==OBJ_TABLE)
+		if((obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN || obj_type==OBJ_SEQUENCE ||
+				obj_type==OBJ_TABLE || obj_type==OBJ_EXTENSION)
 			 && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=NULL;
@@ -6702,6 +6772,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				case OBJ_TYPE: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
 				case OBJ_DOMAIN: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
 				case OBJ_SEQUENCE: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
+				case OBJ_EXTENSION: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
 				default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
 			}
 
@@ -7297,6 +7368,10 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSQLType type)
 
 		case UserTypeConfig::SEQUENCE_TYPE:
 			return(this->getObject(*type, OBJ_SEQUENCE));
+		break;
+
+		case UserTypeConfig::EXTENSION_TYPE:
+			return(this->getObject(*type, OBJ_EXTENSION));
 		break;
 
 		default:

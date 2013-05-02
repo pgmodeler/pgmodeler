@@ -438,6 +438,7 @@ class PgSQLType: public BaseType{
 		friend class Table;
 		friend class Sequence;
 		friend class View;
+		friend class Extension;
 		friend class DatabaseModel;
 };
 

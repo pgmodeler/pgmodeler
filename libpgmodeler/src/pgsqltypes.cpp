@@ -919,7 +919,6 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 	if(PgSQLType::user_types.size() > 0 &&
 		 type_name!="" && ptype)
 	{
-		UserTypeConfig cfg;
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
 		itr=PgSQLType::user_types.begin();

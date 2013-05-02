@@ -214,6 +214,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_OPCLASS_OBJ", QT_TR_NOOP("The operator class assigned to the object '%1' (%2) must use 'btree' as indexing method!")},
 	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Invalid PostgreSQL version '%1' assigned to the schema parser! Valid versions are: %2")},
 	{"ERR_VALIDATION_FAILURE", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
+	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension '%1' is registered as a data type and cannot have the attribute 'handles datatype' modified!")},
 };
 
 Exception::Exception(void)

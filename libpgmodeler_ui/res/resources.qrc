@@ -147,6 +147,7 @@
         <file>icones/plugins.png</file>
         <file>icones/validation.png</file>
         <file>icones/extension.png</file>
+        <file>icones/extension_grp.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

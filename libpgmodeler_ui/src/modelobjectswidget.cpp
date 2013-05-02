@@ -25,7 +25,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 												OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 												OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
 												OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLUMN, OBJ_CONSTRAINT,
-												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_COLLATION };
+												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_COLLATION, OBJ_EXTENSION };
 	int type_id, type_count=sizeof(type)/sizeof(ObjectType);
 	QListWidgetItem *item=NULL;
 	QPixmap icon;
@@ -314,7 +314,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 													OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
 													OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 													OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
-													OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLLATION },
+													OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLLATION, OBJ_EXTENSION },
 				tab_stypes[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
 											 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE },
 				view_stypes[]={ OBJ_TRIGGER, OBJ_RULE };
@@ -469,6 +469,8 @@ void ModelObjectsWidget::updateObjectsList(void)
 						case OBJ_CONVERSION:
 						case OBJ_TYPE:
 						case OBJ_OPFAMILY:
+						case OBJ_EXTENSION:
+						case OBJ_COLLATION:
 						case OBJ_OPCLASS:
 							//Creating the schema icon
 							icon=QPixmap(QString(":/icones/icones/") +
@@ -693,7 +695,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		ObjectType types[]={ OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_DOMAIN, OBJ_TYPE, OBJ_CONVERSION,
 												 OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
-												 OBJ_SEQUENCE, OBJ_COLLATION };
+												 OBJ_SEQUENCE, OBJ_COLLATION, OBJ_EXTENSION };
 		int count, count2, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
 
 		QPixmap sch_icon=QPixmap(QString(":/icones/icones/") +

@@ -48,7 +48,8 @@
 %permission;
 <!ENTITY % collation SYSTEM "collation.dtd">
 %collation;
-
+<!ENTITY % extension SYSTEM "extension.dtd">
+%extension;
 
 <!ELEMENT dbmodel ANY>
 

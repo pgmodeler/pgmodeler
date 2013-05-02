@@ -442,7 +442,7 @@ void BaseObject::setCollation(BaseObject *collation)
 	this->collation=collation;
 }
 
-QString BaseObject::getName(bool format)
+QString BaseObject::getName(bool format, bool prepend_schema)
 {
 	if(format)
 	{
@@ -450,7 +450,7 @@ QString BaseObject::getName(bool format)
 
 		aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
-		if(this->schema)
+		if(this->schema && prepend_schema)
 			aux_name=formatName(this->schema->getName()) + "." + aux_name;
 
 		return(aux_name);
@@ -564,9 +564,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
 
 		//Formats the object's name in case the SQL definition is being generated
-		format=(def_type==SchemaParser::SQL_DEFINITION ||
+		format=((def_type==SchemaParser::SQL_DEFINITION) ||
 						(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
-						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&	obj_type!=BASE_RELATIONSHIP));
+						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP));
 
 		/* Marking the flag that indicates that the comment form to be generated
 		 for the object is specific to it, ignoring the default rule.
@@ -592,11 +592,18 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			break;
 		}
 
-		attributes[ParsersAttributes::NAME]=this->getName(format);
+		if(attributes[ParsersAttributes::NAME].isEmpty())
+			attributes[ParsersAttributes::NAME]=this->getName(format);
+
 		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
-		if(def_type==SchemaParser::XML_DEFINITION && schema)
-			attributes[ParsersAttributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
+		if(schema)
+		{
+			if(def_type==SchemaParser::XML_DEFINITION)
+				attributes[ParsersAttributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
+			else
+				attributes[ParsersAttributes::SCHEMA]=schema->getName(format);
+		}
 
 		if(def_type==SchemaParser::XML_DEFINITION)
 			attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");

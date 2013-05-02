@@ -360,7 +360,10 @@ namespace ParsersAttributes {
 	COPY_OPTIONS="copy-options",
 	TYPE_ATTRIBUTE="typeattrib",
 	COLLATABLE="collatable",
-	RANGE_TYPE="range";
+	RANGE_TYPE="range",
+	HANDLES_TYPE="handles-type",
+	CUR_VERSION="cur-version",
+	OLD_VERSION="old-version";
 }
 
 #endif

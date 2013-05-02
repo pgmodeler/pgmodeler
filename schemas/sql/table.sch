@@ -30,7 +30,6 @@ LIKE $sp @{copy-table} $br
 
 %if @{comment} %then @{comment} %end
 %if @{cols-comment} %then @{cols-comment} %end
-
 %if @{owner} %then @{owner} %end
 
 # This is a special token that pgModeler recognizes as end of DDL command

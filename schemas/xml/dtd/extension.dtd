@@ -1,1 +1,12 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT extension (schema, comment?)>
+<!ATTLIST extension name CDATA #REQUIRED>
+<!ATTLIST extension cur-version CDATA #IMPLIED>
+<!ATTLIST extension old-version CDATA #IMPLIED>
+<!ATTLIST extension handles-type (false|true) "false">
+<!ATTLIST extension protected (false|true) "false">
+<!ATTLIST extension sql-disabled (false|true) "false">
  

@@ -131,6 +131,9 @@ void PgModeler::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectTy
 		case OBJ_COLLATION:
 			copyObject(psrc_obj, dynamic_cast<Collation *>(copy_obj));
 		break;
+		case OBJ_EXTENSION:
+			copyObject(psrc_obj, dynamic_cast<Extension *>(copy_obj));
+		break;
 		default:
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;

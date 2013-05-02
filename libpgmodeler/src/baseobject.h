@@ -240,8 +240,9 @@ class BaseObject {
 		bool isSystemObject(void);
 
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
-		 the name properly formated (schema qualified and using quotes) */
-		QString getName(bool format=false);
+		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
+		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
+		QString getName(bool format=false, bool prepend_schema=true);
 
 		//! \brief Retorns the object's comment
 		QString getComment(void);
