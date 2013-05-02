@@ -52,7 +52,8 @@ HEADERS += $$PWD/src/textbox.h \
 	   $$PWD/src/parameter.h \
 	   $$PWD/src/operation.h \
 	   $$PWD/src/copyoptions.h \
-	   $$PWD/src/typeattribute.h
+	   $$PWD/src/typeattribute.h \
+    src/extension.h
 
 
 SOURCES +=  $$PWD/src/textbox.cpp \
@@ -96,4 +97,5 @@ SOURCES +=  $$PWD/src/textbox.cpp \
 	    $$PWD/src/element.cpp \
 	    $$PWD/src/parameter.cpp \
 	    $$PWD/src/copyoptions.cpp \
-	    $$PWD/src/typeattribute.cpp
+	    $$PWD/src/typeattribute.cpp \
+    src/extension.cpp

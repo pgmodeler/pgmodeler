@@ -900,6 +900,7 @@ void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 			type_conf==UserTypeConfig::SEQUENCE_TYPE ||
 			type_conf==UserTypeConfig::TABLE_TYPE ||
 			type_conf==UserTypeConfig::VIEW_TYPE ||
+			type_conf==UserTypeConfig::EXTENSION_TYPE ||
 			type_conf==UserTypeConfig::BASE_TYPE) &&
 		 getUserTypeIndex(type_name,ptype,pmodel)==0)
 	{

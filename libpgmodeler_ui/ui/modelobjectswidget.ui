@@ -744,7 +744,6 @@
      </layout>
      <zorder>objectstree_tw</zorder>
      <zorder>objectstree_tw</zorder>
-     <zorder></zorder>
      <zorder>splitter</zorder>
     </widget>
    </item>

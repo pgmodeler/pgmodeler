@@ -61,6 +61,7 @@ enum ObjectType {
 	OBJ_OPCLASS,
 	OBJ_DATABASE,
 	OBJ_COLLATION,
+	OBJ_EXTENSION,
 	OBJ_RELATIONSHIP,
 	OBJ_TEXTBOX,
 	OBJ_PERMISSION,
@@ -91,7 +92,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType (excluding BASE_OBJECT and BASE_TABLE).
-		static const int OBJECT_TYPE_COUNT=29;
+		static const int OBJECT_TYPE_COUNT=30;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

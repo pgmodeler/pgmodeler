@@ -299,9 +299,10 @@ class UserTypeConfig {
 													TABLE_TYPE=4, //! \brief The type refers to a table
 													SEQUENCE_TYPE=8, //! \brief The type refers to a sequence
 													VIEW_TYPE=16, //! \brief The type refers to a view
+													EXTENSION_TYPE=32, //! \brief The type refers to a extension used as datatype
 
 													//! \brief This constant refers to all types above and must be used only on type searches
-													ALL_USER_TYPES=31;
+													ALL_USER_TYPES=63;
 
 		UserTypeConfig(void)
 		{ name=""; ptype=NULL; pmodel=NULL; type_conf=BASE_TYPE; }
