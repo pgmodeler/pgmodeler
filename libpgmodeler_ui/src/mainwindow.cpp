@@ -505,7 +505,9 @@ void MainWindow::addModel(const QString &filename)
 		}
 	}
 
-	model_tab->setModified(false);
+	//The model is set to modified when no model file is loaded
+	model_tab->setModified(filename.isEmpty());
+
 	setCurrentModel();
 }
 
