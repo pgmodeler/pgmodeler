@@ -72,7 +72,7 @@ macx | windows {
 ###########################
 # Main variables settings #
 ###########################
-CONFIG += ordered qt stl rtti exceptions warn_on plugin
+CONFIG += ordered qt stl rtti exceptions warn_on
 
 #Avoiding the generation of app bundle on MacOSX
 macx:CONFIG -= app_bundle
@@ -125,11 +125,6 @@ INCLUDEPATH += $$XML_INC \
 
 #Adding xml and PostgreSQL libs
 LIBS = $$XML_LIB $$PGSQL_LIB
-
-#Unix specific: passing the library search path to the linker
-unix & !macx {
- QMAKE_LFLAGS += -L$$DESTDIR
-}
 
 #Deployment configurations
 pgmodeler.path = $$DESTDIR

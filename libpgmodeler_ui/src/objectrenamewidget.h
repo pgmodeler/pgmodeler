@@ -18,20 +18,20 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class QuickRenameWidget
+\class ObjectRenameWidget
 \brief Widget used to quickly rename objects without open the editing form
 */
 
-#ifndef QUICK_RENAME_WIDGET_H
-#define QUICK_RENAME_WIDGET_H
+#ifndef OBJECT_RENAME_WIDGET_H
+#define OBJECT_RENAME_WIDGET_H
 
 #include <QtGui>
-#include "ui_quickrenamewidget.h"
+#include "ui_objectrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
 
-class QuickRenameWidget: public QDialog, public Ui::QuickRenameWidget {
+class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 	private:
 		Q_OBJECT
 
@@ -47,7 +47,7 @@ class QuickRenameWidget: public QDialog, public Ui::QuickRenameWidget {
 		void hideEvent(QHideEvent *);
 
 	public:
-		QuickRenameWidget(QWidget *parent);
+		ObjectRenameWidget(QWidget *parent);
 
 		void setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list);
 

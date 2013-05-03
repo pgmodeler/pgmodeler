@@ -44,7 +44,7 @@
 #include "tablewidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
-#include "quickrenamewidget.h"
+#include "objectrenamewidget.h"
 #include "permissionwidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
@@ -78,7 +78,7 @@ extern CollationWidget *collation_wgt;
 extern ExtensionWidget *extension_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
-extern QuickRenameWidget *quickrename_wgt;
+extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
@@ -1387,10 +1387,10 @@ void ModelWidget::renameObject(void)
 	if(obj->isSystemObject() /*isReservedObject(obj)*/)
 		throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	quickrename_wgt->setAttributes(obj, this->db_model, this->op_list);
-	quickrename_wgt->exec();
+	objectrename_wgt->setAttributes(obj, this->db_model, this->op_list);
+	objectrename_wgt->exec();
 
-	if(quickrename_wgt->result()==QDialog::Accepted)
+	if(objectrename_wgt->result()==QDialog::Accepted)
 	{
 		this->modified=true;
 		emit s_objectModified();

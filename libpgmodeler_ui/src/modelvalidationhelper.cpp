@@ -18,6 +18,11 @@
 
 #include "modelvalidationhelper.h"
 
+ModelValidationHelper::ModelValidationHelper(void)
+{
+	warn_count=error_count=0;
+}
+
 void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *conn)
 {
 	if(!model)
@@ -27,12 +32,15 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 	{
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-												OBJ_COLLATION, OBJ_TABLE /*,	OBJ_COLUMN*/ };
+												OBJ_COLLATION, OBJ_TABLE };
 		unsigned i, count=sizeof(types)/sizeof(ObjectType);
 		BaseObject *object=NULL, *refer_obj=NULL;
 		vector<BaseObject *> refs, refs_aux, *obj_list=NULL;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=NULL;
+		ValidationInfo info;
+
+		warn_count=error_count=0;
 
 		/*Step 1: Validating broken references. This situation happens when a object references another
 		whose id is smaller than the id of the first one. */
@@ -72,7 +80,12 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 					}
 
 					if(!refs_aux.empty())
-						emit s_validationInfoGenerated(ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux));
+					{
+						info=ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
+						warn_count++;
+						val_infos.push_back(info);
+						emit s_validationInfoGenerated(info);
+					}
 				}
 			}
 
@@ -84,4 +97,19 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+unsigned ModelValidationHelper::getWarningCount(void)
+{
+	return(warn_count);
+}
+
+unsigned ModelValidationHelper::getErrorCount(void)
+{
+	return(error_count);
+}
+
+vector<ValidationInfo> ModelValidationHelper::getValidationInfos(void)
+{
+	return(val_infos);
 }

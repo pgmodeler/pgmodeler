@@ -18,6 +18,11 @@
 
 #include "validationinfo.h"
 
+ValidationInfo::ValidationInfo(void)
+{
+	object=NULL;
+	val_type=NO_UNIQUE_NAME;
+}
 
 ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references, QString sql_error)
 {

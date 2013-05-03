@@ -56,6 +56,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	output_trw->clear();
 	validation_prog_pb->setValue(0);
 	prog_info_wgt->setVisible(false);
+	fix_btn->setEnabled(false);
 }
 
 void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conns)
@@ -115,6 +116,11 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	output_trw->setItemWidget(item, 0, label);
 	item->setExpanded(false);
+
+	warn_count_lbl->setText(QString("%1").arg(validation_helper.getWarningCount()));
+	error_count_lbl->setText(QString("%1").arg(validation_helper.getErrorCount()));
+
+	fix_btn->setEnabled(validation_helper.getWarningCount() > 0);
 }
 
 void ModelValidationWidget::validateModel(void)

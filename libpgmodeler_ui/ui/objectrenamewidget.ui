@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QuickRenameWidget</class>
- <widget class="QDialog" name="QuickRenameWidget">
+ <class>ObjectRenameWidget</class>
+ <widget class="QDialog" name="ObjectRenameWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,6 +24,12 @@
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>true</bool>

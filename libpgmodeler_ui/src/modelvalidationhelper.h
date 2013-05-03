@@ -34,12 +34,22 @@ class ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 
+		vector<ValidationInfo> val_infos;
+
+		unsigned warn_count, error_count;
+
 		void resolveConflict(ValidationInfo info);
 
 	public:
-		ModelValidationHelper(void){}
+		ModelValidationHelper(void);
 
 		void validateModel(DatabaseModel *model, DBConnection *conn);
+
+		vector<ValidationInfo> getValidationInfos(void);
+
+		unsigned getErrorCount(void);
+
+		unsigned getWarningCount(void);
 
 	signals:
 		void s_validationInfoGenerated(ValidationInfo val_info);

@@ -5,15 +5,11 @@ TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 
-# The QMAKE_LFLAGS does not work properly with MingW (Windows) or Xcode (MacOSX)
-# so it's necessary to pass manually all the used libraries to the linker
-windows | macx {
- LIBS = $$DESTDIR/$$LIBUTILS \
-        $$DESTDIR/$$LIBPARSERS \
-        $$DESTDIR/$$LIBDBCONNECT \
-        $$DESTDIR/$$LIBOBJRENDERER \
-        $$DESTDIR/$$LIBPGMODELER
-}
+LIBS = $$DESTDIR/$$LIBUTILS \
+       $$DESTDIR/$$LIBPARSERS \
+       $$DESTDIR/$$LIBDBCONNECT \
+       $$DESTDIR/$$LIBOBJRENDERER \
+       $$DESTDIR/$$LIBPGMODELER
 
 SOURCES += $$PWD/src/mainwindow.cpp \
 	   $$PWD/src/modelwidget.cpp \
@@ -64,7 +60,7 @@ SOURCES += $$PWD/src/mainwindow.cpp \
 	   $$PWD/src/modelexportform.cpp \
 	   $$PWD/src/modeloverviewwidget.cpp \
 	   $$PWD/src/modelrestorationform.cpp \
-           $$PWD/src/quickrenamewidget.cpp \
+	   $$PWD/src/objectrenamewidget.cpp \
            $$PWD/src/pgmodelerplugin.cpp \
            $$PWD/src/pluginsconfigwidget.cpp \
 	   $$PWD/src/collationwidget.cpp \
@@ -126,7 +122,7 @@ HEADERS += $$PWD/src/mainwindow.h \
            $$PWD/src/pgmodelerplugin.h \
 	   $$PWD/src/modeloverviewwidget.h \
 	   $$PWD/src/modelrestorationform.h \
-           $$PWD/src/quickrenamewidget.h \
+	   $$PWD/src/objectrenamewidget.h \
            $$PWD/src/pluginsconfigwidget.h \
 	   $$PWD/src/collationwidget.h \
 	   $$PWD/src/elementswidget.h \
@@ -181,7 +177,7 @@ FORMS += $$PWD/ui/mainwindow.ui \
          $$PWD/ui/connectionsconfigwidget.ui \
 	 $$PWD/ui/modeloverviewwidget.ui \
 	 $$PWD/ui/modelrestorationform.ui \
-         $$PWD/ui/quickrenamewidget.ui \
+	 $$PWD/ui/objectrenamewidget.ui \
          $$PWD/ui/pluginsconfigwidget.ui \
          $$PWD/ui/schemawidget.ui \
 	 $$PWD/ui/collationwidget.ui \

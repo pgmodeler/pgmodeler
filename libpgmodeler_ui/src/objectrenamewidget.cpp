@@ -16,9 +16,9 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "quickrenamewidget.h"
+#include "objectrenamewidget.h"
 
-QuickRenameWidget::QuickRenameWidget(QWidget * parent) : QDialog(parent)
+ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
 	object=NULL;
 	op_list=NULL;
@@ -32,10 +32,17 @@ QuickRenameWidget::QuickRenameWidget(QWidget * parent) : QDialog(parent)
 	connect(cancel_tb, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 }
 
-void QuickRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list)
+void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list)
 {
+	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
+
 	if(!object || !op_list)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(tab_obj && tab_obj->isAddedByRelationship())
+		throw Exception(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT)
+										.arg(Utf8String::create(tab_obj->getName()))
+										.arg(Utf8String::create(tab_obj->getTypeName()))
+										,ERR_OPR_REL_INCL_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->adjustSize();
 	this->object=object;
@@ -49,13 +56,13 @@ void QuickRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, 
 	new_name_edt->setText(Utf8String::create(object->getName()));
 }
 
-void QuickRenameWidget::exec(void)
+void ObjectRenameWidget::exec(void)
 {
 	if(object && op_list)
 		QDialog::exec();
 }
 
-void QuickRenameWidget::hideEvent(QHideEvent *)
+void ObjectRenameWidget::hideEvent(QHideEvent *)
 {
 	object=NULL;
 	op_list=NULL;
@@ -64,7 +71,7 @@ void QuickRenameWidget::hideEvent(QHideEvent *)
 	obj_name_lbl->clear();
 }
 
-void QuickRenameWidget::applyRenaming(void)
+void ObjectRenameWidget::applyRenaming(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
 

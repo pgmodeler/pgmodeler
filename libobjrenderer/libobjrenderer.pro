@@ -3,13 +3,9 @@ include(../pgmodeler.pro)
 TEMPLATE = lib
 TARGET = objrenderer
 
-# The QMAKE_LFLAGS does not work properly with MingW (Windows) or Xcode (MacOSX)
-# so it's necessary to pass manually all the used libraries to the linker
-windows | macx {
- LIBS += $$DESTDIR/$$LIBUTILS \
-         $$DESTDIR/$$LIBPARSERS \
-         $$DESTDIR/$$LIBPGMODELER
-}
+LIBS += $$DESTDIR/$$LIBUTILS \
+	$$DESTDIR/$$LIBPARSERS \
+	$$DESTDIR/$$LIBPGMODELER
 
 HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/textboxview.h \

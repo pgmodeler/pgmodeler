@@ -50,7 +50,7 @@
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
 #include "modelexportform.h"
-#include "quickrenamewidget.h"
+#include "objectrenamewidget.h"
 
 //Global forms and widgets
 AboutForm *about_form=NULL;
@@ -87,7 +87,7 @@ TaskProgressWidget *task_prog_wgt=NULL;
 ObjectDepsRefsWidget *deps_refs_wgt=NULL;
 ConfigurationForm *configuration_form=NULL;
 ModelExportForm *export_form=NULL;
-QuickRenameWidget *quickrename_wgt=NULL;
+ObjectRenameWidget *objectrename_wgt=NULL;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -163,7 +163,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		extension_wgt=new ExtensionWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
-		quickrename_wgt=new QuickRenameWidget(this);
+		objectrename_wgt=new ObjectRenameWidget(this);
 	}
 	catch(Exception &e)
 	{
