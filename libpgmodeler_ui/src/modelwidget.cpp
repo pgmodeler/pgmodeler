@@ -2584,6 +2584,11 @@ DatabaseModel *ModelWidget::getDatabaseModel(void)
 	return(db_model);
 }
 
+OperationList *ModelWidget::getOperationList(void)
+{
+	return(op_list);
+}
+
 void ModelWidget::highlightObject(void)
 {
 	QAction *action=dynamic_cast<QAction *>(sender());

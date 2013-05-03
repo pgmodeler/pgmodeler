@@ -180,6 +180,9 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);
 
+		//! \brief Returns the operation list used by database model
+		OperationList *getOperationList(void);
+
 	private slots:
 		/*! \brief Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
 		 de operações adicionais como incluir objetos modificados na lista de operações, criar

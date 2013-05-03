@@ -38,8 +38,6 @@ class ModelValidationHelper: public QObject {
 
 		unsigned warn_count, error_count;
 
-		void resolveConflict(ValidationInfo info);
-
 	public:
 		ModelValidationHelper(void);
 
@@ -50,6 +48,8 @@ class ModelValidationHelper: public QObject {
 		unsigned getErrorCount(void);
 
 		unsigned getWarningCount(void);
+
+		void resolveConflicts(vector<ValidationInfo> &infos);
 
 	signals:
 		void s_validationInfoGenerated(ValidationInfo val_info);

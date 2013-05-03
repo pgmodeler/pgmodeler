@@ -970,7 +970,7 @@ void MainWindow::executePlugin(void)
 {
 	QAction *action=dynamic_cast<QAction *>(sender());
 
-	if(current_model && action)
+	if(action)
 	{
 		PgModelerPlugin *plugin=reinterpret_cast<PgModelerPlugin *>(action->data().value<void *>());
 

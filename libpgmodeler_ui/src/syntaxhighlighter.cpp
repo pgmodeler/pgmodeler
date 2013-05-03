@@ -26,12 +26,14 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_rehighligh
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
 {
+	parent->setAcceptRichText(true);
 	this->auto_rehighlight=auto_rehighlight;
 	configureAttributes();
 }
 
 void SyntaxHighlighter::configureAttributes(void)
 {
+
 	conf_loaded=false;
 	current_block=-1;
 	curr_blk_info_count=0;

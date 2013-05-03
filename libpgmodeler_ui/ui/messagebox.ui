@@ -256,7 +256,7 @@
                <number>4</number>
               </property>
               <property name="textInteractionFlags">
-               <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -408,6 +408,12 @@
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/confirmar.png</normaloff>:/icones/icones/confirmar.png</iconset>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>16</height>
+           </size>
+          </property>
           <property name="autoDefault">
            <bool>true</bool>
           </property>
@@ -437,6 +443,12 @@
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>16</height>
+           </size>
+          </property>
          </widget>
         </item>
         <item row="0" column="3">
@@ -453,6 +465,12 @@
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>16</height>
+           </size>
           </property>
          </widget>
         </item>

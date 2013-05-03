@@ -17,24 +17,28 @@
 */
 
 /**
-\ingroup dummyplugin
-\class DummyPlugin
+\ingroup xml2object
+\class Xml2Object
 \brief Example plugin for pgModeler (does not execute any complex operation)
 */
 
-#ifndef DUMMY_PLUGIN_H
-#define DUMMY_PLUGIN_H
+#ifndef XML2OBJECT_H
+#define XML2OBJECT_H
 
 #include "pgmodelerplugin.h"
+#include "xml2objectwidget.h"
 
-class DummyPlugin: public QObject, public PgModelerPlugin {
+class Xml2Object: public QObject, public PgModelerPlugin {
 	private:
 		Q_OBJECT
+
+		Xml2ObjectWidget xml2obj_wgt;
+
 		//! \brief Declares the interface which is used to implement the plugin
 		Q_INTERFACES(PgModelerPlugin)
 
 	public:
-		DummyPlugin(void);
+		Xml2Object(void);
 
 		QString getPluginTitle(void);
 		QString getPluginVersion(void);

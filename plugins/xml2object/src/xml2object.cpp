@@ -16,18 +16,18 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "dummyplugin.h"
+#include "xml2object.h"
 #include "exception.h"
 #include "messagebox.h"
 
-DummyPlugin::DummyPlugin(void)
+Xml2Object::Xml2Object(void)
 {
 	QTranslator *translator=new QTranslator;
 
-	translator->load(QString("dummyplugin.") + QLocale::system().name(),
+	translator->load(QString("xml2object.") + QLocale::system().name(),
 									 GlobalAttributes::PLUGINS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("dummyplugin") +
+									 QString("xml2object") +
 									 GlobalAttributes::DIR_SEPARATOR +
 									 QString("lang"));
 
@@ -40,42 +40,41 @@ DummyPlugin::DummyPlugin(void)
 
 											GlobalAttributes::PLUGINS_DIR +
 											GlobalAttributes::DIR_SEPARATOR +
-											QString("dummyplugin") +
-											GlobalAttributes::DIR_SEPARATOR + "dummyplugin.png");
+											QString("xml2object") +
+											GlobalAttributes::DIR_SEPARATOR + "xml2object.png");
 }
 
-QString DummyPlugin::getPluginTitle(void)
+QString Xml2Object::getPluginTitle(void)
 {
-	return(trUtf8("Dummy"));
+	return(trUtf8("Xml2Object"));
 }
 
-
-QString DummyPlugin::getPluginVersion(void)
+QString Xml2Object::getPluginVersion(void)
 {
 	return("0.1");
 }
 
-QString DummyPlugin::getPluginAuthor(void)
+QString Xml2Object::getPluginAuthor(void)
 {
 	return("Raphael A. Silva");
 }
 
-QString DummyPlugin::getPluginDescription(void)
+QString Xml2Object::getPluginDescription(void)
 {
-	return(trUtf8("A dummy plugin only to test the pgModeler plugin structure."));
+	return(trUtf8("This plugin permits the creation of objects from XML code and inserting them on the currently opened model."));
 }
 
-void DummyPlugin::showPluginInfo(void)
+void Xml2Object::showPluginInfo(void)
 {
 	plugin_info_frm->show();
 }
 
-void DummyPlugin::executePlugin(ModelWidget *)
+void Xml2Object::executePlugin(ModelWidget *model)
 {
-	MessageBox msgbox;
-	msgbox.show(trUtf8("Plugin successfully loaded!"),
-							trUtf8("Plugin successfully loaded! Check the file PLUGINS.md to know how to create your own plugins."),
-							MessageBox::INFO_ICON);
+	if(!model)
+		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	xml2obj_wgt.show();
 }
 
-Q_EXPORT_PLUGIN2(dummyplugin, DummyPlugin)
+Q_EXPORT_PLUGIN2(Xml2Object, Xml2Object)

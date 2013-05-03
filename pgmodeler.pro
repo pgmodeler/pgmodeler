@@ -96,7 +96,8 @@ SUBDIRS = libutils \
           crashhandler \
 	  main \
 	  main-cli \
-	  plugins/dummyplugin
+	  plugins/dummy \
+	  plugins/xml2object
 
 
 #Creating the project's libraries names based upon the running OS

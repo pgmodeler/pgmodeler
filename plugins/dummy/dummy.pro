@@ -12,7 +12,7 @@ include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 CONFIG += plugin qt warn_on uitools uic4
 QT += core gui
 TEMPLATE = lib
-TARGET = dummyplugin
+TARGET = dummy
 TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
 
 CODECFORTR = UTF8
@@ -30,12 +30,12 @@ LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
 	$$PGMODELER_LIB_DIR/$$LIBPGMODELER \
 	$$PGMODELER_LIB_DIR/$$LIBPGMODELERUI
 
-HEADERS += src/dummyplugin.h
-SOURCES += src/dummyplugin.cpp
+HEADERS += src/dummy.h
+SOURCES += src/dummy.cpp
 
-dummy.files = res/dummyplugin.png lang
-unix:dummy.files += build/libdummyplugin.so
-macx:dummy.files += build/libdummyplugin.dylib
-windows:dummy.files += build/dummyplugin.dll build/libdummyplugin.a
+dummy.files = res/dummy.png lang
+unix:dummy.files += build/libdummy.so
+macx:dummy.files += build/libdummy.dylib
+windows:dummy.files += build/dummy.dll build/libdummy.a
 dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += dummy

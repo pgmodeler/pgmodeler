@@ -69,6 +69,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 	description_lbl = new QLabel(widget);
 	description_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	description_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+	description_lbl->setWordWrap(true);
 	gridLayout->addWidget(description_lbl, 4, 0, 1, 2);
 
 	widget->setLayout(gridLayout);
