@@ -721,9 +721,13 @@ void BaseObjectWidget::finishConfiguration(void)
 				graph_obj->setModified(true);
 			}
 
-			//Updates the visual schemas when the objects is moved to another
+			/* Updates the visual schemas when the objects is moved to another or a
+			table object is added to a table */
 			if(object->getSchema())
 				dynamic_cast<Schema *>(object->getSchema())->setModified(true);
+			else if(tab_obj && tab_obj->getParentTable() &&
+							 tab_obj->getParentTable()->getSchema())
+				dynamic_cast<Schema *>(tab_obj->getParentTable() ->getSchema())->setModified(true);
 
 			if(prev_schema && object->getSchema()!=prev_schema)
 				prev_schema->setModified(true);
