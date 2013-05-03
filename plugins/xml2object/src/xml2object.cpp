@@ -74,7 +74,12 @@ void Xml2Object::executePlugin(ModelWidget *model)
 	if(!model)
 		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	xml2obj_wgt.show();
+	xml2obj_wgt.show(model->getDatabaseModel(), model->getOperationList());
+}
+
+QKeySequence Xml2Object::getPluginShortcut(void)
+{
+	return(QKeySequence("Ctrl+K"));
 }
 
 Q_EXPORT_PLUGIN2(Xml2Object, Xml2Object)

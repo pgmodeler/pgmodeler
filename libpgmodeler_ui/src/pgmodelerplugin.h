@@ -78,6 +78,9 @@ class PgModelerPlugin {
 		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void) = 0;
 
+		//! \brief Returns the plugin's action shortcut
+		virtual QKeySequence getPluginShortcut(void) = 0;
+
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
 														 const QString &description, const QString &ico_filename);

@@ -242,7 +242,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
 
-	model_tb->setVisible(false);
 	current_model=NULL;
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
@@ -526,12 +525,19 @@ ModelWidget *MainWindow::getModel(int idx)
 void MainWindow::setCurrentModel(void)
 {
 	QObject *object=NULL;
+	QList<QAction *> act_list;
 
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
 
-	model_tb->clear();
-	model_tb->setVisible(false);
+	//Removing model specific actions from general toolbar
+	act_list=general_tb->actions();
+	while(act_list.size() > 4)
+	{
+		general_tb->removeAction(act_list.back());
+		act_list.pop_back();
+	}
+
 	edit_menu->clear();
 	edit_menu->addAction(action_undo);
 	edit_menu->addAction(action_redo);
@@ -558,16 +564,15 @@ void MainWindow::setCurrentModel(void)
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 
-		model_tb->setVisible(true);
-		model_tb->addAction(current_model->action_new_object);
-		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
+		general_tb->addAction(current_model->action_new_object);
+		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
 
-		model_tb->addAction(current_model->action_quick_actions);
-		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
+		general_tb->addAction(current_model->action_quick_actions);
+		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
 
-		model_tb->addAction(current_model->action_edit);
-		model_tb->addAction(current_model->action_source_code);
-		model_tb->addAction(current_model->action_select_all);
+		general_tb->addAction(current_model->action_edit);
+		general_tb->addAction(current_model->action_source_code);
+		general_tb->addAction(current_model->action_select_all);
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
@@ -718,7 +723,6 @@ void MainWindow::updateModelTabName(void)
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
 	{
 		models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
-
 	}
 }
 

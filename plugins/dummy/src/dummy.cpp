@@ -78,4 +78,9 @@ void Dummy::executePlugin(ModelWidget *)
 							MessageBox::INFO_ICON);
 }
 
+QKeySequence Dummy::getPluginShortcut(void)
+{
+	return(QKeySequence("Ctrl+J"));
+}
+
 Q_EXPORT_PLUGIN2(dummy, Dummy)

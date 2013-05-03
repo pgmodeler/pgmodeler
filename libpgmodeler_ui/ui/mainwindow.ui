@@ -9,13 +9,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1118</width>
+    <width>1152</width>
     <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>1152</width>
     <height>600</height>
    </size>
   </property>
@@ -387,7 +387,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1118</width>
+     <width>1152</width>
      <height>21</height>
     </rect>
    </property>
@@ -474,7 +474,7 @@
     <string>Controls</string>
    </property>
    <property name="layoutDirection">
-    <enum>Qt::RightToLeft</enum>
+    <enum>Qt::LeftToRight</enum>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -497,54 +497,22 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_new_model"/>
+   <addaction name="action_load_model"/>
+   <addaction name="action_save_model"/>
+   <addaction name="action_print"/>
    <addaction name="action_close_model"/>
    <addaction name="separator"/>
-   <addaction name="action_next"/>
-   <addaction name="action_previous"/>
-   <addaction name="action_normal_zoom"/>
    <addaction name="action_dec_zoom"/>
+   <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
+   <addaction name="action_overview"/>
    <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_alin_objs_grade"/>
-   <addaction name="action_overview"/>
    <addaction name="separator"/>
-   <addaction name="action_print"/>
-   <addaction name="action_save_model"/>
-   <addaction name="action_load_model"/>
-   <addaction name="action_new_model"/>
-  </widget>
-  <widget class="QToolBar" name="model_tb">
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="windowTitle">
-    <string>Model Editing</string>
-   </property>
-   <property name="movable">
-    <bool>false</bool>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea</set>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>32</width>
-     <height>32</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
+   <addaction name="action_previous"/>
+   <addaction name="action_next"/>
   </widget>
   <widget class="QToolBar" name="general_tb">
    <property name="minimumSize">
@@ -840,7 +808,7 @@
      <normaloff>:/icones/icones/fechar.png</normaloff>:/icones/icones/fechar.png</iconset>
    </property>
    <property name="text">
-    <string>Close model</string>
+    <string>Close</string>
    </property>
    <property name="toolTip">
     <string>Close current model</string>

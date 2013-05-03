@@ -121,6 +121,7 @@ void PluginsConfigWidget::loadPlugins(void)
 			plugin_action=new QAction(this);
 			plugin_action->setText(plugin->getPluginTitle());
 			plugin_action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(plugin)));
+			plugin_action->setShortcut(plugin->getPluginShortcut());
 
 			icon.load(dir_plugins + plugin_name +
 								GlobalAttributes::DIR_SEPARATOR  +
