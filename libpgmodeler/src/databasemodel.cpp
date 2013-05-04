@@ -5849,18 +5849,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				/* Case the constraint is a special object stores it on the objects map. Independently to the
 				configuration, foreign keys are discarded in this iteration because on the end of the method
 				they have the definition generated */
-<<<<<<< HEAD
 				if((!constr->isAddedByLinking() &&
 						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()))))
-=======
-				if(/*(def_type==SchemaParser::XML_DEFINITION ||
-						(def_type==SchemaParser::SQL_DEFINITION &&
-						 constr->getConstraintType()!=ConstraintType::foreign_key)) &&*/
-
-					 (!constr->isAddedByLinking() &&
-						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())
-						 /* || (constr->getConstraintType()==ConstraintType::foreign_key)*/)))
->>>>>>> 54a67b6925549a3255d9d8e151f9fe3636e4c8cb
 				{
 					objects_map[constr->getObjectId()]=constr;
 					ids_tab_objs.push_back(constr->getObjectId());
@@ -5924,13 +5914,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				object=(*itr);
 				itr++;
 
-<<<<<<< HEAD
-=======
-				//Stores the table's user added foreign keys
-				//if(object->getObjectType()==OBJ_TABLE)
-				//	dynamic_cast<Table *>(object)->getForeignKeys(fks);
-
->>>>>>> 54a67b6925549a3255d9d8e151f9fe3636e4c8cb
 				if(object->getObjectType()==OBJ_RELATIONSHIP)
 				{
 					rel=dynamic_cast<Relationship *>(object);
@@ -6028,16 +6011,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-<<<<<<< HEAD
-=======
-		//Creates the code definition for user added foreign keys
-		/* while(!fks.empty())
-		{
-			attribs_aux[attrib]+=fks.back()->getCodeDefinition(def_type, true);
-			fks.pop_back();
-		}*/
-
->>>>>>> 54a67b6925549a3255d9d8e151f9fe3636e4c8cb
 		//Gernerating the SQL/XML code for permissions
 		itr=permissions.begin();
 		itr_end=permissions.end();
