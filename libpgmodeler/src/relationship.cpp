@@ -94,14 +94,17 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 
 		setName(str_aux);
 
-		//Setting up the n-n relationship table name based on the suffixes, when they are defined
-		if(src_suffix!="" && dst_suffix!="")
-			tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
-		else
-			tab_name_relnn=this->obj_name;
+		if(rel_type==RELATIONSHIP_NN)
+		{
+			//Setting up the n-n relationship table name based on the suffixes, when they are defined
+			if(src_suffix!="" && dst_suffix!="")
+				tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
+			else
+				tab_name_relnn=this->obj_name;
 
-		if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-			tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+			if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+				tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+		}
 
 		rejected_col_count=0;
 		setIdentifier(identifier);
@@ -228,11 +231,14 @@ void Relationship::createSpecialPrimaryKey(void)
 
 void Relationship::setTableNameRelNN(const QString &name)
 {
-	if(!BaseObject::isValidName(name))
-		throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(rel_type==RELATIONSHIP_NN)
+	{
+		if(!BaseObject::isValidName(name))
+			throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	tab_name_relnn=name;
-	this->invalidated=true;
+		tab_name_relnn=name;
+		this->invalidated=true;
+	}
 }
 
 QString Relationship::getTableNameRelNN(void)
