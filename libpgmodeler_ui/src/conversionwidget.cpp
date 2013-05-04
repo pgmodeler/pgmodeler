@@ -27,14 +27,14 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		Ui_ConversionWidget::setupUi(this);
 
-		setRequiredField(src_encoding_lbl);
-		setRequiredField(trg_encoding_lbl);
-		setRequiredField(conv_func_lbl);
-		setRequiredField(conv_func_sel);
-
 		conv_func_sel=NULL;
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
+
+        setRequiredField(src_encoding_lbl);
+        setRequiredField(trg_encoding_lbl);
+        setRequiredField(conv_func_lbl);
+        setRequiredField(conv_func_sel);
 
 		configureFormLayout(convcod_grid, OBJ_CONVERSION);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
