@@ -110,7 +110,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Objects</string>
+          <string>O&amp;bjects</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -138,7 +138,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Validation</string>
+          <string>&amp;Validation</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -166,7 +166,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Operations</string>
+          <string>&amp;Operations</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
