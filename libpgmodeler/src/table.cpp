@@ -173,14 +173,10 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
 
-		/* Foreign keys added by the user is not appended to the table code definition. Due to its special
-		 behavior they have the code generated in the database model class */
 		if((def_type==SchemaParser::SQL_DEFINITION &&
-				constr->getConstraintType()!=ConstraintType::foreign_key &&
 				(!constr->isReferRelationshipAddedColumn() || constr->getConstraintType()==ConstraintType::primary_key)) ||
 
 			 (def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
-				constr->getConstraintType()!=ConstraintType::foreign_key &&
 				((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
 				 (constr->getConstraintType()==ConstraintType::primary_key))))
 		{

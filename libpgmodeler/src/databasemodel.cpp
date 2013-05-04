@@ -1614,10 +1614,10 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 			if(getRelationship(tab1,tab2))
 			{
 				msg=Exception::getErrorMessage(ERR_DUPLIC_RELATIONSHIP)
-						.arg(tab1->getTypeName())
-						.arg(tab1->getName(true))
-						.arg(tab2->getTypeName())
-						.arg(tab2->getName(true));
+						.arg(Utf8String::create(tab1->getName(true)))
+						.arg(Utf8String::create(tab1->getTypeName()))
+						.arg(Utf8String::create(tab2->getName(true)))
+						.arg(Utf8String::create(tab2->getTypeName()));
 				throw Exception(msg,ERR_DUPLIC_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
@@ -5317,9 +5317,19 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			}
 		}
 
-		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
+		if(obj_rel_type==BASE_RELATIONSHIP)//attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
 		{
 			base_rel=getRelationship(tables[0], tables[1]);
+
+			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
+			added to the table after its creation. */
+			if(!base_rel && attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+			{
+				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
+																			tables[0], tables[1], false, false);
+				addRelationship(base_rel);
+			}
+
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
@@ -5330,12 +5340,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			base_rel->disconnectRelationship();
-			base_rel->setName(attribs[ParsersAttributes::NAME]);
-		}
-		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
-		{
-			base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-																		tables[0], tables[1], false, false);
 			base_rel->setName(attribs[ParsersAttributes::NAME]);
 		}
 		else
@@ -5460,8 +5464,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		storeSpecialObjectsXML();
 		addRelationship(rel);
 	}
-	else if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-		addRelationship(base_rel);
 
 	base_rel->setProtected(protect);
 
@@ -5847,13 +5849,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				/* Case the constraint is a special object stores it on the objects map. Independently to the
 				configuration, foreign keys are discarded in this iteration because on the end of the method
 				they have the definition generated */
-				if((def_type==SchemaParser::XML_DEFINITION ||
+				if(/*(def_type==SchemaParser::XML_DEFINITION ||
 						(def_type==SchemaParser::SQL_DEFINITION &&
-						 constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+						 constr->getConstraintType()!=ConstraintType::foreign_key)) &&*/
 
 					 (!constr->isAddedByLinking() &&
-						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()) ||
-						 (constr->getConstraintType()==ConstraintType::foreign_key))))
+						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())
+						 /* || (constr->getConstraintType()==ConstraintType::foreign_key)*/)))
 				{
 					objects_map[constr->getObjectId()]=constr;
 					ids_tab_objs.push_back(constr->getObjectId());
@@ -5918,8 +5920,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				itr++;
 
 				//Stores the table's user added foreign keys
-				if(object->getObjectType()==OBJ_TABLE)
-					dynamic_cast<Table *>(object)->getForeignKeys(fks);
+				//if(object->getObjectType()==OBJ_TABLE)
+				//	dynamic_cast<Table *>(object)->getForeignKeys(fks);
 
 				if(object->getObjectType()==OBJ_RELATIONSHIP)
 				{
@@ -6019,11 +6021,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		}
 
 		//Creates the code definition for user added foreign keys
-		while(!fks.empty())
+		/* while(!fks.empty())
 		{
 			attribs_aux[attrib]+=fks.back()->getCodeDefinition(def_type, true);
 			fks.pop_back();
-		}
+		}*/
 
 		//Gernerating the SQL/XML code for permissions
 		itr=permissions.begin();
