@@ -80,11 +80,17 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the auto save interval (in miliseconds)
 		int save_interval;
 
+		QStringList recent_models;
+
+		QMenu recent_mdls_menu;
+
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *);
 
 		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
 		void showEvent(QShowEvent *);
+
+		const static int MAX_RECENT_MODELS=10;
 
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -153,8 +159,17 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
 		void updateModelTabName(void);
 
+		//! \brief Loads a recent model. The filename is get from the action that triggered the slot
+		void loadRecentModel(void);
+
+		//! \brief Clears the recent models menu/list
+		void clearRecentModelsMenu(void);
+
+		void updateRecentModelsMenu(void);
+
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
+
 		void hideRightWidgetsBar(void);
 };
 

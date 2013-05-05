@@ -403,6 +403,7 @@
     </property>
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
+    <addaction name="action_recent_models"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
@@ -497,6 +498,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_recent_models"/>
+   <addaction name="separator"/>
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
    <addaction name="action_save_model"/>
@@ -963,6 +966,21 @@
    </property>
    <property name="toolTip">
     <string>Access the list of loaded plugins</string>
+   </property>
+  </action>
+  <action name="action_recent_models">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/loadrecent.png</normaloff>:/icones/icones/loadrecent.png</iconset>
+   </property>
+   <property name="text">
+    <string>Recent Models</string>
+   </property>
+   <property name="toolTip">
+    <string>Load recently opened model</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

@@ -150,6 +150,7 @@
         <file>icones/extension_grp.png</file>
         <file>icones/fixobject.png</file>
         <file>icones/objselect.png</file>
+        <file>icones/loadrecent.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -163,5 +164,7 @@
         <file>styles/pgmodeler_bg_logo.png</file>
         <file>styles/h_splitter.png</file>
         <file>styles/v_splitter.png</file>
+        <file>styles/h_separator.png</file>
+        <file>styles/h_menu_indicator.png</file>
     </qresource>
 </RCC>

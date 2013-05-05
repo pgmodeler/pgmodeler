@@ -29,4 +29,10 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
  $sp </session> $br
 %end
 
+%if @{recent-models} %then
+ $sp <recent-models> $br
+ $sp @{recent-models}
+ $sp </recent-models> $br
+%end
+
 </pgmodeler> $br

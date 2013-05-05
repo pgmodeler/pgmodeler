@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT pgmodeler (configuration, widget-conf?, session?)>
+<!ELEMENT pgmodeler (configuration, widget-conf?, session?, recent-models?)>
 
 <!ELEMENT configuration EMPTY>
 <!ATTLIST configuration op-list-size CDATA #REQUIRED>
@@ -17,6 +17,8 @@
 <!ATTLIST configuration print-pg-num (false|true) "true">
  
 <!ELEMENT session (file+)>
+<!ELEMENT recent-models (file+)>
+
 <!ELEMENT file EMPTY>
 <!ATTLIST file id CDATA #REQUIRED>
 <!ATTLIST file path CDATA #REQUIRED>

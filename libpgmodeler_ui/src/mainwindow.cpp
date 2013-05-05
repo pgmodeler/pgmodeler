@@ -304,8 +304,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			{
 				try
 				{
-					if(!attribs[ParsersAttributes::PATH].isEmpty())
+					//Storing the file of a previous session
+					if(itr->first.contains(ParsersAttributes::_FILE_) &&
+						 !attribs[ParsersAttributes::PATH].isEmpty())
 						prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
+
+					//Creating the recent models menu
+					else if(itr->first.contains(ParsersAttributes::RECENT) &&
+									!attribs[ParsersAttributes::PATH].isEmpty())
+						recent_models.push_back(attribs[ParsersAttributes::PATH]);
 				}
 				catch(Exception &e)
 				{
@@ -373,8 +380,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
-	//Initializes the auto save interval (in miliseconds)
-	//save_interval=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
+	updateRecentModelsMenu();
 	applyConfigurations();
 }
 
@@ -456,8 +462,61 @@ void MainWindow::closeEvent(QCloseEvent *)
 		save_conf=true;
 	}
 
+
+	//Saving recent models list
+	if(!recent_models.isEmpty())
+	{
+		int i=0;
+		QString param_id;
+		map<QString, QString> attribs;
+
+		while(!recent_models.isEmpty())
+		{
+			param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
+			attribs[ParsersAttributes::ID]=param_id;
+			attribs[ParsersAttributes::PATH]=recent_models.front();
+			conf_wgt->addConfigurationParam(param_id, attribs);
+			attribs.clear();
+			recent_models.pop_front();
+		}
+		save_conf=true;
+	}
+
 	if(save_conf)
 		conf_wgt->saveConfiguration();
+}
+
+void MainWindow::updateRecentModelsMenu(void)
+{
+	recent_mdls_menu.clear();
+	recent_models.removeDuplicates();
+
+	for(int i=0; i < recent_models.size() && i < MAX_RECENT_MODELS; i++)
+		recent_mdls_menu.addAction(recent_models[i],this,SLOT(loadRecentModel(void)));
+
+	if(!recent_mdls_menu.isEmpty())
+	{
+		recent_mdls_menu.addSeparator();
+		recent_mdls_menu.addAction(trUtf8("Clear Menu"), this, SLOT(clearRecentModelsMenu(void)));
+		action_recent_models->setMenu(&recent_mdls_menu);
+		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
+	}
+
+	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
+}
+
+void MainWindow::loadRecentModel(void)
+{
+	QAction *act=dynamic_cast<QAction *>(sender());
+
+	if(act)
+		addModel(act->text());
+}
+
+void MainWindow::clearRecentModelsMenu(void)
+{
+	recent_models.clear();
+	updateRecentModelsMenu();
 }
 
 void MainWindow::addModel(const QString &filename)
@@ -906,8 +965,13 @@ void MainWindow::loadModel(void)
 			for(i=0; i < count; i++)
 			{
 				if(QFileInfo(list[i]).isFile())
+				{
 					addModel(list[i]);
+					recent_models.push_front(list[i]);
+				}
 			}
+
+			updateRecentModelsMenu();
 		}
 	}
 	catch(Exception &e)
