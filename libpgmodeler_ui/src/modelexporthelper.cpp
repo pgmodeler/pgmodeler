@@ -70,10 +70,10 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
-	QString  version, sql_buf, sql_cmd;
+	QString  version, sql_buf, sql_cmd, drop_cmd=QString("DROP %1 %2;");
 	DBConnection new_db_conn;
 	unsigned i, count;
 	bool db_created=false;
@@ -239,7 +239,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 	}
 	catch(Exception &e)
 	{
-		QString drop_cmd=QString("DROP %1 %2;");
 		disconnect(db_model, NULL, this, NULL);
 
 		//In case of error during the export all created object are removed

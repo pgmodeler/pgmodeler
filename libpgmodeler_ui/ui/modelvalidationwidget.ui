@@ -307,6 +307,9 @@
        <pointsize>8</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>Try to apply a fix on the selected validation info.</string>
+     </property>
      <property name="text">
       <string>Apply Fix</string>
      </property>
@@ -388,7 +391,7 @@
       <bool>true</bool>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
+      <enum>QAbstractItemView::SingleSelection</enum>
      </property>
      <property name="iconSize">
       <size>

@@ -47,7 +47,7 @@ class ModelExportHelper: public QObject {
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors */
-		void exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup);
+		void exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate=false);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

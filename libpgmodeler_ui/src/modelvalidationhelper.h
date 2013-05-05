@@ -34,25 +34,33 @@ class ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		vector<ValidationInfo> val_infos;
+		//! \brief Reference database model
+		DatabaseModel *db_model;
 
+		//! \brief Warning and error counters
 		unsigned warn_count, error_count;
 
 	public:
 		ModelValidationHelper(void);
 
+		/*! \brief Validates the specified model. If a connection is specifies executes the
+		SQL validation directly on DBMS */
 		void validateModel(DatabaseModel *model, DBConnection *conn);
 
-		vector<ValidationInfo> getValidationInfos(void);
-
+		//! \brief Returns the error count (only when executing SQL validation)
 		unsigned getErrorCount(void);
 
+		//! \brief Returns the warning count
 		unsigned getWarningCount(void);
 
-		void resolveConflicts(vector<ValidationInfo> &infos);
+		//! \brief Try to resolve the conflict specified by validation info
+		void resolveConflict(ValidationInfo &info);
 
 	signals:
+		//! \brief This signal is emitted when a validation info is generated
 		void s_validationInfoGenerated(ValidationInfo val_info);
+
+		//! \brief This signal is emitted when the validation progress changes
 		void s_updateProgress(int prog);
 };
 

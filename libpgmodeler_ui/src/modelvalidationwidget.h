@@ -30,11 +30,17 @@
 #include "modelwidget.h"
 #include "modelvalidationhelper.h"
 
+/* Declaring the ValidationInfo class as a Qt metatype in order to permit
+	 that instances of the class be used as data of QVariant and QMetaType */
+#include <QMetaType>
+Q_DECLARE_METATYPE(ValidationInfo)
+
 class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 		ModelWidget *model_wgt;
 		ModelValidationHelper validation_helper;
+		ValidationInfo curr_val_info;
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
@@ -44,6 +50,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private slots:
 		void validateModel(void);
 		void updateValidation(ValidationInfo val_info);
+		void selectValidationInfo(QTreeWidgetItem *item, int);
+		void applyFix(void);
 
 	public slots:
 		void hide(void);

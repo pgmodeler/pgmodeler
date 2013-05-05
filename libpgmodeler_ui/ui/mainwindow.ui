@@ -498,10 +498,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_recent_models"/>
-   <addaction name="separator"/>
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
+   <addaction name="action_recent_models"/>
    <addaction name="action_save_model"/>
    <addaction name="action_print"/>
    <addaction name="action_close_model"/>

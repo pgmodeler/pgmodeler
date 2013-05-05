@@ -322,6 +322,8 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have a collation assigned
 		bool acceptsCollation(void);
 
+		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
+
 		friend class DatabaseModel;
 };
 

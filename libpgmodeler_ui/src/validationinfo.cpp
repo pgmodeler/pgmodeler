@@ -57,3 +57,9 @@ QString ValidationInfo::getSQLError(void)
 {
 	return(sql_error);
 }
+
+bool ValidationInfo::isValid(void)
+{
+	return(((val_type==NO_UNIQUE_NAME || val_type==BROKEN_REFERENCE) && object) ||
+				 (val_type==SQL_VALIDATION_ERR && !sql_error.isEmpty()));
+}

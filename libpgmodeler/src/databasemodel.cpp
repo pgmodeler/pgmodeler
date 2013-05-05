@@ -6482,6 +6482,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Table *tab=NULL;
 			Trigger *gat=NULL;
 			BaseRelationship *base_rel=NULL;
+			View *view=NULL;
 			vector<BaseObject *>::iterator itr, itr_end;
 			unsigned i, count;
 
@@ -6549,6 +6550,21 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				itr++;
 			}
 
+			itr=views.begin();
+			itr_end=views.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				view=dynamic_cast<View *>(*itr);
+
+				if(view->isReferencingTable(table))
+				{
+					refer=true;
+					refs.push_back(view);
+				}
+
+				itr++;
+			}
 
 			itr=base_relationships.begin();
 			itr_end=base_relationships.end();
@@ -6556,15 +6572,12 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
-				if(base_rel->getTable(BaseRelationship::SRC_TABLE)==table)
+
+				if(base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
+					 base_rel->getTable(BaseRelationship::DST_TABLE)==table)
 				{
 					refer=true;
-					refs.push_back(base_rel->getTable(BaseRelationship::DST_TABLE));
-				}
-				else if(base_rel->getTable(BaseRelationship::DST_TABLE)==table)
-				{
-					refer=true;
-					refs.push_back(base_rel->getTable(BaseRelationship::SRC_TABLE));
+					refs.push_back(base_rel);
 				}
 				itr++;
 			}

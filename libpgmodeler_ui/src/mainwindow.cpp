@@ -645,14 +645,17 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 
-		connect(current_model, SIGNAL(s_objectModified(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		connect(current_model, SIGNAL(s_objectCreated(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		connect(current_model, SIGNAL(s_objectRemoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
+		//connect(current_model, SIGNAL(s_objectModified(void)),oper_list_wgt, SLOT(updateOperationList(void)));
+		//connect(current_model, SIGNAL(s_objectCreated(void)),oper_list_wgt, SLOT(updateOperationList(void)));
+		//connect(current_model, SIGNAL(s_objectRemoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
 
-		connect(current_model, SIGNAL(s_objectModified(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
-		connect(current_model, SIGNAL(s_objectCreated(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
-		connect(current_model, SIGNAL(s_objectRemoved(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
+		//connect(current_model, SIGNAL(s_objectModified(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
+		//connect(current_model, SIGNAL(s_objectCreated(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
+		//connect(current_model, SIGNAL(s_objectRemoved(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
+		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(__updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(__updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(__updateDockWidgets(void)));
 
 		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
@@ -739,6 +742,7 @@ void MainWindow::closeModel(int model_id)
 
 		disconnect(tab, NULL, oper_list_wgt, NULL);
 		disconnect(tab, NULL, model_objs_wgt, NULL);
+		disconnect(tab, NULL, this, NULL);
 		disconnect(action_alin_objs_grade, NULL, this, NULL);
 		disconnect(action_show_grid, NULL, this, NULL);
 		disconnect(action_show_delimiters, NULL, this, NULL);
@@ -1035,6 +1039,9 @@ void MainWindow::__updateDockWidgets(void)
 {
 	oper_list_wgt->updateOperationList();
 	model_objs_wgt->updateObjectsView();
+
+	//Any operation executed over the model will reset the validation
+	model_valid_wgt->setModel(current_model);
 }
 
 void MainWindow::executePlugin(void)

@@ -752,9 +752,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 						(oper->op_type==Operation::OBJECT_REMOVED && redo))
 		{
 			if(parent_tab)
-				parent_tab->removeObject(oper->object_idx,obj_type);
+				parent_tab->removeObject(object/*oper->object_idx,obj_type*/);
 			else if(parent_rel)
-				parent_rel->removeObject(oper->object_idx,obj_type);
+				parent_rel->removeObject(dynamic_cast<TableObject *>(object)/*oper->object_idx,obj_type*/);
 			else
 				model->removeObject(object, oper->object_idx);
 		}

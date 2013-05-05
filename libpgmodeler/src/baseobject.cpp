@@ -724,6 +724,18 @@ void BaseObject::clearAttributes(void)
 	}
 }
 
+void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2)
+{
+	if(!obj1 || !obj2)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(obj1 != obj2)
+	{
+		unsigned id_bkp=obj1->object_id;
+		obj1->object_id=obj2->object_id;
+		obj2->object_id=id_bkp;
+	}
+}
+
 void BaseObject::operator = (BaseObject &obj)
 {
 	this->owner=obj.owner;
