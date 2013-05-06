@@ -15,6 +15,8 @@
 <!ATTLIST configuration save-widgets (false|true) "true">
 <!ATTLIST configuration print-grid (false|true) "true">
 <!ATTLIST configuration print-pg-num (false|true) "true">
+<!ATTLIST configuration hide-rel-name (false|true) "true">
+<!ATTLIST configuration hide-ext-attribs (false|true) "true">
  
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

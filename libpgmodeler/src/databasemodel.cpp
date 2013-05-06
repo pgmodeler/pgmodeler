@@ -5742,7 +5742,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	ObjectType obj_type,
 			aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
 			obj_types[]={ OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
-										OBJ_CAST, OBJ_CONVERSION,
+										OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
 										OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
 										OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
 										OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
@@ -5800,9 +5800,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		//Generating the definition for the other objects type
 		if(def_type==SchemaParser::XML_DEFINITION)
-			count=17;
+			count=18;
 		else
-			count=13;
+			count=14;
 
 		for(i=0; i < count; i++)
 		{

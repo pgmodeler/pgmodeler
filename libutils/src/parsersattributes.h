@@ -365,7 +365,9 @@ namespace ParsersAttributes {
 	CUR_VERSION="cur-version",
 	OLD_VERSION="old-version",
 	RECENT_MODELS="recent-models",
-	RECENT="recent";
+	RECENT="recent",
+	HIDE_REL_NAME="hide-rel-name",
+	HIDE_EXT_ATTRIBS="hide-ext-attribs";
 }
 
 #endif

@@ -107,8 +107,8 @@ void GraphicalView::configureObject(void)
 									view->getObjectList(OBJ_TRIGGER)->begin(),
 									view->getObjectList(OBJ_TRIGGER)->end());
 
-	ext_attribs->setVisible(!tab_objs.empty());
-	ext_attribs_body->setVisible(!tab_objs.empty());
+	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
+	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 
 	if(!tab_objs.empty())
 	{
@@ -181,9 +181,9 @@ void GraphicalView::configureObject(void)
 		This width is used to set the uniform width of table */
 	if(!columns->children().isEmpty() &&
 		 (columns->boundingRect().width() > title->boundingRect().width() &&
-			columns->boundingRect().width() > ext_attribs->boundingRect().width()))
+			((hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width())))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->children().isEmpty() &&
+	else if(!ext_attribs->children().isEmpty() &&  !hide_ext_attribs &&
 					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);

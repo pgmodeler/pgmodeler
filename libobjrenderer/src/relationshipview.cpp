@@ -18,6 +18,8 @@
 
 #include "relationshipview.h"
 
+bool RelationshipView::hide_name_label=false;
+
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
@@ -29,9 +31,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		if(rel->getLabel(i))
 		{
 			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
-			labels[i]=new TextboxView(rel->getLabel(i), true);/*,
-															 BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-															 BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));*/
+			labels[i]=new TextboxView(rel->getLabel(i), true);
 			labels[i]->setZValue(1);
 			this->addToGroup(labels[i]);
 		}
@@ -85,6 +85,16 @@ RelationshipView::~RelationshipView(void)
 
 	this->removeFromGroup(descriptor);
 	delete(descriptor);
+}
+
+void RelationshipView::hideNameLabel(bool value)
+{
+	hide_name_label=value;
+}
+
+bool RelationshipView::isNameLabelHidden(void)
+{
+	return(hide_name_label);
 }
 
 BaseRelationship *RelationshipView::getSourceObject(void)
@@ -811,6 +821,7 @@ void RelationshipView::configureLabels(void)
 		y+=label_dist.y();
 	}
 
+	labels[BaseRelationship::LABEL_REL_NAME]->setVisible(!hide_name_label);
 	labels[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
 	labels[BaseRelationship::LABEL_REL_NAME]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
 	labels[BaseRelationship::LABEL_REL_NAME]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),

@@ -36,6 +36,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Graphical point radius
 		static const float GRAPHIC_PNT_RADIUS=2.5f;
 
+		//! \brief Indicates that the relationship labels must be hidden
+		static bool hide_name_label;
+
 		/*! \brief Indicate that the line is being configured/updated. This flag is used to evict
 		 that the configureLine() method is exceedingly called during the table moving. */
 		bool configuring_line;
@@ -109,6 +112,12 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Disconnects the signal handled by the relationship which senders are the tables
 		void disconnectTables(void);
+
+		//! \brief Hides the relationship's name label. This applies to all relationship instances
+		static void hideNameLabel(bool value);
+
+		//! \brief Returns the current visibility state of name label
+		static bool isNameLabelHidden(void);
 
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);

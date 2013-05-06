@@ -80,8 +80,8 @@ void TableView::configureObject(void)
 		//Special case: if there is no item on extended attributes, the extended body is hidden
 		if(idx==1)
 		{
-			groups[idx]->setVisible(count > 0);
-			bodies[idx]->setVisible(count > 0);
+			groups[idx]->setVisible(count > 0 && !hide_ext_attribs);
+			bodies[idx]->setVisible(count > 0 && !hide_ext_attribs);
 		}
 
 		for(i=0; i < count; i++)
@@ -147,9 +147,9 @@ void TableView::configureObject(void)
 		This width is used to set the uniform width of table */
 	if(!columns->children().isEmpty() &&
 		 (columns->boundingRect().width() > title->boundingRect().width() &&
-			columns->boundingRect().width() > ext_attribs->boundingRect().width()))
+			(hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->children().isEmpty() &&
+	else if(!ext_attribs->children().isEmpty() && !hide_ext_attribs &&
 					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);

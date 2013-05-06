@@ -40,6 +40,8 @@ class BaseTableView: public BaseObjectView {
 
 		*ext_attribs;
 
+		static bool hide_ext_attribs;
+
 		//! \brief Polygonal object that defines the table body
 		QGraphicsPolygonItem *body,
 
@@ -64,6 +66,12 @@ class BaseTableView: public BaseObjectView {
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
+		static void hideExtAttributes(bool value);
+
+		//! \brief Returns the current visibility state of extended attributes
+		static bool isExtAttributesHidden(void);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

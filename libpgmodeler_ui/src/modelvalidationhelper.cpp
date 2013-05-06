@@ -35,7 +35,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 	{
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-												OBJ_COLLATION, OBJ_TABLE },
+												OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW },
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
 		unsigned i, i1, cnt, count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=NULL, *refer_obj=NULL;

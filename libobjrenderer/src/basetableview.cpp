@@ -18,6 +18,8 @@
 
 #include "basetableview.h"
 
+bool BaseTableView::hide_ext_attribs=false;
+
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
 	if(!base_tab)
@@ -51,6 +53,16 @@ BaseTableView::~BaseTableView(void)
 	delete(body);
 	delete(title);
 	delete(columns);
+}
+
+void BaseTableView::hideExtAttributes(bool value)
+{
+	hide_ext_attribs=value;
+}
+
+bool BaseTableView::isExtAttributesHidden(void)
+{
+	return(hide_ext_attribs);
 }
 
 QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -102,16 +114,19 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 	if(!this->isSelected())
 	{
 		QList<QGraphicsItem *> items;
-		float cols_height;
-		float item_idx;
+		float cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
 
 		items.append(columns->children());
-		items.append(ext_attribs->children());
+
+		if(!hide_ext_attribs)
+		{
+			items.append(ext_attribs->children());
+			ext_height=ext_attribs->boundingRect().height();
+		}
 
 		//Calculates the default item height
-		cols_height=roundf((columns->boundingRect().height() +
-												ext_attribs->boundingRect().height()) / static_cast<float>(items.size()));
+		cols_height=roundf((columns->boundingRect().height() + ext_height) / static_cast<float>(items.size()));
 
 		//Calculates the item index based upon the mouse position
 		rect=this->mapRectToItem(title, title->boundingRect());
