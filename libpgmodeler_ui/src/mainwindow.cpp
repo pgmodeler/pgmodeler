@@ -587,6 +587,7 @@ void MainWindow::setCurrentModel(void)
 {
 	QObject *object=NULL;
 	QList<QAction *> act_list;
+	QToolButton *tool_btn=NULL;
 
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
@@ -626,10 +627,14 @@ void MainWindow::setCurrentModel(void)
 		current_model->cancelObjectAddition();
 
 		general_tb->addAction(current_model->action_new_object);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
+		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		tool_btn->setShortcut(QKeySequence("N"));
 
 		general_tb->addAction(current_model->action_quick_actions);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
+		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		tool_btn->setShortcut(QKeySequence("Q"));
 
 		general_tb->addAction(current_model->action_edit);
 		general_tb->addAction(current_model->action_source_code);
@@ -645,14 +650,7 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 
-		//connect(current_model, SIGNAL(s_objectModified(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		//connect(current_model, SIGNAL(s_objectCreated(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		//connect(current_model, SIGNAL(s_objectRemoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-
-		//connect(current_model, SIGNAL(s_objectModified(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
-		//connect(current_model, SIGNAL(s_objectCreated(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
-		//connect(current_model, SIGNAL(s_objectRemoved(void)),model_objs_wgt, SLOT(updateObjectsView(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(__updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(__updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(__updateDockWidgets(void)));

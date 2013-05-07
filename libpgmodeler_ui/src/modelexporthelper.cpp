@@ -1,5 +1,12 @@
 #include "modelexporthelper.h"
 
+ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
+{
+	sql_gen_progress=progress=0;
+	db_created=false;
+	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
+}
+
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
 {
 	if(!db_model)
@@ -73,11 +80,11 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
-	QString  version, sql_buf, sql_cmd, drop_cmd=QString("DROP %1 %2;");
+	QString  version, sql_buf, sql_cmd;
 	DBConnection new_db_conn;
 	unsigned i, count;
-	bool db_created=false;
-	int objs_idx[]={-1, -1};
+	//bool db_created=false;
+	//int objs_idx[]={-1, -1};
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=NULL;
 	vector<Exception> errors;
@@ -102,7 +109,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 
 	try
 	{
+		db_created=false;
 		progress=sql_gen_progress=0;
+		created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 		conn.connect();
 
 		//Retrive the DBMS version in order to generate the correct code
@@ -156,7 +165,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 						errors.push_back(e);
 				}
 
-				objs_idx[type_id]++;
+				created_objs[types[type_id]]++;
 			}
 		}
 
@@ -200,6 +209,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		ts.setString(&sql_buf);
 		i=1;
 		progress+=(sql_gen_progress/progress);
+		sql_cmd.clear();
 
 		while(!ts.atEnd())
 		{
@@ -236,39 +246,24 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		}
 
 		disconnect(db_model, NULL, this, NULL);
+
+		//Closes the new opened connection
+		if(new_db_conn.isStablished()) new_db_conn.close();
+
+		/* If the process was a simulation undo the export
+		removing the created objects */
+		if(simulate)
+			undoDBMSExport(db_model, conn);
 	}
 	catch(Exception &e)
 	{
 		disconnect(db_model, NULL, this, NULL);
 
-		//In case of error during the export all created object are removed
-		if(db_created || objs_idx[0] >= 0 || objs_idx[1] >= 0)
-		{
-			//Closes the opened connection
-			if(new_db_conn.isStablished())
-				new_db_conn.close();
+		//Closes the new opened connection
+		if(new_db_conn.isStablished()) new_db_conn.close();
 
-			//Dropping the database
-			if(db_created)
-				conn.executeDDLCommand(drop_cmd.arg(db_model->getSQLName()).arg(db_model->getName(true)));
-
-			//Drop the roles / tablespaces created
-			for(type_id=1; type_id >=0; type_id--)
-			{
-				while(objs_idx[type_id] >= 0)
-				{
-					object=db_model->getObject(objs_idx[type_id], types[type_id]);
-
-					try
-					{
-						conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
-					}
-					catch(Exception &e){}
-
-					objs_idx[type_id]--;
-				}
-			}
-		}
+		//Undo the export removing the created objects
+		undoDBMSExport(db_model, conn);
 
 		//Redirects any error to the user
 		if(errors.empty())
@@ -279,6 +274,39 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 			throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 		}
 	}
+}
+
+void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, DBConnection &conn)
+{
+ QString drop_cmd=QString("DROP %1 %2;");
+ ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
+ int type_id;
+ BaseObject *object=NULL;
+
+ //In case of error during the export all created object are removed
+ if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)
+ {
+	 //Dropping the database
+	 if(db_created)
+		 conn.executeDDLCommand(drop_cmd.arg(db_model->getSQLName()).arg(db_model->getName(true)));
+
+	 //Drop the roles / tablespaces created
+	 for(type_id=1; type_id >=0; type_id--)
+	 {
+		 while(created_objs[types[type_id]] >= 0)
+		 {
+			 object=db_model->getObject(created_objs[types[type_id]], types[type_id]);
+
+			 try
+			 {
+				 conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
+			 }
+			 catch(Exception &e){}
+
+			 created_objs[types[type_id]]--;
+		 }
+	 }
+ }
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned)

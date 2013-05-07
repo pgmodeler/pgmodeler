@@ -12,7 +12,7 @@
 [CREATE TABLESPACE ] @{name} $br
 
 %if @{owner} %then
-$tb [OWNER] @{owner} $br
+$tb [OWNER ] @{owner} $br
 %end
 
 $tb [LOCATION ] @{directory}; $br

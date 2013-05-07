@@ -32,10 +32,24 @@ class ModelExportHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		int progress, sql_gen_progress;
+		//! \brief  Stores the total progress
+		int progress,
+		//! \brief  Stores the sql generation progress
+		sql_gen_progress;
+
+		/*! \brief Indicates if the database was created on the server (only dbms export).
+		This attribute is used to drop the database from server */
+		bool db_created;
+
+		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
+		This attribute is used to drop the created roles / tablespaces from server */
+		map<ObjectType, int> created_objs;
+
+		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
+		void undoDBMSExport(DatabaseModel *db_model, DBConnection &conn);
 
 	public:
-		ModelExportHelper(QObject *parent = 0) : QObject(parent){ progress=0; }
+		ModelExportHelper(QObject *parent = 0);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);

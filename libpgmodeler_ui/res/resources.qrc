@@ -166,5 +166,7 @@
         <file>styles/v_splitter.png</file>
         <file>styles/h_separator.png</file>
         <file>styles/h_menu_indicator.png</file>
+        <file>styles/close_tab_hover.png</file>
+        <file>styles/close_tab.png</file>
     </qresource>
 </RCC>

@@ -29,6 +29,7 @@
 #include "validationinfo.h"
 #include "databasemodel.h"
 #include "dbconnection.h"
+#include "modelexporthelper.h"
 
 class ModelValidationHelper: public QObject {
 	private:
@@ -37,15 +38,20 @@ class ModelValidationHelper: public QObject {
 		//! \brief Reference database model
 		DatabaseModel *db_model;
 
+		//! \brief DBMS export helper used to execute SQL code validation
+		ModelExportHelper export_helper;
+
 		//! \brief Warning and error counters
 		unsigned warn_count, error_count;
+
+		int progress;
 
 	public:
 		ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void validateModel(DatabaseModel *model, DBConnection *conn);
+		void validateModel(DatabaseModel *model, DBConnection *conn=NULL, const QString &pgsql_ver="");
 
 		//! \brief Returns the error count (only when executing SQL validation)
 		unsigned getErrorCount(void);
@@ -56,12 +62,15 @@ class ModelValidationHelper: public QObject {
 		//! \brief Try to resolve the conflict specified by validation info
 		void resolveConflict(ValidationInfo &info);
 
+	private slots:
+		void redirectExportProgress(int prog, QString msg);
+
 	signals:
 		//! \brief This signal is emitted when a validation info is generated
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_updateProgress(int prog);
+		void s_progressUpdated(int prog, QString msg);
 };
 
 #endif

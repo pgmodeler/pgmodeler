@@ -20,11 +20,12 @@
 
 ModelValidationHelper::ModelValidationHelper(void)
 {
-	warn_count=error_count=0;
+	warn_count=error_count=progress=0;
 	db_model=NULL;
+	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(redirectExportProgress(int,QString)));
 }
 
-void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *conn)
+void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *conn, const QString &pgsql_ver)
 {
 	if(!model)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -36,8 +37,10 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
 												OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW },
+								aux_types[]={ OBJ_TABLE, OBJ_VIEW },
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
-		unsigned i, i1, cnt, count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
+		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
+						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=NULL, *refer_obj=NULL;
 		vector<BaseObject *> refs, refs_aux, *obj_list=NULL;
 		vector<BaseObject *>::iterator itr;
@@ -105,12 +108,13 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			}
 
 			//Emit a signal containing the validation progress
-			emit s_updateProgress(((i+1)/static_cast<float>(count))*30);
+			progress=((i+1)/static_cast<float>(count))*30;
+			emit s_progressUpdated(progress, "");
 		}
 
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
-		and indexs of all tables. */
+		and indexs of all tables/views. The table and view names are checked too. */
 		obj_list=model->getObjectList(OBJ_TABLE);
 		itr=obj_list->begin();
 
@@ -145,6 +149,19 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			}
 		}
 
+		/* Inserting the tables and views to the map in order to check if there is table objects
+			 that conflicts with thems */
+		for(i=0; i < aux_cnt; i++)
+		{
+			obj_list=model->getObjectList(aux_types[i]);
+			itr=obj_list->begin();
+			while(itr!=obj_list->end())
+			{
+				dup_objects[(*itr)->getName()].push_back(*itr);
+				itr++;
+			}
+		}
+
 		//Checking the map of duplicated objects
 		mitr=dup_objects.begin();
 		i=1;
@@ -166,7 +183,8 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			}
 
 			//Emit a signal containing the validation progress
-			emit s_updateProgress(30 + ((i/static_cast<float>(dup_objects.size()))*30));
+			progress=30 + ((i/static_cast<float>(dup_objects.size()))*30);
+			emit s_progressUpdated(progress, "");
 
 			i++; mitr++;
 		}
@@ -175,11 +193,27 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 
 		//Case the connection isn't specified indicates that the SQL validation will not be executed
 		if(!conn)
+		{
 			//Emit a signal indicating the final progress
-			emit s_updateProgress(100);
+			progress=100;
+			emit s_progressUpdated(progress,"");
+		}
 		else
 		{
+			try
+			{
+				export_helper.exportToDBMS(db_model, *conn, pgsql_ver, false, true);
 
+				//Emit a signal indicating the final progress
+				progress=100;
+				emit s_progressUpdated(progress,"");
+			}
+			catch(Exception &e)
+			{
+				info=ValidationInfo(e);
+				error_count++;
+				emit s_validationInfoGenerated(info);
+			}
 		}
 	}
 	catch(Exception &e)
@@ -222,23 +256,55 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			QString new_name;
 			Table *table=NULL;
 			ObjectType obj_type;
+			BaseObject *obj=info.getObject();
 
-			while(!refs.empty())
+			/* If the last element of the referrer objects is a table or view the
+			info object itself need to be renamed since tables and views will not be renamed */
+			bool rename_obj=(refs.back()->getObjectType()==OBJ_TABLE ||
+											 refs.back()->getObjectType()==OBJ_VIEW);
+
+			if(rename_obj)
 			{
-				obj_type=refs.back()->getObjectType();
-				table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(refs.back())->getParentTable());
+				table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(obj)->getParentTable());
+				obj_type=obj->getObjectType();
 
 				do
 				{
 					//Configures a new name for the object [name]_[suffix]
-					new_name=QString("%1_%2").arg(refs.back()->getName()).arg(suffix);
+					new_name=QString("%1_%2").arg(obj->getName()).arg(suffix);
 					suffix++;
 				}
 				//Generates a new name until no object is found on parent table
 				while(table->getObjectIndex(new_name, obj_type) >= 0);
 
 				//Renames the object
-				refs.back()->setName(new_name);
+				obj->setName(new_name);
+			}
+
+
+			//Renaming the referrer objects
+			while(!refs.empty())
+			{
+				obj_type=refs.back()->getObjectType();
+
+				//Tables and view aren't renamed only table child objects (constraints, indexes)
+				if(obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW)
+				{
+					table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(refs.back())->getParentTable());
+
+					do
+					{
+						//Configures a new name for the object [name]_[suffix]
+						new_name=QString("%1_%2").arg(refs.back()->getName()).arg(suffix);
+						suffix++;
+					}
+					//Generates a new name until no object is found on parent table
+					while(table->getObjectIndex(new_name, obj_type) >= 0);
+
+					//Renames the referrer object
+					refs.back()->setName(new_name);
+				}
+
 				refs.pop_back();
 			}
 		}
@@ -260,4 +326,11 @@ unsigned ModelValidationHelper::getWarningCount(void)
 unsigned ModelValidationHelper::getErrorCount(void)
 {
 	return(error_count);
+}
+
+void ModelValidationHelper::redirectExportProgress(int prog, QString msg)
+{
+	int inc=prog - 40;
+	progress=60 + (inc < 0 ? 0 : inc);
+	emit s_progressUpdated(progress, msg);
 }

@@ -522,7 +522,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, Q
 				getPgSQLVersions(vers);
 				while(!vers.empty())
 				{
-					//Setting the @{pgsql[VERSION]} attribute
+					//Setting the @{pgsql[VERSION]} attribute in other to know which version is being used
 					attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
 					vers.pop_back();
 				}

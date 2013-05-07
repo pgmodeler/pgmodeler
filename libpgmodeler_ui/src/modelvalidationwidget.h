@@ -50,8 +50,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private slots:
 		void validateModel(void);
 		void updateValidation(ValidationInfo val_info);
+		void updateProgress(int prog, QString msg);
 		void selectValidationInfo(QTreeWidgetItem *item, int);
 		void applyFix(void);
+		void clearOutput(void);
 
 	public slots:
 		void hide(void);

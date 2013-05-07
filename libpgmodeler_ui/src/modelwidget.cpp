@@ -174,7 +174,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	this->setLayout(grid);
 
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
-	action_source_code->setShortcut(QKeySequence("Alt+S"));
+	action_source_code->setShortcut(QKeySequence("S"));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
 	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
@@ -1605,8 +1605,8 @@ void ModelWidget::copyObjects(void)
 
 	//Ask for confirmation to copy the dependencies of the object(s)
 	msg_box.show(trUtf8("Confirmation"),
-									trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-									MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+								trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
+								MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -1677,7 +1677,7 @@ void ModelWidget::copyObjects(void)
 		object=objs_map[(*itr1)];
 
 		//Reserved object aren't copied
-		if(!object->isSystemObject() /*!isReservedObject(object)*/)
+		if(!object->isSystemObject())
 			copied_objects.push_back(object);
 
 		itr1++;
@@ -1733,8 +1733,7 @@ void ModelWidget::pasteObjects(void)
 				aux_name=object->getName(true);
 
 			//Try to find the object on the model
-			if(!dynamic_cast<TableObject *>(object))
-				aux_object=db_model->getObject(aux_name, obj_type);
+			aux_object=db_model->getObject(aux_name, obj_type);
 
 			/* The second validation is check, when the object is found on the model, if the XML code of the found object
 			 and the object to be paster are different. When the XML defintion are the same the object isn't pasted because
@@ -2311,9 +2310,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		if(objects.empty() ||
 			 (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
-													 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
-													 OBJ_OPFAMILY, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLESPACE, OBJ_COLLATION, OBJ_EXTENSION };
+			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
+													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
+													 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW };
 
 			unsigned cnt = sizeof(types)/sizeof(ObjectType);
 
@@ -2346,11 +2346,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			BaseObject *obj=objects[0];
 			Relationship *rel=dynamic_cast<Relationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
-										OBJ_RULE, OBJ_INDEX },
-					sch_types[]={ OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_DOMAIN, OBJ_COLLATION, OBJ_EXTENSION,
-												OBJ_FUNCTION, OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY,
-												OBJ_SEQUENCE, OBJ_TABLE, OBJ_TYPE, OBJ_VIEW };
+					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
+										OBJ_RULE, OBJ_TRIGGER },
+					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
+												OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
+												OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,
+												OBJ_TYPE,	OBJ_VIEW };
 			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
 							 sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
 

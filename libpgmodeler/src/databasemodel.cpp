@@ -5723,6 +5723,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	map<QString, QString> attribs_aux;
 	unsigned count1, i, count;
 	float general_obj_cnt, gen_defs_count;
+	bool sql_disabled=false;
 	BaseObject *object=NULL;
 	vector<BaseObject *> *obj_list=NULL;
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -5733,7 +5734,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	Type *usr_type=NULL;
 	map<unsigned, BaseObject *> objects_map;
 	vector<unsigned> ids_objs, ids_tab_objs;
-	vector<Constraint *> fks;
 	Table *table=NULL;
 	Index *index=NULL;
 	Trigger *trigger=NULL;
@@ -5776,8 +5776,26 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()!="public") ||
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
-					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+					if(object->getObjectType()==OBJ_TABLESPACE && def_type==SchemaParser::SQL_DEFINITION)
+					{
+						/* The Tablespace has the SQL code definition disabled when generating the
+							code of the entire model because this object cannot be created from a multiline sql command */
+
+						//Saving the sql disabled state
+						sql_disabled=object->isSQLDisabled();
+
+						//Disables the sql to generate a commented code
+						object->setSQLDisabled(true);
+						attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+
+						//Restore the original sql disabled state
+						object->setSQLDisabled(sql_disabled);
+					}
+					else
+					{
+						//Generates the code definition and concatenates to the others
+						attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+					}
 
 					//Increments the generated definition count and emits the signal
 					gen_defs_count++;
@@ -5900,7 +5918,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		{
 			BaseObject *objs[3]={NULL, NULL, NULL};
 			vector<BaseObject *> vet_aux;
-			//count=17;
 
 			vet_aux=relationships;
 			vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
@@ -5984,7 +6001,20 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			else if(obj_type==OBJ_DATABASE)
 			{
 				if(def_type==SchemaParser::SQL_DEFINITION)
+				{
+					/* The Database has the SQL code definition disabled when generating the
+					code of the entire model because this object cannot be created from a multiline sql command */
+
+					//Saving the sql disabled state
+					sql_disabled=this->isSQLDisabled();
+
+					//Disables the sql to generate a commented code
+					this->setSQLDisabled(true);
 					attribs_aux[this->getSchemaName()]+=this->__getCodeDefinition(def_type);
+
+					//Restore the original sql disabled state
+					this->setSQLDisabled(sql_disabled);
+				}
 				else
 					attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
 			}
