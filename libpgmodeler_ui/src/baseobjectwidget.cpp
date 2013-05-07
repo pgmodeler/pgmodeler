@@ -107,6 +107,20 @@ BaseObjectWidget::~BaseObjectWidget(void)
 	delete(parent_form);
 }
 
+bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
+{
+	//Filters the ENTER/RETURN pressing forcing the parent form activate the "Apply" button
+	if(event->type() == QEvent::KeyPress &&
+		 (dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Return ||
+			dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Enter))
+	{
+		parent_form->apply_ok_btn->click();
+		return(true);
+	}
+	else
+		return(QWidget::eventFilter(object, event));
+}
+
 void BaseObjectWidget::show(void)
 {
 	parent_form->exec();
@@ -309,6 +323,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
 	bool show_comment;
+	QObjectList chld_list;
+	QWidget *wgt=NULL;
+
 
 	if(grid)
 	{
@@ -390,6 +407,17 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
+	}
+
+	//Install the event filter into all children object in order to capture key press
+	chld_list=this->children();
+	while(!chld_list.isEmpty())
+	{
+		wgt=dynamic_cast<QWidget *>(chld_list.front());
+		if(wgt)
+			wgt->installEventFilter(this);
+
+		chld_list.pop_front();
 	}
 }
 

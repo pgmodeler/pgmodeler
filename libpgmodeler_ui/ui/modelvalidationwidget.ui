@@ -342,7 +342,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Validate</string>
+      <string>Vali&amp;date</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">

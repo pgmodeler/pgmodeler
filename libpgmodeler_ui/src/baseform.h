@@ -36,7 +36,6 @@ class BaseForm: public QDialog, public Ui::BaseForm {
 
 	public:
 		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
-
 		void setButtonConfiguration(unsigned button_conf=MessageBox::OK_CANCEL_BUTTONS);
 };
 

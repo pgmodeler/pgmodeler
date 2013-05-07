@@ -294,6 +294,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
+
+	viewport->installEventFilter(this);
+	viewport->horizontalScrollBar()->installEventFilter(this);
+	viewport->verticalScrollBar()->installEventFilter(this);
 }
 
 ModelWidget::~ModelWidget(void)
@@ -303,16 +307,6 @@ ModelWidget::~ModelWidget(void)
 	delete(op_list);
 	delete(db_model);
 }
-
-/* bool ModelWidget::isReservedObject(BaseObject *obj)
-{
-	return(obj &&
-				 ((obj->getObjectType()==OBJ_LANGUAGE &&
-					 (obj->getName()==~LanguageType("c") ||
-						obj->getName()==~LanguageType("sql") ||
-						obj->getName()==~LanguageType("plpgsql"))) ||
-					(obj->getObjectType()==OBJ_SCHEMA && obj->getName()=="public")));
-} */
 
 void ModelWidget::setModified(bool value)
 {
@@ -337,26 +331,17 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
+	QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+
 	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if(event->type() == QEvent::Wheel &&
-		 (object==viewport->horizontalScrollBar() ||
-			(object==viewport->verticalScrollBar())))
+	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
 		//Redirects the event to the wheelEvent() method of the model widget
-		this->wheelEvent(dynamic_cast<QWheelEvent *>(event));
+		this->wheelEvent(w_event);
 		return(true);
 	}
 	else
 		return(QWidget::eventFilter(object, event));
-}
-
-void ModelWidget::keyReleaseEvent(QKeyEvent *event)
-{
-	if(event->key()==Qt::Key_Control)
-	{
-		viewport->horizontalScrollBar()->removeEventFilter(this);
-		viewport->verticalScrollBar()->removeEventFilter(this);
-	}
 }
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
@@ -366,13 +351,6 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		this->cancelObjectAddition();
 		scene->clearSelection();
-	}
-	/* Install a event filter on the viewport scrollbars when CONTROL
-	is pressed in order to change the zoom using Crtl + Wheel scroll */
-	else if(event->key()==Qt::Key_Control)
-	{
-		viewport->horizontalScrollBar()->installEventFilter(this);
-		viewport->verticalScrollBar()->installEventFilter(this);
 	}
 }
 
@@ -414,7 +392,6 @@ void ModelWidget::applyZoom(float zoom)
 	{
 		viewport->resetTransform();
 		viewport->scale(zoom, zoom);
-		viewport->centerOn(0,0);
 
 		this->current_zoom=zoom;
 		emit s_zoomModified(zoom);

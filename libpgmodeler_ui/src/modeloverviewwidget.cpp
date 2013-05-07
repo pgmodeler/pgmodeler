@@ -116,16 +116,18 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	if(this->model)
 	{
 		QSizeF size;
+		float factor=RESIZE_FACTOR/zoom_factor;
 
 		//Resizes the window frame based upon the model's viewport dimensions
 		size=this->model->viewport->geometry().size();
-		size.setWidth(size.width() * RESIZE_FACTOR * 1/zoom_factor);
-		size.setHeight(size.height() * RESIZE_FACTOR * 1/zoom_factor);
+		size.setWidth(size.width() * factor);
+		size.setHeight(size.height() * factor);
 		window_frm->resize(size.toSize());
 
 		//Set the frame position based upon the viewport scroll bar values
-		window_frm->move(QPoint(this->model->viewport->horizontalScrollBar()->value() * RESIZE_FACTOR,
-														this->model->viewport->verticalScrollBar()->value() * RESIZE_FACTOR));
+		window_frm->move(QPoint(this->model->viewport->horizontalScrollBar()->value() * factor,
+														this->model->viewport->verticalScrollBar()->value() * factor));
+
 	}
 }
 

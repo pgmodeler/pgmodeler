@@ -151,6 +151,9 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
 
+		//! \brief Filters the ENTER/RETURN key press forcing the button "Apply" to be clicked
+		bool eventFilter(QObject *object, QEvent *event);
+
 	protected slots:
 		void editPermissions(void);
 

@@ -130,6 +130,7 @@ class ModelWidget: public QWidget {
 												MAXIMUM_ZOOM=4.0f,
 												ZOOM_INCREMENT=0.05f;
 
+		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
@@ -140,7 +141,6 @@ class ModelWidget: public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void focusInEvent(QFocusEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
