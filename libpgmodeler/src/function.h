@@ -31,8 +31,6 @@
 
 class Function: public BaseObject {
 	private:
-		static unsigned function_id;
-
 		//! \brief Function unique signature
 		QString signature;
 

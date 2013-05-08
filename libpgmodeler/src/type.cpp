@@ -18,13 +18,8 @@
 
 #include "type.h"
 
-unsigned Type::type_id=60000;
-
 Type::Type(void)
 {
-	#warning "Code temporarily disabled!"
-	//object_id=Type::type_id++;
-
 	obj_type=OBJ_TYPE;
 	setConfiguration(ENUMERATION_TYPE);
 

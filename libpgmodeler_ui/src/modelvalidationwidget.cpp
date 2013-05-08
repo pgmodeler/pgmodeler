@@ -204,6 +204,10 @@ void ModelValidationWidget::validateModel(void)
 
 		model_wgt->setEnabled(true);
 		validate_btn->setEnabled(true);
+
+		/* Indicates the model invalidation only when there is validation warnings (broken refs. or no unique name)
+		sql errors are ignored since validator cannot fix SQL related problemas */
+		model_wgt->setInvalidated(validation_helper.getWarningCount() > 0);
 	}
 	catch(Exception &e)
 	{

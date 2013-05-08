@@ -80,16 +80,19 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the auto save interval (in miliseconds)
 		int save_interval;
 
+		//! \brief Stores the recent models filenames
 		QStringList recent_models;
 
+		//! \brief Stores the actions related to recent models
 		QMenu recent_mdls_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
-		void closeEvent(QCloseEvent *);
+		void closeEvent(QCloseEvent *event);
 
 		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
 		void showEvent(QShowEvent *);
 
+		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
 	public:
@@ -165,6 +168,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Clears the recent models menu/list
 		void clearRecentModelsMenu(void);
 
+		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu(void);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window

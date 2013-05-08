@@ -18,15 +18,9 @@
 
 #include "schema.h"
 
-unsigned Schema::schema_id=30000;
-
 Schema::Schema(void)
 {
 	obj_type=OBJ_SCHEMA;
-
-	#warning "Code temporarily disabled!"
-	//object_id=Schema::schema_id++;
-
 	fill_color=QColor(225,225,225, 80);
 	rect_visible=false;
 	attributes[ParsersAttributes::FILL_COLOR]="";

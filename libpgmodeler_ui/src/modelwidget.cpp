@@ -107,7 +107,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 												BaseRelationship::RELATIONSHIP_GEN };
 
 	current_zoom=1;
-	modified=false;
+	obj_nav_idx=0;
+	modified=invalidated=false;
 	new_obj_type=BASE_OBJECT;
 
 	//Generating a temporary file name for the model
@@ -178,7 +179,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
 	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
-	action_edit->setShortcut(QKeySequence("Space"));
+	QList<QKeySequence> shortcuts;
+	shortcuts.append(QKeySequence("Enter"));
+	shortcuts.append(QKeySequence("Return"));
+	action_edit->setShortcuts(shortcuts);
 	action_edit->setToolTip(trUtf8("Edit the object properties"));
 
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
@@ -313,6 +317,11 @@ void ModelWidget::setModified(bool value)
 	this->modified=value;
 }
 
+void ModelWidget::setInvalidated(bool value)
+{
+	this->invalidated=value;
+}
+
 void ModelWidget::resizeEvent(QResizeEvent *)
 {
 	QRectF ret=scene->sceneRect();
@@ -332,12 +341,18 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
+	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
 	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
 		//Redirects the event to the wheelEvent() method of the model widget
 		this->wheelEvent(w_event);
+		return(true);
+	}
+	if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
+	{
+		this->keyPressEvent(k_event);
 		return(true);
 	}
 	else
@@ -351,6 +366,42 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		this->cancelObjectAddition();
 		scene->clearSelection();
+	}
+	//If the user is navigation through the objects using keyboard
+	else if(event->modifiers()==Qt::AltModifier &&
+					(event->key()==Qt::Key_Left || event->key()==Qt::Key_Right) &&
+					!obj_nav_list.empty())
+	{
+		BaseObjectView *obj=NULL;
+
+		if(obj_nav_idx < obj_nav_list.size())
+		{
+			//Get the graphical representation of the current object
+			obj=dynamic_cast<BaseObjectView *>(obj_nav_list.at(obj_nav_idx)->getReceiverObject());
+
+			//If the object is visible selects it
+			if(obj && obj->isVisible())
+			{
+				scene->clearSelection();
+				obj->setSelected(true);
+				viewport->centerOn(obj);
+			}
+
+			//Navigate forward if the right key is pressed
+			if(event->key()==Qt::Key_Right)
+			{
+				obj_nav_idx++;
+				if(obj_nav_idx >= obj_nav_list.size())
+					obj_nav_idx=0;
+			}
+			//Navigate backward if the left key is pressed
+			else
+			{
+				obj_nav_idx--;
+				if(obj_nav_idx >= obj_nav_list.size())
+					obj_nav_idx=obj_nav_list.size()-1;
+			}
+		}
 	}
 }
 
@@ -440,9 +491,13 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
+
+		obj_nav_list.push_back(graph_obj);
+		obj_nav_idx=0;
 	}
 
 	this->modified=true;
+	this->invalidated=true;
 }
 
 void ModelWidget::addNewObject(void)
@@ -502,15 +557,26 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 
 	if(graph_obj)
 	{
+		vector<BaseGraphicObject *>::iterator itr;
+
 		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
 
 		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
 			 (graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
+
+		//Remove the object from tab navigation list
+		itr=std::find(obj_nav_list.begin(), obj_nav_list.end(), graph_obj);
+		if(itr!=obj_nav_list.end())
+			obj_nav_list.erase(itr);
+
+		//Reset the tab navigation
+		obj_nav_idx=0;
 	}
 
 	this->modified=true;
+	this->invalidated=true;
 }
 
 void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
@@ -830,6 +896,7 @@ void ModelWidget::loadModel(const QString &filename)
 
 		protected_model_frm->setVisible(db_model->isProtected());
 		this->modified=false;
+		this->invalidated=false;
 	}
 	catch(Exception &e)
 	{
@@ -2301,14 +2368,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 	this->disableModelActions();
 	this->selected_objects=objects;
-
 	new_object_menu.setEnabled(!this->db_model->isProtected());
 
 	if(objects.size() <= 1)
 	{
 		//Case there is no selected object or the selected object is the database model
-		if(objects.empty() ||
-			 (objects.size()==1 && objects[0]==db_model))
+		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
 			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
@@ -2555,6 +2620,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 bool ModelWidget::isModified(void)
 {
 	return(modified);
+}
+
+bool ModelWidget::isInvalidated(void)
+{
+	return(invalidated);
 }
 
 DatabaseModel *ModelWidget::getDatabaseModel(void)

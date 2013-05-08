@@ -18,13 +18,8 @@
 
 #include "collation.h"
 
-unsigned Collation::collation_id=40000;
-
 Collation::Collation(void)
 {
-	#warning "Code temporarily disabled!"
-	//object_id=Collation::collation_id++;
-
 	obj_type=OBJ_COLLATION;
 	encoding=BaseType::null;
 

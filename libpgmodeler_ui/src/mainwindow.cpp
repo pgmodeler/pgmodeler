@@ -406,14 +406,12 @@ void MainWindow::showEvent(QShowEvent *)
 	tmpmodel_save_timer.start(60000);
 }
 
-void MainWindow::closeEvent(QCloseEvent *)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
 	GeneralConfigWidget *conf_wgt=NULL;
 	map<QString, map<QString, QString> > confs;
 	bool save_conf=false, modified=false;
 	int i=0;
-
-	this->overview_wgt->close();
 
 	//Checking if there is modified models and ask the user to save them before close the application
 	if(models_tbw->count() > 0)
@@ -425,65 +423,71 @@ void MainWindow::closeEvent(QCloseEvent *)
 		if(modified)
 		{
 			msg_box.show(trUtf8("Save all models"),
-											trUtf8("Some models were modified! Do you want to save them before finish the pgModeler?"),
+											trUtf8("Some models were modified! Do you really want to close pgModeler without save them?"),
 											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
-			if(msg_box.result()==QDialog::Accepted)
-				this->saveAllModels();
+			/* If the user rejects the message box the close event will be aborted
+			causing pgModeler not to be finished */
+			if(msg_box.result()==QDialog::Rejected)
+				event->ignore();
 		}
 	}
 
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-	confs=conf_wgt->getConfigurationParams();
-	conf_wgt->removeConfigurationParams();
-
-	//Case is needed to save the session
-	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
+	if(event->isAccepted())
 	{
-		int i, count;
-		ModelWidget *model=NULL;
-		QString param_id;
-		map<QString, QString> attribs;
+		this->overview_wgt->close();
+		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		confs=conf_wgt->getConfigurationParams();
+		conf_wgt->removeConfigurationParams();
 
-		count=models_tbw->count();
-		for(i=0; i < count; i++)
+		//Case is needed to save the session
+		if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
 		{
-			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+			int i, count;
+			ModelWidget *model=NULL;
+			QString param_id;
+			map<QString, QString> attribs;
 
-			if(!model->getFilename().isEmpty())
+			count=models_tbw->count();
+			for(i=0; i < count; i++)
 			{
-				param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+				if(!model->getFilename().isEmpty())
+				{
+					param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+					attribs[ParsersAttributes::ID]=param_id;
+					attribs[ParsersAttributes::PATH]=model->getFilename();
+					conf_wgt->addConfigurationParam(param_id, attribs);
+					attribs.clear();
+				}
+			}
+			save_conf=true;
+		}
+
+
+		//Saving recent models list
+		if(!recent_models.isEmpty())
+		{
+			int i=0;
+			QString param_id;
+			map<QString, QString> attribs;
+
+			while(!recent_models.isEmpty())
+			{
+				param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
 				attribs[ParsersAttributes::ID]=param_id;
-				attribs[ParsersAttributes::PATH]=model->getFilename();
+				attribs[ParsersAttributes::PATH]=recent_models.front();
 				conf_wgt->addConfigurationParam(param_id, attribs);
 				attribs.clear();
+				recent_models.pop_front();
 			}
+			save_conf=true;
 		}
-		save_conf=true;
+
+		if(save_conf)
+			conf_wgt->saveConfiguration();
 	}
-
-
-	//Saving recent models list
-	if(!recent_models.isEmpty())
-	{
-		int i=0;
-		QString param_id;
-		map<QString, QString> attribs;
-
-		while(!recent_models.isEmpty())
-		{
-			param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
-			attribs[ParsersAttributes::ID]=param_id;
-			attribs[ParsersAttributes::PATH]=recent_models.front();
-			conf_wgt->addConfigurationParam(param_id, attribs);
-			attribs.clear();
-			recent_models.pop_front();
-		}
-		save_conf=true;
-	}
-
-	if(save_conf)
-		conf_wgt->saveConfiguration();
 }
 
 void MainWindow::updateRecentModelsMenu(void)
@@ -824,6 +828,7 @@ void MainWindow::applyConfigurations(void)
 
 void MainWindow::saveAllModels(void)
 {
+
 	if(models_tbw->count() > 0 &&
 		 ((sender()==action_save_all) ||
 			(sender()==&model_save_timer &&	this->isActiveWindow())))
@@ -845,11 +850,20 @@ void MainWindow::saveModel(ModelWidget *model)
 {
 	try
 	{
-		if(!model)
-			model=current_model;
+		if(!model) model=current_model;
 
+		//If the model is invalidated ask the user to confirm the saving
+		if(model->isInvalidated())
+			msg_box.show(trUtf8("Model validation recommended"),
+									 trUtf8("ATTENTION: The model '%1' is invalidated and its recommended that you revalidate it before save! \
+Saving an invalidated model can generate a corrupted model file! \
+Do you really want to proceed with the saving?").arg(model->getDatabaseModel()->getName()),
+													MessageBox::ALERT_ICON, MessageBox::YES_NO_BUTTONS);
 
-		if(model && (model->isModified() || sender()==action_save_as))
+		/* The model is saved only when is modified and is not invalidated or the user
+		confirmed the of invalidated model */
+		if(model && (model->isModified() || sender()==action_save_as) &&
+			 (!model->isInvalidated() || (model->isInvalidated() && msg_box.result()==QDialog::Accepted)))
 		{
 			//If the action that calls the slot were the 'save as' or the model filename isn't set
 			if(sender()==action_save_as || model->filename.isEmpty())

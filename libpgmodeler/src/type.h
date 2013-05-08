@@ -35,8 +35,6 @@
 
 class Type: public BaseObject {
 	private:
-		static unsigned type_id;
-
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
 		unsigned config;
 

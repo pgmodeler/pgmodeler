@@ -30,8 +30,6 @@
 
 class Collation : public BaseObject {
 	private:
-		static unsigned collation_id;
-
 		/*! \brief Base encoding for the collation.
 		When setting the locale or lc_??? attributes the encoding name
 		will be appended to the attributes. Example:

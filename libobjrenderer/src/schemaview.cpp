@@ -35,6 +35,8 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	//Shadow objects are not used in this type of object
 	delete(this->obj_shadow);
 	this->obj_shadow=NULL;
+
+	this->configureObject();
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)

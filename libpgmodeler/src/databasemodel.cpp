@@ -6539,10 +6539,12 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				itr++;
 			}
 
+			/* As base relationship are created automatically by the model they aren't considered
+			as a reference to the table in exclusion mode */
 			itr=base_relationships.begin();
 			itr_end=base_relationships.end();
 
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			while(itr!=itr_end && !exclusion_mode)// || (exclusion_mode && !refer)))
 			{
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
 
@@ -7230,8 +7232,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						constr_cnt=tab->getConstraintCount();
 						for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
-							/*if(tab->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
-								 tab->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS))*/
 							if(tab->getConstraint(idx)->isColumnReferenced(column))
 							{
 								refer=true;
@@ -7264,8 +7264,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						constr_cnt=rel->getConstraintCount();
 						for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
-							/* if(rel->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
-								 rel->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS)) */
 							if(rel->getConstraint(idx)->isColumnReferenced(column))
 							{
 								refer=true;

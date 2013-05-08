@@ -44,7 +44,17 @@ class ModelWidget: public QWidget {
 		float current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-		bool modified;
+		bool modified,
+
+		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
+		When this flag is set it's recommend to revalidate the model using the Model validation tool */
+		invalidated;
+
+		//! \brief Stores the objects that can be navigate through Alt+<left|right> keys
+		vector<BaseGraphicObject *> obj_nav_list;
+
+		//! \brief Stores the current selected object by the navigation
+		unsigned obj_nav_idx;
 
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *obj);
@@ -149,8 +159,11 @@ class ModelWidget: public QWidget {
 		//! \brief Cancel the creation of a new object (only for graphical objects)
 		void cancelObjectAddition(void);
 
-		//! \brief Desables the model actions when some new object action is active
+		//! \brief Disables the model actions when some new object action is active
 		void disableModelActions(void);
+
+		//! \brief Indicate if the model invalidated
+		void setInvalidated(bool value);
 
 	public:
 		ModelWidget(QWidget *parent = 0);
@@ -177,6 +190,9 @@ class ModelWidget: public QWidget {
 		//! \brief Returns if the model is modified or not
 		bool isModified(void);
 
+		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
+		bool isInvalidated(void);
+
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);
 
@@ -184,10 +200,6 @@ class ModelWidget: public QWidget {
 		OperationList *getOperationList(void);
 
 	private slots:
-		/*! \brief Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
-		 de operações adicionais como incluir objetos modificados na lista de operações, criar
-		 objetos na cena e remover objetos da cena de forma automática */
-
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 
@@ -288,6 +300,7 @@ class ModelWidget: public QWidget {
 		friend class OperationListWidget;
 		friend class ModelObjectsWidget;
 		friend class ModelOverviewWidget;
+		friend class ModelValidationWidget;
 };
 
 #endif
