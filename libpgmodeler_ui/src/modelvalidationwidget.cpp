@@ -115,6 +115,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		QFont fnt;
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
+		//Adding all the sql errors into the output pane
 		while(!errors.isEmpty())
 		{
 			item1=new QTreeWidgetItem(item);
@@ -131,6 +132,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	{
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 
+		//Listing the referrer object on output pane
 		refs=val_info.getReferences();
 		while(!refs.empty())
 		{
@@ -139,10 +141,12 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			label1=new QLabel;
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
 
+
 			if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 			{
 				ref_name=refs.back()->getName(true);
 
+				//If the referrer object is a table object, concatenates the parent table name
 				if(dynamic_cast<TableObject *>(refs.back()))
 					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + "." + ref_name;
 
@@ -165,6 +169,8 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	output_trw->setItemWidget(item, 0, label);
 	item->setExpanded(false);
+
+	//Stores the validatin on the current tree item
 	item->setData(0, Qt::UserRole, QVariant::fromValue<ValidationInfo>(val_info));
 
 	warn_count_lbl->setText(QString("%1").arg(validation_helper.getWarningCount()));
@@ -179,6 +185,7 @@ void ModelValidationWidget::validateModel(void)
 		DBConnection *conn=NULL;
 		QString ver;
 
+		//Get the connection only the checkbox is checked.
 		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
 		{
 			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
@@ -220,6 +227,7 @@ void ModelValidationWidget::selectValidationInfo(QTreeWidgetItem *item, int)
 		curr_val_info=item->data(0, Qt::UserRole).value<ValidationInfo>();
 	}
 
+	// Enables the fix button only when the its is relative to a BROKER_REFERENCE or	NO_UNIQUE_NAME
 	fix_btn->setEnabled(curr_val_info.getValidationType()!=ValidationInfo::SQL_VALIDATION_ERR &&
 											curr_val_info.isValid() && validation_helper.getWarningCount() > 0);
 }
@@ -230,6 +238,8 @@ void ModelValidationWidget::applyFix(void)
 	{
 		validation_helper.resolveConflict(curr_val_info);
 		model_wgt->setModified(true);
+
+		//Every time the user apply some fix is necessary to revalidate the model
 		validateModel();
 	}
 	catch(Exception &e)

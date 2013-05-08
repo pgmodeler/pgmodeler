@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ModelValidationWidget
-\brief Implements the operations to validate models.
+\brief Implements the operations to display to the user the validation operation performed by ValidationHelper
 */
 
 #ifndef MODEL_VALIDATION_WIDGET_H
@@ -38,21 +38,32 @@ Q_DECLARE_METATYPE(ValidationInfo)
 class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
+
+		//! \brief Reference model widget
 		ModelWidget *model_wgt;
+
 		ModelValidationHelper validation_helper;
+
+		//! \brief Current validation info selected on output pane
 		ValidationInfo curr_val_info;
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
+
+		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
+
+		//! \brief Updates the connections combo
 		void updateConnections(map<QString, DBConnection *> &conns);
 
 	private slots:
+		//! \brief Try to resolve the conflict pointed by the selected validation info
+		void applyFix(void);
+
 		void validateModel(void);
 		void updateValidation(ValidationInfo val_info);
 		void updateProgress(int prog, QString msg);
 		void selectValidationInfo(QTreeWidgetItem *item, int);
-		void applyFix(void);
 		void clearOutput(void);
 
 	public slots:
