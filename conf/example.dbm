@@ -11,6 +11,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public">
 </schema>
 
+<language name="testlang" protected="true"/>
+
 <function name="trigger_func"
 		window-func="false"
 		returns-setof="false"
@@ -27,7 +29,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<definition>SELECT 1+1;</definition>
 </function>
 
-	<language name="testlang" protected="true"/>
+
 <table name="table" oids="false">
 	<schema name="public"/>
 	<position x="20" y="20"/>

@@ -2451,10 +2451,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		ObjectType obj_type;
 		map<QString, QString> attribs;
 		BaseObject *object=NULL;
-		deque<const xmlNode *> incomplt_objs;
-		bool reeval_objs=false, protected_model=false;
-		const xmlNode *elem_aux=NULL;
-		deque<Exception> errors;
+		bool protected_model=false;
 		map<unsigned, QString>::iterator itr, itr_end;
 
 		//Configuring the path to the base path for objects DTD
@@ -2495,7 +2492,7 @@ void DatabaseModel::loadModel(const QString &filename)
 						/* When the current element is a permission, indicates that the parser created all the
 				 other objects. Thus, if there is no incomplete objects that need to be recreated
 				 the permissions will be loaded */
-						if(elem_name==ParsersAttributes::PERMISSION && incomplt_objs.size()==0)
+						if(elem_name==ParsersAttributes::PERMISSION)
 						{
 							//Recreates the special objects before load the permissions
 							if(!xml_special_objs.empty())
@@ -2514,7 +2511,6 @@ void DatabaseModel::loadModel(const QString &filename)
 
 								xml_special_objs.clear();
 
-
 								//Reload the main buffer
 								XMLParser::restartParser();
 								XMLParser::loadXMLBuffer(str_aux);
@@ -2531,29 +2527,6 @@ void DatabaseModel::loadModel(const QString &filename)
 						{
 							//Indentifies the object type to be load according to the current element on the parser
 							obj_type=getObjectType(elem_name);
-
-							/* This block makes the object re-evaluation, this means, read a code snippet again where,
-					after raising an error, an object was referecend before its creation.
-
-					Conditions for object re evaluation:
-					* the 'reeval_objs' is not set
-					* the incomplete objects list is not empty
-					* the object type is not a function, schema, tablespace, language, type or table. */
-							if(!reeval_objs && incomplt_objs.size() > 0 &&
-								 obj_type!=OBJ_FUNCTION && obj_type!=OBJ_SCHEMA &&
-								 obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_LANGUAGE &&
-								 obj_type!=OBJ_TYPE && obj_type!=OBJ_TABLE)
-							{
-								XMLParser::accessElement(XMLParser::PREVIOUS_ELEMENT);
-								elem_aux=XMLParser::getCurrentElement();
-								reeval_objs=true;
-
-								//Restore the parser at the position of the incomplet object
-								XMLParser::restorePosition(incomplt_objs.front());
-
-								//Gets the incomplete object type
-								obj_type=getObjectType(XMLParser::getElementName());
-							}
 
 							if(obj_type==OBJ_DATABASE)
 							{
@@ -2574,16 +2547,12 @@ void DatabaseModel::loadModel(const QString &filename)
 								{
 									//Saves the current position of the parser before create any object
 									XMLParser::savePosition();
-
 									object=createObject(obj_type);
 
 									if(object)
 									{
-										if(!dynamic_cast<TableObject *>(object) &&
-											 obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
-										{
+										if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
 											addObject(object);
-										}
 
 										if(!signalsBlocked())
 										{
@@ -2599,51 +2568,16 @@ void DatabaseModel::loadModel(const QString &filename)
 								}
 								catch(Exception &e)
 								{
-									if(!reeval_objs &&
-										 (((e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL && obj_type==OBJ_TABLE)) ||
-											(((e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION ||
-												 e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL ||
-												 e.getErrorType()==ERR_ASG_INV_TYPE_OBJECT) &&
-												(obj_type==OBJ_LANGUAGE || obj_type==OBJ_FUNCTION || obj_type==OBJ_TYPE || obj_type==OBJ_OPERATOR)))))
-									{
-										XMLParser::restorePosition();
-										incomplt_objs.push_back(XMLParser::getCurrentElement());
-										errors.push_back(e);
-									}
-									else
-									{
-										QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
-										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
-									}
+									QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 								}
 							}
 						}
 
-						/* If the current process is re-evaluate incomplete objects, removes the object
-				 in the front of the incomplete objects because at this point it was
-				 successfully recreated */
-						if(reeval_objs && incomplt_objs.size() > 0)
-						{
-							incomplt_objs.pop_front();
-							errors.pop_front();
-
-							//If already exists incomplete objects, the parser will try to recreated the next incomplete object
-							if(incomplt_objs.size() > 0)
-								XMLParser::restorePosition(incomplt_objs.front());
-							else
-							{
-								reeval_objs=false;
-								XMLParser::restorePosition(elem_aux);
-							}
-						}
 					}
 				}
-				while((!reeval_objs && XMLParser::accessElement(XMLParser::NEXT_ELEMENT)) ||
-							(reeval_objs));
+				while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 			}
-
-			if(errors.size() > 0)
-				throw Exception(errors[0].getErrorMessage(),errors[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			this->BaseObject::setProtected(protected_model);
 			loading_model=false;

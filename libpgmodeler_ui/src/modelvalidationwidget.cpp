@@ -168,6 +168,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	}
 
 	output_trw->setItemWidget(item, 0, label);
+
 	item->setExpanded(false);
 
 	//Stores the validatin on the current tree item
