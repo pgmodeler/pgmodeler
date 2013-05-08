@@ -5203,6 +5203,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 {
 	vector<unsigned> cols_special_pk;
 	map<QString, QString> attribs;
+	map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=NULL;
 	Relationship *rel=NULL;
 	BaseTable *tables[2]={NULL, NULL};
@@ -5216,6 +5217,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 	try
 	{
+		labels_id[ParsersAttributes::NAME_LABEL]=BaseRelationship::REL_NAME_LABEL;
+		labels_id[ParsersAttributes::SRC_LABEL]=BaseRelationship::SRC_CARD_LABEL;
+		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DST_CARD_LABEL;
+
 		XMLParser::getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
@@ -5360,6 +5365,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 						XMLParser::getElementAttributes(attribs);
 						XMLParser::restorePosition();
+
+						base_rel->setLabelDistance(labels_id[str_aux],
+																			 QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
+																							 attribs[ParsersAttributes::Y_POS].toFloat()));
 					}
 					else if(elem==ParsersAttributes::SPECIAL_PK_COLS && rel)
 					{

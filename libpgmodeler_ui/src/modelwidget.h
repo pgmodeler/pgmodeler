@@ -288,7 +288,6 @@ class ModelWidget: public QWidget {
 		friend class OperationListWidget;
 		friend class ModelObjectsWidget;
 		friend class ModelOverviewWidget;
-		friend class ExportHelper;
 };
 
 #endif

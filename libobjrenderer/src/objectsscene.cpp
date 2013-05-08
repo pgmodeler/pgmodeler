@@ -340,12 +340,14 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 	if(event->buttons()==Qt::LeftButton)
 	{
+		sel_ini_pnt=event->scenePos();
+
 		//Selects the object (without press control) if the user is creating a relationship
 		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 			item->setSelected(true);
 		else if(this->selectedItems().isEmpty())
 		{
-			sel_ini_pnt=event->scenePos();
+			//sel_ini_pnt=event->scenePos();
 			selection_rect->setVisible(true);
 			emit s_objectSelected(NULL,false);
 		}
@@ -406,9 +408,11 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	{
 		unsigned i, count;
 		QList<QGraphicsItem *> items=this->selectedItems();
-		float x1,y1,x2,y2;
+		float x1,y1,x2,y2, dx, dy;
 		QRectF rect;
 		RelationshipView *rel=NULL;
+		vector<QPointF> points;
+		vector<QPointF>::iterator itr;
 
 		/* Get the extreme points of the scene to check if some objects are out the area
 		 forcing the scene to be resized */
@@ -416,6 +420,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		y1=this->sceneRect().top();
 		x2=this->sceneRect().right();
 		y2=this->sceneRect().bottom();
+		dx=event->scenePos().x() - sel_ini_pnt.x();
+		dy=event->scenePos().y() - sel_ini_pnt.y();
 
 		count=items.size();
 		for(i=0; i < count; i++)
@@ -439,6 +445,31 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 			}
 			else
 			{
+				/* If the relationship has points added to the line is necessary to move the points
+				too. Since relationships cannot be moved naturally (by user) this will be done
+				by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
+				points=rel->getSourceObject()->getPoints();
+				if(count > 1 && !points.empty())
+				{
+					itr=points.begin();
+					while(itr!=points.end())
+					{
+						//Translate the points
+						itr->setX(itr->x() + dx);
+						itr->setY(itr->y() + dy);
+
+						//Align to grid if the flag is set
+						if(align_objs_grid)
+							(*itr)=alignPointToGrid(*itr);
+
+						itr++;
+					}
+
+					//Assing the new points to relationship and reconfigure its line
+					rel->getSourceObject()->setPoints(points);
+					rel->configureLine();
+				}
+
 				rect=rel->__boundingRect();
 			}
 
@@ -464,6 +495,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 		emit s_objectsMoved(true);
 		moving_objs=false;
+		sel_ini_pnt.setX(NAN);
+		sel_ini_pnt.setY(NAN);
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{
@@ -515,8 +548,8 @@ void ObjectsScene::alignObjectsToGrid(void)
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::LABEL_SRC_CARD;
-						i1<=BaseRelationship::LABEL_REL_NAME; i1++)
+				for(i1=BaseRelationship::SRC_CARD_LABEL;
+						i1<=BaseRelationship::REL_NAME_LABEL; i1++)
 				{
 					lab=rel->getLabel(i1);
 					if(lab)

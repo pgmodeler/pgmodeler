@@ -848,8 +848,8 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(!model)
 			model=current_model;
 
-		if(model &&
-			 (model->isModified() || sender()==action_save_as))
+
+		if(model && (model->isModified() || sender()==action_save_as))
 		{
 			//If the action that calls the slot were the 'save as' or the model filename isn't set
 			if(sender()==action_save_as || model->filename.isEmpty())

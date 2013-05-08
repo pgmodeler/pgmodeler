@@ -118,17 +118,17 @@ void BaseRelationship::configureRelationship(void)
 			throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the textbox for the name label
-		lables[LABEL_REL_NAME]=new Textbox;
-		lables[LABEL_REL_NAME]->setTextAttribute(Textbox::ITALIC_TXT, true);
+		lables[REL_NAME_LABEL]=new Textbox;
+		lables[REL_NAME_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
 		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
 		if(rel_type!=RELATIONSHIP_GEN &&
 			 rel_type!=RELATIONSHIP_DEP)
 		{
-			lables[LABEL_SRC_CARD]=new Textbox;
-			lables[LABEL_DST_CARD]=new Textbox;
-			lables[LABEL_SRC_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
-			lables[LABEL_DST_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[SRC_CARD_LABEL]=new Textbox;
+			lables[DST_CARD_LABEL]=new Textbox;
+			lables[SRC_CARD_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[DST_CARD_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
 			//Configures the mandatory participation for both tables
 			setMandatoryTable(SRC_TABLE,src_mandatory);
@@ -155,8 +155,8 @@ void BaseRelationship::setName(const QString &name)
 	{
 		BaseObject::setName(name);
 
-		if(lables[LABEL_REL_NAME])
-			lables[LABEL_REL_NAME]->setComment(name);
+		if(lables[REL_NAME_LABEL])
+			lables[REL_NAME_LABEL]->setComment(name);
 	}
 	catch(Exception &e)
 	{
@@ -183,7 +183,7 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 	{
 		src_mandatory=value;
 		//Indicates that the source cardinality label will be configured
-		label_id=LABEL_SRC_CARD;
+		label_id=SRC_CARD_LABEL;
 	}
 	else
 	{
@@ -195,7 +195,7 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 			dst_mandatory=false;
 
 		//Indicates that the destination cardinality label will be configured
-		label_id=LABEL_DST_CARD;
+		label_id=DST_CARD_LABEL;
 	}
 
 	if(!value) cmin="0";
@@ -271,7 +271,7 @@ void BaseRelationship::connectRelationship(void)
 
 Textbox *BaseRelationship::getLabel(unsigned label_id)
 {
-	if(label_id<=LABEL_REL_NAME)
+	if(label_id<=REL_NAME_LABEL)
 		return(lables[label_id]);
 	else
 		//Raises an error when the label id is invalid
@@ -361,7 +361,8 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	{
 		bool reduced_form;
 		setRelationshipAttributes();
-		reduced_form=attributes[ParsersAttributes::POINTS].isEmpty();
+		reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
+									attributes[ParsersAttributes::LABELS_POS].isEmpty());
 		return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
 	}
 }
@@ -373,7 +374,7 @@ void BaseRelationship::setPoints(const vector<QPointF> &points)
 
 void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
 {
-	if(label_id > LABEL_REL_NAME)
+	if(label_id > REL_NAME_LABEL)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->lables_dist[label_id]=label_dist;
@@ -381,7 +382,7 @@ void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
 
 QPointF BaseRelationship::getLabelDistance(unsigned label_id)
 {
-	if(label_id > LABEL_REL_NAME)
+	if(label_id > REL_NAME_LABEL)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->lables_dist[label_id]);

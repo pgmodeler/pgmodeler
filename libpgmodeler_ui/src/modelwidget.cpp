@@ -174,7 +174,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	this->setLayout(grid);
 
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
-	action_source_code->setShortcut(QKeySequence("S"));
+	action_source_code->setShortcut(QKeySequence("Alt+S"));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
 	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);

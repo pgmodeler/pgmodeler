@@ -25,8 +25,8 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	if(!rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	for(unsigned i=BaseRelationship::LABEL_SRC_CARD;
-			i <= BaseRelationship::LABEL_REL_NAME; i++)
+	for(unsigned i=BaseRelationship::SRC_CARD_LABEL;
+			i <= BaseRelationship::REL_NAME_LABEL; i++)
 	{
 		if(rel->getLabel(i))
 		{
@@ -104,7 +104,7 @@ BaseRelationship *RelationshipView::getSourceObject(void)
 
 TextboxView *RelationshipView::getLabel(unsigned lab_idx)
 {
-	if(lab_idx > BaseRelationship::LABEL_REL_NAME)
+	if(lab_idx > BaseRelationship::REL_NAME_LABEL)
 		return(NULL);
 	else
 		return(labels[lab_idx]);
@@ -122,10 +122,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		QPen pen;
 		QColor color;
 
-		//if(!this->isSelected() && value.toBool())
-		//	this->sel_order=++BaseObjectView::global_sel_order;
 		this->setSelectionOrder(value.toBool());
-
 		pos_info_pol->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool());
@@ -310,10 +307,10 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if(dynamic_cast<QGraphicsPolygonItem *>(sel_object))
 		{
 			BaseRelationship *rel_base=this->getSourceObject();
-			vector<QPointF> pontos=rel_base->getPoints();
+			vector<QPointF> points=rel_base->getPoints();
 
-			pontos[sel_object_idx]=event->pos();
-			rel_base->setPoints(pontos);
+			points[sel_object_idx]=event->pos();
+			rel_base->setPoints(points);
 			this->configureLine();
 		}
 		else if(dynamic_cast<TextboxView *>(sel_object))
@@ -800,20 +797,20 @@ void RelationshipView::configureLabels(void)
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
-	label_dist=base_rel->getLabelDistance(BaseRelationship::LABEL_REL_NAME);
+	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
 
 	pnt=descriptor->pos();
 	x=pnt.x() -
-		((labels[BaseRelationship::LABEL_REL_NAME]->boundingRect().width() -
+		((labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().width() -
 		 descriptor->boundingRect().width())/2.0f);
 
 	if(base_rel->isSelfRelationship())
 		y=pnt.y() -
-			labels[BaseRelationship::LABEL_REL_NAME]->boundingRect().height() - (2 * VERT_SPACING);
+			labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
 	else
 		y=pnt.y() + descriptor->boundingRect().height() + VERT_SPACING;
 
-	labels_ini_pos[BaseRelationship::LABEL_REL_NAME]=QPointF(x,y);
+	labels_ini_pos[BaseRelationship::REL_NAME_LABEL]=QPointF(x,y);
 
 	if(!isnan(label_dist.x()))
 	{
@@ -821,12 +818,12 @@ void RelationshipView::configureLabels(void)
 		y+=label_dist.y();
 	}
 
-	labels[BaseRelationship::LABEL_REL_NAME]->setVisible(!hide_name_label);
-	labels[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
-	labels[BaseRelationship::LABEL_REL_NAME]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
-	labels[BaseRelationship::LABEL_REL_NAME]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
+	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
+	labels[BaseRelationship::REL_NAME_LABEL]->setPos(x,y);
+	labels[BaseRelationship::REL_NAME_LABEL]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+	labels[BaseRelationship::REL_NAME_LABEL]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
 																													BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
-	dynamic_cast<Textbox *>(labels[BaseRelationship::LABEL_REL_NAME]->getSourceObject())->setModified(true);
+	dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject())->setModified(true);
 
 	if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
 		 rel_type!=BaseRelationship::RELATIONSHIP_DEP)
@@ -836,8 +833,8 @@ void RelationshipView::configureLabels(void)
 		float dl, da;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
-		unsigned label_ids[2]={ BaseRelationship::LABEL_SRC_CARD,
-														BaseRelationship::LABEL_DST_CARD };
+		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
+														BaseRelationship::DST_CARD_LABEL };
 
 		lins[0]=lines[0]->line();
 		lins[1]=lines[lines.size()-1]->line();
