@@ -212,14 +212,21 @@ void ModelExportForm::selectOutputFile(void)
 
 	file_dlg.setWindowTitle(trUtf8("Export model as..."));
 
-	if(export_to_file_rb->isChecked())
-		file_dlg.setFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
-	else
-		file_dlg.setFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
-
 	file_dlg.setFileMode(QFileDialog::AnyFile);
 	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 	file_dlg.setModal(true);
+
+	if(export_to_file_rb->isChecked())
+	{
+		file_dlg.setFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".sql");
+	}
+	else
+	{
+		file_dlg.setFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
+		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".png");
+	}
+
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
 	{

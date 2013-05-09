@@ -397,6 +397,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		objects if some of them already exists */
 		void createSystemObjects(bool create_public);
 
+		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive=false, bool is_regexp=false, bool exact_match=false);
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *objeto);

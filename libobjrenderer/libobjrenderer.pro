@@ -7,24 +7,24 @@ LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPARSERS \
 	$$DESTDIR/$$LIBPGMODELER
 
-HEADERS +=  $$PWD/src/baseobjectview.h \
-            $$PWD/src/textboxview.h \
-            $$PWD/src/tableview.h \
-            $$PWD/src/graphicalview.h \
-            $$PWD/src/relationshipview.h \
-            $$PWD/src/tabletitleview.h \
-            $$PWD/src/tableobjectview.h \
-            $$PWD/src/basetableview.h \
-            $$PWD/src/objectsscene.h \
-	    $$PWD/src/schemaview.h
+HEADERS +=  src/baseobjectview.h \
+	    src/textboxview.h \
+	    src/tableview.h \
+	    src/graphicalview.h \
+	    src/relationshipview.h \
+	    src/tabletitleview.h \
+	    src/tableobjectview.h \
+	    src/basetableview.h \
+	    src/objectsscene.h \
+	    src/schemaview.h
 
-SOURCES +=  $$PWD/src/baseobjectview.cpp \
-            $$PWD/src/textboxview.cpp \
-            $$PWD/src/tableview.cpp \
-            $$PWD/src/graphicalview.cpp \
-            $$PWD/src/relationshipview.cpp \
-            $$PWD/src/tabletitleview.cpp \
-            $$PWD/src/tableobjectview.cpp \
-            $$PWD/src/basetableview.cpp \
-            $$PWD/src/objectsscene.cpp \
-	    $$PWD/src/schemaview.cpp
+SOURCES +=  src/baseobjectview.cpp \
+	    src/textboxview.cpp \
+	    src/tableview.cpp \
+	    src/graphicalview.cpp \
+	    src/relationshipview.cpp \
+	    src/tabletitleview.cpp \
+	    src/tableobjectview.cpp \
+	    src/basetableview.cpp \
+	    src/objectsscene.cpp \
+	    src/schemaview.cpp

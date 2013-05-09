@@ -1369,7 +1369,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 
 		if(!this->modified && res==QDialog::Accepted)
+		{
 			this->modified=true;
+			this->invalidated=true;
+		}
 	}
 	catch(Exception &e)
 	{

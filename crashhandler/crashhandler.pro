@@ -10,9 +10,9 @@ LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPGMODELER \
 	$$DESTDIR/$$LIBPGMODELERUI
 
-FORMS += $$PWD/ui/crashhandler.ui
+FORMS += ui/crashhandler.ui
 
-SOURCES += $$PWD/src/main.cpp \
-           $$PWD/src/crashhandler.cpp
+SOURCES += src/main.cpp \
+	   src/crashhandler.cpp
 
-HEADERS += $$PWD/src/crashhandler.h
+HEADERS += src/crashhandler.h

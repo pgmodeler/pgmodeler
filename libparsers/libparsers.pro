@@ -5,9 +5,9 @@ TARGET = parsers
 
 LIBS += $$DESTDIR/$$LIBUTILS
 
-HEADERS += $$PWD/src/schemaparser.h \
-           $$PWD/src/xmlparser.h
+HEADERS += src/schemaparser.h \
+	   src/xmlparser.h
 
-SOURCES += $$PWD/src/schemaparser.cpp \
-           $$PWD/src/xmlparser.cpp
+SOURCES += src/schemaparser.cpp \
+	   src/xmlparser.cpp
 

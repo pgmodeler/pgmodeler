@@ -43,8 +43,8 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		configureFormLayout(parameter_grid, OBJ_PARAMETER);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(500, 270);
-		parent_form->setMaximumHeight(270);
+		parent_form->setMinimumSize(500, 300);
+		parent_form->setMaximumHeight(300);
 	}
 	catch(Exception &e)
 	{

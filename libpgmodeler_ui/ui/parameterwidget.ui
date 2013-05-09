@@ -24,7 +24,7 @@
     <rect>
      <x>4</x>
      <y>53</y>
-     <width>80</width>
+     <width>91</width>
      <height>16</height>
     </rect>
    </property>
@@ -36,7 +36,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>75</width>
+     <width>16777215</width>
      <height>16777215</height>
     </size>
    </property>
@@ -47,8 +47,8 @@
   <widget class="QLineEdit" name="default_value_edt">
    <property name="geometry">
     <rect>
-     <x>83</x>
-     <y>53</y>
+     <x>100</x>
+     <y>50</y>
      <width>112</width>
      <height>23</height>
     </rect>

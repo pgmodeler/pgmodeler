@@ -6,8 +6,8 @@ OBJECTS_DIR = obj
 
 LIBS += $$DESTDIR/$$LIBUTILS
 
-HEADERS += $$PWD/src/dbconnection.h \
-           $$PWD/src/resultset.h
+HEADERS += src/dbconnection.h \
+	   src/resultset.h
 
-SOURCES += $$PWD/src/dbconnection.cpp \
-           $$PWD/src/resultset.cpp
+SOURCES += src/dbconnection.cpp \
+	   src/resultset.cpp

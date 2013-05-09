@@ -7395,7 +7395,6 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 	}
 }
 
-
 void DatabaseModel::createSystemObjects(bool create_public)
 {
 	Schema *public_sch=NULL;
@@ -7424,4 +7423,50 @@ void DatabaseModel::createSystemObjects(bool create_public)
 			addObject(lang);
 		}
 	}
+}
+
+vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match)
+{
+	vector<BaseObject *> *obj_list=NULL, list;
+	vector<BaseObject *>::iterator itr;
+	vector<ObjectType>::iterator itr_tp=types.begin();
+
+	if(!types.empty())
+	{
+		QRegExp regexp;
+		QString obj_name;
+
+		regexp.setPattern(pattern);
+		regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
+
+		if(is_regexp)
+			regexp.setPatternSyntax(QRegExp::RegExp2);
+		else
+			regexp.setPatternSyntax(QRegExp::Wildcard);
+
+		while(itr_tp!=types.end())
+		{
+			try
+			{
+				obj_list=getObjectList(*itr_tp);
+				itr=obj_list->begin();
+
+				while(itr!=obj_list->end())
+				{
+					obj_name=(*itr)->getName(true, true).remove('"');
+
+					if((exact_match && regexp.exactMatch(obj_name)) ||
+						 (regexp.indexIn(obj_name) >= 0))
+						list.push_back(*itr);
+
+					itr++;
+				}
+			}
+			catch(Exception &){}
+
+			itr_tp++;
+		}
+	}
+
+	return(list);
 }

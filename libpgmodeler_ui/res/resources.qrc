@@ -151,6 +151,7 @@
         <file>icones/fixobject.png</file>
         <file>icones/objselect.png</file>
         <file>icones/loadrecent.png</file>
+        <file>icones/filter.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

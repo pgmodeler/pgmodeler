@@ -11,7 +11,7 @@ LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPGMODELER \
 	$$DESTDIR/$$LIBPGMODELERUI
 
-SOURCES += $$PWD/src/main.cpp \
-	   $$PWD/src/pgmodelercli.cpp
+SOURCES += src/main.cpp \
+	   src/pgmodelercli.cpp
 
-HEADERS += $$PWD/src/pgmodelercli.h
+HEADERS += src/pgmodelercli.h
