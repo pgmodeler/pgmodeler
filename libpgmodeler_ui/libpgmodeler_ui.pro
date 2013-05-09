@@ -70,7 +70,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/modelvalidationhelper.cpp \
 	   src/validationinfo.cpp \
 	   src/extensionwidget.cpp \
-    src/objectfinderwidget.cpp
+	   src/objectfinderwidget.cpp
 
 
 HEADERS += src/mainwindow.h \

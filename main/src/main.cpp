@@ -40,7 +40,7 @@ void startCrashHandler(int signal)
 		symbols = backtrace_symbols(stack, stack_size);
 
 		#ifdef Q_OS_MAC
-			cmd="crashhandler.app";
+			cmd="crashhandler";
 		#else
 			cmd="crashhandler";
 		#endif

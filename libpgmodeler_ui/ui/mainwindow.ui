@@ -338,6 +338,23 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QSplitter" name="splitter">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QWidget" name="model_valid_parent" native="true"/>
+              <widget class="QWidget" name="obj_finder_parent" native="true"/>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>

@@ -48,6 +48,10 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		//Sets the options passed by the user
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
 
+		//Ceils the width and height of scene rectangle in order to not draw dirty areas on pixmap
+		ret.setWidth(ceilf(ret.width()));
+		ret.setHeight(ceilf(ret.height()));
+
 		//Creates the output pixmap
 		pix=QPixmap(ret.size().toSize());
 		QPainter p(&pix);

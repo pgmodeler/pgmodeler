@@ -37,6 +37,7 @@
 #include "pgmodelerplugin.h"
 #include "modeloverviewwidget.h"
 #include "modelvalidationwidget.h"
+#include "objectfinderwidget.h"
 
 using namespace std;
 
@@ -67,6 +68,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Model objects dock widget
 		ModelObjectsWidget *model_objs_wgt;
+
+		//! \brief Object finder used as dock widget
+		ObjectFinderWidget *obj_finder_wgt;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;
@@ -174,7 +178,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
 
-		void hideRightWidgetsBar(void);
+		void showRightWidgetsBar(void);
+		void showBottomWidgetsBar(void);
 };
 
 #endif

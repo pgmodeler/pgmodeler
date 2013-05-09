@@ -131,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
+		obj_finder_wgt=new ObjectFinderWidget;
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -246,7 +247,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
-	bottom_wgt_bar->setVisible(false);
+	obj_finder_parent->setVisible(false);
+	model_valid_parent->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->addWidget(model_objs_wgt);
@@ -256,28 +258,45 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	vlayout->addWidget(oper_list_wgt);
 	oper_list_parent->setLayout(vlayout);
 
-	vlayout=new QVBoxLayout;
-	vlayout->addWidget(model_valid_wgt);
-	bottom_wgt_bar->setLayout(vlayout);
+	QHBoxLayout * hlayout=new QHBoxLayout;
+	hlayout->addWidget(model_valid_wgt);
+	model_valid_parent->setLayout(hlayout);
+
+	hlayout=new QHBoxLayout;
+	hlayout->addWidget(obj_finder_wgt);
+	obj_finder_parent->setLayout(hlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
-	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(showRightWidgetsBar(void)));
 	connect(model_objs_wgt, SIGNAL(s_visibilityChanged(bool)), objects_btn, SLOT(setChecked(bool)));
-	connect(model_objs_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(hideRightWidgetsBar()));
+	connect(model_objs_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showRightWidgetsBar()));
 
 	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_parent, SLOT(setVisible(bool)));
 	connect(operations_btn, SIGNAL(toggled(bool)), oper_list_wgt, SLOT(setVisible(bool)));
-	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(hideRightWidgetsBar(void)));
+	connect(operations_btn, SIGNAL(toggled(bool)), this, SLOT(showRightWidgetsBar(void)));
 	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), operations_btn, SLOT(setChecked(bool)));
-	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(hideRightWidgetsBar()));
+	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showRightWidgetsBar()));
 
-	connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
+	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_parent, SLOT(setVisible(bool)));
 	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
+	connect(validation_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar(void)));
 	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), validation_btn, SLOT(setChecked(bool)));
+	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+
+	connect(find_obj_btn, SIGNAL(toggled(bool)), obj_finder_parent, SLOT(setVisible(bool)));
+	connect(find_obj_btn, SIGNAL(toggled(bool)), obj_finder_wgt, SLOT(setVisible(bool)));
+	connect(find_obj_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar(void)));
+	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
+	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+
+	/*connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
+	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
+	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), validation_btn, SLOT(setChecked(bool)));*/
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
-	hideRightWidgetsBar();
+	showRightWidgetsBar();
+	showBottomWidgetsBar();
 
 	try
 	{
@@ -384,9 +403,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	applyConfigurations();
 }
 
-void MainWindow::hideRightWidgetsBar(void)
+void MainWindow::showRightWidgetsBar(void)
 {
 	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
+}
+
+void MainWindow::showBottomWidgetsBar(void)
+{
+	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
 }
 
 MainWindow::~MainWindow(void)
