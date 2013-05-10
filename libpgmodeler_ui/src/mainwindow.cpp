@@ -447,12 +447,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(modified)
 		{
 			msg_box.show(trUtf8("Save all models"),
-											trUtf8("Some models were modified! Do you really want to close pgModeler without save them?"),
+											trUtf8("Some models were modified! Do you want to save them before exit pgModeler?"),
 											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
-			/* If the user rejects the message box the close event will be aborted
+			/* If the user accepts the message box the close event will be aborted
 			causing pgModeler not to be finished */
-			if(msg_box.result()==QDialog::Rejected)
+			if(msg_box.result()==QDialog::Accepted)
 				event->ignore();
 		}
 	}
@@ -594,7 +594,7 @@ void MainWindow::addModel(const QString &filename)
 
 	//The model is set to modified when no model file is loaded
 	model_tab->setModified(filename.isEmpty());
-
+	model_tab->setInvalidated(false);
 	setCurrentModel();
 }
 
@@ -708,6 +708,7 @@ void MainWindow::setCurrentModel(void)
 	oper_list_wgt->setModel(current_model);
 	model_objs_wgt->setModel(current_model);
 	model_valid_wgt->setModel(current_model);
+	obj_finder_wgt->setModel(current_model);
 
 	if(current_model)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
@@ -1076,8 +1077,12 @@ void MainWindow::__updateDockWidgets(void)
 	oper_list_wgt->updateOperationList();
 	model_objs_wgt->updateObjectsView();
 
-	//Any operation executed over the model will reset the validation
+	/* Any operation executed over the model will reset the validation and
+	the finder will execute the search again */
 	model_valid_wgt->setModel(current_model);
+
+	if(obj_finder_wgt->result_tbw->rowCount() > 0)
+		obj_finder_wgt->findObjects();
 }
 
 void MainWindow::executePlugin(void)

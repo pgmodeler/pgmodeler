@@ -301,6 +301,7 @@ class ModelWidget: public QWidget {
 		friend class ModelObjectsWidget;
 		friend class ModelOverviewWidget;
 		friend class ModelValidationWidget;
+		friend class ObjectFinderWidget;
 };
 
 #endif

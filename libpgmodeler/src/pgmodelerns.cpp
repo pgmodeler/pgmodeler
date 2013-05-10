@@ -16,11 +16,11 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgmodeler.h"
+#include "pgmodelerns.h"
 #include "databasemodel.h"
 
 template <class Classe>
-void PgModeler::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
+void PgModelerNS::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
 {
 	Classe *orig_obj=NULL;
 
@@ -42,7 +42,7 @@ void PgModeler::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
 	(*orig_obj)=(*copy_obj);
 }
 
-void PgModeler::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type)
+void PgModelerNS::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type)
 {
 	switch(obj_type)
 	{
@@ -138,4 +138,10 @@ void PgModeler::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectTy
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
+}
+
+bool PgModelerNS::isTableObject(ObjectType type)
+{
+	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
+				 type==OBJ_RULE || type==OBJ_INDEX);
 }

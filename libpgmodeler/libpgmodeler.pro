@@ -42,14 +42,14 @@ HEADERS += src/textbox.h \
 	   src/reference.h \
 	   src/permission.h \
 	   src/collation.h \
-	   src/pgmodeler.h \
 	   src/excludeelement.h \
 	   src/element.h \
 	   src/parameter.h \
 	   src/operation.h \
 	   src/copyoptions.h \
 	   src/typeattribute.h \
-    src/extension.h
+    src/extension.h \
+    src/pgmodelerns.h
 
 
 SOURCES +=  src/textbox.cpp \
@@ -88,10 +88,10 @@ SOURCES +=  src/textbox.cpp \
 	    src/reference.cpp \
 	    src/permission.cpp \
 	    src/collation.cpp \
-	    src/pgmodeler.cpp \
 	    src/excludeelement.cpp \
 	    src/element.cpp \
 	    src/parameter.cpp \
 	    src/copyoptions.cpp \
 	    src/typeattribute.cpp \
-    src/extension.cpp
+    src/extension.cpp \
+    src/pgmodelerns.cpp

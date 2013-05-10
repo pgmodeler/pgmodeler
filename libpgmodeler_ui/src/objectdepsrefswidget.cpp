@@ -46,10 +46,17 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 																	BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
 
 	model->getObjectDependecies(object, objs);
-	this->updateTableWidget(objs, dependences_tbw);
+
+	/* As the list of dependencies include the this->object itself is necessary
+	to remove only for semantics reasons */
+	objs.erase(std::find(objs.begin(), objs.end(), this->object));
+	ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
 
 	model->getObjectReferences(object, objs);
-	this->updateTableWidget(objs, references_tbw);
+	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
+
+	references_tbw->resizeColumnsToContents();
+	dependences_tbw->resizeColumnsToContents();
 }
 
 void ObjectDepsRefsWidget::hideEvent(QHideEvent *event)
@@ -64,50 +71,3 @@ void ObjectDepsRefsWidget::hideEvent(QHideEvent *event)
 
 	BaseObjectWidget::hideEvent(event);
 }
-
-void ObjectDepsRefsWidget::updateTableWidget(vector<BaseObject *> &objs, QTableWidget *tab_wgt)
-{
-	int count, lin_idx, i;
-	QTableWidgetItem *tab_item=NULL;
-	BaseObject *parent_obj=NULL;
-
-	count=objs.size();
-	for(lin_idx=0, i=0; i < count; i++)
-	{
-		if(objs[i]!=this->object)
-		{
-			tab_wgt->insertRow(lin_idx);
-
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(Utf8String::create(objs[i]->getName()));
-			tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-																BaseObject::getSchemaName(objs[i]->getObjectType())+ QString(".png")));
-			tab_wgt->setItem(lin_idx, 0, tab_item);
-
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(Utf8String::create(objs[i]->getTypeName()));
-			tab_wgt->setItem(lin_idx, 1, tab_item);
-
-			tab_item=new QTableWidgetItem;
-			object=objs[i];
-			if(dynamic_cast<TableObject *>(objs[i]))
-				parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
-			else if(objs[i]->getSchema())
-				parent_obj=objs[i]->getSchema();
-			else
-				parent_obj=this->model;
-
-			tab_item->setText(Utf8String::create(parent_obj->getName()));
-			tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-																BaseObject::getSchemaName(parent_obj->getObjectType())+ QString(".png")));
-			tab_wgt->setItem(lin_idx, 2, tab_item);
-
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(Utf8String::create(parent_obj->getTypeName()));
-			tab_wgt->setItem(lin_idx, 3, tab_item);
-
-			lin_idx++;
-		}
-	}
-}
-

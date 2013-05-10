@@ -179,10 +179,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
 	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
-	QList<QKeySequence> shortcuts;
-	shortcuts.append(QKeySequence("Enter"));
-	shortcuts.append(QKeySequence("Return"));
-	action_edit->setShortcuts(shortcuts);
+	action_edit->setShortcut(QKeySequence("Space"));
 	action_edit->setToolTip(trUtf8("Edit the object properties"));
 
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
@@ -213,7 +210,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));
 	action_cut->setToolTip(trUtf8("Cut the selected object(s)"));
 
-	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Depend"), this);
+	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Deps && Referrers"), this);
 	action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
@@ -350,7 +347,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		this->wheelEvent(w_event);
 		return(true);
 	}
-	if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
+	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
 	{
 		this->keyPressEvent(k_event);
 		return(true);
@@ -380,12 +377,12 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 			obj=dynamic_cast<BaseObjectView *>(obj_nav_list.at(obj_nav_idx)->getReceiverObject());
 
 			//If the object is visible selects it
-			if(obj && obj->isVisible())
-			{
+			//if(obj && obj->isVisible())
+			//{
 				scene->clearSelection();
 				obj->setSelected(true);
 				viewport->centerOn(obj);
-			}
+			//}
 
 			//Navigate forward if the right key is pressed
 			if(event->key()==Qt::Key_Right)
@@ -492,7 +489,9 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 
-		obj_nav_list.push_back(graph_obj);
+		if(item->isVisible())
+			obj_nav_list.push_back(graph_obj);
+
 		obj_nav_idx=0;
 	}
 
@@ -514,9 +513,7 @@ void ModelWidget::addNewObject(void)
 		uses as parent object the selected object, because the user only can add
 		these types after select a table or schema, respectively */
 		if(selected_objects.size()==1 &&
-			 ((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
-				 obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX ||
-				 obj_type==OBJ_RULE) ||
+			 (PgModelerNS::isTableObject(obj_type) ||
 				selected_objects[0]->getObjectType()==OBJ_SCHEMA))
 			parent_obj=selected_objects[0];
 
@@ -583,6 +580,8 @@ void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
 {
 	if(object)
 		this->showObjectForm(object->getObjectType(), object, NULL, object->getPosition());
+	else
+		this->showObjectForm(OBJ_DATABASE, db_model);
 }
 
 void ModelWidget::handleObjectsMovement(bool end_moviment)
@@ -1163,10 +1162,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(object && obj_type!=object->getObjectType())
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//If the user try to call the table object form without specify a parent object
-		else if(!parent_obj &&
-						(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
-						 obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE ||
-						 obj_type==OBJ_INDEX))
+		else if(!parent_obj && PgModelerNS::isTableObject(obj_type))
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
@@ -1174,7 +1170,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
 		that can be edited only on its fill color an rectangle attributes */
-		if(/* isReservedObject(object)*/ object && object->isSystemObject() && object->getName()!="public")
+		if(object && object->isSystemObject() && object->getName()!="public")
 			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		switch(obj_type)
@@ -1183,6 +1179,27 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
 				schema_wgt->show();
 				res=(schema_wgt->result()==QDialog::Accepted);
+
+				if(res)
+				{
+					BaseGraphicObject *obj=dynamic_cast<BaseGraphicObject *>(object);
+					BaseObjectView *graph_obj=dynamic_cast<BaseObjectView *>(obj->getReceiverObject());
+					vector<BaseGraphicObject *>::iterator itr=std::find(obj_nav_list.begin(), obj_nav_list.end(), obj);
+
+					//Adding the schema on the navigation list if its visible
+					if(graph_obj->isVisible() && itr==obj_nav_list.end())
+					{
+						obj_nav_list.push_back(obj);
+						obj_nav_idx=0;
+					}
+					//Removing the schema from the navigation list if its no more visible
+					else if(!graph_obj->isVisible() && itr!=obj_nav_list.end())
+					{
+						obj_nav_list.erase(itr);
+						obj_nav_idx=0;
+					}
+				}
+
 			break;
 
 			case OBJ_ROLE:
@@ -1373,6 +1390,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			this->modified=true;
 			this->invalidated=true;
 		}
+
+		this->setFocus();
 	}
 	catch(Exception &e)
 	{

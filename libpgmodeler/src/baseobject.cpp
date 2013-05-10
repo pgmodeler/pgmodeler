@@ -43,7 +43,7 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Relationship")
+	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -734,6 +734,18 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2)
 		obj1->object_id=obj2->object_id;
 		obj2->object_id=id_bkp;
 	}
+}
+
+vector<ObjectType> BaseObject::getObjectTypes(void)
+{
+	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
+											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_CONVERSION, OBJ_DATABASE,
+											 OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_INDEX,
+											 OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
+											 OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_RULE, OBJ_SCHEMA, OBJ_SEQUENCE,
+											 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TRIGGER,
+											 OBJ_TYPE, OBJ_VIEW };
+	return(vector<ObjectType>(types, types + sizeof(types) / sizeof(ObjectType)));
 }
 
 void BaseObject::operator = (BaseObject &obj)

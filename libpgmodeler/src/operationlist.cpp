@@ -149,7 +149,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 			BaseObject *copy_obj=NULL;
 
 			if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
-				PgModeler::copyObject(&copy_obj, object, obj_type);
+				PgModelerNS::copyObject(&copy_obj, object, obj_type);
 			else
 				throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -458,8 +458,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	else
 		obj_name=operation->pool_obj->getName(true);
 
-	if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT || obj_type==OBJ_RULE ||
-		 obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX)
+	if(PgModelerNS::isTableObject(obj_type))
 	{
 		obj_name=operation->parent_obj->getName(true) + "." + obj_name;
 	}
@@ -708,13 +707,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				previous values restored with the existing copy on the pool. After restoring the object
 				on the pool will have the same attributes as the object before being restored
 				to enable redo operations */
-			PgModeler::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
-			PgModeler::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
-			PgModeler::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
+			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
+			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
+			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
 			object=orig_obj;
 
 			if(aux_obj)
-				PgModeler::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
+				PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 		}
 
 		/* If the operation is of object removed and is not a redo, or
@@ -725,7 +724,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 						(oper->op_type==Operation::OBJECT_CREATED && redo))
 		{
 			if(aux_obj)
-				PgModeler::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
+				PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 
 			if(parent_tab)
 			{

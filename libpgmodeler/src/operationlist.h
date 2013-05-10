@@ -29,7 +29,7 @@ undo / redo all the operations made.
 #define OPERATIONLIST_H
 
 #include "databasemodel.h"
-#include "pgmodeler.h"
+#include "pgmodelerns.h"
 #include "operation.h"
 
 class OperationList: public QObject {

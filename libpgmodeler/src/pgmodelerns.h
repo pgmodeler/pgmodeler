@@ -18,17 +18,17 @@
 
 /**
 \ingroup libpgmodeler
-\namespace PgModeler
+\namespace PgModelerNS
 \brief This namespace is used to organize all functions or constants used in the libpgmodeler package.
 */
 
-#ifndef PGMODELER_H
-#define PGMODELER_H
+#ifndef PGMODELER_NS_H
+#define PGMODELER_NS_H
 
 #include "baseobject.h"
 #include "indexelement.h"
 
-namespace PgModeler {
+namespace PgModelerNS {
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
 		 before copying. Both objects must be the same type if both are allocated.
@@ -57,6 +57,9 @@ namespace PgModeler {
 	/*! \brief Returns if the element exists in the specified list returning its index, a negative
 	index means that the element does not exists. */
 	int isIndexElementExists(vector<IndexElement> &elements, IndexElement elem);
+
+	//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
+	bool isTableObject(ObjectType type);
 }
 
 #endif

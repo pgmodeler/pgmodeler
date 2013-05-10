@@ -33,6 +33,11 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	connect(output_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectValidationInfo(QTreeWidgetItem *, int)));
 	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
 	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
+	connect(sql_val_btn, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setVisible(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), connection_lbl, SLOT(setEnabled(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_lbl, SLOT(setEnabled(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
 
 	SchemaParser::getPgSQLVersions(vers);
 	version_cmb->addItem(trUtf8("Autodetect"));
@@ -42,7 +47,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		vers.pop_back();
 	}
 
-	sql_val_conf_wgt->setEnabled(false);
+	sql_val_conf_wgt->setVisible(false);
 }
 
 void ModelValidationWidget::hide(void)
@@ -56,17 +61,12 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	bool enable=model_wgt!=NULL;
 
 	this->model_wgt=model_wgt;
-
 	curr_val_info=ValidationInfo();
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
-	sql_validation_chk->setEnabled(enable);
-
-	if(sql_validation_chk->isChecked())
-		sql_val_conf_wgt->setEnabled(enable);
-
-	clearOutput();
+	sql_val_btn->setEnabled(enable);
 	fix_btn->setEnabled(false);
+	clearOutput();
 }
 
 void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conns)

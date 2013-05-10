@@ -696,9 +696,7 @@ void BaseObjectWidget::finishConfiguration(void)
 		if(new_object)
 		{
 			//If the object is a table object and the parent table is specified, adds it to table
-			if(table && (obj_type==OBJ_COLUMN || obj_type==OBJ_RULE ||
-									 obj_type==OBJ_TRIGGER ||
-									 obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT))
+			if(table && PgModelerNS::isTableObject(obj_type))
 				table->addObject(this->object);
 			//Adding the object on the relationship, if specified
 			else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))

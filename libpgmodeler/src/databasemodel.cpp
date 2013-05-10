@@ -256,9 +256,7 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 
 void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
-	if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
-		 obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX ||
-		 obj_type==OBJ_RULE ||
+	if(PgModelerNS::isTableObject(obj_type) ||
 		 obj_type==BASE_OBJECT || obj_type==BASE_RELATIONSHIP ||
 		 obj_type==OBJ_DATABASE)
 		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2269,6 +2267,7 @@ void DatabaseModel::addPermission(Permission *perm)
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		permissions.push_back(perm);
+		perm->setDatabase(this);
 	}
 	catch(Exception &e)
 	{
@@ -7427,46 +7426,88 @@ void DatabaseModel::createSystemObjects(bool create_public)
 
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match)
 {
-	vector<BaseObject *> *obj_list=NULL, list;
-	vector<BaseObject *>::iterator itr;
+	vector<BaseObject *> list, objs;
 	vector<ObjectType>::iterator itr_tp=types.begin();
+	vector<BaseObject *> tables;
+	bool inc_tabs=false, inc_views=false;
+	ObjectType obj_type;
+	QRegExp regexp;
+	QString obj_name;
 
-	if(!types.empty())
+	//Configuring the regex style
+	regexp.setPattern(pattern);
+	regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
+
+	if(is_regexp)
+		regexp.setPatternSyntax(QRegExp::RegExp2);
+	else
+		regexp.setPatternSyntax(QRegExp::Wildcard);
+
+	//If there is some table object types on the type list, gather tables and views
+	while(itr_tp!=types.end() && (!inc_views || !inc_tabs))
 	{
-		QRegExp regexp;
-		QString obj_name;
-
-		regexp.setPattern(pattern);
-		regexp.setCaseSensitivity(case_sensitive ?  Qt::CaseSensitive :  Qt::CaseInsensitive);
-
-		if(is_regexp)
-			regexp.setPatternSyntax(QRegExp::RegExp2);
-		else
-			regexp.setPatternSyntax(QRegExp::Wildcard);
-
-		while(itr_tp!=types.end())
+		if(!inc_tabs && PgModelerNS::isTableObject(*itr_tp))
 		{
-			try
+			tables.insert(tables.end(), getObjectList(OBJ_TABLE)->begin(), getObjectList(OBJ_TABLE)->end());
+			inc_tabs=true;
+		}
+
+		if(!inc_views && ((*itr_tp)==OBJ_RULE || (*itr_tp)==OBJ_TRIGGER))
+		{
+			tables.insert(tables.end(), getObjectList(OBJ_VIEW)->begin(), getObjectList(OBJ_VIEW)->end());
+			inc_views=true;
+		}
+
+		itr_tp++;
+	}
+
+	//Gathering all other objects
+	itr_tp=types.begin();
+	while(itr_tp!=types.end())
+	{
+		obj_type=(*itr_tp);
+		itr_tp++;
+
+		if(obj_type==OBJ_DATABASE)
+			objs.push_back(this);
+		else if(!PgModelerNS::isTableObject(obj_type))
+			objs.insert(objs.end(), getObjectList(obj_type)->begin(), getObjectList(obj_type)->end());
+		else
+		{
+			//Including table object on the object list
+			vector<TableObject *> *tab_objs=NULL;
+			vector<BaseObject *>::iterator itr=tables.begin();
+			BaseObject *tab=NULL;
+
+			while(itr!=tables.end())
 			{
-				obj_list=getObjectList(*itr_tp);
-				itr=obj_list->begin();
+				tab=(*itr);
+				itr++;
 
-				while(itr!=obj_list->end())
-				{
-					obj_name=(*itr)->getName(true, true).remove('"');
+				if(tab->getObjectType()==OBJ_TABLE)
+					tab_objs=dynamic_cast<Table *>(tab)->getObjectList(obj_type);
+				else if(obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
+					tab_objs=dynamic_cast<View *>(tab)->getObjectList(obj_type);
 
-					if((exact_match && regexp.exactMatch(obj_name)) ||
-						 (regexp.indexIn(obj_name) >= 0))
-						list.push_back(*itr);
-
-					itr++;
-				}
+				objs.insert(objs.end(), tab_objs->begin(), tab_objs->end());
 			}
-			catch(Exception &){}
-
-			itr_tp++;
 		}
 	}
+
+	//Try to find  the objects on the configured list
+	while(!objs.empty())
+	{
+		//Quotes are removed from the name by default
+		obj_name=objs.back()->getName(true, true).remove('"');
+
+		//Try to match the name on the configured regexp
+		if((exact_match && regexp.exactMatch(obj_name)) ||
+			 (regexp.indexIn(obj_name) >= 0))
+			list.push_back(objs.back());
+
+		objs.pop_back();
+	}
+
 
 	return(list);
 }

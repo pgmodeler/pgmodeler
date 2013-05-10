@@ -322,6 +322,9 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		if(obj)
 			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
 	}
+	else
+		//Emit a signal indicating that no object was selected
+		emit s_objectDoubleClicked(NULL);
 }
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)

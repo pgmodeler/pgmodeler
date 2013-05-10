@@ -27,7 +27,7 @@
 #define INDEX_H
 
 #include "tableobject.h"
-#include "pgmodeler.h"
+#include "pgmodelerns.h"
 
 class Index: public TableObject{
 	private:

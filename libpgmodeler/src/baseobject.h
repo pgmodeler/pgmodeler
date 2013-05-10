@@ -322,7 +322,12 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have a collation assigned
 		bool acceptsCollation(void);
 
+		//! \brief Swap the the ids of the specified objects
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
+
+		/*! \brief Returns the valid object types in a vector. The types
+		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector */
+		static vector<ObjectType> getObjectTypes(void);
 
 		friend class DatabaseModel;
 };

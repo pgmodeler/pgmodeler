@@ -122,6 +122,9 @@
            <height>20</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>Alt+B</string>
+         </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
@@ -149,6 +152,9 @@
            <width>20</width>
            <height>20</height>
           </size>
+         </property>
+         <property name="shortcut">
+          <string>Alt+V</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -178,6 +184,9 @@
            <height>20</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>Alt+O</string>
+         </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
@@ -194,7 +203,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&amp;Find Object</string>
+          <string>Find Object</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -205,6 +214,9 @@
            <width>20</width>
            <height>20</height>
           </size>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+F</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -349,6 +361,9 @@
              <widget class="QSplitter" name="splitter">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="childrenCollapsible">
+               <bool>false</bool>
               </property>
               <widget class="QWidget" name="model_valid_parent" native="true"/>
               <widget class="QWidget" name="obj_finder_parent" native="true"/>

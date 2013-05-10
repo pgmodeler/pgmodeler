@@ -34,14 +34,10 @@ class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWi
 		Q_OBJECT
 
 		void hideEvent(QHideEvent *event);
-
 		void applyConfiguration(void){}
-
-		void updateTableWidget(vector<BaseObject *> &objs, QTableWidget *tab_wgt);
 
 	public:
 		ObjectDepsRefsWidget(QWidget * parent = 0);
-
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj=NULL);
 };
 

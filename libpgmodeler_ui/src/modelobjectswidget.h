@@ -29,6 +29,7 @@
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "messagebox.h"
+#include "objectfinderwidget.h"
 
 class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	private:
@@ -110,7 +111,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 	private slots:
 		void setObjectVisible(QListWidgetItem *item);
-		void setAllObjectsVisible(bool);
+		void setAllObjectsVisible(bool value);
 		void selectObject(void);
 		void showObjectMenu(void);
 		void editObject(void);
