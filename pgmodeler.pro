@@ -132,7 +132,7 @@ pgmodeler.path = $$DESTDIR
 pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 
 unix {
- pgmodeler.files += pgmodeler.sh
+ pgmodeler.files += pgmodeler.vars
 }
 
 INSTALLS += pgmodeler
