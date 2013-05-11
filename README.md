@@ -31,7 +31,7 @@ pgModeler grow bigger and reached a state that its lonely developer cannot handl
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code visit thw [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
+For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
 Change Log
 ----------
