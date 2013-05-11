@@ -60,7 +60,6 @@ void ObjectFinderWidget::hide(void)
 
 void ObjectFinderWidget::showEvent(QShowEvent *)
 {
-	model_wgt->clearFocus();
 	pattern_edt->setFocus();
 }
 
