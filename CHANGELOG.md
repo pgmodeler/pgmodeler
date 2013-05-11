@@ -4,7 +4,7 @@ Changelog
 v0.5.0_beta
 -----------
 
-ATTENTION: Since version 0.5.0 is in beta stage the change log can change until the release date: May, 17.
+ATTENTION: Since version 0.5.0 is in beta stage the change log can be modified until the release date: May, 17.
 
 * [New] Complete main window restyling.
 * [New] Added a model validation tool to prevent reference break and name conflicts.
