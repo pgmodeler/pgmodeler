@@ -25,7 +25,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 	setupUi(this);
 	this->setModel(NULL);
-	connect(sql_validation_chk, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setEnabled(bool)));
+	//connect(sql_validation_chk, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setEnabled(bool)));
 	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
@@ -193,11 +193,11 @@ void ModelValidationWidget::validateModel(void)
 			conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		}
 
-		output_trw->clear();
-		validation_prog_pb->setValue(0);
+		clearOutput();
 		prog_info_wgt->setVisible(true);
 		validate_btn->setEnabled(false);
 		model_wgt->setEnabled(false);
+		fix_btn->setEnabled(false);
 
 		clear_btn->setEnabled(true);
 		validation_helper.validateModel(model_wgt->getDatabaseModel(), conn, ver);
@@ -308,4 +308,6 @@ void ModelValidationWidget::clearOutput(void)
 	clear_btn->setEnabled(false);
 	prog_info_wgt->setVisible(false);
 	validation_prog_pb->setValue(0);
+	warn_count_lbl->setText(QString("%1").arg(0));
+	error_count_lbl->setText(QString("%1").arg(0));
 }

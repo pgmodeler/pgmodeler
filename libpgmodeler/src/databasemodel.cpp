@@ -5845,9 +5845,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		if(def_type==SchemaParser::XML_DEFINITION)
 			ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
-		//Sort the objects id vector to created the definition in a correct way
-		sort(ids_objs.begin(), ids_objs.end());
-
 		/* SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
 
 		 This generations is made in the following way:
@@ -5899,6 +5896,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				}
 			}
 		}
+
+		//Sort the objects id vector to created the definition in a correct way
+		sort(ids_objs.begin(), ids_objs.end());
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
