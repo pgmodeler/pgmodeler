@@ -216,7 +216,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				fnt.setItalic(true);
 				tab_item=new QTableWidgetItem;
 				tab_item->setFont(fnt);
-				tab_item->setText(Utf8String::create(objs[i]->getTypeName()));
+				tab_item->setText(objs[i]->getTypeName());
 				tab_wgt->setItem(lin_idx, 1, tab_item);
 			}
 
@@ -255,7 +255,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				tab_item=new QTableWidgetItem;
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? Utf8String::create(parent_obj->getTypeName()) : "-");
+				tab_item->setText(parent_obj ? parent_obj->getTypeName() : "-");
 				tab_wgt->setItem(lin_idx, 3, tab_item);
 			}
 
@@ -289,7 +289,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 
 			icon=QPixmap(Utf8String::create(":/icones/icones/") + str_aux + QString(".png"));
 
-			item->setText(Utf8String::create(BaseObject::getTypeName(types[type_id])));
+			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);
 
 			//By default all object types are checked

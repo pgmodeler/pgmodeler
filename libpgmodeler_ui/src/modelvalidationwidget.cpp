@@ -92,16 +92,16 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
-									.arg(Utf8String::create(val_info.getObject()->getName(true)))
-									.arg(Utf8String::create(val_info.getObject()->getTypeName()))
+									.arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
+									.arg(val_info.getObject()->getTypeName())
 									.arg(val_info.getObject()->getObjectId())
 									.arg(val_info.getReferences().size()));
 	else if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 	{
 		table=dynamic_cast<TableObject *>(val_info.getObject())->getParentTable();
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object's name(s).")
-									.arg(Utf8String::create(table->getName(true) + "." + val_info.getObject()->getName(true)))
-									.arg(Utf8String::create(val_info.getObject()->getTypeName()))
+									.arg(Utf8String::create(table->getName(true).remove("\"") + "." + val_info.getObject()->getName(true).remove("\"")))
+									.arg(val_info.getObject()->getTypeName())
 									.arg(val_info.getReferences().size()));
 	}
 	else
