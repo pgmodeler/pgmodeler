@@ -237,7 +237,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
-	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
+	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel()));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
@@ -714,7 +714,7 @@ void MainWindow::setCurrentModel(void)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
-	this->saveTemporaryModel();
+	this->saveTemporaryModel(true);
 }
 
 void MainWindow::setGridOptions(void)
@@ -1098,9 +1098,9 @@ void MainWindow::executePlugin(void)
 	}
 }
 
-void MainWindow::saveTemporaryModel(void)
+void MainWindow::saveTemporaryModel(bool force)
 {
-	if(current_model && this->isActiveWindow())
+	if(current_model && (this->isActiveWindow() || force))
 		current_model->db_model->saveModel(current_model->getTempFilename(), SchemaParser::XML_DEFINITION);
 }
 
