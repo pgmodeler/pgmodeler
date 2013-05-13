@@ -906,6 +906,9 @@ Do you really want to proceed with the saving?").arg(model->getDatabaseModel()->
 					if(!file_dlg.selectedFiles().isEmpty())
 						model->saveModel(file_dlg.selectedFiles().at(0));
 				}
+
+				recent_models.push_front(file_dlg.selectedFiles().at(0));
+				updateRecentModelsMenu();
 			}
 			else
 				model->saveModel();

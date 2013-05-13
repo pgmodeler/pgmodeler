@@ -197,7 +197,6 @@ void ModelValidationWidget::validateModel(void)
 		prog_info_wgt->setVisible(true);
 		validate_btn->setEnabled(false);
 		model_wgt->setEnabled(false);
-		fix_btn->setEnabled(false);
 
 		clear_btn->setEnabled(true);
 		validation_helper.validateModel(model_wgt->getDatabaseModel(), conn, ver);
@@ -208,6 +207,7 @@ void ModelValidationWidget::validateModel(void)
 		/* Indicates the model invalidation only when there is validation warnings (broken refs. or no unique name)
 		sql errors are ignored since validator cannot fix SQL related problemas */
 		model_wgt->setInvalidated(validation_helper.getWarningCount() > 0);
+		fix_btn->setEnabled(model_wgt->isInvalidated());
 	}
 	catch(Exception &e)
 	{
@@ -241,6 +241,9 @@ void ModelValidationWidget::applyFix(void)
 {
 	try
 	{
+		if(!output_trw->currentItem())
+			curr_val_info=output_trw->topLevelItem(0)->data(0, Qt::UserRole).value<ValidationInfo>();
+
 		validation_helper.resolveConflict(curr_val_info);
 		model_wgt->setModified(true);
 
