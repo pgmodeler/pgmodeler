@@ -291,11 +291,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
-	/*connect(validation_btn, SIGNAL(toggled(bool)), bottom_wgt_bar, SLOT(setVisible(bool)));
-	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
-	connect(model_valid_wgt, SIGNAL(s_visibilityChanged(bool)), validation_btn, SLOT(setChecked(bool)));*/
+	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
+	QList<int> sizes;
+	sizes.push_back(10);
+	sizes.push_back(0);
+	v_splitter1->setSizes(sizes);
 
-	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 

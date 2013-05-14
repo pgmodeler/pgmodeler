@@ -91,6 +91,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 	BaseObject *object=NULL;
 	vector<Exception> errors;
 	QTextStream ts;
+	bool ddl_tk_found=false;
 
 	/* Error codes treated in this method
 			42P04 	duplicate_database
@@ -225,6 +226,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 			{
 				//Cleanup single line comments
 				lin=ts.readLine();
+				ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
 				lin.remove(QRegExp("^(--)+(.)+$"));
 
 				//If the line isn't empty after cleanup it will be included on sql command
@@ -232,15 +234,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 					sql_cmd += lin + "\n";
 
 				//If the ddl end token is found
-				if(sql_cmd.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0)
+				if(ddl_tk_found)
 				{
-					sql_cmd.remove(ParsersAttributes::DDL_END_TOKEN);
+					//sql_cmd.remove(ParsersAttributes::DDL_END_TOKEN);
 					sql_cmd.simplified();
 
 					//Executes the extracted SQL command
 					if(!sql_cmd.isEmpty())
 						new_db_conn.executeDDLCommand(sql_cmd);
 
+					ddl_tk_found=false;
 					sql_cmd.clear();
 					i++;
 					emit s_progressUpdated(progress + (i/progress),

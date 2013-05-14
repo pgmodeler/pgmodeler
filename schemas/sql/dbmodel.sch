@@ -22,7 +22,7 @@ $br
 $br $br
 
 [SET check_function_bodies = false;] $br
-[/* ddl-end */] $br $br
+[-- ddl-end --] $br $br
 
 %if @{export-to-file} %then
 

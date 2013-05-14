@@ -5,7 +5,7 @@
 
 %if @{pgsql91} %or @{pgsql92} %then
 
- [/* object: ] @{name} [ | type: ] @{sql-object} [ */] $br
+ [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
  [CREATE COLLATION ] @{name}
 
   %if @{collation} %then
@@ -39,5 +39,5 @@
 
   # This is a special token that pgModeler recognizes as end of DDL command
   # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-  [/* ddl-end */] $br $br
+  [-- ddl-end --] $br $br
 %end

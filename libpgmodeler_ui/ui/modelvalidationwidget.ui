@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>801</width>
-    <height>223</height>
+    <width>477</width>
+    <height>230</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>0</height>
+    <height>230</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -507,10 +507,6 @@
   <zorder>prog_info_wgt</zorder>
   <zorder>hide_tb</zorder>
   <zorder>output_trw</zorder>
-  <zorder>validation_prog_pb</zorder>
-  <zorder>validation_prog_pb</zorder>
-  <zorder>warn_count_lbl</zorder>
-  <zorder>warn_lbl</zorder>
   <zorder>sql_val_conf_wgt</zorder>
   <zorder>clear_btn</zorder>
   <zorder>fix_btn</zorder>

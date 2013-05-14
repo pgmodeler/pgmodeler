@@ -359,7 +359,10 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	{
 		//Case there is no item at the mouse position clears the selection on the scene
 		if(!item)
+		{
 			this->clearSelection();
+			emit s_objectSelected(NULL,false);
+		}
 
 		emit s_popupMenuRequested();
 	}
