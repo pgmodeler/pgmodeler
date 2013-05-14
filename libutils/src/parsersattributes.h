@@ -345,7 +345,7 @@ namespace ParsersAttributes {
 	RECT_VISIBLE="rect-visible",
 	USE_SORTING="use-sorting",
 	STORAGE_PARAMS="stg-params",
-	DDL_END_TOKEN="-- ddl-end --",
+	DDL_END_TOKEN="/* ddl-end */",
 	SQL_DISABLED="sql-disabled",
 	REVOKE="revoke",
 	CASCADE="cascade",

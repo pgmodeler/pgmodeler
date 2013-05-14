@@ -84,11 +84,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
-	QString  version, sql_buf, sql_cmd;
+	QString  version, sql_buf, sql_cmd, lin;
 	DBConnection new_db_conn;
 	unsigned i, count;
-	//bool db_created=false;
-	//int objs_idx[]={-1, -1};
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=NULL;
 	vector<Exception> errors;
@@ -152,8 +150,11 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 
 				try
 				{
-					sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					conn.executeDDLCommand(sql_cmd);
+					if(!object->isSQLDisabled())
+					{
+						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						conn.executeDDLCommand(sql_cmd);
+					}
 				}
 				catch(Exception &e)
 				{
@@ -175,11 +176,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 
 		try
 		{
-			//Creating the database on the DBMS
-			emit s_progressUpdated(progress, trUtf8("Creating database '%1'...").arg(Utf8String::create(db_model->getName())));
-			sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
-			conn.executeDDLCommand(sql_cmd);
-			db_created=true;
+			if(!db_model->isSQLDisabled())
+			{
+				//Creating the database on the DBMS
+				emit s_progressUpdated(progress, trUtf8("Creating database '%1'...").arg(Utf8String::create(db_model->getName())));
+				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				conn.executeDDLCommand(sql_cmd);
+				db_created=true;
+			}
 		}
 		catch(Exception &e)
 		{
@@ -219,7 +223,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		{
 			try
 			{
-				sql_cmd += ts.readLine() + "\n";
+				//Cleanup single line comments
+				lin=ts.readLine();
+				lin.remove(QRegExp("^(--)+(.)+$"));
+
+				//If the line isn't empty after cleanup it will be included on sql command
+				if(!lin.isEmpty())
+					sql_cmd += lin + "\n";
 
 				//If the ddl end token is found
 				if(sql_cmd.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0)
