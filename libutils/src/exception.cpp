@@ -215,6 +215,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Invalid PostgreSQL version '%1' assigned to the schema parser! Valid versions are: %2")},
 	{"ERR_VALIDATION_FAILURE", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension '%1' is registered as a data type and cannot have the attribute 'handles datatype' modified!")},
+	{"ERR_ALOC_INV_FK_RELATIONSHIP", QT_TR_NOOP("The fk relationship '%1' cannot be created because the foreign-key that represents it wasn't created on table '%2'!")},
 };
 
 Exception::Exception(void)

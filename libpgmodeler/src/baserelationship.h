@@ -53,7 +53,7 @@ class BaseRelationship: public BaseGraphicObject  {
 		 moved by the user */
 		QPointF lables_dist[3];
 
-		//! \brief Entidades envolvidas no relacionamento
+		//! \brief Entities envolved on the relationship
 		BaseTable *src_table,
 							*dst_table;
 

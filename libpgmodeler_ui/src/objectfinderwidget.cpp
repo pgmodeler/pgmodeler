@@ -151,11 +151,16 @@ void ObjectFinderWidget::editObject(void)
 {
 	if(selected_obj)
 	{
-		vector<BaseObject *> vect;
-		vect.push_back(selected_obj);
-		model_wgt->scene->clearSelection();
-		model_wgt->configurePopupMenu(vect);
-		model_wgt->editObject();
+		if(selected_obj->getObjectType()==OBJ_PERMISSION)
+			model_wgt->showObjectForm(OBJ_PERMISSION, dynamic_cast<Permission *>(selected_obj)->getObject());
+		else
+		{
+			vector<BaseObject *> vect;
+			vect.push_back(selected_obj);
+			model_wgt->scene->clearSelection();
+			model_wgt->configurePopupMenu(vect);
+			model_wgt->editObject();
+		}
 	}
 }
 
@@ -229,6 +234,8 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
 				else if(objs[i]->getSchema())
 					parent_obj=objs[i]->getSchema();
+				else if(dynamic_cast<Permission *>(objs[i]))
+					parent_obj=dynamic_cast<Permission *>(objs[i])->getObject();
 				else
 					parent_obj=objs[i]->getDatabase();
 

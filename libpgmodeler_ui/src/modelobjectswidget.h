@@ -69,6 +69,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Updates only a view tree starting from the 'root' item
 		void updateViewTree(QTreeWidgetItem *root, BaseObject *schema);
 
+		//! \brief Updates only the permission tree related to the specified object
+		void updatePermissionTree(QTreeWidgetItem *root, BaseObject *object);
+
 		//! \brief Updates the whole database object tree
 		void updateDatabaseTree(void);
 

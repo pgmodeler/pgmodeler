@@ -137,12 +137,19 @@ void PermissionWidget::hideEvent(QHideEvent *event)
 	permissions_tab->removeRows();
 	permissions_tab->blockSignals(false);
 
+	if(perms_changed)
+		emit s_objectManipulated();
+
 	BaseObjectWidget::hideEvent(event);
 }
 
 void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, BaseObject *object)
 {
 	BaseObjectWidget::setAttributes(model,object,parent_obj);
+
+	perms_changed=false;
+	protected_obj_frm->setVisible(false);
+	parent_form->apply_ok_btn->setEnabled(true);
 
 	if(object)
 	{
@@ -291,6 +298,7 @@ void PermissionWidget::addPermission(void)
 		model->addPermission(perm);
 		listPermissions();
 		cancelOperation();
+		perms_changed=true;
 	}
 	catch(Exception &e)
 	{
@@ -340,6 +348,7 @@ void PermissionWidget::updatePermission(void)
 		}
 
 		delete(perm_bkp);
+		perms_changed=true;
 	}
 	catch(Exception &e)
 	{
@@ -399,12 +408,14 @@ void PermissionWidget::removePermission(void)
 	cancelOperation();
 	permission=NULL;
 	permissions_tab->clearSelection();
+	perms_changed=true;
 }
 
 void PermissionWidget::removePermissions(void)
 {
 	model->removePermissions(object);
 	cancelOperation();
+	perms_changed=true;
 }
 
 void PermissionWidget::configurePermission(Permission *perm)

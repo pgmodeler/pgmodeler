@@ -2665,6 +2665,10 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createTrigger(NULL);
 		else if(obj_type==OBJ_INDEX)
 			object=createIndex(NULL);
+		else if(obj_type==OBJ_COLUMN)
+			object=createColumn();
+		else if(obj_type==OBJ_RULE)
+			object=createRule();
 		else if(obj_type==OBJ_RELATIONSHIP ||
 						obj_type==BASE_RELATIONSHIP)
 			object=createRelationship();
@@ -4684,6 +4688,9 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
 			if(!table)
+				table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
+
+			if(!table)
 				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
 												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 					.arg(BaseObject::getTypeName(OBJ_TRIGGER))
@@ -5255,7 +5262,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			}
 		}
 
-		if(obj_rel_type==BASE_RELATIONSHIP)//attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
+		if(obj_rel_type==BASE_RELATIONSHIP)
 		{
 			base_rel=getRelationship(tables[0], tables[1]);
 
@@ -5263,11 +5270,22 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			added to the table after its creation. */
 			if(!base_rel && attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
 			{
-				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-																			tables[0], tables[1], false, false);
+				vector<Constraint *> fks;
+				dynamic_cast<Table *>(tables[0])->getForeignKeys(fks, false, dynamic_cast<Table *>(tables[1]));
+
+				/* If the tables[0] doesn't has any fk that references the tables[1] indicates that the relationship
+				is being created before the fk that represents it (inconsistence!). In this case an error is raised. */
+				if(fks.empty())
+				{
+					throw Exception(Exception::getErrorMessage(ERR_ALOC_INV_FK_RELATIONSHIP)
+													.arg(attribs[ParsersAttributes::NAME])
+													.arg(Utf8String::create(tables[0]->getName(true))),
+													ERR_ALOC_INV_FK_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+
+				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
 				addRelationship(base_rel);
 			}
-
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
@@ -6284,6 +6302,49 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Sequence *seq=dynamic_cast<Sequence *>(object);
 				if(seq->getOwnerColumn())
 					getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
+			}
+			//** Getting the dependecies for column **
+			else if(obj_type==OBJ_COLUMN)
+			{
+				BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Column *>(object)->getType());
+
+				if(usr_type)
+					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			}
+			//** Getting the dependecies for trigger **
+			else if(obj_type==OBJ_TRIGGER)
+			{
+				Trigger *trig=dynamic_cast<Trigger *>(object);
+
+				if(trig->getReferencedTable())
+					getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
+
+				if(trig->getFunction())
+					getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
+			}
+			//** Getting the dependecies for index **
+			else if(obj_type==OBJ_INDEX)
+			{
+				Index *index=dynamic_cast<Index *>(object);
+				BaseObject *usr_type=NULL;
+				unsigned i, count=index->getIndexElementCount();
+
+				for(i=0; i < count; i++)
+				{
+					if(index->getIndexElement(i).getOperatorClass())
+						getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
+
+					if(index->getIndexElement(i).getColumn())
+					{
+						usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
+
+						if(usr_type)
+							getObjectDependecies(usr_type, deps, inc_indirect_deps);
+					}
+
+					if(index->getIndexElement(i).getCollation())
+						getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
+				}
 			}
 			//** Getting the dependecies for table **
 			else if(obj_type==OBJ_TABLE)

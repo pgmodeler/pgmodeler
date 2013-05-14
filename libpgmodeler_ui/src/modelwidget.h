@@ -70,6 +70,9 @@ class ModelWidget: public QWidget {
 		//! \brief Copied object on the source model
 		static vector<BaseObject *> copied_objects;
 
+		//! \brief Stores the cutted object on source model (only when executing cut command)
+		static vector<BaseObject *> cutted_objects;
+
 		//! \brief Frame that indicates if the model is protected
 		QFrame *protected_model_frm;
 

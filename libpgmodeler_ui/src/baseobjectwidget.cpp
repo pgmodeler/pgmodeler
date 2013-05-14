@@ -304,7 +304,6 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 												((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 												 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(prot);
-
 		parent_form->apply_ok_btn->setEnabled(!prot);
 
 		disable_sql_chk->setChecked(object->isSQLDisabled());

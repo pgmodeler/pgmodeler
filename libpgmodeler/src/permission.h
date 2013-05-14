@@ -31,6 +31,7 @@
 #include "role.h"
 #include <algorithm>
 #include <QTextStream>
+#include <QCryptographicHash>
 
 class Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following

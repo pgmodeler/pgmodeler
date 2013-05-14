@@ -276,6 +276,12 @@ void Permission::generatePermissionId(void)
 	QString str_aux, addr;
 	unsigned i, count;
 	QTextStream stream(&addr);
+	QCryptographicHash hash(QCryptographicHash::Md5);
+
+	//Stores the permission address on a string
+	stream << reinterpret_cast<unsigned *>(this);
+	str_aux=addr.mid(2);
+	addr.clear();
 
 	//Generates the id only when there is associated roles to the permission
 	if(roles.size() > 0)
@@ -306,17 +312,12 @@ void Permission::generatePermissionId(void)
 		generates an identifier with zeros indicating that permission
 		is not linked directly to any role on the model */
 	else
-		str_aux="000000";
+		str_aux+="000000";
 
-	/* Configures the permission name as the following:
-		[grant|revoke]_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
-
-		With this name format its possible create an unique id for the permission.
-		Generating errors when the user try to create a second permission
-		with the same configuration as the first. */
-	this->obj_name=QString((!revoke ? QString("grant") : QString("revoke")) + "_%1.%2")
-								 .arg(object->getObjectId())
-								 .arg(str_aux);
+	//Generates an unique name for the permission through md5 hash
+	hash.addData(QByteArray(str_aux.toStdString().c_str()));
+	str_aux=hash.result().toHex();
+	this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)

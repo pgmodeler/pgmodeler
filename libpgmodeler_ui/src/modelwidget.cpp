@@ -82,6 +82,7 @@ extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
+vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
 ModelWidget *ModelWidget::src_model=NULL;
 
@@ -1159,11 +1160,14 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			obj_type=OBJ_RELATIONSHIP;
 		}
 
-		if(object && obj_type!=object->getObjectType())
-			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		//If the user try to call the table object form without specify a parent object
-		else if(!parent_obj && PgModelerNS::isTableObject(obj_type))
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(obj_type!=OBJ_PERMISSION)
+		{
+			if(object && obj_type!=object->getObjectType())
+				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			//If the user try to call the table object form without specify a parent object
+			else if(!parent_obj && PgModelerNS::isTableObject(obj_type))
+				throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
 			pos=dynamic_cast<BaseGraphicObject *>(object)->getPosition();
@@ -1175,6 +1179,11 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 		switch(obj_type)
 		{
+			case OBJ_PERMISSION:
+				permission_wgt->setAttributes(db_model, NULL, object);
+				permission_wgt->show();
+			break;
+
 			case OBJ_SCHEMA:
 				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
 				schema_wgt->show();
@@ -1530,8 +1539,8 @@ void ModelWidget::editPermissions(void)
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-	if(obj->isSystemObject() /* isReservedObject(obj) */)
-		throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//if(obj->isSystemObject() /* isReservedObject(obj) */)
+	//	throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	permission_wgt->setAttributes(this->db_model, NULL, obj);
 	permission_wgt->show();
@@ -1675,7 +1684,7 @@ void ModelWidget::copyObjects(void)
 {
 	map<unsigned, BaseObject *> objs_map;
 	vector<unsigned> objs_id;
-	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *>::iterator itr, itr_aux, itr_end;
 	vector<unsigned>::iterator itr1, itr1_end;
 	vector<BaseObject *> deps;
 	BaseObject *object=NULL;
@@ -1688,7 +1697,7 @@ void ModelWidget::copyObjects(void)
 	if(selected_objects.size()==1)
 	{
 		//Raise an error if the user try to copy a reserved object
-		if(selected_objects[0]->isSystemObject() /* isReservedObject(selected_objects[0])*/)
+		if(selected_objects[0]->isSystemObject())
 			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -1696,6 +1705,11 @@ void ModelWidget::copyObjects(void)
 	msg_box.show(trUtf8("Confirmation"),
 								trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
 								MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+
+	/* When in cut operation is necessary to store the selected objects in a separeted list
+	in order to correclty cut (remove) the object on the source model */
+	if(ModelWidget::cut_operation)
+		cutted_objects=selected_objects;
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -1746,6 +1760,7 @@ void ModelWidget::copyObjects(void)
 	itr=deps.begin();
 	itr_end=deps.end();
 
+
 	//Storing the objects ids in a auxiliary vector
 	while(itr!=itr_end)
 	{
@@ -1776,17 +1791,21 @@ void ModelWidget::copyObjects(void)
 void ModelWidget::pasteObjects(void)
 {
 	map<BaseObject *, QString> xml_objs;
+	BaseTable *orig_parent_tab=NULL;
 	vector<BaseObject *>::iterator itr, itr_end;
 	map<BaseObject *, QString> orig_obj_names;
 	BaseObject *object=NULL, *aux_object=NULL;
 	TableObject *tab_obj=NULL;
+	Table *sel_table=NULL;
+	View *sel_view=NULL;
+	BaseTable *parent=NULL;
 	Function *func=NULL;
 	Constraint *constr=NULL;
 	Operator *oper=NULL;
 	QString aux_name, copy_obj_name;
 	ObjectType obj_type;
 	Exception error;
-	unsigned idx=1, pos=0;
+	unsigned idx=0, pos=0;
 
 	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
 	task_prog_wgt->show();
@@ -1794,10 +1813,20 @@ void ModelWidget::pasteObjects(void)
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
 
+	/* If there is only one object selected, check if its a table or view.
+	Because if the user try to paste a table object the receiver object (selected)
+	must be a table or view */
+	if(selected_objects.size()==1)
+	{
+		sel_table=dynamic_cast<Table *>(selected_objects[0]);
+		sel_view=dynamic_cast<View *>(selected_objects[0]);
+	}
+
 	while(itr!=itr_end)
 	{
 		object=(*itr);
 		obj_type=object->getObjectType();
+		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
 		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
@@ -1805,8 +1834,7 @@ void ModelWidget::pasteObjects(void)
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
 
-
-		if(!dynamic_cast<TableObject *>(object))
+		if(!tab_obj || ((sel_table || sel_view) && tab_obj))
 		{
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
@@ -1821,22 +1849,33 @@ void ModelWidget::pasteObjects(void)
 			else
 				aux_name=object->getName(true);
 
-			//Try to find the object on the model
-			aux_object=db_model->getObject(aux_name, obj_type);
+			if(!tab_obj)
+				//Try to find the object on the model
+				aux_object=db_model->getObject(aux_name, obj_type);
+			else
+			{
+				if(sel_view && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE))
+					aux_object=sel_view->getObject(aux_name, obj_type);
+				else if(sel_table)
+					aux_object=sel_table->getObject(aux_name, obj_type);
+			}
 
 			/* The second validation is check, when the object is found on the model, if the XML code of the found object
 			 and the object to be paster are different. When the XML defintion are the same the object isn't pasted because
 			 the found object can be used as substitute of the object to be pasted. This operation is not applied to graphical
 			 objects because they are ALWAYS pasted on the model */
-			if(aux_object &&
-				 (dynamic_cast<BaseGraphicObject *>(object) ||
-					 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
-						object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION))))
+			if(tab_obj ||
+				 (aux_object &&
+					(dynamic_cast<BaseGraphicObject *>(object) ||
+						 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
+							object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)
 				{
 					func=NULL; oper=NULL;
+					aux_name.clear();
+					idx=0;
 
 					//Store the orignal object name on a map
 					orig_obj_names[object]=object->getName();
@@ -1844,7 +1883,8 @@ void ModelWidget::pasteObjects(void)
 					do
 					{
 						//Creates an name suffix assigned to the object to be pasted in order to resolve conflicts
-						aux_name=QString("_cp%1").arg(idx++);
+						if(idx > 0)	aux_name=QString("_cp%1").arg(idx);
+						idx++;
 
 						/* For each object type as follow configures the name and the suffix and store them on the
 						'copy_obj_name' variable. This string is used to check if there are objects with the same name
@@ -1870,12 +1910,13 @@ void ModelWidget::pasteObjects(void)
 							object->setName(orig_obj_names[object]);
 						}
 					}
-					while(db_model->getObject(copy_obj_name, obj_type));
+					while((!tab_obj && db_model->getObject(copy_obj_name, obj_type)) ||
+								(tab_obj && sel_table && sel_table->getObject(copy_obj_name, obj_type)) ||
+								(tab_obj && sel_view  && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) &&
+								 sel_view->getObject(copy_obj_name, obj_type)));
 
 					//Sets the new object name concatenating the suffix to the original name
 					object->setName(orig_obj_names[object] + aux_name);
-					aux_name.clear();
-					idx=1;
 				}
 			}
 		}
@@ -1889,6 +1930,7 @@ void ModelWidget::pasteObjects(void)
 	while(itr!=itr_end)
 	{
 		object=(*itr);
+		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 
 		pos++;
@@ -1897,8 +1939,37 @@ void ModelWidget::pasteObjects(void)
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
 
-		//Stores the XML definition on a xml buffer map
-		xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+		//Store the original parent table of the object
+		if(tab_obj && (sel_table || sel_view))
+		{
+			if(sel_table)
+				parent=sel_table;
+			else
+				parent=sel_view;
+
+			/* Only generates the XML for a table object when the selected receiver object
+			is a table or is a view and the current object is a trigger or rule (because
+			view's only accepts this two types) */
+			if(sel_table ||
+				 (sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
+											 tab_obj->getObjectType()==OBJ_RULE)))
+			{
+				//Backups the original parent table
+				orig_parent_tab=tab_obj->getParentTable();
+
+				//Set the parent table as the selected table/view
+				tab_obj->setParentTable(parent);
+
+				//Generates the XML code with the new parent table
+				xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+
+				//Restore the original parent table
+				tab_obj->setParentTable(orig_parent_tab);
+			}
+		}
+		else if(!tab_obj)
+			//Stores the XML definition on a xml buffer map
+			xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 	}
 
 	//The fourth step is the restoration of original names of the copied objects
@@ -1923,42 +1994,60 @@ void ModelWidget::pasteObjects(void)
 
 	while(itr!=itr_end)
 	{
-		XMLParser::restartParser();
-		XMLParser::loadXMLBuffer(xml_objs[*itr]);
-		itr++;
-
-		try
+		if(xml_objs.count(*itr))
 		{
-			//Creates the object from the XML
-			object=db_model->createObject(db_model->getObjectType(XMLParser::getElementName()));
-			tab_obj=dynamic_cast<TableObject *>(object);
-			constr=dynamic_cast<Constraint *>(tab_obj);
+			XMLParser::restartParser();
+			XMLParser::loadXMLBuffer(xml_objs[*itr]);
 
-			pos++;
-			task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
-																		trUtf8("Pasting object: %1 (%2)").arg(object->getName())
-																		.arg(object->getTypeName()),
-																		object->getObjectType());
-
-			/* Once created, the object is added on the model, except for relationships and table objects
-			because they are inserted automatically */
-			if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
-				db_model->addObject(object);
-
-			if(tab_obj)
+			try
 			{
-				if(constr && constr->getConstraintType()==ConstraintType::foreign_key)
-					db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
+				//Creates the object from the XML
+				object=db_model->createObject(db_model->getObjectType(XMLParser::getElementName()));
+				tab_obj=dynamic_cast<TableObject *>(object);
+				constr=dynamic_cast<Constraint *>(tab_obj);
 
-				op_list->registerObject(tab_obj, Operation::OBJECT_CREATED, -1, tab_obj->getParentTable());
+				pos++;
+				task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+																			trUtf8("Pasting object: %1 (%2)").arg(object->getName())
+																			.arg(object->getTypeName()),
+																			object->getObjectType());
+
+				/* Once created, the object is added on the model, except for relationships and table objects
+			because they are inserted automatically */
+				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
+					db_model->addObject(object);
+
+				//Special case for table objects
+				if(tab_obj)
+				{
+					if(sel_table &&
+						 (tab_obj->getObjectType()==OBJ_COLUMN ||	tab_obj->getObjectType()==OBJ_RULE))
+					{
+						sel_table->addObject(tab_obj);
+						sel_table->setModified(true);
+					}
+					else if(sel_view && tab_obj->getObjectType()==OBJ_RULE)
+					{
+						sel_view->addObject(tab_obj);
+						sel_view->setModified(true);
+					}
+
+					//Updates the fk relationships if the constraint is a foreign-key
+					if(constr && constr->getConstraintType()==ConstraintType::foreign_key)
+						db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
+
+					op_list->registerObject(tab_obj, Operation::OBJECT_CREATED, -1, tab_obj->getParentTable());
+				}
+				else
+					op_list->registerObject(object, Operation::OBJECT_CREATED);
 			}
-			else
-				op_list->registerObject(object, Operation::OBJECT_CREATED);
+			catch(Exception &e)
+			{
+				error=e;
+			}
 		}
-		catch(Exception &e)
-		{
-			error=e;
-		}
+
+		itr++;
 	}
 	op_list->finishOperationChain();
 
@@ -1983,12 +2072,14 @@ void ModelWidget::pasteObjects(void)
 	else
 	{
 		//Remove the objects from the source model
+		ModelWidget::src_model->selected_objects=ModelWidget::cutted_objects;
 		ModelWidget::src_model->removeObjects();
 
 		//Uncheck the cut operation flag
 		ModelWidget::cut_operation=false;
 
 		copied_objects.clear();
+		cutted_objects.clear();
 		if(this!=ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
 
@@ -2493,7 +2584,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
 
-			if(!tab_obj)
+			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 				popup_menu.addAction(action_deps_refs);
 		}
 	}
@@ -2514,7 +2605,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 	//Adding the copy and paste if there is selected objects
 	if(!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
-		 !objects.empty() && !tab_obj)
+		 !objects.empty() && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 	{
 		popup_menu.addAction(action_copy);
 
@@ -2530,11 +2621,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	if(!copied_objects.empty())
 		popup_menu.addAction(action_paste);
 
-	//Caso haja objeto selecionado adiciona a ação de excluir
-	if((!(objects.size()==1 && (objects[0]==db_model ||
-															 (objects[0]->getObjectType()==BASE_RELATIONSHIP &&
-																dynamic_cast<BaseRelationship *>(objects[0])->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK))) &&
-			!objects.empty()) || tab_obj)
+	/* Adding the delete object action. This action will be unavailable on following conditions:
+	1) The selected object is the database itself
+	2) The object is protected
+	3) The object is table child object and it was added by relationship
+	4) The object is a base relationship (table-view) */
+	if((tab_obj && !tab_obj->isAddedByRelationship() && !tab_obj->isProtected()) ||
+		 (objects.size()==1 && objects[0]->isProtected()) ||
+		 (!tab_obj && objects.size()==1 && objects[0]!=db_model && objects[0]->getObjectType()!=BASE_RELATIONSHIP) ||
+		 (objects.size()==1 && objects[0]->getObjectType()==BASE_RELATIONSHIP &&
+			dynamic_cast<BaseRelationship *>(objects[0])->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK) ||
+		 objects.size() > 1)
 		popup_menu.addAction(action_remove);
 
 	//If the table object is a column creates a special menu to acess the constraints that is applied to the column

@@ -86,26 +86,44 @@ void ModelObjectsWidget::showObjectMenu(void)
 void ModelObjectsWidget::editObject(void)
 {
 	if(selected_object && model_wgt && !simplified_view)
-		model_wgt->editObject();
+	{
+		//If the user double-clicked the item "Permission (n)" on tree view
+		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
+			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt()==OBJ_PERMISSION)
+			model_wgt->showObjectForm(OBJ_PERMISSION,
+																reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
+		//If the user double-clicked a permission on  list view
+		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
+		{
+			BaseObject *obj=reinterpret_cast<Permission *>(objectslist_tbw->item(objectslist_tbw->currentRow(), 0)->data(Qt::UserRole).value<void *>());
+			Permission *perm=dynamic_cast<Permission *>(obj);
+
+			if(perm)
+				model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+		}
+		else
+			model_wgt->editObject();
+	}
 }
 
 void ModelObjectsWidget::selectObject(void)
 {
+	ObjectType obj_type=BASE_OBJECT;
+
 	if(tree_view_tb->isChecked())
 	{
 		QTreeWidgetItem *tree_item=objectstree_tw->currentItem();
-		ObjectType obj_type=BASE_OBJECT;
 
 		if(tree_item)
 		{
-			selected_object=reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
 			obj_type=static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+			selected_object=reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
 		}
 
 		//If user select a group item popups a "New [OBJECT]" menu
 		if(!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
 			 obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
-			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER)
+			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
 									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), NULL);
@@ -128,12 +146,16 @@ void ModelObjectsWidget::selectObject(void)
 	}
 	else
 	{
-		QTableWidgetItem *tab_item=objectslist_tbw->item(objectslist_tbw->currentRow(), 0);//objectslist_tbw->currentItem();
+		QTableWidgetItem *tab_item=objectslist_tbw->item(objectslist_tbw->currentRow(), 0);
+
 		if(tab_item)
+		{
 			selected_object=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+			obj_type=selected_object->getObjectType();
+		}
 	}
 
-	if(selected_object && !simplified_view)
+	if(obj_type!=OBJ_PERMISSION && selected_object && !simplified_view)
 	{
 		vector<BaseObject *> vect;
 
@@ -319,8 +341,8 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					item2->setToolTip(0,Utf8String::create(schema->getName()));
 					item2->setIcon(0,sch_icon);
 					item2->setData(0, Qt::UserRole, generateItemValue(schema));
+					updatePermissionTree(item2, schema);
 				}
-
 
 				if(schema && schema->isProtected())
 				{
@@ -365,6 +387,8 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 							object=obj_list[i2];
 							item4=new QTreeWidgetItem(item3);
 							item4->setData(0, Qt::UserRole, generateItemValue(object));
+
+							updatePermissionTree(item4, object);
 
 							if(object->isProtected())
 							{
@@ -457,6 +481,8 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 																 QString(".png")));
 				item1->setData(0, Qt::UserRole, generateItemValue(table));
 
+				updatePermissionTree(item1, table);
+
 				if(table->isProtected())
 				{
 					font=item1->font(0);
@@ -492,6 +518,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 							item3->setToolTip(0,Utf8String::create(object->getName()));
 							item3->setData(0, Qt::UserRole, generateItemValue(object));
 
+							updatePermissionTree(item3, object);
 
 							if(dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 							{
@@ -588,6 +615,8 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 																 QString(".png")));
 				item1->setData(0, Qt::UserRole, generateItemValue(view));
 
+				updatePermissionTree(item1, view);
+
 				if(view->isProtected())
 				{
 					font=item1->font(0);
@@ -645,6 +674,36 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 	}
 }
 
+void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject *object)
+{
+	try
+	{
+		if(db_model && visible_objs_map[OBJ_PERMISSION] &&
+			 Permission::objectAcceptsPermission(object->getObjectType()))
+		{
+			vector<Permission *> perms;
+			QTreeWidgetItem *item=new QTreeWidgetItem(root);
+			QFont font=item->font(0);
+
+			db_model->getPermissions(object, perms);
+			item->setIcon(0,QPixmap(":/icones/icones/permission_grp.png"));
+
+			font.setItalic(true);
+			item->setFont(0, font);
+			item->setText(0, QString("%1 (%2)")
+										.arg(Utf8String::create(BaseObject::getTypeName(OBJ_PERMISSION)))
+										.arg(perms.size()));
+
+			item->setData(0, Qt::UserRole, generateItemValue(object));
+			item->setData(1, Qt::UserRole, static_cast<unsigned>(OBJ_PERMISSION));
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void ModelObjectsWidget::updateDatabaseTree(void)
 {
 	if(!db_model)
@@ -680,6 +739,8 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 				root->setToolTip(0,Utf8String::create(db_model->getName()));
 				root->setData(0, Qt::UserRole, generateItemValue(db_model));
 
+				updatePermissionTree(root, db_model);
+
 				if(db_model->isProtected())
 				{
 					font=root->font(0);
@@ -712,8 +773,6 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						}
 
 						count=obj_list.size();
-
-
 						item1->setText(0,BaseObject::getTypeName(types[i]) +
 													 QString(" (%1)").arg(count));
 						font=item1->font(0);
@@ -728,6 +787,8 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 							item2->setText(0,Utf8String::create(object->getName()));
 							item2->setToolTip(0,Utf8String::create(object->getName()));
 							item2->setData(0, Qt::UserRole, generateItemValue(object));
+
+							updatePermissionTree(item2, object);
 
 							if(object->isProtected())
 							{

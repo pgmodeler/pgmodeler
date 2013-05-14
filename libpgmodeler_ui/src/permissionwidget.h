@@ -46,6 +46,10 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		//! \brief Widget used to select roles on the database model
 		ModelObjectsWidget *objectselection_wgt;
 
+		/*! \brief Indicates if some permission was changed. This flag is used to know when
+		emit the signal s_objectManipulated() */
+		bool perms_changed;
+
 		void hideEvent(QHideEvent *event);
 
 	public:

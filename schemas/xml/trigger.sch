@@ -33,10 +33,10 @@
   [ protected=] "true"
  %end
 
- %if @{decl-in-table} %then
- %else
+ #%if @{decl-in-table} %then
+ #%else
    $br $tb [ table=] "@{table}"
- %end
+ #%end
 
   %if @{sql-disabled} %then
    [ sql-disabled=] "true"

@@ -744,7 +744,7 @@ vector<ObjectType> BaseObject::getObjectTypes(void)
 											 OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_RULE, OBJ_SCHEMA, OBJ_SEQUENCE,
 											 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TRIGGER,
-											 OBJ_TYPE, OBJ_VIEW };
+											 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
 	return(vector<ObjectType>(types, types + sizeof(types) / sizeof(ObjectType)));
 }
 
