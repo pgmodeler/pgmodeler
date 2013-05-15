@@ -291,6 +291,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
+	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
+
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
 	QList<int> sizes;
 	sizes.push_back(10);
@@ -848,7 +850,7 @@ void MainWindow::applyConfigurations(void)
 		dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
 
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-	conn_cfg_wgt->getConnections(connections, true);
+	conn_cfg_wgt->getConnections(connections);
 	model_valid_wgt->updateConnections(connections);
 }
 

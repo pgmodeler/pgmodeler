@@ -88,6 +88,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	QLabel *label=new QLabel, *label1=NULL;
 	vector<BaseObject *> refs;
 	BaseTable *table=NULL;
+	TableObject *tab_obj=NULL;
 	QString ref_name;
 
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
@@ -98,11 +99,21 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 									.arg(val_info.getReferences().size()));
 	else if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 	{
-		table=dynamic_cast<TableObject *>(val_info.getObject())->getParentTable();
+		tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
+
+		if(tab_obj)
+		{
+			table=tab_obj->getParentTable();
+			ref_name=table->getName(true).remove("\"") + "." + val_info.getObject()->getName(true).remove("\"");
+		}
+		else
+			ref_name=val_info.getObject()->getName(true).remove("\"");
+
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object's name(s).")
-									.arg(Utf8String::create(table->getName(true).remove("\"") + "." + val_info.getObject()->getName(true).remove("\"")))
-									.arg(val_info.getObject()->getTypeName())
-									.arg(val_info.getReferences().size()));
+									 .arg(Utf8String::create(ref_name))
+									 .arg(val_info.getObject()->getTypeName())
+									 .arg(val_info.getReferences().size()));
+
 	}
 	else
 		label->setText(trUtf8("Validation failed to execute the SQL command below."));

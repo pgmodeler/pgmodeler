@@ -57,7 +57,7 @@ void ModelExportForm::show(ModelWidget *model)
 		this->model=model;
 
 		//Get the current connections configured on the connections widget
-		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections, true);
+		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);
 
 		connections_cmb->clear();
 		itr=connections.begin();

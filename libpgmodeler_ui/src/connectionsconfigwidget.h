@@ -35,7 +35,9 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		Q_OBJECT
 
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
-		void configurarConexao(DBConnection *conn);
+		void configureConnection(DBConnection *conn);
+
+		void hideEvent(QHideEvent *);
 
 	public:
 		ConnectionsConfigWidget(QWidget * parent=0);
@@ -44,9 +46,8 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void saveConfiguration(void);
 		void loadConfiguration(void);
 
-		/*! \brief Fills the passed map with all the loaded connections. The boolean paramenter
-		make the method concatenate the hostname/ip on each map key */
-		void getConnections(map<QString, DBConnection *> &conns, bool inc_hostname=false);
+		//! \brief Fills the passed map with all the loaded connections.
+		void getConnections(map<QString, DBConnection *> &conns);
 
 	public slots:
 		void restoreDefaults(void);

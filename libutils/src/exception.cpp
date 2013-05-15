@@ -29,7 +29,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_NOT_ALOC_OBJECT", QT_TR_NOOP("Assignment of not allocated object!")},
 	{"ERR_ASG_NOT_ALOC_SCHEMA", QT_TR_NOOP("Assignment of a not allocated schema to object '%1' (%2)!")},
 	{"ERR_ASG_OBJ_INV_DEFINITION", QT_TR_NOOP("The object '%1' (%2) has inconsistent configuration (invalid SQL/XML definition)!")},
-	{"ERR_ASG_DUPLIC_OBJECT", QT_TR_NOOP("The object '%1' (%2) already exists in the list of elements of the same type in the object '%3' (%4)!")},
+	{"ERR_ASG_DUPLIC_OBJECT", QT_TR_NOOP("The object '%1' (%2) already exists on '%3' (%4)!")},
 	{"ERR_ASG_DUPL_OBJ_CONTAINER", QT_TR_NOOP("The object '%1' (%2) can't be assigned because there is already exists in the container object '%3'!")},
 	{"ERR_ASG_OBJECT_INV_TYPE", QT_TR_NOOP("Assigning object of an invalid type!")},
 	{"ERR_REM_OBJ_INVALID_TYPE", QT_TR_NOOP("Removing an object of an invalid type!")},

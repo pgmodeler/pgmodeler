@@ -359,6 +359,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		 that are search on tables and views list */
 	if((obj_type==OBJ_VIEW &&	(getObject(object->getName(true), obj_type, idx) ||
 														 getObject(object->getName(true), OBJ_TABLE, idx))) ||
+		 (obj_type==OBJ_TABLE && (getObject(object->getName(true), obj_type, idx) ||
+															getObject(object->getName(true), OBJ_VIEW, idx))) ||
 		 (obj_type==OBJ_FUNCTION &&	getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)) ||
 		 (obj_type==OBJ_OPERATOR &&	getObject(dynamic_cast<Operator *>(object)->getSignature(), obj_type, idx)) ||
 		 (obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)))

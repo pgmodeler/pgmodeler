@@ -50,6 +50,11 @@ ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
 		this->removeConnection();
 }
 
+void ConnectionsConfigWidget::hideEvent(QHideEvent *)
+{
+	this->newConnection();
+}
+
 void ConnectionsConfigWidget::loadConfiguration(void)
 {
 	vector<QString> key_attribs;
@@ -81,7 +86,8 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		conn->setConnectionParam(DBConnection::PARAM_KERBEROS_SERVER, itr->second[DBConnection::PARAM_KERBEROS_SERVER]);
 		conn->setConnectionParam(DBConnection::PARAM_OPTIONS, itr->second[DBConnection::PARAM_OPTIONS]);
 
-		connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]),
+		connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]) +
+				QString(" (%1:%2)").arg(itr->second[DBConnection::PARAM_SERVER_FQDN]).arg(itr->second[DBConnection::PARAM_PORT]),
 				QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
 
 		itr++;
@@ -149,24 +155,21 @@ void ConnectionsConfigWidget::handleConnection(void)
 {
 	DBConnection *conn=NULL;
 	QString alias;
-	unsigned i=1;
 
 	try
 	{
-		alias=alias_edt->text();
-		while(connections_cmb->findText(alias)>=0)
-			alias=QString("%1(%2)").arg(alias_edt->text()).arg(i++);
+		alias=QString("%1 (%2:%3)").arg(alias_edt->text()).arg(host_edt->text()).arg(port_sbp->value());
 
 		if(!update_tb->isVisible())
 		{
 			conn=new DBConnection;
-			this->configurarConexao(conn);
+			this->configureConnection(conn);
 			connections_cmb->addItem(alias, QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
 		}
 		else
 		{
 			conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-			this->configurarConexao(conn);
+			this->configureConnection(conn);
 			connections_cmb->setItemText(connections_cmb->currentIndex(), alias);
 		}
 
@@ -249,7 +252,7 @@ void ConnectionsConfigWidget::editConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::configurarConexao(DBConnection *conn)
+void ConnectionsConfigWidget::configureConnection(DBConnection *conn)
 {
 	if(conn)
 	{
@@ -306,7 +309,7 @@ void ConnectionsConfigWidget::testConnection(void)
 
 	try
 	{
-		this->configurarConexao(&conn);
+		this->configureConnection(&conn);
 		conn.connect();
 		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), MessageBox::INFO_ICON);
 	}
@@ -384,32 +387,15 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	}
 }
 
-void ConnectionsConfigWidget::getConnections(map<QString, DBConnection *> &conns, bool inc_hostname)
+void ConnectionsConfigWidget::getConnections(map<QString, DBConnection *> &conns)
 {
 	int i, count;
-	QString host;
-	DBConnection *conn=NULL;
 
 	conns.clear();
 	count=connections_cmb->count();
 
 	for(i=0; i < count; i++)
-	{
-		conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(i).value<void *>());
-
-		if(inc_hostname)
-		{
-			host=conn->getConnectionParam(DBConnection::PARAM_SERVER_FQDN);
-
-			if(host.isEmpty())
-				host=conn->getConnectionParam(DBConnection::PARAM_SERVER_IP);
-
-			if(!host.isEmpty())
-				host=QString(" (%1)").arg(host);
-		}
-
-		conns[connections_cmb->itemText(i) + host]=conn;
-	}
+		conns[connections_cmb->itemText(i)]=reinterpret_cast<DBConnection *>(connections_cmb->itemData(i).value<void *>());
 }
 
 

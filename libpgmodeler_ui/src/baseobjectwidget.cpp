@@ -624,12 +624,21 @@ void BaseObjectWidget::applyConfiguration(void)
 					parent_obj=model;
 					aux_obj=model->getObject(obj_name,obj_type);
 
+					/* Special case for tables an views. Its necessary to make an additional
+					checking on table list when the configured object is a view or a checking
+					on view list when the configured object is a table, this because PostgreSQL
+					does not accepts tables and views have the same name on the same schema */
+					if(!aux_obj && obj_type==OBJ_TABLE)
+						aux_obj=model->getObject(obj_name, OBJ_VIEW);
+					else if(!aux_obj && obj_type==OBJ_VIEW)
+						aux_obj=model->getObject(obj_name, OBJ_TABLE);
+
 					if(obj_type==OBJ_FUNCTION)
 						aux_obj1=model->getObject(dynamic_cast<Function *>(object)->getSignature(),obj_type);
 					else if(obj_type==OBJ_OPERATOR)
 						aux_obj1=model->getObject(dynamic_cast<Operator *>(object)->getSignature(),obj_type);
 					else
-						aux_obj1=model->getObject(object->getName(),obj_type);
+						aux_obj1=model->getObject(object->getName(true),obj_type);
 
 					new_obj=(!aux_obj && !aux_obj1);
 				}

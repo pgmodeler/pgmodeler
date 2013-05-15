@@ -50,6 +50,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 		Constraint *constr=NULL;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
+		QString name;
 
 		warn_count=error_count=0;
 
@@ -134,6 +135,10 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 					//Get the table object (constraint or index)
 					tab_obj=dynamic_cast<TableObject *>(table->getObject(i1, tab_obj_types[i]));
 
+					//Configures the full name of the object including the parent name
+					name=tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
+					name.remove("\"");
+
 					//Trying to convert the object to constraint
 					constr=dynamic_cast<Constraint *>(tab_obj);
 
@@ -145,7 +150,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 							(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
 													constr->getConstraintType()==ConstraintType::unique ||
 													constr->getConstraintType()==ConstraintType::exclude))))
-						dup_objects[tab_obj->getName()].push_back(tab_obj);
+						dup_objects[name].push_back(tab_obj);
 				}
 			}
 		}
@@ -158,7 +163,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			itr=obj_list->begin();
 			while(itr!=obj_list->end())
 			{
-				dup_objects[(*itr)->getName()].push_back(*itr);
+				dup_objects[(*itr)->getName(true).remove("\"")].push_back(*itr);
 				itr++;
 			}
 		}

@@ -1189,8 +1189,14 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				schema_wgt->show();
 				res=(schema_wgt->result()==QDialog::Accepted);
 
-				if(res)
+				if(res==QDialog::Accepted)
 				{
+					/* If the object is unallocated at this point indicates that user just added a new schema
+					this way, the last schema added is retrieved from the model and inserted on navigation list
+					if it is visible */
+					if(!object)
+						object=db_model->getSchema(db_model->getObjectCount(OBJ_SCHEMA)-1);
+
 					BaseGraphicObject *obj=dynamic_cast<BaseGraphicObject *>(object);
 					BaseObjectView *graph_obj=dynamic_cast<BaseObjectView *>(obj->getReceiverObject());
 					vector<BaseGraphicObject *>::iterator itr=std::find(obj_nav_list.begin(), obj_nav_list.end(), obj);
