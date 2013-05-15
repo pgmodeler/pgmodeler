@@ -33,6 +33,21 @@ Compiling/Installation
 
 For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
+Model file changes
+------------------
+
+Several changes were introduced in pgModeler 0.5.0 mading some tag on model files created on 0.4.1_r1 incompatible with the new version. If you having problems during loading of older model files you can open them on a text editor and try the fixes below:
+
+* Remove ```io-cast``` attribute from ```<cast>``` tags.
+* Remove ```recheck``` attribute from ```<element>``` tags.
+* Remove values ```greater-op```, ```less-op```, ```sort-op``` or ```sort2-op``` from ```ref-type``` attribute from ```<operator>``` tags.
+* Remove ```sysid```attribute from ```<role>``` tags.
+* Replace ```<parameter>``` tag by ```<typeattrib>``` on ```<usertype>``` tags.
+
+After that you can try to reload your model. Probably a second problem can occurr: broken references between objects. As the model validation was introduced on pgModeler 0.5.0 the object references are not checked during loading time anymore. Instead the user needs to validate the model every time before saving it.
+
+As a collateral effect loading older models can generate several errors like "Object A is referencing the object B which was not found in the model!" (Code: ERR_REF_OBJ_INEXISTS_MODEL). The fix to this is a little tricky: you have to change the creation order of the object A in relation of B, that means, B must be created before A. So, again, open the model on a text editor and move the XML portion of the B object to a position right before the A XML portion.
+
 Change Log
 ----------
 

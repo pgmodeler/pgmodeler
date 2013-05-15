@@ -5025,7 +5025,7 @@ View *DatabaseModel::createView(void)
 							count=list_aux.size();
 
 							//Indicates that some of the references were used in the expressions
-							if(cout > 0 && !refs_in_expr)
+							if(count > 0 && !refs_in_expr)
 								refs_in_expr=true;
 
 							for(i=0; i < count; i++)

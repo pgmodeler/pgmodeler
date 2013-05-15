@@ -394,8 +394,9 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		fmt=font_config[ParsersAttributes::REF_TABLE];
 
-		str_aux=reference.getExpression().mid(0,20);
-		if(reference.getExpression().size() > 20) str_aux+="...";
+		str_aux=reference.getExpression().simplified().mid(0,25);
+		if(reference.getExpression().size() > 25) str_aux+="...";
+		str_aux.replace("\n", " ");
 
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());

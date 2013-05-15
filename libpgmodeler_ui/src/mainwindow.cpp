@@ -824,34 +824,37 @@ void MainWindow::updateModelTabName(void)
 
 void MainWindow::applyConfigurations(void)
 {
-	GeneralConfigWidget *conf_wgt=NULL;
-	ConnectionsConfigWidget *conn_cfg_wgt=NULL;
-	map<QString, DBConnection *> connections;
-	int count, i;
-
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-
-	//Disable the auto save if the option is not checked
-	if(!conf_wgt->autosave_interv_chk->isChecked())
+	if(configuration_form->result()==QDialog::Accepted)
 	{
-		//Stop the save timer
-		save_interval=0;
-		model_save_timer.stop();
-	}
-	else
-	{
-		save_interval=conf_wgt->autosave_interv_spb->value() * 60000;
-		model_save_timer.start(save_interval);
-	}
+		GeneralConfigWidget *conf_wgt=NULL;
+		ConnectionsConfigWidget *conn_cfg_wgt=NULL;
+		map<QString, DBConnection *> connections;
+		int count, i;
 
-	//Force the update of all opened models
-	count=models_tbw->count();
-	for(i=0; i < count; i++)
-		dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
+		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 
-	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-	conn_cfg_wgt->getConnections(connections);
-	model_valid_wgt->updateConnections(connections);
+		//Disable the auto save if the option is not checked
+		if(!conf_wgt->autosave_interv_chk->isChecked())
+		{
+			//Stop the save timer
+			save_interval=0;
+			model_save_timer.stop();
+		}
+		else
+		{
+			save_interval=conf_wgt->autosave_interv_spb->value() * 60000;
+			model_save_timer.start(save_interval);
+		}
+
+		//Force the update of all opened models
+		count=models_tbw->count();
+		for(i=0; i < count; i++)
+			dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
+
+		conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+		conn_cfg_wgt->getConnections(connections);
+		model_valid_wgt->updateConnections(connections);
+	}
 }
 
 

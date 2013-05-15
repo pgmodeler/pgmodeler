@@ -65,10 +65,10 @@ void ConfigurationForm::close(void)
 			connections_conf->loadConfiguration();
 		}
 	}
-	catch(Exception &e)
+	catch(Exception &)
 	{}
 
-	QDialog::close();
+	QDialog::reject();
 }
 
 void ConfigurationForm::applyConfiguration(void)
@@ -77,7 +77,7 @@ void ConfigurationForm::applyConfiguration(void)
 	general_conf->applyConfiguration();
 	appearance_conf->saveConfiguration();
 	connections_conf->saveConfiguration();
-	this->close();
+	QDialog::accept();
 }
 
 void ConfigurationForm::loadConfiguration(void)

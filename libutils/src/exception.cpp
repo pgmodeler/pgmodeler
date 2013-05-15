@@ -120,7 +120,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INCOMP_COLS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the column '%1' in table '%2' can not be merged with the column '%3' of table '%4' because they have incompatible types!")},
 	{"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
 	{"ERR_ASG_FOREIGN_KEY_REL", QT_TR_NOOP("A foreign key can not be added to a relationship because is created automatically when this is connected!")},
-	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object '%1' (%2) is referencing the object '%3' (%4) which was not found in the list of objects of the same type in the model!")},
+	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object '%1' (%2) is referencing the object '%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
 	{"ERR_ASG_INV_MAX_SIZE_OP_LIST", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
 	{"ERR_FILE_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!")},

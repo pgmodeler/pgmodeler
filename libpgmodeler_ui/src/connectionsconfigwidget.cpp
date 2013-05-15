@@ -61,6 +61,10 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
 	DBConnection *conn=NULL;
 
+	//Destroy all the loaded connections
+	while(connections_cmb->count() > 0)
+		this->removeConnection();
+
 	key_attribs.push_back(ParsersAttributes::ALIAS);
 	BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
 
