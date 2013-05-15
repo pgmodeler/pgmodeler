@@ -62,30 +62,23 @@ void XMLParser::loadXMLFile(const QString &filename)
 {
 	try
 	{
-		ifstream input;
-		QString buffer, str_aux;
-		string line;
+		QFile input;
+		QString buffer;
 
 		if(filename!="")
 		{
 			//Opens a file stream using the file name
-			input.open(filename.toAscii(),ios_base::in);
+			input.setFileName(filename);
+			input.open(QFile::ReadOnly);
 
-			//Case the file opening was sucessful
-			if(!input.is_open())
+			//Case the file opening was not sucessful
+			if(!input.isOpen())
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)).arg(filename);
-				throw Exception(str_aux,ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(QString(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)).arg(filename),
+												ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			buffer="";
-
-			//Read the file line by line and store them on the parser buffer
-			while(!input.eof())
-			{
-				getline(input, line);
-				buffer+=QString::fromStdString(line) + "\n";
-			}
+			buffer=input.readAll();
 			input.close();
 
 			xml_doc_filename=filename;

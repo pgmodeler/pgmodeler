@@ -27,8 +27,6 @@
 
 #include "globalattributes.h"
 #include "exception.h"
-#include <fstream>
-#include <iostream>
 #include <map>
 #include <vector>
 #include <QDir>
@@ -164,7 +162,7 @@ class SchemaParser {
 		static void loadBuffer(const QString &buf);
 
 		//! \brief Loads a schema file and inserts its line into the parser's buffer
-		static void loadFile(const QString &file);
+		static void loadFile(const QString &filename);
 
 		/*! \brief Returns the PostgreSQL version available based on the subdirectories on schema/sql.
 		 To be recognized as a version, the directory name must follow the rule: [NUMBER].[NUMBER](.[NUMBER])*/

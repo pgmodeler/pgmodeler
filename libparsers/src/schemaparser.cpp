@@ -136,35 +136,27 @@ void SchemaParser::loadBuffer(const QString &buf)
 	}
 }
 
-void SchemaParser::loadFile(const QString &file)
+void SchemaParser::loadFile(const QString &filename)
 {
-	if(file!="")
+	if(filename!="")
 	{
-		ifstream input;
-		char lin[1025];
+		QFile input;
 		QString buf;
 
 		//Open the file for reading
-		input.open(file.toStdString().c_str());
+		input.setFileName(filename);
+		input.open(QFile::ReadOnly);
 
-		if(!input.is_open())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file),
+		if(!input.isOpen())
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename),
 											ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		//While the input file doesn't reach the end
-		while(!input.eof())
-		{
-			input.getline(lin, 1024);
-			buf+=QString(lin) + CHR_LINE_END;
-		}
+		buf=input.readAll();
+		input.close();
 
 		//Loads the parser buffer
 		loadBuffer(buf);
-
-		SchemaParser::filename=file;
-
-		//Close the file stream
-		input.close();
+		SchemaParser::filename=filename;
 	}
 }
 

@@ -32,9 +32,6 @@
 #include "syntaxhighlighter.h"
 #include "messagebox.h"
 
-#include <iostream>
-#include <fstream>
-
 class CrashHandler : public QDialog, Ui::CrashHandler
 {
 	private:

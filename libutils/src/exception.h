@@ -29,7 +29,6 @@
 #include <QObject>
 #include <exception>
 #include <signal.h>
-#include <iostream>
 #include <vector>
 #include <deque>
 #include "utf8string.h"

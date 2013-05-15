@@ -26,7 +26,7 @@
 
 void startCrashHandler(int signal)
 {
-	ofstream output;
+	QFile output;
 	QString lin, cmd;
 
 	/** At the moment the backtrace function does not exists on MingW (Windows) this way
@@ -49,11 +49,12 @@ void startCrashHandler(int signal)
 	#endif
 
 	//Creates the stacktrace file
-	output.open((GlobalAttributes::TEMPORARY_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::STACKTRACE_FILE).toStdString().c_str());
+	output.setFileName(GlobalAttributes::TEMPORARY_DIR +
+										 GlobalAttributes::DIR_SEPARATOR +
+										 GlobalAttributes::STACKTRACE_FILE);
+	output.open(QFile::WriteOnly);
 
-	if(output.is_open())
+	if(output.isOpen())
 	{
 		lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n")
 				.arg(GlobalAttributes::PGMODELER_VERSION)

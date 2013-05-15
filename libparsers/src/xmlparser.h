@@ -30,8 +30,6 @@
 #include <libxml/tree.h>
 #include "schemaparser.h"
 #include "exception.h"
-#include <fstream>
-#include <iostream>
 #include <map>
 #include <stack>
 using namespace std;
