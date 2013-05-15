@@ -403,6 +403,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
+	updateConnections();
 	updateRecentModelsMenu();
 	applyConfigurations();
 }
@@ -518,6 +519,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	}
 }
 
+void MainWindow::updateConnections(void)
+{
+	ConnectionsConfigWidget *conn_cfg_wgt=NULL;
+	map<QString, DBConnection *> connections;
+
+	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+	conn_cfg_wgt->getConnections(connections);
+	model_valid_wgt->updateConnections(connections);
+}
 void MainWindow::updateRecentModelsMenu(void)
 {
 	recent_mdls_menu.clear();
@@ -827,8 +837,6 @@ void MainWindow::applyConfigurations(void)
 	if(configuration_form->result()==QDialog::Accepted)
 	{
 		GeneralConfigWidget *conf_wgt=NULL;
-		ConnectionsConfigWidget *conn_cfg_wgt=NULL;
-		map<QString, DBConnection *> connections;
 		int count, i;
 
 		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
@@ -851,9 +859,7 @@ void MainWindow::applyConfigurations(void)
 		for(i=0; i < count; i++)
 			dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
 
-		conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-		conn_cfg_wgt->getConnections(connections);
-		model_valid_wgt->updateConnections(connections);
+		updateConnections();
 	}
 }
 

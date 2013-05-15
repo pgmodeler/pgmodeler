@@ -176,6 +176,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu(void);
 
+		void updateConnections(void);
+
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
 

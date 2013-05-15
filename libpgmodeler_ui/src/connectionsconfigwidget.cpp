@@ -207,43 +207,45 @@ void ConnectionsConfigWidget::editConnection(void)
 {
 	if(connections_cmb->count() > 0)
 	{
-		DBConnection *conexao=NULL;
+		DBConnection *conn=NULL;
 
-		conexao=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		alias_edt->setText(connections_cmb->currentText());
+		conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-		if(!conexao->getConnectionParam(DBConnection::PARAM_SERVER_FQDN).isEmpty())
-			host_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SERVER_FQDN));
+		//Removes the (host:port) portion from the alias before fill the field
+		alias_edt->setText(connections_cmb->currentText().remove(QRegExp("( )(\\()(.)+(\\:)(.)+(\\))")));
+
+		if(!conn->getConnectionParam(DBConnection::PARAM_SERVER_FQDN).isEmpty())
+			host_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SERVER_FQDN));
 		else
-			host_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SERVER_IP));
+			host_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SERVER_IP));
 
-		conn_db_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_DB_NAME));
-		user_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_USER));
-		passwd_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_PASSWORD));
-		port_sbp->setValue(conexao->getConnectionParam(DBConnection::PARAM_PORT).toInt());
-		timeout_sbp->setValue(conexao->getConnectionParam(DBConnection::PARAM_CONN_TIMEOUT).toInt());
+		conn_db_edt->setText(conn->getConnectionParam(DBConnection::PARAM_DB_NAME));
+		user_edt->setText(conn->getConnectionParam(DBConnection::PARAM_USER));
+		passwd_edt->setText(conn->getConnectionParam(DBConnection::PARAM_PASSWORD));
+		port_sbp->setValue(conn->getConnectionParam(DBConnection::PARAM_PORT).toInt());
+		timeout_sbp->setValue(conn->getConnectionParam(DBConnection::PARAM_CONN_TIMEOUT).toInt());
 
-		krb_server_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_KERBEROS_SERVER));
-		gssapi_auth_chk->setChecked(conexao->getConnectionParam(DBConnection::PARAM_LIB_GSSAPI)=="gssapi");
-		options_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_OPTIONS));
+		krb_server_edt->setText(conn->getConnectionParam(DBConnection::PARAM_KERBEROS_SERVER));
+		gssapi_auth_chk->setChecked(conn->getConnectionParam(DBConnection::PARAM_LIB_GSSAPI)=="gssapi");
+		options_edt->setText(conn->getConnectionParam(DBConnection::PARAM_OPTIONS));
 
-		if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_DESABLE)
+		if(conn->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_DESABLE)
 			ssl_mode_cmb->setCurrentIndex(0);
-		else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_ALLOW)
+		else if(conn->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_ALLOW)
 			ssl_mode_cmb->setCurrentIndex(1);
-		else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_REQUIRE)
+		else if(conn->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_REQUIRE)
 			ssl_mode_cmb->setCurrentIndex(2);
-		else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_CA_VERIF)
+		else if(conn->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_CA_VERIF)
 			ssl_mode_cmb->setCurrentIndex(3);
 		else
 			ssl_mode_cmb->setCurrentIndex(4);
 
 		if(ssl_mode_cmb->currentIndex() > 0)
 		{
-			client_cert_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_CERT));
-			root_cert_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_ROOT_CERT));
-			client_key_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_KEY));
-			crl_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_CRL));
+			client_cert_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SSL_CERT));
+			root_cert_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SSL_ROOT_CERT));
+			client_key_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SSL_KEY));
+			crl_edt->setText(conn->getConnectionParam(DBConnection::PARAM_SSL_CRL));
 		}
 
 		update_tb->setVisible(true);
