@@ -1,10 +1,10 @@
 Changelog
 ---------
 
-v0.5.0_beta
------------
+v0.5.0
+------
 
-ATTENTION: Since version 0.5.0 is in beta stage the change log can be modified until the release date: May, 17.
+<em>Release date: May 17, 2013</em>
 
 * [New] Complete main window restyling.
 * [New] Added a model validation tool to prevent reference break and name conflicts.
@@ -32,6 +32,7 @@ ATTENTION: Since version 0.5.0 is in beta stage the change log can be modified u
 * [New] Added collation attribute to domains.
 * [New] Required fields are now highlighted on editing forms.
 * [New] pgModeler creates system objects (e.g, public schema and SQL, C, plpgsql languages) when adding a new model.
+* [Change] Minor improvements on when showing Views.
 * [Change] Relationship points are moved when the parent relationship is being moved together with other objects.
 * [Change] Simplified the model loading operation. pgModeler will not try to recreate objects with unsatisfied dependencies instead errors will be raised.
 * [Change] Minor changes on FK relationship creation.
@@ -52,6 +53,11 @@ ATTENTION: Since version 0.5.0 is in beta stage the change log can be modified u
 * [Change] Spatial types had SRID digit count upgraded to 5.
 * [Change] One-to-one relationships now generates unique names for UNIQUE constraints.
 * [Change] Several class improvements, performance tunings and forms readjustments.
+* [Fix] Minor fixes on connection configuration form.
+* [Fix] Corrected a bug that was crashing pgModeler when adding new schemas.
+* [Fix] Corrected a bug that was crashing pgModeler when validation model.
+* [Fix] Corrected a bug that was preventing the popup menu to be configured correctly on model widget.
+* [Fix] Menu bar style correctly applied on Windows system.
 * [Fix] Now relationship labels' position are restored when loading the model file.
 * [Fix] Minor fixes on database model code generation.
 * [Fix] Corrected the glicthy wheel scroll/zoom on model widget.
@@ -67,7 +73,7 @@ ATTENTION: Since version 0.5.0 is in beta stage the change log can be modified u
 v0.4.1_r1
 ---------
 
-<em>Release date: March 19, 2013 </em>
+<em>Release date: March 19, 2013</em>
 
 * [Change]: user can now prepend a CTE (commom table expression, a.k.a "with queries") on view's definition.
 * [Change]: user can now create a single reference containing a expression that defines the entire view.
