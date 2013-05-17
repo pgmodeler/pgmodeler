@@ -116,7 +116,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	int i;
 	bool is_formated=false;
 	QString frmt_name;
-	QChar chr, chr1, chr2;
+	QByteArray raw_name;
+	unsigned char chr, chr1, chr2;
 	QRegExp regexp_vect[]={
 		QRegExp("(\")(.)+(\")"),
 		QRegExp("(\")(.)+(\")(\\.)(\")(.)+(\")"),
@@ -146,24 +147,27 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		bool is_upper=false;
 		unsigned i, qtd;
 
+		raw_name.append(name);
+
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
+
 		i=0;
 		while(i < qtd && !is_upper)
 		{
-			chr=name[i];
+			chr=raw_name[i];
 
 			if(((i + 1) < (qtd-1)) &&
 				 ((chr >= 0xC2 && chr <= 0xDF) ||
 					(chr >= 0xE0 && chr <= 0xEF)))
-				chr1=name[i+1];
+				chr1=raw_name[i+1];
 			else
 				chr1=0;
 
 			if((i + 2) < (qtd-1) &&
 				 chr >= 0xE0 && chr <= 0xEF)
-				chr2=name[i+2];
+				chr2=raw_name[i+2];
 			else
 				chr2=0;
 
@@ -183,7 +187,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 					chr1 >= 0x80 && chr1 <= 0xBF &&
 					chr2 >= 0x80 && chr2 <= 0xBF) ||
 
-				 chr.isUpper())
+				 QChar(chr).isUpper())
 			{
 				is_upper=true;
 			}

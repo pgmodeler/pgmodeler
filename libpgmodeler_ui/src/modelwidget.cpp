@@ -148,7 +148,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	font.setKerning(true);
 	label->setFont(font);
 	label->setWordWrap(true);
-	label->setText(trUtf8("<strong>CAUTION:</strong> The object model is protected! New objects will be inserted only when the protection is removed!"));
+	label->setText(trUtf8("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
@@ -2464,7 +2464,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(!quick_actions_menu.isEmpty())
+		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
 	}
 }
@@ -2479,7 +2479,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	QAction *action=NULL;
 	TableObject *tab_obj=NULL;
 	QString str_aux;
-	bool protected_obj=false;
+	bool protected_obj=false, model_protected=db_model->isProtected();
 
 	new_object_menu.clear();
 	quick_actions_menu.clear();
@@ -2610,7 +2610,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	}
 
 	//Adding the copy and paste if there is selected objects
-	if(!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
+	if(!model_protected &&
+		 !(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
 		 !objects.empty() && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 	{
 		popup_menu.addAction(action_copy);
@@ -2624,7 +2625,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	}
 
 	//If there is copied object adds the paste action
-	if(!copied_objects.empty())
+	if(!model_protected && !copied_objects.empty())
 		popup_menu.addAction(action_paste);
 
 	/* Adding the delete object action. This action will be unavailable on following conditions:

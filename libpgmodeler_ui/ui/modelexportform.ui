@@ -38,14 +38,20 @@
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
   </property>
-  <layout class="QGridLayout" name="export_grid">
-   <property name="margin">
+  <layout class="QGridLayout" name="gridLayout_6">
+   <property name="leftMargin">
     <number>2</number>
    </property>
-   <property name="spacing">
-    <number>4</number>
+   <property name="topMargin">
+    <number>2</number>
    </property>
-   <item row="0" column="0">
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
      <property name="enabled">
       <bool>true</bool>
@@ -63,7 +69,16 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item row="0" column="0">
@@ -98,7 +113,7 @@
          <enum>QFrame::HLine</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Sunken</enum>
         </property>
        </widget>
       </item>
@@ -1023,7 +1038,16 @@
       </item>
       <item row="7" column="0">
        <layout class="QGridLayout" name="gridLayout_4">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
          <number>4</number>
         </property>
         <item row="0" column="0" colspan="2">
@@ -1096,30 +1120,31 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <layout class="QGridLayout" name="botoes_lt">
-     <property name="leftMargin">
-      <number>4</number>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string/>
      </property>
-     <property name="bottomMargin">
-      <number>2</number>
+     <property name="pixmap">
+      <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
      </property>
-     <property name="spacing">
-      <number>0</number>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <spacer name="horizontalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <item row="0" column="1">
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>91</width>
-         <height>27</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="2">
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>246</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
       <widget class="QPushButton" name="export_btn">
        <property name="minimumSize">
         <size>
@@ -1145,7 +1170,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
+     <item>
       <widget class="QPushButton" name="close_btn">
        <property name="minimumSize">
         <size>
@@ -1168,16 +1193,6 @@
        </property>
        <property name="flat">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
        </property>
       </widget>
      </item>

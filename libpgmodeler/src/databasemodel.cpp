@@ -516,8 +516,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	BaseObject *object=NULL;
 	vector<BaseObject *> *obj_list=NULL;
 	vector<BaseObject *>::iterator itr, itr_end;
-	bool found=false;
-	int count;
+	bool found=false, formatted=false;
 	QString aux_name, aux_name1;
 
 	obj_list=getObjectList(obj_type);
@@ -529,14 +528,13 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;
-
+		formatted=name.contains("\"") || name.contains(".");
 		aux_name1=name;
-		count=aux_name1.count(QChar('\0'));
-		if(count >=1) aux_name1.chop(count);
 
 		if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
 		{
-			aux_name1=BaseObject::formatName(aux_name1);
+			if(!formatted)
+				aux_name1=BaseObject::formatName(aux_name1);
 
 			while(itr!=itr_end && !found)
 			{
