@@ -457,7 +457,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		{
 			msg_box.show(trUtf8("Save all models"),
 											trUtf8("Some models were modified! Do you want to save them before exit pgModeler?"),
-											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
+											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 			/* If the user accepts the message box the close event will be aborted
 			causing pgModeler not to be finished */
@@ -801,7 +801,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model were modified! Do you want to save it before close?"),
-											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
+											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
 				this->saveModel(model);
@@ -900,7 +900,7 @@ void MainWindow::saveModel(ModelWidget *model)
 									 trUtf8("ATTENTION: The model '%1' is invalidated and its recommended that you revalidate it before save! \
 Saving an invalidated model can generate a corrupted model file! \
 Do you really want to proceed with the saving?").arg(model->getDatabaseModel()->getName()),
-													MessageBox::ALERT_ICON, MessageBox::YES_NO_BUTTONS);
+													Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 		/* The model is saved only when is modified and is not invalidated or the user
 		confirmed the of invalidated model */
@@ -985,7 +985,7 @@ void MainWindow::printModel(void)
 			{
 				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
-												MessageBox::ALERT_ICON, MessageBox::ALL_BUTTONS);
+												Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS);
 			}
 
 			if(!msg_box.isCancelled())
@@ -1136,7 +1136,7 @@ void MainWindow::openWiki(void)
 {
 	msg_box.show(trUtf8("Open Wiki pages"),
 							 trUtf8("This action will open a web browser window! Want to proceed?"),
-							 MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
+							 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));

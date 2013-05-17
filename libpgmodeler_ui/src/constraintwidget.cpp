@@ -512,7 +512,7 @@ void ConstraintWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		cancelConfiguration();
 		msg_box.show(e);

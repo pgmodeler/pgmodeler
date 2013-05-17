@@ -311,13 +311,13 @@ void ConnectionsConfigWidget::configureConnection(DBConnection *conn)
 void ConnectionsConfigWidget::testConnection(void)
 {
 	DBConnection conn;
-	MessageBox msg_box;
+	Messagebox msg_box;
 
 	try
 	{
 		this->configureConnection(&conn);
 		conn.connect();
-		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), MessageBox::INFO_ICON);
+		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), Messagebox::INFO_ICON);
 	}
 	catch(Exception &e)
 	{

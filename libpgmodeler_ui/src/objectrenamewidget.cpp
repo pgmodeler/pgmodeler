@@ -163,7 +163,7 @@ void ObjectRenameWidget::applyRenaming(void)
 	}
 	catch(Exception &e)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		if(obj_type!=OBJ_DATABASE)
 			op_list->removeLastOperation();

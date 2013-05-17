@@ -204,12 +204,12 @@ void OperationListWidget::redoOperation(void)
 
 void OperationListWidget::removeOperations(void)
 {
-	MessageBox msg_box;
+	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Operation history exclusion"),
 									trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-									MessageBox::CONFIRM_ICON,
-									MessageBox::YES_NO_BUTTONS);
+									Messagebox::CONFIRM_ICON,
+									Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

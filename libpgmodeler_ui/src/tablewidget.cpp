@@ -625,7 +625,7 @@ void TableWidget::applyConfiguration(void)
 		}
 		catch(Exception &e)
 		{
-			MessageBox msg_box;
+			Messagebox msg_box;
 
 			if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
 				msg_box.show(e);

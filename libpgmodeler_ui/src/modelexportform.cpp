@@ -150,7 +150,7 @@ void ModelExportForm::exportModel(void)
 	}
 	catch(Exception &e)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		progress_lbl->setText(trUtf8("Error on export!"));
 		progress_lbl->repaint();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MessageBox</class>
- <widget class="QDialog" name="MessageBox">
+ <class>Messagebox</class>
+ <widget class="QDialog" name="Messagebox">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

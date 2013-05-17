@@ -53,7 +53,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		QTimer model_save_timer,	tmpmodel_save_timer;
 
 		//! \brief Message box widget used to show error/confirmation messages
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;

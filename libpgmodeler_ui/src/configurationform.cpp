@@ -102,8 +102,8 @@ void ConfigurationForm::restoreDefaults(void)
 {
 	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-									MessageBox::CONFIRM_ICON,
-									MessageBox::YES_NO_BUTTONS);
+									Messagebox::CONFIRM_ICON,
+									Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

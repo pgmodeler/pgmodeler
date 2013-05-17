@@ -18,7 +18,7 @@
 
 #include "messagebox.h"
 
-MessageBox::MessageBox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	cancelled=false;
@@ -32,13 +32,13 @@ MessageBox::MessageBox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	show_errors_txt_tb->setVisible(false);
 }
 
-void MessageBox::handleYesOkClick(void)
+void Messagebox::handleYesOkClick(void)
 {
 	exceptions_trw->clear();
 	accept();
 }
 
-void MessageBox::handleNoCancelClick(void)
+void Messagebox::handleNoCancelClick(void)
 {
 	exceptions_trw->clear();
 
@@ -54,12 +54,12 @@ void MessageBox::handleNoCancelClick(void)
 	}
 }
 
-bool MessageBox::isCancelled(void)
+bool Messagebox::isCancelled(void)
 {
 	return(cancelled);
 }
 
-void MessageBox::showExceptionList(void)
+void Messagebox::showExceptionList(void)
 {
 	if(show_errors_tb->isChecked())
 	{
@@ -77,7 +77,7 @@ void MessageBox::showExceptionList(void)
 	}
 }
 
-void MessageBox::show(Exception e, const QString &msg, unsigned icon_type)
+void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 {
 	deque<Exception> list;
 	deque<Exception>::reverse_iterator itr,itr_end;
@@ -176,7 +176,7 @@ void MessageBox::show(Exception e, const QString &msg, unsigned icon_type)
 	this->show(title,str_aux,icon_type,OK_BUTTON);
 }
 
-void MessageBox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons)
+void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons)
 {
 	QString icon_name;
 

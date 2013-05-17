@@ -35,7 +35,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
 {
-	if(button_conf==MessageBox::OK_CANCEL_BUTTONS)
+	if(button_conf==Messagebox::OK_CANCEL_BUTTONS)
 	{
 		apply_ok_btn->setText(trUtf8("&Apply"));
 		cancel_btn->setVisible(true);

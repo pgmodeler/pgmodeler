@@ -28,7 +28,7 @@
 #include "ui_messagebox.h"
 #include "exception.h"
 
-class MessageBox: public QDialog, public Ui::MessageBox {
+class Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
 		bool cancelled;
@@ -47,7 +47,7 @@ class MessageBox: public QDialog, public Ui::MessageBox {
 													OK_BUTTON=2,
 													ALL_BUTTONS=3;
 
-		MessageBox(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		Messagebox(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 		void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
 		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);

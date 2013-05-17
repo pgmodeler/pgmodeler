@@ -754,7 +754,7 @@ void ModelWidget::convertRelationshipNN(void)
 		{
 			msg_box.show(trUtf8("Confirmation"),
 									 trUtf8("Do you really want to convert the relationship?"),
-									 MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
 			{
@@ -1711,7 +1711,7 @@ void ModelWidget::copyObjects(void)
 	//Ask for confirmation to copy the dependencies of the object(s)
 	msg_box.show(trUtf8("Confirmation"),
 								trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-								MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+								Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	/* When in cut operation is necessary to store the selected objects in a separeted list
 	in order to correclty cut (remove) the object on the source model */
@@ -2068,7 +2068,7 @@ void ModelWidget::pasteObjects(void)
 	if(error.getErrorType()!=ERR_CUSTOM)
 		msg_box.show(error,
 								 trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
-								 MessageBox::ALERT_ICON);
+								 Messagebox::ALERT_ICON);
 
 	if(!ModelWidget::cut_operation)
 	{
@@ -2128,18 +2128,18 @@ void ModelWidget::removeObjects(void)
 			{
 				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?"),
-												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 			else
 			{
 				if(selected_objects[0]->getObjectType()==OBJ_RELATIONSHIP)
 					msg_box.show(trUtf8("Confirmation"),
 													trUtf8("CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?"),
-													MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+													Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 				else
 					msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Do you really want to delete the selected object?"),
-												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 		}
 

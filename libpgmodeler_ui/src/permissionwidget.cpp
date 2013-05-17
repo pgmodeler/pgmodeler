@@ -39,7 +39,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	parent_form->generalwidget_wgt->insertWidget(0, this);
 	parent_form->generalwidget_wgt->setCurrentIndex(0);
-	parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
+	parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
 	parent_form->setMinimumSize(670, 550);

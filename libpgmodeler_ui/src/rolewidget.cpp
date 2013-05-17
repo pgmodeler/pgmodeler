@@ -233,7 +233,7 @@ void RoleWidget::showSelectedRoleData(void)
 	unsigned idx_tab;
 	int lin, idx_lin=-1;
 	BaseObject *obj_sel=NULL;
-	MessageBox msg_box;
+	Messagebox msg_box;
 
 	//Get the selected role
 	obj_sel=object_selection_wgt->getSelectedObject();

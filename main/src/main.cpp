@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 		//Raises an error if ui style is not found
 		if(!ui_style.isOpen())
 		{
-		 MessageBox msg;
+		 Messagebox msg;
 		 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
 												 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}

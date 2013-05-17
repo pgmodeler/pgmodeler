@@ -26,7 +26,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 	QWidget *widget=NULL;
 
 	plugin_info_frm=new BaseForm(NULL, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-	plugin_info_frm->setButtonConfiguration(MessageBox::OK_BUTTON);
+	plugin_info_frm->setButtonConfiguration(Messagebox::OK_BUTTON);
 	plugin_info_frm->connect(plugin_info_frm->apply_ok_btn, SIGNAL(clicked(void)), plugin_info_frm, SLOT(close(void)));
 
 	gridLayout=new QGridLayout;

@@ -45,7 +45,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		version_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
-		parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
+		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
 		parent_form->setMinimumSize(650, 550);
 
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));

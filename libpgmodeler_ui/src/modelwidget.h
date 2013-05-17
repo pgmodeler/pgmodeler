@@ -38,7 +38,7 @@ class ModelWidget: public QWidget {
 		Q_OBJECT
 
 		//! \brief Message box used to show error/confirmation/alert messages
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		//! \brief Current zoom aplied to the scene
 		float current_zoom;

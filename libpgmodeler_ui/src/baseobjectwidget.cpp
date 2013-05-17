@@ -56,7 +56,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
 		parent_form->generalwidget_wgt->insertWidget(0, this);
 		parent_form->generalwidget_wgt->setCurrentIndex(0);
-		parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
+		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 		parent_form->setObjectName("parent_form");
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));

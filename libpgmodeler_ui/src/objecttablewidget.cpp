@@ -356,7 +356,7 @@ void ObjectTableWidget::removeRow(void)
 {
 	if(table_tbw->currentRow()>=0)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 		unsigned 	row_idx=table_tbw->currentRow();
 		QTableWidgetItem *item=table_tbw->currentItem();
 
@@ -364,7 +364,7 @@ void ObjectTableWidget::removeRow(void)
 		{
 			if(conf_exclusion)
 				msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
-												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
@@ -383,13 +383,13 @@ void ObjectTableWidget::removeRows(void)
 	if(table_tbw->rowCount() > 0)
 	{
 		QObject *sender_obj=sender();
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
 			msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
-											MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
+											Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
 			 (conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
