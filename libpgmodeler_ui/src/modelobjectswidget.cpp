@@ -706,9 +706,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 
 void ModelObjectsWidget::updateDatabaseTree(void)
 {
-	if(!db_model)
-		objectstree_tw->clear();
-	else
+	if(db_model)
 	{
 		QString str_aux;
 		BaseObject *object=NULL;
@@ -887,10 +885,14 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 {
+	bool enable = (db_model!=NULL);
+
 	this->db_model=db_model;
-	content_wgt->setEnabled(db_model!=NULL);
+	content_wgt->setEnabled(enable);
 	updateObjectsView();
 	visaoobjetos_stw->setEnabled(true);
+	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
+	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
 }
 
 void ModelObjectsWidget::showEvent(QShowEvent *)
@@ -904,7 +906,7 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 			int x, y;
 			x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2);
 			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
-			this->setGeometry(QRect(QPoint(x,y), this->size()));
+			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
 		}
 	}
 }

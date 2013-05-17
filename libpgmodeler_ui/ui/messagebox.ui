@@ -70,102 +70,18 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>0</number>
       </property>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>2</number>
-        </property>
-        <property name="bottomMargin">
-         <number>2</number>
-        </property>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>361</width>
-            <height>27</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="show_errors_txt_tb">
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Show excpetion stack in text format (useful to report errors).</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../res/resources.qrc">
-            <normaloff>:/icones/icones/codigofonte.png</normaloff>:/icones/icones/codigofonte.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="show_errors_tb">
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Show/hide exceptions stack.</string>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../res/resources.qrc">
-            <normaloff>:/icones/icones/refazer.png</normaloff>:/icones/icones/refazer.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
+      <item row="0" column="0" colspan="2">
        <widget class="QStackedWidget" name="objs_group_wgt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -186,7 +102,7 @@
          <enum>QFrame::Plain</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="pg1_4">
          <layout class="QGridLayout" name="gridLayout_9">
@@ -313,13 +229,13 @@
         <widget class="QWidget" name="pg2_4">
          <layout class="QGridLayout" name="gridLayout_8">
           <property name="leftMargin">
-           <number>2</number>
+           <number>4</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>4</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>4</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -404,6 +320,87 @@
          </layout>
         </widget>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>414</width>
+          <height>27</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="show_errors_txt_tb">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Show excpetion stack in text format (useful to report errors).</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/resources.qrc">
+            <normaloff>:/icones/icones/codigofonte.png</normaloff>:/icones/icones/codigofonte.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="show_errors_tb">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Show/hide exceptions stack.</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/resources.qrc">
+            <normaloff>:/icones/icones/refazer.png</normaloff>:/icones/icones/refazer.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
