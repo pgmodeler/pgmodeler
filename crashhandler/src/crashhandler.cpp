@@ -122,7 +122,7 @@ void CrashHandler::loadReport(const QString &filename)
 		//Showing the sections of the uncompressed buffer on the respective widgets
 		while(i < buf_aux.size() && idx <= 2)
 		{
-			if(buf_aux.at(i).toAscii()!=CHR_DELIMITER)
+			if(buf_aux.at(i).toLatin1()!=CHR_DELIMITER)
 				str_aux.append(buf_aux.at(i));
 			else
 			{

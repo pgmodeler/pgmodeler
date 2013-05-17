@@ -25,7 +25,7 @@
 #ifndef BASE_OBJECT_VIEW_H
 #define BASE_OBJECT_VIEW_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "basegraphicobject.h"
 #include "baserelationship.h"
 #include "xmlparser.h"

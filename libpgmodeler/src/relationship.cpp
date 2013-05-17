@@ -69,15 +69,15 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		this->invalidated=true;
 
 		if(rel_type==RELATIONSHIP_11)
-			str_aux=QApplication::translate("Relationship","%1_has_one_%2","",QApplication::UnicodeUTF8);
+			str_aux=QApplication::translate("Relationship","%1_has_one_%2","");
 		else if(rel_type==RELATIONSHIP_1N)
-			str_aux=QApplication::translate("Relationship","%1_has_many_%2","",QApplication::UnicodeUTF8);
+			str_aux=QApplication::translate("Relationship","%1_has_many_%2","");
 		else if(rel_type==RELATIONSHIP_NN)
-			str_aux=QApplication::translate("Relationship","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
+			str_aux=QApplication::translate("Relationship","many_%1_has_many_%2","");
 		else if(rel_type==RELATIONSHIP_GEN)
-			str_aux=QApplication::translate("Relationship","%1_inherits_%2","",QApplication::UnicodeUTF8);
+			str_aux=QApplication::translate("Relationship","%1_inherits_%2","");
 		else
-			str_aux=QApplication::translate("Relationship","%1_copies_%2","",QApplication::UnicodeUTF8);
+			str_aux=QApplication::translate("Relationship","%1_copies_%2","");
 
 		if(rel_type==RELATIONSHIP_NN)
 			str_aux=str_aux.arg(this->src_table->getName())

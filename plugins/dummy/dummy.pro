@@ -9,11 +9,12 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-CONFIG += plugin qt warn_on uitools uic4
-QT += core gui
+CONFIG += plugin qt warn_on uic4
+QT += core gui uitools
 TEMPLATE = lib
 TARGET = dummy
 TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
+OTHER_FILES += dummy.json
 
 CODECFORTR = UTF8
 
@@ -33,7 +34,7 @@ LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
 HEADERS += src/dummy.h
 SOURCES += src/dummy.cpp
 
-dummy.files = res/dummy.png lang
+dummy.files = res/dummy.png lang dummy.json
 unix:dummy.files += build/libdummy.so
 macx:dummy.files += build/libdummy.dylib
 windows:dummy.files += build/dummy.dll build/libdummy.a

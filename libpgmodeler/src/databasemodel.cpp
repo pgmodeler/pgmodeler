@@ -3391,7 +3391,7 @@ Type *DatabaseModel::createType(void)
 				type->setElement(attribs[ParsersAttributes::ELEMENT]);
 
 			if(!attribs[ParsersAttributes::DELIMITER].isEmpty())
-				type->setDelimiter(attribs[ParsersAttributes::DELIMITER][0].toAscii());
+				type->setDelimiter(attribs[ParsersAttributes::DELIMITER][0].toLatin1());
 
 			if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
 				type->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);

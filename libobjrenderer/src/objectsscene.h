@@ -25,7 +25,8 @@
 #ifndef OBJECTS_SCENE_H
 #define OBJECTS_SCENE_H
 
-#include <QtGui>
+#include <QtWidgets>
+#include <QPrinter>
 #include "relationshipview.h"
 #include "graphicalview.h"
 #include "tableview.h"

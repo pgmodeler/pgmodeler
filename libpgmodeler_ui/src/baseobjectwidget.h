@@ -25,7 +25,7 @@
 #ifndef BASE_OBJECT_WIDGET_H
 #define BASE_OBJECT_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "baseform.h"

@@ -108,7 +108,7 @@ LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 
-QT += core gui
+QT += core widgets printsupport
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj

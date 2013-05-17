@@ -232,12 +232,12 @@ QString SchemaParser::getWord(void)
 
 	/* Attempt to extract a word if the first character is not
 		a special character. */
-	if(!isSpecialCharacter(current_line[column].toAscii()))
+	if(!isSpecialCharacter(current_line[column].toLatin1()))
 	{
 		/* Extract the word while it is not end of line, space or
 		 special character */
 		while(current_line[column]!=CHR_LINE_END &&
-					!isSpecialCharacter(current_line[column].toAscii()) &&
+					!isSpecialCharacter(current_line[column].toLatin1()) &&
 					current_line[column]!=CHR_SPACE &&
 					current_line[column]!=CHR_TABULATION)
 		{
@@ -401,7 +401,7 @@ bool SchemaParser::evaluateExpression(void)
 			while(current_line[column]==CHR_SPACE ||
 						current_line[column]==CHR_TABULATION) column++;
 
-			switch(current_line[column].toAscii())
+			switch(current_line[column].toLatin1())
 			{
 				//Extract the next conditional token
 				case CHR_INI_CONDITIONAL:
@@ -647,7 +647,7 @@ QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
 
 		while(line < buffer.size())
 		{
-			chr=buffer[line][column].toAscii();
+			chr=buffer[line][column].toLatin1();
 			switch(chr)
 			{
 				/* Increments the number of rows causing the parser

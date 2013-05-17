@@ -156,7 +156,6 @@
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
         <file>imagens/model2sgdb.png</file>
-        <file>imagens/pgmodeler_logo_alfa.png</file>
         <file>imagens/model2png.png</file>
         <file>imagens/pgmodeler_logo.png</file>
         <file>imagens/pgmodeler_name.png</file>

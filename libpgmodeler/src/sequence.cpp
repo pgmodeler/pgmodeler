@@ -128,7 +128,7 @@ int Sequence::compareValues(QString value1, QString value2)
 		for(i=0; i < 2; i++)
 		{
 			//Gets the value signal
-			ops[i]=vet_values[i]->at(0).toAscii();
+			ops[i]=vet_values[i]->at(0).toLatin1();
 
 			//Case the value doesn't has a + it will be append
 			if(ops[i]!='-' && ops[i]!='+') ops[i]='+';

@@ -364,7 +364,7 @@ void TypeWidget::applyConfiguration(void)
 			type->setCollatable(collatable_chk->isChecked());
 
 			if(!delimiter_edt->text().isEmpty())
-				type->setDelimiter(delimiter_edt->text().at(0).toAscii());
+				type->setDelimiter(delimiter_edt->text().at(0).toLatin1());
 
 			type->setDefaultValue(default_value_edt->text());
 			type->setCategory(CategoryType(category_cmb->currentText()));

@@ -57,6 +57,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		parent_form->generalwidget_wgt->insertWidget(0, this);
 		parent_form->generalwidget_wgt->setCurrentIndex(0);
 		parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
+		parent_form->setObjectName("parent_form");
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
 		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
@@ -92,7 +93,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		layout->addWidget(edt_perms_tb);
 
 		baseobject_grid->addLayout(layout,9,0,1,5);
-		baseobject_grid->addWidget(div1_ln, 10, 0, 1, 5);
 	}
 	catch(Exception &e)
 	{
@@ -380,8 +380,6 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	show_comment=obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER;
 	comment_lbl->setVisible(show_comment);
 	comment_edt->setVisible(show_comment);
-
-	div1_ln->setVisible(obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP);
 
 	if(obj_type!=BASE_OBJECT)
 	{

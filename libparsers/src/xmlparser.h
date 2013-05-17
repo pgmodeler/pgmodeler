@@ -32,6 +32,7 @@
 #include "exception.h"
 #include <map>
 #include <stack>
+#include <iostream>
 using namespace std;
 
 class XMLParser {

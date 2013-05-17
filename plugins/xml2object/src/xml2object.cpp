@@ -81,5 +81,3 @@ QKeySequence Xml2Object::getPluginShortcut(void)
 {
 	return(QKeySequence("Ctrl+K"));
 }
-
-Q_EXPORT_PLUGIN2(Xml2Object, Xml2Object)

@@ -152,7 +152,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		{
 			pen.setColor(QColor(75,115,195));
 			pen.setStyle(Qt::DashLine);
-			pen.setWidthF(1.85f);
+			pen.setWidthF(1.0f);
 			painter.setPen(pen);
 			painter.drawLine(width-1, 0,width-1,height-1);
 			painter.drawLine(0, height-1,width-1,height-1);
@@ -330,7 +330,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Gets the item at mouse position
-	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y());
+	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
 	/* If the relationship line is visible, indicates that the user is in the middle of
 		 a relationship creation, thus is needed to inform to the scene to activate the

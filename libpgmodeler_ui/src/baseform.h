@@ -25,7 +25,7 @@
 #ifndef BASE_FORM_H
 #define BASE_FORM_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_baseform.h"
 #include "exception.h"
 #include "messagebox.h"

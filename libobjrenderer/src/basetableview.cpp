@@ -117,11 +117,11 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		float cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
 
-		items.append(columns->children());
+		items.append(columns->childItems());
 
 		if(!hide_ext_attribs)
 		{
-			items.append(ext_attribs->children());
+			items.append(ext_attribs->childItems());
 			ext_height=ext_attribs->boundingRect().height();
 		}
 

@@ -9,10 +9,11 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-CONFIG += plugin qt warn_on uitools uic4
-QT += core gui
+CONFIG += plugin qt warn_on uic4
+QT += core gui uitools
 TEMPLATE = lib
 TARGET = xml2object
+OTHER_FILES += xml2object.json
 
 CODECFORTR = UTF8
 
@@ -37,7 +38,7 @@ SOURCES += src/xml2object.cpp \
 
 FORMS += ui/xml2objectwidget.ui
 
-xml2object.files = res/xml2object.png lang
+xml2object.files = res/xml2object.png lang xml2object.json
 unix:xml2object.files += build/libxml2object.so
 macx:xml2object.files += build/libxml2object.dylib
 windows:xml2object.files += build/xml2object.dll build/libxml2object.a

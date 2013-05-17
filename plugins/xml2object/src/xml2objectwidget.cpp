@@ -25,7 +25,7 @@ void Xml2ObjectWidget::loadXML(void)
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setFilter(trUtf8("Database model (*.dbm);;XML file (*.xml);;All files (*.*)"));
+	file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;XML file (*.xml);;All files (*.*)"));
 	file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
 	file_dlg.setWindowTitle(trUtf8("Load file"));
 	file_dlg.setFileMode(QFileDialog::ExistingFiles);

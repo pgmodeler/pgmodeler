@@ -496,7 +496,7 @@ void BaseObjectView::configureProtectedIcon(void)
 			this->resizePolygon(pol, pol.boundingRect().width() * factor,
 													pol.boundingRect().height() * factor);
 
-		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->children().at(0));
+		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
 		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_ARC));
 		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_ARC));
@@ -511,7 +511,7 @@ void BaseObjectView::configureProtectedIcon(void)
 			this->resizePolygon(pol, pol.boundingRect().width() * factor,
 													pol.boundingRect().height() * factor);
 
-		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->children().at(1));
+		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);
 		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_BODY));
 		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_BODY));

@@ -252,18 +252,22 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	model_valid_parent->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
+	vlayout->setContentsMargins(0,0,0,0);
 	vlayout->addWidget(model_objs_wgt);
 	model_objs_parent->setLayout(vlayout);
 
 	vlayout=new QVBoxLayout;
+	vlayout->setContentsMargins(0,0,0,0);
 	vlayout->addWidget(oper_list_wgt);
 	oper_list_parent->setLayout(vlayout);
 
 	QHBoxLayout * hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(model_valid_wgt);
 	model_valid_parent->setLayout(hlayout);
 
 	hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
 
@@ -909,7 +913,7 @@ Do you really want to proceed with the saving?").arg(model->getDatabaseModel()->
 				QFileDialog file_dlg;
 
 				file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-				file_dlg.setFilter(tr("Database model (*.dbm);;All files (*.*)"));
+				file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
 				file_dlg.setFileMode(QFileDialog::AnyFile);
 				file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 				file_dlg.setModal(true);
@@ -1008,7 +1012,7 @@ void MainWindow::loadModel(void)
 
 	try
 	{
-		file_dlg.setFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);

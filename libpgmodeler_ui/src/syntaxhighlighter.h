@@ -25,7 +25,7 @@
 #ifndef SYNTAX_HIGHLIGHTER_H
 #define SYNTAX_HIGHLIGHTER_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include <map>
 #include <vector>
 #include "exception.h"

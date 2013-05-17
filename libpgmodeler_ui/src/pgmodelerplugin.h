@@ -89,6 +89,6 @@ class PgModelerPlugin {
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base
 	 for plugin implementation. All plugin must inherit this class and use the Q_INTERFACE
 	 directive in its declaration  */
-Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")
+Q_DECLARE_INTERFACE(PgModelerPlugin,"br.com.pgmodeler.PgModelerPlugin")
 
 #endif

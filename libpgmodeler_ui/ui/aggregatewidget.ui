@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="funcaoagregacao_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <property name="spacing">
@@ -104,7 +113,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="transition_func_lbl">
      <property name="text">
-      <string>Transition Function:</string>
+      <string>Transition Func.:</string>
      </property>
     </widget>
    </item>

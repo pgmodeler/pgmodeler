@@ -41,9 +41,10 @@ void BaseConfigWidget::removeConfigurationParams(void)
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 {
-	QString buf,
-			//Configures the schema filename for the configuration
-			sch_filename=GlobalAttributes::CONFIGURATIONS_DIR +
+	QByteArray buf;
+
+						//Configures the schema filename for the configuration
+	QString	sch_filename=GlobalAttributes::CONFIGURATIONS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
 									 GlobalAttributes::SCHEMAS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
@@ -71,8 +72,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		}
 
 		//Generates the configuration from the schema file
-		buf=SchemaParser::getCodeDefinition(sch_filename, attribs);
-
+		buf.append(SchemaParser::getCodeDefinition(sch_filename, attribs));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
@@ -80,7 +80,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 											ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
-		output.write(buf.toStdString().c_str(), buf.size());
+		output.write(buf.data(), buf.size());
 		output.close();
 	}
 	catch(Exception &e)

@@ -56,10 +56,12 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	new_name_edt->setText(Utf8String::create(object->getName()));
 }
 
-void ObjectRenameWidget::exec(void)
+int ObjectRenameWidget::exec(void)
 {
 	if(object && op_list)
-		QDialog::exec();
+		return(QDialog::exec());
+	else
+		return(QDialog::Rejected);
 }
 
 void ObjectRenameWidget::hideEvent(QHideEvent *)

@@ -145,7 +145,8 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 
 void XMLParser::readBuffer(void)
 {
-	QString buffer, msg, file;
+	QByteArray buffer;
+	QString msg, file;
 	xmlError *xml_error=NULL;
 	int parser_opt;
 
@@ -170,8 +171,7 @@ void XMLParser::readBuffer(void)
 		buffer+=xml_buffer;
 
 		//Create an xml document from the buffer
-		xml_doc=xmlReadMemory(buffer.toStdString().c_str(), buffer.size(),
-													NULL, NULL, parser_opt);
+		xml_doc=xmlReadMemory(buffer.data(), buffer.size(),	NULL, NULL, parser_opt);
 
 		//In case the document criation fails, gets the last xml parser error
 		xml_error=xmlGetLastError();

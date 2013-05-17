@@ -25,7 +25,7 @@
 #ifndef TASK_PROGRESS_WIDGET_H
 #define TASK_PROGRESS_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 #include "utf8string.h"

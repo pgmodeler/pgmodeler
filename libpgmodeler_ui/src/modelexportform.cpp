@@ -218,12 +218,12 @@ void ModelExportForm::selectOutputFile(void)
 
 	if(export_to_file_rb->isChecked())
 	{
-		file_dlg.setFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".sql");
 	}
 	else
 	{
-		file_dlg.setFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".png");
 	}
 

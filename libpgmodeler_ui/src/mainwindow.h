@@ -25,7 +25,8 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QtGui>
+#include <QtWidgets>
+#include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
 #include "aboutform.h"

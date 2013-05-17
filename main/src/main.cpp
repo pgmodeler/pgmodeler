@@ -110,6 +110,7 @@ int main(int argc, char **argv)
 									 GlobalAttributes::CONFIGURATION_EXT);
 		QString style;
 		QFileInfo fi(argv[0]);
+		QApplication::setStyle(QStyleFactory::create("Fusion"));
 
 		//Changing the current working dir to the executable's directory in
 		QDir::setCurrent(fi.absolutePath());
@@ -126,8 +127,6 @@ int main(int argc, char **argv)
 
 		//Loading the application splash screen
 		QPixmap pixmap(":imagens/imagens/pgmodeler_logo.png");
-		QPixmap alfa(":imagens/imagens/pgmodeler_logo_alfa.png");
-		pixmap.setAlphaChannel(alfa);
 
 		//Draws the current version code on the splash
 		QFont fnt;

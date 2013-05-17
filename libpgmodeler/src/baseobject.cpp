@@ -82,7 +82,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::COLLATION]="";
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
-	this->setName(QApplication::translate("BaseObject","new_object","",QApplication::UnicodeUTF8, -1));
+	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
 unsigned BaseObject::getGlobalId(void)
@@ -96,7 +96,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"",QApplication::UnicodeUTF8, -1));
+		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
 	else
 		return("");
 }
@@ -204,23 +204,25 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	int len;
+	QByteArray raw_name;
 
-	len=name.size();
+	raw_name.append(name);
+	len=raw_name.size();
 
 	/* If the name is greater than the maximum size accepted
 		by PostgreSQL (currently 63 bytes) or it is empty
 		the name is invalid */
-	if(name.isEmpty() || len > OBJECT_NAME_MAX_LENGTH)
+	if(raw_name.isEmpty() || len > OBJECT_NAME_MAX_LENGTH)
 		return(false);
 	else
 	{
 		int i=0;
 		bool valid=true;
-		QChar chr='\0', chr1='\0', chr2='\0';
+		unsigned char chr='\0', chr1='\0', chr2='\0';
 
-		chr=name[0];
+		chr=raw_name[0];
 		if(len > 1)
-			chr1=name[len-1];
+			chr1=raw_name[len-1];
 
 		//Checks if the name is enclosed in quotes
 		if(chr=='\"' && chr1=='\"')
@@ -232,7 +234,7 @@ bool BaseObject::isValidName(const QString &name)
 
 		while(valid && i < len)
 		{
-			chr=name[i];
+			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
 			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ ] */
@@ -259,10 +261,10 @@ bool BaseObject::isValidName(const QString &name)
 			E0 to EF hex (224 to 239): first byte of a three-byte sequence.  */
 			if(!valid && (i < len-1))
 			{
-				chr1=name[i+1];
+				chr1=raw_name[i+1];
 
 				if((i + 2) <= (len-1))
-					chr2=name[i+2];
+					chr2=raw_name[i+2];
 				else
 					chr2=0;
 

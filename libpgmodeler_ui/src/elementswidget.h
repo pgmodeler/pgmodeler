@@ -25,7 +25,7 @@
 #ifndef ELEMENT_WIDGET_H
 #define ELEMENT_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_elementswidget.h"
 #include "objecttablewidget.h"
 #include "objectselectorwidget.h"

@@ -25,7 +25,7 @@
 #ifndef OBJECT_RENAME_WIDGET_H
 #define OBJECT_RENAME_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_objectrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"
@@ -52,7 +52,7 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 		void setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list);
 
 	public slots:
-		void exec(void);
+		int exec(void);
 
 	private slots:
 		void applyRenaming(void);

@@ -163,7 +163,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		//Shows/hides the attribute's selection
 		count=attributes.size();
 		for(i=0; i < count; i++)
-			attributes[i]->children().at(3)->setVisible(value.toBool());
+			attributes[i]->childItems().at(3)->setVisible(value.toBool());
 
 
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
@@ -541,7 +541,7 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier, the line has its thickness modified
 			if(rel && rel->isIdentifier() && i >= idx_lin_desc)
-				pen.setWidthF(1.75f);
+				pen.setWidthF(1.5f);
 			else
 				pen.setWidthF(1.0f);
 
@@ -742,10 +742,10 @@ void RelationshipView::configureAttributes(void)
 			else
 			{
 				attrib=attributes[i];
-				lin=dynamic_cast<QGraphicsLineItem *>(attrib->children().at(0));
-				desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->children().at(1));
-				text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->children().at(2));
-				sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->children().at(3));
+				lin=dynamic_cast<QGraphicsLineItem *>(attrib->childItems().at(0));
+				desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->childItems().at(1));
+				text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->childItems().at(2));
+				sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->childItems().at(3));
 			}
 
 			desc->setRect(rect);
