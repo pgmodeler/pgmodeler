@@ -6,13 +6,16 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
 [CREATE TABLE ] @{name} ( $br
-%if @{columns} %then @{columns} %end
-%if @{constraints} %then , $br @{constraints} %end
+  %if @{copy-table} %then
+    $tb LIKE $sp @{copy-table}
+    %if @{columns} %then [,] %end
+    $br
+  %end
+
+  %if @{columns} %then @{columns} %end
+  %if @{constraints} %then , $br @{constraints} %end
 $br ) $br
 
-%if @{copy-table} %then
-LIKE $sp @{copy-table} $br
-%end
 
 [WITH (OIDS=] %if @{oids} %then TRUE %else FALSE %end )
 %if @{tablespace} %then

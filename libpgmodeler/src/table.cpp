@@ -137,9 +137,8 @@ void Table::setColumnsAttribute(unsigned def_type)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if(def_type==SchemaParser::SQL_DEFINITION ||
-			 (def_type==SchemaParser::XML_DEFINITION &&
-				!columns[i]->isAddedByRelationship()))
+		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy())||
+			 (def_type==SchemaParser::XML_DEFINITION &&	!columns[i]->isAddedByRelationship()))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
 

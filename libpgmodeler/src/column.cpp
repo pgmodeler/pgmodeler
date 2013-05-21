@@ -127,5 +127,7 @@ void Column::operator = (Column &col)
 	this->add_by_copy=false;
 	this->add_by_generalization=false;
 	this->add_by_linking=false;
+
+	this->not_null=col.not_null;
 }
 

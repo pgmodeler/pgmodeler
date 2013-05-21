@@ -758,7 +758,6 @@ void Relationship::addConstraints(Table *recv_tab)
 				if(name!="") constr->setName(name);
 
 				//Adds the constraint to the table
-				//recv_tab->addConstraint(constr, (constr_id < constr_indexes.size() ? constr_indexes[constr_id] : -1));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -780,7 +779,6 @@ void Relationship::addConstraints(Table *recv_tab)
 				}
 				else
 					//Case the table doens't has a primary key the constraint will the be it
-					//recv_tab->addConstraint(constr, (constr_id < constr_indexes.size() ? constr_indexes[constr_id] : -1));
 					recv_tab->addConstraint(constr);
 
 				if(constr==pk_special)
