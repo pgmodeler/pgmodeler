@@ -1182,6 +1182,26 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 	}
 }
 
+void Table::moveObjectToIndex(TableObject *tab_obj, unsigned idx)
+{
+	unsigned curr_idx;
+
+	try
+	{
+		if(!tab_obj)
+			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		curr_idx=getObjectIndex(tab_obj);
+
+		if(curr_idx!=idx)
+			swapObjectsIndexes(tab_obj->getObjectType(), curr_idx, idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
 void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
 {
 	if(column && !column->isAddedByRelationship())

@@ -132,23 +132,26 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 
 void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 {
-	QString aux_name=pattern,
-					pat_tokens[]={ SRC_TAB_TOKEN, DST_TAB_TOKEN,
-												 GEN_TAB_TOKEN, SRC_COL_TOKEN };
-	unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
+	if(!pattern.isEmpty())
+	{
+		QString aux_name=pattern,
+				pat_tokens[]={ SRC_TAB_TOKEN, DST_TAB_TOKEN,
+											 GEN_TAB_TOKEN, SRC_COL_TOKEN };
+		unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
 
-	for(i=0; i < count; i++)
-		aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
+		for(i=0; i < count; i++)
+			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
-	if(pat_id > DST_FK_PATTERN)
-		throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
-										.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(pattern.isEmpty() || !BaseObject::isValidName(aux_name))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NAME_PATTERN)
-										.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(pat_id > DST_FK_PATTERN)
+			throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
+											.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(!BaseObject::isValidName(aux_name))
+			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NAME_PATTERN)
+											.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	name_patterns[pat_id]=pattern;
-	this->invalidated=true;
+		name_patterns[pat_id]=pattern;
+		this->invalidated=true;
+	}
 }
 
 QString Relationship::getNamePattern(unsigned pat_id)
@@ -183,6 +186,56 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col)
 		name.remove(BaseObject::OBJECT_NAME_MAX_LENGTH, name.size());
 
 	return(name);
+}
+
+void Relationship::saveObjectsIndexes(void)
+{
+	if(connected && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
+	{
+		unsigned i;
+
+		col_indexes.clear();
+		constr_indexes.clear();
+		attrib_indexes.clear();
+
+		for(i=0; i < gen_columns.size(); i++)
+			col_indexes.push_back(getReceiverTable()->getObjectIndex(gen_columns[i]->getName(), OBJ_COLUMN));
+
+		for(i=0; i < rel_attributes.size(); i++)
+			attrib_indexes.push_back(getReceiverTable()->getObjectIndex(rel_attributes[i]->getName(), OBJ_COLUMN));
+
+		for(i=0; i < rel_constraints.size(); i++)
+			constr_indexes.push_back(getReceiverTable()->getObjectIndex(rel_constraints[i]->getName(), OBJ_CONSTRAINT));
+	}
+}
+
+void Relationship::restoreObjectsIndexes(void)
+{
+	if(connected && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
+	{
+		unsigned i;
+
+		for(i=0; i < col_indexes.size() && i < gen_columns.size(); i++)
+			getReceiverTable()->moveObjectToIndex(gen_columns[i], col_indexes[i]);
+
+		for(i=0; i < attrib_indexes.size() && i < rel_attributes.size(); i++)
+			getReceiverTable()->moveObjectToIndex(rel_attributes[i], attrib_indexes[i]);
+
+		for(i=0; i < constr_indexes.size() && i < rel_constraints.size(); i++)
+		 getReceiverTable()->moveObjectToIndex(rel_constraints[i], constr_indexes[i]);
+
+		getReceiverTable()->setModified(true);
+	}
+}
+
+void Relationship::setObjectsIndexes(vector<unsigned> &idxs, unsigned ref_type)
+{
+	if(ref_type==COL_INDEXES)
+	 col_indexes=idxs;
+	else if(ref_type==ATTRIB_INDEXES)
+	 attrib_indexes=idxs;
+	else
+	 constr_indexes=idxs;
 }
 
 void Relationship::setMandatoryTable(unsigned table_id, bool value)
@@ -703,6 +756,7 @@ void Relationship::addConstraints(Table *recv_tab)
 				if(name!="") constr->setName(name);
 
 				//Adds the constraint to the table
+				//recv_tab->addConstraint(constr, (constr_id < constr_indexes.size() ? constr_indexes[constr_id] : -1));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -724,6 +778,7 @@ void Relationship::addConstraints(Table *recv_tab)
 				}
 				else
 					//Case the table doens't has a primary key the constraint will the be it
+					//recv_tab->addConstraint(constr, (constr_id < constr_indexes.size() ? constr_indexes[constr_id] : -1));
 					recv_tab->addConstraint(constr);
 
 				if(constr==pk_special)
@@ -1333,6 +1388,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			aux.clear();
 
 			column->setAddedByLinking(true);
+			//recv_tab->addColumn(column, (i < attrib_indexes.size() ? attrib_indexes[i] : -1));
 			recv_tab->addColumn(column);
 		}
 	}
@@ -1435,6 +1491,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 				prev_ref_col_names[column_aux->getObjectId()]=column->getName();
 
+			//recv_tab->addColumn(column, (i < col_indexes.size() ? col_indexes[i] : -1));
 			recv_tab->addColumn(column);
 		}
 	}
@@ -1507,7 +1564,7 @@ void Relationship::addColumnsRel11(void)
 			else
 			{
 				addForeignKey(ref_tab, recv_tab, del_action,  ActionType::cascade);
-				addUniqueKey(/*ref_tab,*/ recv_tab);
+				addUniqueKey(recv_tab);
 			}
 		}
 	}
@@ -2243,6 +2300,29 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
 		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
 
+		if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
+		{
+			count=col_indexes.size();
+			for(i=0; i < count; i++)
+				attributes[ParsersAttributes::COL_INDEXES]+=QString("%1").arg(col_indexes[i]) + ",";
+
+			count=attrib_indexes.size();
+			for(i=0; i < count; i++)
+				attributes[ParsersAttributes::ATTRIB_INDEXES]+=QString("%1").arg(attrib_indexes[i]) + ",";
+
+			count=constr_indexes.size();
+			for(i=0; i < count; i++)
+				attributes[ParsersAttributes::CONSTR_INDEXES]+=QString("%1").arg(constr_indexes[i]) + ",";
+
+			count=rel_constraints.size();
+			for(i=0; i < count; i++)
+				attributes[ParsersAttributes::COL_INDEXES]+=QString("%1").arg(getReceiverTable()->getObjectIndex(rel_constraints[i]->getName(), OBJ_CONSTRAINT)) + ",";
+
+			attributes[ParsersAttributes::COL_INDEXES].remove(attributes[ParsersAttributes::COL_INDEXES].size()-1,1);
+			attributes[ParsersAttributes::ATTRIB_INDEXES].remove(attributes[ParsersAttributes::ATTRIB_INDEXES].size()-1,1);
+			attributes[ParsersAttributes::CONSTR_INDEXES].remove(attributes[ParsersAttributes::CONSTR_INDEXES].size()-1,1);
+		}
+
 		attributes[ParsersAttributes::COLUMNS]="";
 		count=rel_attributes.size();
 		for(i=0; i < count; i++)
@@ -2302,5 +2382,8 @@ void Relationship::operator = (Relationship &rel)
 	this->gen_columns.clear();
 	this->copy_options=rel.copy_options;
 	this->name_patterns=rel.name_patterns;
+	this->col_indexes=rel.col_indexes;
+	this->constr_indexes=rel.constr_indexes;
+	this->attrib_indexes=rel.attrib_indexes;
 }
 

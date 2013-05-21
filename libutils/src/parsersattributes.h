@@ -371,7 +371,10 @@ namespace ParsersAttributes {
 	PK_PATTERN="pk-pattern",
 	UQ_PATTERN="uq-pattern",
 	SRC_FK_PATTERN="src-fk-pattern",
-	DST_FK_PATTERN="dst-fk-pattern";
+	DST_FK_PATTERN="dst-fk-pattern",
+	COL_INDEXES="col-indexes",
+	ATTRIB_INDEXES="attrib-indexes",
+	CONSTR_INDEXES="constr-indexes";
 }
 
 #endif

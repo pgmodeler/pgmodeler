@@ -29,6 +29,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 
 #include <QFile>
 #include <QObject>
+#include <QStringList>
 #include "baseobject.h"
 #include "table.h"
 #include "function.h"

@@ -10,9 +10,6 @@
 <!ATTLIST relationship protected (false|true) "false">
 <!ATTLIST relationship src-table CDATA #REQUIRED>
 <!ATTLIST relationship dst-table CDATA #REQUIRED>
-<!ATTLIST relationship src-sufix CDATA #IMPLIED>
-<!ATTLIST relationship dst-sufix CDATA #IMPLIED>
-<!ATTLIST relationship auto-sufix (false|true) "true">
 <!ATTLIST relationship table-name CDATA #IMPLIED>
 <!ATTLIST relationship identifier (false|true) "false">
 <!ATTLIST relationship deferrable (true |false) "false">
@@ -26,7 +23,10 @@
 <!ATTLIST relationship uq-pattern CDATA #IMPLIED>
 <!ATTLIST relationship src-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
- 
+<!ATTLIST relationship col-indexes CDATA #IMPLIED>
+<!ATTLIST relationship attrib-indexes CDATA #IMPLIED>
+<!ATTLIST relationship constr-indexes CDATA #IMPLIED>
+
 <!ELEMENT line (position+)>
 
 <!ELEMENT special-pk-cols EMPTY>

@@ -102,6 +102,9 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::UQ_PATTERN]="";
 	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
 	attributes[ParsersAttributes::DST_FK_PATTERN]="";
+	attributes[ParsersAttributes::COL_INDEXES]="";
+	attributes[ParsersAttributes::CONSTR_INDEXES]="";
+	attributes[ParsersAttributes::ATTRIB_INDEXES]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)

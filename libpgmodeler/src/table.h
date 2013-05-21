@@ -256,6 +256,9 @@ class Table: public BaseTable {
 		//! \brief Swaps two objects position
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
 
+		//! \brief Move the object to the specified index
+		void moveObjectToIndex(TableObject *tab_obj, unsigned idx);
+
 		//! \brief Returns if the table references objects added by relationship
 		bool isReferRelationshipAddedObject(void);
 

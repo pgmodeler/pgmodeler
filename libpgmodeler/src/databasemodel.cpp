@@ -1129,6 +1129,9 @@ void DatabaseModel::validateRelationships(void)
 				//Makes a cast to the correct object class
 				rel=dynamic_cast<Relationship *>(base_rel);
 
+				if(!loading_model)
+					rel->saveObjectsIndexes();
+
 				//If the relationships is invalid
 				if(rel->isInvalidated())
 				{
@@ -1294,6 +1297,17 @@ void DatabaseModel::validateRelationships(void)
 
 		//Redirects all the errors captured on the revalidation
 		throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
+	}
+
+
+	itr=relationships.begin();
+	itr_end=relationships.end();
+
+	while(itr!=itr_end)
+	{
+		rel=dynamic_cast<Relationship *>(*itr);
+		rel->restoreObjectsIndexes();
+		itr++;
 	}
 }
 
@@ -5300,6 +5314,26 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		}
 		else
 		{
+			vector<unsigned> idxs;
+			QStringList str_idxs;
+			QString idx_attrib[]= { ParsersAttributes::COL_INDEXES,
+															ParsersAttributes::ATTRIB_INDEXES,
+															ParsersAttributes::CONSTR_INDEXES },
+
+							pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
+															ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
+															ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN };
+
+			unsigned idx_type[]= { Relationship::COL_INDEXES,
+														 Relationship::ATTRIB_INDEXES,
+														 Relationship::CONSTR_INDEXES },
+
+					pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
+													Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
+													Relationship::PK_PATTERN, Relationship::UQ_PATTERN },
+					count=sizeof(idx_type)/sizeof(unsigned),
+					pat_count=sizeof(pattern_id)/sizeof(unsigned);
+
 			src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
 			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
 			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
@@ -5330,6 +5364,29 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			rel->setName(attribs[ParsersAttributes::NAME]);
 			base_rel=rel;
+
+			//Configuring the name patterns
+			for(i=0; i < pat_count; i++)
+				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
+
+			//Restoring the column / attributes / constraints indexes
+			for(i=0; i < count; i++)
+			{
+				idxs.clear();
+
+				if(!attribs[idx_attrib[i]].isEmpty())
+				{
+					str_idxs=attribs[idx_attrib[i]].split(",");
+
+					while(!str_idxs.isEmpty())
+					{
+						idxs.push_back(str_idxs.front().toUInt());
+						str_idxs.pop_front();
+					}
+
+					rel->setObjectsIndexes(idxs, idx_type[i]);
+				}
+			}
 		}
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

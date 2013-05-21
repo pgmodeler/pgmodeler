@@ -793,7 +793,7 @@ void RelationshipWidget::applyConfiguration(void)
 				count=sizeof(pattern_ids)/sizeof(unsigned);
 				for(i=0; i < count; i++)
 				{
-					if(pattern_fields[i]->isEnabled() && !pattern_fields[i]->toPlainText().isEmpty())
+					if(pattern_fields[i]->isEnabled())
 						rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
 				}
 			}

@@ -254,16 +254,18 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 			/* if the type is COLUMN or CONSTRAINT disable the move buttons for the two tables
 			 because columns/constraints only can be moved when the table does not reference
 			 objects created by relationship */
-			if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
+			/*if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
 			{
-				if(this->new_object || !table->isReferRelationshipAddedObject())
+				//if(this->new_object || !table->isReferRelationshipAddedObject())
 					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
 																														(ObjectTableWidget::UPDATE_BUTTON));
 				else
 					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
 																														(ObjectTableWidget::UPDATE_BUTTON |
 																														 ObjectTableWidget::MOVE_BUTTONS));
-			}
+			}*/
+			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
+																												(ObjectTableWidget::UPDATE_BUTTON));
 		}
 
 		//Listing the ancestor tables
