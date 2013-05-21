@@ -113,6 +113,8 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
 		}
+		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN)
+			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
 		else
 		{
 			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
@@ -295,7 +297,7 @@ void Relationship::createSpecialPrimaryKey(void)
 
 		 2) Use the same tablespace as the receiver table */
 		pk_special=new Constraint;
-		pk_special->setName(this->getName() + QString("_pk"));
+		pk_special->setName(generateObjectName(PK_PATTERN));
 		pk_special->setConstraintType(ConstraintType::primary_key);
 		pk_special->setAddedByLinking(true);
 		pk_special->setProtected(true);
@@ -1533,7 +1535,7 @@ void Relationship::addColumnsRel11(void)
 			addConstraints(recv_tab);
 			copyColumns(ref_tab, recv_tab, false);
 			addForeignKey(ref_tab, recv_tab, del_action, ActionType::cascade);
-			addUniqueKey(/*ref_tab,*/ recv_tab);
+			addUniqueKey(recv_tab);
 		}
 		else
 		{
@@ -1553,14 +1555,14 @@ void Relationship::addColumnsRel11(void)
 
 				configureIndentifierRel(recv_tab);
 			}
+			else
+				createSpecialPrimaryKey();
 
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
 
 			if(identifier)
-			{
 				addForeignKey(ref_tab, recv_tab, ActionType::cascade, ActionType::cascade);
-			}
 			else
 			{
 				addForeignKey(ref_tab, recv_tab, del_action,  ActionType::cascade);
@@ -1613,7 +1615,7 @@ void Relationship::addColumnsRel1n(void)
 		{
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
-			copyColumns(ref_tab, recv_tab, not_null);
+		copyColumns(ref_tab, recv_tab, not_null);
 			addForeignKey(ref_tab, recv_tab, del_action, upd_action);
 		}
 		else
@@ -1624,13 +1626,13 @@ void Relationship::addColumnsRel1n(void)
 			{
 				this->setMandatoryTable(SRC_TABLE, true);
 				this->setMandatoryTable(DST_TABLE, false);
-
 				configureIndentifierRel(recv_tab);
 			}
+			else
+			 createSpecialPrimaryKey();
 
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
-
 			addForeignKey(ref_tab, recv_tab, del_action, upd_action);
 		}
 	}
@@ -1866,16 +1868,14 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				 added to primary key (in case of a identifier relationship) must be removed */
 				if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 				{
+					table=getReceiverTable();
+
 					/* Gets the table which has a foreign key that represents the
 					relationship (the table where the foreign key was inserted
 					upon connection of the relationship) */
 					if(fk_rel1n)
-					{
-						table=dynamic_cast<Table *>(fk_rel1n->getParentTable());
-
 						//Removes the foreign key from table
 						table->removeConstraint(fk_rel1n->getName());
-					}
 
 					/* Gets the table primary key to check if it is the same as the primary key
 					that defines the identifier relationship */
@@ -1918,6 +1918,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						delete(pk);
 						pk_relident=NULL;
 					}
+					else if(pk_special)
+						table->removeObject(pk_special);
 				}
 				else if(rel_type==RELATIONSHIP_NN)
 				{

@@ -75,10 +75,10 @@ $br $tb [ dst-table=] "@{dst-table}"
  %if %not @{relgen} %and %not @{reldep} %then
    %if @{columns} %then @{columns} %end
    %if @{constraints} %then @{constraints} %end
- %else
-   %if @{special-pk-cols} %then
-     $tb [<special-pk-cols indexes=]"@{special-pk-cols}"/> $br
-   %end
+ %end
+
+ %if @{special-pk-cols} %then
+   $tb [<special-pk-cols indexes=]"@{special-pk-cols}"/> $br
  %end
 
  </relationship>  $br $br

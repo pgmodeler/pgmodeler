@@ -476,10 +476,10 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font=tab->font();
 		font.setItalic(true);
 
-		if(object->isProtected())
-			tab->setRowFont(row, font, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
-		else
+		if(object->isAddedByRelationship())
 			tab->setRowFont(row, font, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
+		else
+			tab->setRowFont(row, font, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
 	}
 
 	tab->setRowData(QVariant::fromValue<void *>(object), row);

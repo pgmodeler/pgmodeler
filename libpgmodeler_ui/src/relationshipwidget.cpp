@@ -103,7 +103,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		rel_attribs_tbw->widget(2)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(3)->layout());
-		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships."));
+		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table."));
 
 		grid->addWidget(frame, 1, 0, 1, 1);
 		frame->setParent(rel_attribs_tbw->widget(3));
@@ -222,8 +222,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	static QWidget *tabs[4]={ rel_attribs_tbw->widget(1), rel_attribs_tbw->widget(2), rel_attribs_tbw->widget(3), rel_attribs_tbw->widget(4) };
-	static QString tab_lables[4]={ rel_attribs_tbw->tabText(1), rel_attribs_tbw->tabText(2), rel_attribs_tbw->tabText(3), rel_attribs_tbw->tabText(4)};
+	static QWidget *tabs[]={ NULL, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
+														rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
+	static QString tab_lables[]={ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
+																rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 	unsigned rel_type, i;
 	Relationship *aux_rel=NULL;
 	bool rel1n, relnn, relgen_dep;
@@ -302,8 +304,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		//Lists the relationship constraints
 		listObjects(OBJ_CONSTRAINT);
 
-		if(rel_type==BaseRelationship::RELATIONSHIP_GEN ||
-			 rel_type==BaseRelationship::RELATIONSHIP_DEP)
+		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
 			/* If the new relationship is generalization or copy it is necessary to connect it in order
 				 to create the columns permiting the user to configure the special primary key later */
@@ -362,12 +363,19 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 							rel_type==BaseRelationship::RELATIONSHIP_GEN ||
 							rel_type==BaseRelationship::RELATIONSHIP_FK);
 
-	name_patterns_grp->setVisible(rel1n || relnn);
+	name_patterns_grp->setVisible(rel1n || relnn ||
+																(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
 
 	dst_col_pattern_txt->setEnabled(relnn);
 	dst_fk_pattern_txt->setEnabled(relnn);
 	dst_col_pattern_lbl->setEnabled(relnn);
 	dst_fk_pattern_lbl->setEnabled(relnn);
+	src_col_pattern_lbl->setEnabled(!relgen_dep);
+	src_col_pattern_txt->setEnabled(!relgen_dep);
+	src_fk_pattern_lbl->setEnabled(!relgen_dep);
+	src_fk_pattern_txt->setEnabled(!relgen_dep);
+	uq_pattern_lbl->setEnabled(!relgen_dep);
+	uq_pattern_txt->setEnabled(!relgen_dep);
 
 	card_lbl->setVisible(rel1n);
 	table1_mand_chk->setEnabled(rel1n);
@@ -381,21 +389,24 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
 
-	for(i=0; i < 4; i++)
+	for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
 		rel_attribs_tbw->removeTab(1);
 
 	if(!relgen_dep)
 	{
-		for(i=0; i < 2; i++)
-			rel_attribs_tbw->addTab(tabs[i], tab_lables[i]);
+		for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
+		{
+			if(i!=SPECIAL_PK_TAB || (i==SPECIAL_PK_TAB && base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
+			 rel_attribs_tbw->addTab(tabs[i], tab_lables[i]);
+		}
 	}
 	else if(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP)
-		rel_attribs_tbw->addTab(tabs[2], tab_lables[2]);
+		rel_attribs_tbw->addTab(tabs[SPECIAL_PK_TAB], tab_lables[SPECIAL_PK_TAB]);
 
 	if(base_rel->getObjectType()==OBJ_RELATIONSHIP ||
 		 (base_rel->getObjectType()==BASE_RELATIONSHIP &&
 			base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
-		rel_attribs_tbw->addTab(tabs[3], tab_lables[3]);
+		rel_attribs_tbw->addTab(tabs[ADVANCED_TAB], tab_lables[ADVANCED_TAB]);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP &&
 															 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP);
@@ -826,19 +837,7 @@ void RelationshipWidget::applyConfiguration(void)
 			if(table2_mand_chk->isEnabled())
 				rel->setMandatoryTable(BaseRelationship::DST_TABLE, table2_mand_chk->isChecked());
 
-			if(rel_type==BaseRelationship::RELATIONSHIP_GEN ||
-				 rel_type==BaseRelationship::RELATIONSHIP_DEP)
-			{
-				count=rel_columns_lst->count();
-				for(i=0; i < count; i++)
-				{
-					if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
-						col_ids.push_back(i);
-				}
-
-				rel->setSpecialPrimaryKeyCols(col_ids);
-			}
-			else if(rel_type==BaseRelationship::RELATIONSHIP_1N ||
+			if(rel_type==BaseRelationship::RELATIONSHIP_1N ||
 							rel_type==BaseRelationship::RELATIONSHIP_11)
 			{
 				rel->setIdentifier(identifier_chk->isChecked());
@@ -847,6 +846,17 @@ void RelationshipWidget::applyConfiguration(void)
 			}
 			else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
 				rel->setTableNameRelNN(relnn_tab_name_edt->text());
+
+			if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+			{
+				count=rel_columns_lst->count();
+				for(i=0; i < count; i++)
+				{
+					if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
+						col_ids.push_back(i);
+				}
+				rel->setSpecialPrimaryKeyCols(col_ids);
+			}
 
 			try
 			{

@@ -136,6 +136,7 @@ class Relationship: public BaseRelationship {
 				This vector is used by the relationship validation method. */
 		pk_columns;
 
+		//! \brief Stores the column / constraints / attributes indexes on the receiver table
 		vector<unsigned> col_indexes,
 		attrib_indexes,
 		constr_indexes;
