@@ -2056,9 +2056,8 @@ bool Relationship::isInvalidated(void)
 
 					/* To validate the columns with each other the following rules are followed:
 
-				1) Check if the there was some name modification. If the generated name differs from
-					 the name generated when the relationship was connected, then the relationship is
-					 invalidated.
+				1) Check if the there was some name modification. If the generated name does not contains
+					 the pk column name, then the relationship is invalidated.
 
 				2) Check if the types of the columns are compatible.
 					 The only accepted exception is if the type of the source column is 'serial' or 'bigserial'
@@ -2066,9 +2065,8 @@ bool Relationship::isInvalidated(void)
 
 				3) Check if the column (address) from the vector pk_columns is equal to the column
 					 obtained directly from the primary key */
-					col_name=generateObjectName(SRC_COL_PATTERN, col1);
 					valid=(col1==col3 &&
-								 (col_name.contains(col1->getName())) &&
+								 (col2->getName().contains(col1->getName())) &&
 								 (col1->getType()==col2->getType() ||
 									(col1->getType()=="serial" && col2->getType()=="integer") ||
 									(col1->getType()=="bigserial" && col2->getType()=="bigint")));

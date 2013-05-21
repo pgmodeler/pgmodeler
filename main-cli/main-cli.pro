@@ -1,5 +1,6 @@
 include(../pgmodeler.pro)
 
+CONFIG += console
 TEMPLATE = app
 TARGET = pgmodeler-cli
 INCLUDEPATH += ../main/src
