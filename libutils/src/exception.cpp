@@ -146,7 +146,6 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_ALIGNMENT_TYPE",QT_TR_NOOP("Assignment of invalid alignment to type '%1'!")},
 	{"ERR_ASG_INV_NAME_TABLE_RELNN",  QT_TR_NOOP("Assignment of invalid name to the table generated from N-N relationship!")},
 	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship '%1' can not make use of the special primary key. Only generalization/copy relationships have access to this resource!")},
-	{"ERR_ASG_INV_SUFFIX_REL",  QT_TR_NOOP("Assignment of invalid suffix to the relationship '%1'!")},
 	{"ERR_OPR_REL_INCL_OBJECT", QT_TR_NOOP("The object '%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
 	{"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object '%1' (%2) can not be deleted because it is protected!")},
 	{"ERR_REDECL_HL_GROUP", QT_TR_NOOP("The group '%1' has already been declared earlier!")},
@@ -216,6 +215,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_VALIDATION_FAILURE", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension '%1' is registered as a data type and cannot have the attribute 'handles datatype' modified!")},
 	{"ERR_ALOC_INV_FK_RELATIONSHIP", QT_TR_NOOP("The fk relationship '%1' cannot be created because the foreign-key that represents it wasn't created on table '%2'!")},
+	{"ERR_ASG_INV_NAME_PATTERN", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship '%1'!")},
+	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship '%1'!")}
 };
 
 Exception::Exception(void)

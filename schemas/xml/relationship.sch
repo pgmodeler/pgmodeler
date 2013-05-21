@@ -1,50 +1,55 @@
 # XML definition for relationships
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<relationship name=] "@{name}" $br
-$tb
-[ type=] "@{type}"
+[<relationship name=] "@{name}" [ type=] "@{type}"
+
+  %if @{src-col-pattern} %or @{dst-col-pattern} %then
+    $br $tb
+    %if @{src-col-pattern} %then [ src-col-pattern=] "@{src-col-pattern}" %end
+    %if @{dst-col-pattern} %then [ dst-col-pattern=] "@{dst-col-pattern}" %end
+  %end
+  
+  %if @{pk-pattern} %or @{uq-pattern} %then
+    $br $tb
+    %if @{pk-pattern} %then [ pk-pattern=] "@{pk-pattern}" %end
+    %if @{uq-pattern} %then [ uq-pattern=] "@{uq-pattern}" %end
+  %end
+
+  %if @{src-fk-pattern} %or  @{dst-fk-pattern} %then
+    $br $tb
+    %if @{src-fk-pattern} %then [ src-fk-pattern=] "@{src-fk-pattern}" %end
+    %if @{dst-fk-pattern} %then [ dst-fk-pattern=] "@{dst-fk-pattern}" %end
+   %end
 
   %if @{sql-disabled} %then
-   [ sql-disabled=] "true" $br
+   $br $tb [ sql-disabled=] "true"
   %end
 
  %if @{protected} %then 
-  [ protected=] "true"
- %end $br
+  $br [ protected=] "true"
+ %end
 
-$tb [ src-table=] "@{src-table}" $br
-$tb [ dst-table=] "@{dst-table}" $br
+$br $tb [ src-table=] "@{src-table}" 
+$br $tb [ dst-table=] "@{dst-table}"
 
 
 %if %not @{relgen} %and %not @{reldep} %then
-  $tb
+  $br $tb
   [ src-required=] %if @{src-required} %then "true" %else "false" %end
-  [ dst-required=] %if @{dst-required} %then "true" %else "false" %end $br
-
-  %if @{src-sufix} %then
-   $tb [ src-sufix=] "@{src-sufix}" $br
-  %end
-
-  %if @{dst-sufix} %then
-   $tb [ dst-sufix=] "@{dst-sufix}" $br
-  %end
-
-  %if @{auto-sufix} %then
-   $tb [ auto-sufix=] "true" $br
-  %end
+  [ dst-required=] %if @{dst-required} %then "true" %else "false" %end
 
   %if @{identifier} %then
    $tb $sp identifier="true" $br
   %end
 
   %if @{table-name} %then
-   $tb $sp table-name="@{table-name}" $br
+   $tb $sp table-name="@{table-name}"
   %end
 
   %if @{deferrable} %then
+   $br
    $tb $sp deferrable="true"
-   $sp defer-type="@{defer-type}" $br
+   $sp defer-type="@{defer-type}"
   %end
 %else
   %if @{copy-mode} %then

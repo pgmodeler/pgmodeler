@@ -20,6 +20,17 @@
 #include <QApplication>
 
 const QString Relationship::SUFFIX_SEPARATOR("_");
+const QString Relationship::SRC_TAB_TOKEN("{st}");
+const QString Relationship::DST_TAB_TOKEN("{dt}");
+const QString Relationship::GEN_TAB_TOKEN("{gt}");
+const QString Relationship::SRC_COL_TOKEN("{sc}");
+
+const unsigned Relationship::SRC_COL_PATTERN=0;
+const unsigned Relationship::DST_COL_PATTERN=1;
+const unsigned Relationship::PK_PATTERN=2;
+const unsigned Relationship::UQ_PATTERN=3;
+const unsigned Relationship::SRC_FK_PATTERN=4;
+const unsigned Relationship::DST_FK_PATTERN=5;
 
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
@@ -31,7 +42,6 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 
 Relationship::Relationship(unsigned rel_type, Table *src_tab,
 													 Table *dst_tab, bool src_mdtry, bool dst_mdtry,
-													 bool auto_suffix, const QString &src_suffix, const QString &dst_suffix,
 													 bool identifier,  bool deferrable, DeferralType deferral_type, CopyOptions copy_op) :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
@@ -56,10 +66,6 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 												.arg(Utf8String::create(dst_tab->getName(true)))
 												.arg(Utf8String::create(src_tab->getCopyTable()->getName(true))),
 												ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		this->src_suffix=src_suffix;
-		this->dst_suffix=dst_suffix;
-		this->auto_suffix=auto_suffix;
 
 		copy_options=copy_op;
 		table_relnn=NULL;
@@ -96,14 +102,23 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 
 		if(rel_type==RELATIONSHIP_NN)
 		{
-			//Setting up the n-n relationship table name based on the suffixes, when they are defined
-			if(src_suffix!="" && dst_suffix!="")
-				tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
-			else
-				tab_name_relnn=this->obj_name;
-
+			tab_name_relnn=this->obj_name;
 			if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 				tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+
+			setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
+			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
+			setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
+			setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + "uq");
+			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
+			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
+		}
+		else
+		{
+			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
+			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
+			setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "uq");
+			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 		}
 
 		rejected_col_count=0;
@@ -115,39 +130,65 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 	}
 }
 
+void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
+{
+	QString aux_name=pattern,
+					pat_tokens[]={ SRC_TAB_TOKEN, DST_TAB_TOKEN,
+												 GEN_TAB_TOKEN, SRC_COL_TOKEN };
+	unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
+
+	for(i=0; i < count; i++)
+		aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
+
+	if(pat_id > DST_FK_PATTERN)
+		throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
+										.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(pattern.isEmpty() || !BaseObject::isValidName(aux_name))
+		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NAME_PATTERN)
+										.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	name_patterns[pat_id]=pattern;
+	this->invalidated=true;
+}
+
+QString Relationship::getNamePattern(unsigned pat_id)
+{
+	if(pat_id > DST_FK_PATTERN)
+		throw Exception(ERR_REF_INV_NAME_PATTERN_ID,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(name_patterns[pat_id]);
+}
+
+QString Relationship::generateObjectName(unsigned pat_id, Column *id_col)
+{
+	QString name;
+
+	name=name_patterns[pat_id];
+	name.replace(GEN_TAB_TOKEN, (rel_type==RELATIONSHIP_NN ? tab_name_relnn : ""));
+
+	if(rel_type==RELATIONSHIP_NN)
+	{
+		name.replace(SRC_TAB_TOKEN, src_table->getName());
+		name.replace(DST_TAB_TOKEN, dst_table->getName());
+	}
+	else
+	{
+		name.replace(SRC_TAB_TOKEN, getReferenceTable()->getName());
+		name.replace(DST_TAB_TOKEN, getReceiverTable()->getName());
+	}
+
+	name.replace(SRC_COL_TOKEN, (id_col ? id_col->getName() : ""));
+
+	if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+		name.remove(BaseObject::OBJECT_NAME_MAX_LENGTH, name.size());
+
+	return(name);
+}
+
 void Relationship::setMandatoryTable(unsigned table_id, bool value)
 {
 	BaseRelationship::setMandatoryTable(table_id, value);
 	this->invalidated=true;
-}
-
-void Relationship::setTableSuffix(unsigned table_id, const QString &suffix)
-{
-	if(table_id > DST_TABLE)
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(!suffix.isEmpty() && !BaseObject::isValidName(suffix))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
-										.arg(Utf8String::create(this->getName())),
-										ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(table_id==SRC_TABLE)
-		src_suffix=suffix;
-	else
-		dst_suffix=suffix;
-
-	this->invalidated=true;
-}
-
-QString Relationship::getTableSuffix(unsigned table_id)
-{
-	if(table_id > DST_TABLE)
-		throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(table_id==SRC_TABLE)
-		return(src_suffix);
-	else
-		return(dst_suffix);
 }
 
 void Relationship::setDeferrable(bool value)
@@ -237,6 +278,7 @@ void Relationship::setTableNameRelNN(const QString &name)
 			throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		tab_name_relnn=name;
+		tab_name_relnn.remove("\"");
 		this->invalidated=true;
 	}
 }
@@ -1045,7 +1087,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 			aux.clear();
 
 			//Configures a basic name for the primary key
-			name=recv_tab->getName() + SUFFIX_SEPARATOR + "pk";
+			name=generateObjectName(PK_PATTERN);
 
 			//Resolves any duplication of the new constraint name on the receiver table
 			while(recv_tab->getConstraint(name + aux))
@@ -1090,7 +1132,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 	}
 }
 
-void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
+void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 {
 	Constraint *uq=NULL;
 	unsigned i, count;
@@ -1117,7 +1159,7 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
 		//Configures the name for the constraint
 		i=1;
 		aux.clear();
-		name=ref_tab->getName() + SUFFIX_SEPARATOR + QString("%1").arg(uq->getObjectId()) + SUFFIX_SEPARATOR + "uq";
+		name=generateObjectName(UQ_PATTERN);
 
 		//Resolves any duplication of the new constraint name on the receiver table
 		while(recv_tab->getConstraint(name + aux))
@@ -1225,7 +1267,16 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 		//Configures the foreign key name
 		i=1;
 		aux.clear();
-		name=ref_tab->getName() + SUFFIX_SEPARATOR + "fk";
+
+		if(rel_type!=RELATIONSHIP_NN)
+			name=generateObjectName(SRC_FK_PATTERN);
+		else
+		{
+			if(ref_tab==src_table)
+				name=generateObjectName(SRC_FK_PATTERN);
+			else
+				name=generateObjectName(DST_FK_PATTERN);
+		}
 
 		//Resolves any duplication of the new constraint name on the receiver table
 		while(recv_tab->getConstraint(name + aux))
@@ -1304,41 +1355,12 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 	Constraint *dst_pk=NULL, *src_pk=NULL, *pk=NULL;
 	unsigned i, count, i1;
 	Column *column=NULL, *column_aux=NULL;
-	QString name, suffix, aux, prev_name;
+	QString name, aux, prev_name;
 
 	try
 	{
 		dst_pk=recv_tab->getPrimaryKey();
 		pk=src_pk=ref_tab->getPrimaryKey();
-
-		//Selecting the correct column suffix according to the relationship configuration
-		if(auto_suffix)
-		{
-			if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)
-			{
-				suffix=SUFFIX_SEPARATOR + ref_tab->getName();
-
-				if(ref_tab==src_table)
-					src_suffix=suffix;
-				else
-					dst_suffix=suffix;
-			}
-			else if(rel_type==RELATIONSHIP_NN)
-			{
-				if(ref_tab==dst_table)
-					suffix=dst_suffix=SUFFIX_SEPARATOR + dst_table->getName();
-				else
-					suffix=src_suffix=SUFFIX_SEPARATOR + src_table->getName();
-			}
-		}
-		else if(((rel_type!=RELATIONSHIP_NN && recv_tab==src_table) ||
-						 (rel_type==RELATIONSHIP_NN && ref_tab==dst_table))
-						&& !dst_suffix.isEmpty())
-			suffix=SUFFIX_SEPARATOR + dst_suffix;
-		else if(((rel_type!=RELATIONSHIP_NN && recv_tab==dst_table) ||
-						 (rel_type==RELATIONSHIP_NN && ref_tab==src_table))
-						&& !src_suffix.isEmpty())
-			suffix=SUFFIX_SEPARATOR + src_suffix;
 
 		/* Raises an error if some table doesn't has a primary key if
 		 the relationship is 1-1, 1-n or n-n */
@@ -1369,7 +1391,17 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
 
-			prev_name=prev_ref_col_names[column->getObjectId()];
+			prev_name=prev_ref_col_names[column_aux->getObjectId()];
+
+			if(rel_type!=RELATIONSHIP_NN)
+				name=generateObjectName(SRC_COL_PATTERN, column_aux);
+			else
+			{
+				if(ref_tab==src_table)
+					name=generateObjectName(SRC_COL_PATTERN, column_aux);
+				else
+					name=generateObjectName(DST_COL_PATTERN, column_aux);
+			}
 
 			//Protects the column evicting that the user modifies it
 			column->setAddedByLinking(true);
@@ -1382,9 +1414,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			else if(column->getType()=="bigserial")
 				column->setType(PgSQLType("bigint"));
 
-			//Creates the column name based on the original name and the selected suffix
-			name=column->getName() + suffix;
-
 			//Resolves any duplication of the column name on the receiver table
 			while(recv_tab->getColumn(name + aux))
 			{
@@ -1392,14 +1421,8 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 				i1++;
 			}
 
-			//Stores the generated suffix to be used on later validations
-			col_suffixes.push_back(suffix + aux);
-
 			name+=aux;
-
-			if(prev_name!="")
-				column->setName(prev_name);
-
+			if(prev_name!="")	column->setName(prev_name);
 			column->setName(name);
 
 			/* If the old name given to the column is different from the current name, the current name
@@ -1410,7 +1433,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			the n-n relationships columns are always recreated without the need to keep the history because
 			the user can not reference the columns created by n-n relationships. */
 			if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
-				prev_ref_col_names[column->getObjectId()]=column->getName();
+				prev_ref_col_names[column_aux->getObjectId()]=column->getName();
 
 			recv_tab->addColumn(column);
 		}
@@ -1425,8 +1448,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 
 		prev_ref_col_names.clear();
 		pk_columns.clear();
-		col_suffixes.clear();
-
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1455,7 +1476,7 @@ void Relationship::addColumnsRel11(void)
 			addConstraints(recv_tab);
 			copyColumns(ref_tab, recv_tab, false);
 			addForeignKey(ref_tab, recv_tab, del_action, ActionType::cascade);
-			addUniqueKey(ref_tab, recv_tab);
+			addUniqueKey(/*ref_tab,*/ recv_tab);
 		}
 		else
 		{
@@ -1486,7 +1507,7 @@ void Relationship::addColumnsRel11(void)
 			else
 			{
 				addForeignKey(ref_tab, recv_tab, del_action,  ActionType::cascade);
-				addUniqueKey(ref_tab, recv_tab);
+				addUniqueKey(/*ref_tab,*/ recv_tab);
 			}
 		}
 	}
@@ -1587,7 +1608,7 @@ void Relationship::addColumnsRelNn(void)
 
 		//Creates the primary key for the n-n relationship table
 		pk_tabnn=new Constraint;
-		pk_tabnn->setName(table_relnn->getName() + "_pk");
+		pk_tabnn->setName(generateObjectName(PK_PATTERN));
 		pk_tabnn->setConstraintType(ConstraintType::primary_key);
 		pk_tabnn->setAddedByLinking(true);
 		count=gen_columns.size();
@@ -1904,8 +1925,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 			gen_columns.clear();
 			pk_columns.clear();
-			col_suffixes.clear();
-			prev_ref_col_names.clear();
+			//prev_ref_col_names.clear();
 
 			if(table_relnn)
 			{
@@ -1975,7 +1995,7 @@ void Relationship::forceInvalidate(void)
 
 bool Relationship::isInvalidated(void)
 {
-	unsigned rel_cols_count, tab_cols_count, i, i1, count;
+	unsigned rel_cols_count, tab_cols_count, i, count;
 	Table *table=NULL, *table1=NULL;
 	Constraint *fk=NULL, *fk1=NULL, *constr=NULL, *pk=NULL;
 	bool valid=false;
@@ -1997,13 +2017,6 @@ bool Relationship::isInvalidated(void)
 	}
 	else if(connected)
 	{
-		/* Validates suffixes case automatic generation of suffixes is active.
-			Checks if the suffixes, when filled, coincide with the names of the respective tables */
-		if(auto_suffix &&
-			 ((!src_suffix.isEmpty() &&  src_suffix!=QString(SUFFIX_SEPARATOR) + src_table->getName()) ||
-				(!dst_suffix.isEmpty() &&  dst_suffix!=QString(SUFFIX_SEPARATOR) + dst_table->getName())))
-			return(true);
-
 		/* For relationships 1-1 and 1-n the verification for
 		 invalidation of the relationship is based on the comparison of
 		 amount of foreign key columns and the number of columns of
@@ -2038,16 +2051,14 @@ bool Relationship::isInvalidated(void)
 					col1=pk_columns[i];
 
 					/* This third columns is get from the table primary key and will be checked if the columns
-				addresses is the same. If not the relationship is invalidated */
+					addresses is the same. If not the relationship is invalidated */
 					col3=pk->getColumn(i, Constraint::SOURCE_COLS);
 
 					/* To validate the columns with each other the following rules are followed:
 
-				1) Check if the names are the same. If they are nothing is done.
-					 If they are different is necessary to check if there is already a column
-					 on receiver table with the same name of the current primary key column ,
-					 this indicates that the primary key column in the table had to be renamed
-					 because the receiver table already had a column of the same name.
+				1) Check if the there was some name modification. If the generated name differs from
+					 the name generated when the relationship was connected, then the relationship is
+					 invalidated.
 
 				2) Check if the types of the columns are compatible.
 					 The only accepted exception is if the type of the source column is 'serial' or 'bigserial'
@@ -2055,9 +2066,9 @@ bool Relationship::isInvalidated(void)
 
 				3) Check if the column (address) from the vector pk_columns is equal to the column
 					 obtained directly from the primary key */
-					col_name=col1->getName() + col_suffixes[i];
+					col_name=generateObjectName(SRC_COL_PATTERN, col1);
 					valid=(col1==col3 &&
-								 (col_name==col2->getName()) &&
+								 (col_name.contains(col1->getName())) &&
 								 (col1->getType()==col2->getType() ||
 									(col1->getType()=="serial" && col2->getType()=="integer") ||
 									(col1->getType()=="bigserial" && col2->getType()=="bigint")));
@@ -2115,11 +2126,9 @@ bool Relationship::isInvalidated(void)
 			if(table->getPrimaryKey() && table1->getPrimaryKey())
 			{
 				count=table_relnn->getConstraintCount();
-
 				for(i=0; i < count; i++)
 				{
 					constr=table_relnn->getConstraint(i);
-
 					if(constr->getConstraintType()==ConstraintType::foreign_key)
 					{
 						if(!fk && constr->getReferencedTable()==table)
@@ -2134,49 +2143,32 @@ bool Relationship::isInvalidated(void)
 				rel_cols_count=fk->getColumnCount(Constraint::REFERENCED_COLS) + fk1->getColumnCount(Constraint::REFERENCED_COLS);
 
 				/* The number of columns in the table is obtained by summing the amount
-			 of primary keys columns involved in the relationship */
+				of primary keys columns involved in the relationship */
 				tab_cols_count=table->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS) +
 											 table1->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS);
 
 				valid=(rel_cols_count == tab_cols_count);
 
 				/* Checking if the columns created with the connection still exists
-			 in reference table */
+				in reference table */
 				count=fk->getColumnCount(Constraint::SOURCE_COLS);
+				pk=table->getPrimaryKey();
 
 				for(i=0; i < count && valid; i++)
 				{
 					col_name=fk->getColumn(i, Constraint::SOURCE_COLS)->getName();
-
-					/* If the suffix of origin is specified removes it from the column name
-				so that it can be located in the table */
-					if(!col_suffixes[i].isEmpty())
-						col_name=col_name.remove(col_suffixes[i]);
-
-					//Check if the column exists in table
-					col1=table->getColumn(col_name);
-					valid=col1 &&
-								table->getPrimaryKey()->isColumnExists(col1, Constraint::SOURCE_COLS);
+					valid=(col_name==generateObjectName(SRC_COL_PATTERN, pk->getColumn(i, Constraint::SOURCE_COLS)));
 				}
 
 				/* Checking if the columns created with the connection still exists
-			 in receiver table */
-				i1=count;
-				count+=fk1->getColumnCount(Constraint::SOURCE_COLS);
+				in receiver table */
+				count=fk1->getColumnCount(Constraint::SOURCE_COLS);
+				pk=table1->getPrimaryKey();
 
-				for(i=0; i1 < count && valid; i1++)
+				for(i=0; i < count && valid; i++)
 				{
-					col_name=fk1->getColumn(i++, Constraint::SOURCE_COLS)->getName();
-
-					/* If the suffix of destination is specified removes it from the column name
-				so that it can be located in the table */
-					if(!col_suffixes[i1].isEmpty())
-						col_name=col_name.remove(col_suffixes[i1]);
-
-					//Check if the column exists in table
-					col1=table1->getColumn(col_name);
-					valid=col1 &&
-								table1->getPrimaryKey()->isColumnExists(col1, Constraint::SOURCE_COLS);
+					col_name=fk1->getColumn(i, Constraint::SOURCE_COLS)->getName();
+					valid=(col_name==generateObjectName(DST_COL_PATTERN, pk->getColumn(i, Constraint::SOURCE_COLS)));
 				}
 			}
 		}
@@ -2204,8 +2196,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			for(i=0; i < count; i++)
 			{
 				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::primary_key)
-					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-																											getCodeDefinition(def_type, false);
+					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
 
 			}
 
@@ -2240,15 +2231,19 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[ParsersAttributes::SRC_SUFFIX]=(!auto_suffix ? src_suffix : "");
-		attributes[ParsersAttributes::DST_SUFFIX]=(!auto_suffix ? dst_suffix : "");
 		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
 		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
-		attributes[ParsersAttributes::AUTO_SUFFIX]=(auto_suffix ? "1" : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
 		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
 		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
+
+		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
+		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
+		attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PK_PATTERN];
+		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UQ_PATTERN];
+		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
+		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
 
 		attributes[ParsersAttributes::COLUMNS]="";
 		count=rel_attributes.size();
@@ -2293,18 +2288,6 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 	}
 }
 
-void Relationship::setAutomaticSuffix(bool value)
-{
-	this->invalidated=(this->auto_suffix!=value);
-	this->auto_suffix=value;
-	this->src_suffix=this->dst_suffix="";
-}
-
-bool Relationship::isAutomaticSuffix(void)
-{
-	return(this->auto_suffix);
-}
-
 void Relationship::operator = (Relationship &rel)
 {
 	(*dynamic_cast<BaseRelationship *>(this))=dynamic_cast<BaseRelationship &>(rel);
@@ -2312,8 +2295,6 @@ void Relationship::operator = (Relationship &rel)
 	this->column_ids_pk_rel=rel.column_ids_pk_rel;
 	this->rel_attributes=rel.rel_attributes;
 	this->rel_constraints=rel.rel_constraints;
-	this->dst_suffix=rel.dst_suffix;
-	this->src_suffix=rel.src_suffix;
 	this->identifier=rel.identifier;
 	this->deferral_type=rel.deferral_type;
 	this->deferrable=rel.deferrable;
@@ -2321,7 +2302,7 @@ void Relationship::operator = (Relationship &rel)
 	this->table_relnn=NULL;
 	this->fk_rel1n=pk_relident=pk_special=NULL;
 	this->gen_columns.clear();
-	this->auto_suffix=rel.auto_suffix;
 	this->copy_options=rel.copy_options;
+	this->name_patterns=rel.name_patterns;
 }
 

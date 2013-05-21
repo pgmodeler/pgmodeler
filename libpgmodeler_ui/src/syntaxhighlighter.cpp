@@ -584,7 +584,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										regexp.setPattern(attribs[ParsersAttributes::VALUE]);
 
 										if(attribs[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
-											regexp.setPatternSyntax(QRegExp::RegExp);
+											regexp.setPatternSyntax(QRegExp::RegExp2);
+										else if(attribs[ParsersAttributes::WILDCARD]==ParsersAttributes::_TRUE_)
+											regexp.setPatternSyntax(QRegExp::Wildcard);
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);
 

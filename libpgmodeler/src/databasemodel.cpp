@@ -5213,7 +5213,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseRelationship *base_rel=NULL;
 	Relationship *rel=NULL;
 	BaseTable *tables[2]={NULL, NULL};
-	bool src_mand, dst_mand, identifier, protect, deferrable, auto_suffix;
+	bool src_mand, dst_mand, identifier, protect, deferrable;
 	DeferralType defer_type;
 	unsigned rel_type=0, i;
 	ObjectType table_types[2]={OBJ_VIEW, OBJ_TABLE}, obj_rel_type;
@@ -5304,8 +5304,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
 			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
 			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
-			auto_suffix=(!attribs[ParsersAttributes::AUTO_SUFFIX].isEmpty() &&
-									attribs[ParsersAttributes::AUTO_SUFFIX]==ParsersAttributes::_TRUE_);
 			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
@@ -5320,14 +5318,12 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel_type=BaseRelationship::RELATIONSHIP_DEP;
 
 			rel=new Relationship(rel_type,
-													 dynamic_cast<Table *>(tables[0]),
+					dynamic_cast<Table *>(tables[0]),
 					dynamic_cast<Table *>(tables[1]),
 					src_mand, dst_mand,
-					auto_suffix, attribs[ParsersAttributes::SRC_SUFFIX],
-					attribs[ParsersAttributes::DST_SUFFIX],
 					identifier, deferrable, defer_type,
 					CopyOptions(attribs[ParsersAttributes::COPY_MODE].toUInt(),
-											attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
+					attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
 
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
@@ -6065,28 +6061,26 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 {
-	QString str_aux;
 	QFile output(filename);
+	QByteArray buf;
 
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-	{
-		str_aux=QString(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(filename));
-		throw Exception(str_aux,ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(filename),
+										ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		str_aux=this->getCodeDefinition(def_type);
-		output.write(str_aux.toStdString().c_str(),str_aux.size());
+		buf.append(this->getCodeDefinition(def_type));
+		output.write(buf.data(),buf.size());
 		output.close();
 	}
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		str_aux=QString(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(filename));
-		throw Exception(str_aux,ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(filename),
+										ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

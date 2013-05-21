@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="view_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <property name="spacing">
@@ -30,7 +39,16 @@
        <string>References</string>
       </attribute>
       <layout class="QGridLayout" name="referencias_grid">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
         <number>4</number>
        </property>
        <property name="spacing">
@@ -274,6 +292,18 @@
        <string>Table Expression</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
        <item row="0" column="0">
         <widget class="QTextEdit" name="cte_expression_txt">
          <property name="sizePolicy">
@@ -291,7 +321,16 @@
        <string>Code Preview</string>
       </attribute>
       <layout class="QGridLayout" name="previsao_grid">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
         <number>4</number>
        </property>
        <property name="spacing">

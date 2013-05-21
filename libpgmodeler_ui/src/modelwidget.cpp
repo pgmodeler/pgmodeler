@@ -166,7 +166,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	viewport->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->centerOn(0,0);
 	this->applyZoom(1);
 
@@ -841,15 +841,13 @@ void ModelWidget::convertRelationshipNN(void)
 
 					//Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
 					rel1=new Relationship(Relationship::RELATIONSHIP_1N,
-																src_tab, tab, src_mand, false, true,
-																"", "", true);
+																src_tab, tab, src_mand, false, true);
 					db_model->addRelationship(rel1);
 					op_list->registerObject(rel1, Operation::OBJECT_CREATED);
 
 					//Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 					rel2=new Relationship(Relationship::RELATIONSHIP_1N,
-																dst_tab, tab, dst_mand, false, true,
-																"", "", true);
+																dst_tab, tab, dst_mand, false, true);
 					db_model->addRelationship(rel2);
 					op_list->registerObject(rel2, Operation::OBJECT_CREATED);
 					op_list->finishOperationChain();

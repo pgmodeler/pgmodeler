@@ -80,9 +80,6 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::SRC_SUFFIX]="";
-	attributes[ParsersAttributes::DST_SUFFIX]="";
-	attributes[ParsersAttributes::AUTO_SUFFIX]="";
 	attributes[ParsersAttributes::IDENTIFIER]="";
 	attributes[ParsersAttributes::REDUCED_FORM]="";
 	attributes[ParsersAttributes::DEFERRABLE]="";
@@ -99,6 +96,12 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::COPY_OPTIONS]="";
 	attributes[ParsersAttributes::COPY_MODE]="";
+	attributes[ParsersAttributes::SRC_COL_PATTERN]="";
+	attributes[ParsersAttributes::DST_COL_PATTERN]="";
+	attributes[ParsersAttributes::PK_PATTERN]="";
+	attributes[ParsersAttributes::UQ_PATTERN]="";
+	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
+	attributes[ParsersAttributes::DST_FK_PATTERN]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -330,8 +333,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		attributes[ParsersAttributes::X_POS]=QString("%1").arg(points[i].x());
 		attributes[ParsersAttributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																						 attributes, SchemaParser::XML_DEFINITION);
+		str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 	}
 	attributes[ParsersAttributes::POINTS]=str_aux;
 
@@ -342,11 +344,9 @@ void BaseRelationship::setRelationshipAttributes(void)
 		{
 			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																							attributes, SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 			attributes[ParsersAttributes::REF_TYPE]=label_attribs[i];
-			str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::LABEL,
-																							 attributes, SchemaParser::XML_DEFINITION);
+			str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
 		}
 	}
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;

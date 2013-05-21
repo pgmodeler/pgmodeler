@@ -207,8 +207,6 @@ namespace ParsersAttributes {
 	DST_REQUIRED="dst-required",
 	SRC_TABLE="src-table",
 	DST_TABLE="dst-table",
-	SRC_SUFFIX="src-sufix",
-	DST_SUFFIX="dst-sufix",
 	IDENTIFIER="identifier",
 	POINTS="points",
 	LINE="line",
@@ -246,6 +244,7 @@ namespace ParsersAttributes {
 	INITIAL_EXP="initial-exp",
 	VALUE="value",
 	REGULAR_EXP="regexp",
+	WILDCARD="wildcard",
 	WORD_SEPARATORS="word-separators",
 	WORD_DELIMITERS="word-delimiters",
 	IGNORED_CHARS="ignored-chars",
@@ -335,7 +334,6 @@ namespace ParsersAttributes {
 	VISIBLE="visible",
 	POSITION_INFO="pos-info",
 	CONNECTIONS="connections",
-	AUTO_SUFFIX="auto-sufix",
 	VARIATION="variation",
 	SPATIAL_TYPE="spatial-type",
 	COLS_COMMENT="cols-comment",
@@ -367,7 +365,13 @@ namespace ParsersAttributes {
 	RECENT_MODELS="recent-models",
 	RECENT="recent",
 	HIDE_REL_NAME="hide-rel-name",
-	HIDE_EXT_ATTRIBS="hide-ext-attribs";
+	HIDE_EXT_ATTRIBS="hide-ext-attribs",
+	SRC_COL_PATTERN="src-col-pattern",
+	DST_COL_PATTERN="dst-col-pattern",
+	PK_PATTERN="pk-pattern",
+	UQ_PATTERN="uq-pattern",
+	SRC_FK_PATTERN="src-fk-pattern",
+	DST_FK_PATTERN="dst-fk-pattern";
 }
 
 #endif
