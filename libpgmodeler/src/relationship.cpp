@@ -848,6 +848,7 @@ void Relationship::addColumnsRelGen(void)
 
 			if(dst_type=="serial") dst_type="integer";
 			else if(dst_type=="bigserial") dst_type="bigint";
+			else if(dst_type=="smallserial") dst_type="smallint";
 
 			/* This flag indicates that the column name is registered
 			in the other table column (duplication). This situation need
@@ -863,6 +864,7 @@ void Relationship::addColumnsRelGen(void)
 
 				if(src_type=="serial") src_type="integer";
 				else if(src_type=="bigserial") src_type="bigint";
+				else if(dst_type=="smallserial") dst_type="smallint";
 
 				//Check the duplication on the column names
 				duplic=(src_col->getName()==dst_col->getName());
@@ -970,6 +972,8 @@ void Relationship::addColumnsRelGen(void)
 						column->setType(PgSQLType("integer"));
 					else if(column->getType()=="bigserial")
 						column->setType(PgSQLType("bigint"));
+					else if(column->getType()=="smallserial")
+						column->setType(PgSQLType("smallint"));
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
@@ -1469,6 +1473,8 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 				column->setType(PgSQLType("integer"));
 			else if(column->getType()=="bigserial")
 				column->setType(PgSQLType("bigint"));
+			else if(column->getType()=="smallserial")
+				column->setType(PgSQLType("smallint"));
 
 			//Resolves any duplication of the column name on the receiver table
 			while(recv_tab->getColumn(name + aux))
@@ -2126,7 +2132,8 @@ bool Relationship::isInvalidated(void)
 								 (col2->getName().contains(col1->getName())) &&
 								 (col1->getType()==col2->getType() ||
 									(col1->getType()=="serial" && col2->getType()=="integer") ||
-									(col1->getType()=="bigserial" && col2->getType()=="bigint")));
+									(col1->getType()=="bigserial" && col2->getType()=="bigint") ||
+									(col1->getType()=="smallserial" && col2->getType()=="smallint")));
 				}
 			}
 		}
