@@ -14,9 +14,7 @@ QT += core gui uitools
 TEMPLATE = lib
 TARGET = xml2object
 OTHER_FILES += xml2object.json
-
 CODECFORTR = UTF8
-
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -38,9 +36,9 @@ SOURCES += src/xml2object.cpp \
 
 FORMS += ui/xml2objectwidget.ui
 
-xml2object.files = res/xml2object.png lang xml2object.json
-unix:xml2object.files += build/libxml2object.so
-macx:xml2object.files += build/libxml2object.dylib
-windows:xml2object.files += build/xml2object.dll build/libxml2object.a
+unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+
+xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
+windows:xml2object.files += build/$$LIB_PREFIX$$TARGET.a
 xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += xml2object

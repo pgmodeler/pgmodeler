@@ -15,9 +15,7 @@ TEMPLATE = lib
 TARGET = dummy
 TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
 OTHER_FILES += dummy.json
-
 CODECFORTR = UTF8
-
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -34,9 +32,9 @@ LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
 HEADERS += src/dummy.h
 SOURCES += src/dummy.cpp
 
-dummy.files = res/dummy.png lang dummy.json
-unix:dummy.files += build/libdummy.so
-macx:dummy.files += build/libdummy.dylib
-windows:dummy.files += build/dummy.dll build/libdummy.a
+unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+
+dummy.files += res/dummy.png lang dummy.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
+windows:dummy.files += build/$$LIB_PREFIX$$TARGET.a
 dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += dummy

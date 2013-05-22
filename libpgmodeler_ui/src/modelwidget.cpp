@@ -1326,11 +1326,11 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			case OBJ_CONSTRAINT:
 				Constraint *constr;
 				constr=dynamic_cast<Constraint *>(object);
-				constraint_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, constr);
+				constraint_wgt->setAttributes(db_model, parent_obj, op_list, constr);
 				constraint_wgt->show();
 				res=(constraint_wgt->result()==QDialog::Accepted);
 
-				if(constr)
+				if(constr && parent_obj->getObjectType()==OBJ_TABLE)
 					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
 				else
 					db_model->validateRelationships();
