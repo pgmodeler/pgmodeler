@@ -479,7 +479,7 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->isColumnReferenced(column))
+			if(constr->isColumnReferenced(column, constr_type==ConstraintType::foreign_key))
 			{
 				constr_type=constr->getConstraintType();
 

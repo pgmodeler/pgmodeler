@@ -103,7 +103,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return(found);
 }
 
-bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
+bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 {
 	bool found=false;
 	vector<ExcludeElement>::iterator itr, itr_end;
@@ -112,9 +112,10 @@ bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
 		 constr_type == ConstraintType::unique ||
 		 constr_type == ConstraintType::foreign_key)
 	{
-		found=isColumnExists(column, SOURCE_COLS);
+		if(!search_only_ref_cols)
+		 found=isColumnExists(column, SOURCE_COLS);
 
-		if(constr_type == ConstraintType::foreign_key && !found && search_ref_cols)
+		if(constr_type == ConstraintType::foreign_key)
 			found=isColumnExists(column, REFERENCED_COLS);
 	}
 	else if(constr_type==ConstraintType::exclude)

@@ -6612,7 +6612,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
 				{
 					constr=tab->getConstraint(i);
+					//If a constraint references its own parent table it'll not be included on the references list
 					if(constr->getConstraintType()==ConstraintType::foreign_key &&
+						 constr->getParentTable()!=constr->getReferencedTable() &&
 						 constr->getReferencedTable()==table)
 					{
 						refer=true;

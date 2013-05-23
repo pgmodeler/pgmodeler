@@ -202,8 +202,8 @@ class Constraint: public TableObject{
 		bool isColumnExists(Column *column, unsigned col_type);
 
 		/*! \brief Indicates whether the column is referenced in internal column list or exclude element list.
-		The second parameter is useful to permit or not the search of column on referenced columns list. */
-		bool isColumnReferenced(Column *column, bool search_ref_cols = true);
+		The second parameter is useful to permit or not the search of column only on referenced columns list. */
+		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
