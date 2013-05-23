@@ -9,7 +9,7 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-CONFIG += plugin qt warn_on uic4
+CONFIG += plugin qt uic4
 QT += core gui uitools
 TEMPLATE = lib
 TARGET = dummy

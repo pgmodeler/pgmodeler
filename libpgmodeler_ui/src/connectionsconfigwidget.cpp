@@ -59,7 +59,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 {
 	vector<QString> key_attribs;
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
-	DBConnection *conn=NULL;
+	DBConnection *conn=nullptr;
 
 	//Destroy all the loaded connections
 	while(connections_cmb->count() > 0)
@@ -157,7 +157,7 @@ void ConnectionsConfigWidget::newConnection(void)
 
 void ConnectionsConfigWidget::handleConnection(void)
 {
-	DBConnection *conn=NULL;
+	DBConnection *conn=nullptr;
 	QString alias;
 
 	try
@@ -194,7 +194,7 @@ void ConnectionsConfigWidget::removeConnection(void)
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
-		DBConnection *conexao=NULL;
+		DBConnection *conexao=nullptr;
 
 		conexao=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		connections_cmb->removeItem(connections_cmb->currentIndex());
@@ -207,7 +207,7 @@ void ConnectionsConfigWidget::editConnection(void)
 {
 	if(connections_cmb->count() > 0)
 	{
-		DBConnection *conn=NULL;
+		DBConnection *conn=nullptr;
 
 		conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
@@ -350,7 +350,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	try
 	{
 		int i, count;
-		DBConnection *conn=NULL;
+		DBConnection *conn=nullptr;
 		map<QString, QString> attribs;
 
 		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();

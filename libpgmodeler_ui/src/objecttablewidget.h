@@ -42,14 +42,14 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		const static unsigned ADD_BUTTON=1,
-													REMOVE_BUTTON=2,
-													UPDATE_BUTTON=4,
-													MOVE_BUTTONS=8,
-													EDIT_BUTTON=16,
-													REMOVE_ALL_BUTTON=32,
-													ALL_BUTTONS=63,
-													NO_BUTTONS=0;
+		static constexpr unsigned ADD_BUTTON=1,
+															REMOVE_BUTTON=2,
+															UPDATE_BUTTON=4,
+															MOVE_BUTTONS=8,
+															EDIT_BUTTON=16,
+															REMOVE_ALL_BUTTON=32,
+															ALL_BUTTONS=63,
+															NO_BUTTONS=0;
 
 		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
 											bool conf_exclusion=false, QWidget * parent = 0);

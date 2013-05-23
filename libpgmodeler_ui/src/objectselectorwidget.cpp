@@ -18,7 +18,7 @@
 
 #include "objectselectorwidget.h"
 
-QObject *ObjectSelectorWidget::current_selector=NULL;
+QObject *ObjectSelectorWidget::current_selector=nullptr;
 
 ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget *parent): QWidget(parent)
 {
@@ -28,9 +28,9 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 
 		obj_view_wgt=new ModelObjectsWidget(true);
 
-		model=NULL;
-		selected_obj=NULL;
-		obj_name_hl=NULL;
+		model=nullptr;
+		selected_obj=nullptr;
+		obj_name_hl=nullptr;
 
 		this->sel_obj_type=sel_obj_type;
 
@@ -112,7 +112,7 @@ void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 
 void ObjectSelectorWidget::clearSelector(void)
 {
-	this->selected_obj=NULL;
+	this->selected_obj=nullptr;
 	obj_name_txt->clear();
 	rem_object_tb->setEnabled(false);
 	emit s_selectorCleared();

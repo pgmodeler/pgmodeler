@@ -57,13 +57,13 @@ class TableObjectView: public BaseObjectView
 													TYPE_SEPARATOR,
 													CONSTR_SEPARATOR,
 													TXT_FOREIGN_KEY,
-													TXT_NOT_NULL,
+													TXT_NOT_nullptr,
 													TXT_PRIMARY_KEY,
 													TXT_UNIQUE,
 													TXT_CHECK,
 													TXT_EXCLUDE;
 
-		TableObjectView(TableObject *object=NULL);
+		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);
 
 		//! \brief Configures the object as a view reference

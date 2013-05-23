@@ -92,7 +92,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 	if(col_count > 0)
 	{
 		unsigned i;
-		QTableWidgetItem *item=NULL;
+		QTableWidgetItem *item=nullptr;
 
 		i=table_tbw->columnCount();
 		table_tbw->setColumnCount(col_count);
@@ -107,7 +107,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 
 void ObjectTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -118,7 +118,7 @@ void ObjectTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 
 void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -129,7 +129,7 @@ void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 
 void ObjectTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -143,7 +143,7 @@ void ObjectTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigne
 
 void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -169,7 +169,7 @@ void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 
 void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 	int col_count, i;
 
 	if(row_idx >= table_tbw->rowCount())
@@ -187,7 +187,7 @@ void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor 
 
 void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -209,7 +209,7 @@ unsigned ObjectTableWidget::getRowCount(void)
 
 QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -220,7 +220,7 @@ QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
 
 QString ObjectTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -234,7 +234,7 @@ QString ObjectTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 
 QVariant ObjectTableWidget::getRowData(unsigned row_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -251,7 +251,7 @@ int ObjectTableWidget::getSelectedRow(void)
 int ObjectTableWidget::getRowIndex(const QVariant &data)
 {
 	unsigned i, count;
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 	bool found=false;
 
 	count=table_tbw->rowCount();
@@ -284,7 +284,7 @@ void ObjectTableWidget::addColumn(unsigned col_idx)
 
 void ObjectTableWidget::selectRow(int lin_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 
 	item=table_tbw->item(0,lin_idx);
 
@@ -299,7 +299,7 @@ void ObjectTableWidget::selectRow(int lin_idx)
 
 void ObjectTableWidget::addRow(unsigned lin_idx)
 {
-	QTableWidgetItem *item=NULL;
+	QTableWidgetItem *item=nullptr;
 	unsigned i, col_cont=table_tbw->columnCount();
 
 	table_tbw->insertRow(lin_idx);
@@ -369,7 +369,7 @@ void ObjectTableWidget::removeRow(void)
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
 				table_tbw->removeRow(row_idx);
-				table_tbw->setCurrentItem(NULL);
+				table_tbw->setCurrentItem(nullptr);
 				setButtonsEnabled();
 
 				emit s_rowRemoved(row_idx);
@@ -419,7 +419,7 @@ void ObjectTableWidget::removeColumn(unsigned col_idx)
 void ObjectTableWidget::moveRows(void)
 {
 	QObject *sender_obj=sender();
-	QTableWidgetItem *item=NULL, *item1=NULL;
+	QTableWidgetItem *item=nullptr, *item1=nullptr;
 	int row=-1, row1=-1;
 	unsigned col, col_count=table_tbw->columnCount();
 	QVariant aux_data;
@@ -513,7 +513,7 @@ void ObjectTableWidget::updateRow(void)
 void ObjectTableWidget::clearSelection(void)
 {
 	table_tbw->clearSelection();
-	table_tbw->setCurrentItem(NULL);
+	table_tbw->setCurrentItem(nullptr);
 	setButtonsEnabled();
 }
 

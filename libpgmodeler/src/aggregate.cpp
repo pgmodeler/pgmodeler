@@ -21,8 +21,8 @@
 Aggregate::Aggregate(void)
 {
 	obj_type=OBJ_AGGREGATE;
-	functions[0]=functions[1]=NULL;
-	sort_operator=NULL;
+	functions[0]=functions[1]=nullptr;
+	sort_operator=nullptr;
 	attributes[ParsersAttributes::TYPES]="";
 	attributes[ParsersAttributes::TRANSITION_FUNC]="";
 	attributes[ParsersAttributes::STATE_TYPE]="";
@@ -96,7 +96,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 {
 	if(sort_op)
 	{
-		Function *func=NULL;
+		Function *func=nullptr;
 
 		/* Accordingly to the documentation, a sort operator only can be assigned
 		 to the aggregate when:

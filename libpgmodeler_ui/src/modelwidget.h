@@ -139,9 +139,9 @@ class ModelWidget: public QWidget {
 						tmp_filename;
 
 	protected:
-		static const float	MINIMUM_ZOOM=0.35f,
-												MAXIMUM_ZOOM=4.0f,
-												ZOOM_INCREMENT=0.05f;
+		static constexpr float MINIMUM_ZOOM=0.35f,
+													 MAXIMUM_ZOOM=4.0f,
+													 ZOOM_INCREMENT=0.05f;
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -182,7 +182,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=NULL, BaseObject *parent_obj=NULL, QPointF pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, QPointF pos=QPointF(NAN, NAN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(float zoom);

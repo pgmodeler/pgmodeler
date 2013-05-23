@@ -50,7 +50,7 @@ void TablespaceWidget::applyConfiguration(void)
 {
 	try
 	{
-		Tablespace *tablespc=NULL;
+		Tablespace *tablespc=nullptr;
 
 		startConfiguration<Tablespace>();
 

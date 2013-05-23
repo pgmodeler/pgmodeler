@@ -157,7 +157,7 @@ void Role::setRoleAttribute(unsigned role_type)
 {
 	QString str_roles, attrib;
 	unsigned i, count;
-	vector<Role *>  *roles_vect=NULL;
+	vector<Role *>  *roles_vect=nullptr;
 
 	switch(role_type)
 	{
@@ -188,7 +188,7 @@ void Role::setRoleAttribute(unsigned role_type)
 
 void Role::removeRole(unsigned role_type, unsigned role_idx)
 {
-	vector<Role *> *list=NULL;
+	vector<Role *> *list=nullptr;
 	vector<Role *>::iterator itr;
 
 	switch(role_type)
@@ -211,7 +211,7 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 
 void Role::removeRoles(unsigned role_type)
 {
-	vector<Role *> *list=NULL;
+	vector<Role *> *list=nullptr;
 
 	switch(role_type)
 	{
@@ -229,7 +229,7 @@ void Role::removeRoles(unsigned role_type)
 
 bool Role::isRoleExists(unsigned role_type, Role *role)
 {
-	vector<Role *> *list=NULL;
+	vector<Role *> *list=nullptr;
 	vector<Role *>::iterator itr, itr_end;
 	bool found=false;
 
@@ -265,7 +265,7 @@ bool Role::getOption(unsigned op_type)
 
 Role *Role::getRole(unsigned role_type, unsigned role_idx)
 {
-	vector<Role *> *list=NULL;
+	vector<Role *> *list=nullptr;
 
 	switch(role_type)
 	{
@@ -287,7 +287,7 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 
 unsigned Role::getRoleCount(unsigned role_type)
 {
-	vector<Role *> *list=NULL;
+	vector<Role *> *list=nullptr;
 
 	switch(role_type)
 	{

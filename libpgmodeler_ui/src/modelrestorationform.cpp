@@ -36,7 +36,7 @@ int ModelRestorationForm::exec(void)
 {
 	QStringList file_list=this->getTemporaryModels();
 	QFileInfo info;
-	QListWidgetItem *item=NULL;
+	QListWidgetItem *item=nullptr;
 
 	while(!file_list.isEmpty())
 	{

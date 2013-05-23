@@ -32,8 +32,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		Ui_RelationshipWidget::setupUi(this);
 
 		QStringList list;
-		QGridLayout *grid=NULL;
-		QFrame *frame=NULL;
+		QGridLayout *grid=nullptr;
+		QFrame *frame=nullptr;
 		QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																	src_fk_pattern_txt, dst_fk_pattern_txt,
 																	pk_pattern_txt, uq_pattern_txt };
@@ -200,7 +200,7 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
 {
-	Relationship *rel=NULL;
+	Relationship *rel=nullptr;
 
 	try
 	{
@@ -222,12 +222,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	static QWidget *tabs[]={ NULL, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
+	static QWidget *tabs[]={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
 														rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
 	static QString tab_lables[]={ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
 																rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 	unsigned rel_type, i;
-	Relationship *aux_rel=NULL;
+	Relationship *aux_rel=nullptr;
 	bool rel1n, relnn, relgen_dep;
 
 	if(!base_rel)
@@ -272,7 +272,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		vector<Column *> cols;
 		vector<unsigned> col_ids;
 		int count, i;
-		QListWidgetItem *item=NULL;
+		QListWidgetItem *item=nullptr;
 
 		pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
 		src_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_FK_PATTERN)));
@@ -416,8 +416,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=NULL;
-	Relationship *rel=NULL;
+	ObjectTableWidget *tab=nullptr;
+	Relationship *rel=nullptr;
 	unsigned count, i;
 
 	try
@@ -452,9 +452,9 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 
 void RelationshipWidget::listAdvancedObjects(void)
 {
-	BaseRelationship *base_rel=NULL;
-	Relationship *rel=NULL;
-	Table *tab=NULL;
+	BaseRelationship *base_rel=nullptr;
+	Relationship *rel=nullptr;
+	Table *tab=nullptr;
 	vector<Column *> cols;
 	vector<Constraint *> constrs;
 	unsigned count=0, i,i1;
@@ -534,9 +534,9 @@ void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
 	bool prot=true;
-	Table *tab=NULL;
-	Constraint *constr=NULL;
-	Column *col=NULL;
+	Table *tab=nullptr;
+	Constraint *constr=nullptr;
+	Column *col=nullptr;
 
 	switch(object->getObjectType())
 	{
@@ -592,12 +592,12 @@ void RelationshipWidget::addObject(void)
 
 		if(obj_type==OBJ_COLUMN)
 		{
-			column_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
+			column_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
 			column_wgt->show();
 		}
 		else
 		{
-			constraint_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
+			constraint_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
 			constraint_wgt->show();
 		}
 
@@ -647,7 +647,7 @@ void RelationshipWidget::editObject(int row)
 
 void RelationshipWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=NULL;
+	ObjectTableWidget *tab=nullptr;
 
 	if(object->getObjectType()==OBJ_COLUMN)
 	{
@@ -666,10 +666,10 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 
 void RelationshipWidget::removeObjects(void)
 {
-	Relationship *rel=NULL;
+	Relationship *rel=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
 	unsigned count, op_count=0, i;
-	TableObject *object=NULL;
+	TableObject *object=nullptr;
 
 	try
 	{
@@ -719,9 +719,9 @@ void RelationshipWidget::removeObjects(void)
 
 void RelationshipWidget::removeObject(int row)
 {
-	Relationship *rel=NULL;
+	Relationship *rel=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
-	TableObject *object=NULL;
+	TableObject *object=nullptr;
 
 	try
 	{
@@ -770,7 +770,7 @@ void RelationshipWidget::applyConfiguration(void)
 {
 	try
 	{
-		Relationship *rel=NULL;
+		Relationship *rel=nullptr;
 		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
 		vector<unsigned> col_ids;
 

@@ -69,11 +69,11 @@ BaseObject::BaseObject(void)
 	object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	obj_type=BASE_OBJECT;
-	schema=NULL;
-	owner=NULL;
-	tablespace=NULL;
-	database=NULL;
-	collation=NULL;
+	schema=nullptr;
+	owner=nullptr;
+	tablespace=nullptr;
+	database=nullptr;
+	collation=nullptr;
 	attributes[ParsersAttributes::NAME]="";
 	attributes[ParsersAttributes::COMMENT]="";
 	attributes[ParsersAttributes::OWNER]="";

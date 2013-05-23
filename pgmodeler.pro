@@ -72,7 +72,7 @@ macx | windows {
 ###########################
 # Main variables settings #
 ###########################
-CONFIG += ordered qt stl rtti exceptions warn_on
+CONFIG += ordered qt stl rtti exceptions warn_on c++11
 
 #Avoiding the generation of app bundle on MacOSX
 macx:CONFIG -= app_bundle

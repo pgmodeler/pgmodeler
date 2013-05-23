@@ -137,7 +137,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void loadModel(void);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
-		void saveModel(ModelWidget *model=NULL);
+		void saveModel(ModelWidget *model=nullptr);
 
 		//! \brief Save all loaded models
 		void saveAllModels(void);

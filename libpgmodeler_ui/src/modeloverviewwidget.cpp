@@ -22,7 +22,7 @@
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
 	setupUi(this);
-	this->model=NULL;
+	this->model=nullptr;
 	zoom_factor=1;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
@@ -31,9 +31,9 @@ void ModelOverviewWidget::show(ModelWidget *model)
 {
 	if(this->model)
 	{
-		disconnect(this->model, NULL, this, NULL);
-		disconnect(this->model->viewport, NULL,  this, NULL);
-		disconnect(this->model->scene, NULL,  this, NULL);
+		disconnect(this->model, nullptr, this, nullptr);
+		disconnect(this->model->viewport, nullptr,  this, nullptr);
+		disconnect(this->model->scene, nullptr,  this, nullptr);
 	}
 
 	this->model=model;

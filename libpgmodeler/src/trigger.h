@@ -165,7 +165,7 @@ class Trigger: public TableObject{
 		bool isReferRelationshipAddedColumn(void);
 
 		//! \brief Returns the SQL / XML definition for the trigger
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		/*! \brief Validates the trigger attributes according to the docs.
 		This method is executed whenever the trigger is added to a table or view.

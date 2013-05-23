@@ -97,7 +97,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 		/*! \brief Merges the specified grid layout with the 'baseobject_grid' creating a single form.
 			The obj_type parameter must be specified to show the object type icon */
-		void configureFormLayout(QGridLayout *grid=NULL, ObjectType obj_type=BASE_OBJECT);
+		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=BASE_OBJECT);
 
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */
@@ -118,22 +118,22 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
 
-		virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
-															 BaseObject *object, BaseObject *parent_obj=NULL,
+		void setAttributes(DatabaseModel *model, OperationList *op_list,
+															 BaseObject *object, BaseObject *parent_obj=nullptr,
 															 float obj_px=NAN, float obj_py=NAN, bool uses_op_list=true);
 
 		/*! \brief This method is a simplification of the original setAttributes. This method must be used
 		only on forms that does not make use of operaton list and not treat graphical objects, since it calls
-		this original one whit the op_list=NULL and obj_px=NAN, obj_py=NAN */
-		virtual void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
+		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
+	 void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
 		void setRequiredField(QWidget *widget);
 
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static const unsigned UNTIL_VERSION=0,
-		VERSIONS_INTERVAL=1,
-		AFTER_VERSION=2;
+		static constexpr unsigned UNTIL_VERSION=0,
+															VERSIONS_INTERVAL=1,
+															AFTER_VERSION=2;
 
 		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
 
@@ -146,7 +146,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
 			the values are the reference to the widget. The second map is used to specify the values
 			of widgets specific for each version. */
-		static QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
+		static QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
 
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
@@ -170,7 +170,7 @@ void BaseObjectWidget::startConfiguration(void)
 {
 	try
 	{
-		Class *new_tmpl_obj=NULL;
+		Class *new_tmpl_obj=nullptr;
 
 		//! \brief If the object is already allocated
 		if(this->object && op_list &&

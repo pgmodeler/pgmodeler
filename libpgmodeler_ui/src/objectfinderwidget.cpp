@@ -33,7 +33,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-	this->setModel(NULL);
+	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
 }
 
@@ -65,7 +65,7 @@ void ObjectFinderWidget::showEvent(QShowEvent *)
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 {
-	bool enable=model_wgt!=NULL;
+	bool enable=model_wgt!=nullptr;
 
 	clearResult();
 	this->model_wgt=model_wgt;
@@ -80,7 +80,7 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 
 void ObjectFinderWidget::clearResult(void)
 {
-	selected_obj=NULL;
+	selected_obj=nullptr;
 
 	while(result_tbw->rowCount() > 0)
 		result_tbw->removeRow(0);
@@ -177,8 +177,8 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
 		unsigned lin_idx, i;
-		QTableWidgetItem *tab_item=NULL;
-		BaseObject *parent_obj=NULL;
+		QTableWidgetItem *tab_item=nullptr;
+		BaseObject *parent_obj=nullptr;
 		QFont fnt;
 		QString str_aux;
 
@@ -276,7 +276,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 {
 	vector<ObjectType> types=BaseObject::getObjectTypes();
-	QListWidgetItem *item=NULL;
+	QListWidgetItem *item=nullptr;
 	QPixmap icon;
 	QString str_aux;
 

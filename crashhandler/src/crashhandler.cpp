@@ -79,7 +79,7 @@ void CrashHandler::loadReport(const QString &filename)
 {
 	QFile input;
 	QFileInfo fi;
-	char *buf=NULL;
+	char *buf=nullptr;
 	Messagebox msgbox;
 
 	fi.setFile(filename);
@@ -114,7 +114,7 @@ void CrashHandler::loadReport(const QString &filename)
 		uncomp_buf=qUncompress(uncomp_buf);
 
 		delete[](buf);
-		buf=NULL;
+		buf=nullptr;
 
 		buf_aux=QString(uncomp_buf.data());
 		i=idx=0;

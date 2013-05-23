@@ -37,7 +37,7 @@ void ExtensionWidget::applyConfiguration(void)
 {
 	try
 	{
-		Extension *extension=NULL;
+		Extension *extension=nullptr;
 
 		startConfiguration<Extension>();
 		extension=dynamic_cast<Extension *>(this->object);

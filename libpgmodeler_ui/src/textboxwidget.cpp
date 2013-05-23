@@ -57,7 +57,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
 	}
 
-	BaseObjectWidget::setAttributes(model, op_list, txtbox, NULL, obj_px, obj_py);
+	BaseObjectWidget::setAttributes(model, op_list, txtbox, nullptr, obj_px, obj_py);
 }
 
 void TextboxWidget::selectTextColor(void)
@@ -80,7 +80,7 @@ void TextboxWidget::applyConfiguration(void)
 {
 	try
 	{
-		Textbox *txtbox=NULL;
+		Textbox *txtbox=nullptr;
 
 		startConfiguration<Textbox>();
 

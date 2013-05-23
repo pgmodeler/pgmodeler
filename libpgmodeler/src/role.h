@@ -59,16 +59,16 @@ class Role: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the available options for the role
-		static const unsigned OP_SUPERUSER=0,
-													OP_CREATEDB=1,
-													OP_CREATEROLE=2,
-													OP_INHERIT=3,
-													OP_LOGIN=4,
-													OP_ENCRYPTED=5,
-													OP_REPLICATION=6;
+		static constexpr unsigned OP_SUPERUSER=0,
+															OP_CREATEDB=1,
+															OP_CREATEROLE=2,
+															OP_INHERIT=3,
+															OP_LOGIN=4,
+															OP_ENCRYPTED=5,
+															OP_REPLICATION=6;
 
 		//! \brief Constants used to reference the internal role lists of the class
-		static const unsigned REF_ROLE=10,
+		static constexpr unsigned REF_ROLE=10,
 													MEMBER_ROLE=20,
 													ADMIN_ROLE=30;
 
@@ -118,7 +118,7 @@ class Role: public BaseObject {
 		QString getPassword(void);
 
 		//! \brief Returns the SQL / XML definition for the role
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

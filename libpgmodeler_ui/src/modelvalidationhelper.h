@@ -51,7 +51,7 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void validateModel(DatabaseModel *model, DBConnection *conn=NULL, const QString &pgsql_ver="");
+		void validateModel(DatabaseModel *model, DBConnection *conn=nullptr, const QString &pgsql_ver="");
 
 		//! \brief Returns the error count (only when executing SQL validation)
 		unsigned getErrorCount(void);

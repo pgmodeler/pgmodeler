@@ -23,7 +23,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	try
 	{
 		QStringList list;
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
 
@@ -115,7 +115,7 @@ void IndexWidget::applyConfiguration(void)
 {
 	try
 	{
-		Index *index=NULL;
+		Index *index=nullptr;
 		vector<IndexElement> idx_elems;
 
 		startConfiguration<Index>();

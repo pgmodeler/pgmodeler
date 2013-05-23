@@ -106,20 +106,20 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static const unsigned BASE_TYPE=10,
-		ENUMERATION_TYPE=11,
-		COMPOSITE_TYPE=12,
-		RANGE_TYPE=13;
+		static constexpr unsigned BASE_TYPE=10,
+															ENUMERATION_TYPE=11,
+															COMPOSITE_TYPE=12,
+															RANGE_TYPE=13;
 
-		static const unsigned INPUT_FUNC=0,
-		OUTPUT_FUNC=1,
-		RECV_FUNC=2,
-		SEND_FUNC=3,
-		TPMOD_IN_FUNC=4,
-		TPMOD_OUT_FUNC=5,
-		ANALYZE_FUNC=6,
-		CANONICAL_FUNC=7,
-		SUBTYPE_DIFF_FUNC=8;
+		static constexpr unsigned INPUT_FUNC=0,
+															OUTPUT_FUNC=1,
+															RECV_FUNC=2,
+															SEND_FUNC=3,
+															TPMOD_IN_FUNC=4,
+															TPMOD_OUT_FUNC=5,
+															ANALYZE_FUNC=6,
+															CANONICAL_FUNC=7,
+															SUBTYPE_DIFF_FUNC=8;
 
 		Type(void);
 		~Type(void);
@@ -218,10 +218,10 @@ class Type: public BaseObject {
 		/*! \brief Returns the SQL / XML definition for the type. If the boolean
 		 parameter is set the code definition is generated in a
 		 reduced form (XML only) */
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
 		//! \brief Returns the SQL / XML definition for the type
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);

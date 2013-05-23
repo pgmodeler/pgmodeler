@@ -50,7 +50,7 @@ void Xml2ObjectWidget::loadXML(void)
 void Xml2ObjectWidget::show(DatabaseModel *model, OperationList *op_list)
 {
 	clearSource();
-	this->setEnabled(model!=NULL && op_list!=NULL);
+	this->setEnabled(model!=nullptr && op_list!=nullptr);
 	this->op_list=op_list;
 	this->model=model;
 	QDialog::show();
@@ -60,7 +60,7 @@ void Xml2ObjectWidget::generateObject(void)
 {
 	try
 	{
-		BaseObject *object=NULL;
+		BaseObject *object=nullptr;
 		ObjectType obj_type;
 		QString elem_name;
 

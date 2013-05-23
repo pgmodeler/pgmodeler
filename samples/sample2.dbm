@@ -1021,7 +1021,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_A1_has_one_table_A2"
 	 type="rel11"
 	 src-required="false" dst-required="true"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"/>
@@ -1029,7 +1029,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <!--<relationship name="table_A4_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_2"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A4&quot;"/>-->
@@ -1037,7 +1037,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <!--<relationship name="table_A3_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_2a"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A3&quot;">
@@ -1050,7 +1050,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <!--<relationship name="table_B2_copies_table_A1"
 	 type="reldep"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_2b"
 	 src-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;">
@@ -1064,7 +1064,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_B2_has_one_table_B2"
 	 type="rel11"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_3"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;">
@@ -1078,7 +1078,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_A3_has_many_table_A2"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_4"
 	 src-table="&quot;schema_A&quot;.&quot;table_A3&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;">
@@ -1091,7 +1091,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_C1_has_many_table_C2"
 	 type="rel1n"
 	 src-required="true" dst-required="false"
-	 auto-sufix="true"
+	 
 	 identifier="true"
 	 table-name="relacao_teste_5"
 	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
@@ -1100,7 +1100,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_C2_has_many_table_C4"
 	 type="rel1n"
 	 src-required="true" dst-required="false"
-	 auto-sufix="true"
+	 
 	 identifier="true"
 	 table-name="relacao_teste_6"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
@@ -1127,7 +1127,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_A2_has_many_tabela_B_4c"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_7"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
@@ -1149,7 +1149,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="tabela_B_4c_has_many_tabela_B_4a"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_9"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
 	 src-table="public.&quot;tabela_B_4c&quot;"
@@ -1158,7 +1158,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="many_table_B1_has_many_table_B3"
 	 type="relnn"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="&quot;tabela_REL_NN&quot;"
 	 src-table="&quot;schema_B&quot;.&quot;table_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"/>
@@ -1166,7 +1166,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_C3_has_many_table_C2"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_11"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
 	 src-table="&quot;schema_C&quot;.&quot;table_C3&quot;"
@@ -1182,7 +1182,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="table_C4_has_many_table_C3"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
-	 auto-sufix="true"
+	 
 	 table-name="relacao_teste_8"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
 	 src-table="&quot;schema_C&quot;.&quot;table_C4&quot;"

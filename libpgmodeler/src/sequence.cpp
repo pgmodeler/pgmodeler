@@ -28,7 +28,7 @@ Sequence::Sequence(void)
 	increment=start=cache="1";
 	min_value="0";
 	max_value=MAX_POSITIVE_VALUE;
-	owner_col=NULL;
+	owner_col=nullptr;
 
 	attributes[ParsersAttributes::INCREMENT]="";
 	attributes[ParsersAttributes::MIN_VALUE]="";
@@ -166,7 +166,7 @@ void Sequence::setName(const QString &name)
 
 void Sequence::setSchema(BaseObject *schema)
 {
-	Table *table=NULL;
+	Table *table=nullptr;
 	QString prev_name=this->getName(true);
 
 	if(owner_col)
@@ -224,7 +224,7 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 {
 	if(!table || col_name=="")
-		this->owner_col=NULL;
+		this->owner_col=nullptr;
 	else if(table)
 	{
 		//Raises an error if the table schema differs from the sequence schema
@@ -258,10 +258,10 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 
 void Sequence::setOwnerColumn(Column *column)
 {
-	Table *tabela=NULL;
+	Table *tabela=nullptr;
 
 	if(!column)
-		this->owner_col=NULL;
+		this->owner_col=nullptr;
 	else
 	{
 		tabela=dynamic_cast<Table *>(column->getParentTable());
@@ -337,7 +337,7 @@ Column *Sequence::getOwnerColumn(void)
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
 	QString str_aux;
-	Table *table=NULL;
+	Table *table=nullptr;
 
 	if(owner_col)
 	{

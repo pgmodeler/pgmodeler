@@ -56,7 +56,7 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int start_
 {
 	unsigned i, count;
 	bool found=false;
-	MultiLineInfo *info=NULL;
+	MultiLineInfo *info=nullptr;
 
 	//Checking if the passed parameters is inside a multiline info
 	count=multi_line_infos.size();
@@ -116,7 +116,7 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int start_
 	if(found)
 		return(info);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 void SyntaxHighlighter::removeMultiLineInfo(int block)
@@ -162,10 +162,10 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	QRegExp expr;
 	vector<QString>::iterator itr, itr_end;
 	vector<QRegExp>::iterator itr_exp, itr_exp_end;
-	vector<QRegExp> *vet_expr=NULL;
+	vector<QRegExp> *vet_expr=nullptr;
 	QString group;
 	bool match=false, part_mach=false;
-	MultiLineInfo *info=NULL;
+	MultiLineInfo *info=nullptr;
 
 	//Try to get the multiline info for the current block
 	info=getMultiLineInfo(idx, idx, current_block);
@@ -296,7 +296,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 void SyntaxHighlighter::rehighlight(void)
 {
-	MultiLineInfo *info=NULL;
+	MultiLineInfo *info=nullptr;
 
 	/* Remove all the multiline infos because during the rehighlight
 		 all them all gathered again */

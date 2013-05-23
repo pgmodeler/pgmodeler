@@ -20,7 +20,7 @@
 
 ValidationInfo::ValidationInfo(void)
 {
-	object=NULL;
+	object=nullptr;
 	val_type=NO_UNIQUE_NAME;
 }
 
@@ -39,7 +39,7 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
 
 ValidationInfo::ValidationInfo(Exception &e)
 {
-	deque<Exception> err_list;
+	vector<Exception> err_list;
 
 	val_type=SQL_VALIDATION_ERR;
 	e.getExceptionsList(err_list);

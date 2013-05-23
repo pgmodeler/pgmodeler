@@ -85,7 +85,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_NOT_ALOC_LANGUAGE", QT_TR_NOOP("Assignment of not allocated language!")},
 	{"ERR_ASG_INV_LANGUAGE_OBJECT", QT_TR_NOOP("Assignment of language object which type is invalid!")},
 	{"ERR_REF_TYPE_INV_INDEX", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
-	{"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to to object '%1' (%2)!")},
+	{"ERR_ASG_nullptr_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to to object '%1' (%2)!")},
 	{"ERR_ASG_INV_TYPE_OBJECT", QT_TR_NOOP("Assignment of invalid type to the object!")},
 	{"ERR_ASG_EMPTY_DIR_NAME", QT_TR_NOOP("Assignment of an empty directory to object '%1' (%2)!")},
 	{"ERR_OBT_TYPES_INV_QUANTITY", QT_TR_NOOP("Obtaining types with invalid quantity!")},
@@ -342,33 +342,33 @@ QString Exception::getExtraInfo(void)
 
 void Exception::addException(Exception &exception)
 {
-	deque<Exception>::iterator itr, itr_end;
+	vector<Exception>::iterator itr, itr_end;
 
 	itr=exception.exceptions.begin();
 	itr_end=exception.exceptions.end();
 
 	while(itr!=itr_end)
 	{
-		this->exceptions.push_front(Exception(itr->error_msg,itr->error_type,
-																					itr->method,itr->file,itr->line,NULL,itr->extra_info));
+		this->exceptions.push_back(Exception(itr->error_msg,itr->error_type,
+																					itr->method,itr->file,itr->line,nullptr,itr->extra_info));
 		itr++;
 	}
 	exception.exceptions.clear();
-	this->exceptions.push_front(Exception(exception.error_msg,exception.error_type,
-																				exception.method,exception.file,exception.line,NULL,exception.extra_info));
+	this->exceptions.push_back(Exception(exception.error_msg,exception.error_type,
+																			 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
 }
 
-void Exception::getExceptionsList(deque<Exception> &list)
+void Exception::getExceptionsList(vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
-	list.push_front(Exception(this->error_msg,this->error_type,
-														this->method,this->file,this->line,NULL,this->extra_info));
+	list.push_back(Exception(this->error_msg,this->error_type,
+													 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
 QString Exception::getExceptionsText(void)
 {
-	deque<Exception> exceptions;
-	deque<Exception>::iterator itr, itr_end;
+	vector<Exception> exceptions;
+	vector<Exception>::iterator itr, itr_end;
 	unsigned idx=0;
 	QString exceptions_txt;
 

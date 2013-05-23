@@ -30,7 +30,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
-	copy_table=NULL;
+	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
 }
 
@@ -38,7 +38,7 @@ Table::~Table(void)
 {
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
 											 OBJ_CONSTRAINT, OBJ_COLUMN };
-	vector<TableObject *> *list=NULL;
+	vector<TableObject *> *list=nullptr;
 
 	for(unsigned i=0; i < 5; i++)
 	{
@@ -78,8 +78,8 @@ void Table::setProtected(bool value)
 													 OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
 	unsigned i;
 	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=NULL;
-	TableObject *tab_obj=NULL;
+	vector<TableObject *> *list=nullptr;
+	TableObject *tab_obj=nullptr;
 
 	//Protected the table child objects
 	for(i=0; i < 5; i++)
@@ -165,7 +165,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	QString str_constr;
 	unsigned i, count;
 	bool inc_added_by_rel;
-	Constraint *constr=NULL;
+	Constraint *constr=nullptr;
 
 	count=constraints.size();
 	for(i=0; i < count; i++)
@@ -204,7 +204,7 @@ void Table::setTriggersAttribute(unsigned def_type)
 {
 	QString str_trig;
 	unsigned i, count;
-	Trigger *trig=NULL;
+	Trigger *trig=nullptr;
 
 	count=triggers.size();
 	for(i=0; i < count; i++)
@@ -229,7 +229,7 @@ void Table::setIndexesAttribute(unsigned def_type)
 {
 	QString str_ind;
 	unsigned i, count;
-	Index *ind=NULL;
+	Index *ind=nullptr;
 
 	count=indexes.size();
 	for(i=0; i < count; i++)
@@ -529,7 +529,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 	}
 	else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
 	{
-		vector<TableObject *> *obj_list=NULL;
+		vector<TableObject *> *obj_list=nullptr;
 		vector<TableObject *>::iterator itr;
 
 		obj_list=getObjectList(obj_type);
@@ -541,13 +541,13 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		if(obj_type!=OBJ_COLUMN)
 		{
 			itr=obj_list->begin() + obj_idx;
-			(*itr)->setParentTable(NULL);
+			(*itr)->setParentTable(nullptr);
 			obj_list->erase(itr);
 		}
 		else
 		{
 			vector<TableObject *> refs;
-			Column *column=NULL;
+			Column *column=nullptr;
 
 			itr=obj_list->begin() + obj_idx;
 			column=dynamic_cast<Column *>(*itr);
@@ -568,7 +568,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			column->setParentTable(NULL);
+			column->setParentTable(nullptr);
 			columns.erase(itr);
 		}
 	}
@@ -761,7 +761,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type)
 
 BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
 {
-	BaseObject *object=NULL;
+	BaseObject *object=nullptr;
 	bool found=false, format=false;
 
 	//Checks if the name contains ", if so, the search will consider formatted names
@@ -770,7 +770,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	if(PgModelerNS::isTableObject(obj_type))
 	{
 		vector<TableObject *>::iterator itr, itr_end;
-		vector<TableObject *> *obj_list=NULL;
+		vector<TableObject *> *obj_list=nullptr;
 		QString aux_name=name;
 
 		obj_list=getObjectList(obj_type);
@@ -824,7 +824,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 
 BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=NULL;
+	vector<TableObject *> *obj_list=nullptr;
 
 	if(obj_type==OBJ_TABLE)
 	{
@@ -865,7 +865,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 	}
 	else
 	{
-		Column *column=NULL;
+		Column *column=nullptr;
 		vector<TableObject *>::iterator itr, itr_end;
 		bool found=false, format=false;
 
@@ -881,7 +881,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 			found=(name!="" && column->getOldName(format)==name);
 		}
 
-		if(!found) column=NULL;
+		if(!found) column=nullptr;
 		return(column);
 	}
 }
@@ -975,7 +975,7 @@ unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 		}
 		else
 		{
-			vector<TableObject *> *list=NULL;
+			vector<TableObject *> *list=nullptr;
 			list=getObjectList(obj_type);
 
 			if(!inc_added_by_rel)
@@ -1004,13 +1004,13 @@ unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 Constraint *Table::getPrimaryKey(void)
 {
 	unsigned count,i;
-	Constraint *pk=NULL, *constr=NULL;
+	Constraint *pk=nullptr, *constr=nullptr;
 
 	count=constraints.size();
 	for(i=0; i < count && !pk; i++)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
-		pk=(constr->getConstraintType()==ConstraintType::primary_key ? constr : NULL);
+		pk=(constr->getConstraintType()==ConstraintType::primary_key ? constr : nullptr);
 	}
 
 	return(pk);
@@ -1019,7 +1019,7 @@ Constraint *Table::getPrimaryKey(void)
 void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
 {
 	unsigned count,i;
-	Constraint *constr=NULL;
+	Constraint *constr=nullptr;
 
 	count=constraints.size();
 	for(i=0; i < count; i++)
@@ -1042,7 +1042,7 @@ bool Table::isWithOIDs(void)
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
 	unsigned count,i;
-	Constraint *constr=NULL;
+	Constraint *constr=nullptr;
 	bool found=false;
 
 	count=constraints.size();
@@ -1061,7 +1061,7 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 {
 	bool found=false;
 	vector<TableObject *>::iterator itr, itr_end;
-	Constraint *constr=NULL;
+	Constraint *constr=nullptr;
 
 	if(column)
 	{
@@ -1135,9 +1135,9 @@ bool Table::isReferRelationshipAddedObject(void)
 
 void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
 {
-	vector<TableObject *> *obj_list=NULL;
+	vector<TableObject *> *obj_list=nullptr;
 	vector<TableObject *>::iterator itr1, itr2;
-	TableObject *aux_obj=NULL;
+	TableObject *aux_obj=nullptr;
 
 	try
 	{
@@ -1207,12 +1207,12 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	{
 		unsigned count, i;
 		IndexElement elem;
-		Column *col=NULL, *col1=NULL;
+		Column *col=nullptr, *col1=nullptr;
 		vector<TableObject *>::iterator itr, itr_end;
 		bool found=false;
-		Index *ind=NULL;
-		Constraint *constr=NULL;
-		Trigger *trig=NULL;
+		Index *ind=nullptr;
+		Constraint *constr=nullptr;
+		Trigger *trig=nullptr;
 
 		itr=indexes.begin();
 		itr_end=indexes.end();

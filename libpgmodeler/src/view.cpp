@@ -34,7 +34,7 @@ View::View(void) : BaseTable()
 View::~View(void)
 {
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
-	vector<TableObject *> *list=NULL;
+	vector<TableObject *> *list=nullptr;
 
 	for(unsigned i=0; i < 2; i++)
 	{
@@ -66,7 +66,7 @@ void View::setProtected(bool value)
 	ObjectType obj_types[]={ OBJ_RULE, OBJ_TRIGGER };
 	unsigned i;
 	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=NULL;
+	vector<TableObject *> *list=nullptr;
 
 	//Protected the table child objects
 	for(i=0; i < sizeof(obj_types)/sizeof(ObjectType); i++)
@@ -140,14 +140,14 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 	else if(sql_type==Reference::SQL_REFER_WHERE)
 		return(&exp_where);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 {
 	int idx;
-	vector<unsigned> *expr_list=NULL;
-	Column *col=NULL;
+	vector<unsigned> *expr_list=nullptr;
+	Column *col=nullptr;
 
 	//Specific tests for expressions used as view definition
 	if(sql_type==Reference::SQL_VIEW_DEFINITION)
@@ -419,7 +419,7 @@ void View::setReferencesAttribute(void)
 
 bool View::isReferRelationshipAddedColumn(void)
 {
-	Column *column=NULL;
+	Column *column=nullptr;
 	unsigned count, i;
 	bool found=false;
 
@@ -436,7 +436,7 @@ bool View::isReferRelationshipAddedColumn(void)
 
 bool View::isReferencingTable(Table *tab)
 {
-	Table *aux_tab=NULL;
+	Table *aux_tab=nullptr;
 	unsigned count, i;
 	bool found=false;
 
@@ -628,7 +628,7 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=obj_list->begin() + obj_idx;
-	(*itr)->setParentTable(NULL);
+	(*itr)->setParentTable(nullptr);
 	obj_list->erase(itr);
 }
 
@@ -701,7 +701,7 @@ TableObject *View::getObject(const QString &name, ObjectType obj_type)
 		if(idx >= 0)
 			return(getObject(idx, obj_type));
 		else
-			return(NULL);
+			return(nullptr);
 	}
 	catch(Exception &e)
 	{
@@ -769,13 +769,13 @@ void View::removeObjects(void)
 {
 	while(!triggers.empty())
 	{
-		triggers.back()->setParentTable(NULL);
+		triggers.back()->setParentTable(nullptr);
 		triggers.pop_back();
 	}
 
 	while(!rules.empty())
 	{
-		rules.back()->setParentTable(NULL);
+		rules.back()->setParentTable(nullptr);
 		rules.pop_back();
 	}
 }

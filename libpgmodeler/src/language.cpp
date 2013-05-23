@@ -24,7 +24,7 @@ Language::Language(void)
 	is_trusted=false;
 
 	for(unsigned i=VALIDATOR_FUNC; i <= INLINE_FUNC; i++)
-		functions[i]=NULL;
+		functions[i]=nullptr;
 
 	attributes[ParsersAttributes::TRUSTED]="";
 	attributes[ParsersAttributes::HANDLER_FUNC]="";

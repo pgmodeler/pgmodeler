@@ -110,7 +110,7 @@ class Sequence: public BaseObject {
 		void operator = (Sequence &seq);
 
 		//! \brief Returns the SQL / XML definition for the sequence
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

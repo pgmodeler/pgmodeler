@@ -23,11 +23,11 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 	try
 	{
 		map<QString, vector<QWidget *> > fields_map;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 
 		setupUi(this);
 
-		parent_obj=NULL;
+		parent_obj=nullptr;
 
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
 		elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -165,7 +165,7 @@ void ElementsWidget::updateColumnsCombo(void)
 {
 	Table *table = dynamic_cast<Table *>(parent_obj);
 	Relationship *rel = dynamic_cast<Relationship *>(parent_obj);
-	Column *column=NULL;
+	Column *column=nullptr;
 	unsigned i, col_count=0;
 
 	try
@@ -242,7 +242,7 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 		else
 			elements_tab->setCellText(descending_rb->text(), elem_idx, 4);
 
-		if(elem->getSortingAttribute(IndexElement::NULLS_FIRST))
+		if(elem->getSortingAttribute(IndexElement::nullptrS_FIRST))
 			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 5);
 		else
 			elements_tab->setCellText(trUtf8("No"), elem_idx, 5);
@@ -274,7 +274,7 @@ void ElementsWidget::handleElement(int elem_idx)
 											 dynamic_cast<Element *>(&idxelem));
 
 		elem->setSortingEnabled(sorting_chk->isChecked());
-		elem->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
+		elem->setSortingAttribute(IndexElement::nullptrS_FIRST, nulls_first_chk->isChecked());
 		elem->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
 		elem->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 
@@ -305,7 +305,7 @@ void ElementsWidget::handleElement(int elem_idx)
 
 void ElementsWidget::editElement(int elem_idx)
 {
-	Element *elem = NULL;
+	Element *elem = nullptr;
 	IndexElement idxelem;
 	ExcludeElement excelem;
 	QVariant data = elements_tab->getRowData(elem_idx);
@@ -338,7 +338,7 @@ void ElementsWidget::editElement(int elem_idx)
 	else
 		descending_rb->setChecked(true);
 
-	nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
+	nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::nullptrS_FIRST));
 	sorting_chk->setChecked(elem->isSortingEnabled());
 	op_class_sel->setSelectedObject(elem->getOperatorClass());
 

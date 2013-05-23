@@ -68,8 +68,8 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 												ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		copy_options=copy_op;
-		table_relnn=NULL;
-		fk_rel1n=pk_relident=pk_special=uq_rel11=NULL;
+		table_relnn=nullptr;
+		fk_rel1n=pk_relident=pk_special=uq_rel11=nullptr;
 		this->deferrable=deferrable;
 		this->deferral_type=deferral_type;
 		this->invalidated=true;
@@ -338,7 +338,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		{
 			//Case some error is raised deletes the special primary key
 			delete(pk_special);
-			pk_special=NULL;
+			pk_special=nullptr;
 		}
 	}
 }
@@ -380,8 +380,8 @@ DeferralType Relationship::getDeferralType(void)
 int Relationship::getObjectIndex(TableObject *object)
 {
 	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=NULL;
-	TableObject *obj_aux=NULL;
+	vector<TableObject *> *list=nullptr;
+	TableObject *obj_aux=nullptr;
 	ObjectType obj_type;
 	bool found=false;
 
@@ -418,7 +418,7 @@ int Relationship::getObjectIndex(TableObject *object)
 bool Relationship::isColumnExists(Column *column)
 {
 	vector<Column *>::iterator itr, itr_end;
-	Column *col_aux=NULL;
+	Column *col_aux=nullptr;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -441,7 +441,7 @@ bool Relationship::isColumnExists(Column *column)
 void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 {
 	ObjectType obj_type;
-	vector<TableObject *> *obj_list=NULL;
+	vector<TableObject *> *obj_list=nullptr;
 
 	/* Raises an error if the user try to add  manually a special primary key on
 		the relationship and the relationship type is not generalization or copy */
@@ -476,7 +476,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 			else
 			{
-				Constraint *rest=NULL;
+				Constraint *rest=nullptr;
 				rest=dynamic_cast<Constraint *>(tab_obj);
 
 				//Raises an error if the user try to add as foreign key to relationship
@@ -487,7 +487,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			}
 
 			//Switch back to null the object parent
-			tab_obj->setParentTable(NULL);
+			tab_obj->setParentTable(nullptr);
 
 			if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
 				obj_list->push_back(tab_obj);
@@ -545,7 +545,7 @@ void Relationship::destroyObjects(void)
 
 void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
-	vector<TableObject *> *obj_list=NULL;
+	vector<TableObject *> *obj_list=nullptr;
 
 	if(obj_type==OBJ_COLUMN)
 		obj_list=&rel_attributes;
@@ -560,8 +560,8 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 
 	if(obj_type==OBJ_COLUMN)
 	{
-		Column *col=NULL;
-		Constraint *constr=NULL;
+		Column *col=nullptr;
+		Constraint *constr=nullptr;
 		vector<TableObject *>::iterator itr, itr_end;
 		bool refer=false;
 
@@ -646,7 +646,7 @@ vector<Constraint *> Relationship::getGeneratedConstraints(void)
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
-	vector<TableObject *> *list=NULL;
+	vector<TableObject *> *list=nullptr;
 
 	if(obj_type==OBJ_COLUMN)
 		list=&rel_attributes;
@@ -664,8 +664,8 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 {
 	vector<TableObject *>::iterator itr, itr_end;
-	vector<TableObject *> *list=NULL;
-	TableObject *obj_aux=NULL;
+	vector<TableObject *> *list=nullptr;
+	TableObject *obj_aux=nullptr;
 	bool found=false;
 
 	if(obj_type==OBJ_COLUMN)
@@ -688,7 +688,7 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 	if(found)
 		return(obj_aux);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 Column *Relationship::getAttribute(unsigned attrib_idx)
@@ -741,7 +741,7 @@ unsigned Relationship::getObjectCount(ObjectType obj_type)
 
 void Relationship::addConstraints(Table *recv_tab)
 {
-	Constraint *constr=NULL, *pk=NULL;
+	Constraint *constr=nullptr, *pk=nullptr;
 	unsigned constr_id, constr_cnt, i, count;
 	QString name, orig_name, aux;
 
@@ -823,10 +823,10 @@ void Relationship::addConstraints(Table *recv_tab)
 
 void Relationship::addColumnsRelGen(void)
 {
-	Table *src_tab=NULL, *dst_tab=NULL,
-			*parent_tab=NULL, *aux_tab=NULL;
-	Column *src_col=NULL, *dst_col=NULL,
-			*column=NULL, *aux_col=NULL;
+	Table *src_tab=nullptr, *dst_tab=nullptr,
+			*parent_tab=nullptr, *aux_tab=nullptr;
+	Column *src_col=nullptr, *dst_col=nullptr,
+			*column=nullptr, *aux_col=nullptr;
 	unsigned src_count, dst_count,
 			i, i1, i2, id_tab,
 			idx, tab_count;
@@ -983,7 +983,7 @@ void Relationship::addColumnsRelGen(void)
 					else
 						column->setAddedByCopy(true);
 
-					column->setParentTable(NULL);
+					column->setParentTable(nullptr);
 
 					//Converts the type
 					if(column->getType()=="serial")
@@ -1124,7 +1124,7 @@ void Relationship::connectRelationship(void)
 		if(table_relnn)
 		{
 			delete(table_relnn);
-			table_relnn=NULL;
+			table_relnn=nullptr;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
@@ -1132,7 +1132,7 @@ void Relationship::connectRelationship(void)
 
 void Relationship::configureIndentifierRel(Table *recv_tab)
 {
-	Constraint *pk=NULL;
+	Constraint *pk=nullptr;
 	unsigned i, count;
 	QString name, aux;
 	bool new_pk=false;
@@ -1202,7 +1202,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 					pk->removeColumn(gen_columns[i]->getName(), Constraint::SOURCE_COLS);
 			}
 
-			pk_relident=NULL;
+			pk_relident=nullptr;
 		}
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -1211,7 +1211,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 
 void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 {
-	Constraint *uq=NULL;
+	Constraint *uq=nullptr;
 	unsigned i, count;
 	QString name, aux;
 
@@ -1254,7 +1254,7 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 		{
 			recv_tab->removeObject(uq_rel11);
 			delete(uq_rel11);
-			uq_rel11=NULL;
+			uq_rel11=nullptr;
 		}
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -1263,9 +1263,9 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 
 void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del_act, ActionType upd_act)
 {
-	Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
+	Constraint *pk=nullptr, *pk_aux=nullptr, *fk=nullptr;
 	unsigned i, i1, qty;
-	Column *column=NULL, *column_aux=NULL;
+	Column *column=nullptr, *column_aux=nullptr;
 	QString name, aux;
 
 	try
@@ -1371,7 +1371,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 		{
 			recv_tab->removeObject(fk_rel1n);
 			delete(fk_rel1n);
-			fk_rel1n=NULL;
+			fk_rel1n=nullptr;
 		}
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -1381,7 +1381,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 void Relationship::addAttributes(Table *recv_tab)
 {
 	unsigned i, count, i1;
-	Column *column=NULL;
+	Column *column=nullptr;
 	QString name, aux;
 
 	try
@@ -1430,9 +1430,9 @@ void Relationship::addAttributes(Table *recv_tab)
 
 void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 {
-	Constraint *dst_pk=NULL, *src_pk=NULL, *pk=NULL;
+	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
 	unsigned i, count, i1;
-	Column *column=NULL, *column_aux=NULL;
+	Column *column=nullptr, *column_aux=nullptr;
 	QString name, aux, prev_name;
 
 	try
@@ -1484,7 +1484,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			//Protects the column evicting that the user modifies it
 			column->setAddedByLinking(true);
 			//Set the parent table as null permiting the column to be added on the receiver table
-			column->setParentTable(NULL);
+			column->setParentTable(nullptr);
 
 			//Converting the serial like types
 			if(column->getType()=="serial")
@@ -1535,7 +1535,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 
 void Relationship::addColumnsRel11(void)
 {
-	Table *ref_tab=NULL, *recv_tab=NULL;
+	Table *ref_tab=nullptr, *recv_tab=nullptr;
 
 	try
 	{
@@ -1604,7 +1604,7 @@ void Relationship::addColumnsRel11(void)
 
 void Relationship::addColumnsRel1n(void)
 {
-	Table *ref_tab=NULL, *recv_tab=NULL;
+	Table *ref_tab=nullptr, *recv_tab=nullptr;
 	bool not_null=false;
 	ActionType del_action=ActionType::set_null, upd_action=ActionType::cascade;
 
@@ -1670,8 +1670,8 @@ void Relationship::addColumnsRel1n(void)
 
 void Relationship::addColumnsRelNn(void)
 {
-	Table *tab=NULL, *tab1=NULL;
-	Constraint *pk_tabnn=NULL;
+	Table *tab=nullptr, *tab1=nullptr;
+	Constraint *pk_tabnn=nullptr;
 	bool src_not_null=false, dst_not_null=false;
 	ActionType acao_del_orig=ActionType::restrict, acao_del_dest=ActionType::restrict,
 			acao_upd_orig=ActionType::cascade, acao_upd_dest=ActionType::cascade;
@@ -1718,9 +1718,9 @@ void Relationship::addColumnsRelNn(void)
 Table *Relationship::getReferenceTable(void)
 {
 	/* Many to Many relationships doesn't has only one reference table so
-		is returned NULL */
+		is returned nullptr */
 	if(rel_type==RELATIONSHIP_NN)
-		return(NULL);
+		return(nullptr);
 	else
 	{
 		if(src_table==getReceiverTable())
@@ -1744,9 +1744,9 @@ Table *Relationship::getReceiverTable(void)
 			return(dynamic_cast<Table *>(src_table));
 		// Case 4: (1,1) ---<>--- (1,1)
 		else
-			/* Returns NULL since this type of relationship isn't implemented. Refer to
+			/* Returns nullptr since this type of relationship isn't implemented. Refer to
 		 header file top comment for details */
-			return(NULL);
+			return(nullptr);
 	}
 	/* For 1-n relationships, the table order is unchagned this means that
 		the columns are always included in the destination table */
@@ -1764,9 +1764,9 @@ Table *Relationship::getReceiverTable(void)
 
 void Relationship::removeTableObjectsRefCols(Table *table)
 {
-	Trigger *trigger=NULL;
-	Index *index=NULL;
-	Constraint *constr=NULL;
+	Trigger *trigger=nullptr;
+	Index *index=nullptr;
+	Constraint *constr=nullptr;
 	int i, count;
 
 	//Remove all triggers that reference columns added by relationship
@@ -1818,8 +1818,8 @@ void Relationship::removeColumnsFromTablePK(Table *table)
 {
 	if(table)
 	{
-		Constraint *pk=NULL;
-		Column *column=NULL;
+		Constraint *pk=nullptr;
+		Column *column=nullptr;
 		unsigned i, count;
 
 		/* Gets the table primary key and removes the columns
@@ -1854,12 +1854,12 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 		if(connected)
 		{
 			vector<Column *>::iterator itr, itr_end;
-			Column *column=NULL;
-			Table *table=NULL;
+			Column *column=nullptr;
+			Table *table=nullptr;
 			unsigned list_idx=0;
-			vector<TableObject *> *attr_list=NULL;
+			vector<TableObject *> *attr_list=nullptr;
 			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
-			TableObject *tab_obj=NULL;
+			TableObject *tab_obj=nullptr;
 
 			if(rel_type==RELATIONSHIP_GEN ||
 				 rel_type==RELATIONSHIP_DEP)
@@ -1878,11 +1878,11 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				if(rel_type==RELATIONSHIP_GEN)
 					table->removeObject(getReferenceTable()->getName(true), OBJ_TABLE);
 				else
-					table->setCopyTable(NULL);
+					table->setCopyTable(nullptr);
 			}
 			else
 			{
-				Constraint *pk=NULL, *constr=NULL;
+				Constraint *pk=nullptr, *constr=nullptr;
 				unsigned i, count;
 
 				/* In case of relationship 1-1 and 1-n is necessary remove the
@@ -1914,7 +1914,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						//Destroy the foreign key
 						fk_rel1n->removeColumns();
 						delete(fk_rel1n);
-						fk_rel1n=NULL;
+						fk_rel1n=nullptr;
 					}
 
 					//Destroy the auto created unique key if it exists
@@ -1923,7 +1923,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						table->removeConstraint(uq_rel11->getName());
 						uq_rel11->removeColumns();
 						delete(uq_rel11);
-						uq_rel11=NULL;
+						uq_rel11=nullptr;
 					}
 
 					/* Removes the primary key from the table in case of identifier relationship where
@@ -1938,7 +1938,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 						//Destroy the primary key
 						delete(pk);
-						pk_relident=NULL;
+						pk_relident=nullptr;
 					}
 					else if(pk_special)
 						table->removeObject(pk_special);
@@ -1981,7 +1981,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					if(table && getObjectIndex(tab_obj) >= 0 && tab_obj->getParentTable())
 					{
 						table->removeObject(tab_obj);
-						tab_obj->setParentTable(NULL);
+						tab_obj->setParentTable(nullptr);
 					}
 					itr_atrib++;
 				}
@@ -2011,13 +2011,13 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			if(table_relnn)
 			{
 				delete(table_relnn);
-				table_relnn=NULL;
+				table_relnn=nullptr;
 			}
 
 			if(pk_special)
 			{
 				delete(pk_special);
-				pk_special=NULL;
+				pk_special=nullptr;
 			}
 
 			BaseRelationship::disconnectRelationship();
@@ -2050,7 +2050,7 @@ CopyOptions Relationship::getCopyOptions(void)
 bool Relationship::hasIndentifierAttribute(void)
 {
 	vector<TableObject *>::iterator itr, itr_end;
-	Constraint *constr=NULL;
+	Constraint *constr=nullptr;
 	bool found=false;
 
 	itr=rel_constraints.begin();
@@ -2077,10 +2077,10 @@ void Relationship::forceInvalidate(void)
 bool Relationship::isInvalidated(void)
 {
 	unsigned rel_cols_count, tab_cols_count, i, count;
-	Table *table=NULL, *table1=NULL;
-	Constraint *fk=NULL, *fk1=NULL, *constr=NULL, *pk=NULL;
+	Table *table=nullptr, *table1=nullptr;
+	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
-	Column *col1=NULL, *col2=NULL, *col3=NULL;
+	Column *col1=nullptr, *col2=nullptr, *col3=nullptr;
 	QString col_name;
 
 	if(invalidated)
@@ -2092,7 +2092,7 @@ bool Relationship::isInvalidated(void)
 		if(pk_relident && pk_relident->isAddedByLinking())
 		{
 			dynamic_cast<Table *>(pk_relident->getParentTable())->removeObject(pk_relident);
-			pk_relident=NULL;
+			pk_relident=nullptr;
 		}
 		return(true);
 	}
@@ -2402,8 +2402,8 @@ void Relationship::operator = (Relationship &rel)
 	this->deferral_type=rel.deferral_type;
 	this->deferrable=rel.deferrable;
 	this->tab_name_relnn=rel.tab_name_relnn;
-	this->table_relnn=NULL;
-	this->fk_rel1n=pk_relident=pk_special=NULL;
+	this->table_relnn=nullptr;
+	this->fk_rel1n=pk_relident=pk_special=nullptr;
 	this->gen_columns.clear();
 	this->copy_options=rel.copy_options;
 	this->name_patterns=rel.name_patterns;

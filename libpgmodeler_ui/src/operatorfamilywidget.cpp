@@ -54,7 +54,7 @@ void OperatorFamilyWidget::applyConfiguration(void)
 {
 	try
 	{
-		OperatorFamily *op_family=NULL;
+		OperatorFamily *op_family=nullptr;
 
 		startConfiguration<OperatorFamily>();
 		op_family=dynamic_cast<OperatorFamily *>(this->object);

@@ -21,7 +21,7 @@
 ModelValidationHelper::ModelValidationHelper(void)
 {
 	warn_count=error_count=progress=0;
-	db_model=NULL;
+	db_model=nullptr;
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(redirectExportProgress(int,QString)));
 }
 
@@ -41,13 +41,13 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
-		BaseObject *object=NULL, *refer_obj=NULL;
-		vector<BaseObject *> refs, refs_aux, *obj_list=NULL;
+		BaseObject *object=nullptr, *refer_obj=nullptr;
+		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
-		TableObject *tab_obj=NULL;
+		TableObject *tab_obj=nullptr;
 		ValidationInfo info;
-		Table *table=NULL;
-		Constraint *constr=NULL;
+		Table *table=nullptr;
+		Constraint *constr=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name;
@@ -233,7 +233,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 	try
 	{
 		vector<BaseObject *> refs=info.getReferences();
-		BaseObject *obj=NULL;
+		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
 		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
@@ -260,7 +260,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		{
 			unsigned suffix=1;
 			QString new_name;
-			Table *table=NULL;
+			Table *table=nullptr;
 			ObjectType obj_type;
 			BaseObject *obj=info.getObject();
 

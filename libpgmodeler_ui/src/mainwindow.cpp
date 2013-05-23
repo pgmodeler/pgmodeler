@@ -53,41 +53,41 @@
 #include "objectrenamewidget.h"
 
 //Global forms and widgets
-AboutForm *about_form=NULL;
-TextboxWidget *textbox_wgt=NULL;
-SourceCodeWidget *sourcecode_wgt=NULL;
-DatabaseWidget *database_wgt=NULL;
-SchemaWidget *schema_wgt=NULL;
-RoleWidget *role_wgt=NULL;
-PermissionWidget *permission_wgt=NULL;
-TablespaceWidget *tablespace_wgt=NULL;
-LanguageWidget *language_wgt=NULL;
-ParameterWidget *parameter_wgt=NULL;
-FunctionWidget *function_wgt=NULL;
-CastWidget *cast_wgt=NULL;
-ConversionWidget *conversion_wgt=NULL;
-DomainWidget *domain_wgt=NULL;
-AggregateWidget *aggregate_wgt=NULL;
-SequenceWidget *sequence_wgt=NULL;
-OperatorWidget *operator_wgt=NULL;
-OperatorFamilyWidget *opfamily_wgt=NULL;
-OperatorClassWidget *opclass_wgt=NULL;
-TypeWidget *type_wgt=NULL;
-ViewWidget *view_wgt=NULL;
-ColumnWidget *column_wgt=NULL;
-ConstraintWidget *constraint_wgt=NULL;
-RuleWidget *rule_wgt=NULL;
-TriggerWidget *trigger_wgt=NULL;
-IndexWidget *index_wgt=NULL;
-RelationshipWidget *relationship_wgt=NULL;
-TableWidget *table_wgt=NULL;
-CollationWidget *collation_wgt=NULL;
-ExtensionWidget *extension_wgt=NULL;
-TaskProgressWidget *task_prog_wgt=NULL;
-ObjectDepsRefsWidget *deps_refs_wgt=NULL;
-ConfigurationForm *configuration_form=NULL;
-ModelExportForm *export_form=NULL;
-ObjectRenameWidget *objectrename_wgt=NULL;
+AboutForm *about_form=nullptr;
+TextboxWidget *textbox_wgt=nullptr;
+SourceCodeWidget *sourcecode_wgt=nullptr;
+DatabaseWidget *database_wgt=nullptr;
+SchemaWidget *schema_wgt=nullptr;
+RoleWidget *role_wgt=nullptr;
+PermissionWidget *permission_wgt=nullptr;
+TablespaceWidget *tablespace_wgt=nullptr;
+LanguageWidget *language_wgt=nullptr;
+ParameterWidget *parameter_wgt=nullptr;
+FunctionWidget *function_wgt=nullptr;
+CastWidget *cast_wgt=nullptr;
+ConversionWidget *conversion_wgt=nullptr;
+DomainWidget *domain_wgt=nullptr;
+AggregateWidget *aggregate_wgt=nullptr;
+SequenceWidget *sequence_wgt=nullptr;
+OperatorWidget *operator_wgt=nullptr;
+OperatorFamilyWidget *opfamily_wgt=nullptr;
+OperatorClassWidget *opclass_wgt=nullptr;
+TypeWidget *type_wgt=nullptr;
+ViewWidget *view_wgt=nullptr;
+ColumnWidget *column_wgt=nullptr;
+ConstraintWidget *constraint_wgt=nullptr;
+RuleWidget *rule_wgt=nullptr;
+TriggerWidget *trigger_wgt=nullptr;
+IndexWidget *index_wgt=nullptr;
+RelationshipWidget *relationship_wgt=nullptr;
+TableWidget *table_wgt=nullptr;
+CollationWidget *collation_wgt=nullptr;
+ExtensionWidget *extension_wgt=nullptr;
+TaskProgressWidget *task_prog_wgt=nullptr;
+ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
+ConfigurationForm *configuration_form=nullptr;
+ModelExportForm *export_form=nullptr;
+ObjectRenameWidget *objectrename_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -96,8 +96,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
 	map<QString, QString> attribs;
 	QStringList prev_session_files;
-	BaseConfigWidget *conf_wgt=NULL;
-	PluginsConfigWidget *plugins_conf_wgt=NULL;
+	BaseConfigWidget *conf_wgt=nullptr;
+	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	ObjectType obj_types[]={
 		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
 		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
@@ -244,7 +244,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
 
-	current_model=NULL;
+	current_model=nullptr;
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
@@ -311,7 +311,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
-		plugins_conf_wgt->installPluginsActions(NULL, plugins_menu, this, SLOT(executePlugin(void)));
+		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
@@ -362,7 +362,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(restoration_form->result()==QDialog::Accepted)
 		{
-			ModelWidget *model=NULL;
+			ModelWidget *model=nullptr;
 
 			try
 			{
@@ -441,7 +441,7 @@ void MainWindow::showEvent(QShowEvent *)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	GeneralConfigWidget *conf_wgt=NULL;
+	GeneralConfigWidget *conf_wgt=nullptr;
 	map<QString, map<QString, QString> > confs;
 	bool save_conf=false, modified=false;
 	int i=0;
@@ -477,7 +477,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
 		{
 			int i, count;
-			ModelWidget *model=NULL;
+			ModelWidget *model=nullptr;
 			QString param_id;
 			map<QString, QString> attribs;
 
@@ -525,7 +525,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-	ConnectionsConfigWidget *conn_cfg_wgt=NULL;
+	ConnectionsConfigWidget *conn_cfg_wgt=nullptr;
 	map<QString, DBConnection *> connections;
 
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
@@ -567,10 +567,10 @@ void MainWindow::clearRecentModelsMenu(void)
 
 void MainWindow::addModel(const QString &filename)
 {
-	ModelWidget *model_tab=NULL;
+	ModelWidget *model_tab=nullptr;
 	QString obj_name, tab_name, str_aux;
-	Schema *public_sch=NULL;
-	QLayout *layout=NULL;
+	Schema *public_sch=nullptr;
+	QLayout *layout=nullptr;
 
 	//Set a name for the tab widget
 	str_aux=QString("%1").arg(models_tbw->count());
@@ -631,9 +631,9 @@ ModelWidget *MainWindow::getModel(int idx)
 
 void MainWindow::setCurrentModel(void)
 {
-	QObject *object=NULL;
+	QObject *object=nullptr;
 	QList<QAction *> act_list;
-	QToolButton *tool_btn=NULL;
+	QToolButton *tool_btn=nullptr;
 
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
@@ -772,7 +772,7 @@ void MainWindow::applyZoom(void)
 
 void MainWindow::closeModel(int model_id)
 {
-	QWidget *tab=NULL;
+	QWidget *tab=nullptr;
 
 	if(model_id >= 0)
 		tab=models_tbw->widget(model_id);
@@ -785,12 +785,12 @@ void MainWindow::closeModel(int model_id)
 
 		model_tree_states.erase(model);
 
-		disconnect(tab, NULL, oper_list_wgt, NULL);
-		disconnect(tab, NULL, model_objs_wgt, NULL);
-		disconnect(tab, NULL, this, NULL);
-		disconnect(action_alin_objs_grade, NULL, this, NULL);
-		disconnect(action_show_grid, NULL, this, NULL);
-		disconnect(action_show_delimiters, NULL, this, NULL);
+		disconnect(tab, nullptr, oper_list_wgt, nullptr);
+		disconnect(tab, nullptr, model_objs_wgt, nullptr);
+		disconnect(tab, nullptr, this, nullptr);
+		disconnect(action_alin_objs_grade, nullptr, this, nullptr);
+		disconnect(action_show_grid, nullptr, this, nullptr);
+		disconnect(action_show_delimiters, nullptr, this, nullptr);
 
 		//Remove the temporary file related to the closed model
 		QDir arq_tmp;
@@ -817,9 +817,9 @@ void MainWindow::closeModel(int model_id)
 
 	if(models_tbw->count()==0)
 	{
-		current_model=NULL;
-		model_objs_wgt->setModel(static_cast<DatabaseModel *>(NULL));
-		oper_list_wgt->setModel(static_cast<ModelWidget *>(NULL));
+		current_model=nullptr;
+		model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
+		oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
 		updateToolsState(true);
 	}
 	else
@@ -840,7 +840,7 @@ void MainWindow::applyConfigurations(void)
 {
 	if(configuration_form->result()==QDialog::Accepted)
 	{
-		GeneralConfigWidget *conf_wgt=NULL;
+		GeneralConfigWidget *conf_wgt=nullptr;
 		int count, i;
 
 		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
@@ -876,7 +876,7 @@ void MainWindow::saveAllModels(void)
 			(sender()==&model_save_timer &&	this->isActiveWindow())))
 
 	{
-		ModelWidget *model=NULL;
+		ModelWidget *model=nullptr;
 		int i, count;
 
 		count=models_tbw->count();
@@ -949,7 +949,7 @@ void MainWindow::printModel(void)
 {
 	if(current_model)
 	{
-		QPrinter *printer=NULL;
+		QPrinter *printer=nullptr;
 		QPrinter::PageSize paper_size, curr_paper_size;
 		QPrinter::Orientation orientation, curr_orientation;
 		QRectF margins;

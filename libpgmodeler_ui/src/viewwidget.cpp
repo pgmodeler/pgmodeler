@@ -27,9 +27,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
 	{
-		ObjectTableWidget *tab=NULL;
+		ObjectTableWidget *tab=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 
 		Ui_ViewWidget::setupUi(this);
 
@@ -137,14 +137,14 @@ ObjectTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 void ViewWidget::showTableObjectForm(ObjectType obj_type)
 {
-	TableObject *object=NULL;
-	ObjectTableWidget *obj_table=NULL;
-	View *view=NULL;
+	TableObject *object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	View *view=nullptr;
 
 	obj_table=getObjectTable(obj_type);
 
@@ -187,9 +187,9 @@ void ViewWidget::handleObject(void)
 
 void ViewWidget::removeObjects(void)
 {
-	View *view=NULL;
+	View *view=nullptr;
 	unsigned count, op_count=0, i;
-	BaseObject *object=NULL;
+	BaseObject *object=nullptr;
 	ObjectType obj_type=getObjectType(sender());
 
 	try
@@ -227,8 +227,8 @@ void ViewWidget::removeObjects(void)
 
 void ViewWidget::removeObject(int row)
 {
-	View *view=NULL;
-	BaseObject *object=NULL;
+	View *view=nullptr;
+	BaseObject *object=nullptr;
 	ObjectType obj_type=getObjectType(sender());
 
 	try
@@ -270,9 +270,9 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 void ViewWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=NULL;
-	Trigger *trigger=NULL;
-	Rule *rule=NULL;
+	ObjectTableWidget *tab=nullptr;
+	Trigger *trigger=nullptr;
+	Rule *rule=nullptr;
 	ObjectType obj_type;
 	QString str_aux;
 	unsigned i;
@@ -323,9 +323,9 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 void ViewWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=NULL;
+	ObjectTableWidget *tab=nullptr;
 	unsigned count, i;
-	View *view=NULL;
+	View *view=nullptr;
 
 	try
 	{
@@ -496,7 +496,7 @@ void ViewWidget::editReference(int ref_idx)
 
 void ViewWidget::showObjectName(void)
 {
-	Column *col=NULL;
+	Column *col=nullptr;
 	QObject *obj_sender=sender();
 
 	//If the sender is the table selector means that user want to reference all table columns
@@ -526,8 +526,8 @@ void ViewWidget::showObjectName(void)
 
 void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_where, bool after_where, bool view_def, unsigned row)
 {
-	Table *tab=NULL;
-	Column *col=NULL;
+	Table *tab=nullptr;
+	Column *col=nullptr;
 	QString str_aux;
 
 	if(refer.getReferenceType()==Reference::REFER_COLUMN)
@@ -575,7 +575,7 @@ void ViewWidget::updateCodePreview(void)
 			View aux_view;
 			Reference refer;
 			QString str_aux;
-			TableObject *tab_obj=NULL;
+			TableObject *tab_obj=nullptr;
 			map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
 			unsigned i, count, i1, expr_type[]={Reference::SQL_REFER_SELECT,
 																					Reference::SQL_REFER_FROM,
@@ -703,7 +703,7 @@ void ViewWidget::applyConfiguration(void)
 {
 	try
 	{
-		View *view=NULL;
+		View *view=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
 													 Reference::SQL_REFER_FROM,

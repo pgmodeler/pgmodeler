@@ -69,8 +69,8 @@ void PluginsConfigWidget::loadPlugins(void)
 									GlobalAttributes::DIR_SEPARATOR;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
-	PgModelerPlugin *plugin=NULL;
-	QAction *plugin_action=NULL;
+	PgModelerPlugin *plugin=nullptr;
+	QAction *plugin_action=nullptr;
 	QPixmap icon;
 	QFileInfo fi;
 

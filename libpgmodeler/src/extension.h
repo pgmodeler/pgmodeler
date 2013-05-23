@@ -40,8 +40,8 @@ class Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static const unsigned CUR_VERSION=0,
-													OLD_VERSION=1;
+		static constexpr unsigned CUR_VERSION=0,
+															OLD_VERSION=1;
 		Extension(void);
 		~Extension(void);
 
@@ -64,7 +64,7 @@ class Extension: public BaseObject {
 		QString getVersion(unsigned ver);
 
 		//! \brief Returns the SQL / XML code definition for the extension
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		void operator = (Extension &ext);
 };

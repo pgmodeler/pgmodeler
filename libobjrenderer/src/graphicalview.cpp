@@ -40,16 +40,16 @@ void GraphicalView::configureObject(void)
 	int i, count, count1=0;
 	Reference ref;
 	QPen pen;
-	TableObjectView *graph_ref=NULL;
+	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY };
 	float width, type_width=0, px=0;
-	TableObjectView *col_item=NULL;
+	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
-	TableObject *tab_obj=NULL;
+	TableObject *tab_obj=nullptr;
 
 	//Configures the view's title
 	title->configureObject(view);

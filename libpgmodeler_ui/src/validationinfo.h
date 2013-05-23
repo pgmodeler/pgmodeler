@@ -45,9 +45,9 @@ class ValidationInfo {
 		QStringList sql_errors;
 
 	public:
-		static const unsigned NO_UNIQUE_NAME=0,
-													BROKEN_REFERENCE=1,
-													SQL_VALIDATION_ERR=2;
+		static constexpr unsigned NO_UNIQUE_NAME=0,
+															BROKEN_REFERENCE=1,
+															SQL_VALIDATION_ERR=2;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);

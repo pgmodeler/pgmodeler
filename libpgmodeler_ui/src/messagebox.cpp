@@ -79,12 +79,12 @@ void Messagebox::showExceptionList(void)
 
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 {
-	deque<Exception> list;
-	deque<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *item=NULL,*item1=NULL,*item2=NULL;
-	QLabel *label=NULL;
+	vector<Exception> list;
+	vector<Exception>::reverse_iterator itr,itr_end;
+	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
+	QLabel *label=nullptr;
 	int idx=0;
-	Exception *ex=NULL;
+	Exception *ex=nullptr;
 	QString str_aux, title;
 	QFont font=this->font();
 

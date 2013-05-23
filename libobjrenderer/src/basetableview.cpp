@@ -38,7 +38,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	this->addToGroup(ext_attribs_body);
 	ext_attribs->setZValue(1);
 	this->setAcceptHoverEvents(true);
-	sel_child_obj=NULL;
+	sel_child_obj=nullptr;
 }
 
 BaseTableView::~BaseTableView(void)
@@ -104,7 +104,7 @@ void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 	if(!this->isSelected() && obj_selection->isVisible())
 		obj_selection->setVisible(false);
 
-	sel_child_obj=NULL;
+	sel_child_obj=nullptr;
 }
 
 void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)

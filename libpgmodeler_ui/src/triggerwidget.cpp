@@ -113,7 +113,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 
 void TriggerWidget::addColumn(int lin_idx)
 {
-	Column *column=NULL;
+	Column *column=nullptr;
 
 	try
 	{
@@ -141,7 +141,7 @@ void TriggerWidget::addColumn(Column *column, int row)
 
 void TriggerWidget::updateColumnsCombo(void)
 {
-	Column *column=NULL;
+	Column *column=nullptr;
 	unsigned i, col_count=0;
 
 	try
@@ -220,7 +220,7 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger)
 {
 	unsigned count=0, i;
-	Column *column=NULL;
+	Column *column=nullptr;
 
 	if(!parent_table)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -274,9 +274,9 @@ void TriggerWidget::applyConfiguration(void)
 {
 	try
 	{
-		Trigger *trigger=NULL;
+		Trigger *trigger=nullptr;
 		unsigned i, count;
-		Column *column=NULL;
+		Column *column=nullptr;
 
 		startConfiguration<Trigger>();
 

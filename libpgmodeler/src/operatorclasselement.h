@@ -63,11 +63,12 @@ class OperatorClassElement {
 
 	public:
 		//! \brief Constants used to reference the element types
-		static const unsigned OPERATOR_ELEM=0,
-													FUNCTION_ELEM=1,
-													STORAGE_ELEM=2;
+		static constexpr unsigned OPERATOR_ELEM=0,
+															FUNCTION_ELEM=1,
+															STORAGE_ELEM=2;
 
 		OperatorClassElement(void);
+		virtual ~OperatorClassElement(void){}
 
 		//! \brief Defines the element as a function clause
 		void setFunction(Function *func, unsigned stg_number);
@@ -85,15 +86,15 @@ class OperatorClassElement {
 		unsigned getElementType(void);
 
 		/*! \brief Returns the current assigned function.
-		 This method returns NULL when the element is not an FUNCTION_ELEM */
+		 This method returns nullptr when the element is not an FUNCTION_ELEM */
 		Function *getFunction(void);
 
 		/*! \brief Returns the current assigned operator.
-		 This method returns NULL when the element is not an OPERATOR_ELEM */
+		 This method returns nullptr when the element is not an OPERATOR_ELEM */
 		Operator *getOperator(void);
 
 		/*! \brief Returns the operator family used by element.
-		This method returns NULL when the element is not an OPERATOR_ELEM */
+		This method returns nullptr when the element is not an OPERATOR_ELEM */
 		OperatorFamily *getOperatorFamily(void);
 
 		//! \brief Storage type of the element
@@ -106,7 +107,7 @@ class OperatorClassElement {
 		unsigned getStrategyNumber(void);
 
 		//! \brief Returns the SQL / XML code definition for the element
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Operator to compare two elements, returns true when all atributes has the same configuration
 		bool operator == (OperatorClassElement &elem);

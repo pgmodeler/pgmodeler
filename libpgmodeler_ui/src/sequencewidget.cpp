@@ -24,7 +24,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 	{
 		Ui_SequenceWidget::setupUi(this);
 
-		column_sel=NULL;
+		column_sel=nullptr;
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 		sequence_grid->addWidget(column_sel,3,1,1,3);
 
@@ -77,7 +77,7 @@ void SequenceWidget::applyConfiguration(void)
 {
 	try
 	{
-		Sequence *sequence=NULL;
+		Sequence *sequence=nullptr;
 		startConfiguration<Sequence>();
 
 		sequence=dynamic_cast<Sequence *>(this->object);

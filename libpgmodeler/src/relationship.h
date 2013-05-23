@@ -39,7 +39,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 (0,1) ---<>--- (0,1)
 	 >> Columns are added on the destination table in order to represent the relationship.
 	 >> The columns that represents the foreign key must accept null values.
-	 >> The policy for DELETE and UPDATE events on the foreign key must be SET NULL.
+	 >> The policy for DELETE and UPDATE events on the foreign key must be SET nullptr.
 	 >> The relationship attributes and constraints are added on same table where the
 			foreign key columns are added.
 
@@ -47,7 +47,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 (0,1) ---<>--- (1,1)
 	 >> Columns ared added on the table which minimum cardinality is 0.
 	 >> The columns that represents the foreign key must accept null values.
-	 >> The policy for DELETE and UPDATE events on the foreign key must be SET NULL.
+	 >> The policy for DELETE and UPDATE events on the foreign key must be SET nullptr.
 	 >> The relationship attributes and constraints are added on same table where the
 			foreign key columns are added.
 
@@ -68,7 +68,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 	>> Columns are added on the destination table in any cardinality combination.
 	>> When the minimum cardinality is 0 on the "One" side (e.g. (0,1)) the foreign key columns
 		 must accept null values in order to represent the optionality of the relationship. Also
-		 the foreign key ON DELETE and ON UPDATE policy must be SET NULL.
+		 the foreign key ON DELETE and ON UPDATE policy must be SET nullptr.
 	>> When the minimum cardinality is 1 on the "One" size (e.g. (1,1)) the foreign key columns
 		 mustn't accept null values (NOT NULL) to represent the entity mandatory participation. Also
 		 the foreign key ON DELETE and ON UPDATE policy must be RESTRICT.
@@ -251,12 +251,12 @@ class Relationship: public BaseRelationship {
 		void removeColumnsFromTablePK(Table *table);
 
 		//! \brief Generates the object name according to the specified name pattern
-		QString generateObjectName(unsigned pat_id, Column *id_col=NULL);
+		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
 
 	protected:
-		static const unsigned COL_INDEXES=0,
-													ATTRIB_INDEXES=1,
-													CONSTR_INDEXES=2;
+		static constexpr unsigned COL_INDEXES=0,
+															ATTRIB_INDEXES=1,
+															CONSTR_INDEXES=2;
 
 		//! \brief Destroy all the relationship attributes and constraints
 		void destroyObjects(void);
@@ -447,12 +447,12 @@ class Relationship: public BaseRelationship {
 		 WARNING: Not necessarily this method returns the source table
 		 because not in all relationship configuration the reference is the source table
 
-		 For n-n relationships this method returns NULL as this type of relationship
+		 For n-n relationships this method returns nullptr as this type of relationship
 		 has 2 reference tables, which may be obtained by the method BaseRelationship::getTable() */
 		Table *getReferenceTable(void);
 
 		//! \brief Returns SQL / XML definition for the relationship.
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Copies the attributes from one relationship to another
 		void operator = (Relationship &rel);

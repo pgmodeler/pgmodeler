@@ -24,10 +24,10 @@ Trigger::Trigger(void)
 	EventType tipos[4]={EventType::on_insert, EventType::on_delete,
 											EventType::on_update, EventType::on_truncate};
 
-	function=NULL;
+	function=nullptr;
 	is_exec_per_row=is_constraint=is_deferrable=false;
 	obj_type=OBJ_TRIGGER;
-	referenced_table=NULL;
+	referenced_table=nullptr;
 
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
@@ -274,7 +274,7 @@ bool Trigger::isConstraint(void)
 bool Trigger::isReferRelationshipAddedColumn(void)
 {
 	vector<Column *>::iterator itr, itr_end;
-	Column *col=NULL;
+	Column *col=nullptr;
 	bool enc=false;
 
 	itr=upd_columns.begin();

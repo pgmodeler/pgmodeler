@@ -31,8 +31,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		configureFormLayout(codigofonte_grid, BASE_OBJECT);
 		comment_lbl->setText(trUtf8("Type:"));
 
-		hl_sqlcode=NULL;
-		hl_xmlcode=NULL;
+		hl_sqlcode=nullptr;
+		hl_xmlcode=nullptr;
 
 		font=name_edt->font();
 		font.setItalic(true);
@@ -127,12 +127,12 @@ void SourceCodeWidget::generateSourceCode(int)
 
 		setSourceCodeTab();
 		task_prog_wgt->close();
-		disconnect(this->model, NULL, task_prog_wgt, NULL);
+		disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 	}
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(this->model, NULL, task_prog_wgt, NULL);
+		disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -143,7 +143,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 	{
 		try
 		{
-			BaseObjectWidget::setAttributes(model, object, NULL);
+			BaseObjectWidget::setAttributes(model, object, nullptr);
 
 			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);

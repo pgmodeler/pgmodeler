@@ -857,7 +857,7 @@ QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
 									vet_aux=&else_map[prev_if_level];
 							}
 							else
-								vet_aux=NULL;
+								vet_aux=nullptr;
 
 							/* Initializes the iterators to scan
 								 the auxiliary vector if necessary */

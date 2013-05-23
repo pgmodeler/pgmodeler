@@ -744,7 +744,7 @@ unsigned PgSQLType::operator = (const QString &type_name)
 	unsigned type_idx, usr_type_idx;
 
 	type_idx=BaseType::getType(type_name, offset, types_count);
-	usr_type_idx=getUserTypeIndex(type_name, NULL);
+	usr_type_idx=getUserTypeIndex(type_name, nullptr);
 
 	if(type_idx==0 && usr_type_idx==0)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -765,7 +765,7 @@ void *PgSQLType::getUserTypeReference(void)
 	if(this->isUserType())
 		return(user_types[this->type_idx - (pseudo_end + 1)].ptype);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 unsigned PgSQLType::getUserTypeConfig(void)
@@ -1090,7 +1090,7 @@ void PgSQLType::setDimension(unsigned dim)
 {
 	if(dim > 0 && this->isUserType())
 	{
-		int idx=getUserTypeIndex(~(*this), NULL);
+		int idx=getUserTypeIndex(~(*this), nullptr);
 		if(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
 			 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
 			throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);

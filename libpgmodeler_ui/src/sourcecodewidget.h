@@ -40,7 +40,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 	public:
 		SourceCodeWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
+		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 
 	private slots:
 		void generateSourceCode(int=0);

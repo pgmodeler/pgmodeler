@@ -21,7 +21,7 @@
 TableView::TableView(Table *table) : BaseTableView(table)
 {
 	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
-	//sel_child_obj=NULL;
+	//sel_child_obj=nullptr;
 	this->configureObject();
 }
 
@@ -37,10 +37,10 @@ void TableView::configureObject(void)
 	int i, count, idx;
 	float width, type_width=0, px=0;
 	QPen pen;
-	TableObjectView *col_item=NULL;
+	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
 	QList<TableObjectView *> col_items;
-	TableObject *tab_obj=NULL;
+	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;

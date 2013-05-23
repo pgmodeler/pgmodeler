@@ -25,7 +25,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	for(unsigned i=0; i < 3; i++)
-		lables[i]=NULL;
+		lables[i]=nullptr;
 
 	(*(this))=(*rel);
 }
@@ -47,7 +47,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 
 		for(unsigned i=0; i < 3; i++)
 		{
-			lables[i]=NULL;
+			lables[i]=nullptr;
 			lables_dist[i]=QPointF(NAN, NAN);
 		}
 
@@ -234,7 +234,7 @@ BaseTable *BaseRelationship::getTable(unsigned table_id)
 	else if(table_id==DST_TABLE)
 		return(dst_table);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 bool BaseRelationship::isTableMandatory(unsigned table_id)
@@ -343,7 +343,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	str_aux="";
 	for(i=0; i < 3; i++)
 	{
-		if(!isnan(lables_dist[i].x()))
+		if(!std::isnan(lables_dist[i].x()))
 		{
 			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());

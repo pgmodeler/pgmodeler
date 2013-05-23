@@ -154,11 +154,11 @@ class BaseObject {
 
 		/*! \brief This method calls the getCodeDefinition(unsigned, bool) method with the 'reduced_form' defined as 'false',
 		 This is the real implementation of the virtual method getCodeDefinition(unsigned). */
-		virtual QString __getCodeDefinition(unsigned def_type);
+		QString __getCodeDefinition(unsigned def_type);
 
 		/*! \brief Set the database that owns the object
-		ATTENTION: calling this method with a NULL parameter doesn't means that the object will
-							 be removed from the database, only the attribute will be set as NULL and
+		ATTENTION: calling this method with a nullptr parameter doesn't means that the object will
+							 be removed from the database, only the attribute will be set as nullptr and
 							 if the user calls getDatabase() in further operations may result in crash */
 		void setDatabase(BaseObject *db);
 
@@ -284,7 +284,7 @@ class BaseObject {
 		bool operator != (const QString &obj_name);
 
 		//! \brief Assigns an object to other copiyng all the attributes correctly
-		virtual void operator = (BaseObject &obj);
+		void operator = (BaseObject &obj);
 
 		//! \brief Clears all the attributes used by the SchemaParser
 		void clearAttributes(void);
@@ -296,7 +296,7 @@ class BaseObject {
 		/*! \brief Returns the object's SQL or XML code definition. The attribute 'reduced_form'
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

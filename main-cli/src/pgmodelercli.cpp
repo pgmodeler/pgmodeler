@@ -47,8 +47,8 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		int eq_pos=-1;
 		map<QString, QString> opts;
 
-		model=NULL;
-		scene=NULL;
+		model=nullptr;
+		scene=nullptr;
 
 		initializeOptions();
 
@@ -377,7 +377,7 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 	if(graph_obj)
 	{
 		ObjectType obj_type=graph_obj->getObjectType();
-		QGraphicsItem *item=NULL;
+		QGraphicsItem *item=nullptr;
 
 		switch(obj_type)
 		{

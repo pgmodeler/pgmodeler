@@ -20,7 +20,7 @@
 
 ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	QGridLayout *layout=NULL;
+	QGridLayout *layout=nullptr;
 
 	setupUi(this);
 
@@ -130,7 +130,7 @@ void ConfigurationForm::restoreDefaults(void)
 BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 {
 	if(idx >= static_cast<unsigned>(confs_stw->count()))
-		return(NULL);
+		return(nullptr);
 	else
 	{
 		switch(idx)

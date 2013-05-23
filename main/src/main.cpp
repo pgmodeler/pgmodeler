@@ -34,7 +34,7 @@ void startCrashHandler(int signal)
 	#ifndef Q_OS_WIN
 		void *stack[20];
 		size_t stack_size, i;
-		char **symbols=NULL;
+		char **symbols=nullptr;
 
 		stack_size = backtrace(stack, 20);
 		symbols = backtrace_symbols(stack, stack_size);

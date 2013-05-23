@@ -94,7 +94,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getReceiverObject(void);
 
 		//! \brief Returns the code definition of the object
-		virtual QString getCodeDefinition(unsigned tipo_def)=0;
+		virtual QString getCodeDefinition(unsigned)=0;
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method

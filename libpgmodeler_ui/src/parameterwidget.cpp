@@ -22,8 +22,8 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 {
 	try
 	{
-		QGridLayout *parameter_grid=NULL;
-		QSpacerItem *hspacer=NULL;
+		QGridLayout *parameter_grid=nullptr;
+		QSpacerItem *hspacer=nullptr;
 
 		Ui_ParameterWidget::setupUi(this);
 
@@ -69,7 +69,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	default_value_edt->setText(Utf8String::create(param.getDefaultValue()));
 	data_type->setAttributes(param.getType(), model);
 
-	BaseObjectWidget::setAttributes(model,&this->parameter, NULL);
+	BaseObjectWidget::setAttributes(model,&this->parameter, nullptr);
 }
 
 void ParameterWidget::applyConfiguration(void)

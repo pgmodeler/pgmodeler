@@ -20,9 +20,9 @@
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
-	object=NULL;
-	op_list=NULL;
-	model=NULL;
+	object=nullptr;
+	op_list=nullptr;
+	model=nullptr;
 
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
@@ -66,9 +66,9 @@ int ObjectRenameWidget::exec(void)
 
 void ObjectRenameWidget::hideEvent(QHideEvent *)
 {
-	object=NULL;
-	op_list=NULL;
-	model=NULL;
+	object=nullptr;
+	op_list=nullptr;
+	model=nullptr;
 	new_name_edt->clear();
 	obj_name_lbl->clear();
 }
@@ -85,7 +85,7 @@ void ObjectRenameWidget::applyRenaming(void)
 		{
 			BaseGraphicObject *obj_graph=dynamic_cast<BaseGraphicObject *>(object);
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
-			BaseObject *aux_obj=NULL, *parent_obj=NULL;
+			BaseObject *aux_obj=nullptr, *parent_obj=nullptr;
 			QString fmt_name;
 
 			obj_type=object->getObjectType();
@@ -93,7 +93,7 @@ void ObjectRenameWidget::applyRenaming(void)
 			if(obj_type!=OBJ_DATABASE)
 			{
 				//Register the object on operations list before the modification
-				op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : NULL));
+				op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 
 				//Format the object name to check if it will have a conflicting name
 				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);

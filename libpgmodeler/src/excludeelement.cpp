@@ -2,7 +2,7 @@
 
 ExcludeElement::ExcludeElement(void) : Element()
 {
- _operator=NULL;
+ _operator=nullptr;
 }
 
 void ExcludeElement::setOperator(Operator *oper)

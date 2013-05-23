@@ -24,11 +24,11 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	}
 	catch(Exception &e)
 	{
-		disconnect(db_model, NULL, this, NULL);
+		disconnect(db_model, nullptr, this, nullptr);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	disconnect(db_model, NULL, this, NULL);
+	disconnect(db_model, nullptr, this, nullptr);
 }
 
 void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
@@ -88,7 +88,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 	DBConnection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
-	BaseObject *object=NULL;
+	BaseObject *object=nullptr;
 	vector<Exception> errors;
 	QTextStream ts;
 	bool ddl_tk_found=false;
@@ -262,7 +262,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 			}
 		}
 
-		disconnect(db_model, NULL, this, NULL);
+		disconnect(db_model, nullptr, this, nullptr);
 
 		//Closes the new opened connection
 		if(new_db_conn.isStablished()) new_db_conn.close();
@@ -274,7 +274,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 	}
 	catch(Exception &e)
 	{
-		disconnect(db_model, NULL, this, NULL);
+		disconnect(db_model, nullptr, this, nullptr);
 
 		//Closes the new opened connection
 		if(new_db_conn.isStablished()) new_db_conn.close();
@@ -298,7 +298,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, DBConnection &co
  QString drop_cmd=QString("DROP %1 %2;");
  ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
  int type_id;
- BaseObject *object=NULL;
+ BaseObject *object=nullptr;
 
  //In case of error during the export all created object are removed
  if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)

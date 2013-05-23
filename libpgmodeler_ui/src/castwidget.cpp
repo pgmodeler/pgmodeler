@@ -23,7 +23,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 	try
 	{
 		QFont font;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 		QSpacerItem *spacer=new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding);
 
 		Ui_CastWidget::setupUi(this);
@@ -96,7 +96,7 @@ void CastWidget::applyConfiguration(void)
 {
 	try
 	{
-		Cast *cast=NULL;
+		Cast *cast=nullptr;
 
 		startConfiguration<Cast>();
 

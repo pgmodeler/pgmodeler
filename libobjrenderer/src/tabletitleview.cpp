@@ -18,7 +18,7 @@
 
 #include "tabletitleview.h"
 
-TableTitleView::TableTitleView(void) : BaseObjectView(NULL)
+TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 {
 	schema_name=new QGraphicsSimpleTextItem;
 	schema_name->setZValue(1);

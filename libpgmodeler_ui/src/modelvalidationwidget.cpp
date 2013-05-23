@@ -24,7 +24,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	vector<QString> vers;
 
 	setupUi(this);
-	this->setModel(NULL);
+	this->setModel(nullptr);
 	//connect(sql_validation_chk, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setEnabled(bool)));
 	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
@@ -58,7 +58,7 @@ void ModelValidationWidget::hide(void)
 
 void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 {
-	bool enable=model_wgt!=NULL;
+	bool enable=model_wgt!=nullptr;
 
 	this->model_wgt=model_wgt;
 	curr_val_info=ValidationInfo();
@@ -84,11 +84,11 @@ void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conn
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
-	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=NULL;
-	QLabel *label=new QLabel, *label1=NULL;
+	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr;
+	QLabel *label=new QLabel, *label1=nullptr;
 	vector<BaseObject *> refs;
-	BaseTable *table=NULL;
-	TableObject *tab_obj=NULL;
+	BaseTable *table=nullptr;
+	TableObject *tab_obj=nullptr;
 	QString ref_name;
 
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
@@ -194,7 +194,7 @@ void ModelValidationWidget::validateModel(void)
 {
 	try
 	{
-		DBConnection *conn=NULL;
+		DBConnection *conn=nullptr;
 		QString ver;
 
 		//Get the connection only the checkbox is checked.
@@ -283,8 +283,8 @@ void ModelValidationWidget::applyFix(void)
 
 void ModelValidationWidget::updateProgress(int prog, QString msg)
 {
-	QTreeWidgetItem *item=NULL;
-	QLabel *label=NULL;
+	QTreeWidgetItem *item=nullptr;
+	QLabel *label=nullptr;
 
 	validation_prog_pb->setValue(prog);
 
@@ -321,6 +321,7 @@ void ModelValidationWidget::clearOutput(void)
 	output_trw->clear();
 	clear_btn->setEnabled(false);
 	prog_info_wgt->setVisible(false);
+	fix_btn->setEnabled(false);
 	validation_prog_pb->setValue(0);
 	warn_count_lbl->setText(QString("%1").arg(0));
 	error_count_lbl->setText(QString("%1").arg(0));

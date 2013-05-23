@@ -81,18 +81,18 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static const unsigned PRIV_SELECT=0,
-													PRIV_INSERT=1,
-													PRIV_UPDATE=2,
-													PRIV_DELETE=3,
-													PRIV_TRUNCATE=4,
-													PRIV_REFERENCES=5,
-													PRIV_TRIGGER=6,
-													PRIV_CREATE=7,
-													PRIV_CONNECT=8,
-													PRIV_TEMPORARY=9,
-													PRIV_EXECUTE=10,
-													PRIV_USAGE=11;
+		static constexpr unsigned PRIV_SELECT=0,
+															PRIV_INSERT=1,
+															PRIV_UPDATE=2,
+															PRIV_DELETE=3,
+															PRIV_TRUNCATE=4,
+															PRIV_REFERENCES=5,
+															PRIV_TRIGGER=6,
+															PRIV_CREATE=7,
+															PRIV_CONNECT=8,
+															PRIV_TEMPORARY=9,
+															PRIV_EXECUTE=10,
+															PRIV_USAGE=11;
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
@@ -137,16 +137,14 @@ class Permission: public BaseObject {
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
-
 		bool isRevoke(void);
-
 		bool isCascade(void);
 
 		//! \brief Returns if the passed object type accepts permission
 		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

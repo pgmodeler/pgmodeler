@@ -57,11 +57,11 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
-		static const unsigned GENERAL_TAB=0,
-													ATTRIBUTES_TAB=1,
-													CONSTRAINTS_TAB=2,
-													SPECIAL_PK_TAB=3,
-													ADVANCED_TAB=4;
+		static constexpr unsigned GENERAL_TAB=0,
+															ATTRIBUTES_TAB=1,
+															CONSTRAINTS_TAB=2,
+															SPECIAL_PK_TAB=3,
+															ADVANCED_TAB=4;
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);

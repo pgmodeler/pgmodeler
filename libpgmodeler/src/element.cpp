@@ -20,9 +20,9 @@
 
 Element::Element(void)
 {
-	column=NULL;
-	operator_class=NULL;
-	sorting_attibs[NULLS_FIRST]=false;
+	column=nullptr;
+	operator_class=nullptr;
+	sorting_attibs[nullptrS_FIRST]=false;
 	sorting_attibs[ASC_ORDER]=true;
 	sorting_enabled=false;
 }
@@ -41,7 +41,7 @@ void Element::setExpression(const QString &expression)
 	if(!expression.isEmpty())
 	{
 		this->expression=expression;
-		this->column=NULL;
+		this->column=nullptr;
 	}
 }
 
@@ -52,7 +52,7 @@ void Element::setOperatorClass(OperatorClass *oper_class)
 
 void Element::setSortingAttribute(unsigned attrib, bool value)
 {
-	if(attrib > NULLS_FIRST)
+	if(attrib > nullptrS_FIRST)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	sorting_attibs[attrib]=value;
@@ -70,7 +70,7 @@ bool Element::isSortingEnabled(void)
 
 bool Element::getSortingAttribute(unsigned attrib)
 {
-	if(attrib > NULLS_FIRST)
+	if(attrib > nullptrS_FIRST)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(sorting_attibs[attrib]);
@@ -97,7 +97,7 @@ void Element::configureAttributes(map<QString, QString> &attributes, unsigned de
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
 	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? "1" : "");
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? "1" : "");
+	attributes[ParsersAttributes::nullptrS_FIRST]=(this->sorting_enabled && this->sorting_attibs[nullptrS_FIRST] ? "1" : "");
 	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? "1" : "");
 
 

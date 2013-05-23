@@ -23,7 +23,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 	try
 	{
 		QStringList list;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 
 		Ui_RuleWidget::setupUi(this);
 
@@ -125,7 +125,7 @@ void RuleWidget::applyConfiguration(void)
 {
 	try
 	{
-		Rule *rule=NULL;
+		Rule *rule=nullptr;
 		unsigned count, i;
 
 		startConfiguration<Rule>();

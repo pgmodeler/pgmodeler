@@ -50,7 +50,7 @@ ObjectsScene::ObjectsScene(void)
 
 ObjectsScene::~ObjectsScene(void)
 {
-	QGraphicsItemGroup *item=NULL;
+	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
 													 OBJ_VIEW, OBJ_TABLE };
@@ -167,10 +167,10 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 {
 	QList<QGraphicsItem *> items=this->items();
 	QGraphicsItem::GraphicsItemFlags flags;
-	BaseObjectView *object=NULL;
-	BaseGraphicObject *base_obj=NULL;
+	BaseObjectView *object=nullptr;
+	BaseGraphicObject *base_obj=nullptr;
 
-	if(!isnan(p_start.x()) && !isnan(p_start.y()))
+	if(!std::isnan(p_start.x()) && !std::isnan(p_start.y()))
 		rel_line->setLine(QLineF(p_start,p_start));
 
 	rel_line->setVisible(value);
@@ -296,13 +296,13 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 		if(rel)
 		{
-			disconnect(rel, NULL, this, NULL);
+			disconnect(rel, nullptr, this, nullptr);
 			rel->disconnectTables();
 		}
 		else if(tab)
-			disconnect(tab, NULL, this, NULL);
+			disconnect(tab, nullptr, this, nullptr);
 		else if(object)
-			disconnect(object, NULL, this, NULL);
+			disconnect(object, nullptr, this, nullptr);
 
 		item->setVisible(false);
 		item->setActive(false);
@@ -324,7 +324,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 	}
 	else
 		//Emit a signal indicating that no object was selected
-		emit s_objectDoubleClicked(NULL);
+		emit s_objectDoubleClicked(nullptr);
 }
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -352,7 +352,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		{
 			//sel_ini_pnt=event->scenePos();
 			selection_rect->setVisible(true);
-			emit s_objectSelected(NULL,false);
+			emit s_objectSelected(nullptr,false);
 		}
 	}
 	else if(event->buttons()==Qt::RightButton)
@@ -361,7 +361,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		if(!item)
 		{
 			this->clearSelection();
-			emit s_objectSelected(NULL,false);
+			emit s_objectSelected(nullptr,false);
 		}
 
 		emit s_popupMenuRequested();
@@ -416,7 +416,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		QList<QGraphicsItem *> items=this->selectedItems();
 		float x1,y1,x2,y2, dx, dy;
 		QRectF rect;
-		RelationshipView *rel=NULL;
+		RelationshipView *rel=nullptr;
 		vector<QPointF> points;
 		vector<QPointF>::iterator itr;
 
@@ -522,9 +522,9 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::alignObjectsToGrid(void)
 {
 	QList<QGraphicsItem *> items=this->items();
-	RelationshipView *rel=NULL;
-	BaseTableView *tab=NULL;
-	TextboxView *lab=NULL;
+	RelationshipView *rel=nullptr;
+	BaseTableView *tab=nullptr;
+	TextboxView *lab=nullptr;
 	vector<QPointF> points;
 	vector<Schema *> schemas;
 	unsigned i, count, i1, count1;
