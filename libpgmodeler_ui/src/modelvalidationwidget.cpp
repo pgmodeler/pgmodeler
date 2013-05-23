@@ -171,7 +171,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + "." + ref_name;
 
 				label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
-												.arg(Utf8String::create(ref_name))
+												.arg(Utf8String::create(ref_name).remove("\""))
 												.arg(Utf8String::create(refs.back()->getTypeName())));
 			}
 			else

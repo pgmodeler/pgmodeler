@@ -277,9 +277,15 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>22</width>
-       <height>22</height>
+       <width>18</width>
+       <height>18</height>
       </size>
+     </property>
+     <property name="indentation">
+      <number>20</number>
+     </property>
+     <property name="uniformRowHeights">
+      <bool>true</bool>
      </property>
      <attribute name="headerVisible">
       <bool>false</bool>
