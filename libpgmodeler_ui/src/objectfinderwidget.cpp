@@ -22,10 +22,10 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	filter_wgt->setVisible(false);
+	filter_frm->setVisible(false);
 	updateObjectTypeList(obj_types_lst);
 
-	connect(filter_btn, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
+	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(result_tbw, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(selectObject(void)));
@@ -71,7 +71,7 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	filter_btn->setEnabled(enable);
 	pattern_edt->setEnabled(enable);
-	filter_wgt->setEnabled(enable);
+	filter_frm->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable);
 	result_tbw->setEnabled(enable);

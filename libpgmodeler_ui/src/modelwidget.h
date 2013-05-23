@@ -44,11 +44,7 @@ class ModelWidget: public QWidget {
 		float current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-		bool modified,
-
-		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
-		When this flag is set it's recommend to revalidate the model using the Model validation tool */
-		invalidated;
+		bool modified;
 
 		//! \brief Stores the objects that can be navigate through Alt+<left|right> keys
 		vector<BaseGraphicObject *> obj_nav_list;
@@ -165,9 +161,6 @@ class ModelWidget: public QWidget {
 		//! \brief Disables the model actions when some new object action is active
 		void disableModelActions(void);
 
-		//! \brief Indicate if the model invalidated
-		void setInvalidated(bool value);
-
 	public:
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -192,9 +185,6 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns if the model is modified or not
 		bool isModified(void);
-
-		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
-		bool isInvalidated(void);
 
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);

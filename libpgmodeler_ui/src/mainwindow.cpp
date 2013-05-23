@@ -612,7 +612,6 @@ void MainWindow::addModel(const QString &filename)
 
 	//The model is set to modified when no model file is loaded
 	model_tab->setModified(filename.isEmpty());
-	model_tab->setInvalidated(false);
 	setCurrentModel();
 }
 
@@ -838,7 +837,8 @@ void MainWindow::updateModelTabName(void)
 
 void MainWindow::applyConfigurations(void)
 {
-	if(configuration_form->result()==QDialog::Accepted)
+	if(!sender() ||
+		 (sender()==configuration_form && configuration_form->result()==QDialog::Accepted))
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
 		int count, i;
@@ -876,15 +876,11 @@ void MainWindow::saveAllModels(void)
 			(sender()==&model_save_timer &&	this->isActiveWindow())))
 
 	{
-		ModelWidget *model=nullptr;
 		int i, count;
 
 		count=models_tbw->count();
 		for(i=0; i < count; i++)
-		{
-			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-			this->saveModel(model);
-		}
+			this->saveModel(dynamic_cast<ModelWidget *>(models_tbw->widget(i)));
 	}
 }
 
@@ -894,43 +890,51 @@ void MainWindow::saveModel(ModelWidget *model)
 	{
 		if(!model) model=current_model;
 
-		//If the model is invalidated ask the user to confirm the saving
-		if(model->isInvalidated())
-			msg_box.show(trUtf8("Model validation recommended"),
-									 trUtf8("ATTENTION: The model '%1' is invalidated and its recommended that you revalidate it before save! \
-Saving an invalidated model can generate a corrupted model file! \
-Do you really want to proceed with the saving?").arg(model->getDatabaseModel()->getName()),
-													Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
-
-		/* The model is saved only when is modified and is not invalidated or the user
-		confirmed the of invalidated model */
-		if(model && (model->isModified() || sender()==action_save_as) &&
-			 (!model->isInvalidated() || (model->isInvalidated() && msg_box.result()==QDialog::Accepted)))
+		if(model)
 		{
-			//If the action that calls the slot were the 'save as' or the model filename isn't set
-			if(sender()==action_save_as || model->filename.isEmpty())
+			if(model->isModified())
+				model_valid_wgt->validate_btn->click();
+
+			/* The model is saved only when is modified and is not invalidated or the user
+			confirmed the of invalidated model */
+			if(!model->getDatabaseModel()->isInvalidated() && (model->isModified() || sender()==action_save_as))
 			{
-				QFileDialog file_dlg;
-
-				file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-				file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
-				file_dlg.setFileMode(QFileDialog::AnyFile);
-				file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-				file_dlg.setModal(true);
-
-				if(file_dlg.exec()==QFileDialog::Accepted)
+				//If the action that calls the slot were the 'save as' or the model filename isn't set
+				if(sender()==action_save_as || model->filename.isEmpty())
 				{
-					if(!file_dlg.selectedFiles().isEmpty())
-						model->saveModel(file_dlg.selectedFiles().at(0));
+					QFileDialog file_dlg;
+
+					file_dlg.setDefaultSuffix("dbm");
+					file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
+					file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+					file_dlg.setFileMode(QFileDialog::AnyFile);
+					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+					file_dlg.setModal(true);
+
+					if(file_dlg.exec()==QFileDialog::Accepted)
+					{
+						if(!file_dlg.selectedFiles().isEmpty())
+							model->saveModel(file_dlg.selectedFiles().at(0));
+					}
+
+					recent_models.push_front(file_dlg.selectedFiles().at(0));
+					updateRecentModelsMenu();
 				}
+				else
+					model->saveModel();
 
-				recent_models.push_front(file_dlg.selectedFiles().at(0));
-				updateRecentModelsMenu();
+				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
+				model_valid_wgt->clearOutput();
 			}
-			else
-				model->saveModel();
-
-			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
+			//Aborts the model saving and show a warning message when it is invalid
+			else if(model->getDatabaseModel()->isInvalidated())
+			{
+				validation_btn->setChecked(true);
+				msg_box.show(trUtf8("Model not saved"),
+										 trUtf8("Could not save the model '%1' due to some validation errors! Please, use the validation tool to fix any problem and try again.")
+										 .arg(model->getDatabaseModel()->getName()),
+										 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+			}
 		}
 	}
 	catch(Exception &e)

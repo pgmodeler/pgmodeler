@@ -33,11 +33,10 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	connect(output_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectValidationInfo(QTreeWidgetItem *, int)));
 	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
 	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
-	connect(sql_val_btn, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setVisible(bool)));
-	connect(sql_validation_chk, SIGNAL(toggled(bool)), connection_lbl, SLOT(setEnabled(bool)));
+	connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
-	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_lbl, SLOT(setEnabled(bool)));
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
+	connect(fix_steps_chk, SIGNAL(toggled(bool)), fix_steps_sb, SLOT(setEnabled(bool)));
 
 	SchemaParser::getPgSQLVersions(vers);
 	version_cmb->addItem(trUtf8("Autodetect"));
@@ -47,7 +46,8 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		vers.pop_back();
 	}
 
-	sql_val_conf_wgt->setVisible(false);
+	options_frm->setVisible(false);
+	curr_step=0;
 }
 
 void ModelValidationWidget::hide(void)
@@ -64,8 +64,10 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	curr_val_info=ValidationInfo();
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
-	sql_val_btn->setEnabled(enable);
+	options_btn->setEnabled(enable);
+	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
+	curr_step=0;
 	clearOutput();
 }
 
@@ -115,33 +117,40 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 									 .arg(val_info.getReferences().size()));
 
 	}
+	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+		label->setText(trUtf8("SQL validation failed due to error(s) below."));
 	else
-		label->setText(trUtf8("Validation failed to execute the SQL command below."));
+		label->setText(val_info.getErrors().at(0));
 
 	output_trw->addTopLevelItem(item);
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR ||
+		 val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
 	{
-		QStringList errors=val_info.getSQLErrors();
+		QStringList errors=val_info.getErrors();
 		QFont fnt;
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+		validation_prog_pb->setValue(validation_prog_pb->maximum());
 
-		//Adding all the sql errors into the output pane
-		while(!errors.isEmpty())
+		if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
 		{
-			item1=new QTreeWidgetItem(item);
-			label1=new QLabel;
-			label1->setText(errors.back());
-			fnt=label1->font();
-			fnt.setPointSizeF(8.0f);
-			label1->setFont(fnt);
-			output_trw->setItemWidget(item1, 0, label1);
-			errors.pop_back();
+			//Adding all the sql errors into the output pane
+			while(!errors.isEmpty())
+			{
+				item1=new QTreeWidgetItem(item);
+				label1=new QLabel;
+				label1->setText(errors.back());
+				fnt=label1->font();
+				fnt.setPointSizeF(8.0f);
+				label1->setFont(fnt);
+				output_trw->setItemWidget(item1, 0, label1);
+				errors.pop_back();
+			}
 		}
 	}
 	else
 	{
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
 		//Listing the referrer object on output pane
 		refs=val_info.getReferences();
@@ -214,11 +223,7 @@ void ModelValidationWidget::validateModel(void)
 
 		model_wgt->setEnabled(true);
 		validate_btn->setEnabled(true);
-
-		/* Indicates the model invalidation only when there is validation warnings (broken refs. or no unique name)
-		sql errors are ignored since validator cannot fix SQL related problemas */
-		model_wgt->setInvalidated(validation_helper.getWarningCount() > 0);
-		fix_btn->setEnabled(model_wgt->isInvalidated());
+		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
 	}
 	catch(Exception &e)
 	{
@@ -245,7 +250,7 @@ void ModelValidationWidget::selectValidationInfo(QTreeWidgetItem *item, int)
 
 	// Enables the fix button only when the its is relative to a BROKER_REFERENCE or	NO_UNIQUE_NAME
 	fix_btn->setEnabled(curr_val_info.getValidationType()!=ValidationInfo::SQL_VALIDATION_ERR &&
-											curr_val_info.isValid() && validation_helper.getWarningCount() > 0);
+											curr_val_info.isValid() && validation_helper.getErrorCount() > 0);
 }
 
 void ModelValidationWidget::applyFix(void)
@@ -260,6 +265,15 @@ void ModelValidationWidget::applyFix(void)
 
 		//Every time the user apply some fix is necessary to revalidate the model
 		validateModel();
+
+		if(fix_steps_chk->isChecked() && curr_step < fix_steps_sb->value() &&
+			 validation_helper.getErrorCount() > 0)
+		{
+			curr_step++;
+			this->applyFix();
+		}
+		else
+			curr_step=0;
 	}
 	catch(Exception &e)
 	{
@@ -269,6 +283,7 @@ void ModelValidationWidget::applyFix(void)
 		label->setText(trUtf8("The validation process failed due to external errors! You can restart the validation by clicking <strong>Validate</strong> again."));
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
+		curr_step=0;
 		output_trw->clear();
 		output_trw->insertTopLevelItem(0, item);
 		output_trw->setItemWidget(item, 0, label);

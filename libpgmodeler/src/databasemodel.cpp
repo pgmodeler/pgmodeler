@@ -29,7 +29,7 @@ DatabaseModel::DatabaseModel(void)
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
 	conn_limit=-1;
-	loading_model=false;
+	loading_model=invalidated=false;
 	attributes[ParsersAttributes::ENCODING]="";
 	attributes[ParsersAttributes::TEMPLATE_DB]="";
 	attributes[ParsersAttributes::CONN_LIMIT]="";
@@ -7622,4 +7622,14 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 
 
 	return(list);
+}
+
+void DatabaseModel::setInvalidated(bool value)
+{
+	this->invalidated=value;
+}
+
+bool DatabaseModel::isInvalidated(void)
+{
+	return(invalidated);
 }

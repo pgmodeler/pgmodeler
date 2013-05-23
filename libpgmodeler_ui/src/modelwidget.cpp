@@ -109,7 +109,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	current_zoom=1;
 	obj_nav_idx=0;
-	modified=invalidated=false;
+	modified=false;
 	new_obj_type=BASE_OBJECT;
 
 	//Generating a temporary file name for the model
@@ -315,11 +315,6 @@ void ModelWidget::setModified(bool value)
 	this->modified=value;
 }
 
-void ModelWidget::setInvalidated(bool value)
-{
-	this->invalidated=value;
-}
-
 void ModelWidget::resizeEvent(QResizeEvent *)
 {
 	QRectF ret=scene->sceneRect();
@@ -497,7 +492,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 	}
 
 	this->modified=true;
-	this->invalidated=true;
+	//this->invalidated=true;
 }
 
 void ModelWidget::addNewObject(void)
@@ -574,7 +569,7 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 	}
 
 	this->modified=true;
-	this->invalidated=true;
+	//this->invalidated=true;
 }
 
 void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
@@ -895,7 +890,7 @@ void ModelWidget::loadModel(const QString &filename)
 
 		protected_model_frm->setVisible(db_model->isProtected());
 		this->modified=false;
-		this->invalidated=false;
+		//this->invalidated=false;
 	}
 	catch(Exception &e)
 	{
@@ -1400,10 +1395,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 
 		if(!this->modified && res==QDialog::Accepted)
-		{
 			this->modified=true;
-			this->invalidated=true;
-		}
 
 		this->setFocus();
 	}
@@ -2745,11 +2737,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 bool ModelWidget::isModified(void)
 {
 	return(modified);
-}
-
-bool ModelWidget::isInvalidated(void)
-{
-	return(invalidated);
 }
 
 DatabaseModel *ModelWidget::getDatabaseModel(void)

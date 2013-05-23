@@ -42,16 +42,18 @@ class ValidationInfo {
 		the info is about SQL validation */
 		vector<BaseObject *> references;
 
-		QStringList sql_errors;
+		QStringList errors;
 
 	public:
 		static constexpr unsigned NO_UNIQUE_NAME=0,
 															BROKEN_REFERENCE=1,
-															SQL_VALIDATION_ERR=2;
+															SQL_VALIDATION_ERR=2,
+															VALIDATION_ABORTED=3;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
-		ValidationInfo(Exception &e);
+		ValidationInfo(const QString &msg);
+		ValidationInfo(Exception e);
 
 		//! \brief Returns the validation type
 		unsigned getValidationType(void);
@@ -63,7 +65,7 @@ class ValidationInfo {
 		vector<BaseObject *> getReferences(void);
 
 		//! \brief Returns the SQL errors generated during the SQL validation
-		QStringList getSQLErrors(void);
+		QStringList getErrors(void);
 
 		/*! \brief Returns if the content of validation info is valid. To be valid
 		the info must have the object not null when it is NO_UNIQUE_NAME or BROKEN_REFERENCE,

@@ -47,6 +47,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Current validation info selected on output pane
 		ValidationInfo curr_val_info;
 
+		int curr_step;
+
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
 
@@ -59,15 +61,14 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private slots:
 		//! \brief Try to resolve the conflict pointed by the selected validation info
 		void applyFix(void);
-
-		void validateModel(void);
 		void updateValidation(ValidationInfo val_info);
 		void updateProgress(int prog, QString msg);
 		void selectValidationInfo(QTreeWidgetItem *item, int);
-		void clearOutput(void);
+		void validateModel(void);
 
 	public slots:
 		void hide(void);
+		void clearOutput(void);
 
 	signals:
 		void s_visibilityChanged(bool);

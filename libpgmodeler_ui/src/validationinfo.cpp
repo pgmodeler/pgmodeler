@@ -37,7 +37,7 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
  this->references=references;
 }
 
-ValidationInfo::ValidationInfo(Exception &e)
+ValidationInfo::ValidationInfo(Exception e)
 {
 	vector<Exception> err_list;
 
@@ -46,11 +46,17 @@ ValidationInfo::ValidationInfo(Exception &e)
 
 	while(!err_list.empty())
 	{
-		sql_errors.push_back(err_list.back().getErrorMessage());
+		errors.push_back(err_list.back().getErrorMessage());
 		err_list.pop_back();
 	}
 
-	sql_errors.removeDuplicates();
+	errors.removeDuplicates();
+}
+
+ValidationInfo::ValidationInfo(const QString &msg)
+{
+	val_type=VALIDATION_ABORTED;
+	errors.push_back(msg);
 }
 
 unsigned ValidationInfo::getValidationType(void)
@@ -68,13 +74,13 @@ vector<BaseObject *> ValidationInfo::getReferences(void)
 	return(references);
 }
 
-QStringList ValidationInfo::getSQLErrors(void)
+QStringList ValidationInfo::getErrors(void)
 {
-	return(sql_errors);
+	return(errors);
 }
 
 bool ValidationInfo::isValid(void)
 {
 	return(((val_type==NO_UNIQUE_NAME || val_type==BROKEN_REFERENCE) && object) ||
-				 (val_type==SQL_VALIDATION_ERR && !sql_errors.empty()));
+				 (val_type==SQL_VALIDATION_ERR && !errors.empty()));
 }

@@ -102,7 +102,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		map<unsigned, QString> xml_special_objs;
 
 		//! \brief Indicates if the model is being loaded
-		bool loading_model;
+		bool loading_model,
+
+		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
+		When this flag is set it's recommend to revalidate the model using the Model validation tool */
+		invalidated;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -126,6 +130,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
+
+	protected:
+		//! \brief Indicate if the model invalidated
+		void setInvalidated(bool value);
 
 	public:
 		DatabaseModel(void);
@@ -209,6 +217,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the database enconding
 		EncodingType getEncoding(void);
+
+		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
+		bool isInvalidated(void);
 
 		//! \brief Saves the specified code definition for the model on the specified filename
 		void saveModel(const QString &filename, unsigned def_type);
@@ -409,6 +420,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned icon_id);
+
+	friend class ModelValidationHelper;
 };
 
 #endif

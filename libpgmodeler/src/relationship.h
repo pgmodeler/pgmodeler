@@ -39,7 +39,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 (0,1) ---<>--- (0,1)
 	 >> Columns are added on the destination table in order to represent the relationship.
 	 >> The columns that represents the foreign key must accept null values.
-	 >> The policy for DELETE and UPDATE events on the foreign key must be SET nullptr.
+	 >> The policy for DELETE and UPDATE events on the foreign key must be SET NULL.
 	 >> The relationship attributes and constraints are added on same table where the
 			foreign key columns are added.
 
@@ -47,7 +47,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 (0,1) ---<>--- (1,1)
 	 >> Columns ared added on the table which minimum cardinality is 0.
 	 >> The columns that represents the foreign key must accept null values.
-	 >> The policy for DELETE and UPDATE events on the foreign key must be SET nullptr.
+	 >> The policy for DELETE and UPDATE events on the foreign key must be SET NULL.
 	 >> The relationship attributes and constraints are added on same table where the
 			foreign key columns are added.
 
@@ -68,7 +68,7 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 	>> Columns are added on the destination table in any cardinality combination.
 	>> When the minimum cardinality is 0 on the "One" side (e.g. (0,1)) the foreign key columns
 		 must accept null values in order to represent the optionality of the relationship. Also
-		 the foreign key ON DELETE and ON UPDATE policy must be SET nullptr.
+		 the foreign key ON DELETE and ON UPDATE policy must be SET NULL.
 	>> When the minimum cardinality is 1 on the "One" size (e.g. (1,1)) the foreign key columns
 		 mustn't accept null values (NOT NULL) to represent the entity mandatory participation. Also
 		 the foreign key ON DELETE and ON UPDATE policy must be RESTRICT.
