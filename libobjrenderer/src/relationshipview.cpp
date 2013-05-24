@@ -232,16 +232,9 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						/* Creates a auxiliary line based upon the cursor position. This
 				 line is used to calculate the exact point (intersection) where the new one
 				 must be inserted */
-						if(lines[i]->line().angle()>=179 || lines[i]->line().angle()>=359)
-						{
-							lin.setP1(QPointF(event->pos().x(), event->pos().y()-50));
-							lin.setP2(QPointF(event->pos().x(), event->pos().y()+50));
-						}
-						else
-						{
-							lin.setP1(QPointF(event->pos().x()-50, event->pos().y()));
-							lin.setP2(QPointF(event->pos().x()+50, event->pos().y()));
-						}
+						lin.setP1(QPointF(event->pos().x()-50, event->pos().y()-50));
+						lin.setP2(QPointF(event->pos().x()+50, event->pos().y()+50));
+
 
 						//Case the auxiliary line intercepts one relationship line
 						if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
@@ -541,7 +534,7 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier, the line has its thickness modified
 			if(rel && rel->isIdentifier() && i >= idx_lin_desc)
-				pen.setWidthF(1.5f);
+				pen.setWidthF(1.6f);
 			else
 				pen.setWidthF(1.0f);
 
