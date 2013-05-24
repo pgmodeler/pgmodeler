@@ -44,9 +44,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		ModelValidationHelper validation_helper;
 
-		//! \brief Current validation info selected on output pane
-		ValidationInfo curr_val_info;
-
+		//! \brief Current fix step
 		int curr_step;
 
 	public:
@@ -59,11 +57,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateConnections(map<QString, DBConnection *> &conns);
 
 	private slots:
-		//! \brief Try to resolve the conflict pointed by the selected validation info
 		void applyFix(void);
 		void updateValidation(ValidationInfo val_info);
 		void updateProgress(int prog, QString msg);
-		void selectValidationInfo(QTreeWidgetItem *item, int);
 		void validateModel(void);
 
 	public slots:

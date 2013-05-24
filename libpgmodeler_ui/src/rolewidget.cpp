@@ -33,7 +33,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 																				 Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
 
-	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 5);
+	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
 	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(can_replicate_chk);
@@ -72,7 +72,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		members_twg->widget(i)->setLayout(grid);
 	}
 

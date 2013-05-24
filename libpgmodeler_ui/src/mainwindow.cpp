@@ -892,8 +892,14 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
+			bool sql_val_checked=model_valid_wgt->sql_validation_chk->isChecked();
+
 			if(model->isModified())
+			{
+				model_valid_wgt->sql_validation_chk->setChecked(false);
 				model_valid_wgt->validate_btn->click();
+				model_valid_wgt->sql_validation_chk->setChecked(sql_val_checked);
+			}
 
 			/* The model is saved only when is modified and is not invalidated or the user
 			confirmed the of invalidated model */

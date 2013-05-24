@@ -6,8 +6,8 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	configureFormLayout(extension_grid, OBJ_EXTENSION);
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	parent_form->setMinimumSize(480, 280);
-	parent_form->setMaximumHeight(280);
+	parent_form->setMinimumSize(480, 250);
+	parent_form->setMaximumHeight(250);
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)

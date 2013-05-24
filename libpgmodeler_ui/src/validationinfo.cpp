@@ -21,7 +21,7 @@
 ValidationInfo::ValidationInfo(void)
 {
 	object=nullptr;
-	val_type=NO_UNIQUE_NAME;
+	val_type=VALIDATION_ABORTED;
 }
 
 ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)

@@ -59,7 +59,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		func_config_twg->widget(1)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());

@@ -30,22 +30,22 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	plugins_conf=new PluginsConfigWidget(this);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(2,2,2,2);
+	layout->setContentsMargins(4,4,4,4);
 	layout->addWidget(general_conf);
 	confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(2,2,2,2);
+	layout->setContentsMargins(4,4,4,4);
 	layout->addWidget(appearance_conf);
 	confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(2,2,2,2);
+	layout->setContentsMargins(4,4,4,4);
 	layout->addWidget(connections_conf);
 	confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(2,2,2,2);
+	layout->setContentsMargins(4,4,4,4);
 	layout->addWidget(plugins_conf);
 	confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
 

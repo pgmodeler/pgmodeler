@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>180</height>
+    <height>187</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -65,6 +65,18 @@
       <string>Data Type</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
       <item row="1" column="1" colspan="4">
        <widget class="QComboBox" name="interval_cmb">
         <property name="enabled">

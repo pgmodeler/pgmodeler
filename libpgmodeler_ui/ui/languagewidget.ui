@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="language_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <property name="spacing">
@@ -73,7 +82,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Validator Function:</string>
+      <string>Validator Func.:</string>
      </property>
     </widget>
    </item>
@@ -92,7 +101,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Handler Function:</string>
+      <string>Handler Func.:</string>
      </property>
     </widget>
    </item>
@@ -111,7 +120,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Inline Function:</string>
+      <string>Inline Func.:</string>
      </property>
     </widget>
    </item>

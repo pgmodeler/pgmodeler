@@ -25,12 +25,11 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 	setupUi(this);
 	this->setModel(nullptr);
-	//connect(sql_validation_chk, SIGNAL(toggled(bool)), sql_val_conf_wgt, SLOT(setEnabled(bool)));
+
 	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
-	connect(output_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectValidationInfo(QTreeWidgetItem *, int)));
 	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
 	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
 	connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -61,7 +60,6 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	bool enable=model_wgt!=nullptr;
 
 	this->model_wgt=model_wgt;
-	curr_val_info=ValidationInfo();
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
 	options_btn->setEnabled(enable);
@@ -234,33 +232,14 @@ void ModelValidationWidget::validateModel(void)
 	}
 }
 
-void ModelValidationWidget::selectValidationInfo(QTreeWidgetItem *item, int)
-{
-	output_trw->clearSelection();
-
-	if(item)
-	{
-		if(item->parent())
-			item=item->parent();
-
-		item->setSelected(true);
-		output_trw->setCurrentItem(item);
-		curr_val_info=item->data(0, Qt::UserRole).value<ValidationInfo>();
-	}
-
-	// Enables the fix button only when the its is relative to a BROKER_REFERENCE or	NO_UNIQUE_NAME
-	fix_btn->setEnabled(curr_val_info.getValidationType()!=ValidationInfo::SQL_VALIDATION_ERR &&
-											curr_val_info.isValid() && validation_helper.getErrorCount() > 0);
-}
-
 void ModelValidationWidget::applyFix(void)
 {
 	try
 	{
-		if(!output_trw->currentItem())
-			curr_val_info=output_trw->topLevelItem(0)->data(0, Qt::UserRole).value<ValidationInfo>();
+		ValidationInfo val_info;
 
-		validation_helper.resolveConflict(curr_val_info);
+		val_info=output_trw->topLevelItem(0)->data(0, Qt::UserRole).value<ValidationInfo>();
+		validation_helper.resolveConflict(val_info);
 		model_wgt->setModified(true);
 
 		//Every time the user apply some fix is necessary to revalidate the model

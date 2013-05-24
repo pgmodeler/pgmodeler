@@ -1223,7 +1223,7 @@ QString PgSQLType::operator * (void)
 			aux=BaseType::type_list[type_idx];
 
 			if(interval_type!=BaseType::null)
-				aux+=QString("[%1]").arg(~interval_type);
+				aux+=QString(" %1 ").arg(~interval_type);
 
 			if(precision >= 0)
 				aux+=QString("(%1)").arg(precision);

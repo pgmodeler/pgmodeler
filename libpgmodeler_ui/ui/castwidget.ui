@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="cast_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <property name="spacing">
@@ -36,7 +45,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>121</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -127,7 +136,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>138</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -138,7 +147,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Conversion Function:</string>
+      <string>Conversion Func.:</string>
      </property>
     </widget>
    </item>

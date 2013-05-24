@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>492</width>
-    <height>311</height>
+    <height>313</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,8 +20,17 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="confgeral_grid">
-   <property name="margin">
-    <number>2</number>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
    </property>
    <property name="spacing">
     <number>6</number>
@@ -456,7 +465,7 @@
       <enum>QFrame::HLine</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
     </widget>
    </item>

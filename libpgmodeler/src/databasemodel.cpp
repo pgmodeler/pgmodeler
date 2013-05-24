@@ -1107,9 +1107,30 @@ void DatabaseModel::validateRelationships(void)
 	map<unsigned, Exception> error_map;
 	map<unsigned, Exception>::iterator itr2, itr2_end;
 	map<BaseObject *, unsigned> conn_tries;
-	unsigned idx;
+	unsigned idx, rels_gen_pk=0;
 	vector<Schema *> schemas;
 	BaseTable *tab1=nullptr, *tab2=nullptr;
+
+	itr=relationships.begin();
+	itr_end=relationships.end();
+
+	/* Calculates the quantity of referece tables which has primary keys added by relationship.
+	This type of primary key may cause unexpected relationship invalidation during the validation process
+	because all relationship are disconnected and when reconnecting them the primary key sometimes is not yet
+	created causing other relationships to be broken. This counter is used to try revalidate any relationship
+	that emits ERR_LINK_TABLES_NO_PK exception during its connection */
+	while(itr!=itr_end)
+	{
+		rel=dynamic_cast<Relationship *>(*itr);
+		itr++;
+
+		if(rel &&
+			 (rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+				rel->getRelationshipType()==Relationship::RELATIONSHIP_1N) &&
+				rel->getReferenceTable()->getPrimaryKey() &&
+				rel->getReferenceTable()->getPrimaryKey()->isAddedByRelationship())
+			rels_gen_pk++;
+	}
 
 	itr=relationships.begin();
 	itr_end=relationships.end();
@@ -1199,9 +1220,9 @@ void DatabaseModel::validateRelationships(void)
 			 permanently invalidated and need to be removed from the model */
 				catch(Exception &e)
 				{
-					/* If the relationship connection failed after 3 times at the same error
-					it will be deleted from model */
-					if(e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > 3)
+					/* If the relationship connection failed after 'rels_gen_pk' times at the
+					same error it will be deleted from model */
+					if(e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk)
 					{
 						//Removes the relationship
 						__removeObject(rel);
@@ -1216,8 +1237,9 @@ void DatabaseModel::validateRelationships(void)
 					{
 						//Increments the connection tries
 						conn_tries[rel]++;
+
 						/* Removes the relationship from the current position and inserts it
-						into the next position after the next relationship */
+						into the next position after the next relationship to try the reconnection */
 						rels.erase(itr_ant);
 						rels.insert(rels.begin() + idx + 1,rel);
 					}
