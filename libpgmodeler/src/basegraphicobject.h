@@ -102,7 +102,6 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Signal emitted when the user calls the setProtected() method
 		void s_objectProtected(bool);
 
-		friend class CenaObjetos;
 		friend class BaseObjectView;
 		friend class DatabaseModel;
 };

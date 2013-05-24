@@ -1106,6 +1106,7 @@ void DatabaseModel::validateRelationships(void)
 	map<unsigned, QString>::iterator itr1, itr1_end;
 	map<unsigned, Exception> error_map;
 	map<unsigned, Exception>::iterator itr2, itr2_end;
+	map<BaseObject *, unsigned> conn_tries;
 	unsigned idx;
 	vector<Schema *> schemas;
 	BaseTable *tab1=nullptr, *tab2=nullptr;
@@ -1198,19 +1199,33 @@ void DatabaseModel::validateRelationships(void)
 			 permanently invalidated and need to be removed from the model */
 				catch(Exception &e)
 				{
-					//Removes the relationship
-					__removeObject(rel);
+					/* If the relationship connection failed after 3 times at the same error
+					it will be deleted from model */
+					if(e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > 3)
+					{
+						//Removes the relationship
+						__removeObject(rel);
 
-					//Removes the iterator that stores the relationship from the list
-					rels.erase(itr_ant);
+						//Removes the iterator that stores the relationship from the list
+						rels.erase(itr_ant);
+
+						//Stores the error raised in a list
+						errors.push_back(e);
+					}
+					else
+					{
+						//Increments the connection tries
+						conn_tries[rel]++;
+						/* Removes the relationship from the current position and inserts it
+						into the next position after the next relationship */
+						rels.erase(itr_ant);
+						rels.insert(rels.begin() + idx + 1,rel);
+					}
 
 					/* Points the searching to the iterator immediately after the removed iterator
 				evicting to walk on the list from the first item */
 					itr_end=rels.end();
 					itr=rels.begin() + idx;
-
-					//Stores the error raised in a list
-					errors.push_back(e);
 				}
 			}
 

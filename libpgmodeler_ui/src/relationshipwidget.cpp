@@ -855,6 +855,7 @@ void RelationshipWidget::applyConfiguration(void)
 					if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
 						col_ids.push_back(i);
 				}
+
 				rel->setSpecialPrimaryKeyCols(col_ids);
 			}
 

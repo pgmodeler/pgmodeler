@@ -196,7 +196,9 @@ class Relationship: public BaseRelationship {
 		vector<unsigned> column_ids_pk_rel;
 
 		//! \brief Name assigned to the generated table on n-n relationships
-		QString tab_name_relnn;
+		QString tab_name_relnn,
+		src_tab_prev_name,
+		dst_tab_prev_name;
 
 		//! \brief Indicates if the column exists on the referenced column list
 		bool isColumnExists(Column *column);
