@@ -140,11 +140,12 @@ int main(int argc, char **argv)
 		p.begin(&pixmap);
 		p.setFont(fnt);
 		p.setPen(QColor(255,255,255));
-		p.drawText(QPointF((pixmap.size().width()*0.55f)-(ret.width()/2),
-											 pixmap.size().width()-17), str_ver);
+		p.drawText(QPointF(pixmap.size().width()-(ret.width()/2),
+											 pixmap.size().height()), str_ver);
 		p.end();
 
 		QSplashScreen splash(pixmap);
+		splash.setWindowModality(Qt::ApplicationModal);
 		splash.show();
 		splash.repaint();
 

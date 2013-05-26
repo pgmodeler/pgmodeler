@@ -226,7 +226,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			else
 			{
 				warn_count++;
-				emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending warnings! SQL validation will not be executed.")));
+				emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending errors! SQL validation will not be executed.")));
 			}
 		}
 
