@@ -102,7 +102,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler64x64.png</pixmap>
+         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 		QPixmap pixmap(":imagens/imagens/pgmodeler_logo.png");
 
 		//Draws the current version code on the splash
-		QFont fnt;
+		/* QFont fnt;
 		QPainter p;
 		fnt.setBold(true);
 
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 		p.setPen(QColor(255,255,255));
 		p.drawText(QPointF(pixmap.size().width()-(ret.width()/2),
 											 pixmap.size().height()), str_ver);
-		p.end();
+		p.end(); */
 
 		QSplashScreen splash(pixmap);
 		splash.setWindowModality(Qt::ApplicationModal);
