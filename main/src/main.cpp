@@ -126,25 +126,7 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		//Loading the application splash screen
-		QPixmap pixmap(":imagens/imagens/pgmodeler_logo.png");
-
-		//Draws the current version code on the splash
-		/* QFont fnt;
-		QPainter p;
-		fnt.setBold(true);
-
-		QFontMetrics fm(fnt);
-		QString str_ver=QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION);
-		QRect ret=fm.boundingRect(str_ver);
-
-		p.begin(&pixmap);
-		p.setFont(fnt);
-		p.setPen(QColor(255,255,255));
-		p.drawText(QPointF(pixmap.size().width()-(ret.width()/2),
-											 pixmap.size().height()), str_ver);
-		p.end(); */
-
-		QSplashScreen splash(pixmap);
+		QSplashScreen splash(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
 		splash.setWindowModality(Qt::ApplicationModal);
 		splash.show();
 		splash.repaint();
@@ -170,8 +152,16 @@ int main(int argc, char **argv)
 
 		app.setStyleSheet(style);
 		fmain.showMaximized();
-		app.exec();
 
+		//If the user specifies a list of files to be loaded
+		if(app.arguments().size() > 1)
+		{
+			QStringList list=app.arguments();
+			list.pop_front();
+			fmain.loadModels(list);
+		}
+
+		app.exec();
 		return(0);
 	}
 	catch(Exception &e)

@@ -159,6 +159,7 @@
         <file>imagens/model2png.png</file>
         <file>imagens/pgmodeler_logo.png</file>
         <file>imagens/pgmodeler_name.png</file>
+        <file>imagens/pgmodeler_splash.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>

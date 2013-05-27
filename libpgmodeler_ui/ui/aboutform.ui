@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>645</width>
-    <height>480</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>645</width>
-    <height>480</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>645</width>
-    <height>480</height>
+    <height>450</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -135,20 +135,20 @@
         <property name="minimumSize">
          <size>
           <width>128</width>
-          <height>128</height>
+          <height>148</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>128</width>
-          <height>128</height>
+          <height>148</height>
          </size>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_logo.png</pixmap>
+         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_splash.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -244,7 +244,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
@@ -259,6 +259,13 @@
           </property>
           <property name="openExternalLinks">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;</string>
           </property>
          </widget>
         </item>
@@ -364,9 +371,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
          </size>
         </property>
         <property name="text">
-         <string>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.</string>
+         <string>The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>

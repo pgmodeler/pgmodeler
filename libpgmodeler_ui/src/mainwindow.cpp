@@ -1016,8 +1016,6 @@ void MainWindow::printModel(void)
 
 void MainWindow::loadModel(void)
 {
-	QStringList list;
-	int i, count;
 	QFileDialog file_dlg;
 
 	try
@@ -1029,21 +1027,25 @@ void MainWindow::loadModel(void)
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
 		if(file_dlg.exec()==QFileDialog::Accepted)
+			loadModels(file_dlg.selectedFiles());
+	}
+	catch(Exception &e)
+	{
+		msg_box.show(e);
+	}
+}
+
+void MainWindow::loadModels(const QStringList &list)
+{
+	try
+	{
+		for(int i=0; i < list.count(); i++)
 		{
-			list=file_dlg.selectedFiles();
-			count=list.count();
-
-			for(i=0; i < count; i++)
-			{
-				if(QFileInfo(list[i]).isFile())
-				{
-					addModel(list[i]);
-					recent_models.push_front(list[i]);
-				}
-			}
-
-			updateRecentModelsMenu();
+			addModel(list[i]);
+			recent_models.push_front(list[i]);
 		}
+
+		updateRecentModelsMenu();
 	}
 	catch(Exception &e)
 	{

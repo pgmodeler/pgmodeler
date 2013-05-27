@@ -104,6 +104,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
+		//! \brief Loads a set of models from string list
+		void loadModels(const QStringList &list);
+
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
