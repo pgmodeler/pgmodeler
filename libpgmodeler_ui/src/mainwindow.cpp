@@ -390,8 +390,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		restoration_form->removeTemporaryModels();
 	}
 
-	//Loading the files from the previous session
-	if(!prev_session_files.isEmpty() && restoration_form->result()==QDialog::Rejected)
+	/* Loading the files from the previous session. The session will be restored only
+	if pgModeler is on model restore mode or pgModeler is opening a model clicked by user
+	o the file manager */
+	if(QApplication::arguments().size() <= 1 &&
+		 !prev_session_files.isEmpty() && restoration_form->result()==QDialog::Rejected)
 	{
 		try
 		{
@@ -437,6 +440,13 @@ void MainWindow::showEvent(QShowEvent *)
 
 	//The temporary model timer is always of 1 minute
 	tmpmodel_save_timer.start(60000);
+
+/*#ifndef Q_OS_MAC
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+
+	if(!conf_wgt->isFileAssociated())
+			conf_wgt->updateFileAssociation();
+#endif*/
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -29,20 +29,25 @@
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
+#include "messagebox.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
+
+		bool file_associated;
 
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+		bool isFileAssociated(void);
 
 	public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
+		void updateFileAssociation(void);
 
 	private slots:
 		void convertMarginUnity(void);

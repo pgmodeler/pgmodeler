@@ -232,6 +232,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	cancelled=false;
 
+	icon_lbl->setVisible(!icon_name.isEmpty());
 	if(icon_name!="")
 		icon_lbl->setPixmap(QPixmap((":/icones/icones/" + icon_name)));
 

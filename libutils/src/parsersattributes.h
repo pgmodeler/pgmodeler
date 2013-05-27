@@ -374,7 +374,10 @@ namespace ParsersAttributes {
 	DST_FK_PATTERN="dst-fk-pattern",
 	COL_INDEXES="col-indexes",
 	ATTRIB_INDEXES="attrib-indexes",
-	CONSTR_INDEXES="constr-indexes";
+	CONSTR_INDEXES="constr-indexes",
+	ICON="icon",
+	ROOT_DIR="root-dir",
+	FILE_ASSOCIATED="file-associated";
 }
 
 #endif
