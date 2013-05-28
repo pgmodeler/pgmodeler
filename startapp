@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PWD="${0%/*}"
+EXE=$PWD/$1
+
+export DYLD_LIBRARY_PATH=$PWD:$DYLD_LIBRARY_PATH
+export PGMODELER_SCHEMAS_DIR=$PWD/schemas
+export PGMODELER_CONF_DIR=$PWD/conf
+export PGMODELER_LANG_DIR=$PWD/lang
+export PGMODELER_PLUGINS_DIR=$PWD/plugins
+export PGMODELER_TMP_DIR=$PWD/tmp
+
+$EXE ${@:2:10}

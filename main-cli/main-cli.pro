@@ -5,9 +5,6 @@ TEMPLATE = app
 TARGET = pgmodeler-cli
 INCLUDEPATH += ../main/src
 
-macx:ICON=res/pgmodeler-cli.icns
-macx:QMAKE_INFO_PLIST=res/Info.plist
-
 LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPARSERS \
 	$$DESTDIR/$$LIBDBCONNECT \

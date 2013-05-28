@@ -78,6 +78,8 @@ CONFIG += ordered qt stl rtti exceptions warn_on c++11
 unix:CONFIG += x11
 windows:CONFIG += windows
 
+macx:CONFIG-=app_bundle
+
 #Libraries extension and preffix for each platform
 unix:LIB_PREFIX = lib
 unix:LIB_EXT = so
@@ -90,8 +92,8 @@ SUBDIRS = libutils \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
-	  plugins/dummy \
-	  plugins/xml2object \
+          #plugins/dummy \
+          #plugins/xml2object \
 	  crashhandler \
 	  main-cli \
 	  main
@@ -109,7 +111,11 @@ TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
-DESTDIR = $$PWD/build
+
+macx {
+ BASEDIR = $$PWD/build/pgmodeler.app/Contents
+ DESTDIR = $$BASEDIR/MacOS
+}
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
@@ -126,6 +132,5 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 #Deployment configurations
 pgmodeler.path = $$DESTDIR
 pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
-
 unix:pgmodeler.files += pgmodeler.vars
 INSTALLS += pgmodeler
