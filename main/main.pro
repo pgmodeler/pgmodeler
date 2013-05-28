@@ -5,7 +5,8 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
-macx:ICON=res/macosx_ico.icns
+macx:ICON=res/pgmodeler.icns
+macx:QMAKE_INFO_PLIST=res/Info.plist
 
 LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPARSERS \
@@ -16,3 +17,5 @@ LIBS += $$DESTDIR/$$LIBUTILS \
 
 HEADERS += src/application.h
 SOURCES += src/main.cpp
+
+

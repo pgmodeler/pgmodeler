@@ -1,0 +1,40 @@
+<!DOCTYPE plist PUBLIC
+        "-//Apple Computer//DTD PLIST 1.0//EN"
+        "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+       <key>CFBundleIconFile</key>
+       <string>pgmodeler-cli.icns</string>
+       <key>CFBundleExecutable</key>
+       <string>pgmodeler-cli</string>
+       <key>CFBundleIdentifier</key>
+       <string>br.com.pgmodeler.CLI</string>
+       <key>CFBundleInfoDictionaryVersion</key>
+       <string>1.0</string>
+       <key>CFBundlePackageType</key>
+       <string>APPL</string>
+       <key>CFBundleSignature</key>
+       <string>????</string>
+       <key>CFBundleVersion</key>
+       <string>1.0</string>
+       <key>CSResourcesFileMapped</key>
+       <true/>
+
+       <key>LSEnvironment</key>
+       <dict>
+         <key>DYLD_LIBRARY_PATH</key>
+         <string>/Users/raphael/pgmodeler/build</string>
+         <key>PGMODELER_SCHEMAS_DIR</key>
+         <string>/Users/raphael/pgmodeler/build/schemas</string>
+         <key>PGMODELER_CONF_DIR</key>
+         <string>/Users/raphael/pgmodeler/build/conf</string>
+         <key>PGMODELER_LANG_DIR</key>
+         <string>/Users/raphael/pgmodeler/build/lang</string>
+         <key>PGMODELER_PLUGINS_DIR</key>
+         <string>/Users/raphael/pgmodeler/build/plugins</string>
+         <key>PGMODELER_TMP_DIR</key>
+         <string>/Users/raphael/pgmodeler/build/tmp</string>
+       </dict>
+
+    </dict>
+</plist>
