@@ -121,6 +121,7 @@ int main(int argc, char **argv)
 
 		//Loading the application splash screen
 		QSplashScreen splash(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));
 		splash.setWindowModality(Qt::ApplicationModal);
 		splash.show();
 		splash.repaint();

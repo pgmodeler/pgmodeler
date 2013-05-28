@@ -3,6 +3,12 @@ PGMODELER_SRC_DIR=../../
 PGMODELER_LIB_DIR=../../build
 PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
 
+macx {
+ PGMODELER_SRC_DIR=../../
+ PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/MacOS
+ PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+}
+
 !exists($$PGMODELER_SRC_DIR) {
  warning("The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
  error("qmake aborted.")
