@@ -5,6 +5,7 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
+macx:ICON=res/macosx_ico.icns
 
 LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPARSERS \
