@@ -7,7 +7,7 @@ $ob Desktop $sp Entry $cb $br
 [Name=pgModeler] $br
 [NoDisplay=false] $br
 [Path=]@{root-dir} $br
-[StartupNotify=true] $br
+[StartupNotify=false] $br
 [Terminal=false] $br
 [TerminalOptions=] $br
 [Type=Application] $br

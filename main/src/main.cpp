@@ -40,12 +40,12 @@ void startCrashHandler(int signal)
 		symbols = backtrace_symbols(stack, stack_size);
 
 		#ifdef Q_OS_MAC
-                    cmd="startapp crashhandler";
+				cmd="startapp crashhandler";
 		#else
         cmd="crashhandler";
 		#endif
 	#else
-	cmd="crashhandler.exe";
+		cmd="crashhandler.exe";
 	#endif
 
 	//Creates the stacktrace file

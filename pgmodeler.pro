@@ -92,8 +92,8 @@ SUBDIRS = libutils \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
-          #plugins/dummy \
-          #plugins/xml2object \
+	  plugins/dummy \
+	  plugins/xml2object \
 	  crashhandler \
 	  main-cli \
 	  main
@@ -132,6 +132,6 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 
 #Deployment configurations
 pgmodeler.path = $$DESTDIR
-pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
+pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE
 unix:pgmodeler.files += pgmodeler.vars
 INSTALLS += pgmodeler

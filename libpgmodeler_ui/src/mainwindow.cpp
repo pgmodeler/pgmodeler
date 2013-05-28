@@ -1029,11 +1029,11 @@ void MainWindow::loadModel(void)
 	QFileDialog file_dlg;
 
 	try
-    {
+	{
 		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
-        file_dlg.setFileMode(QFileDialog::ExistingFiles);
+		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
 		if(file_dlg.exec()==QFileDialog::Accepted)

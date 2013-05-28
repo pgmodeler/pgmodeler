@@ -228,6 +228,10 @@ void GeneralConfigWidget::updateFileAssociation(void)
  #ifdef Q_OS_LINUX
 
 	QString str_aux,
+			 exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
+											GlobalAttributes::DIR_SEPARATOR + "pgmodeler_logo.png").absolutePath(),
+			 dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
+											GlobalAttributes::DIR_SEPARATOR + "pgmodeler_dbm.png").absolutePath(),
 			 mime_db_dir=QDir::homePath() + "/.local/share/mime",
 			 mimeapps=QDir::homePath() + "/.local/share/applications/mimeapps.list",
 			 base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
@@ -241,8 +245,8 @@ void GeneralConfigWidget::updateFileAssociation(void)
 
 	file_associated=true;
 	attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
-	attribs[ParsersAttributes::ICON]=QDir::toNativeSeparators(QApplication::applicationDirPath() +
-																													 GlobalAttributes::DIR_SEPARATOR + "pgmodeler_logo.png");
+	attribs[ParsersAttributes::ICON]=exec_icon;
+
 	try
 	{
 		 for(unsigned i; i < 2; i++)
@@ -259,6 +263,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			out.write(buf.data(), buf.size());
 			out.close();
 			buf.clear();
+			attribs[ParsersAttributes::ICON]=dbm_icon;
 		 }
 
 		 out.setFileName(mimeapps);

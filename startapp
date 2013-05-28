@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # pgModeler startup script for MacOSX bundle application
 # usage: startapp [executable]
 # Where [executable]  can be pgmodeler | pgmodeler-cli | crashhandler
