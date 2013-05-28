@@ -111,6 +111,7 @@ TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
+DESTDIR = $$PWD/build
 
 macx {
  BASEDIR = $$PWD/build/pgmodeler.app/Contents
