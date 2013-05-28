@@ -110,7 +110,6 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = $$PWD/build
-macx:DESTDIR = $$PWD/build/pgmodeler.app
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
@@ -129,10 +128,4 @@ pgmodeler.path = $$DESTDIR
 pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 
 unix:pgmodeler.files += pgmodeler.vars
-!macx:INSTALLS += pgmodeler
-
-macx {
- pgmodeler.files+=$$LIBUTILS $$LIBPARSERS $$LIBDBCONNECT $$LIBPGMODELER $$LIBOBJRENDERER $$LIBPGMODELERUI
- QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}*.$${LIB_EXT}"
- QMAKE_BUNDLE_DATA+=pgmodeler
-}
+INSTALLS += pgmodeler
