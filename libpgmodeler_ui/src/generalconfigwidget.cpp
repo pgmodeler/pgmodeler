@@ -228,16 +228,28 @@ void GeneralConfigWidget::updateFileAssociation(void)
  #ifdef Q_OS_LINUX
 
 	QString str_aux,
+
+			 //Configures the path to the application logo
 			 exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
 											GlobalAttributes::DIR_SEPARATOR + "pgmodeler_logo.png").absolutePath(),
+
+			 //Configures the path to the document logo
 			 dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-											GlobalAttributes::DIR_SEPARATOR + "pgmodeler_dbm.png").absolutePath(),
+										 GlobalAttributes::DIR_SEPARATOR + "pgmodeler_dbm.png").absolutePath(),
+
+			 //Path to directory that register mime types
 			 mime_db_dir=QDir::homePath() + "/.local/share/mime",
+
+			 //Path to the file that associates apps to mimetypes
 			 mimeapps=QDir::homePath() + "/.local/share/applications/mimeapps.list",
+
 			 base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
 										 GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR,
-			files[] = { QDir::homePath() + "/.local/share/applications/pgModeler.desktop",
+
+			 //Files generated after update file association (application-dbm.xml and pgModeler.desktop)
+			 files[] = { QDir::homePath() + "/.local/share/applications/pgModeler.desktop",
 									 mime_db_dir + "/packages/application-dbm.xml" },
+
 			 schemas[] = { base_conf_dir + "desktop" + GlobalAttributes::SCHEMA_EXT,
 										 base_conf_dir + "application-dbm" + GlobalAttributes::SCHEMA_EXT };
 	QByteArray buf, buf_aux;
@@ -273,17 +285,20 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			 throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
 											 ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		 //Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
 		 buf=out.readAll();
 		 out.close();
 
 		 QTextStream ts(&buf);
 		 while(!ts.atEnd())
 		 {
+			 //Remove any reference to application/dbm mime from file
 			 str_aux=ts.readLine();
 			 str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
 
 			 if(!str_aux.isEmpty())
 			 {
+				 //Updates the application/dbm mime association
 				 if(str_aux.contains("[Added Associations]"))
 					 str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
 				 else
@@ -293,9 +308,12 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			 }
 		 }
 
+		//Write a new copy of the mimeapps.list file
 		out.open(QFile::Truncate | QFile::WriteOnly);
 		out.write(buf_aux.data(), buf_aux.size());
 		out.close();
+
+		//Update the mime database
 		QProcess::execute("update-mime-database", QStringList { mime_db_dir });
 		update_assoc_btn->setEnabled(false);
 	}
