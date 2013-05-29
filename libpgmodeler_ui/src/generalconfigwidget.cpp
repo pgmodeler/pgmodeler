@@ -29,14 +29,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 
 	Ui_GeneralConfigWidget::setupUi(this);
 
-	file_associated=false;
-
 	for(int i=0; i < 31; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
-	connect(update_assoc_btn, SIGNAL(clicked(void)), this, SLOT(updateFileAssociation(void)));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]="";
@@ -52,10 +49,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]="";
-
-	#ifdef Q_OS_MAC
-		update_assoc_btn->setVisible(false);
-	#endif
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
@@ -93,9 +86,6 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 	hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 	hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
-
-	file_associated=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]==ParsersAttributes::_TRUE_;
-	update_assoc_btn->setEnabled(!file_associated);
 
 	this->applyConfiguration();
 }
@@ -137,8 +127,6 @@ void GeneralConfigWidget::saveConfiguration()
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
-
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]=(file_associated ? "1" : "");
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -215,18 +203,12 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	prev_unity=unity_cmb->currentIndex();
 }
 
-bool GeneralConfigWidget::isFileAssociated(void)
-{
-	return(file_associated);
-}
-
 void GeneralConfigWidget::updateFileAssociation(void)
 {
  Messagebox msg_box;
  map<QString,QString> attribs;
 
  #ifdef Q_OS_LINUX
-
 	QString str_aux,
 
 			 //Configures the path to the application logo
@@ -255,73 +237,80 @@ void GeneralConfigWidget::updateFileAssociation(void)
 	QByteArray buf, buf_aux;
 	QFile out;
 
-	file_associated=true;
-	attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
-	attribs[ParsersAttributes::ICON]=exec_icon;
+	//Check if the necessary file exists. If not asks the user to update file association
+	if(!QFileInfo(files[0]).exists() || !QFileInfo(files[1]).exists())
+		msg_box.show(trUtf8("File association missing"),
+								 trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?"),
+								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-	try
+	if(msg_box.result()==QDialog::Accepted)
 	{
-		 for(unsigned i; i < 2; i++)
-		 {
-			 SchemaParser::loadFile(schemas[i]);
-			 buf.append(SchemaParser::getCodeDefinition(attribs));
-			 out.setFileName(files[i]);
-			 out.open(QFile::WriteOnly);
+		//file_associated=true;
+		attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
+		attribs[ParsersAttributes::ICON]=exec_icon;
+
+		try
+		{
+			for(unsigned i; i < 2; i++)
+			{
+				SchemaParser::loadFile(schemas[i]);
+				buf.append(SchemaParser::getCodeDefinition(attribs));
+				out.setFileName(files[i]);
+				out.open(QFile::WriteOnly);
+
+				if(!out.isOpen())
+					throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(files[i]),
+													ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+				out.write(buf.data(), buf.size());
+				out.close();
+				buf.clear();
+				attribs[ParsersAttributes::ICON]=dbm_icon;
+			}
+
+			out.setFileName(mimeapps);
+			out.open(QFile::ReadOnly);
 
 			if(!out.isOpen())
-				 throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(files[i]),
-											 ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
+												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			out.write(buf.data(), buf.size());
+			//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
+			buf=out.readAll();
 			out.close();
-			buf.clear();
-			attribs[ParsersAttributes::ICON]=dbm_icon;
-		 }
 
-		 out.setFileName(mimeapps);
-		 out.open(QFile::ReadOnly);
+			QTextStream ts(&buf);
+			while(!ts.atEnd())
+			{
+				//Remove any reference to application/dbm mime from file
+				str_aux=ts.readLine();
+				str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
 
-		 if(!out.isOpen())
-			 throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
-											 ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				if(!str_aux.isEmpty())
+				{
+					//Updates the application/dbm mime association
+					if(str_aux.contains("[Added Associations]"))
+						str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
+					else
+						str_aux+="\n";
 
-		 //Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
-		 buf=out.readAll();
-		 out.close();
+					buf_aux.append(str_aux);
+				}
+			}
 
-		 QTextStream ts(&buf);
-		 while(!ts.atEnd())
-		 {
-			 //Remove any reference to application/dbm mime from file
-			 str_aux=ts.readLine();
-			 str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
+			//Write a new copy of the mimeapps.list file
+			out.open(QFile::Truncate | QFile::WriteOnly);
+			out.write(buf_aux.data(), buf_aux.size());
+			out.close();
 
-			 if(!str_aux.isEmpty())
-			 {
-				 //Updates the application/dbm mime association
-				 if(str_aux.contains("[Added Associations]"))
-					 str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
-				 else
-					 str_aux+="\n";
-
-				 buf_aux.append(str_aux);
-			 }
-		 }
-
-		//Write a new copy of the mimeapps.list file
-		out.open(QFile::Truncate | QFile::WriteOnly);
-		out.write(buf_aux.data(), buf_aux.size());
-		out.close();
-
-		//Update the mime database
-		QProcess::execute("update-mime-database", QStringList { mime_db_dir });
-		update_assoc_btn->setEnabled(false);
+			//Update the mime database
+			QProcess::execute("update-mime-database", QStringList { mime_db_dir });
+		}
+		catch(Exception &e)
+		{
+			msg_box.show(e);
+		}
 	}
-	catch(Exception &e)
-	{
-		msg_box.show(e);
-	}
-
  #else
 		#ifdef Q_OS_WIN
 

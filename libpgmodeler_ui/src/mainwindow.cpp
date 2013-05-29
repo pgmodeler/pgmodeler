@@ -441,12 +441,10 @@ void MainWindow::showEvent(QShowEvent *)
 	//The temporary model timer is always of 1 minute
 	tmpmodel_save_timer.start(60000);
 
-/*#ifndef Q_OS_MAC
+ #ifndef Q_OS_MAC
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-
-	if(!conf_wgt->isFileAssociated())
-			conf_wgt->updateFileAssociation();
-#endif*/
+	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
+ #endif
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

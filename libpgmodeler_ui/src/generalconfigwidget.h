@@ -35,14 +35,11 @@ class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, publi
 	private:
 		Q_OBJECT
 
-		bool file_associated;
-
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
-		bool isFileAssociated(void);
 
 	public slots:
 		void applyConfiguration(void);
