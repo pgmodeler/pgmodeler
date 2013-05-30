@@ -92,11 +92,11 @@ SUBDIRS = libutils \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
-	  plugins/dummy \
-	  plugins/xml2object \
 	  crashhandler \
 	  main-cli \
-	  main
+	  main \
+	  plugins/dummy \
+	  plugins/xml2object
 
 #Creating the project's libraries names based upon the running OS
 LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
@@ -133,5 +133,9 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 #Deployment configurations
 pgmodeler.path = $$DESTDIR
 pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE
-unix:pgmodeler.files += pgmodeler.vars
+
+unix {
+!macx:pgmodeler.files += pgmodeler.vars
+}
+
 INSTALLS += pgmodeler

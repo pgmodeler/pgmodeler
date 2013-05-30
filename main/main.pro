@@ -5,7 +5,10 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
-macx:QMAKE_POST_LINK+="cp -r ../res/* $$BASEDIR; cp ../startapp $$DESTDIR"
+macx:QMAKE_POST_LINK+="cp -r res/Resources $$BASEDIR; \
+		       cp res/Info.plist $$BASEDIR; \
+		       cp res/PkgInfo $$BASEDIR; \
+		       cp res/startapp $$DESTDIR"
 
 LIBS += $$DESTDIR/$$LIBUTILS \
 	$$DESTDIR/$$LIBPARSERS \
