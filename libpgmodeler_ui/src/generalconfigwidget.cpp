@@ -206,9 +206,11 @@ void GeneralConfigWidget::convertMarginUnity(void)
 void GeneralConfigWidget::updateFileAssociation(void)
 {
  Messagebox msg_box;
- map<QString,QString> attribs;
+ QString title=trUtf8("File association missing"),
+         msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
 
  #ifdef Q_OS_LINUX
+  map<QString,QString> attribs;
 	QString str_aux,
 
 			 //Configures the path to the application logo
@@ -239,9 +241,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 
 	//Check if the necessary file exists. If not asks the user to update file association
 	if(!QFileInfo(files[0]).exists() || !QFileInfo(files[1]).exists())
-		msg_box.show(trUtf8("File association missing"),
-								 trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+    msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
@@ -272,7 +272,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			out.open(QFile::ReadOnly);
 
 			if(!out.isOpen())
-				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
+        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
 												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
@@ -313,8 +313,42 @@ void GeneralConfigWidget::updateFileAssociation(void)
 	}
  #else
 		#ifdef Q_OS_WIN
+     //Checking if the .dbm registry key exists
+     QSettings dbm_ext("HKEY_CURRENT_USER\\Software\\Classes\\.dbm", QSettings::NativeFormat);
+     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + "\\pgmodeler.exe");
 
+     //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
+     if(dbm_ext.value("Default").toString().isEmpty())
+       msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
+      if(msg_box.result()==QDialog::Accepted)
+      {
+        //Write the default value for .dbm registry key
+        dbm_ext.setValue("Default", "dbm_auto_file");
+        dbm_ext.sync();
+
+        //Other registry keys values
+        map<QString, QStringList> confs = {
+          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file", { "FriendlyTypeName" , "pgModeler Database Model" } },
+          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon", { "Default" , QString("%1,1").arg(exe_path) } },
+          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command", { "Default" , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+          { "\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm", { "OpenWithList/a", "pgmodeler.exe", "OpenWithList/MRUList","a"} }
+        };
+
+        map<QString, QStringList>::iterator itr;
+        itr=confs.begin();
+
+        //Iterates over the configuration map writing the other keys on registry
+        while(itr!=confs.end())
+        {
+          QSettings s(itr->first, QSettings::NativeFormat);
+          for(int i=0; i < itr->second.size(); i+=2)
+            s.setValue(itr->second[i], itr->second[i+1]);
+
+          s.sync();
+          itr++;
+        }
+     }
 		#endif
  #endif
 }
