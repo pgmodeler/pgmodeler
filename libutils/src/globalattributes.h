@@ -60,6 +60,7 @@ namespace GlobalAttributes {
 
 	static const QString
 	PGMODELER_VERSION="0.5.1",
+	PGMODELER_VER_CODENAME="Lovely Duda",
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
 	CRASH_HANDLER_FILE="pgmodeler%1.crash",
