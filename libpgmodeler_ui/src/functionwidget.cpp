@@ -26,10 +26,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 	try
 	{
 		QStringList types;
-		QGridLayout *grid=NULL, *grid1=NULL;
+		QGridLayout *grid=nullptr, *grid1=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > value_map;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 
 		Ui_FunctionWidget::setupUi(this);
 
@@ -59,7 +59,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		func_config_twg->widget(1)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());
@@ -115,7 +115,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 void FunctionWidget::handleParameter(int result)
 {
 	int lin_cnt, lin;
-	ObjectTableWidget *table=NULL;
+	ObjectTableWidget *table=nullptr;
 
 	//Selects the table to be handled according to its visibility
 	if(parameters_tab->isVisible())
@@ -148,7 +148,7 @@ void FunctionWidget::handleParameter(int result)
 void FunctionWidget::showParameterForm(void)
 {
 	QObject *obj_sender=sender();
-	ObjectTableWidget *table=NULL;
+	ObjectTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
 
@@ -223,7 +223,7 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func)
 {
 	vector<BaseObject *> languages;
-	Language *lang=NULL;
+	Language *lang=nullptr;
 	QStringList list;
 	unsigned count=0, i;
 	Parameter param;
@@ -318,7 +318,7 @@ void FunctionWidget::hideEvent(QHideEvent *event)
 	symbol_edt->clear();
 	library_edt->clear();
 	func_config_twg->setCurrentIndex(0);
-	disconnect(parameter_wgt,NULL, this, NULL);
+	disconnect(parameter_wgt,nullptr, this, nullptr);
 	BaseObjectWidget::hideEvent(event);
 }
 
@@ -363,16 +363,16 @@ void FunctionWidget::validateConfiguredFunction(void)
 {
 	vector<BaseObject *> *obj_list;
 	vector<BaseObject *>::iterator itr, itr_end;
-	Conversion *conv=NULL;
-	Cast *cast=NULL;
-	Aggregate *aggr=NULL;
-	Trigger *trig=NULL;
-	Language *lang=NULL;
-	Operator *oper=NULL;
-	Type *type=NULL;
-	Table *tab=NULL;
-	Function *func=NULL;
-	BaseObject *object=NULL;
+	Conversion *conv=nullptr;
+	Cast *cast=nullptr;
+	Aggregate *aggr=nullptr;
+	Trigger *trig=nullptr;
+	Language *lang=nullptr;
+	Operator *oper=nullptr;
+	Type *type=nullptr;
+	Table *tab=nullptr;
+	Function *func=nullptr;
+	BaseObject *object=nullptr;
 	unsigned i, i1, count;
 
 	//Object types that references a function
@@ -484,7 +484,7 @@ void FunctionWidget::applyConfiguration(void)
 {
 	try
 	{
-		Function *func=NULL;
+		Function *func=nullptr;
 		unsigned count, i;
 		Parameter param;
 		QString str_aux;

@@ -20,8 +20,8 @@
 
 ValidationInfo::ValidationInfo(void)
 {
-	object=NULL;
-	val_type=NO_UNIQUE_NAME;
+	object=nullptr;
+	val_type=VALIDATION_ABORTED;
 }
 
 ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)
@@ -37,20 +37,26 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
  this->references=references;
 }
 
-ValidationInfo::ValidationInfo(Exception &e)
+ValidationInfo::ValidationInfo(Exception e)
 {
-	deque<Exception> err_list;
+	vector<Exception> err_list;
 
 	val_type=SQL_VALIDATION_ERR;
 	e.getExceptionsList(err_list);
 
 	while(!err_list.empty())
 	{
-		sql_errors.push_back(err_list.back().getErrorMessage());
+		errors.push_back(err_list.back().getErrorMessage());
 		err_list.pop_back();
 	}
 
-	sql_errors.removeDuplicates();
+	errors.removeDuplicates();
+}
+
+ValidationInfo::ValidationInfo(const QString &msg)
+{
+	val_type=VALIDATION_ABORTED;
+	errors.push_back(msg);
 }
 
 unsigned ValidationInfo::getValidationType(void)
@@ -68,13 +74,13 @@ vector<BaseObject *> ValidationInfo::getReferences(void)
 	return(references);
 }
 
-QStringList ValidationInfo::getSQLErrors(void)
+QStringList ValidationInfo::getErrors(void)
 {
-	return(sql_errors);
+	return(errors);
 }
 
 bool ValidationInfo::isValid(void)
 {
 	return(((val_type==NO_UNIQUE_NAME || val_type==BROKEN_REFERENCE) && object) ||
-				 (val_type==SQL_VALIDATION_ERR && !sql_errors.empty()));
+				 (val_type==SQL_VALIDATION_ERR && !errors.empty()));
 }

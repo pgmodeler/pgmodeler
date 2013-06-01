@@ -25,7 +25,7 @@
 #ifndef VIEW_WIDGET_H
 #define VIEW_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
 #include "objecttablewidget.h"

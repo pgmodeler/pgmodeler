@@ -21,7 +21,7 @@
 Conversion::Conversion(void)
 {
 	obj_type=OBJ_CONVERSION;
-	conversion_func=NULL;
+	conversion_func=nullptr;
 	is_default=false;
 	attributes[ParsersAttributes::DEFAULT]="";
 	attributes[ParsersAttributes::SRC_ENCODING]="";
@@ -36,10 +36,10 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 	{
 		//If the passed enconding type is null an error is raised
 		if((~encoding_type)=="")
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
+			throw Exception(Exception::getErrorMessage(ERR_ASG_nullptr_TYPE_OBJECT)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ERR_ASG_nullptr_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Assigns the encoding to the conversion in the specified index
 		this->encodings[encoding_idx]=encoding_type;

@@ -83,7 +83,7 @@ class Rule: public TableObject{
 		void removeCommands(void);
 
 		//! \brief Returns the SQL / XML definition for the rule
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

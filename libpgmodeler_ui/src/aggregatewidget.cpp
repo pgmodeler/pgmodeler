@@ -22,10 +22,10 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 {
 	try
 	{
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 		Ui_AggregateWidget::setupUi(this);
-		QSpacerItem *spacer=NULL;
-		QFrame *frame=NULL;
+		QSpacerItem *spacer=nullptr;
+		QFrame *frame=nullptr;
 
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, false);
 		initial_cond_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -145,7 +145,7 @@ void AggregateWidget::applyConfiguration(void)
 {
 	try
 	{
-		Aggregate *aggregate=NULL;
+		Aggregate *aggregate=nullptr;
 		unsigned count, i;
 
 		startConfiguration<Aggregate>();

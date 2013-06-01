@@ -32,6 +32,7 @@
 #include "exception.h"
 #include <map>
 #include <stack>
+#include <iostream>
 using namespace std;
 
 class XMLParser {
@@ -74,10 +75,10 @@ class XMLParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-		static const unsigned ROOT_ELEMENT=0,
-													CHILD_ELEMENT=1,
-													NEXT_ELEMENT=2,
-													PREVIOUS_ELEMENT=3;
+		static constexpr unsigned ROOT_ELEMENT=0,
+															CHILD_ELEMENT=1,
+															NEXT_ELEMENT=2,
+															PREVIOUS_ELEMENT=3;
 
 		static const QString CHAR_AMP; //! \brief & = &amp;
 		static const QString CHAR_LT; //! \brief  < = &lt;

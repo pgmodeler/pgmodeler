@@ -22,12 +22,12 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 {
 	try
 	{
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 		QStringList encodings;
 
 		Ui_ConversionWidget::setupUi(this);
 
-		conv_func_sel=NULL;
+		conv_func_sel=nullptr;
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
@@ -81,7 +81,7 @@ void ConversionWidget::applyConfiguration(void)
 {
 	try
 	{
-		Conversion *conv=NULL;
+		Conversion *conv=nullptr;
 
 		startConfiguration<Conversion>();
 		conv=dynamic_cast<Conversion *>(this->object);

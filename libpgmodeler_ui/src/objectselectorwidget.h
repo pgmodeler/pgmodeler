@@ -25,7 +25,7 @@
 #ifndef OBJECT_SELECTOR_WIDGET_H
 #define OBJECT_SELECTOR_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "databasemodel.h"
 #include "syntaxhighlighter.h"
 #include "modelobjectswidget.h"

@@ -59,7 +59,8 @@ namespace GlobalAttributes {
 	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
 	static const QString
-	PGMODELER_VERSION="0.5.0",
+	PGMODELER_VERSION="0.5.1",
+	PGMODELER_VER_CODENAME="Lovely Duda",
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
 	CRASH_HANDLER_FILE="pgmodeler%1.crash",
@@ -85,6 +86,7 @@ namespace GlobalAttributes {
 
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
+	PATTERN_HIGHLIGHT_CONF="pattern-highlight", //! \brief Configuration file for name patterns highlight (relationship editing form)
 
 	EXAMPLE_MODEL="example.dbm", //! \brief Default name for the sample model loaded on appearence configuration form
 	UI_STYLE_CONF="ui-style"; //! \brief Configuration file ui style

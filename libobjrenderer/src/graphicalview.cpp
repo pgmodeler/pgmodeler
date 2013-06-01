@@ -40,16 +40,16 @@ void GraphicalView::configureObject(void)
 	int i, count, count1=0;
 	Reference ref;
 	QPen pen;
-	TableObjectView *graph_ref=NULL;
+	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY };
 	float width, type_width=0, px=0;
-	TableObjectView *col_item=NULL;
+	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
-	TableObject *tab_obj=NULL;
+	TableObject *tab_obj=nullptr;
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -64,7 +64,7 @@ void GraphicalView::configureObject(void)
 	columns->moveBy(-columns->scenePos().x(),
 										 -columns->scenePos().y());
 
-	subitems=columns->children();
+	subitems=columns->childItems();
 
 	for(i=0; i < count; i++)
 	{
@@ -115,7 +115,7 @@ void GraphicalView::configureObject(void)
 		count=tab_objs.size();
 
 		//Gets the subitems of the current group
-		subitems=ext_attribs->children();
+		subitems=ext_attribs->childItems();
 		ext_attribs->moveBy(-ext_attribs->scenePos().x(),
 												-ext_attribs->scenePos().y());
 		for(i=0; i < count; i++)
@@ -179,11 +179,11 @@ void GraphicalView::configureObject(void)
 
 	/* Calculating the maximum width between the title, columns and extended attributes.
 		This width is used to set the uniform width of table */
-	if(!columns->children().isEmpty() &&
+	if(!columns->childItems().isEmpty() &&
 		 (columns->boundingRect().width() > title->boundingRect().width() &&
 			((hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width())))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->children().isEmpty() &&  !hide_ext_attribs &&
+	else if(!ext_attribs->childItems().isEmpty() &&  !hide_ext_attribs &&
 					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
@@ -217,7 +217,7 @@ void GraphicalView::configureObject(void)
 													bodies[0]->boundingRect().height() - 2);
 		groups[idx]->setPos(bodies[idx]->pos());
 
-		subitems=groups[idx]->children();
+		subitems=groups[idx]->childItems();
 		while(!subitems.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());

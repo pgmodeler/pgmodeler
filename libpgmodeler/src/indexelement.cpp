@@ -20,7 +20,7 @@
 
 IndexElement::IndexElement(void) : Element()
 {
-	collation=NULL;
+	collation=nullptr;
 }
 
 void IndexElement::setCollation(Collation *collation)

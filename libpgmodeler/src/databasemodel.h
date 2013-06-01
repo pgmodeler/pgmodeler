@@ -29,6 +29,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 
 #include <QFile>
 #include <QObject>
+#include <QStringList>
 #include "baseobject.h"
 #include "table.h"
 #include "function.h"
@@ -101,7 +102,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		map<unsigned, QString> xml_special_objs;
 
 		//! \brief Indicates if the model is being loaded
-		bool loading_model;
+		bool loading_model,
+
+		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
+		When this flag is set it's recommend to revalidate the model using the Model validation tool */
+		invalidated;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -126,6 +131,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
+	protected:
+		//! \brief Indicate if the model invalidated
+		void setInvalidated(bool value);
+
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
@@ -144,7 +153,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void validateRelationships(void);
 
 		//! \brief Returns the list of objects that belongs to the passed schema
-		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
+		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
 
 		//! \brief Returns the object index searching by its name
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -209,16 +218,19 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the database enconding
 		EncodingType getEncoding(void);
 
+		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
+		bool isInvalidated(void);
+
 		//! \brief Saves the specified code definition for the model on the specified filename
 		void saveModel(const QString &filename, unsigned def_type);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
 		 in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */
-		QString getCodeDefinition(unsigned def_type, bool export_file);
+		virtual QString getCodeDefinition(unsigned def_type, bool export_file) final;
 
 		//! \brief Returns the complete SQL/XML definition for the entire model (including all the other objects).
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
@@ -228,7 +240,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
 
 		/*! \brief Searchs and returns the relationship between the specified tables. If the second parameter
-		 is ommited (NULL), the method returns the first relationship where the source table is
+		 is ommited (nullptr), the method returns the first relationship where the source table is
 		 participating */
 		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
@@ -408,6 +420,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned icon_id);
+
+	friend class ModelValidationHelper;
 };
 
 #endif

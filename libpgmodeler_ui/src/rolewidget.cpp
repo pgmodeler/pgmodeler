@@ -21,9 +21,9 @@
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
-	ObjectTableWidget *obj_tab=NULL;
-	QGridLayout *grid=NULL;
-	QFrame *frame=NULL;
+	ObjectTableWidget *obj_tab=nullptr;
+	QGridLayout *grid=nullptr;
+	QFrame *frame=nullptr;
 	map<QString, vector<QWidget *> > fields_map;
 	unsigned i;
 
@@ -33,7 +33,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 																				 Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
 
-	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 5);
+	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
 	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(can_replicate_chk);
@@ -72,7 +72,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		members_twg->widget(i)->setLayout(grid);
 	}
 
@@ -172,7 +172,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 	if(role)
 	{
 		QString str_aux;
-		Role *aux_role=NULL;
+		Role *aux_role=nullptr;
 		unsigned count, i, type_id,
 							role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
@@ -204,7 +204,7 @@ void RoleWidget::fillMembersTable(void)
 {
 	if(this->object)
 	{
-		Role *aux_role=NULL, *role=NULL;
+		Role *aux_role=nullptr, *role=nullptr;
 		unsigned count, i, type_id,
 				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
@@ -232,8 +232,8 @@ void RoleWidget::showSelectedRoleData(void)
 {
 	unsigned idx_tab;
 	int lin, idx_lin=-1;
-	BaseObject *obj_sel=NULL;
-	MessageBox msg_box;
+	BaseObject *obj_sel=nullptr;
+	Messagebox msg_box;
 
 	//Get the selected role
 	obj_sel=object_selection_wgt->getSelectedObject();
@@ -281,7 +281,7 @@ void RoleWidget::showSelectedRoleData(void)
 
 void RoleWidget::applyConfiguration(void)
 {
-	Role *role=NULL, *aux_role=NULL;
+	Role *role=nullptr, *aux_role=nullptr;
 	unsigned count, i, type_id,
 			role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 

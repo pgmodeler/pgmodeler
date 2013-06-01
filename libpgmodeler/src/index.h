@@ -50,9 +50,9 @@ class Index: public TableObject{
 		void setIndexElementsAttribute(unsigned def_type);
 
 	public:
-		const static unsigned UNIQUE=0,
-													CONCURRENT=1,
-													FAST_UPDATE=2;
+		static constexpr  unsigned UNIQUE=0,
+															 CONCURRENT=1,
+															 FAST_UPDATE=2;
 
 		Index(void);
 
@@ -112,7 +112,7 @@ class Index: public TableObject{
 		unsigned getFillFactor(void);
 
 		//! \brief Returns the SQL / XML definition for the index
-		QString getCodeDefinition(unsigned tipo_def);
+		virtual QString getCodeDefinition(unsigned tipo_def) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary

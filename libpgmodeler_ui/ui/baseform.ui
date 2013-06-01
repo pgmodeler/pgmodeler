@@ -27,7 +27,16 @@
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <item row="0" column="0">
@@ -50,7 +59,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="buttons_wgt" native="true">
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
@@ -73,22 +82,19 @@
       <item row="0" column="0">
        <layout class="QGridLayout" name="buttons_lt">
         <property name="leftMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <property name="topMargin">
          <number>2</number>
         </property>
         <property name="rightMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <property name="bottomMargin">
-         <number>0</number>
+         <number>2</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>5</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>0</number>
+        <property name="spacing">
+         <number>6</number>
         </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label">

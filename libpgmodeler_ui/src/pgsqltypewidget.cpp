@@ -31,7 +31,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		this->setWindowTitle(groupBox->title());
 
-		format_hl=NULL;
+		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, false);
 
 		format_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -143,7 +143,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-			combo->addItem(Utf8String::create(types[idx]), QVariant(PgSQLType::getUserTypeIndex(types[idx],NULL,model)));
+			combo->addItem(Utf8String::create(types[idx]), QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
 		PgSQLType::getTypes(types, oid_types, pseudo_types);
@@ -168,9 +168,10 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);
 
+		length_sb->setValue(type.getLength());
 		precision_sb->setValue(type.getPrecision());
 		dimension_sb->setValue(type.getDimension());
-		length_sb->setValue(type.getLength());
+
 
 		idx=interval_cmb->findText(~(type.getIntervalType()));
 		interval_cmb->setCurrentIndex(idx);

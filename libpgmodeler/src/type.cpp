@@ -180,10 +180,10 @@ void Type::setConfiguration(unsigned conf)
 	enumerations.clear();
 
 	for(unsigned idx=0; idx < sizeof(functions)/sizeof(Function *); idx++)
-		functions[idx]=NULL;
+		functions[idx]=nullptr;
 
-	setCollation(NULL);
-	subtype_opclass=NULL;
+	setCollation(nullptr);
+	subtype_opclass=nullptr;
 
 	alignment="integer";
 	delimiter='\0';
@@ -308,7 +308,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 	unsigned i, conf_funcs[]={ INPUT_FUNC, RECV_FUNC,
 														 OUTPUT_FUNC, SEND_FUNC };
 	Parameter param;
-	Function *func=NULL;
+	Function *func=nullptr;
 
 	for(i=0; i < 4; i++)
 	{

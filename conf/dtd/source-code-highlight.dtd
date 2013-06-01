@@ -30,3 +30,5 @@
 <!ATTLIST element value CDATA #REQUIRED>
 <!ATTLIST element type (initial-exp|final-exp) "initial-exp">
 <!ATTLIST element regexp (false|true) "false">
+<!ATTLIST element wildcard (false|true) "false">
+

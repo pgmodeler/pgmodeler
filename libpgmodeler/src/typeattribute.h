@@ -40,8 +40,7 @@ class TypeAttribute: public BaseObject {
 		PgSQLType getType(void);
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		QString getCodeDefinition(unsigned def_type);
-
+		virtual QString getCodeDefinition(unsigned def_type) final;
 		void operator = (const TypeAttribute &tpattrib);
 };
 

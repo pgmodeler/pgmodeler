@@ -28,26 +28,26 @@
 #include "ui_messagebox.h"
 #include "exception.h"
 
-class MessageBox: public QDialog, public Ui::MessageBox {
+class Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
 		bool cancelled;
 
 	public:
 		//! \brief Constants used to define the message icon
-		static const unsigned NO_ICON=10,
-													ERROR_ICON=11,
-													INFO_ICON=12,
-													ALERT_ICON=13,
-													CONFIRM_ICON=14;
+		static constexpr unsigned NO_ICON=10,
+															ERROR_ICON=11,
+															INFO_ICON=12,
+															ALERT_ICON=13,
+															CONFIRM_ICON=14;
 
 		//! \brief Constants used to configure the visible buttons
-		static const unsigned YES_NO_BUTTONS=0,
-													OK_CANCEL_BUTTONS=1,
-													OK_BUTTON=2,
-													ALL_BUTTONS=3;
+		static constexpr unsigned YES_NO_BUTTONS=0,
+															OK_CANCEL_BUTTONS=1,
+															OK_BUTTON=2,
+															ALL_BUTTONS=3;
 
-		MessageBox(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		Messagebox(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 		void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
 		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);

@@ -21,7 +21,7 @@
 OperatorClass::OperatorClass(void)
 {
 	obj_type=OBJ_OPCLASS;
-	family=NULL;
+	family=nullptr;
 	is_default=false;
 	attributes[ParsersAttributes::FAMILY]="";
 	attributes[ParsersAttributes::ELEMENTS]="";

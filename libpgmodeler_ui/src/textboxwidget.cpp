@@ -24,7 +24,7 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	configureFormLayout(caixatexto_grid, OBJ_TEXTBOX);
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
-	parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
+	parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 	parent_form->setMinimumSize(500,250);
 }
 
@@ -57,7 +57,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
 	}
 
-	BaseObjectWidget::setAttributes(model, op_list, txtbox, NULL, obj_px, obj_py);
+	BaseObjectWidget::setAttributes(model, op_list, txtbox, nullptr, obj_px, obj_py);
 }
 
 void TextboxWidget::selectTextColor(void)
@@ -80,7 +80,7 @@ void TextboxWidget::applyConfiguration(void)
 {
 	try
 	{
-		Textbox *txtbox=NULL;
+		Textbox *txtbox=nullptr;
 
 		startConfiguration<Textbox>();
 

@@ -23,7 +23,7 @@ Domain::Domain(void)
 	obj_type=OBJ_DOMAIN;
 	not_null=false;
 	attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	attributes[ParsersAttributes::NOT_NULL]="";
+	attributes[ParsersAttributes::NOT_nullptr]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::CONSTRAINT]="";
@@ -113,7 +113,7 @@ PgSQLType Domain::getType(void)
 
 QString Domain::getCodeDefinition(unsigned def_type)
 {
-	attributes[ParsersAttributes::NOT_NULL]=(not_null ? "1" : "");
+	attributes[ParsersAttributes::NOT_nullptr]=(not_null ? "1" : "");
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::EXPRESSION]=expression;
 	attributes[ParsersAttributes::CONSTRAINT]=BaseObject::formatName(constraint_name);

@@ -20,8 +20,8 @@
 
 Reference::Reference(void)
 {
-	this->table=NULL;
-	this->column=NULL;
+	this->table=nullptr;
+	this->column=nullptr;
 	this->is_def_expr=false;
 }
 
@@ -56,8 +56,8 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
 	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	table=NULL;
-	column=NULL;
+	table=nullptr;
+	column=nullptr;
 	alias=expr_alias;
 	this->expression=expression;
 	this->is_def_expr=false;

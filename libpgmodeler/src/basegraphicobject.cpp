@@ -24,7 +24,7 @@ BaseGraphicObject::BaseGraphicObject(void)
 	attributes[ParsersAttributes::X_POS]="";
 	attributes[ParsersAttributes::Y_POS]="";
 	attributes[ParsersAttributes::POSITION]="";
-	receiver_object=NULL;
+	receiver_object=nullptr;
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -83,7 +83,7 @@ void BaseGraphicObject::operator = (BaseGraphicObject &obj)
 void BaseGraphicObject::setReceiverObject(QObject *obj)
 {
 	if(!obj && receiver_object)
-		disconnect(this, NULL, receiver_object, NULL);
+		disconnect(this, nullptr, receiver_object, nullptr);
 
 	receiver_object=obj;
 }

@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=197;
+const int ERROR_COUNT=198;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -116,7 +116,7 @@ enum ErrorType {
 	ERR_ASG_NOT_ALOC_LANGUAGE,
 	ERR_ASG_INV_LANGUAGE_OBJECT,
 	ERR_REF_TYPE_INV_INDEX,
-	ERR_ASG_NULL_TYPE_OBJECT,
+	ERR_ASG_nullptr_TYPE_OBJECT,
 	ERR_ASG_INV_TYPE_OBJECT,
 	ERR_ASG_EMPTY_DIR_NAME,
 	ERR_OBT_TYPES_INV_QUANTITY,
@@ -177,7 +177,6 @@ enum ErrorType {
 	ERR_ASG_INV_ALIGNMENT_TYPE,
 	ERR_ASG_INV_NAME_TABLE_RELNN,
 	ERR_INV_USE_ESPECIAL_PK,
-	ERR_ASG_INV_SUFFIX_REL,
 	ERR_OPR_REL_INCL_OBJECT,
 	ERR_REM_PROTECTED_OBJECT,
 	ERR_REDECL_HL_GROUP,
@@ -246,21 +245,23 @@ enum ErrorType {
 	ERR_INV_POSTGRESQL_VERSION,
 	ERR_VALIDATION_FAILURE,
 	ERR_REG_EXT_NOT_HANDLING_TYPE,
-	ERR_ALOC_INV_FK_RELATIONSHIP
+	ERR_ALOC_INV_FK_RELATIONSHIP,
+	ERR_ASG_INV_NAME_PATTERN,
+	ERR_REF_INV_NAME_PATTERN_ID
 };
 
 class Exception {
 	private:
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
-		deque<Exception> exceptions;
+		vector<Exception> exceptions;
 
 		//! \brief Stores the error messages and codes (names of errors) in string format
 		static QString messages[ERROR_COUNT][2];
 
 		//! \brief Constants used to access the error details
-		static const unsigned ERROR_CODE=0,
-													ERROR_MESSAGE=1;
+		static constexpr unsigned ERROR_CODE=0,
+															ERROR_MESSAGE=1;
 
 		//! \brief Error type related to the exception
 		ErrorType error_type;
@@ -291,9 +292,9 @@ class Exception {
 
 	public:
 		Exception(void);
-		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
-		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
-		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
+		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
+		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
+		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
 		Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
 		~Exception(void){}
@@ -307,7 +308,7 @@ class Exception {
 		QString getExtraInfo(void);
 
 		//! \brief Gets the full exception stack
-		void getExceptionsList(deque<Exception> &list);
+		void getExceptionsList(vector<Exception> &list);
 
 		//! \brief Gets the exception stack in a formatted text
 		QString getExceptionsText(void);

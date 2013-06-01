@@ -21,7 +21,7 @@
 ModelValidationHelper::ModelValidationHelper(void)
 {
 	warn_count=error_count=progress=0;
-	db_model=NULL;
+	db_model=nullptr;
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(redirectExportProgress(int,QString)));
 }
 
@@ -41,13 +41,13 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
-		BaseObject *object=NULL, *refer_obj=NULL;
-		vector<BaseObject *> refs, refs_aux, *obj_list=NULL;
+		BaseObject *object=nullptr, *refer_obj=nullptr;
+		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
-		TableObject *tab_obj=NULL;
+		TableObject *tab_obj=nullptr;
 		ValidationInfo info;
-		Table *table=NULL;
-		Constraint *constr=NULL;
+		Table *table=nullptr;
+		Constraint *constr=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name;
@@ -101,7 +101,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 					{
 						//Configures a validation info
 						info=ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
-						warn_count++;
+						error_count++;
 
 						//Emit the signal containing the info
 						emit s_validationInfoGenerated(info);
@@ -181,7 +181,7 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 
 				//Configures a validation info
 				info=ValidationInfo(ValidationInfo::NO_UNIQUE_NAME, mitr->second.front(), refs);
-				warn_count++;
+				error_count++;
 				refs.clear();
 
 				//Emit the signal containing the info
@@ -196,7 +196,6 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 		}
 
 		//Step 3 (optional): Validating the SQL code onto a local DBMS.
-
 		//Case the connection isn't specified indicates that the SQL validation will not be executed
 		if(!conn)
 		{
@@ -204,23 +203,36 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 			progress=100;
 			emit s_progressUpdated(progress,"");
 		}
+		//SQL validation only occurs when the model is completely validated.
 		else
 		{
-			try
+			if(error_count==0)
 			{
-				export_helper.exportToDBMS(db_model, *conn, pgsql_ver, false, true);
+				try
+				{
+					export_helper.exportToDBMS(db_model, *conn, pgsql_ver, false, true);
 
-				//Emit a signal indicating the final progress
-				progress=100;
-				emit s_progressUpdated(progress,"");
+					//Emit a signal indicating the final progress
+					progress=100;
+					emit s_progressUpdated(progress,"");
+				}
+				catch(Exception &e)
+				{
+					info=ValidationInfo(e);
+					warn_count++;
+					emit s_validationInfoGenerated(info);
+				}
 			}
-			catch(Exception &e)
+			else
 			{
-				info=ValidationInfo(e);
-				error_count++;
-				emit s_validationInfoGenerated(info);
+				warn_count++;
+				emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending errors! SQL validation will not be executed.")));
 			}
 		}
+
+		/* Indicates the model invalidation only when there are validation warnings (broken refs. or no unique name)
+		sql errors are ignored since validator cannot fix SQL related problems */
+		db_model->setInvalidated(error_count > 0);
 	}
 	catch(Exception &e)
 	{
@@ -233,7 +245,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 	try
 	{
 		vector<BaseObject *> refs=info.getReferences();
-		BaseObject *obj=NULL;
+		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
 		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
@@ -260,7 +272,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		{
 			unsigned suffix=1;
 			QString new_name;
-			Table *table=NULL;
+			Table *table=nullptr;
 			ObjectType obj_type;
 			BaseObject *obj=info.getObject();
 
@@ -316,7 +328,9 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		}
 
 		//Revalidates all relationshps of model
-		db_model->validateRelationships();
+		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
+			 info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+			db_model->validateRelationships();
 	}
 	catch(Exception &e)
 	{

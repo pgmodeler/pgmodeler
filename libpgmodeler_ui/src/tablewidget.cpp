@@ -31,8 +31,8 @@ extern TriggerWidget *trigger_wgt;
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
-	QGridLayout *grid=NULL;
-	ObjectTableWidget *tab=NULL;
+	QGridLayout *grid=nullptr;
+	ObjectTableWidget *tab=nullptr;
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 
 	Ui_TableWidget::setupUi(this);
@@ -143,9 +143,9 @@ void TableWidget::hideEvent(QHideEvent *event)
 
 void TableWidget::showTableObjectForm(ObjectType obj_type)
 {
-	TableObject *object=NULL;
-	ObjectTableWidget *obj_table=NULL;
-	Table *table=NULL;
+	TableObject *object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	Table *table=nullptr;
 
 	//Selects the object table based upon the passed object type
 	obj_table=getObjectTable(obj_type);
@@ -191,7 +191,7 @@ ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 ObjectType TableWidget::getObjectType(QObject *sender)
@@ -222,7 +222,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	try
 	{
 		unsigned i, count;
-		Table *aux_tab=NULL;
+		Table *aux_tab=nullptr;
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 
 		if(!table)
@@ -254,16 +254,18 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 			/* if the type is COLUMN or CONSTRAINT disable the move buttons for the two tables
 			 because columns/constraints only can be moved when the table does not reference
 			 objects created by relationship */
-			if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
+			/*if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
 			{
-				if(this->new_object || !table->isReferRelationshipAddedObject())
+				//if(this->new_object || !table->isReferRelationshipAddedObject())
 					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
 																														(ObjectTableWidget::UPDATE_BUTTON));
 				else
 					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
 																														(ObjectTableWidget::UPDATE_BUTTON |
 																														 ObjectTableWidget::MOVE_BUTTONS));
-			}
+			}*/
+			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
+																												(ObjectTableWidget::UPDATE_BUTTON));
 		}
 
 		//Listing the ancestor tables
@@ -299,9 +301,9 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 void TableWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=NULL;
+	ObjectTableWidget *tab=nullptr;
 	unsigned count, i;
-	Table *table=NULL;
+	Table *table=nullptr;
 
 	try
 	{
@@ -358,12 +360,12 @@ void TableWidget::handleObject(void)
 
 void TableWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=NULL;
-	Column *column=NULL;
-	Constraint *constr=NULL;
-	Trigger *trigger=NULL;
-	Rule *rule=NULL;
-	Index *index=NULL;
+	ObjectTableWidget *tab=nullptr;
+	Column *column=nullptr;
+	Constraint *constr=nullptr;
+	Trigger *trigger=nullptr;
+	Rule *rule=nullptr;
+	Index *index=nullptr;
 	ObjectType obj_type;
 	QString str_aux, str_aux1,
 			contr_types[]={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
@@ -474,10 +476,10 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font=tab->font();
 		font.setItalic(true);
 
-		if(object->isProtected())
-			tab->setRowFont(row, font, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
-		else
+		if(object->isAddedByRelationship())
 			tab->setRowFont(row, font, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
+		else
+			tab->setRowFont(row, font, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
 	}
 
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
@@ -485,9 +487,9 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 void TableWidget::removeObjects(void)
 {
-	Table *table=NULL;
+	Table *table=nullptr;
 	unsigned count, op_count=0, i;
-	BaseObject *object=NULL;
+	BaseObject *object=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
 
 	try
@@ -539,8 +541,8 @@ void TableWidget::removeObjects(void)
 
 void TableWidget::removeObject(int row)
 {
-	Table *table=NULL;
-	BaseObject *object=NULL;
+	Table *table=nullptr;
+	BaseObject *object=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
 
 	try
@@ -572,7 +574,7 @@ void TableWidget::removeObject(int row)
 void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
 {
 	ObjectType obj_type=BASE_OBJECT;
-	Table *table=NULL;
+	Table *table=nullptr;
 	int count;
 
 	try
@@ -606,7 +608,7 @@ void TableWidget::applyConfiguration(void)
 {
 	try
 	{
-		Table *table=NULL;
+		Table *table=nullptr;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -618,14 +620,14 @@ void TableWidget::applyConfiguration(void)
 
 		try
 		{
-			if(model->getRelationship(table, NULL))
+			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
 
 			model->updateTableFKRelationships(table);
 		}
 		catch(Exception &e)
 		{
-			MessageBox msg_box;
+			Messagebox msg_box;
 
 			if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
 				msg_box.show(e);

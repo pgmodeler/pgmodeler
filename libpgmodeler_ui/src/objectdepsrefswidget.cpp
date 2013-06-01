@@ -24,7 +24,7 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	configureFormLayout(objectdepsrefs_grid, BASE_OBJECT);
 
 	parent_form->setWindowTitle(trUtf8("Dependences / References of Object"));
-	parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
+	parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
 	parent_form->setMinimumSize(550, 300);
 
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));

@@ -36,10 +36,10 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 			this->addToGroup(labels[i]);
 		}
 		else
-			labels[i]=NULL;
+			labels[i]=nullptr;
 	}
 
-	sel_object=NULL;
+	sel_object=nullptr;
 	sel_object_idx=-1;
 	configuring_line=false;
 
@@ -47,7 +47,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	descriptor->setZValue(0);
 	this->addToGroup(descriptor);
 
-	tables[0]=tables[1]=NULL;
+	tables[0]=tables[1]=nullptr;
 
 	//Relationship has the minor Z, being on the bottom of scene object's stack
 	this->setZValue(-1);
@@ -56,7 +56,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
 RelationshipView::~RelationshipView(void)
 {
-	QGraphicsItem *item=NULL;
+	QGraphicsItem *item=nullptr;
 
 	for(int i=0; i < 3; i++)
 	{
@@ -105,7 +105,7 @@ BaseRelationship *RelationshipView::getSourceObject(void)
 TextboxView *RelationshipView::getLabel(unsigned lab_idx)
 {
 	if(lab_idx > BaseRelationship::REL_NAME_LABEL)
-		return(NULL);
+		return(nullptr);
 	else
 		return(labels[lab_idx]);
 }
@@ -163,7 +163,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		//Shows/hides the attribute's selection
 		count=attributes.size();
 		for(i=0; i < count; i++)
-			attributes[i]->children().at(3)->setVisible(value.toBool());
+			attributes[i]->childItems().at(3)->setVisible(value.toBool());
 
 
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
@@ -232,16 +232,9 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						/* Creates a auxiliary line based upon the cursor position. This
 				 line is used to calculate the exact point (intersection) where the new one
 				 must be inserted */
-						if(lines[i]->line().angle()>=179 || lines[i]->line().angle()>=359)
-						{
-							lin.setP1(QPointF(event->pos().x(), event->pos().y()-50));
-							lin.setP2(QPointF(event->pos().x(), event->pos().y()+50));
-						}
-						else
-						{
-							lin.setP1(QPointF(event->pos().x()-50, event->pos().y()));
-							lin.setP2(QPointF(event->pos().x()+50, event->pos().y()));
-						}
+						lin.setP1(QPointF(event->pos().x()-50, event->pos().y()-50));
+						lin.setP2(QPointF(event->pos().x()+50, event->pos().y()+50));
+
 
 						//Case the auxiliary line intercepts one relationship line
 						if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
@@ -334,7 +327,7 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		}
 
 		sel_object_idx=-1;
-		sel_object=NULL;
+		sel_object=nullptr;
 	}
 
 	BaseObjectView::mouseReleaseEvent(event);
@@ -343,7 +336,7 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void RelationshipView::disconnectTables(void)
 {
 	for(unsigned i=0; i < 2; i++)
-		disconnect(tables[i], NULL, this, NULL);
+		disconnect(tables[i], nullptr, this, nullptr);
 }
 
 void RelationshipView::configureObject(void)
@@ -381,12 +374,12 @@ void RelationshipView::configureLine(void)
 		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 		vector<QPointF> points;
 		QLineF lin_aux[2];
-		QGraphicsLineItem *lin=NULL;
+		QGraphicsLineItem *lin=nullptr;
 		QPointF pos, p_int, p_central[2];
 		QRectF rect;
-		QGraphicsItem *item=NULL;
+		QGraphicsItem *item=nullptr;
 		QPen pen;
-		QGraphicsPolygonItem *pol=NULL;
+		QGraphicsPolygonItem *pol=nullptr;
 		QPolygonF pol_aux;
 		QString tool_tip;
 		int i, i1, count, idx_lin_desc=0;
@@ -541,7 +534,7 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier, the line has its thickness modified
 			if(rel && rel->isIdentifier() && i >= idx_lin_desc)
-				pen.setWidthF(1.75f);
+				pen.setWidthF(1.6f);
 			else
 				pen.setWidthF(1.0f);
 
@@ -679,13 +672,13 @@ void RelationshipView::configureAttributes(void)
 	if(rel)
 	{
 		int i, count;
-		Column *col=NULL;
-		QGraphicsItemGroup *attrib=NULL;
-		QGraphicsLineItem *lin=NULL;
-		QGraphicsEllipseItem *desc=NULL;
-		QGraphicsPolygonItem *sel_attrib=NULL;
-		QGraphicsSimpleTextItem *text=NULL;
-		QGraphicsItemGroup *item=NULL;
+		Column *col=nullptr;
+		QGraphicsItemGroup *attrib=nullptr;
+		QGraphicsLineItem *lin=nullptr;
+		QGraphicsEllipseItem *desc=nullptr;
+		QGraphicsPolygonItem *sel_attrib=nullptr;
+		QGraphicsSimpleTextItem *text=nullptr;
+		QGraphicsItemGroup *item=nullptr;
 		QPointF p_aux;
 		QTextCharFormat fmt;
 		QFont font;
@@ -742,10 +735,10 @@ void RelationshipView::configureAttributes(void)
 			else
 			{
 				attrib=attributes[i];
-				lin=dynamic_cast<QGraphicsLineItem *>(attrib->children().at(0));
-				desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->children().at(1));
-				text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->children().at(2));
-				sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->children().at(3));
+				lin=dynamic_cast<QGraphicsLineItem *>(attrib->childItems().at(0));
+				desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->childItems().at(1));
+				text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->childItems().at(2));
+				sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->childItems().at(3));
 			}
 
 			desc->setRect(rect);
@@ -812,7 +805,7 @@ void RelationshipView::configureLabels(void)
 
 	labels_ini_pos[BaseRelationship::REL_NAME_LABEL]=QPointF(x,y);
 
-	if(!isnan(label_dist.x()))
+	if(!std::isnan(label_dist.x()))
 	{
 		x+=label_dist.x();
 		y+=label_dist.y();
@@ -919,7 +912,7 @@ void RelationshipView::configureLabels(void)
 
 			labels_ini_pos[label_ids[idx]]=QPointF(x,y);
 			label_dist=base_rel->getLabelDistance(label_ids[idx]);
-			if(!isnan(label_dist.x()))
+			if(!std::isnan(label_dist.x()))
 			{
 				x+=label_dist.x();
 				y+=label_dist.y();

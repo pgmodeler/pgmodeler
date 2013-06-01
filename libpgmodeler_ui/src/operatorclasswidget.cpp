@@ -23,7 +23,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	try
 	{
 		QStringList tipos;
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 
 		Ui_OperatorClassWidget::setupUi(this);
 
@@ -246,7 +246,7 @@ void OperatorClassWidget::applyConfiguration(void)
 {
 	try
 	{
-		OperatorClass *op_class=NULL;
+		OperatorClass *op_class=nullptr;
 		unsigned i, count;
 
 		startConfiguration<OperatorClass>();

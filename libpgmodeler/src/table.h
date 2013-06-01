@@ -227,7 +227,7 @@ class Table: public BaseTable {
 		void removeRule(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -235,13 +235,13 @@ class Table: public BaseTable {
 		//! \brief Returns the index for the specified table object
 		int getObjectIndex(BaseObject *obj);
 
-		//! \brief Returns the primary key of the table. Returns NULL when it doesn't exists
+		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
 		Constraint *getPrimaryKey(void);
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
 		is used to filter the search, including only the foreign keys that references the specified table */
-		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=NULL);
+		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=nullptr);
 
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs(void);
@@ -255,6 +255,9 @@ class Table: public BaseTable {
 
 		//! \brief Swaps two objects position
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
+
+		//! \brief Move the object to the specified index
+		void moveObjectToIndex(TableObject *tab_obj, unsigned idx);
 
 		//! \brief Returns if the table references objects added by relationship
 		bool isReferRelationshipAddedObject(void);

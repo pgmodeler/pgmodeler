@@ -1,6 +1,13 @@
+#Unix or Windows directory configuration
 PGMODELER_SRC_DIR=../../
 PGMODELER_LIB_DIR=../../build
-PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
+PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+
+macx {
+ PGMODELER_SRC_DIR=../../
+ PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/MacOS
+ PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+}
 
 !exists($$PGMODELER_SRC_DIR) {
  warning("The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
@@ -9,13 +16,12 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-CONFIG += plugin qt warn_on uitools uic4
-QT += core gui
+CONFIG += plugin qt uic4
+QT += core gui uitools
 TEMPLATE = lib
 TARGET = xml2object
-
+OTHER_FILES += xml2object.json
 CODECFORTR = UTF8
-
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -37,9 +43,10 @@ SOURCES += src/xml2object.cpp \
 
 FORMS += ui/xml2objectwidget.ui
 
-xml2object.files = res/xml2object.png lang
-unix:xml2object.files += build/libxml2object.so
-macx:xml2object.files += build/libxml2object.dylib
-windows:xml2object.files += build/xml2object.dll build/libxml2object.a
+unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
+
+xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
+windows:xml2object.files += build/$$LIB_PREFIX$$TARGET.a
 xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += xml2object

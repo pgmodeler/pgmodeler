@@ -1,0 +1,38 @@
+<!DOCTYPE plist PUBLIC
+        "-//Apple Computer//DTD PLIST 1.0//EN"
+        "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+      <key>CFBundleDocumentTypes</key>
+       <array>
+          <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+              <string>dbm</string>
+            </array>
+            <key>CFBundleTypeIconFile</key>
+            <string>pgmodeler_dbm.icns</string>
+            <key>CFBundleTypeName</key>
+            <string>pgModeler Database Model</string>
+           </dict>
+       </array>
+       <key>CFBundleIconFile</key>
+       <string>pgmodeler.icns</string>
+       <key>CFBundleExecutable</key>
+       <string>startapp</string>
+       <key>CFBundleIdentifier</key>
+       <string>br.com.pgmodeler.pgModeler</string>
+       <key>CFBundleInfoDictionaryVersion</key>
+       <string>1.0</string>
+       <key>CFBundlePackageType</key>
+       <string>APPL</string>
+       <key>CFBundleSignature</key>
+       <string>????</string>
+       <key>CFBundleVersion</key>
+       <string>1.0</string>
+       <key>CSResourcesFileMapped</key>
+       <true/>
+    </dict>
+</plist>

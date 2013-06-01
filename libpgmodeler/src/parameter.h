@@ -44,8 +44,8 @@ class Parameter: public Column {
 		bool isOut(void);
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		QString getCodeDefinition(unsigned def_type);
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
 		void operator = (const Parameter &param);
 };

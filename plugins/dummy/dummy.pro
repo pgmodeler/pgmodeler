@@ -1,6 +1,13 @@
+#Unix or Windows directory configuration
 PGMODELER_SRC_DIR=../../
 PGMODELER_LIB_DIR=../../build
-PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
+PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+
+macx {
+ PGMODELER_SRC_DIR=../../
+ PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/MacOS
+ PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+}
 
 !exists($$PGMODELER_SRC_DIR) {
  warning("The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
@@ -9,14 +16,13 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-CONFIG += plugin qt warn_on uitools uic4
-QT += core gui
+CONFIG += plugin qt uic4
+QT += core gui uitools
 TEMPLATE = lib
 TARGET = dummy
 TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
-
+OTHER_FILES += dummy.json
 CODECFORTR = UTF8
-
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -33,9 +39,10 @@ LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
 HEADERS += src/dummy.h
 SOURCES += src/dummy.cpp
 
-dummy.files = res/dummy.png lang
-unix:dummy.files += build/libdummy.so
-macx:dummy.files += build/libdummy.dylib
-windows:dummy.files += build/dummy.dll build/libdummy.a
+unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
+
+dummy.files += res/dummy.png lang dummy.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
+windows:dummy.files += build/$$LIB_PREFIX$$TARGET.a
 dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += dummy

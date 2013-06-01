@@ -24,8 +24,8 @@ macx {
 windows {
  PGSQL_LIB = C:/PostgreSQL/9.2/bin/libpq.dll
  PGSQL_INC = C:/PostgreSQL/9.2/include
- XML_INC = C:/QtSDK/mingw/include
- XML_LIB = C:/QtSDK/mingw/bin/libxml2.dll
+ XML_INC = C:/Qt/Qt5.0.2/5.0.2/mingw47_32/include
+ XML_LIB = C:/Qt/Qt5.0.2/5.0.2/mingw47_32/bin/libxml2.dll
 }
 
 macx | windows {
@@ -72,14 +72,13 @@ macx | windows {
 ###########################
 # Main variables settings #
 ###########################
-CONFIG += ordered qt stl rtti exceptions warn_on
-
-#Avoiding the generation of app bundle on MacOSX
-macx:CONFIG -= app_bundle
+CONFIG += ordered qt stl rtti exceptions warn_on c++11
 
 #Additional configs on unix / windows
 unix:CONFIG += x11
 windows:CONFIG += windows
+
+macx:CONFIG-=app_bundle
 
 #Libraries extension and preffix for each platform
 unix:LIB_PREFIX = lib
@@ -93,12 +92,11 @@ SUBDIRS = libutils \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
-          crashhandler \
-	  main \
+	  crashhandler \
 	  main-cli \
+	  main \
 	  plugins/dummy \
 	  plugins/xml2object
-
 
 #Creating the project's libraries names based upon the running OS
 LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
@@ -108,12 +106,17 @@ LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 
-QT += core gui
+QT += core widgets printsupport
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = $$PWD/build
+
+macx {
+ BASEDIR = $$PWD/build/pgmodeler.app/Contents
+ DESTDIR = $$BASEDIR/MacOS
+}
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
@@ -129,10 +132,10 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 
 #Deployment configurations
 pgmodeler.path = $$DESTDIR
-pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
+pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE
 
 unix {
- pgmodeler.files += pgmodeler.vars
+!macx:pgmodeler.files += pgmodeler.vars
 }
 
 INSTALLS += pgmodeler

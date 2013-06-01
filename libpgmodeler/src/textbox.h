@@ -40,9 +40,9 @@ class Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		static const unsigned ITALIC_TXT=0,
-													BOLD_TXT=1,
-													UNDERLINE_TXT=2;
+		static constexpr unsigned ITALIC_TXT=0,
+															BOLD_TXT=1,
+															UNDERLINE_TXT=2;
 
 		/*! \brief To define the content of the textboxes
 		 the method setComment() must be used and the getComment()
@@ -57,7 +57,7 @@ class Textbox: public BaseGraphicObject{
 
 		/*! \brief Since textboxes doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the current state of the passed text attribute
 		bool getTextAttribute(unsigned attrib);

@@ -34,18 +34,18 @@ void startCrashHandler(int signal)
 	#ifndef Q_OS_WIN
 		void *stack[20];
 		size_t stack_size, i;
-		char **symbols=NULL;
+		char **symbols=nullptr;
 
 		stack_size = backtrace(stack, 20);
 		symbols = backtrace_symbols(stack, stack_size);
 
 		#ifdef Q_OS_MAC
-			cmd="crashhandler";
+				cmd="startapp crashhandler";
 		#else
-			cmd="crashhandler";
+        cmd="crashhandler";
 		#endif
 	#else
-	cmd="crashhandler.exe";
+		cmd="crashhandler.exe";
 	#endif
 
 	//Creates the stacktrace file
@@ -85,12 +85,6 @@ void startCrashHandler(int signal)
 	//Executes the crashhandler command (which must be on the same directory as the pgModeler executable)
 	cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
 
-	//Mac OSX little fix: configure the correct path to call crashhandler.app
-	#ifdef Q_OS_MAC
-		cmd.replace("pgmodeler.app/Contents/MacOS/","");
-		cmd=QString("open ") + cmd;
-	#endif
-
     exit(1 + system(cmd.toStdString().c_str()));
 }
 
@@ -110,6 +104,7 @@ int main(int argc, char **argv)
 									 GlobalAttributes::CONFIGURATION_EXT);
 		QString style;
 		QFileInfo fi(argv[0]);
+		QApplication::setStyle(QStyleFactory::create("Fusion"));
 
 		//Changing the current working dir to the executable's directory in
 		QDir::setCurrent(fi.absolutePath());
@@ -125,27 +120,35 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		//Loading the application splash screen
-		QPixmap pixmap(":imagens/imagens/pgmodeler_logo.png");
-		QPixmap alfa(":imagens/imagens/pgmodeler_logo_alfa.png");
-		pixmap.setAlphaChannel(alfa);
+		QPixmap pix=QPixmap(":imagens/imagens/pgmodeler_splash.png");
 
 		//Draws the current version code on the splash
 		QFont fnt;
-		QPainter p;
 		fnt.setBold(true);
+		fnt.setPointSizeF(9.0f);
 
-		QFontMetrics fm(fnt);
-		QString str_ver=QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION);
-		QRect ret=fm.boundingRect(str_ver);
+		QSplashScreen splash(pix);
+		QLabel *ver_label=new QLabel(&splash);
+		QGraphicsDropShadowEffect shadow;
+		QPalette pal;
 
-		p.begin(&pixmap);
-		p.setFont(fnt);
-		p.setPen(QColor(255,255,255));
-		p.drawText(QPointF((pixmap.size().width()*0.55f)-(ret.width()/2),
-											 pixmap.size().width()-17), str_ver);
-		p.end();
+		//Configures a label with the pgModeler's version
+		pal.setColor(QPalette::WindowText, QColor(255,255,255));
 
-		QSplashScreen splash(pixmap);
+		shadow.setColor(QColor(0,0,0));
+		shadow.setXOffset(3);
+		shadow.setYOffset(3);
+		shadow.setBlurRadius(10);
+
+		//Shows the label version at bottom of splash screen
+		ver_label->setFont(fnt);
+		ver_label->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
+		ver_label->setPalette(pal);
+		ver_label->move(pix.size().width() * 0.75f, pix.size().height() * 0.92f);
+		ver_label->setGraphicsEffect(&shadow);
+
+		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));
+		splash.setWindowModality(Qt::ApplicationModal);
 		splash.show();
 		splash.repaint();
 
@@ -161,7 +164,7 @@ int main(int argc, char **argv)
 		//Raises an error if ui style is not found
 		if(!ui_style.isOpen())
 		{
-		 MessageBox msg;
+		 Messagebox msg;
 		 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
 												 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
@@ -170,8 +173,16 @@ int main(int argc, char **argv)
 
 		app.setStyleSheet(style);
 		fmain.showMaximized();
-		app.exec();
 
+		//If the user specifies a list of files to be loaded
+		if(app.arguments().size() > 1)
+		{
+			QStringList list=app.arguments();
+			list.pop_front();
+			fmain.loadModels(list);
+		}
+
+		app.exec();
 		return(0);
 	}
 	catch(Exception &e)

@@ -33,7 +33,7 @@
 
 class Application: public QApplication {
 	private:
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 	public:
 
@@ -53,7 +53,7 @@ class Application: public QApplication {
 			}
 			catch(...)
 			{
-				msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
+				msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
 				return(false);
 			}
 		}

@@ -32,7 +32,7 @@ class ExcludeElement: public Element {
 
 	public:
 		ExcludeElement(void);
-        virtual ~ExcludeElement(void) {}
+		virtual ~ExcludeElement(void) {}
 
 		//! \brief Defines the operator used by the exclude element
 		void setOperator(Operator *oper);
@@ -40,7 +40,7 @@ class ExcludeElement: public Element {
 		//! \brief Returns the operator used by the exclude element
 		Operator *getOperator(void);
 
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

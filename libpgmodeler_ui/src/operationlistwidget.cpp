@@ -24,7 +24,7 @@ extern TaskProgressWidget *task_prog_wgt;
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
-	setModel(NULL);
+	setModel(nullptr);
 
 	operations_tw->headerItem()->setHidden(true);
 	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation(void)));
@@ -56,7 +56,7 @@ void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
 
 void OperationListWidget::updateOperationList(void)
 {
-	content_wgt->setEnabled(this->model_wgt!=NULL);
+	content_wgt->setEnabled(this->model_wgt!=nullptr);
 
 	if(!model_wgt)
 	{
@@ -69,7 +69,7 @@ void OperationListWidget::updateOperationList(void)
 		unsigned count, i, op_type;
 		ObjectType obj_type;
 		QString obj_name, str_aux, op_name, op_icon;
-		QTreeWidgetItem *item=NULL,*item1=NULL, *item2=NULL;
+		QTreeWidgetItem *item=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font=this->font();
 		bool value=false;
 
@@ -163,7 +163,7 @@ void OperationListWidget::undoOperation(void)
 		model_wgt->op_list->undoOperation();
 
 		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 
 		notifyUpdateOnModel();
 
@@ -172,7 +172,7 @@ void OperationListWidget::undoOperation(void)
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -188,7 +188,7 @@ void OperationListWidget::redoOperation(void)
 		model_wgt->op_list->redoOperation();
 
 		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 
 		notifyUpdateOnModel();
 
@@ -197,19 +197,19 @@ void OperationListWidget::redoOperation(void)
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void OperationListWidget::removeOperations(void)
 {
-	MessageBox msg_box;
+	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Operation history exclusion"),
 									trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-									MessageBox::CONFIRM_ICON,
-									MessageBox::YES_NO_BUTTONS);
+									Messagebox::CONFIRM_ICON,
+									Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

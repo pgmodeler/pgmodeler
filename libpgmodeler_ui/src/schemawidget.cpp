@@ -21,7 +21,7 @@
 SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA)
 {
 	Ui_SchemaWidget::setupUi(this);
-	configureFormLayout(NULL, OBJ_SCHEMA);
+	configureFormLayout(nullptr, OBJ_SCHEMA);
 
 	baseobject_grid->addWidget(fill_color_lbl, baseobject_grid->count(), 0, 1, 1);
 	baseobject_grid->addWidget(fill_color_tb, baseobject_grid->count()-1, 1, 1, 1);
@@ -85,7 +85,7 @@ void SchemaWidget::applyConfiguration(void)
 {
 	try
 	{
-		Schema *schema=NULL;
+		Schema *schema=nullptr;
 
 		startConfiguration<Schema>();
 		schema=dynamic_cast<Schema *>(this->object);

@@ -29,6 +29,7 @@
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
+#include "messagebox.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
 	private:
@@ -43,6 +44,7 @@ class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, publi
 	public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
+		void updateFileAssociation(void);
 
 	private slots:
 		void convertMarginUnity(void);

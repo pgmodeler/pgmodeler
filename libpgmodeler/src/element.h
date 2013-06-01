@@ -42,8 +42,8 @@ class Element {
 		//! \brief Operator class used by the  element
 		OperatorClass *operator_class;
 
-		/*! \brief Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
-		 This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
+		/*! \brief Sorting attributes of the element (ASC|DESC, nullptrS [FIRST|LAST])
+		 This attibutes can be configured used the constants ASC_ORDER and nullptrS_FIRST */
 		bool sorting_attibs[2],
 				 //! \brief Enable the use of the sort attributes
 				 sorting_enabled;
@@ -53,8 +53,8 @@ class Element {
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		const static unsigned ASC_ORDER=0,
-													NULLS_FIRST=1;
+		static constexpr unsigned ASC_ORDER=0,
+															nullptrS_FIRST=1;
 
 		Element(void);
         virtual ~Element(void) {}

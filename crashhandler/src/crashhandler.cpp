@@ -79,8 +79,8 @@ void CrashHandler::loadReport(const QString &filename)
 {
 	QFile input;
 	QFileInfo fi;
-	char *buf=NULL;
-	MessageBox msgbox;
+	char *buf=nullptr;
+	Messagebox msgbox;
 
 	fi.setFile(filename);
 	input.setFileName(filename);
@@ -92,7 +92,7 @@ void CrashHandler::loadReport(const QString &filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), MessageBox::ERROR_ICON);
+		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), Messagebox::ERROR_ICON);
 	else
 	{
 		QByteArray uncomp_buf;
@@ -114,7 +114,7 @@ void CrashHandler::loadReport(const QString &filename)
 		uncomp_buf=qUncompress(uncomp_buf);
 
 		delete[](buf);
-		buf=NULL;
+		buf=nullptr;
 
 		buf_aux=QString(uncomp_buf.data());
 		i=idx=0;
@@ -122,7 +122,7 @@ void CrashHandler::loadReport(const QString &filename)
 		//Showing the sections of the uncompressed buffer on the respective widgets
 		while(i < buf_aux.size() && idx <= 2)
 		{
-			if(buf_aux.at(i).toAscii()!=CHR_DELIMITER)
+			if(buf_aux.at(i).toLatin1()!=CHR_DELIMITER)
 				str_aux.append(buf_aux.at(i));
 			else
 			{
@@ -136,7 +136,7 @@ void CrashHandler::loadReport(const QString &filename)
 
 void CrashHandler::generateReport(void)
 {
-	MessageBox msgbox;
+	Messagebox msgbox;
 	QByteArray buf, comp_buf;
 	QFile output;
 
@@ -150,7 +150,7 @@ void CrashHandler::generateReport(void)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), MessageBox::ERROR_ICON);
+		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), Messagebox::ERROR_ICON);
 	else
 	{
 		buf.append(actions_txt->toPlainText().toUtf8());
@@ -170,7 +170,7 @@ void CrashHandler::generateReport(void)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), MessageBox::INFO_ICON);
+		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), Messagebox::INFO_ICON);
 		this->close();
 	}
 }

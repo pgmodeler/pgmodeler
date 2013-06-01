@@ -20,7 +20,7 @@
 
 TableObject::TableObject(void)
 {
-	parent_table=NULL;
+	parent_table=nullptr;
 	add_by_linking=add_by_generalization=add_by_copy=false;
 }
 

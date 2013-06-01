@@ -129,13 +129,13 @@ class SchemaParser {
 	public:
 
 		//! \brief Constants used to refernce PostgreSQL versions.
-		static const QString  PGSQL_VERSION_90,
-													PGSQL_VERSION_91,
-													PGSQL_VERSION_92;
+		static const QString PGSQL_VERSION_90,
+												 PGSQL_VERSION_91,
+												 PGSQL_VERSION_92;
 
 		//! \brief Constants used to get a specific object definition
-		static const unsigned SQL_DEFINITION=0,
-													XML_DEFINITION=1;
+		static constexpr unsigned SQL_DEFINITION=0,
+															XML_DEFINITION=1;
 
 		/*! \brief Set the version of PostgreSQL to be adopted by the parser in obtaining
 		 the definition of the objects. This function should always be called at

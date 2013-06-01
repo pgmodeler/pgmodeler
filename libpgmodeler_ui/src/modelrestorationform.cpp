@@ -32,11 +32,11 @@ QStringList ModelRestorationForm::getTemporaryModels(void)
 	return(QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
-void ModelRestorationForm::exec(void)
+int ModelRestorationForm::exec(void)
 {
 	QStringList file_list=this->getTemporaryModels();
 	QFileInfo info;
-	QListWidgetItem *item=NULL;
+	QListWidgetItem *item=nullptr;
 
 	while(!file_list.isEmpty())
 	{
@@ -58,7 +58,7 @@ void ModelRestorationForm::exec(void)
 		file_list.pop_front();
 	}
 
-	QDialog::exec();
+	return(QDialog::exec());
 }
 
 bool ModelRestorationForm::hasTemporaryModels(void)

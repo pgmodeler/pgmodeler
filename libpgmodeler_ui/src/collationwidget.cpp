@@ -21,7 +21,7 @@
 CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLLATION)
 {
 	QStringList loc_list, encodings;
-	QFrame *frame=NULL;
+	QFrame *frame=nullptr;
 
 	Ui_CollationWidget::setupUi(this);
 
@@ -121,13 +121,13 @@ void CollationWidget::resetFields(void)
 	}
 	//Resetting the lc_??? combos
 	else if((sender()==collation_sel || sender()==locale_cmb) &&
-					(collation_sel->getSelectedObject()!=NULL || locale_cmb->currentIndex() > 0))
+					(collation_sel->getSelectedObject()!=nullptr || locale_cmb->currentIndex() > 0))
 	{
 		lccollate_cmb->setCurrentIndex(0);
 		lcctype_cmb->setCurrentIndex(0);
 
 		//Additionally resets the collation selector or locale combo depending on sender()
-		if(sender()==collation_sel && collation_sel->getSelectedObject()!=NULL)
+		if(sender()==collation_sel && collation_sel->getSelectedObject()!=nullptr)
 			locale_cmb->setCurrentIndex(0);
 		else
 			collation_sel->clearSelector();
@@ -144,7 +144,7 @@ void CollationWidget::applyConfiguration(void)
 {
 	try
 	{
-		Collation *collation=NULL;
+		Collation *collation=nullptr;
 
 		startConfiguration<Collation>();
 

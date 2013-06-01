@@ -21,7 +21,7 @@
 TableView::TableView(Table *table) : BaseTableView(table)
 {
 	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
-	//sel_child_obj=NULL;
+	//sel_child_obj=nullptr;
 	this->configureObject();
 }
 
@@ -37,10 +37,10 @@ void TableView::configureObject(void)
 	int i, count, idx;
 	float width, type_width=0, px=0;
 	QPen pen;
-	TableObjectView *col_item=NULL;
+	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
 	QList<TableObjectView *> col_items;
-	TableObject *tab_obj=NULL;
+	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
@@ -72,7 +72,7 @@ void TableView::configureObject(void)
 		}
 
 		//Gets the subitems of the current group
-		subitems=groups[idx]->children();
+		subitems=groups[idx]->childItems();
 		groups[idx]->moveBy(-groups[idx]->scenePos().x(),
 												-groups[idx]->scenePos().y());
 		count=tab_objs.size();
@@ -145,11 +145,11 @@ void TableView::configureObject(void)
 
 	/* Calculating the maximum width between the title, columns and extended attributes.
 		This width is used to set the uniform width of table */
-	if(!columns->children().isEmpty() &&
+	if(!columns->childItems().isEmpty() &&
 		 (columns->boundingRect().width() > title->boundingRect().width() &&
 			(hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->children().isEmpty() && !hide_ext_attribs &&
+	else if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
 					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
@@ -182,7 +182,7 @@ void TableView::configureObject(void)
 													bodies[0]->boundingRect().height() - 2);
 		groups[idx]->setPos(bodies[idx]->pos());
 
-		subitems=groups[idx]->children();
+		subitems=groups[idx]->childItems();
 		while(!subitems.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());

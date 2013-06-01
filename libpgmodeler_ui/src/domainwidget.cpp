@@ -24,14 +24,14 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 	{
 		Ui_DomainWidget::setupUi(this);
 
-		check_expr_hl=NULL;
+		check_expr_hl=nullptr;
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false);
 		check_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																		 GlobalAttributes::DIR_SEPARATOR +
 																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																		 GlobalAttributes::CONFIGURATION_EXT);
 
-		data_type=NULL;
+		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
 		domain_grid->addWidget(data_type,4,0,1,2);
 
@@ -80,7 +80,7 @@ void DomainWidget::applyConfiguration(void)
 {
 	try
 	{
-		Domain *domain=NULL;
+		Domain *domain=nullptr;
 		startConfiguration<Domain>();
 
 		domain=dynamic_cast<Domain *>(this->object);

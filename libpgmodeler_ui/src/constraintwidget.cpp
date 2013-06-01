@@ -24,7 +24,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	{
 		QStringList list;
 		map<QString, vector<QWidget *> > fields_map;
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 
 		Ui_ConstraintWidget::setupUi(this);
 
@@ -117,9 +117,9 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 void ConstraintWidget::addColumn(int row)
 {
 	QObject *sender_obj=sender();
-	ObjectTableWidget *aux_col_tab=NULL;
-	QComboBox *combo=NULL;
-	Column *column=NULL;
+	ObjectTableWidget *aux_col_tab=nullptr;
+	QComboBox *combo=nullptr;
+	Column *column=nullptr;
 	unsigned col_id;
 
 	try
@@ -174,7 +174,7 @@ void ConstraintWidget::removeColumns(void)
 
 void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 {
-	ObjectTableWidget *table_wgt=NULL;
+	ObjectTableWidget *table_wgt=nullptr;
 
 	if(column && row >= 0)
 	{
@@ -204,11 +204,11 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 
 void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 {
-	ObjectTableWidget *aux_col_tab=NULL;
-	Column *column=NULL;
-	Table *table=NULL;
-	QComboBox *combo=NULL;
-	Relationship *rel=NULL;
+	ObjectTableWidget *aux_col_tab=nullptr;
+	Column *column=nullptr;
+	Table *table=nullptr;
+	QComboBox *combo=nullptr;
+	Relationship *rel=nullptr;
 	unsigned i, count=0;
 
 	try
@@ -361,8 +361,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 {
 	ObjectType obj_type;
 	unsigned count, i, row;
-	Column *column=NULL;
-	Table *ref_table=NULL;
+	Column *column=nullptr;
+	Table *ref_table=nullptr;
 	vector<ExcludeElement> excl_elems;
 
 	if(!parent_obj)
@@ -374,7 +374,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
 
-	info_frm->setVisible(this->table!=NULL);
+	info_frm->setVisible(this->table!=nullptr);
 	ref_table_sel->setModel(model);
 
 	if(this->table)
@@ -450,10 +450,10 @@ void ConstraintWidget::applyConfiguration(void)
 {
 	try
 	{
-		Constraint *constr=NULL;
+		Constraint *constr=nullptr;
 		unsigned i, col_id, count;
-		Column *column=NULL;
-		ObjectTableWidget *aux_col_tab=NULL;
+		Column *column=nullptr;
+		ObjectTableWidget *aux_col_tab=nullptr;
 		vector<ExcludeElement> excl_elems;
 
 		startConfiguration<Constraint>();
@@ -512,7 +512,7 @@ void ConstraintWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		cancelConfiguration();
 		msg_box.show(e);

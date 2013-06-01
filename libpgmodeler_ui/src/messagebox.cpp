@@ -18,7 +18,7 @@
 
 #include "messagebox.h"
 
-MessageBox::MessageBox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	cancelled=false;
@@ -32,13 +32,13 @@ MessageBox::MessageBox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	show_errors_txt_tb->setVisible(false);
 }
 
-void MessageBox::handleYesOkClick(void)
+void Messagebox::handleYesOkClick(void)
 {
 	exceptions_trw->clear();
 	accept();
 }
 
-void MessageBox::handleNoCancelClick(void)
+void Messagebox::handleNoCancelClick(void)
 {
 	exceptions_trw->clear();
 
@@ -54,12 +54,12 @@ void MessageBox::handleNoCancelClick(void)
 	}
 }
 
-bool MessageBox::isCancelled(void)
+bool Messagebox::isCancelled(void)
 {
 	return(cancelled);
 }
 
-void MessageBox::showExceptionList(void)
+void Messagebox::showExceptionList(void)
 {
 	if(show_errors_tb->isChecked())
 	{
@@ -77,14 +77,14 @@ void MessageBox::showExceptionList(void)
 	}
 }
 
-void MessageBox::show(Exception e, const QString &msg, unsigned icon_type)
+void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 {
-	deque<Exception> list;
-	deque<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *item=NULL,*item1=NULL,*item2=NULL;
-	QLabel *label=NULL;
+	vector<Exception> list;
+	vector<Exception>::reverse_iterator itr,itr_end;
+	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
+	QLabel *label=nullptr;
 	int idx=0;
-	Exception *ex=NULL;
+	Exception *ex=nullptr;
 	QString str_aux, title;
 	QFont font=this->font();
 
@@ -176,7 +176,7 @@ void MessageBox::show(Exception e, const QString &msg, unsigned icon_type)
 	this->show(title,str_aux,icon_type,OK_BUTTON);
 }
 
-void MessageBox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons)
+void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons)
 {
 	QString icon_name;
 
@@ -232,6 +232,7 @@ void MessageBox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	cancelled=false;
 
+	icon_lbl->setVisible(!icon_name.isEmpty());
 	if(icon_name!="")
 		icon_lbl->setPixmap(QPixmap((":/icones/icones/" + icon_name)));
 

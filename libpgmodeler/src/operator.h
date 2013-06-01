@@ -45,15 +45,13 @@ class Operator: public BaseObject {
 					merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
-		static const unsigned FUNC_OPERATOR=0,
-													FUNC_JOIN=1,
-													FUNC_RESTRICT=2,
-
-													LEFT_ARG=0,
-													RIGHT_ARG=1,
-
-													OPER_COMMUTATOR=0,
-													OPER_NEGATOR=1;
+		static constexpr unsigned FUNC_OPERATOR=0,
+															FUNC_JOIN=1,
+															FUNC_RESTRICT=2,
+															LEFT_ARG=0,
+															RIGHT_ARG=1,
+															OPER_COMMUTATOR=0,
+															OPER_NEGATOR=1;
 
 		Operator(void);
 
@@ -94,8 +92,8 @@ class Operator: public BaseObject {
 		static bool isValidName(const QString &name);
 
 		//! \brief Returns the SQL / XML definition for the operator
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the operator signature
 		QString getSignature(bool format_name=true);

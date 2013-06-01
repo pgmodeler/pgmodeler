@@ -25,7 +25,8 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QtGui>
+#include <QtWidgets>
+#include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
 #include "aboutform.h"
@@ -52,7 +53,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		QTimer model_save_timer,	tmpmodel_save_timer;
 
 		//! \brief Message box widget used to show error/confirmation messages
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
@@ -103,6 +104,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
+		//! \brief Loads a set of models from string list
+		void loadModels(const QStringList &list);
+
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
@@ -136,7 +140,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void loadModel(void);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
-		void saveModel(ModelWidget *model=NULL);
+		void saveModel(ModelWidget *model=nullptr);
 
 		//! \brief Save all loaded models
 		void saveAllModels(void);

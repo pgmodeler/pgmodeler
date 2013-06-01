@@ -146,7 +146,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 		if(op_type==Operation::OBJECT_MODIFIED ||
 			 op_type==Operation::OBJECT_MOVED)
 		{
-			BaseObject *copy_obj=NULL;
+			BaseObject *copy_obj=nullptr;
 
 			if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
 				PgModelerNS::copyObject(&copy_obj, object, obj_type);
@@ -172,9 +172,9 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 
 void OperationList::removeOperations(void)
 {
-	BaseObject *object=NULL;
-	TableObject *tab_obj=NULL;
-	BaseTable *tab=NULL;
+	BaseObject *object=nullptr;
+	TableObject *tab_obj=nullptr;
+	BaseTable *tab=nullptr;
 
 	//Destroy the operations
 	while(!operations.empty())
@@ -217,7 +217,7 @@ void OperationList::removeOperations(void)
 		}
 
 		not_removed_objs.pop_back();
-		tab_obj=NULL;
+		tab_obj=nullptr;
 	}
 
 	current_index=0;
@@ -227,7 +227,7 @@ void OperationList::removeOperations(void)
 void OperationList::validateOperations(void)
 {
 	vector<Operation *>::iterator itr, itr_end;
-	Operation *oper=NULL;
+	Operation *oper=nullptr;
 
 	itr=operations.begin();
 	itr_end=operations.end();
@@ -268,7 +268,7 @@ bool OperationList::isObjectOnPool(BaseObject *object)
 
 void OperationList::removeFromPool(unsigned obj_idx)
 {
-	BaseObject *object=NULL;
+	BaseObject *object=nullptr;
 	vector<BaseObject *>::iterator itr;
 
 	//Raises an error if the object index is invalid (out of bound)
@@ -293,10 +293,10 @@ void OperationList::removeFromPool(unsigned obj_idx)
 void OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx,  BaseObject *parent_obj)
 {
 	ObjectType obj_type;
-	Operation *operation=NULL;
-	BaseTable *parent_tab=NULL;
-	Relationship *parent_rel=NULL;
-	TableObject *tab_obj=NULL;
+	Operation *operation=nullptr;
+	BaseTable *parent_tab=nullptr;
+	Relationship *parent_rel=nullptr;
+	TableObject *tab_obj=nullptr;
 	tab_obj=dynamic_cast<TableObject *>(object);
 	int obj_idx=-1;
 
@@ -443,7 +443,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 
 void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type)
 {
-	Operation *operation=NULL;
+	Operation *operation=nullptr;
 
 	if(oper_idx >= operations.size())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -507,7 +507,7 @@ void OperationList::undoOperation(void)
 {
 	if(isUndoAvailable())
 	{
-		Operation *operation=NULL;
+		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
 		unsigned chain_size=0, pos=0;
@@ -572,7 +572,7 @@ void OperationList::redoOperation(void)
 {
 	if(isRedoAvailable())
 	{
-		Operation *operation=NULL;
+		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
 		unsigned chain_size=0, pos=0;
@@ -634,10 +634,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 {
 	if(oper)
 	{
-		BaseObject *orig_obj=NULL, *bkp_obj=NULL, *object=NULL, *aux_obj=NULL;
+		BaseObject *orig_obj=nullptr, *bkp_obj=nullptr, *object=nullptr, *aux_obj=nullptr;
 		ObjectType obj_type;
-		BaseTable *parent_tab=NULL;
-		Relationship *parent_rel=NULL;
+		BaseTable *parent_tab=nullptr;
+		Relationship *parent_rel=nullptr;
 
 		object=oper->pool_obj;
 		obj_type=object->getObjectType();
@@ -798,7 +798,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(obj_type==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
 				model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
 			else if((obj_type==OBJ_RELATIONSHIP ||
-							 (obj_type==OBJ_TABLE && model->getRelationship(dynamic_cast<BaseTable *>(object), NULL))) &&
+							 (obj_type==OBJ_TABLE && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
 							oper->op_type==Operation::OBJECT_MODIFIED)
 				model->validateRelationships();
 
@@ -825,7 +825,7 @@ void OperationList::removeLastOperation(void)
 {
 	if(!operations.empty())
 	{
-		Operation *oper=NULL;
+		Operation *oper=nullptr;
 		bool end=false;
 		vector<Operation *>::reverse_iterator itr;
 		unsigned obj_idx=operations.size()-1;
@@ -873,7 +873,7 @@ void OperationList::removeLastOperation(void)
 void OperationList::updateObjectIndex(BaseObject *object, unsigned new_idx)
 {
 	vector<Operation *>::iterator itr, itr_end;
-	Operation *oper=NULL;
+	Operation *oper=nullptr;
 
 	if(!object)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

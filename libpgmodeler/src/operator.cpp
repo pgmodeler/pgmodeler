@@ -25,10 +25,10 @@ Operator::Operator(void)
 	obj_type=OBJ_OPERATOR;
 
 	for(i=FUNC_OPERATOR; i <= FUNC_RESTRICT; i++)
-		functions[i]=NULL;
+		functions[i]=nullptr;
 
 	for(i=Operator::OPER_COMMUTATOR; i <= OPER_NEGATOR; i++)
-		operators[i]=NULL;
+		operators[i]=nullptr;
 
 	hashes=merges=false;
 	argument_types[LEFT_ARG]=PgSQLType("any");

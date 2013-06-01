@@ -32,10 +32,12 @@ class Xml2Object: public QObject, public PgModelerPlugin {
 	private:
 		Q_OBJECT
 
-		Xml2ObjectWidget xml2obj_wgt;
+		Q_PLUGIN_METADATA(IID "br.com.pgmodeler.PgModelerPlugin" FILE "xml2object.json")
 
 		//! \brief Declares the interface which is used to implement the plugin
 		Q_INTERFACES(PgModelerPlugin)
+
+		Xml2ObjectWidget xml2obj_wgt;
 
 	public:
 		Xml2Object(void);

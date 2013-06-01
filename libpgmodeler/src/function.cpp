@@ -21,7 +21,7 @@
 Function::Function(void)
 {
 	return_type=PgSQLType("void");
-	language=NULL;
+	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
 	obj_type=OBJ_FUNCTION;

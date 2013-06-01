@@ -21,8 +21,8 @@
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
-	model_wgt=NULL;
-	db_model=NULL;
+	model_wgt=nullptr;
+	db_model=nullptr;
 	setModel(db_model);
 
 	title_wgt->setVisible(!simplified_view);
@@ -34,7 +34,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
 
-	selected_object=NULL;
+	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
 
 	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject(void)));
@@ -126,7 +126,7 @@ void ModelObjectsWidget::selectObject(void)
 			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
-									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), NULL);
+									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
@@ -141,7 +141,7 @@ void ModelObjectsWidget::selectObject(void)
 
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
-			disconnect(&act,NULL,model_wgt,NULL);
+			disconnect(&act,nullptr,model_wgt,nullptr);
 		}
 	}
 	else
@@ -206,7 +206,7 @@ void ModelObjectsWidget::setObjectVisible(QListWidgetItem *item)
 void ModelObjectsWidget::setAllObjectsVisible(bool value)
 {
 	ObjectType obj_type;
-	QListWidgetItem *item=NULL;
+	QListWidgetItem *item=nullptr;
 	bool checked;
 
 	checked=(sender()==select_all_tb || value);
@@ -288,12 +288,12 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 {
 	if(db_model && visible_objs_map[OBJ_SCHEMA])
 	{
-		BaseObject *object=NULL, *schema=NULL;
-		Function *func=NULL;
-		Operator *oper=NULL;
+		BaseObject *object=nullptr, *schema=nullptr;
+		Function *func=nullptr;
+		Operator *oper=nullptr;
 		vector<BaseObject *> obj_list;
 		QFont font;
-		QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL, *item4=NULL;
+		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr, *item4=nullptr;
 		ObjectType types[]={ OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_DOMAIN, OBJ_TYPE, OBJ_CONVERSION,
 												 OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
@@ -331,7 +331,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 				{
 					//The new sub item to be configured will be the public schema item
 					item2=item1;
-					schema=NULL;
+					schema=nullptr;
 				}
 				else
 				{
@@ -437,10 +437,10 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 {
 	if(db_model && visible_objs_map[OBJ_TABLE])
 	{
-		BaseObject *object=NULL;
+		BaseObject *object=nullptr;
 		vector<BaseObject *> obj_list;
-		Table *table=NULL;
-		QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL;
+		Table *table=nullptr;
+		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
 		QString str_aux;
 		QFont font;
 		ConstraintType constr_type;
@@ -574,10 +574,10 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 {
 	if(db_model && visible_objs_map[OBJ_VIEW])
 	{
-		BaseObject *object=NULL;
+		BaseObject *object=nullptr;
 		vector<BaseObject *> obj_list;
-		View *view=NULL;
-		QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL;
+		View *view=nullptr;
+		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
 		QFont font;
 		ObjectType types[]={ OBJ_RULE, OBJ_TRIGGER };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
@@ -706,13 +706,11 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 
 void ModelObjectsWidget::updateDatabaseTree(void)
 {
-	if(!db_model)
-		objectstree_tw->clear();
-	else
+	if(db_model)
 	{
 		QString str_aux;
-		BaseObject *object=NULL;
-		QTreeWidgetItem *root=NULL,*item1=NULL, *item2=NULL;
+		BaseObject *object=nullptr;
+		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font;
 		vector<BaseObject *> tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
@@ -861,7 +859,7 @@ void ModelObjectsWidget::close(void)
 	QObject *obj_sender=sender();
 
 	if(obj_sender==cancel_tb)
-		selected_object=NULL;
+		selected_object=nullptr;
 	else
 	{
 		QVariant data;
@@ -887,10 +885,14 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 {
+	bool enable = (db_model!=nullptr);
+
 	this->db_model=db_model;
-	content_wgt->setEnabled(db_model!=NULL);
+	content_wgt->setEnabled(enable);
 	updateObjectsView();
 	visaoobjetos_stw->setEnabled(true);
+	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
+	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
 }
 
 void ModelObjectsWidget::showEvent(QShowEvent *)
@@ -904,7 +906,7 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 			int x, y;
 			x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2);
 			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
-			this->setGeometry(QRect(QPoint(x,y), this->size()));
+			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
 		}
 	}
 }
@@ -970,8 +972,8 @@ void ModelObjectsWidget::saveTreeState(bool value)
 void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
 {
 	QList<QTreeWidgetItem *> items;
-	BaseObject *obj=NULL;
-	QTreeWidgetItem *item=NULL;
+	BaseObject *obj=nullptr;
+	QTreeWidgetItem *item=nullptr;
 
 	tree_items.clear();
 	items=objectstree_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
@@ -992,7 +994,7 @@ void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
 
 void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
 {
-	QTreeWidgetItem *item=NULL, *parent_item=NULL;
+	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
 
 	while(!tree_items.empty())
 	{
@@ -1018,8 +1020,8 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 	if(object)
 	{
 		QList<QTreeWidgetItem *> items;
-		BaseObject *aux_obj=NULL;
-		QTreeWidgetItem *item=NULL;
+		BaseObject *aux_obj=nullptr;
+		QTreeWidgetItem *item=nullptr;
 
 		items=objectstree_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
 
@@ -1031,7 +1033,7 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 			if(aux_obj==object)
 				break;
 			else
-				item=NULL;
+				item=nullptr;
 
 			items.pop_front();
 		}
@@ -1039,5 +1041,5 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 		return(item);
 	}
 	else
-		return(NULL);
+		return(nullptr);
 }

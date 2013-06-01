@@ -81,11 +81,11 @@ class Constraint: public TableObject{
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
-		static const unsigned SOURCE_COLS=0,
+		static constexpr unsigned SOURCE_COLS=0,
 
-													/*! \brief Access the referenced columns that means the columns from the
-													referenced table primary key (only for foreign keys) */
-													REFERENCED_COLS=1;
+														 /*! \brief Access the referenced columns that means the columns from the
+														 referenced table primary key (only for foreign keys) */
+														 REFERENCED_COLS=1;
 
 		Constraint(void);
 		~Constraint(void);
@@ -121,7 +121,7 @@ class Constraint: public TableObject{
 		void setReferencedTable(BaseTable *tab_ref);
 
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
-		void setTablespace(Tablespace *tabspc);
+		void setTablespace(BaseObject *tabspc);
 
 		//! \brief Defines the constraint fill factor (only for primary keys and unique)
 		void setFillFactor(unsigned factor);
@@ -192,18 +192,18 @@ class Constraint: public TableObject{
 		/*! \brief Returns the SQL / XML definition for the constraint.
 		 This method calls getCodeDefintion(unsigned, bool) with the
 		 second parameter as false */
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		/*! \brief Returns the SQL / XML definition for the constraint. The boolean parameter indicates
 		 whether the columns added by relationship must appear on the code definition */
-		QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel);
+		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);
 
 		/*! \brief Indicates whether the column is referenced in internal column list or exclude element list.
-		The second parameter is useful to permit or not the search of column on referenced columns list. */
-		bool isColumnReferenced(Column *column, bool search_ref_cols = true);
+		The second parameter is useful to permit or not the search of column only on referenced columns list. */
+		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);

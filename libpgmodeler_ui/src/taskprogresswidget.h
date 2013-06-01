@@ -25,7 +25,7 @@
 #ifndef TASK_PROGRESS_WIDGET_H
 #define TASK_PROGRESS_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 #include "utf8string.h"
@@ -42,12 +42,11 @@ class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 
 	public:
 		TaskProgressWidget(QWidget *parent=0, Qt::WindowFlags f=0);
-
 		void addIcon(unsigned id, const QIcon &ico);
 
 	public slots:
+		void show(void);
 		void close(void);
-
 		void updateProgress(int progress, const QString &text, unsigned icon_id);
 };
 

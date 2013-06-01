@@ -25,7 +25,7 @@
 #ifndef OPERATION_LIST_WIDGET_H
 #define OPERATION_LIST_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_operationlistwidget.h"
 #include "modelwidget.h"
 #include "messagebox.h"

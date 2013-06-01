@@ -20,7 +20,7 @@
 
 ResultSet::ResultSet(void)
 {
-	sql_result=NULL;
+	sql_result=nullptr;
 	empty_result=false;
 	is_res_copied=false;
 	current_tuple=-1;
@@ -83,7 +83,7 @@ void ResultSet::destroyResultSet(void)
 		PQclear(sql_result);
 
 	//Reset the other attributes
-	sql_result=NULL;
+	sql_result=nullptr;
 	empty_result=false;
 	is_res_copied=false;
 	current_tuple=-1;

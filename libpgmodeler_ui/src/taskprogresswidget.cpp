@@ -21,12 +21,28 @@
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
 {
 	icons[id]=ico;
+}
+
+void TaskProgressWidget::show(void)
+{
+	/* Using a event loop as a workaround to give a little time to task progress
+	 to be shown before start the progress update. In tasks too quick, if the event loop above
+	 isn't used the task is not shown properly and sometimes stay only on taskbar not poping up
+	 to the user. */
+	QEventLoop eventLoop;
+	QDialog::show();
+	QTimer t;
+
+	//Gives 100ms to the task to be shown and update its contents
+	t.singleShot(100, &eventLoop, SLOT(quit(void)));
+	text_lbl->setText(trUtf8("Waiting task to start..."));
+	eventLoop.exec(QEventLoop::AllEvents);
 }
 
 void TaskProgressWidget::updateProgress(int progress, const QString &text, unsigned icon_id)
@@ -50,6 +66,6 @@ void TaskProgressWidget::close(void)
 	progress_pb->setValue(0);
 	text_lbl->clear();
 	icon_lbl->clear();
-	QWidget::close();
+	QDialog::close();
 }
 

@@ -70,8 +70,8 @@ class Collation : public BaseObject {
 		EncodingType getEncoding(void);
 
 		//! \brief Returns the SQL / XML definition for the collation.
-		QString getCodeDefinition(unsigned def_type);
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 };
 
 #endif

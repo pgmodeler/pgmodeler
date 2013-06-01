@@ -36,7 +36,7 @@ class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
 	public:
 		TextboxWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=NULL, float obj_px=NAN, float obj_py=NAN);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=nullptr, float obj_px=NAN, float obj_py=NAN);
 
 	private slots:
 		void selectTextColor(void);

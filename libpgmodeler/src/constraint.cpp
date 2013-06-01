@@ -20,7 +20,7 @@
 
 Constraint::Constraint(void)
 {
-	ref_table=NULL;
+	ref_table=nullptr;
 	obj_type=OBJ_CONSTRAINT;
 	deferrable=false;
 	no_inherit=false;
@@ -74,7 +74,7 @@ void Constraint::setCheckExpression(const QString &expr)
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
 {
 	vector<Column *>::iterator itr, itr_end;
-	//Column *col_aux=NULL;
+	//Column *col_aux=nullptr;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -103,7 +103,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return(found);
 }
 
-bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
+bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 {
 	bool found=false;
 	vector<ExcludeElement>::iterator itr, itr_end;
@@ -112,9 +112,10 @@ bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
 		 constr_type == ConstraintType::unique ||
 		 constr_type == ConstraintType::foreign_key)
 	{
-		found=isColumnExists(column, SOURCE_COLS);
+		if(!search_only_ref_cols)
+		 found=isColumnExists(column, SOURCE_COLS);
 
-		if(constr_type == ConstraintType::foreign_key && !found && search_ref_cols)
+		if(constr_type == ConstraintType::foreign_key)
 			found=isColumnExists(column, REFERENCED_COLS);
 	}
 	else if(constr_type==ConstraintType::exclude)
@@ -154,7 +155,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	}
 }
 
-void Constraint::setTablespace(Tablespace *tabspc)
+void Constraint::setTablespace(BaseObject *tabspc)
 {
 	try
 	{
@@ -173,8 +174,8 @@ void Constraint::setTablespace(Tablespace *tabspc)
 
 void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel)
 {
-	vector<Column *> *col_vector=NULL;
-	Column *col=NULL;
+	vector<Column *> *col_vector=nullptr;
+	Column *col=nullptr;
 	QString str_cols, attrib;
 	unsigned i, count;
 	bool format=(def_type==SchemaParser::SQL_DEFINITION);
@@ -270,7 +271,7 @@ QString Constraint::getCheckExpression(void)
 
 Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 {
-	vector<Column *> *col_list=NULL;
+	vector<Column *> *col_list=nullptr;
 
 	col_list=(col_type==SOURCE_COLS ? &columns : &ref_columns);
 
@@ -284,7 +285,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 Column *Constraint::getColumn(const QString &name, unsigned col_type)
 {
 	bool found=false;
-	vector<Column *> *col_list=NULL;
+	vector<Column *> *col_list=nullptr;
 	vector<Column *>::iterator itr_col, itr_end_col;
 
 	col_list=(col_type==SOURCE_COLS? &columns : &ref_columns);
@@ -300,7 +301,7 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
 	}
 
 	if(found) return(*itr_col);
-	else return(NULL);
+	else return(nullptr);
 }
 
 BaseTable *Constraint::getReferencedTable(void)
@@ -325,8 +326,8 @@ void Constraint::removeColumns(void)
 void Constraint::removeColumn(const QString &name, unsigned col_type)
 {
 	vector<Column *>::iterator itr, itr_end;
-	vector<Column *> *cols=NULL;
-	Column *col=NULL;
+	vector<Column *> *cols=nullptr;
+	Column *col=nullptr;
 
 	//Gets the column list using the specified internal list type
 	if(col_type==REFERENCED_COLS)
@@ -371,7 +372,7 @@ bool Constraint::isReferRelationshipAddedColumn(void)
 {
 	vector<Column *>::iterator itr, itr_end;
 	vector<ExcludeElement>::iterator itr1, itr1_end;
-	Column *col=NULL;
+	Column *col=nullptr;
 	bool found=false;
 
 	//First iterates over the source columns list
@@ -476,7 +477,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::nullptrS_FIRST, nulls_first);
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
@@ -507,7 +508,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::nullptrS_FIRST, nulls_first);
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)

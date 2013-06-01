@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# pgModeler startup script for MacOSX bundle application
+# usage: startapp [executable]
+# Where [executable]  can be pgmodeler | pgmodeler-cli | crashhandler
+
+PWD="${0%/*}"
+EXE=$PWD/$1
+
+# Checking if the parameter contains the name of any pgModeler executables
+res=$(echo $1 | grep -E \(pgmodeler\|pgmodeler-cli\|crashhandler\))
+
+# If not contains the executable name the default is call pgmodeler (GUI)
+if [ -z $res ]; then
+  EXE=$PWD/pgmodeler
+fi
+
+# Export the necessary environment variables
+export DYLD_LIBRARY_PATH=$PWD:$DYLD_LIBRARY_PATH
+export PGMODELER_SCHEMAS_DIR=$PWD/schemas
+export PGMODELER_CONF_DIR=$PWD/conf
+export PGMODELER_LANG_DIR=$PWD/lang
+export PGMODELER_PLUGINS_DIR=$PWD/plugins
+export PGMODELER_TMP_DIR=$PWD/tmp
+
+#Calls the executable redirecting the parameters to it
+$EXE ${@:2:20}

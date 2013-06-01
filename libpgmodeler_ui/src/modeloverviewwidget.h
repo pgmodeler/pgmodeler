@@ -27,7 +27,7 @@
 #ifndef MODEL_OVERVIEW_WIDGET_H
 #define MODEL_OVERVIEW_WIDGET_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "exception.h"
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
@@ -43,7 +43,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		float zoom_factor;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-		const static float RESIZE_FACTOR=0.20f;
+		static constexpr float RESIZE_FACTOR=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);

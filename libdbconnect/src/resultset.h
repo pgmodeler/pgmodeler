@@ -59,10 +59,10 @@ class ResultSet {
 
  public:
    //! \brief Constants used to navigate through the resultset
-   static const unsigned FIRST_TUPLE=0,
-                         LAST_TUPLE=1,
-                         PREVIOUS_TUPLE=2,
-                         NEXT_TUPLE=3;
+	 static constexpr unsigned FIRST_TUPLE=0,
+														 LAST_TUPLE=1,
+														 PREVIOUS_TUPLE=2,
+														 NEXT_TUPLE=3;
 
    ResultSet(void);
   ~ResultSet(void);

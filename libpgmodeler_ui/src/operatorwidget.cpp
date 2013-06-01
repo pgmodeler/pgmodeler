@@ -22,20 +22,20 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 {
 	try
 	{
-		QGridLayout *grid=NULL;
+		QGridLayout *grid=nullptr;
 		unsigned i, i1;
 		map<QString, vector<QWidget *> > field_map;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 
 		Ui_OperatorWidget::setupUi(this);
 
-		arg_types[0]=NULL;
+		arg_types[0]=nullptr;
 		arg_types[0]=new PgSQLTypeWidget(this, trUtf8("Left Argument Type"));
-		arg_types[1]=NULL;
+		arg_types[1]=nullptr;
 		arg_types[1]=new PgSQLTypeWidget(this, trUtf8("Right Argument Type"));
 
 		grid=new QGridLayout;
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		grid->addWidget(arg_types[0],0,0);
 		grid->addWidget(arg_types[1],1,0);
 
@@ -47,7 +47,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
 		{
-			functions_sel[i]=NULL;
+			functions_sel[i]=nullptr;
 			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
 			if(i!=Operator::FUNC_OPERATOR)
@@ -57,7 +57,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		//grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(2)->layout());
 		for(i=Operator::OPER_COMMUTATOR, i1=3; i <= Operator::OPER_NEGATOR; i++,i1++)
 		{
-			operators_sel[i]=NULL;
+			operators_sel[i]=nullptr;
 			operators_sel[i]=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 			grid->addWidget(operators_sel[i],i1,1,1,1);
 		}
@@ -143,7 +143,7 @@ void OperatorWidget::applyConfiguration(void)
 	try
 	{
 		unsigned i;
-		Operator *oper=NULL;
+		Operator *oper=nullptr;
 		startConfiguration<Operator>();
 
 		oper=dynamic_cast<Operator *>(this->object);

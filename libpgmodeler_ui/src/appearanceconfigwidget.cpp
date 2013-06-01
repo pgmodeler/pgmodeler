@@ -94,10 +94,10 @@ void AppearanceConfigWidget::loadExampleModel(void)
 {
 	try
 	{
-		RelationshipView *rel=NULL;
-		TextboxView *txtbox=NULL;
-		TableView *tab=NULL;
-		GraphicalView *view=NULL;
+		RelationshipView *rel=nullptr;
+		TextboxView *txtbox=nullptr;
+		TableView *tab=nullptr;
+		GraphicalView *view=nullptr;
 		unsigned count, i;
 
 		if(model->getObjectCount()==0)

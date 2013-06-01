@@ -30,6 +30,9 @@
 class Dummy: public QObject, public PgModelerPlugin {
 	private:
 		Q_OBJECT
+
+		Q_PLUGIN_METADATA(IID "br.com.pgmodeler.PgModelerPlugin" FILE "dummy.json")
+
 		//! \brief Declares the interface which is used to implement the plugin
 		Q_INTERFACES(PgModelerPlugin)
 

@@ -21,8 +21,8 @@
 OperatorClassElement::OperatorClassElement(void)
 {
 	element_type=OPERATOR_ELEM;
-	function=NULL;
-	_operator=NULL;
+	function=nullptr;
+	_operator=nullptr;
 	for_order_by=false;
 	strategy_number=0;
 }
@@ -38,8 +38,8 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 		throw Exception(ERR_ASG_INV_SUPSTG_NUMBER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Clear the attributes not related to the FUNCTION element type
-	this->_operator=NULL;
-	this->op_family=NULL;
+	this->_operator=nullptr;
+	this->op_family=nullptr;
 
 	//Configure the attributes that belongs to the element type
 	this->function=func;
@@ -58,7 +58,7 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
 		throw Exception(ERR_ASG_INV_SUPSTG_NUMBER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Clear the attributes not related to the OPERATOR element type
-	this->function=NULL;
+	this->function=nullptr;
 
 	//Configure the attributes that belongs to the element type
 	this->_operator=oper;
@@ -81,9 +81,9 @@ void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family, bool for
 void OperatorClassElement::setStorage(PgSQLType storage)
 {
 	//Clear the attributes not related to the STORAGE element type
-	this->function=NULL;
-	this->_operator=NULL;
-	this->op_family=NULL;
+	this->function=nullptr;
+	this->_operator=nullptr;
+	this->op_family=nullptr;
 	this->strategy_number=0;
 
 	//Configure the attributes that belongs to the element type

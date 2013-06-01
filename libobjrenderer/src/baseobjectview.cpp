@@ -25,17 +25,17 @@ unsigned BaseObjectView::global_sel_order=1;
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
 	sel_order=0;
-	protected_icon=NULL;
-	obj_shadow=NULL;
-	obj_selection=NULL;
-	pos_info_pol=NULL;
-	pos_info_txt=NULL;
+	protected_icon=nullptr;
+	obj_shadow=nullptr;
+	obj_selection=nullptr;
+	pos_info_pol=nullptr;
+	pos_info_txt=nullptr;
 	setSourceObject(object);
 }
 
 BaseObjectView::~BaseObjectView(void)
 {
-	setSourceObject(NULL);
+	setSourceObject(nullptr);
 }
 
 void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -58,7 +58,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 	disconnect(this, SLOT(toggleProtectionIcon(bool)));
 
 	if(graph_obj)
-		graph_obj->setReceiverObject(NULL);
+		graph_obj->setReceiverObject(nullptr);
 
 	//Stores the reference to the source object as the data of graphical object
 	this->setData(0, QVariant::fromValue<void *>(object));
@@ -69,37 +69,37 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 		{
 			this->removeFromGroup(obj_selection);
 			delete(obj_selection);
-			obj_selection=NULL;
+			obj_selection=nullptr;
 		}
 
 		if(obj_shadow)
 		{
 			this->removeFromGroup(obj_shadow);
 			delete(obj_shadow);
-			obj_shadow=NULL;
+			obj_shadow=nullptr;
 		}
 
 		if(protected_icon)
 		{
 			this->removeFromGroup(protected_icon);
 			delete(protected_icon);
-			protected_icon=NULL;
+			protected_icon=nullptr;
 		}
 
 		if(pos_info_txt)
 		{
 			this->removeFromGroup(pos_info_txt);
 			delete(pos_info_txt);
-			pos_info_txt=NULL;
+			pos_info_txt=nullptr;
 
 			this->removeFromGroup(pos_info_pol);
 			delete(pos_info_pol);
-			pos_info_pol=NULL;
+			pos_info_pol=nullptr;
 		}
 	}
 	else
 	{
-		QGraphicsPolygonItem *pol_item=NULL;
+		QGraphicsPolygonItem *pol_item=nullptr;
 
 		connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
 		graph_obj->setReceiverObject(this);
@@ -184,7 +184,7 @@ void BaseObjectView::resizePolygon(QPolygonF &pol, float width, float height)
 
 void BaseObjectView::loadObjectsStyle(void)
 {
-	QColor *colors=NULL;
+	QColor *colors=nullptr;
 	QTextCharFormat font_fmt;
 	QFont font;
 	map<QString, QString> attribs;
@@ -306,7 +306,7 @@ void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &col
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 {
-	QColor *colors=NULL;
+	QColor *colors=nullptr;
 	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 	if(color_config.count(id) > 0)
@@ -332,7 +332,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 QPen BaseObjectView::getBorderStyle(const QString &id)
 {
 	QPen pen;
-	QColor *colors=NULL;
+	QColor *colors=nullptr;
 
 	if(color_config.count(id) > 0)
 	{
@@ -477,7 +477,7 @@ void BaseObjectView::configureProtectedIcon(void)
 {
 	if(protected_icon)
 	{
-		QGraphicsPolygonItem *pol_item=NULL;
+		QGraphicsPolygonItem *pol_item=nullptr;
 		QPolygonF pol;
 		float factor;
 
@@ -496,7 +496,7 @@ void BaseObjectView::configureProtectedIcon(void)
 			this->resizePolygon(pol, pol.boundingRect().width() * factor,
 													pol.boundingRect().height() * factor);
 
-		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->children().at(0));
+		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
 		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_ARC));
 		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_ARC));
@@ -511,7 +511,7 @@ void BaseObjectView::configureProtectedIcon(void)
 			this->resizePolygon(pol, pol.boundingRect().width() * factor,
 													pol.boundingRect().height() * factor);
 
-		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->children().at(1));
+		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);
 		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_BODY));
 		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_BODY));

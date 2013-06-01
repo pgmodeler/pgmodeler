@@ -34,7 +34,7 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-		static const float GRAPHIC_PNT_RADIUS=2.5f;
+		static constexpr float GRAPHIC_PNT_RADIUS=2.5f;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;

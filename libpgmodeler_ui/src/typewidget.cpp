@@ -22,9 +22,9 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 {
 	try
 	{
-		QGridLayout *grid=NULL;
-		QSpacerItem *spacer=NULL;
-		QFrame *frame=NULL;
+		QGridLayout *grid=nullptr;
+		QSpacerItem *spacer=nullptr;
+		QFrame *frame=nullptr;
 		QStringList list;
 		unsigned i,i1;
 
@@ -44,7 +44,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		{
-			functions_sel[i]=NULL;
+			functions_sel[i]=nullptr;
 			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
@@ -86,7 +86,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 
 		for(i1=1, i=Type::CANONICAL_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++,i1++)
 		{
-			functions_sel[i]=NULL;
+			functions_sel[i]=nullptr;
 			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 			grid->addWidget(functions_sel[i],i1,1,1,1);
 		}
@@ -316,7 +316,7 @@ void TypeWidget::applyConfiguration(void)
 {
 	try
 	{
-		Type *type=NULL;
+		Type *type=nullptr;
 		unsigned i, count;
 
 		startConfiguration<Type>();
@@ -364,7 +364,7 @@ void TypeWidget::applyConfiguration(void)
 			type->setCollatable(collatable_chk->isChecked());
 
 			if(!delimiter_edt->text().isEmpty())
-				type->setDelimiter(delimiter_edt->text().at(0).toAscii());
+				type->setDelimiter(delimiter_edt->text().at(0).toLatin1());
 
 			type->setDefaultValue(default_value_edt->text());
 			type->setCategory(CategoryType(category_cmb->currentText()));

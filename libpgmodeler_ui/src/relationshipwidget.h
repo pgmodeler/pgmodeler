@@ -39,12 +39,13 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		unsigned operation_count;
 
 		SyntaxHighlighter *table1_hl,
-											*table2_hl;
+											*table2_hl,
+											*patterns_hl[6];
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		ObjectTableWidget *attributes_tab,
-												*constraints_tab,
-												*advanced_objs_tab;
+											*constraints_tab,
+											*advanced_objs_tab;
 
 		//! \brief Lists the objects of relationship (attributes/constraints) on the respective table widget
 		void listObjects(ObjectType obj_type);
@@ -55,6 +56,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		/*! \brief Shows the object data in the specified table row. The table widget is idenfied by
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
+
+		static constexpr unsigned GENERAL_TAB=0,
+															ATTRIBUTES_TAB=1,
+															CONSTRAINTS_TAB=2,
+															SPECIAL_PK_TAB=3,
+															ADVANCED_TAB=4;
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);

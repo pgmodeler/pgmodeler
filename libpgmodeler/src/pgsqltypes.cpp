@@ -74,7 +74,7 @@ QString BaseType::type_list[types_count]=
 	"gin",
 
 	//Types used by the class PgSQLType
-	//offsets 28 to 67
+	//offsets 28 to 68
 	"smallint", "integer", "bigint", "decimal", "numeric",
 	"real", "double precision", "float", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",
@@ -84,50 +84,51 @@ QString BaseType::type_list[types_count]=
 	"point", "line", "lseg", "box", "path",
 	"polygon", "circle", "cidr", "inet",
 	"macaddr", "bit", "bit varying", "varbit", "uuid", "xml", "json",
+	"smallserial",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 68 to 72
+	//offsets 69 to 73
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
 
 	//Range-types
-	//offsets 73 to 78
+	//offsets 74 to 79
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 79 to 90
+	//offsets 80 to 91
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",
 
 	//Pseudo-types
-	//offsets 91 to 102
+	//offsets 92 to 103
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray","cstring","internal","language_handler",
 	"record","trigger","void","opaque",
 
 	//Interval types
-	//offsets 103 to 115
+	//offsets 104 to 116
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 116 to 118
+	//offsets 117 to 119
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 119 to 120
+	//offsets 120 to 121
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 121 to 126
+	//offsets 122 to 127
 	"sql",
 	"c",
 	"plpgsql",
@@ -136,7 +137,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 127 to 167
+	//offsets 128 to 168
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -148,25 +149,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 168 to 171
+	//offsets 169 to 172
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 172 to 174
+	//offsets 173 to 175
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 175 to 176
+	//offsets 176 to 177
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 177 to 190 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 178 to 191 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -183,7 +184,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 191 to 193
+	//offsets 192 to 194
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -192,7 +193,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 194 to 200
+	//offsets 195 to 201
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -743,7 +744,7 @@ unsigned PgSQLType::operator = (const QString &type_name)
 	unsigned type_idx, usr_type_idx;
 
 	type_idx=BaseType::getType(type_name, offset, types_count);
-	usr_type_idx=getUserTypeIndex(type_name, NULL);
+	usr_type_idx=getUserTypeIndex(type_name, nullptr);
 
 	if(type_idx==0 && usr_type_idx==0)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -764,7 +765,7 @@ void *PgSQLType::getUserTypeReference(void)
 	if(this->isUserType())
 		return(user_types[this->type_idx - (pseudo_end + 1)].ptype);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 unsigned PgSQLType::getUserTypeConfig(void)
@@ -1089,7 +1090,7 @@ void PgSQLType::setDimension(unsigned dim)
 {
 	if(dim > 0 && this->isUserType())
 	{
-		int idx=getUserTypeIndex(~(*this), NULL);
+		int idx=getUserTypeIndex(~(*this), nullptr);
 		if(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
 			 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
 			throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1222,7 +1223,7 @@ QString PgSQLType::operator * (void)
 			aux=BaseType::type_list[type_idx];
 
 			if(interval_type!=BaseType::null)
-				aux+=QString("[%1]").arg(~interval_type);
+				aux+=QString(" %1 ").arg(~interval_type);
 
 			if(precision >= 0)
 				aux+=QString("(%1)").arg(precision);

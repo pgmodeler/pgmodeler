@@ -272,7 +272,7 @@ void Permission::generatePermissionId(void)
 {
 	vector<Role *>::iterator itr, itr_end;
 	vector<QString> addr_vect;
-	Role *role=NULL;
+	Role *role=nullptr;
 	QString str_aux, addr;
 	unsigned i, count;
 	QTextStream stream(&addr);

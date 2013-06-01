@@ -23,14 +23,14 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 	try
 	{
 		map<QString, vector<QWidget *> > field_map;
-		QFrame *frame=NULL;
+		QFrame *frame=nullptr;
 		QString version_key;
 
 		Ui_LanguageWidget::setupUi(this);
 
-		func_handler_sel=NULL;
-		func_validator_sel=NULL;
-		func_inline_sel=NULL;
+		func_handler_sel=nullptr;
+		func_validator_sel=nullptr;
+		func_inline_sel=nullptr;
 
 		func_handler_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		func_validator_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
@@ -95,7 +95,7 @@ void LanguageWidget::applyConfiguration(void)
 {
 	try
 	{
-		Language *language=NULL;
+		Language *language=nullptr;
 
 		startConfiguration<Language>();
 

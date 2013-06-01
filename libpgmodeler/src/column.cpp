@@ -24,7 +24,7 @@ Column::Column(void)
 	not_null=false;
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	attributes[ParsersAttributes::NOT_NULL]="";
+	attributes[ParsersAttributes::NOT_nullptr]="";
 	attributes[ParsersAttributes::TABLE]="";
 }
 
@@ -107,7 +107,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
-	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
+	attributes[ParsersAttributes::NOT_nullptr]=(!not_null ? "" : "1");
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
@@ -127,5 +127,7 @@ void Column::operator = (Column &col)
 	this->add_by_copy=false;
 	this->add_by_generalization=false;
 	this->add_by_linking=false;
+
+	this->not_null=col.not_null;
 }
 

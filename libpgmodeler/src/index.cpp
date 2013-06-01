@@ -33,7 +33,7 @@ Index::Index(void)
 	attributes[ParsersAttributes::FACTOR]="";
 	attributes[ParsersAttributes::CONDITION]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::NULLS_FIRST]="";
+	attributes[ParsersAttributes::nullptrS_FIRST]="";
 	attributes[ParsersAttributes::ASC_ORDER]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
@@ -95,7 +95,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(IndexElement::nullptrS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		if(getElementIndex(elem) >= 0)
@@ -126,7 +126,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(IndexElement::nullptrS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		if(getElementIndex(elem) >= 0)
@@ -238,7 +238,7 @@ QString Index::getConditionalExpression(void)
 bool Index::isReferRelationshipAddedColumn(void)
 {
 	vector<IndexElement>::iterator itr, itr_end;
-	Column *col=NULL;
+	Column *col=nullptr;
 	bool found=false;
 
 	itr=idx_elements.begin();

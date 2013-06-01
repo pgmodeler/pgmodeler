@@ -26,7 +26,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 {
 	vector<QString> versions;
 
-	model=NULL;
+	model=nullptr;
 
 	setupUi(this);
 	connect(export_to_file_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportType(void)));
@@ -83,7 +83,7 @@ void ModelExportForm::updateProgress(int progress, QString msg)
 
 void ModelExportForm::hideEvent(QHideEvent *)
 {
-	this->model=NULL;
+	this->model=nullptr;
 	file_edt->clear();
 	export_to_file_rb->setChecked(true);
 	export_btn->setEnabled(false);
@@ -135,7 +135,7 @@ void ModelExportForm::exportModel(void)
 			}
 			catch(Exception &e)
 			{		
-				disconnect(&export_hlp, NULL, this, NULL);
+				disconnect(&export_hlp, nullptr, this, nullptr);
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			}
 		}
@@ -146,11 +146,11 @@ void ModelExportForm::exportModel(void)
 		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 		ico_lbl->setVisible(true);
 		QTimer::singleShot(5000, this, SLOT(hideProgress(void)));
-		disconnect(&export_hlp, NULL, this, NULL);
+		disconnect(&export_hlp, nullptr, this, nullptr);
 	}
 	catch(Exception &e)
 	{
-		MessageBox msg_box;
+		Messagebox msg_box;
 
 		progress_lbl->setText(trUtf8("Error on export!"));
 		progress_lbl->repaint();
@@ -218,12 +218,12 @@ void ModelExportForm::selectOutputFile(void)
 
 	if(export_to_file_rb->isChecked())
 	{
-		file_dlg.setFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".sql");
 	}
 	else
 	{
-		file_dlg.setFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".png");
 	}
 

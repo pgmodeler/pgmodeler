@@ -38,7 +38,7 @@ class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWi
 
 	public:
 		ObjectDepsRefsWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj=NULL);
+		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj=nullptr);
 };
 
 #endif

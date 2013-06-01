@@ -25,7 +25,7 @@
 #ifndef MODEL_RESTORATION_FORM_H
 #define MODEL_RESTORATION_FORM_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
@@ -43,7 +43,7 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 		QStringList getSelectedModels(void);
 
 	public slots:
-		void exec(void);
+		int exec(void);
 
 		//! \brief Clears the tmp/ dir removing all temporary files
 		void removeTemporaryModels(void);

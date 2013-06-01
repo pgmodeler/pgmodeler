@@ -22,7 +22,7 @@
 template <class Classe>
 void PgModelerNS::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
 {
-	Classe *orig_obj=NULL;
+	Classe *orig_obj=nullptr;
 
 	//Gets the objects stored in the pointer
 	orig_obj=dynamic_cast<Classe *>(*psrc_obj);

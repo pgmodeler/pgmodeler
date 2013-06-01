@@ -167,7 +167,7 @@ class View: public BaseTable {
 		int getReferenceIndex(Reference &ref, unsigned sql_type);
 
 		//! \brief Returns the SQL / XML definition for the view
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		/*! \brief Returns whether the view references columns added
 		 by relationship. This method is used as auxiliary

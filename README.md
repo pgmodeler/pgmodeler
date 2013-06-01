@@ -33,7 +33,7 @@ Compiling/Installation
 
 For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
-Model file changes
+Model File Changes
 ------------------
 
 Several changes were introduced in pgModeler 0.5.0 mading some tag on model files created on 0.4.1_r1 incompatible with the new version. If you having problems during loading of older model files you can open them on a text editor and try the fixes below:
@@ -43,82 +43,48 @@ Several changes were introduced in pgModeler 0.5.0 mading some tag on model file
 * Remove values ```greater-op```, ```less-op```, ```sort-op``` or ```sort2-op``` from ```ref-type``` attribute from ```<operator>``` tags.
 * Remove ```sysid```attribute from ```<role>``` tags.
 * Replace ```<parameter>``` tag by ```<typeattrib>``` on ```<usertype>``` tags.
+* Remove ```auto-suffix```, ```src-suffix``` and ```dst-suffix``` from ```<relationship>``` tags.
 
 After that you can try to reload your model. Probably a second problem can occurr: broken references between objects. As the model validation was introduced on pgModeler 0.5.0 the object references are not checked during loading time anymore. Instead the user needs to validate the model every time before saving it.
 
 As a collateral effect loading older models can generate several errors like "Object A is referencing the object B which was not found in the model!" (Code: ERR_REF_OBJ_INEXISTS_MODEL). The fix to this is a little tricky: you have to change the creation order of the object A in relation of B, that means, B must be created before A. So, again, open the model on a text editor and move the XML portion of the B object to a position right before the A XML portion.
 
+MacOSX Notes
+------------
+
+* The port to C++11 and Qt5 raised an undesirable side effect on splash screen that appears glitch on this system. This does not compromise the execution and will be fixed on future releases.
+* Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
+* As on the other systems it's possible to run pgModeler from shell but using the following command: ```open pgmodeler.app --args [MODULE] [ARGS]``` where ```MODULE``` can be ```pgmodeler | pgmodeler-cli | crashhandler``` and ```ARGS``` are additional arguments passed to modules (e.g. CLI arguments)
+
 Change Log
 ----------
 
-v0.5.0
+v0.5.1
 ------
+<em>Codename: <strong>Lovely Duda</strong></em>
+<em>Estimated Release date: June 5, 2013</em>
 
-<em>Release date: May 17, 2013</em>
-
-* [New] Complete main window restyling.
-* [New] Added a model validation tool to prevent reference break and name conflicts.
-* [New] Added an object navigation using keyboard on model widget. Pressing Alt + [left|right] keys will switch between graphical objects.
-* [New] Introduced the pgmodeler-cli. A command line tool to handle model export without loading the graphical interface.
-* [New] Added an option to list available configured connections on pgmodeler-cli.
-* [New] pgModeler now alerts the user when he try to save an invalidated model.
-* [New] pgModeler now aborts app closing when the user wants to do a last saving on modified models.
-* [New] Added support to hide relationship labels and table extended attributes on configuration dialog.
-* [New] Added "Recent Models" menu.
-* [New] Introduced the Xml2Object plugin to help on develpment testings.
-* [New] Added partial support to PostgreSQL Extensions objects.
-* [New] Added JSON datatype.
-* [New] Added support for rules and trigger on views.
-* [New] Added support for user defined range types.
-* [New] Added support for collations on composite types (user defined).
-* [New] Added built-in range types.
-* [New] Added support to INCLUDING/EXCLUDING options when dealing with copy relationships.
-* [New] Added support for EXCLUDE constraint support
-* [New] Added NO INHERIT option to check constraints.
-* [New] Added REPLICATION option to roles.
-* [New] Added FOR ORDER BY option and removed Recheck from OperatorClassElement.
-* [New] Added collation support for index elements.
-* [New] Added [NOT] LEAKPROOF key word to functions.
-* [New] Added collation attribute to domains.
-* [New] Required fields are now highlighted on editing forms.
-* [New] pgModeler creates system objects (e.g, public schema and SQL, C, plpgsql languages) when adding a new model.
-* [Change] Minor improvements on when showing Views.
-* [Change] Relationship points are moved when the parent relationship is being moved together with other objects.
-* [Change] Simplified the model loading operation. pgModeler will not try to recreate objects with unsatisfied dependencies instead errors will be raised.
-* [Change] Minor changes on FK relationship creation.
-* [Change] User-added foreign-keys had code generation changed.
-* [Change] Minor improvements on PgModelerPlugin structure.
-* [Change] DummyPlugin renamed to Dummy.
-* [Change] Improvements on building process for all supported systems.
-* [Change] Removed "Save widget positions" from configuration form.
-* [Change] Removed fullscreen mode from main window.
-* [Change] Removed unused/deprecated error messages.
-* [Change] Removed deprecated files COMPILING.md and PLUGINS.md.
-* [Change] Subproject libutil was renamed to libutils due to some conflicts on Linux systems.
-* [Change] Startup scripts removed. Since the environment variables are set by the installer on Windows and for Unix the variables are set using the new pgmodeler.sh script.
-* [Change] "Disable SQL code" option added for all types of objects. Except for textboxes and base relationships (view-table relatioships and fk relationships).
-* [Change] Fixed permissions for views.
-* [Change] PostgreSQL 8.x support completely removed.
-* [Change] Schema files (for SQL code) aren't organized in folders anymore. All code (for different PostgreSQL versions) will be in the same .sch file for each object.
-* [Change] Spatial types had SRID digit count upgraded to 5.
-* [Change] One-to-one relationships now generates unique names for UNIQUE constraints.
-* [Change] Several class improvements, performance tunings and forms readjustments.
-* [Fix] Minor fixes on connection configuration form.
-* [Fix] Corrected a bug that was crashing pgModeler when adding new schemas.
-* [Fix] Corrected a bug that was crashing pgModeler when validation model.
-* [Fix] Corrected a bug that was preventing the popup menu to be configured correctly on model widget.
-* [Fix] Menu bar style correctly applied on Windows system.
-* [Fix] Now relationship labels' position are restored when loading the model file.
-* [Fix] Minor fixes on database model code generation.
-* [Fix] Corrected the glicthy wheel scroll/zoom on model widget.
-* [Fix] Corrected the visual update of schema's rectangle when adding a column on a child table.
-* [Fix] Corrected a bug that was preventing a new model to be saved correctly.
-* [Fix] Minor fixes on model widget copy/paste operations.
-* [Fix] Models now are correclty auto saved when modified.
-* [Fix] Corrected operator's signature generation.
-* [Fix] Corrected a bug on textbox with unicode texts.
-* [Fix] Index and Rule editing forms now handles correctly unicode expressions.
-* [Fix] Corrected a bug that was avoiding the name "remembering" during relationship loading.
+* [New] Code base ported to C++11 and Qt5.
+* [New] MacOSX compilation now generates an application bundle: pgmodeler.app
+* [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it (except for MacOSX, see MacOSX notes).
+* [New] Added support for loading models by calling pgModeler gui executable from terminal (e.g. pgmodeler model1.dbm model2.dbm)
+* [New] pgModeler logo redesign.
+* [New] Added special primary keys support to one-to-one and one-to-many relationships.
+* [New] Relationships now supports patterns to define generated objects names. The manual suffix and auto-suffix generation are deprecated.
+* [New] Columns/constraints generated by relationship can have position changed on parent table.
+* [New] Added smallserial built-in datatype.
+* [Change] Improvements on model validation tool. pgModeler will not save the model while isn't completely validated.
+* [Fix] minor fix on point insertion on relationships.
+* [Fix] Corrected the wrongly displayed interval fields.
+* [Fix] Corrected self relationship validation.
+* [Fix] Corrected a bug on editing numeric data types.
+* [Fix] Minor fixes on build scripts (All platforms).
+* [Fix] Added the missing directive CONFIG+=console to main-cli.pro
+* [Fix] Minor fixes on task progress exhibition on quick tasks.
+* [Fix] pgmodeler-cli output fixed on Windows system.
+* [Fix] Table inheritance now copies columns with NOT NULL attribute correclty configured.
+* [Fix] Plugin build scripts fixed. Now generated libraries are correctly copied to build directory.
+* [Fix] Editing a column with 'numeric' datatype does not generate errors anymore.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

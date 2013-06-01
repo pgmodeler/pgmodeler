@@ -25,7 +25,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	for(unsigned i=0; i < 3; i++)
-		lables[i]=NULL;
+		lables[i]=nullptr;
 
 	(*(this))=(*rel);
 }
@@ -47,14 +47,13 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 
 		for(unsigned i=0; i < 3; i++)
 		{
-			lables[i]=NULL;
+			lables[i]=nullptr;
 			lables_dist[i]=QPointF(NAN, NAN);
 		}
 
 		configureRelationship();
 
-
-		str_aux=QApplication::translate("BaseRelationship","rel_%1_%2","",QApplication::UnicodeUTF8)
+		str_aux=QApplication::translate("BaseRelationship","rel_%1_%2","")
 						.arg(src_tab->getName()).arg(dst_tab->getName());
 
 		if(str_aux.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
@@ -81,9 +80,6 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::SRC_SUFFIX]="";
-	attributes[ParsersAttributes::DST_SUFFIX]="";
-	attributes[ParsersAttributes::AUTO_SUFFIX]="";
 	attributes[ParsersAttributes::IDENTIFIER]="";
 	attributes[ParsersAttributes::REDUCED_FORM]="";
 	attributes[ParsersAttributes::DEFERRABLE]="";
@@ -100,6 +96,15 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::COPY_OPTIONS]="";
 	attributes[ParsersAttributes::COPY_MODE]="";
+	attributes[ParsersAttributes::SRC_COL_PATTERN]="";
+	attributes[ParsersAttributes::DST_COL_PATTERN]="";
+	attributes[ParsersAttributes::PK_PATTERN]="";
+	attributes[ParsersAttributes::UQ_PATTERN]="";
+	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
+	attributes[ParsersAttributes::DST_FK_PATTERN]="";
+	attributes[ParsersAttributes::COL_INDEXES]="";
+	attributes[ParsersAttributes::CONSTR_INDEXES]="";
+	attributes[ParsersAttributes::ATTRIB_INDEXES]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -229,7 +234,7 @@ BaseTable *BaseRelationship::getTable(unsigned table_id)
 	else if(table_id==DST_TABLE)
 		return(dst_table);
 	else
-		return(NULL);
+		return(nullptr);
 }
 
 bool BaseRelationship::isTableMandatory(unsigned table_id)
@@ -331,23 +336,20 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		attributes[ParsersAttributes::X_POS]=QString("%1").arg(points[i].x());
 		attributes[ParsersAttributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																						 attributes, SchemaParser::XML_DEFINITION);
+		str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 	}
 	attributes[ParsersAttributes::POINTS]=str_aux;
 
 	str_aux="";
 	for(i=0; i < 3; i++)
 	{
-		if(!isnan(lables_dist[i].x()))
+		if(!std::isnan(lables_dist[i].x()))
 		{
 			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																							attributes, SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 			attributes[ParsersAttributes::REF_TYPE]=label_attribs[i];
-			str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::LABEL,
-																							 attributes, SchemaParser::XML_DEFINITION);
+			str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
 		}
 	}
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;

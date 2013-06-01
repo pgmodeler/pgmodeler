@@ -45,8 +45,8 @@ class Conversion: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the conversion encodings
-		static const unsigned SRC_ENCODING=0,
-													DST_ENCODING=1;
+		static constexpr unsigned SRC_ENCODING=0,
+															DST_ENCODING=1;
 
 		Conversion(void);
 
@@ -69,7 +69,7 @@ class Conversion: public BaseObject {
 		bool isDefault(void);
 
 		//! \brief Returns the SQL/XML code definition for the conversion
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif
