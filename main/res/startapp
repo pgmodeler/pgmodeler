@@ -24,4 +24,4 @@ export PGMODELER_PLUGINS_DIR=$PWD/plugins
 export PGMODELER_TMP_DIR=$PWD/tmp
 
 #Calls the executable redirecting the parameters to it
-$EXE ${@:2:10}
+$EXE ${@:2:20}
