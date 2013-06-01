@@ -49,6 +49,13 @@ After that you can try to reload your model. Probably a second problem can occur
 
 As a collateral effect loading older models can generate several errors like "Object A is referencing the object B which was not found in the model!" (Code: ERR_REF_OBJ_INEXISTS_MODEL). The fix to this is a little tricky: you have to change the creation order of the object A in relation of B, that means, B must be created before A. So, again, open the model on a text editor and move the XML portion of the B object to a position right before the A XML portion.
 
+MacOSX Notes
+------------
+
+* The port to C++11 and Qt5 raised an undesirable side effect on splash screen that appears glitch on this system. This does not compromise the execution and will be fixed on future releases.
+* Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
+* As on the other systems it's possible to run pgModeler from shell but using the following command: ```open pgmodeler.app --args [MODULE] [ARGS]``` where ```MODULE``` can be ```pgmodeler | pgmodeler-cli | crashhandler``` and ```ARGS``` are additional arguments passed to modules (e.g. CLI arguments)
+
 Change Log
 ----------
 
@@ -59,7 +66,7 @@ v0.5.1
 
 * [New] Code base ported to C++11 and Qt5.
 * [New] MacOSX compilation now generates an application bundle: pgmodeler.app
-* [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it.
+* [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it (except for MacOSX, see MacOSX notes).
 * [New] Added support for loading models by calling pgModeler gui executable from terminal (e.g. pgmodeler model1.dbm model2.dbm)
 * [New] pgModeler logo redesign.
 * [New] Added special primary keys support to one-to-one and one-to-many relationships.

@@ -8,7 +8,7 @@ v0.5.1
 
 * [New] Code base ported to C++11 and Qt5.
 * [New] MacOSX compilation now generates an application bundle: pgmodeler.app
-* [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it.
+* [New] pgModeler is now capable of associate dbm files to its executable being possible opening a model from file manager by clicking it (except for MacOSX, see MacOSX notes).
 * [New] Added support for loading models by calling pgModeler gui executable from terminal (e.g. pgmodeler model1.dbm model2.dbm)
 * [New] pgModeler logo redesign.
 * [New] Added special primary keys support to one-to-one and one-to-many relationships.
