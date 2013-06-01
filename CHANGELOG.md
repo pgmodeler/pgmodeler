@@ -4,7 +4,7 @@ Changelog
 v0.5.1
 ------
 <em>Codename: <strong>Lovely Duda</strong></em>
-<em>Estimated Release date: June 5, 2013</em>
+<em>Release date: June 1, 2013</em>
 
 * [New] Code base ported to C++11 and Qt5.
 * [New] MacOSX compilation now generates an application bundle: pgmodeler.app
