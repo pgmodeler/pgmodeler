@@ -251,10 +251,12 @@ void GeneralConfigWidget::updateFileAssociation(void)
 
 		try
 		{
-			for(unsigned i; i < 2; i++)
+            for(unsigned i=0; i < 2; i++)
 			{
 				SchemaParser::loadFile(schemas[i]);
 				buf.append(SchemaParser::getCodeDefinition(attribs));
+                QDir(".").mkpath(QFileInfo(files[i]).absolutePath());
+
 				out.setFileName(files[i]);
 				out.open(QFile::WriteOnly);
 
@@ -268,7 +270,17 @@ void GeneralConfigWidget::updateFileAssociation(void)
 				attribs[ParsersAttributes::ICON]=dbm_icon;
 			}
 
-			out.setFileName(mimeapps);
+            out.setFileName(mimeapps);
+
+            if(!QFileInfo(mimeapps).exists())
+            {
+                 out.open(QFile::WriteOnly);
+                 out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
+                 out.close();
+            }
+            else
+            {
+
 			out.open(QFile::ReadOnly);
 
 			if(!out.isOpen())
@@ -302,6 +314,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			out.open(QFile::Truncate | QFile::WriteOnly);
 			out.write(buf_aux.data(), buf_aux.size());
 			out.close();
+            }
 
 			//Update the mime database
 			QProcess::execute("update-mime-database", QStringList { mime_db_dir });
