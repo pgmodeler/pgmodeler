@@ -251,11 +251,11 @@ void GeneralConfigWidget::updateFileAssociation(void)
 
 		try
 		{
-            for(unsigned i=0; i < 2; i++)
+			for(unsigned i=0; i < 2; i++)
 			{
 				SchemaParser::loadFile(schemas[i]);
 				buf.append(SchemaParser::getCodeDefinition(attribs));
-                QDir(".").mkpath(QFileInfo(files[i]).absolutePath());
+				QDir(".").mkpath(QFileInfo(files[i]).absolutePath());
 
 				out.setFileName(files[i]);
 				out.open(QFile::WriteOnly);
@@ -270,51 +270,52 @@ void GeneralConfigWidget::updateFileAssociation(void)
 				attribs[ParsersAttributes::ICON]=dbm_icon;
 			}
 
-            out.setFileName(mimeapps);
+			out.setFileName(mimeapps);
 
-            if(!QFileInfo(mimeapps).exists())
-            {
-                 out.open(QFile::WriteOnly);
-                 out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
-                 out.close();
-            }
-            else
-            {
-
-			out.open(QFile::ReadOnly);
-
-			if(!out.isOpen())
-        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
-												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
-			buf=out.readAll();
-			out.close();
-
-			QTextStream ts(&buf);
-			while(!ts.atEnd())
+			//If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
+			if(!QFileInfo(mimeapps).exists())
 			{
-				//Remove any reference to application/dbm mime from file
-				str_aux=ts.readLine();
-				str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
-
-				if(!str_aux.isEmpty())
-				{
-					//Updates the application/dbm mime association
-					if(str_aux.contains("[Added Associations]"))
-						str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
-					else
-						str_aux+="\n";
-
-					buf_aux.append(str_aux);
-				}
+				out.open(QFile::WriteOnly);
+				out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
+				out.close();
 			}
+			else
+			{
 
-			//Write a new copy of the mimeapps.list file
-			out.open(QFile::Truncate | QFile::WriteOnly);
-			out.write(buf_aux.data(), buf_aux.size());
-			out.close();
-            }
+				out.open(QFile::ReadOnly);
+
+				if(!out.isOpen())
+					throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
+													ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+				//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
+				buf=out.readAll();
+				out.close();
+
+				QTextStream ts(&buf);
+				while(!ts.atEnd())
+				{
+					//Remove any reference to application/dbm mime from file
+					str_aux=ts.readLine();
+					str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
+
+					if(!str_aux.isEmpty())
+					{
+						//Updates the application/dbm mime association
+						if(str_aux.contains("[Added Associations]"))
+							str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
+						else
+							str_aux+="\n";
+
+						buf_aux.append(str_aux);
+					}
+				}
+
+				//Write a new copy of the mimeapps.list file
+				out.open(QFile::Truncate | QFile::WriteOnly);
+				out.write(buf_aux.data(), buf_aux.size());
+				out.close();
+			}
 
 			//Update the mime database
 			QProcess::execute("update-mime-database", QStringList { mime_db_dir });
