@@ -3,7 +3,7 @@
 ; Created with Inno Setup (http://www.jrsoftware.org/isinfo.php)
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
-#define MyAppVersion "v0.4.0"
+#define MyAppVersion "0.5.1"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -91,7 +91,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep=ssInstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}\lib'),true);
+      SetEnv('Path',ExpandConstant('{app}'),true);
     end;
 end;
 
@@ -99,6 +99,6 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 if CurUninstallStep = usUninstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}\lib'),false);
+      SetEnv('Path',ExpandConstant('{app}'),false);
     end;
 end;
