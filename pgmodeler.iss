@@ -3,6 +3,7 @@
 ; Created with Inno Setup (http://www.jrsoftware.org/isinfo.php)
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
+#define MyAppMenuGroup "pgModeler"
 #define MyAppVersion "0.5.1"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
@@ -15,7 +16,6 @@
 AppId={{8978809A-8AA1-4DE8-A4B8-058F2CE7B9E7}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -32,8 +32,6 @@ ChangesEnvironment=true
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-;Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-;Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -46,12 +44,39 @@ Source: ".\build\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs creat
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
+Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppMenuGroup}}"; Filename: "{#MyAppURL}"
+Name: "{group}\{cm:UninstallProgram,{#MyAppMenuGroup}}"; Filename: "{uninstallexe}"
+Name: "{commondesktop}\{#MyAppMenuGroup}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppMenuGroup}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
+
+[CustomMessages]
+qt5notfound=Qt5 framework was not found on this system. Please download and install Qt5 framework and try to run this setup again.%n%nNOTE: Read "Installation" section on pgmodeler.com.br/wiki for details.%n%nSetup will now abort!
+pgsqlnotfound=PostgreSQL not found on this system. Please download and install PostgreSQL database and try to run this setup again.%n%nNOTE: Read "Installation" section on pgmodeler.com.br/wiki for details.%n%nSetup will now abort!
 
 [code]
+function InitializeSetup(): Boolean;
+var
+    ResultCode: Integer;
+    Qt5Installed : Boolean;
+    PgSQLInstalled : Boolean;
+begin
+  Result:=true;
+	Qt5Installed := Exec('qmake.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  PgSQLInstalled := Exec('pg_config.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+  if Qt5Installed = false then
+    begin
+      MsgBox(ExpandConstant('{cm:qt5notfound}'), mbConfirmation, MB_OK)
+      Result:=false;
+    end
+  else if PgSQLInstalled = false then
+    begin
+      MsgBox(ExpandConstant('{cm:pgsqlnotfound}'), mbConfirmation, MB_OK)
+      Result:=false;
+    end;
+  end;
+end.
+
 procedure SetEnv(EnvName, EnvValue: String; IsInstall: Boolean);
 var
   OrgValue:String;
