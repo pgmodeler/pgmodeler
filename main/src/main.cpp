@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 		ver_label->setFont(fnt);
 		ver_label->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
 		ver_label->setPalette(pal);
-		ver_label->move(pix.size().width() * 0.75f, pix.size().height() * 0.92f);
+		ver_label->move(pix.size().width() * 0.50f, pix.size().height() * 0.92f);
 		ver_label->setGraphicsEffect(&shadow);
 
 		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));

@@ -662,6 +662,7 @@
    <addaction name="action_configuration"/>
    <addaction name="action_plugins"/>
    <addaction name="action_export"/>
+   <addaction name="action_import"/>
    <addaction name="action_wiki"/>
   </widget>
   <action name="action_new_model">
@@ -879,6 +880,9 @@
    <property name="text">
     <string>Export</string>
    </property>
+   <property name="toolTip">
+    <string>Export current model to file or DBMS.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
@@ -996,6 +1000,9 @@
    <property name="text">
     <string>Settings</string>
    </property>
+   <property name="toolTip">
+    <string>Edit pgModeler's settings</string>
+   </property>
   </action>
   <action name="actionWidgets">
    <property name="text">
@@ -1038,6 +1045,9 @@
    </property>
    <property name="text">
     <string>Wiki</string>
+   </property>
+   <property name="toolTip">
+    <string>Access pgModeler's Wiki pages.</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -1086,6 +1096,18 @@
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="action_import">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/import.png</normaloff>:/icones/icones/import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import existing database to new model (reverse engineering)</string>
    </property>
   </action>
  </widget>
