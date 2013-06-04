@@ -49,7 +49,6 @@
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
-#include "modelexportform.h"
 #include "objectrenamewidget.h"
 
 //Global forms and widgets
@@ -86,7 +85,6 @@ ExtensionWidget *extension_wgt=nullptr;
 TaskProgressWidget *task_prog_wgt=nullptr;
 ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
-ModelExportForm *export_form=nullptr;
 ObjectRenameWidget *objectrename_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -124,7 +122,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		about_form=new AboutForm;
 		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-		export_form=new ModelExportForm(this);
+		model_export_form=new ModelExportForm(this);
+		db_import_form=new DatabaseImportForm(this);
 
 		restoration_form=new ModelRestorationForm(this);
 		oper_list_wgt=new OperationListWidget;
@@ -240,6 +239,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel()));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
+	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
@@ -960,7 +960,12 @@ void MainWindow::saveModel(ModelWidget *model)
 void MainWindow::exportModel(void)
 {
 	if(current_model)
-		export_form->show(current_model);
+		model_export_form->show(current_model);
+}
+
+void MainWindow::importDatabase(void)
+{
+	db_import_form->show();
 }
 
 void MainWindow::printModel(void)

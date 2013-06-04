@@ -70,7 +70,9 @@ SOURCES += src/mainwindow.cpp \
 	   src/modelvalidationhelper.cpp \
 	   src/validationinfo.cpp \
 	   src/extensionwidget.cpp \
-	   src/objectfinderwidget.cpp
+	   src/objectfinderwidget.cpp \
+	   src/databaseimporthelper.cpp \
+    src/databaseimportform.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -132,7 +134,9 @@ HEADERS += src/mainwindow.h \
 	   src/modelvalidationhelper.h \
 	   src/validationinfo.h \
 	   src/extensionwidget.h \
-	   src/objectfinderwidget.h
+	   src/objectfinderwidget.h \
+	   src/databaseimporthelper.h \
+    src/databaseimportform.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -186,4 +190,5 @@ FORMS += ui/mainwindow.ui \
 	 ui/elementswidget.ui \
 	 ui/modelvalidationwidget.ui \
 	 ui/extensionwidget.ui \
-	 ui/objectfinderwidget.ui
+	 ui/objectfinderwidget.ui \
+    ui/databaseimportform.ui

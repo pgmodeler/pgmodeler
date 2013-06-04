@@ -39,6 +39,8 @@
 #include "modeloverviewwidget.h"
 #include "modelvalidationwidget.h"
 #include "objectfinderwidget.h"
+#include "modelexportform.h"
+#include "databaseimportform.h"
 
 using namespace std;
 
@@ -63,6 +65,12 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;
+
+		//! \brief Model exportation form
+		ModelExportForm *model_export_form;
+
+		//! \brief Database import form
+		DatabaseImportForm *db_import_form;
 
 		//! \brief Operation list dock widget
 		OperationListWidget *oper_list_wgt;
@@ -150,6 +158,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Executes the export of the currently focused model
 		void exportModel(void);
+
+		//! \brief Executes the reverse engineering
+		void importDatabase(void);
 
 		//! \brief Updates the opened models with new configurations
 		void applyConfigurations(void);

@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ExportHelper
-\brief Implements the base operations to export models
+\class ModelExportHelper
+\brief Implements the base operations to export models (forward engineering)
 */
 
 #ifndef MODEL_EXPORT_HELPER_H

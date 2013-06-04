@@ -881,7 +881,7 @@
     <string>Export</string>
    </property>
    <property name="toolTip">
-    <string>Export current model to file or DBMS.</string>
+    <string>Export current model to file or DBMS (forward engineering).</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
