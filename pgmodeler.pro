@@ -106,13 +106,13 @@ UI_DIR = src
 
 macx {
  BASEDIR = $$PWD/build/pgmodeler.app/Contents
- DESTDIR = $$BASEDIR/MacOS
- LIBDESTDIR = $$BASEDIR/Frameworks
+ DESTDIR = $$BASEDIR/MacOS #Where the compiled executables are stored
+ LIBDESTDIR = $$BASEDIR/Frameworks #Where the compiled libs are stored
 }
 
 linux|windows {
  DESTDIR = $$PWD/build
- LIBDESTDIR = $$DESTDIR
+ LIBDESTDIR = $$DESTDIR #On Linux and Windows the compiled libs resides on the same executable's dir
 }
 
 #Creating the project's libraries names based upon the running OS
