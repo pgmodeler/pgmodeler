@@ -16,7 +16,7 @@ if [ -z $res ]; then
 fi
 
 # Export the necessary environment variables
-export DYLD_LIBRARY_PATH=$PWD:$DYLD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PWD:/usr/lib:$DYLD_LIBRARY_PATH
 export PGMODELER_SCHEMAS_DIR=$PWD/schemas
 export PGMODELER_CONF_DIR=$PWD/conf
 export PGMODELER_LANG_DIR=$PWD/lang

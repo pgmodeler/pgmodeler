@@ -5,7 +5,7 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
 
 macx {
  PGMODELER_SRC_DIR=../../
- PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/MacOS
+ PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/Frameworks
  PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
 }
 

@@ -1,5 +1,6 @@
 include(../pgmodeler.pro)
 
+DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
