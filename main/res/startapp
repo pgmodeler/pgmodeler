@@ -12,11 +12,13 @@ res=$(echo $1 | grep -E \(pgmodeler\|pgmodeler-cli\|crashhandler\))
 
 # If not contains the executable name the default is call pgmodeler (GUI)
 if [ -z $res ]; then
-  EXE=$PWD/pgmodeler
+  echo "Please specify one module: pgmodeler | pgmodeler-cli | crashhandler"
+  exit 1
 fi
 
 # Export the necessary environment variables
-export DYLD_LIBRARY_PATH=$PWD:/usr/lib:$DYLD_LIBRARY_PATH
+export DYLD_FRAMEWORK_PATH=../Frameworks
+export DYLD_LIBRARY_PATH=../Frameworks
 export PGMODELER_SCHEMAS_DIR=$PWD/schemas
 export PGMODELER_CONF_DIR=$PWD/conf
 export PGMODELER_LANG_DIR=$PWD/lang
@@ -24,4 +26,4 @@ export PGMODELER_PLUGINS_DIR=$PWD/plugins
 export PGMODELER_TMP_DIR=$PWD/tmp
 
 #Calls the executable redirecting the parameters to it
-$EXE ${@:2:20}
+$EXE ${@:2:20} &
