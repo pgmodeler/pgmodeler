@@ -1,21 +1,15 @@
 #/bin/bash
 
-QMAKE_ROOT=/usr/local/qt-5.0.2/5.0.2/gcc_64/bin
-QMAKE_ARGS="-r -spec linux-g++-64"
+QT_ROOT=/Users/raphael/Qt5.0.2/5.0.2/clang_64
+QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang-libc++"
 DEPLOY_VER=$1
-LOG=linuxdeploy.log
-
-if [ `uname -m`="x86_64" ]; then
-  ARCH="linux64"
-else
-  ARCH="linux32"
-fi
-
-PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
-PKGFILE=$PKGNAME.tar.gz
+LOG=macdeploy.log
+PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
+PKGFILE=$PKGNAME.dmg
+APPNAME=pgmodeler
 
 echo
-echo "pgModeler Linux deployment script"
+echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
 
@@ -32,7 +26,7 @@ rm -r build/* &> $LOG
 make distclean &> $LOG
 
 echo "Running qmake..."
-$QMAKE_ROOT/qmake $QMAKE_ARGS &> $LOG
+$QT_ROOT/bin/qmake $QMAKE_ARGS &> $LOG
 
 if [ $? -ne 0 ]; then
   echo
@@ -59,10 +53,10 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm -r $PKGNAME &> $LOG
-mkdir $PKGNAME &> $LOG
-cp -r build/* $PKGNAME &> $LOG
-tar -zcvf $PKGFILE $PKGNAME &> $LOG
+rm -r ./$PKGNAME.dmg &> $LOG
+rm build/$APPNAME.app/Contents/Frameworks/libpq* &> $LOG
+$QT_ROOT/bin/macdeployqt build/$APPNAME.app -dmg &> $LOG
+mv build/$APPNAME.dmg ./$PKGFILE &> $LOG
 
 if [ $? -ne 0 ]; then
   echo
