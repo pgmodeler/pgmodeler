@@ -121,13 +121,14 @@ int main(int argc, char **argv)
 
 		//Loading the application splash screen
 		QSplashScreen splash;
-		splash.setPixmap(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
-		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));
+		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+		splash.setPixmap(pix);
+		splash.setMask(pix.mask());
 
 		#ifndef Q_OS_MAC
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
 		#else
-			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHints);
+			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
 		#endif
 
 		splash.show();
