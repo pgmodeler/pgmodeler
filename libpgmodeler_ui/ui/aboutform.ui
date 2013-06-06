@@ -135,13 +135,13 @@
         <property name="minimumSize">
          <size>
           <width>128</width>
-          <height>148</height>
+          <height>151</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>128</width>
-          <height>148</height>
+          <height>151</height>
          </size>
         </property>
         <property name="text">
@@ -163,7 +163,7 @@
         <item row="1" column="0" colspan="2">
          <widget class="QLabel" name="pgmodeler_ver_lbl">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
