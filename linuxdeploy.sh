@@ -14,6 +14,7 @@ fi
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 PKGFILE=$PKGNAME.tar.gz
 
+clear
 echo
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
@@ -29,45 +30,49 @@ fi
 echo
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
-make distclean &> $LOG
+make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
-$QMAKE_ROOT/qmake $QMAKE_ARGS &> $LOG
+$QMAKE_ROOT/qmake $QMAKE_ARGS  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
   echo "** Failed to execute qmake with arguments '$QMAKE_ARGS'"
   echo
+  exit 1
 fi
 
 echo "Compiling code..."
-make -j5 &> $LOG
+make -j5  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
   echo "** Compilation failed!"
   echo
+  exit 1
 fi
 
 echo "Installing dependencies..."
-make install &> $LOG
+make install  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
   echo "** Installation failed!"
   echo
+  exit 1
 fi
 
 echo "Packaging installation..."
-rm -r $PKGNAME &> $LOG
-mkdir $PKGNAME &> $LOG
-cp -r build/* $PKGNAME &> $LOG
-tar -zcvf $PKGFILE $PKGNAME &> $LOG
+rm -r $PKGNAME  >> $LOG 2>&1
+mkdir $PKGNAME  >> $LOG 2>&1
+cp -r build/* $PKGNAME  >> $LOG 2>&1
+tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
   echo "** Failed to create package!"
   echo
+  exit 1
 fi
 
 echo "File created: $PKGFILE"

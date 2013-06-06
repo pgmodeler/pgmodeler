@@ -8,6 +8,7 @@ PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
 
+clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
@@ -23,10 +24,10 @@ fi
 echo
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
-make distclean &> $LOG
+make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
-$QT_ROOT/bin/qmake $QMAKE_ARGS &> $LOG
+$QT_ROOT/bin/qmake $QMAKE_ARGS  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -35,7 +36,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make -j5 &> $LOG
+make -j5  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -44,7 +45,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing dependencies..."
-make install &> $LOG
+make install  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -53,10 +54,10 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm -r ./$PKGNAME.dmg &> $LOG
-rm build/$APPNAME.app/Contents/Frameworks/libpq* &> $LOG
-$QT_ROOT/bin/macdeployqt build/$APPNAME.app -dmg &> $LOG
-mv build/$APPNAME.dmg ./$PKGFILE &> $LOG
+rm -r ./$PKGNAME.dmg  >> $LOG 2>&1
+rm build/$APPNAME.app/Contents/Frameworks/libpq*  >> $LOG 2>&1
+$QT_ROOT/bin/macdeployqt build/$APPNAME.app -dmg  >> $LOG 2>&1
+mv build/$APPNAME.dmg ./$PKGFILE  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
