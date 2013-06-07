@@ -115,7 +115,7 @@ bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 		if(!search_only_ref_cols)
 		 found=isColumnExists(column, SOURCE_COLS);
 
-		if(constr_type == ConstraintType::foreign_key)
+		if(!found && constr_type == ConstraintType::foreign_key)
 			found=isColumnExists(column, REFERENCED_COLS);
 	}
 	else if(constr_type==ConstraintType::exclude)
