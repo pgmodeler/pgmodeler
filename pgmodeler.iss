@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.5.1"
+#define MyAppVersion "0.5.1_r1"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -25,7 +25,8 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=.\build\LICENSE
 OutputDir=.\
-OutputBaseFilename=pgmodeler-{#MyAppVersion}-windows
+;OutputBaseFilename=pgmodeler-{#MyAppVersion}-windows
+OutputBaseFilename=pgmodeler
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=true
@@ -53,30 +54,30 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppMenuGroup}"
 qt5notfound=Qt5 framework was not found on this system. Please download and install Qt5 framework and try to run this setup again.%n%nNOTE: Read "Installation" section on pgmodeler.com.br/wiki for details.%n%nSetup will now abort!
 pgsqlnotfound=PostgreSQL not found on this system. Please download and install PostgreSQL database and try to run this setup again.%n%nNOTE: Read "Installation" section on pgmodeler.com.br/wiki for details.%n%nSetup will now abort!
 
+
+; function InitializeSetup(): Boolean;
+; var
+    ; ResultCode: Integer;
+    ; Qt5Installed : Boolean;
+    ; PgSQLInstalled : Boolean;
+; begin
+  ; Result:=true;
+	; Qt5Installed := Exec('qmake.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  ; PgSQLInstalled := Exec('pg_config.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+  ; if Qt5Installed = false then
+    ; begin
+      ; MsgBox(ExpandConstant('{cm:qt5notfound}'), mbConfirmation, MB_OK)
+      ; Result:=false;
+    ; end
+  ; else if PgSQLInstalled = false then
+    ; begin
+      ; MsgBox(ExpandConstant('{cm:pgsqlnotfound}'), mbConfirmation, MB_OK)
+      ; Result:=false;
+    ; end;
+  ; end;
+; end.
 [code]
-function InitializeSetup(): Boolean;
-var
-    ResultCode: Integer;
-    Qt5Installed : Boolean;
-    PgSQLInstalled : Boolean;
-begin
-  Result:=true;
-	Qt5Installed := Exec('qmake.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-  PgSQLInstalled := Exec('pg_config.exe', '--version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-
-  if Qt5Installed = false then
-    begin
-      MsgBox(ExpandConstant('{cm:qt5notfound}'), mbConfirmation, MB_OK)
-      Result:=false;
-    end
-  else if PgSQLInstalled = false then
-    begin
-      MsgBox(ExpandConstant('{cm:pgsqlnotfound}'), mbConfirmation, MB_OK)
-      Result:=false;
-    end;
-  end;
-end.
-
 procedure SetEnv(EnvName, EnvValue: String; IsInstall: Boolean);
 var
   OrgValue:String;

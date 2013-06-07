@@ -21,7 +21,9 @@
        <key>CFBundleIconFile</key>
        <string>pgmodeler.icns</string>
        <key>CFBundleExecutable</key>
-       <string>startapp</string>
+       <string>pgmodeler</string>
+       <key>CFBundleDisplayName</key>
+       <string>pgModeler</string>
        <key>CFBundleIdentifier</key>
        <string>br.com.pgmodeler.pgModeler</string>
        <key>CFBundleInfoDictionaryVersion</key>
@@ -31,7 +33,7 @@
        <key>CFBundleSignature</key>
        <string>????</string>
        <key>CFBundleVersion</key>
-       <string>1.0</string>
+       <string>0.5.1_r1</string>
        <key>CSResourcesFileMapped</key>
        <true/>
     </dict>

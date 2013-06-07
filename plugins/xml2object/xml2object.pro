@@ -5,8 +5,9 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
 
 macx {
  PGMODELER_SRC_DIR=../../
- PGMODELER_LIB_DIR=../../build/pgmodeler.app/Contents/MacOS
- PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
+ PGMODELER_BASE_DIR=../../build/pgmodeler.app/Contents
+ PGMODELER_LIB_DIR=$$PGMODELER_BASE_DIR/Frameworks
+ PGMODELER_PLUGIN_DIR=$$PGMODELER_BASE_DIR/MacOS/plugins
 }
 
 !exists($$PGMODELER_SRC_DIR) {
@@ -47,6 +48,6 @@ unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
 windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
 
 xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
-windows:xml2object.files += build/$$LIB_PREFIX$$TARGET.a
+windows:xml2object.files += $$DESTDIR/$$LIB_PREFIX$$TARGET.a
 xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += xml2object

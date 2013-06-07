@@ -1,5 +1,6 @@
 include(../pgmodeler.pro)
 
+DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
@@ -72,7 +73,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/extensionwidget.cpp \
 	   src/objectfinderwidget.cpp \
 	   src/databaseimporthelper.cpp \
-    src/databaseimportform.cpp
+	   src/databaseimportform.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -136,7 +137,7 @@ HEADERS += src/mainwindow.h \
 	   src/extensionwidget.h \
 	   src/objectfinderwidget.h \
 	   src/databaseimporthelper.h \
-    src/databaseimportform.h
+	   src/databaseimportform.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -191,4 +192,4 @@ FORMS += ui/mainwindow.ui \
 	 ui/modelvalidationwidget.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
-    ui/databaseimportform.ui
+	 ui/databaseimportform.ui

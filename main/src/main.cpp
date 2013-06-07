@@ -120,6 +120,7 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		//Loading the application splash screen
+<<<<<<< HEAD
 		QPixmap pix=QPixmap(":imagens/imagens/pgmodeler_splash.png");
 
 		//Draws the current version code on the splash
@@ -149,6 +150,19 @@ int main(int argc, char **argv)
 
 		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));
 		splash.setWindowModality(Qt::ApplicationModal);
+=======
+		QSplashScreen splash;
+		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+		splash.setPixmap(pix);
+		splash.setMask(pix.mask());
+
+		#ifndef Q_OS_MAC
+			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
+		#else
+			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+		#endif
+
+>>>>>>> build-fix
 		splash.show();
 		splash.repaint();
 

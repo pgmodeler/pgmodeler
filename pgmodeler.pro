@@ -98,6 +98,23 @@ SUBDIRS = libutils \
 	  plugins/dummy \
 	  plugins/xml2object
 
+QT += core widgets printsupport
+TEMPLATE = subdirs
+MOC_DIR = moc
+OBJECTS_DIR = obj
+UI_DIR = src
+
+macx {
+ BASEDIR = $$PWD/build/pgmodeler.app/Contents
+ DESTDIR = $$BASEDIR/MacOS #Where the compiled executables are stored
+ LIBDESTDIR = $$BASEDIR/Frameworks #Where the compiled libs are stored
+}
+
+linux|windows {
+ DESTDIR = $$PWD/build
+ LIBDESTDIR = $$DESTDIR #On Linux and Windows the compiled libs resides on the same executable's dir
+}
+
 #Creating the project's libraries names based upon the running OS
 LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
 LIBPARSERS=$${LIB_PREFIX}parsers.$${LIB_EXT}
@@ -105,18 +122,6 @@ LIBDBCONNECT=$${LIB_PREFIX}dbconnect.$${LIB_EXT}
 LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
-
-QT += core widgets printsupport
-TEMPLATE = subdirs
-MOC_DIR = moc
-OBJECTS_DIR = obj
-UI_DIR = src
-DESTDIR = $$PWD/build
-
-macx {
- BASEDIR = $$PWD/build/pgmodeler.app/Contents
- DESTDIR = $$BASEDIR/MacOS
-}
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
