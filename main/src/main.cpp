@@ -120,37 +120,6 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		//Loading the application splash screen
-<<<<<<< HEAD
-		QPixmap pix=QPixmap(":imagens/imagens/pgmodeler_splash.png");
-
-		//Draws the current version code on the splash
-		QFont fnt;
-		fnt.setBold(true);
-		fnt.setPointSizeF(9.0f);
-
-		QSplashScreen splash(pix);
-		QLabel *ver_label=new QLabel(&splash);
-		QGraphicsDropShadowEffect shadow;
-		QPalette pal;
-
-		//Configures a label with the pgModeler's version
-		pal.setColor(QPalette::WindowText, QColor(255,255,255));
-
-		shadow.setColor(QColor(0,0,0));
-		shadow.setXOffset(3);
-		shadow.setYOffset(3);
-		shadow.setBlurRadius(10);
-
-		//Shows the label version at bottom of splash screen
-		ver_label->setFont(fnt);
-		ver_label->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
-		ver_label->setPalette(pal);
-		ver_label->move(pix.size().width() * 0.50f, pix.size().height() * 0.92f);
-		ver_label->setGraphicsEffect(&shadow);
-
-		splash.setMask(QPixmap(":imagens/imagens/pgmodeler_splash_mask.png"));
-		splash.setWindowModality(Qt::ApplicationModal);
-=======
 		QSplashScreen splash;
 		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
 		splash.setPixmap(pix);
@@ -162,7 +131,6 @@ int main(int argc, char **argv)
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
 		#endif
 
->>>>>>> build-fix
 		splash.show();
 		splash.repaint();
 
