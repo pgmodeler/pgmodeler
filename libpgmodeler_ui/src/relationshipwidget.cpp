@@ -55,7 +55,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		for(i=0; i < count; i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true);
+			patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true, true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																			 GlobalAttributes::DIR_SEPARATOR +
 																			 GlobalAttributes::PATTERN_HIGHLIGHT_CONF +

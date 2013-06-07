@@ -2087,7 +2087,7 @@ bool Relationship::isInvalidated(void)
 	Table *table=nullptr, *table1=nullptr;
 	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
-	Column *col1=nullptr, *col2=nullptr, *col3=nullptr;
+	Column *rel_pk_col=nullptr, *gen_col=nullptr, *pk_col=nullptr;
 	QString col_name;
 
 	if(invalidated)
@@ -2139,19 +2139,19 @@ bool Relationship::isInvalidated(void)
 				for(i=0; i < rel_cols_count && valid; i++)
 				{
 					//Gets one column from the foreign key
-					col2=gen_columns[i];
+					gen_col=gen_columns[i];
 
 					//Gets one column from the primary key
-					col1=pk_columns[i];
+					rel_pk_col=pk_columns[i];
 
 					/* This third columns is get from the table primary key and will be checked if the columns
 					addresses is the same. If not the relationship is invalidated */
-					col3=pk->getColumn(i, Constraint::SOURCE_COLS);
+					pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
 
 					/* To validate the columns with each other the following rules are followed:
 
-				1) Check if the there was some name modification. If the generated name does not contains
-					 the pk column name, then the relationship is invalidated.
+				1) Check if the there was some name modification. If the generated name does is not compatible
+					 with the current generated column name, then the relationship is invalidated.
 
 				2) Check if the types of the columns are compatible.
 					 The only accepted exception is if the type of the source column is 'serial' or 'bigserial'
@@ -2159,12 +2159,14 @@ bool Relationship::isInvalidated(void)
 
 				3) Check if the column (address) from the vector pk_columns is equal to the column
 					 obtained directly from the primary key */
-					valid=(col1==col3 &&
-								 (col2->getName().contains(col1->getName())) &&
-								 (col1->getType()==col2->getType() ||
-									(col1->getType()=="serial" && col2->getType()=="integer") ||
-									(col1->getType()=="bigserial" && col2->getType()=="bigint") ||
-									(col1->getType()=="smallserial" && col2->getType()=="smallint")));
+					col_name=generateObjectName(SRC_COL_PATTERN, rel_pk_col);
+					valid=(rel_pk_col==pk_col &&
+								 (gen_col->getName()==col_name ||
+									gen_col->getName().contains(pk_col->getName())) &&
+								 (rel_pk_col->getType()==gen_col->getType() ||
+									(rel_pk_col->getType()=="serial" && gen_col->getType()=="integer") ||
+									(rel_pk_col->getType()=="bigserial" && gen_col->getType()=="bigint") ||
+									(rel_pk_col->getType()=="smallserial" && gen_col->getType()=="smallint")));
 				}
 			}
 		}
@@ -2249,8 +2251,10 @@ bool Relationship::isInvalidated(void)
 
 				for(i=0; i < count && valid; i++)
 				{
-					col_name=fk->getColumn(i, Constraint::SOURCE_COLS)->getName();
-					valid=(col_name==generateObjectName(SRC_COL_PATTERN, pk->getColumn(i, Constraint::SOURCE_COLS)));
+					gen_col=fk->getColumn(i, Constraint::SOURCE_COLS);
+					pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
+					valid=(gen_col->getName()==generateObjectName(SRC_COL_PATTERN, pk_col) ||
+								 gen_col->getName().contains(pk_col->getName()));
 				}
 
 				/* Checking if the columns created with the connection still exists
@@ -2260,8 +2264,10 @@ bool Relationship::isInvalidated(void)
 
 				for(i=0; i < count && valid; i++)
 				{
-					col_name=fk1->getColumn(i, Constraint::SOURCE_COLS)->getName();
-					valid=(col_name==generateObjectName(DST_COL_PATTERN, pk->getColumn(i, Constraint::SOURCE_COLS)));
+					gen_col=fk1->getColumn(i, Constraint::SOURCE_COLS);
+					pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
+					valid=(gen_col->getName()==generateObjectName(DST_COL_PATTERN, pk_col) ||
+								 gen_col->getName().contains(pk_col->getName()));
 				}
 			}
 		}

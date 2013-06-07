@@ -97,7 +97,11 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 					/*! \brief Indicates that the code must be rehighlighted in real time (as the user types).
 					If this attribute is set to false, the user must always call the rehighlight method */
-					auto_rehighlight;
+					auto_rehighlight,
+
+					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
+							the text to be in a single line. */
+					single_line_mode;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -133,6 +137,10 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Returns the multiline info count for the specified block
 		unsigned getMultiLineInfoCount(int block);
 
+		/*! \brief This event filter is used to nullify the line breaks when the highlighter
+		 is created in single line edit model */
+		bool eventFilter(QObject *object, QEvent *event);
+
 	public:
 		/*! \brief Install the syntax highlighter in a QTextDocument. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
@@ -142,7 +150,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
-		SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight);
+		SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
