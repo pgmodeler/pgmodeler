@@ -8,6 +8,7 @@ LOG=macdeploy.log
 PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
+BUNDLE=$APPNAME.app
 
 clear
 echo
@@ -78,10 +79,16 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm -r ./$PKGNAME.dmg  >> $LOG 2>&1
-rm build/$APPNAME.app/Contents/Frameworks/libpq*  >> $LOG 2>&1
-$QT_ROOT/bin/macdeployqt build/$APPNAME.app -dmg  >> $LOG 2>&1
-mv build/$APPNAME.dmg ./$PKGFILE  >> $LOG 2>&1
+rm $PKGFILE  >> $LOG 2>&1
+
+# Deploy the Qt libraries onto app bundle
+$QT_ROOT/bin/macdeployqt build/$BUNDLE >> $LOG 2>&1
+
+# Remove the libpq from Frameworks path
+rm build/$BUNDLE/Contents/Frameworks/libpq*  >> $LOG 2>&1
+
+# Creates an empty dmg file named
+hdiutil create -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder build/ >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
