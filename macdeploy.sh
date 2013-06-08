@@ -1,6 +1,7 @@
 #/bin/bash
 
-QT_ROOT=/Users/raphael/Qt5.0.2/5.0.2/clang_64
+USR=`whoami`
+QT_ROOT=/Users/$USR/Qt5.0.2/5.0.2/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang-libc++"
 DEPLOY_VER=$1
 LOG=macdeploy.log
