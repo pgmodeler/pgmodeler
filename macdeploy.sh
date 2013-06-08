@@ -21,6 +21,29 @@ if [ -z $DEPLOY_VER ]; then
   exit 1
 fi
 
+# Identifying System Qt version
+if [ -e "$QT_ROOT/bin/qmake" ]; then
+  QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER=${QT_VER:0:5}
+fi
+
+# If Qt was not found in system path
+if [ -z "$QT_VER" ]; then
+  echo
+  echo "** No Qt framework was found!"
+  echo
+  exit 1
+else
+  # Checking if identified version is valid (>= 5.0.0)
+  if [[ "$QT_VER" < "5.0.0" ]]; then
+    echo
+    echo "** Qt framework found but in no suitable version (>= 5.0.0)!"
+    echo "** Installed Qt version: $QT_VER"
+    echo
+    exit 1
+  fi
+fi
+
 echo
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
