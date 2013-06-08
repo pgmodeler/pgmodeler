@@ -68,7 +68,7 @@ fi
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER=`$QMAKE_ROOT/qmake --version | grep -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER=`$QMAKE_ROOT/qmake --version | grep '[0-9].[0-9].[0-9]'`
   QT_VER=${QT_VER:0:5}
 fi
 

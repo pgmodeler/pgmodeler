@@ -58,6 +58,7 @@ if [ $? -ne 0 ]; then
   echo
   echo "** Failed to execute qmake with arguments '$QMAKE_ARGS'"
   echo
+  exit 1
 fi
 
 echo "Compiling code..."
@@ -67,6 +68,7 @@ if [ $? -ne 0 ]; then
   echo
   echo "** Compilation failed!"
   echo
+  exit 1
 fi
 
 echo "Installing dependencies..."
@@ -76,6 +78,7 @@ if [ $? -ne 0 ]; then
   echo
   echo "** Installation failed!"
   echo
+  exit 1
 fi
 
 echo "Packaging installation..."
@@ -94,6 +97,7 @@ if [ $? -ne 0 ]; then
   echo
   echo "** Failed to create package!"
   echo
+  exit 1
 fi
 
 echo "File created: $PKGFILE"
