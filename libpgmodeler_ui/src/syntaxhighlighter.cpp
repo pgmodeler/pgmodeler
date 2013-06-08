@@ -21,15 +21,36 @@
 SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
 {
 	this->auto_rehighlight=auto_rehighlight;
+	this->single_line_mode=false;
 	configureAttributes();
 }
 
-SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
 	parent->setAcceptRichText(true);
 	this->auto_rehighlight=auto_rehighlight;
+	this->single_line_mode=single_line_mode;
 	configureAttributes();
+
+	if(single_line_mode)
+		parent->installEventFilter(this);
 }
+
+bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
+{
+	//Filters the ENTER/RETURN avoiding line breaks
+	if(this->single_line_mode &&
+		 event->type() == QEvent::KeyPress &&
+		 (dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Return ||
+			dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Enter))
+	{
+		event->ignore();
+		return(true);
+	}
+	else
+		return(QSyntaxHighlighter::eventFilter(object, event));
+}
+
 
 void SyntaxHighlighter::configureAttributes(void)
 {

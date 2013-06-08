@@ -1,9 +1,19 @@
 Changelog
 ---------
 
+v0.5.1_r1
+---------
+<em>Codename: <strong>Lovely Duda</strong></em><br/>
+<em>Estimated release date: June 14, 2013</em>
+
+* [New] Added deployment scripts on all platforms to compile and pack pgModeler. Note: On Windows the script must run on GNU environment port like Cygwin or MingW.
+* [Fix] Splash screen corrected on MacOSX
+* [Fix] Corrected a bug on relationships that was crashing pgModeler when specifying column name pattern.
+* [Change] Minor improvements on syntax highlighter.
+
 v0.5.1
 ------
-<em>Codename: <strong>Lovely Duda</strong></em>
+<em>Codename: <strong>Lovely Duda</strong></em><br/>
 <em>Release date: June 1, 2013</em>
 
 * [New] Code base ported to C++11 and Qt5.
