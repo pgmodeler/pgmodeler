@@ -147,7 +147,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 
 				//Emits a signal indicating that the object is being exported
 				emit s_progressUpdated(progress,
-															trUtf8("Creating object '%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()));
+															 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()));
 
 				try
 				{
@@ -180,7 +180,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 			if(!db_model->isSQLDisabled())
 			{
 				//Creating the database on the DBMS
-				emit s_progressUpdated(progress, trUtf8("Creating database '%1'...").arg(Utf8String::create(db_model->getName())));
+				emit s_progressUpdated(progress, trUtf8("Creating database `%1'...").arg(Utf8String::create(db_model->getName())));
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
@@ -203,12 +203,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		progress=30;
 		new_db_conn=conn;
 		new_db_conn.setConnectionParam(DBConnection::PARAM_DB_NAME, db_model->getName());
-		emit s_progressUpdated(progress, trUtf8("Connecting to database '%1'...").arg(Utf8String::create(db_model->getName())));
+		emit s_progressUpdated(progress, trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
 
 		new_db_conn.connect();
 		progress=50;
 		//Creating the other object types
-		emit s_progressUpdated(progress, trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(db_model->getName())));
+		emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'...").arg(Utf8String::create(db_model->getName())));
 
 		//Generates the sql from entire model
 		sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
@@ -236,8 +236,57 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 				//If the ddl end token is found
 				if(ddl_tk_found)
 				{
-					//sql_cmd.remove(ParsersAttributes::DDL_END_TOKEN);
+					//Regexp used to extract the object being created
+					QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
+
 					sql_cmd.simplified();
+
+					//Check if the regex matches the sql command
+					if(reg.exactMatch(sql_cmd))
+					{
+						QString obj_type, obj_name;
+						ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+																		 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
+																		 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
+																		 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,	OBJ_ROLE,
+																		 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,	OBJ_TYPE,
+																		 OBJ_TABLESPACE, OBJ_DATABASE, OBJ_COLLATION, OBJ_EXTENSION };
+						unsigned count=sizeof(obj_types)/sizeof(ObjectType);
+						int pos=0;
+
+						for(unsigned i=0; i < count; i++)
+						{
+							//Check if the keyword for the current object exists on string
+							pos=sql_cmd.indexOf(BaseObject::getSQLName(obj_types[i]));
+
+							if(pos >= 0)
+							{
+								//Extracts from the line the string starting with the object's name
+								lin=sql_cmd.mid(pos + BaseObject::getSQLName(obj_types[i]).size(),
+																sql_cmd.indexOf('\n')).simplified();
+
+								//Stores the object type name
+								obj_type=BaseObject::getTypeName(obj_types[i]);
+
+								//Special case of indexes, removes the "concurrently" keyword that cames after INDEX keyword
+								if(obj_types[i]==OBJ_INDEX)
+									lin.replace("CONCURRENTLY","");
+
+								//The object name is the first element when splitting the string with space separator
+								obj_name=lin.split(' ').at(0);
+								obj_name.remove('(');
+								obj_name.remove(';');
+								break;
+							}
+						}
+
+						emit s_progressUpdated(progress + (i/progress), trUtf8("Creating object `%1' (%2)...")
+																	 .arg(obj_name)
+																	 .arg(obj_type));
+					}
+					else
+						//General commands like alter / set aren't explicitly shown
+						emit s_progressUpdated(progress + (i/progress), trUtf8("Executing auxiliary command..."));
 
 					//Executes the extracted SQL command
 					if(!sql_cmd.isEmpty())
@@ -246,8 +295,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 					ddl_tk_found=false;
 					sql_cmd.clear();
 					i++;
-					emit s_progressUpdated(progress + (i/progress),
-																 trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(db_model->getName())));
 				}
 			}
 			catch(Exception &e)

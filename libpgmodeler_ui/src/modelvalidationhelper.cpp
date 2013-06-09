@@ -142,11 +142,9 @@ void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *co
 					//Trying to convert the object to constraint
 					constr=dynamic_cast<Constraint *>(tab_obj);
 
-					/* If the object was not added by relationship and is an index or
-					a primary key, unique or exclude constraint, insert the object on duplicated
-					objects map */
-					if(!tab_obj->isAddedByLinking() &&
-						 (!constr ||
+					/* If the object is an index or	a primary key, unique or exclude constraint,
+					insert the object on duplicated	objects map */
+					if((!constr ||
 							(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
 													constr->getConstraintType()==ConstraintType::unique ||
 													constr->getConstraintType()==ConstraintType::exclude))))
@@ -275,6 +273,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			Table *table=nullptr;
 			ObjectType obj_type;
 			BaseObject *obj=info.getObject();
+			TableObject *tab_obj=nullptr;
 
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
@@ -299,16 +298,16 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				obj->setName(new_name);
 			}
 
-
 			//Renaming the referrer objects
 			while(!refs.empty())
 			{
 				obj_type=refs.back()->getObjectType();
+				tab_obj=dynamic_cast<TableObject *>(refs.back());
 
 				//Tables and view aren't renamed only table child objects (constraints, indexes)
-				if(obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW)
+				if(tab_obj && !tab_obj->isAddedByRelationship())
 				{
-					table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(refs.back())->getParentTable());
+					table=dynamic_cast<Table *>(tab_obj->getParentTable());
 
 					do
 					{

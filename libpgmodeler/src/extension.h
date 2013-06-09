@@ -49,9 +49,8 @@ class Extension: public BaseObject {
 		void setSchema(BaseObject *schema);
 
 		/*! \brief Defines if the extension handles a datatype. When setting to true
-		the extension will be registered as a datatype on DatabaseModel class. It's not
-		recommended to call this method if the extension already handles a type since can cause
-		reference breaking on any objects that uses this extension as data type */
+		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when
+		the extension was already inserted on the model. */
 		void setHandlesType(bool value);
 
 		//! \brief Set the versions of the extension

@@ -244,6 +244,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
 			else if(obj_type==OBJ_COLLATION)
 				removeCollation(dynamic_cast<Collation *>(object), obj_idx);
+			else if(obj_type==OBJ_EXTENSION)
+				removeExtension(dynamic_cast<Extension *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				removePermission(dynamic_cast<Permission *>(object));
 		}
@@ -5778,7 +5780,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<unsigned>::iterator itr1, itr1_end;
-	QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
+	QString msg=trUtf8("Generating %1 of the object `%2' (%3)"),
 			attrib=ParsersAttributes::OBJECTS,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
 	Type *usr_type=nullptr;
@@ -6106,8 +6108,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
 														.arg(Utf8String::create((*itr)->getName()))
-														.arg(object->getTypeName()),
-														object->getObjectType());
+														.arg((*itr)->getTypeName()),
+														(*itr)->getObjectType());
 			}
 
 			itr++;
