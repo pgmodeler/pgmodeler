@@ -706,7 +706,9 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 
 void ModelObjectsWidget::updateDatabaseTree(void)
 {
-	if(db_model)
+	if(!db_model)
+		objectstree_tw->clear();
+	else
 	{
 		QString str_aux;
 		BaseObject *object=nullptr;

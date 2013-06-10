@@ -65,9 +65,12 @@ v0.5.1_r1
 <em>Estimated release date: June 14, 2013</em>
 
 * [New] Added deployment scripts on all platforms to compile and pack pgModeler. Note: On Windows the script must run on GNU environment port like Cygwin or MingW.
-* [Fix] Splash screen corrected on MacOSX.
-* [Fix] Corrected a bug on relationship object that was crashing pgModeler when specifying column name pattern.
 * [Change] Minor improvements on syntax highlighter.
+* [Change] Improvements on model validation widget. Output panel now shows the currently validated object (SQL validation).
+* [Fix] Extension object naming corrected.
+* [Fix] Extension object removal corrected.
+* [Fix] Splash screen corrected on MacOSX
+* [Fix] Corrected a bug on relationships that was crashing pgModeler when specifying column name pattern.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

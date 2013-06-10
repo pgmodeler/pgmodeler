@@ -19,7 +19,7 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		cur_ver_edt->setText(ext->getVersion(Extension::CUR_VERSION));
 		old_ver_edt->setText(ext->getVersion(Extension::OLD_VERSION));
 
-		handles_type_chk->setEnabled(!ext->handlesType());
+		handles_type_chk->setEnabled(false);
 		handles_type_chk->setChecked(ext->handlesType());
 	}
 }

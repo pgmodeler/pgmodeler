@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="extension_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -73,6 +82,9 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>This attribute cannot be changed once the object is created.</string>
      </property>
      <property name="text">
       <string>Handles data type</string>

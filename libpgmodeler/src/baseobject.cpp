@@ -61,7 +61,6 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
 	 are respectively assigned to objects of classes Role, Tablespace
 	 DBModel, Schema, Collation, Function and Type */
-//unsigned BaseObject::global_id=60000;
 unsigned BaseObject::global_id=30000;
 
 BaseObject::BaseObject(void)
@@ -152,6 +151,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
+		is_upper=(name.indexOf('-')>=0 && !is_operator);
 
 		i=0;
 		while(i < qtd && !is_upper)
@@ -245,7 +245,7 @@ bool BaseObject::isValidName(const QString &name)
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
-				 chr == '_')
+				 chr == '_' || chr == '-')
 			{
 				valid=true;
 				i++;

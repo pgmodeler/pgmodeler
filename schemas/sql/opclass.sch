@@ -8,8 +8,8 @@
 [CREATE OPERATOR CLASS ] @{name} 
 %if @{default} %then [ DEFAULT ] %end
 
-[FOR TYPE ] @{type} $br
-[USING ] @{index-type} 
+[ FOR TYPE ] @{type} $br
+[ USING ] @{index-type}
 
 %if @{family} %then [ FAMILY ] @{family} %end
 [ AS] $br

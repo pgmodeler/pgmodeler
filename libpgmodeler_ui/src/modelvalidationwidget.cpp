@@ -84,8 +84,8 @@ void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conn
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
-	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr;
-	QLabel *label=new QLabel, *label1=nullptr;
+	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
+	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
 	vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
@@ -154,7 +154,6 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		refs=val_info.getReferences();
 		while(!refs.empty())
 		{
-
 			item1=new QTreeWidgetItem(item);
 			label1=new QLabel;
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
@@ -162,11 +161,26 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 			if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 			{
+				TableObject *tab_obj=dynamic_cast<TableObject *>(refs.back());
 				ref_name=refs.back()->getName(true);
 
 				//If the referrer object is a table object, concatenates the parent table name
-				if(dynamic_cast<TableObject *>(refs.back()))
+				if(tab_obj)
+				{
 					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + "." + ref_name;
+
+					if(tab_obj->isAddedByRelationship())
+					{
+						QPalette pal;
+						item2=new QTreeWidgetItem(item1);
+						label2=new QLabel;
+						pal.setColor(QPalette::Text, QColor(255,0,0));
+						label2->setPalette(pal);
+						label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
+						output_trw->setItemWidget(item2, 0, label2);
+						item1->setExpanded(true);
+					}
+				}
 
 				label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
 												.arg(Utf8String::create(ref_name).remove("\""))
@@ -298,8 +312,18 @@ void ModelValidationWidget::updateProgress(int prog, QString msg)
 	}
 	else if(!msg.isEmpty())
 	{
+		int idx=msg.indexOf('`');
 		item=new QTreeWidgetItem;
 		label=new QLabel;
+
+		if(idx > 0)
+		{
+			msg.replace("`","<strong>");
+			msg.replace("'","</strong>");
+			msg.replace(" ("," <em>(");
+			msg.replace(")",")</em>");
+		}
+
 		label->setText(msg);
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
 		output_trw->addTopLevelItem(item);
