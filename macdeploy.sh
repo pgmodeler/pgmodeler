@@ -62,7 +62,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make -j5  >> $LOG 2>&1
+make   >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
