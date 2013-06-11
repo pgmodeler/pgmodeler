@@ -43,7 +43,7 @@ Several changes were introduced in pgModeler 0.5.0 mading some tag on model file
 * Remove values ```greater-op```, ```less-op```, ```sort-op``` or ```sort2-op``` from ```ref-type``` attribute from ```<operator>``` tags.
 * Remove ```sysid```attribute from ```<role>``` tags.
 * Replace ```<parameter>``` tag by ```<typeattrib>``` on ```<usertype>``` tags.
-* Remove ```auto-suffix```, ```src-suffix``` and ```dst-suffix``` from ```<relationship>``` tags.
+* Remove ```auto-sufix```, ```src-sufix``` and ```dst-sufix``` from ```<relationship>``` tags.
 
 After that you can try to reload your model. Probably a second problem can occurr: broken references between objects. As the model validation was introduced on pgModeler 0.5.0 the object references are not checked during loading time anymore. Instead the user needs to validate the model every time before saving it.
 
@@ -52,9 +52,8 @@ As a collateral effect loading older models can generate several errors like "Ob
 MacOSX Notes
 ------------
 
-* The port to C++11 and Qt5 raised an undesirable side effect on splash screen that appears glitch on this system. This does not compromise the execution and will be fixed on future releases.
 * Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
-* As on the other systems it's possible to run pgModeler from shell but using the following command: ```open pgmodeler.app --args [MODULE] [ARGS]``` where ```MODULE``` can be ```pgmodeler | pgmodeler-cli | crashhandler``` and ```ARGS``` are additional arguments passed to modules (e.g. CLI arguments)
+* To use pgmodeler-cli command you must call it by executing the following command inside the "pgmodeler.app/Contents/MacOS" path: ```./startapp pgmodeler-cli [PARAMS]```
 
 Change Log
 ----------
