@@ -5,9 +5,14 @@ QMAKE_ROOT=$QT_ROOT/bin
 MINGW_ROOT=/c/Qt/Qt5.0.2/Tools/MinGW/bin
 PGSQL_ROOT=/c/PostgreSQL/9.2/bin
 QMAKE_ARGS="-r -spec win32-g++"
-DEPLOY_VER=$1
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
+
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
+DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
+
 PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
@@ -50,7 +55,7 @@ DEP_PLUGINS="imageformats/qgif.dll \
 			 imageformats/qwbmp.dll \
 			 platforms/qwindows.dll \
 			 printsupport/windowsprintersupport.dll"
-			 
+		 
 export PATH=$QMAKE_ROOT:$MINGW_ROOT:$PATH
 
 clear
@@ -58,13 +63,6 @@ echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
-
-if [ -z $DEPLOY_VER ]; then
-  echo
-  echo "** Deploy version not specified!"
-  echo
-  exit 1
-fi
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -91,6 +89,7 @@ fi
 
 
 echo
+echo "Deploying version: $DEPLOY_VER"
 echo "Cleaning previous compilation..."
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1

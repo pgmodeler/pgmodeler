@@ -73,7 +73,7 @@ else
 fi
 
 echo
-echo "Deploying version $DEPLOY_VER..."
+echo "Deploying version: $DEPLOY_VER"
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
