@@ -3,25 +3,21 @@
 USR=`whoami`
 QT_ROOT=/Users/$USR/Qt5.0.2/5.0.2/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang-libc++"
-DEPLOY_VER=$1
 LOG=macdeploy.log
 PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
 BUNDLE=$APPNAME.app
 
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=${DEPLOY_VER/\",/}
+
 clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
-
-if [ -z $DEPLOY_VER ]; then
-  echo
-  echo "** Deploy version not specified!"
-  echo
-  exit 1
-fi
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
@@ -47,6 +43,7 @@ else
 fi
 
 echo
+echo "Deploying version $DEPLOY_VER..."
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
