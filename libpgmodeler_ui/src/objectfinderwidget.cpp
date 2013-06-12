@@ -161,6 +161,8 @@ void ObjectFinderWidget::editObject(void)
 			model_wgt->configurePopupMenu(vect);
 			model_wgt->editObject();
 		}
+
+		selected_obj=nullptr;
 	}
 }
 

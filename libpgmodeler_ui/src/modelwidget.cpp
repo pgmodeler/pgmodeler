@@ -1312,10 +1312,13 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				column_wgt->show();
 				res=(column_wgt->result()==QDialog::Accepted);
 
-				if(col)
-					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
-				else
-					db_model->validateRelationships();
+				if(res==QDialog::Accepted)
+				{
+					if(col)
+						db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
+					else
+						db_model->validateRelationships();
+				}
 			break;
 
 			case OBJ_CONSTRAINT:
@@ -1325,10 +1328,13 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				constraint_wgt->show();
 				res=(constraint_wgt->result()==QDialog::Accepted);
 
-				if(constr && parent_obj->getObjectType()==OBJ_TABLE)
-					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
-				else
-					db_model->validateRelationships();
+				if(res==QDialog::Accepted)
+				{
+					if(constr && parent_obj->getObjectType()==OBJ_TABLE)
+						db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
+					else
+						db_model->validateRelationships();
+				}
 			break;
 
 			case OBJ_RULE:
