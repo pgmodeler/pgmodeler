@@ -64,10 +64,18 @@ v0.5.1_r1
 <em>Estimated release date: June 14, 2013</em>
 
 * [New] Added deployment scripts on all platforms to compile and pack pgModeler. Note: On Windows the script must run on GNU environment port like Cygwin or MingW.
+* [New] Added an special field to columns to easily identify which relationship generated it. (only for columns added by relationship)
+* [Change] Model overview widget is now shown always stay on top.
 * [Change] Minor improvements on syntax highlighter.
 * [Change] Improvements on model validation widget. Output panel now shows the currently validated object (SQL validation).
+* [Fix] Removed from user defined type DTD the mandatory use of collation object.
+* [Fix] Collation's SQL generation corrected. Encoding is appended to LOCALE keyword.
+* [Fix] Corrected the wrongly used COLLATION keyword on user defined type.
+* [Fix] Corrected a bug that was crashing pgModeler when selecting relationship created objects on object finder result list.
 * [Fix] Extension object naming corrected.
 * [Fix] Extension object removal corrected.
+* [Fix] Corrected a bug on CLI that was not finding dependencies paths correctly.
+* [Fix] Minor fix on task progress widget on MacOSX.
 * [Fix] Splash screen corrected on MacOSX
 * [Fix] Corrected a bug on relationships that was crashing pgModeler when specifying column name pattern.
 
