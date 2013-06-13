@@ -242,6 +242,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
 	action_highlight_object->setToolTip(trUtf8("Clears the current selection and centers the model view on the selected object."));
 
+	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
+	action_parent_rel->setToolTip(trUtf8("Opens the properties form of the column's parent relationship."));
+
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
@@ -286,6 +289,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
+	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2589,6 +2593,14 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 				popup_menu.addAction(action_deps_refs);
+
+			if(tab_obj && tab_obj->isAddedByRelationship() &&
+				 tab_obj->getObjectType()==OBJ_COLUMN)
+			{
+				action_parent_rel->setData(QVariant::fromValue<void *>(dynamic_cast<Column *>(tab_obj)->getParentRelationship()));
+				popup_menu.addAction(action_parent_rel);
+			}
+
 		}
 	}
 

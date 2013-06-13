@@ -192,6 +192,9 @@ void TableObjectView::configureObject(void)
 
 		if(column)
 		{
+			if(column->isAddedByRelationship())
+				tooltip+=trUtf8("\nRelationship: %1").arg(Utf8String::create(column->getParentRelationship()->getName()));
+
 			str_constr=this->getConstraintString(column);
 
 			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
