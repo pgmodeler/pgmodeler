@@ -248,9 +248,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 						ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
 																		 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 																		 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
-																		 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,	OBJ_ROLE,
-																		 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,	OBJ_TYPE,
-																		 OBJ_TABLESPACE, OBJ_DATABASE, OBJ_COLLATION, OBJ_EXTENSION };
+																		 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
+																		 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
+																		 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
 						unsigned count=sizeof(obj_types)/sizeof(ObjectType);
 						int pos=0;
 
