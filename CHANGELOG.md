@@ -4,7 +4,7 @@ Changelog
 v0.5.1_r1
 ---------
 <em>Codename: <strong>Lovely Duda</strong></em><br/>
-<em>Estimated release date: June 14, 2013</em>
+<em>Release date: June 13, 2013</em>
 
 * [New] Added deployment scripts on all platforms to compile and pack pgModeler. Note: On Windows the script must run on GNU environment port like Cygwin or MingW.
 * [New] Added an special field to columns to easily identify which relationship generated it. (only for columns added by relationship)
