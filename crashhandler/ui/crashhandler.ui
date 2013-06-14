@@ -311,6 +311,7 @@
          </property>
          <property name="font">
           <font>
+           <family>DejaVu Sans Mono</family>
            <pointsize>8</pointsize>
            <italic>true</italic>
           </font>

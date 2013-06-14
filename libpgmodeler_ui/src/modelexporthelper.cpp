@@ -350,6 +350,8 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, DBConnection &co
  //In case of error during the export all created object are removed
  if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)
  {
+	 emit s_progressUpdated(progress, trUtf8("Destroying created objects..."));
+
 	 //Dropping the database
 	 if(db_created)
 		 conn.executeDDLCommand(drop_cmd.arg(db_model->getSQLName()).arg(db_model->getName(true)));
