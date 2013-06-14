@@ -112,7 +112,8 @@ class ModelWidget: public QWidget {
 						*action_quick_actions,
 						*action_sel_sch_children,
 						*action_highlight_object,
-						*action_parent_rel;
+						*action_parent_rel,
+						*action_insert_sql;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -265,6 +266,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Adds a new object onto the selected model/table/schema
 		void addNewObject(void);
+
+		//! \brief Triggers the sql insertion widget for the current database model
+		void insertSQLCommands(void);
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
 		void configureObjectSelection(void);

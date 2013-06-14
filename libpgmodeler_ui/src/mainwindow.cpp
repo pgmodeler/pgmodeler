@@ -51,6 +51,7 @@
 #include "configurationform.h"
 #include "modelexportform.h"
 #include "objectrenamewidget.h"
+#include "sqlinsertwidget.h"
 
 //Global forms and widgets
 AboutForm *about_form=nullptr;
@@ -88,6 +89,7 @@ ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
 ModelExportForm *export_form=nullptr;
 ObjectRenameWidget *objectrename_wgt=nullptr;
+SQLInsertWidget *sqlinsert_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -165,6 +167,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
+		sqlinsert_wgt=new SQLInsertWidget(this);
 	}
 	catch(Exception &e)
 	{
@@ -691,6 +694,7 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_edit);
 		general_tb->addAction(current_model->action_source_code);
+		general_tb->addAction(current_model->action_insert_sql);
 		general_tb->addAction(current_model->action_select_all);
 
 		edit_menu->addAction(current_model->action_copy);

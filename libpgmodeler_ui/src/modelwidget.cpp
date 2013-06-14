@@ -48,6 +48,7 @@
 #include "permissionwidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
+#include "sqlinsertwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -80,6 +81,7 @@ extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
+extern SQLInsertWidget *sqlinsert_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -245,6 +247,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 	action_parent_rel->setToolTip(trUtf8("Opens the properties form of the column's parent relationship."));
 
+	action_insert_sql=new QAction(QIcon(QString(":/icones/icones/sqlinsert.png")), trUtf8("Insert SQL"), this);
+	action_insert_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
+
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
@@ -290,6 +295,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
+	connect(action_insert_sql, SIGNAL(triggered(bool)), this, SLOT(insertSQLCommands(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2325,6 +2331,11 @@ void ModelWidget::removeObjects(void)
 	}
 }
 
+void ModelWidget::insertSQLCommands(void)
+{
+	sqlinsert_wgt->show(this->db_model);
+}
+
 void ModelWidget::showObjectMenu(void)
 {
 	BaseTableView *tab=nullptr;
@@ -2363,6 +2374,7 @@ void ModelWidget::configureObjectMenu(BaseObject *object)
 void ModelWidget::disableModelActions(void)
 {
 	action_source_code->setEnabled(false);
+	action_insert_sql->setEnabled(false);
 	action_edit->setEnabled(false);
 	action_protect->setEnabled(false);
 	action_unprotect->setEnabled(false);
@@ -2515,8 +2527,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 			action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
+
 			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
+			popup_menu.addAction(action_insert_sql);
 
 			if(db_model->isProtected())
 				popup_menu.addAction(action_unprotect);

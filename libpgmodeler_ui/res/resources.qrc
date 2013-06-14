@@ -152,6 +152,7 @@
         <file>icones/objselect.png</file>
         <file>icones/loadrecent.png</file>
         <file>icones/filter.png</file>
+        <file>icones/sqlinsert.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
