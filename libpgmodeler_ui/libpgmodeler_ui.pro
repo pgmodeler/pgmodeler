@@ -72,7 +72,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/validationinfo.cpp \
 	   src/extensionwidget.cpp \
 	   src/objectfinderwidget.cpp \
-    src/sqlinsertwidget.cpp
+    src/sqlappendwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -135,7 +135,7 @@ HEADERS += src/mainwindow.h \
 	   src/validationinfo.h \
 	   src/extensionwidget.h \
 	   src/objectfinderwidget.h \
-    src/sqlinsertwidget.h
+    src/sqlappendwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -190,4 +190,4 @@ FORMS += ui/mainwindow.ui \
 	 ui/modelvalidationwidget.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
-    ui/sqlinsertwidget.ui
+    ui/sqlappendwidget.ui

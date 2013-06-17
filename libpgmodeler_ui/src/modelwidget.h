@@ -268,7 +268,7 @@ class ModelWidget: public QWidget {
 		void addNewObject(void);
 
 		//! \brief Triggers the sql insertion widget for the current database model
-		void insertSQLCommands(void);
+		void appendSQL(void);
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
 		void configureObjectSelection(void);

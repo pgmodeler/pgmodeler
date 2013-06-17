@@ -82,6 +82,9 @@ class TableObject: public BaseObject {
 		 possible relationship types) */
 		bool isAddedByRelationship(void);
 
+		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
+		static bool isTableObject(ObjectType type);
+
 		void operator = (TableObject &object);
 
 		friend class Relationship;

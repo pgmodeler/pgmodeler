@@ -767,7 +767,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	//Checks if the name contains ", if so, the search will consider formatted names
 	format=name.contains("\"");
 
-	if(PgModelerNS::isTableObject(obj_type))
+	if(TableObject::isTableObject(obj_type))
 	{
 		vector<TableObject *>::iterator itr, itr_end;
 		vector<TableObject *> *obj_list=nullptr;
@@ -967,7 +967,7 @@ unsigned Table::getAncestorTableCount(void)
 
 unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 {
-	if(PgModelerNS::isTableObject(obj_type) || obj_type==OBJ_TABLE)
+	if(TableObject::isTableObject(obj_type) || obj_type==OBJ_TABLE)
 	{
 		if(obj_type==OBJ_TABLE)
 		{

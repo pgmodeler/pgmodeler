@@ -458,7 +458,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	else
 		obj_name=operation->pool_obj->getName(true);
 
-	if(PgModelerNS::isTableObject(obj_type))
+	if(TableObject::isTableObject(obj_type))
 	{
 		obj_name=operation->parent_obj->getName(true) + "." + obj_name;
 	}

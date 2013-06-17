@@ -258,7 +258,7 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 
 void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
-	if(PgModelerNS::isTableObject(obj_type) ||
+	if(TableObject::isTableObject(obj_type) ||
 		 obj_type==BASE_OBJECT || obj_type==BASE_RELATIONSHIP ||
 		 obj_type==OBJ_DATABASE)
 		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -7599,7 +7599,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	//If there is some table object types on the type list, gather tables and views
 	while(itr_tp!=types.end() && (!inc_views || !inc_tabs))
 	{
-		if(!inc_tabs && PgModelerNS::isTableObject(*itr_tp))
+		if(!inc_tabs && TableObject::isTableObject(*itr_tp))
 		{
 			tables.insert(tables.end(), getObjectList(OBJ_TABLE)->begin(), getObjectList(OBJ_TABLE)->end());
 			inc_tabs=true;
@@ -7623,7 +7623,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 
 		if(obj_type==OBJ_DATABASE)
 			objs.push_back(this);
-		else if(!PgModelerNS::isTableObject(obj_type))
+		else if(!TableObject::isTableObject(obj_type))
 			objs.insert(objs.end(), getObjectList(obj_type)->begin(), getObjectList(obj_type)->end());
 		else
 		{

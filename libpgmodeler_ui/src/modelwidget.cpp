@@ -48,7 +48,7 @@
 #include "permissionwidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
-#include "sqlinsertwidget.h"
+#include "sqlappendwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -81,7 +81,7 @@ extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
-extern SQLInsertWidget *sqlinsert_wgt;
+extern SQLAppendWidget *sqlappend_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -247,7 +247,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 	action_parent_rel->setToolTip(trUtf8("Opens the properties form of the column's parent relationship."));
 
-	action_insert_sql=new QAction(QIcon(QString(":/icones/icones/sqlinsert.png")), trUtf8("Insert SQL"), this);
+	action_insert_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Insert SQL"), this);
 	action_insert_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
 
 	//Alocatting the object creation actions
@@ -295,7 +295,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
-	connect(action_insert_sql, SIGNAL(triggered(bool)), this, SLOT(insertSQLCommands(void)));
+	connect(action_insert_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -519,7 +519,7 @@ void ModelWidget::addNewObject(void)
 		uses as parent object the selected object, because the user only can add
 		these types after select a table or schema, respectively */
 		if(selected_objects.size()==1 &&
-			 (PgModelerNS::isTableObject(obj_type) ||
+			 (TableObject::isTableObject(obj_type) ||
 				selected_objects[0]->getObjectType()==OBJ_SCHEMA))
 			parent_obj=selected_objects[0];
 
@@ -1169,7 +1169,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			if(object && obj_type!=object->getObjectType())
 				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			//If the user try to call the table object form without specify a parent object
-			else if(!parent_obj && PgModelerNS::isTableObject(obj_type))
+			else if(!parent_obj && TableObject::isTableObject(obj_type))
 				throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
@@ -2331,9 +2331,9 @@ void ModelWidget::removeObjects(void)
 	}
 }
 
-void ModelWidget::insertSQLCommands(void)
+void ModelWidget::appendSQL(void)
 {
-	sqlinsert_wgt->show(this->db_model);
+	sqlappend_wgt->show();
 }
 
 void ModelWidget::showObjectMenu(void)

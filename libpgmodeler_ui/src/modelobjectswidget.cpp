@@ -181,7 +181,7 @@ void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 		if(obj_type!=OBJ_DATABASE)
 			visible_objs_map[OBJ_DATABASE]=true;
 
-		if(PgModelerNS::isTableObject(obj_type))
+		if(TableObject::isTableObject(obj_type))
 			visible_objs_map[OBJ_TABLE]=visible_objs_map[OBJ_SCHEMA]=true;
 
 		if(BaseObject::acceptsSchema(obj_type))

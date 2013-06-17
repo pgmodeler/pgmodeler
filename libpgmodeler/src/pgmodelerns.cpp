@@ -139,9 +139,3 @@ void PgModelerNS::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, Object
 		break;
 	}
 }
-
-bool PgModelerNS::isTableObject(ObjectType type)
-{
-	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
-				 type==OBJ_RULE || type==OBJ_INDEX);
-}

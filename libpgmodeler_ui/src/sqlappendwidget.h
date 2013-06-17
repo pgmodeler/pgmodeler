@@ -18,34 +18,28 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class SQLInsertWidget
+\class SQLAppendWidget
 \brief Widget that handles insertion of free SQL commands on database model definition
 */
 
-#ifndef SQL_INSERT_WIDGET_H
-#define SQL_INSERT_WIDGET_H
+#ifndef SQL_APPEND_WIDGET_H
+#define SQL_APPEND_WIDGET_H
 
-#include <QWidget>
-#include "ui_sqlinsertwidget.h"
-#include "baseform.h"
-#include "databasemodel.h"
+#include "baseobjectwidget.h"
+#include "ui_sqlappendwidget.h"
 
-class SQLInsertWidget: public QWidget, public Ui::SQLInsertWidget {
+class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 	private:
 		Q_OBJECT
-		BaseForm parent_form;
-		DatabaseModel *db_model;
 
-		void hideEvent(QHideEvent *);
+		//void hideEvent(QHideEvent *);
 
 	public:
-		SQLInsertWidget(QWidget *parent=0);
+		SQLAppendWidget(QWidget *parent=0);
+		void setAttributes(DatabaseModel *model, BaseObject *object);
 		
 	signals:
-		
-	public slots:
-		void show(DatabaseModel *db_model);
-		void close(void);
+
 };
 
 #endif
