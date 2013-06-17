@@ -326,8 +326,10 @@ class BaseObject {
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
 
 		/*! \brief Returns the valid object types in a vector. The types
-		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector */
-		static vector<ObjectType> getObjectTypes(void);
+		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
+		By default table objects (columns, trigger, constraints, etc) are included. To
+		avoid the insertion of these types set the boolean param to false. */
+		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
 
 		friend class DatabaseModel;
 };

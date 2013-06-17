@@ -18,32 +18,45 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class SQLAppendWidget
-\brief Widget that handles insertion of free SQL commands into object's definition
+\class CodeCompletionWidget
+\brief Widget that handles the code completion (keywords and model object names) on a field that has
+the syntax highlighter installed on it.
 */
 
-#ifndef SQL_APPEND_WIDGET_H
-#define SQL_APPEND_WIDGET_H
+#ifndef CODE_COMPLETION_WIDGET_H
+#define CODE_COMPLETION_WIDGET_H
 
-#include "baseobjectwidget.h"
-#include "codecompletionwidget.h"
-#include "ui_sqlappendwidget.h"
+#include <QWidget>
+#include "syntaxhighlighter.h"
+#include "databasemodel.h"
 
-class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
+class CodeCompletionWidget: public QWidget
+{
 	private:
 		Q_OBJECT
 
-		SyntaxHighlighter *sqlcode_hl;
-		CodeCompletionWidget *sqlcode_cp;
+		QSyntaxHighlighter *syntax_hl;
 
-		//void hideEvent(QHideEvent *);
+		QListWidget *name_list;
+
+		QStringList keywords;
+
+		QTextCursor new_txt_cur, prev_txt_cur;
+
+		QString word;
+
+		DatabaseModel *db_model;
+
+		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		SQLAppendWidget(QWidget *parent=0);
-		void setAttributes(DatabaseModel *model, BaseObject *object);
-		
-	signals:
+		CodeCompletionWidget(SyntaxHighlighter *syntax_hl, const QString &keywords_grp="keywords");
 
+		void setModel(DatabaseModel *db_model);
+
+	public slots:
+		void show(void);
+		void close(void);
 };
 
 #endif

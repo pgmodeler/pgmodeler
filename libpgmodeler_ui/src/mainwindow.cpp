@@ -694,7 +694,6 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_edit);
 		general_tb->addAction(current_model->action_source_code);
-		general_tb->addAction(current_model->action_insert_sql);
 		general_tb->addAction(current_model->action_select_all);
 
 		edit_menu->addAction(current_model->action_copy);

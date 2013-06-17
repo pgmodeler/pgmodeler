@@ -18,13 +18,6 @@
 
 #include "syntaxhighlighter.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
-{
-	this->auto_rehighlight=auto_rehighlight;
-	this->single_line_mode=false;
-	configureAttributes();
-}
-
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
 	parent->setAcceptRichText(true);
@@ -660,5 +653,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
+}
+
+vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+{
+	map<QString, vector<QRegExp> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+
+	if(expr_map->count(group_name) > 0)
+		return(expr_map->at(group_name));
+	else
+		return(vector<QRegExp>());
 }
 

@@ -113,7 +113,7 @@ class ModelWidget: public QWidget {
 						*action_sel_sch_children,
 						*action_highlight_object,
 						*action_parent_rel,
-						*action_insert_sql;
+						*action_append_sql;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;

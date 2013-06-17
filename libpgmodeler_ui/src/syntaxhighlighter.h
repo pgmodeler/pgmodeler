@@ -142,11 +142,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		/*! \brief Install the syntax highlighter in a QTextDocument. The boolean param is used to
-		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
-		every time he modifies the text */
-		SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight);
-
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
@@ -157,6 +152,10 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns if the configuration were successfully loaded
 		bool isConfigurationLoaded(void);
+
+		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
+		that the final expressions must be returned instead of initial expression (default) */
+		vector<QRegExp> getExpressions(const QString &group_name, bool final_expr=false);
 
 	public slots:
 		//! \brief Rehighlight all the document

@@ -56,52 +56,7 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Puts an INSERT command template at current cursor position.</string>
-        </property>
-        <property name="text">
-         <string>&amp;INSERT</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Puts an DELETE command template at current cursor position.</string>
-        </property>
-        <property name="text">
-         <string>&amp;DELETE</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <widget class="QPushButton" name="pushButton_2">
         <property name="font">
          <font>
@@ -117,7 +72,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="1" column="4">
        <widget class="QPushButton" name="pushButton_4">
         <property name="font">
          <font>
@@ -133,7 +88,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="1" column="6">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -146,12 +101,68 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="0" colspan="6">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Puts an INSERT command template at current cursor position.</string>
+        </property>
+        <property name="text">
+         <string>&amp;INSERT</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Puts an DELETE command template at current cursor position.</string>
+        </property>
+        <property name="text">
+         <string>&amp;DELETE</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0" colspan="7">
        <widget class="QTextEdit" name="sqlcode_txt">
         <property name="font">
          <font>
           <family>DejaVu Sans Mono</family>
          </font>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="7">
+       <widget class="QCheckBox" name="end_of_model_chk">
+        <property name="toolTip">
+         <string>Append the SQL code at the very end of model definition.
+Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE command.</string>
+        </property>
+        <property name="text">
+         <string>Append at end of model definition.</string>
         </property>
        </widget>
       </item>

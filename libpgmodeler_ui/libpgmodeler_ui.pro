@@ -72,7 +72,8 @@ SOURCES += src/mainwindow.cpp \
 	   src/validationinfo.cpp \
 	   src/extensionwidget.cpp \
 	   src/objectfinderwidget.cpp \
-    src/sqlappendwidget.cpp
+	   src/sqlappendwidget.cpp \
+	   src/codecompletionwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -135,7 +136,8 @@ HEADERS += src/mainwindow.h \
 	   src/validationinfo.h \
 	   src/extensionwidget.h \
 	   src/objectfinderwidget.h \
-    src/sqlappendwidget.h
+    src/sqlappendwidget.h \
+    src/codecompletionwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \

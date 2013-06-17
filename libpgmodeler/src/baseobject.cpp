@@ -742,16 +742,26 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2)
 	}
 }
 
-vector<ObjectType> BaseObject::getObjectTypes(void)
+vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
 	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_CONVERSION, OBJ_DATABASE,
-											 OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_INDEX,
-											 OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
-											 OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_RULE, OBJ_SCHEMA, OBJ_SEQUENCE,
-											 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TRIGGER,
+											 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION,
+											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
+											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
 											 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
-	return(vector<ObjectType>(types, types + sizeof(types) / sizeof(ObjectType)));
+	vector<ObjectType> vet_types(types, types + sizeof(types) / sizeof(ObjectType));
+
+	if(inc_table_objs)
+	{
+		vet_types.push_back(OBJ_COLUMN);
+		vet_types.push_back(OBJ_CONSTRAINT);
+		vet_types.push_back(OBJ_TRIGGER);
+		vet_types.push_back(OBJ_RULE);
+		vet_types.push_back(OBJ_INDEX);
+	}
+
+	return(vet_types);
 }
 
 void BaseObject::operator = (BaseObject &obj)

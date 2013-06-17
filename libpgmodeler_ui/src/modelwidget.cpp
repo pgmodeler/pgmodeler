@@ -247,8 +247,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 	action_parent_rel->setToolTip(trUtf8("Opens the properties form of the column's parent relationship."));
 
-	action_insert_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Insert SQL"), this);
-	action_insert_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
+	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
+	action_append_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
 
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
@@ -295,7 +295,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
-	connect(action_insert_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
+	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -382,13 +382,10 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 			//Get the graphical representation of the current object
 			obj=dynamic_cast<BaseObjectView *>(obj_nav_list.at(obj_nav_idx)->getReceiverObject());
 
-			//If the object is visible selects it
-			//if(obj && obj->isVisible())
-			//{
 				scene->clearSelection();
 				obj->setSelected(true);
 				viewport->centerOn(obj);
-			//}
+
 
 			//Navigate forward if the right key is pressed
 			if(event->key()==Qt::Key_Right)
@@ -502,7 +499,6 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 	}
 
 	this->modified=true;
-	//this->invalidated=true;
 }
 
 void ModelWidget::addNewObject(void)
@@ -1552,9 +1548,6 @@ void ModelWidget::editPermissions(void)
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-	//if(obj->isSystemObject() /* isReservedObject(obj) */)
-	//	throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	permission_wgt->setAttributes(this->db_model, nullptr, obj);
 	permission_wgt->show();
 	this->setModified(true);
@@ -2333,6 +2326,10 @@ void ModelWidget::removeObjects(void)
 
 void ModelWidget::appendSQL(void)
 {
+	QAction *act=dynamic_cast<QAction *>(sender());
+	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+
+	sqlappend_wgt->setAttributes(db_model, obj);
 	sqlappend_wgt->show();
 }
 
@@ -2374,7 +2371,6 @@ void ModelWidget::configureObjectMenu(BaseObject *object)
 void ModelWidget::disableModelActions(void)
 {
 	action_source_code->setEnabled(false);
-	action_insert_sql->setEnabled(false);
 	action_edit->setEnabled(false);
 	action_protect->setEnabled(false);
 	action_unprotect->setEnabled(false);
@@ -2477,6 +2473,12 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
 
+		if(!TableObject::isTableObject(obj->getObjectType()))
+		{
+			action_append_sql->setData(QVariant::fromValue<void *>(obj));
+			quick_actions_menu.addAction(action_append_sql);
+		}
+
 		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
 	}
@@ -2530,7 +2532,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
-			popup_menu.addAction(action_insert_sql);
 
 			if(db_model->isProtected())
 				popup_menu.addAction(action_unprotect);
