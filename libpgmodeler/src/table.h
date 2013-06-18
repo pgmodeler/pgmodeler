@@ -238,6 +238,9 @@ class Table: public BaseTable {
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
 		Constraint *getPrimaryKey(void);
 
+		//! \brief Returns all child objects of the table
+		vector<BaseObject *> getObjects(void);
+
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
 		is used to filter the search, including only the foreign keys that references the specified table */

@@ -110,10 +110,13 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 						word_delimiters,
 
 						//! \brief Stores the chars ignored by the highlighter during the word reading
-						ignored_chars;
+						ignored_chars,
 
-						//! \brief Current block in which the highlighter is positioned
-						int current_block;
+						//! \brief Stores the string that triggers the code completion
+						completion_trigger;
+
+		//! \brief Current block in which the highlighter is positioned
+		int current_block;
 
 		/*! \brief Multiline info count on the current block. This attribute is used to know when
 		the highlighter must call the rehighlight method to highlight all the document again */
@@ -156,6 +159,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
 		that the final expressions must be returned instead of initial expression (default) */
 		vector<QRegExp> getExpressions(const QString &group_name, bool final_expr=false);
+
+		//! \brief Returns the current configured code completion trigger string
+		QString getCompletionTrigger(void);
 
 	public slots:
 		//! \brief Rehighlight all the document

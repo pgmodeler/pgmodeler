@@ -1274,3 +1274,15 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	}
 }
 
+vector<BaseObject *> Table::getObjects(void)
+{
+	vector<BaseObject *> list;
+
+	list.assign(columns.begin(), columns.end());
+	list.insert(list.end(), constraints.begin(), constraints.end());
+	list.insert(list.end(), triggers.begin(), triggers.end());
+	list.insert(list.end(), rules.begin(), rules.end());
+	list.insert(list.end(), indexes.begin(), indexes.end());
+
+	return(list);
+}

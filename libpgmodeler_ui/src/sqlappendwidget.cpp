@@ -23,6 +23,8 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 
 		font=name_edt->font();
 		font.setItalic(true);
+
+		name_edt->setReadOnly(true);
 		comment_edt->setFont(font);
 		comment_edt->setReadOnly(true);
 		comment_lbl->setText(trUtf8("Type:"));
@@ -48,6 +50,7 @@ void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		{
 			BaseObjectWidget::setAttributes(model, object, nullptr);
 
+			sqlcode_txt->setFocus();
 			sqlcode_cp->setModel(model);
 			end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 			comment_edt->setText(object->getTypeName());

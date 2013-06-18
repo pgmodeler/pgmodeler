@@ -459,9 +459,13 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		if(this->schema && prepend_schema)
 			aux_name=formatName(this->schema->getName()) + "." + aux_name;
 
-		return(aux_name);
+		if(!aux_name.isEmpty())
+			return(aux_name);
+		else
+			return(this->obj_name);
 	}
-	else return(this->obj_name);
+	else
+		return(this->obj_name);
 }
 
 QString BaseObject::getComment(void)

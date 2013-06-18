@@ -791,3 +791,12 @@ void View::operator = (View &view)
 	this->cte_expression=view.cte_expression;
 }
 
+vector<BaseObject *> View::getObjects(void)
+{
+	vector<BaseObject *> list;
+
+	list.assign(triggers.begin(), triggers.end());
+	list.insert(list.end(), rules.begin(), rules.end());
+
+	return(list);
+}

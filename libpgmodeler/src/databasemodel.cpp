@@ -513,6 +513,32 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 	return(sel_list);
 }
 
+vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
+{
+	vector<BaseObject *> *obj_list=nullptr, sel_list;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType types[]={	OBJ_FUNCTION, OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
+												OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE, OBJ_CONVERSION,
+												OBJ_TYPE, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,	OBJ_EXTENSION };
+	unsigned i, count=sizeof(types)/sizeof(ObjectType);
+
+	for(i=0; i < count; i++)
+	{
+		obj_list=getObjectList(types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end)
+		{
+			if((*itr)->getSchema()==schema)
+				sel_list.push_back(*itr);
+			itr++;
+		}
+	}
+
+	return(sel_list);
+}
+
 BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
 {
 	BaseObject *object=nullptr;
@@ -7577,7 +7603,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	}
 }
 
-vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match)
+vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)
 {
 	vector<BaseObject *> list, objs;
 	vector<ObjectType>::iterator itr_tp=types.begin();
@@ -7651,11 +7677,20 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	while(!objs.empty())
 	{
 		//Quotes are removed from the name by default
-		obj_name=objs.back()->getName(true, true).remove('"');
+		if(format_obj_names)
+		{
+			if(TableObject::isTableObject(objs.back()->getObjectType()))
+				obj_name=dynamic_cast<TableObject *>(objs.back())->getParentTable()->getName(true);
+
+			obj_name+=objs.back()->getName(true, true);
+			obj_name.remove('"');
+		}
+		else
+			obj_name=objs.back()->getName();
 
 		//Try to match the name on the configured regexp
 		if((exact_match && regexp.exactMatch(obj_name)) ||
-			 (regexp.indexIn(obj_name) >= 0))
+			 (!exact_match && regexp.indexIn(obj_name) >= 0))
 			list.push_back(objs.back());
 
 		objs.pop_back();

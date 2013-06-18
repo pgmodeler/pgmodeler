@@ -207,7 +207,7 @@ class Function: public BaseObject {
 		/*! \brief Generates the function's signature. The 'format' parameter is used
 		 to adequately format the function and parameters names. By default
 		 this formating is always done. */
-		void createSignature(bool format=true);
+		void createSignature(bool format=true, bool prepend_schema=true);
 
 		//! \brief Returns the SQL / XML code definition for the function
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;

@@ -382,9 +382,10 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 			}
 
+
 			//If the word is not empty try to identify the group
 			if(!word.isEmpty())
-			{
+			{	
 				i1=i;
 				while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
 
@@ -486,6 +487,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						{
 							XMLParser::getElementAttributes(attribs);
 							ignored_chars=attribs[ParsersAttributes::VALUE];
+						}
+						else if(elem==ParsersAttributes::COMPLETION_TRIGGER)
+						{
+							XMLParser::getElementAttributes(attribs);
+							completion_trigger=attribs[ParsersAttributes::VALUE];
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -663,5 +669,10 @@ vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, boo
 		return(expr_map->at(group_name));
 	else
 		return(vector<QRegExp>());
+}
+
+QString SyntaxHighlighter::getCompletionTrigger(void)
+{
+	return(completion_trigger);
 }
 

@@ -393,7 +393,7 @@ QString Function::getSignature(void)
 	return(signature);
 }
 
-void Function::createSignature(bool format)
+void Function::createSignature(bool format, bool prepend_schema)
 {
 	QString str_param;
 	unsigned i, count;
@@ -405,7 +405,7 @@ void Function::createSignature(bool format)
 	str_param.remove(str_param.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format) + QString("(") + str_param + QString(")");
+	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
 }
 
 QString Function::getCodeDefinition(unsigned def_type)

@@ -152,8 +152,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Validates all the relationship, propagating all column modifications over the tables
 		void validateRelationships(void);
 
-		//! \brief Returns the list of objects that belongs to the passed schema
+		//! \brief Returns the list of specified object type that belongs to the passed schema
 		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
+
+		//! \brief Returns the list of objects (all types) that belongs to the passed schema
+		vector<BaseObject *> getObjects(BaseObject *schema);
 
 		//! \brief Returns the object index searching by its name
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -411,7 +414,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
-		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive=false, bool is_regexp=false, bool exact_match=false);
+		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names=true,
+																		 bool case_sensitive=false, bool is_regexp=false, bool exact_match=false);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

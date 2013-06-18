@@ -35,7 +35,7 @@ class CodeCompletionWidget: public QWidget
 	private:
 		Q_OBJECT
 
-		QSyntaxHighlighter *syntax_hl;
+		SyntaxHighlighter *syntax_hl;
 
 		QListWidget *name_list;
 
@@ -47,7 +47,17 @@ class CodeCompletionWidget: public QWidget
 
 		DatabaseModel *db_model;
 
+		BaseObject *last_sel_obj;
+
+		bool close_on_select;
+
+		QString expandObjectName(BaseObject *obj);
+
 		bool eventFilter(QObject *object, QEvent *event);
+
+		void populateNameList(vector<BaseObject *> &objects);
+
+		void show(void){}
 
 	public:
 		CodeCompletionWidget(SyntaxHighlighter *syntax_hl, const QString &keywords_grp="keywords");
@@ -55,7 +65,8 @@ class CodeCompletionWidget: public QWidget
 		void setModel(DatabaseModel *db_model);
 
 	public slots:
-		void show(void);
+		void updateList(void);
+		void popUp(void);
 		void close(void);
 };
 
