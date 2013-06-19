@@ -53,6 +53,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
+		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
+		expression_cp=new CodeCompletionWidget(expression_txt);
+
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
@@ -661,6 +664,9 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	}
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
+
+	expression_cp->configureCompletion(model, expression_hl);
+	cte_expression_cp->configureCompletion(model, cte_expression_hl);
 
 	op_list->startOperationChain();
 	operation_count=op_list->getCurrentSize();

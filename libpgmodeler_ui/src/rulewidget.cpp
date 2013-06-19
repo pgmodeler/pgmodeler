@@ -38,6 +38,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 																		GlobalAttributes::DIR_SEPARATOR +
 																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																		GlobalAttributes::CONFIGURATION_EXT);
+		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
@@ -103,6 +104,8 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, rule, parent_tab);
+
+	command_cp->configureCompletion(model, command_hl);
 
 	if(rule)
 	{

@@ -491,7 +491,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						else if(elem==ParsersAttributes::COMPLETION_TRIGGER)
 						{
 							XMLParser::getElementAttributes(attribs);
-							completion_trigger=attribs[ParsersAttributes::VALUE];
+
+							if(attribs[ParsersAttributes::VALUE].size() >= 1)
+								completion_trigger=attribs[ParsersAttributes::VALUE].at(0);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -671,7 +673,7 @@ vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, boo
 		return(vector<QRegExp>());
 }
 
-QString SyntaxHighlighter::getCompletionTrigger(void)
+QChar SyntaxHighlighter::getCompletionTrigger(void)
 {
 	return(completion_trigger);
 }

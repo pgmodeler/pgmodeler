@@ -7619,6 +7619,8 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 
 	if(is_regexp)
 		regexp.setPatternSyntax(QRegExp::RegExp2);
+	else if(exact_match)
+		regexp.setPatternSyntax(QRegExp::FixedString);
 	else
 		regexp.setPatternSyntax(QRegExp::Wildcard);
 
@@ -7689,11 +7691,13 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 			obj_name=objs.back()->getName();
 
 		//Try to match the name on the configured regexp
-		if((exact_match && regexp.exactMatch(obj_name)) ||
+		if((exact_match && pattern==obj_name) ||
+			 (exact_match && regexp.exactMatch(obj_name)) ||
 			 (!exact_match && regexp.indexIn(obj_name) >= 0))
 			list.push_back(objs.back());
 
 		objs.pop_back();
+		obj_name.clear();
 	}
 
 

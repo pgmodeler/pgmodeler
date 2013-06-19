@@ -37,6 +37,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		source_code_hl=new SyntaxHighlighter(source_code_txt, true);
+		source_code_cp=new CodeCompletionWidget(source_code_txt);
+
 		ret_type=new PgSQLTypeWidget(this);
 
 		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
@@ -356,6 +358,7 @@ void FunctionWidget::selectLanguage(void)
 		}
 
 		source_code_hl->rehighlight();
+		source_code_cp->configureCompletion(this->model, source_code_hl);
 	}
 }
 

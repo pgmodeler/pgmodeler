@@ -414,8 +414,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
-		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names=true,
-																		 bool case_sensitive=false, bool is_regexp=false, bool exact_match=false);
+		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
+																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

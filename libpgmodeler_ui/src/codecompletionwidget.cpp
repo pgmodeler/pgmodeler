@@ -18,18 +18,10 @@
 
 #include "codecompletionwidget.h"
 
-CodeCompletionWidget::CodeCompletionWidget(SyntaxHighlighter *syntax_hl, const QString &keywords_grp) : QWidget(dynamic_cast<QWidget *>(syntax_hl))
+CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
-	if(!syntax_hl)
+	if(!code_field_txt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
-
-	while(!exprs.empty())
-	{
-		keywords.push_front(exprs.back().pattern());
-		exprs.pop_back();
-	}
 
 	name_list=new QListWidget(this);
 	name_list->setWindowFlags(Qt::Popup);
@@ -40,65 +32,63 @@ CodeCompletionWidget::CodeCompletionWidget(SyntaxHighlighter *syntax_hl, const Q
 	font.setPointSizeF(8);
 	name_list->setFont(font);
 
-	syntax_hl->parent()->installEventFilter(this);
+	code_field_txt->installEventFilter(this);
 	name_list->installEventFilter(this);
-	this->syntax_hl=syntax_hl;
+	this->code_field_txt=code_field_txt;
+	auto_triggered=false;
 
 	db_model=nullptr;
-	last_sel_obj=nullptr;
-	close_on_select=true;
-
-	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(close(void)));
+	setQualifyingLevel(nullptr);
+	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(void)));
 }
 
 bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-	if(k_event)
+	if(k_event && k_event->type()==QEvent::KeyPress)
 	{
-		//Filters the Crtl+Space to trigger the code completion
-		if(object==syntax_hl->parent())
+		if(object==code_field_txt)
 		{
-			if(k_event->key()==Qt::Key_Space &&
-				 (k_event->modifiers()==Qt::ControlModifier || k_event->modifiers()==Qt::ShiftModifier))
+			//Filters the trigger char and shows up the code completion
+			if(QChar(k_event->key())==completion_trigger)
 			{
-				close_on_select=(k_event->modifiers()==Qt::ControlModifier);
-				this->popUp();
+				if(name_list->isVisible())
+					this->selectItem();
+
+				auto_triggered=true;
+				this->show();
+			}
+			//Filters the Crtl+Space to trigger the code completion
+			else if(k_event->key()==Qt::Key_Space && k_event->modifiers()==Qt::ControlModifier)
+			{
+				this->show();
 				return(true);
 			}
-			else if(k_event->key()==Qt::Key_Space)
-			{
-				last_sel_obj=nullptr;
-			}
-			else if(k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
-			{
-				last_sel_obj=nullptr;
-				this->updateList();
-			}
+			else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
+				this->close();
 		}
-		//Filters the Escape press to close the code completion widget
 		else if(object==name_list)
 		{
 			if(k_event->key()==Qt::Key_Escape)
 			{
-				close_on_select=true;
-				name_list->clearSelection();
 				this->close();
 				return(true);
 			}
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
 			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
 			{
-				this->close();
+				this->selectItem();
 				return(true);
 			}
+			//Filters other key press and redirects to the code input field
 			else if(k_event->key()!=Qt::Key_Up && k_event->key()!=Qt::Key_Down &&
 							k_event->key()!=Qt::Key_PageUp && k_event->key()!=Qt::Key_PageDown &&
 							k_event->key()!=Qt::Key_Home && k_event->key()!=Qt::Key_End &&
 							k_event->modifiers()!=Qt::AltModifier)
 			{
-				QCoreApplication::sendEvent(this->syntax_hl->parent(), k_event);
+
+				QCoreApplication::sendEvent(code_field_txt, k_event);
 				this->updateList();
 				return(true);
 			}
@@ -108,22 +98,43 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void CodeCompletionWidget::setModel(DatabaseModel *db_model)
+void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
 	name_list->clear();
+	word.clear();
+	setQualifyingLevel(nullptr);
+	auto_triggered=false;
 	this->db_model=db_model;
+
+	if(syntax_hl)
+	{
+		//Get the keywords from the highlighter
+		vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+
+		while(!exprs.empty())
+		{
+			keywords.push_front(exprs.back().pattern());
+			exprs.pop_back();
+		}
+
+		completion_trigger=syntax_hl->getCompletionTrigger();
+	}
+	else
+		completion_trigger=QChar('.');
 }
 
-void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects)
+void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QString filter)
 {
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
+	QRegExp regexp(filter.remove("\"") + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
 
 	name_list->clear();
 	for(unsigned i=0; i < objects.size(); i++)
 	{
 		obj_name.clear();
 
+		//Formatting the object name according to the object type
 		if(objects[i]->getObjectType()==OBJ_FUNCTION)
 		{
 			dynamic_cast<Function *>(objects[i])->createSignature(false);
@@ -134,91 +145,126 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects)
 		else
 			obj_name+=objects[i]->getName(false, false);
 
-		item=new QListWidgetItem(QPixmap(QString(":/icones/icones/") + objects[i]->getSchemaName() + QString(".png")), obj_name);
-		item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
-		item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
-		name_list->addItem(item);
+		//The object will be inserted if its name matches the filter or there is no filter set
+		if(filter.isEmpty() || regexp.exactMatch(obj_name))
+		{
+			item=new QListWidgetItem(QPixmap(QString(":/icones/icones/") + objects[i]->getSchemaName() + QString(".png")), obj_name);
+			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
+			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
+			name_list->addItem(item);
+		}
 	}
 }
 
-void CodeCompletionWidget::popUp(void)
+void CodeCompletionWidget::show(void)
 {
-	QTextEdit *txt=dynamic_cast<QTextEdit *>(syntax_hl->parent());
-	prev_txt_cur=txt->textCursor();
+	prev_txt_cur=code_field_txt->textCursor();
 	this->updateList();
 	name_list->show();
 }
 
+void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
+{
+	if(!obj)
+		qualifying_level=-1;
+	else if(obj->getObjectType()==OBJ_SCHEMA)
+		qualifying_level=0;
+	else if(obj->getObjectType()==OBJ_TABLE ||
+					obj->getObjectType()==OBJ_VIEW)
+		qualifying_level=1;
+	else
+		qualifying_level=2;
+
+	if(qualifying_level < 0)
+		sel_objects={ nullptr, nullptr, nullptr };
+	else
+		sel_objects[qualifying_level]=obj;
+}
+
 void CodeCompletionWidget::updateList(void)
 {
-	QTextEdit *txt=dynamic_cast<QTextEdit *>(syntax_hl->parent());
 	QListWidgetItem *item=nullptr;
 	QString pattern;
 	QStringList list;
 	vector<BaseObject *> objects;
 	vector<ObjectType> types=BaseObject::getObjectTypes(false);
+	QTextCursor tc;
 
 	word.clear();
-	new_txt_cur=txt->textCursor();
+	new_txt_cur=tc=code_field_txt->textCursor();
 
-	if(new_txt_cur.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor))
+	/* Try to move the cursor to the previous char in order to check if the user is
+	calling the completion without an attached word */
+	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+
+	if(!tc.selectedText().trimmed().isEmpty() && new_txt_cur.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor))
 	{
-		txt->setTextCursor(new_txt_cur);
-		word=txt->textCursor().selectedText();
+		//Move the cursor right before the trigger char in order to get the complete word
+		code_field_txt->setTextCursor(new_txt_cur);
+		word=code_field_txt->textCursor().selectedText();
 		word.remove("\"");
 
-		if(syntax_hl->getCompletionTrigger()==word)
+		//Case the completion was triggered using the trigger char
+		if(auto_triggered || completion_trigger==word)
 		{
+			/* The completion will try to find a schema, table or view that matches the word,
+			if the serach returns one item the completion will start/continue an qualifying level */
 			new_txt_cur.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor);
-
-			txt->setTextCursor(new_txt_cur);
-			word=txt->textCursor().selectedText();
-			word.remove(syntax_hl->getCompletionTrigger());
+			code_field_txt->setTextCursor(new_txt_cur);
+			word=code_field_txt->textCursor().selectedText();
+			word.remove(completion_trigger);
 			word.remove("\"");
 
-			objects=db_model->findObjects(word, { OBJ_SCHEMA, OBJ_TABLE }, false, false, true);
+			objects=db_model->findObjects(word, { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW }, false, false, false, true);
 
 			if(objects.size()==1)
-				last_sel_obj=objects[0];
+				setQualifyingLevel(objects[0]);
 		}
 
-		txt->setTextCursor(prev_txt_cur);
+		code_field_txt->setTextCursor(prev_txt_cur);
 	}
 
-	if(word.isEmpty() || word.endsWith(' '))
-		pattern="(.)*";
-	else
-		pattern="(^" + word.trimmed() + ")";
+	if(!word.isEmpty() && !auto_triggered)
+		pattern="(^" + word.simplified() + ")";
+	else if(auto_triggered)
+		pattern=word;
 
 	if(db_model)
 	{
+		//Textboxes and relationships are the only objects that is not listed on the completion
 		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
 		types.erase(std::find(types.begin(), types.end(), OBJ_RELATIONSHIP));
 		types.erase(std::find(types.begin(), types.end(), BASE_RELATIONSHIP));
 
-		if(!last_sel_obj)
+		//Negative qualifying level means that user called the completion before a space (empty word)
+		if(qualifying_level < 0)
+			//The default behavior for this is to search all the objects on the model
+			objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered);
+		else
 		{
-			objects=db_model->findObjects(pattern, types, false, false, true);
-			populateNameList(objects);
+			//Searching objects according to qualifying level.
+
+			//Level 0 indicates that user selected a schema, so all objects of the schema are retrieved
+			if(qualifying_level==0)
+				objects=db_model->getObjects(sel_objects[qualifying_level]);
+			//Level 1 indicates that user selected a table or view, so all child objects are retrieved
+			else if(qualifying_level==1)
+				objects=dynamic_cast<BaseTable *>(sel_objects[qualifying_level])->getObjects();
+
+			/* If the typed word is equal to the current level object's name clear the order in order
+			to avoid listing the same object */
+			if(word==sel_objects[qualifying_level]->getName())
+				word.clear();
 		}
-		else if(last_sel_obj)
-		{
-			if(last_sel_obj->getObjectType()==OBJ_SCHEMA)
-			{
-				objects=db_model->getObjects(last_sel_obj);
-				populateNameList(objects);
-			}
-			else if(last_sel_obj->getObjectType()==OBJ_TABLE)
-			{
-				objects=dynamic_cast<Table *>(last_sel_obj)->getObjects();
-				populateNameList(objects);
-			}
-		}
+
+		populateNameList(objects, word);
 	}
 
-	if(!last_sel_obj)
+	/* List the keywords if the qualifying level is negative or the
+	completion wasn't triggered using the special char */
+	if(qualifying_level < 0 && !auto_triggered)
 	{
-		list=keywords.filter(QRegExp(pattern, Qt::CaseInsensitive));
+		list=keywords.filter(QRegExp(word, Qt::CaseInsensitive));
 		for(int i=0; i < list.size(); i++)
 		{
 			item=new QListWidgetItem(QPixmap(":/icones/icones/keyword.png"), list[i]);
@@ -231,62 +277,73 @@ void CodeCompletionWidget::updateList(void)
 
 	if(!name_list->isEnabled())
 		name_list->addItem(trUtf8("(no items found.)"));
+	else
+	{
+		name_list->sortItems();
+		name_list->setItemSelected(name_list->item(0), true);
+	}
 
-	name_list->move(txt->mapToGlobal(txt->cursorRect().topLeft() + QPoint(0,20)));
-	name_list->sortItems();
+	//Sets the list position right below of text cursor
+	name_list->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
+	name_list->setFocus();
 }
 
-void CodeCompletionWidget::close(void)
+void CodeCompletionWidget::selectItem(void)
 {
-	QTextEdit *txt=dynamic_cast<QTextEdit *>(syntax_hl->parent());
-
 	if(!name_list->selectedItems().isEmpty())
 	{
 		QListWidgetItem *item=name_list->selectedItems().at(0);
 		BaseObject *object=nullptr;
 		QTextCursor tc;
 
-		if(!last_sel_obj)
-			txt->setTextCursor(new_txt_cur);
+		if(qualifying_level < 0)
+			code_field_txt->setTextCursor(new_txt_cur);
 
+		//If the selected item is a object (data not null)
 		if(!item->data(Qt::UserRole).isNull())
 		{
+			//Retrieve the object
 			object=reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
 
+			/* Move the cursor to the start of the word because all the chars will be replaced
+			with the object name */
 			prev_txt_cur.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
-
 			tc=prev_txt_cur;
 			tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
 
 			if(tc.selectedText().contains("\""))
 				prev_txt_cur=tc;
 
-			txt->setTextCursor(prev_txt_cur);
+			code_field_txt->setTextCursor(prev_txt_cur);
 
+			//If the user selects the item with Alt key pressed the object name will be expanded
 			if(QApplication::keyboardModifiers()==Qt::AltModifier)
-				txt->insertPlainText(expandObjectName(object));
+				code_field_txt->insertPlainText(expandObjectName(object));
 			else
-				txt->insertPlainText(object->getName(true, false));
+				code_field_txt->insertPlainText(object->getName(true, false));
 
-			if(TableObject::isTableObject(object->getObjectType()))
-				last_sel_obj=dynamic_cast<TableObject *>(object)->getParentTable();
-			else
-				last_sel_obj=(object->getObjectType()==OBJ_SCHEMA ||
-											object->getObjectType()==OBJ_TABLE ? object : nullptr);
+			setQualifyingLevel(object);
 		}
 		else
 		{
-			txt->insertPlainText(item->text() + " ");
-			last_sel_obj=nullptr;
+			code_field_txt->insertPlainText(item->text() + " ");
+			setQualifyingLevel(nullptr);
 		}
 	}
 	else
-		last_sel_obj=nullptr;
+		setQualifyingLevel(nullptr);
 
 	name_list->clearSelection();
+	name_list->close();
+	auto_triggered=false;
+}
 
-	if(close_on_select)
-		name_list->close();
+void CodeCompletionWidget::close(void)
+{
+	setQualifyingLevel(nullptr);
+	name_list->clearSelection();
+	name_list->close();
+	auto_triggered=false;
 }
 
 QString CodeCompletionWidget::expandObjectName(BaseObject *obj)
@@ -319,7 +376,20 @@ QString CodeCompletionWidget::expandObjectName(BaseObject *obj)
 		break;
 
 		case OBJ_AGGREGATE:
-			name+="(*)";
+			Aggregate *agg;
+			agg=dynamic_cast<Aggregate *>(obj);
+			name+="(";
+
+			if(agg->getDataTypeCount()==0)
+				name+="*";
+			else
+			{
+				for(unsigned i=0; i < agg->getDataTypeCount(); i++)
+					name+=~agg->getDataType(i) + ",";
+				name.remove(name.size()-1, 1);
+			}
+
+			name+=")";
 		break;
 
 		default:

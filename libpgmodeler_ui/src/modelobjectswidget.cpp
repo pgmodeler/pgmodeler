@@ -279,7 +279,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 
 	if(db_model)
 	{
-		vector<BaseObject *> objects=db_model->findObjects("", BaseObject::getObjectTypes());
+		vector<BaseObject *> objects=db_model->findObjects("", BaseObject::getObjectTypes(),true, false, false, false);
 		ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 	}
 }

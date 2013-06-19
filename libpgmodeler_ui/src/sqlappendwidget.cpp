@@ -15,7 +15,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 																	GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																	GlobalAttributes::CONFIGURATION_EXT);
 
-		sqlcode_cp=new CodeCompletionWidget(sqlcode_hl);
+		sqlcode_cp=new CodeCompletionWidget(sqlcode_txt);
 
 		parent_form->setWindowTitle(trUtf8("Append SQL code"));
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
@@ -51,7 +51,7 @@ void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			BaseObjectWidget::setAttributes(model, object, nullptr);
 
 			sqlcode_txt->setFocus();
-			sqlcode_cp->setModel(model);
+			sqlcode_cp->configureCompletion(model, sqlcode_hl);
 			end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 			comment_edt->setText(object->getTypeName());
 			protected_obj_frm->setVisible(false);

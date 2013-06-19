@@ -35,39 +35,85 @@ class CodeCompletionWidget: public QWidget
 	private:
 		Q_OBJECT
 
-		SyntaxHighlighter *syntax_hl;
+		//! \brief Input field that is associated with the code completion
+		QTextEdit *code_field_txt;
 
+		//! \brief This widget stores the list of completion items
 		QListWidget *name_list;
 
+		/*! \brief Stores the keywords retrieved from the syntax highlighter.
+		These key words are listed whenever the user call the completion */
 		QStringList keywords;
 
-		QTextCursor new_txt_cur, prev_txt_cur;
+		/*! \brief This cursor object is configured to use as a replacer when the user
+		selects an item on the completion list */
+		QTextCursor new_txt_cur,
 
+		//! \brief Stores the current text cursor position on the code field
+		prev_txt_cur;
+
+		//! \brief Current typed word
 		QString word;
 
+		/*! \brief Stores the char used to trigger the completion widget. If the completion
+		was instantiated using a SyntaxHighlighter object this char is retrieved from this last
+		or the default (.) is used */
+		QChar completion_trigger;
+
+		//! \brief Stores the database model used to search for objects and list them on completion
 		DatabaseModel *db_model;
 
-		BaseObject *last_sel_obj;
+		/*! \brief This is used to simulate an history of selected object
+		whenever the user types the completion trigger char. An example of qualifying is access a column
+		of a table by typing the full path to it: public[0].table[1].column[2]. The numbers between brace
+		are the qualifying level. */
+		int qualifying_level;
 
-		bool close_on_select;
+		//! \brief Indicates if the completion was triggered by typing the completion char
+		bool auto_triggered;
 
+		//! \brief Store the objects selected for each qualifying level
+		vector<BaseObject *> sel_objects;
+
+		/*! \brief Creates a more detailed object name. This applies only for tables, functions, aggregates
+		 and casts as follow:
+
+		 Tables: table_name(colum1, column2,...,columnN)
+		 Function: function_name(param1, param2, ..., paramN)
+		 Aggregate: aggregate_name(param1, param2, ..., paramN)
+		 Cast: cast(input_type AS output_type) */
 		QString expandObjectName(BaseObject *obj);
 
+		//! \brief Filters the necessary events to trigger the completion as well to control/select items
 		bool eventFilter(QObject *object, QEvent *event);
 
-		void populateNameList(vector<BaseObject *> &objects);
+		/*! \brief Insert the objects of the vector into the name listing. The filter parameter is used to
+		insert only the object which names matches the filter */
+		void populateNameList(vector<BaseObject *> &objects, QString filter="");
 
-		void show(void){}
+		//! \brief Configures the current qualifying level according to the passed object
+		void setQualifyingLevel(BaseObject *obj);
 
 	public:
-		CodeCompletionWidget(SyntaxHighlighter *syntax_hl, const QString &keywords_grp="keywords");
+		CodeCompletionWidget(QTextEdit *code_field_txt);
 
-		void setModel(DatabaseModel *db_model);
+		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
+		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
+		highlighter uses an different configuration */
+		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
 
 	public slots:
+		//! \brief Updates the completion list based upon the typed word
 		void updateList(void);
-		void popUp(void);
+
+		//! \brief Shows the configured completion list
+		void show(void);
+
+		//! \brief Close without select any item on completion list
 		void close(void);
+
+		//! \brief Selects an item and closes the completion list
+		void selectItem(void);
 };
 
 #endif
