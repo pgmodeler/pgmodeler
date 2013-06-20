@@ -244,7 +244,7 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Edit Permissions</string>
+    <string>Edit object's permissions</string>
    </property>
    <property name="text">
     <string>Edit permissions</string>
@@ -419,7 +419,7 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Edit Permissions</string>
+    <string>Append a set of SQL commands to the object's definition.</string>
    </property>
    <property name="text">
     <string>Append SQL</string>

@@ -56,53 +56,18 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="1" column="2">
-       <widget class="QPushButton" name="update_tb">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <italic>true</italic>
-         </font>
+      <item row="1" column="7">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="toolTip">
-         <string>Puts an UPDATE command template at current cursor position.</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-        <property name="text">
-         <string>&amp;UPDATE</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="insert_tb">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Puts an INSERT command template at current cursor position.</string>
-        </property>
-        <property name="text">
-         <string>&amp;INSERT</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QPushButton" name="delete_tb">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Puts an DELETE command template at current cursor position.</string>
-        </property>
-        <property name="text">
-         <string>&amp;DELETE</string>
-        </property>
-       </widget>
+       </spacer>
       </item>
       <item row="1" column="0">
        <spacer name="horizontalSpacer">
@@ -117,7 +82,7 @@
         </property>
        </spacer>
       </item>
-      <item row="3" column="0" colspan="7">
+      <item row="3" column="0" colspan="8">
        <widget class="QTextEdit" name="sqlcode_txt">
         <property name="font">
          <font>
@@ -126,7 +91,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="7">
+      <item row="0" column="0" colspan="8">
        <widget class="QCheckBox" name="end_of_model_chk">
         <property name="toolTip">
          <string>Append the SQL code at the very end of model definition.
@@ -137,24 +102,155 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         </property>
        </widget>
       </item>
-      <item row="1" column="6">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
+      <item row="1" column="1">
+       <widget class="QToolButton" name="insert_tb">
+        <property name="minimumSize">
          <size>
-          <width>40</width>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Puts an INSERT command template at current cursor position.</string>
+        </property>
+        <property name="text">
+         <string>&amp;INSERT</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
           <height>20</height>
          </size>
         </property>
-       </spacer>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
       </item>
-      <item row="1" column="4" colspan="2">
-       <widget class="QPushButton" name="select_tb">
+      <item row="1" column="2">
+       <widget class="QToolButton" name="update_tb">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Puts an UPDATE command template at current cursor position.</string>
+        </property>
+        <property name="text">
+         <string>&amp;UPDATE</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QToolButton" name="delete_tb">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Puts an DELETE command template at current cursor position.</string>
+        </property>
+        <property name="text">
+         <string>&amp;DELETE</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5" colspan="2">
+       <widget class="QToolButton" name="clear_tb">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="text">
+         <string>&amp;Clear</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QToolButton" name="select_tb_2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
           <italic>true</italic>
          </font>
         </property>
@@ -164,6 +260,18 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <property name="text">
          <string>&amp;SELECT</string>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
        </widget>
       </item>
      </layout>
@@ -171,6 +279,8 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

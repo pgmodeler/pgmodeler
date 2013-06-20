@@ -249,6 +249,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
 	action_append_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
+	action_append_sql->setShortcut(QKeySequence("Alt+Q"));
 
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)

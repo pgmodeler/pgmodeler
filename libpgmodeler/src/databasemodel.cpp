@@ -29,12 +29,13 @@ DatabaseModel::DatabaseModel(void)
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
 	conn_limit=-1;
-	loading_model=invalidated=false;
+	loading_model=invalidated=append_at_eod=false;
 	attributes[ParsersAttributes::ENCODING]="";
 	attributes[ParsersAttributes::TEMPLATE_DB]="";
 	attributes[ParsersAttributes::CONN_LIMIT]="";
 	attributes[ParsersAttributes::_LC_COLLATE_]="";
 	attributes[ParsersAttributes::_LC_CTYPE_]="";
+	attributes[ParsersAttributes::APPEND_AT_EOD]="";
 }
 
 DatabaseModel::~DatabaseModel(void)
@@ -2613,6 +2614,7 @@ void DatabaseModel::loadModel(const QString &filename)
 								template_db=attribs[ParsersAttributes::TEMPLATE_DB];
 								localizations[0]=attribs[ParsersAttributes::_LC_CTYPE_];
 								localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
+								append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
 
 								if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 									conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
@@ -2834,6 +2836,13 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					collation=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
 					object->setCollation(collation);
 					has_error=(!collation && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+				}
+				else if(elem_name==ParsersAttributes::APPENDED_SQL)
+				{
+					XMLParser::savePosition();
+					XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+					object->setAppendedSQL(XMLParser::getElementContent());
+					XMLParser::restorePosition();
 				}
 				//Defines the object's position (only for graphical objects)
 				else if(elem_name==ParsersAttributes::POSITION)
@@ -5766,6 +5775,8 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 
 QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 {
+	QString def, bkp_appended_sql;
+
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
 
@@ -5785,10 +5796,31 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::ENCODING]=(~encoding);
 		attributes[ParsersAttributes::_LC_COLLATE_]=localizations[1];
 		attributes[ParsersAttributes::_LC_CTYPE_]=localizations[0];
+		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? "1" : "");
 	}
 
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
-	return(this->BaseObject::__getCodeDefinition(def_type));
+
+	if(def_type==SchemaParser::SQL_DEFINITION && append_at_eod)
+	{
+		bkp_appended_sql=this->appended_sql;
+		this->appended_sql.clear();
+	}
+
+	try
+	{
+		def=this->BaseObject::__getCodeDefinition(def_type);
+
+		if(def_type==SchemaParser::SQL_DEFINITION && append_at_eod)
+			this->appended_sql=bkp_appended_sql;
+
+		return(def);
+	}
+	catch(Exception &e)
+	{
+		this->appended_sql=bkp_appended_sql;
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type)
@@ -5806,7 +5838,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<unsigned>::iterator itr1, itr1_end;
-	QString msg=trUtf8("Generating %1 of the object `%2' (%3)"),
+	QString def,
+			msg=trUtf8("Generating %1 of the object `%2' (%3)"),
 			attrib=ParsersAttributes::OBJECTS,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
 	Type *usr_type=nullptr;
@@ -6177,8 +6210,12 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	}
 
 	attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? "1" : "");
+	def=SchemaParser::getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
-	return(SchemaParser::getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type));
+	if(append_at_eod && def_type==SchemaParser::SQL_DEFINITION)
+		def+="-- Appended SQL commands --\n" +	this->appended_sql + "\n";
+
+	return(def);
 }
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
@@ -7700,7 +7737,6 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		obj_name.clear();
 	}
 
-
 	return(list);
 }
 
@@ -7712,4 +7748,14 @@ void DatabaseModel::setInvalidated(bool value)
 bool DatabaseModel::isInvalidated(void)
 {
 	return(invalidated);
+}
+
+void  DatabaseModel::setAppendAtEOD(bool value)
+{
+	append_at_eod=value;
+}
+
+bool  DatabaseModel::isAppendAtEOD(void)
+{
+	return(append_at_eod);
 }

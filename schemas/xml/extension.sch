@@ -26,6 +26,7 @@
 
   @{schema}
   %if @{comment} %then @{comment} %end
+  %if @{appended-sql} %then @{appended-sql} %end
 
 </extension>  $br $br
  

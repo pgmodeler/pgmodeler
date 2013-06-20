@@ -30,6 +30,8 @@ like columns, rules, triggers, indexes, constraints.
 #include "basetable.h"
 
 class TableObject: public BaseObject {
+	private:
+
 	protected:
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;

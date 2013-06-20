@@ -19,3 +19,5 @@
 <!ELEMENT columns EMPTY>
 <!ATTLIST columns names CDATA #REQUIRED>
 <!ATTLIST columns ref-type (src-columns|dst-columns) "src-columns">
+
+<!ELEMENT appended-sql (#PCDATA)>

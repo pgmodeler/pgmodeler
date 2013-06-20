@@ -36,14 +36,32 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 		SyntaxHighlighter *sqlcode_hl;
 		CodeCompletionWidget *sqlcode_cp;
 
-		//void hideEvent(QHideEvent *);
+		QMenu insert_menu,
+					delete_menu,
+					update_menu,
+					select_menu;
+
+		QAction *action_basic_cmd,
+						*action_inc_serials,
+						*action_exc_serials;
+
+		void configureMenus(void);
 
 	public:
 		SQLAppendWidget(QWidget *parent=0);
+
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		
 	signals:
 
+	public slots:
+		void applyConfiguration(void);
+
+	private slots:
+		void addInsertCommand(void);
+		//void addDeleteCommand(void);
+		//void addUpdateCommand(void);
+		//void addSelectCommand(void);
 };
 
 #endif

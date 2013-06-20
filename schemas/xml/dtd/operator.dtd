@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT operator (schema?,role?,comment?,type*,operator*,function*)>
+<!ELEMENT operator (schema?,role?,comment?, appended-sql?,type*,operator*,function*)>
 <!ATTLIST operator name CDATA #IMPLIED>
 <!ATTLIST operator signature CDATA #IMPLIED>
 <!ATTLIST operator ref-type (none|commutator-op|negator-op) "none">

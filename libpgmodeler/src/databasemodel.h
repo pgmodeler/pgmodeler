@@ -106,7 +106,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
 		When this flag is set it's recommend to revalidate the model using the Model validation tool */
-		invalidated;
+		invalidated,
+
+		//! \brief Indicates that appended SQL commands must be put at the very end of model definition
+		append_at_eod;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -196,6 +199,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Sets the protection for all objects on the model
 		void setProtected(bool value);
+
+		//! \brief Sets the sql appending at end of entire model definition
+		void setAppendAtEOD(bool value);
+
+		//! \brief Returns the current state of the sql appeding at end of entire model definition
+		bool isAppendAtEOD(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);

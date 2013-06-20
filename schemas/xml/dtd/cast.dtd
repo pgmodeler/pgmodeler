@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT cast (comment?, type, type, function?)>
+<!ELEMENT cast (comment?,appended-sql?, type, type, function?)>
 <!ATTLIST cast cast-type (implicit|assignment) "implicit">
 <!ATTLIST cast protected (false|true) "false">
 <!ATTLIST cast io-cast (false|true) "false">
