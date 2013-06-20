@@ -41,9 +41,15 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 					update_menu,
 					select_menu;
 
-		QAction *action_basic_cmd,
+		QAction *action_gen_insert,
+						*action_gen_select,
 						*action_inc_serials,
-						*action_exc_serials;
+						*action_exc_serials,
+						*action_tab_select,
+						*action_tab_update,
+						*action_gen_update,
+						*action_gen_delete,
+						*action_tab_delete;
 
 		void configureMenus(void);
 
@@ -52,16 +58,11 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		
-	signals:
-
 	public slots:
 		void applyConfiguration(void);
 
 	private slots:
-		void addInsertCommand(void);
-		//void addDeleteCommand(void);
-		//void addUpdateCommand(void);
-		//void addSelectCommand(void);
+		void addCommand(void);
 };
 
 #endif

@@ -176,9 +176,14 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 		qualifying_level=2;
 
 	if(qualifying_level < 0)
+	{
 		sel_objects={ nullptr, nullptr, nullptr };
+	}
 	else
+	{
 		sel_objects[qualifying_level]=obj;
+		lvl_cur=code_field_txt->textCursor();
+	}
 }
 
 void CodeCompletionWidget::updateList(void)
@@ -209,7 +214,7 @@ void CodeCompletionWidget::updateList(void)
 		{
 			/* The completion will try to find a schema, table or view that matches the word,
 			if the serach returns one item the completion will start/continue an qualifying level */
-			new_txt_cur.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor);
+			new_txt_cur.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
 			code_field_txt->setTextCursor(new_txt_cur);
 			word=code_field_txt->textCursor().selectedText();
 			word.remove(completion_trigger);
@@ -315,13 +320,7 @@ void CodeCompletionWidget::selectItem(void)
 				prev_txt_cur=tc;
 
 			code_field_txt->setTextCursor(prev_txt_cur);
-
-			//If the user selects the item with Alt key pressed the object name will be expanded
-			if(QApplication::keyboardModifiers()==Qt::AltModifier)
-				code_field_txt->insertPlainText(expandObjectName(object));
-			else
-				code_field_txt->insertPlainText(object->getName(true, false));
-
+			insertObjectName(object);
 			setQualifyingLevel(object);
 		}
 		else
@@ -346,15 +345,21 @@ void CodeCompletionWidget::close(void)
 	auto_triggered=false;
 }
 
-QString CodeCompletionWidget::expandObjectName(BaseObject *obj)
+void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 {
-	QString name=obj->getName(true, false);
+	bool sch_qualified=!sel_objects[0],
+			 modify_name=QApplication::keyboardModifiers()==Qt::AltModifier;
+	QString name=obj->getName(true, sch_qualified);
+	ObjectType obj_type=obj->getObjectType();
+	int move_cnt=0;
 
-	switch(obj->getObjectType())
+
+	if(modify_name &&
+		 (obj_type==OBJ_TABLE || TableObject::isTableObject(obj_type)))
 	{
-		case OBJ_TABLE:
-			Table *tab;
-			tab=dynamic_cast<Table *>(obj);
+		if(obj_type==OBJ_TABLE)
+		{
+			Table *tab=dynamic_cast<Table *>(obj);
 
 			name+="(";
 			for(unsigned i=0; i < tab->getColumnCount(); i++)
@@ -362,39 +367,45 @@ QString CodeCompletionWidget::expandObjectName(BaseObject *obj)
 
 			name.remove(name.size()-1, 1);
 			name+=")";
-		break;
-
-		case OBJ_FUNCTION:
-			Function *func;
-			func=dynamic_cast<Function *>(obj);
-			func->createSignature(true, false);
-			name=func->getSignature();
-		break;
-
-		case OBJ_CAST:
-			name.replace(",", " AS ");
-		break;
-
-		case OBJ_AGGREGATE:
-			Aggregate *agg;
-			agg=dynamic_cast<Aggregate *>(obj);
-			name+="(";
-
-			if(agg->getDataTypeCount()==0)
-				name+="*";
+		}
+		else
+		{
+			if(sel_objects[0])
+				move_cnt=2;
 			else
-			{
-				for(unsigned i=0; i < agg->getDataTypeCount(); i++)
-					name+=~agg->getDataType(i) + ",";
-				name.remove(name.size()-1, 1);
-			}
+				move_cnt=3;
 
-			name+=")";
-		break;
+			lvl_cur.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor, move_cnt);
+			code_field_txt->setTextCursor(lvl_cur);
+		}
+	}
+	else if(obj_type==OBJ_FUNCTION)
+	{
+		Function *func=dynamic_cast<Function *>(obj);
+		func->createSignature(true, sch_qualified);
+		name=func->getSignature();
+	}
+	else if(obj_type==OBJ_CAST)
+	{
+		name.replace(",", " AS ");
+	}
+	else if(obj_type==OBJ_AGGREGATE)
+	{
+		Aggregate *agg;
+		agg=dynamic_cast<Aggregate *>(obj);
+		name+="(";
 
-		default:
-		break;
+		if(agg->getDataTypeCount()==0)
+			name+="*";
+		else
+		{
+			for(unsigned i=0; i < agg->getDataTypeCount(); i++)
+				name+=~agg->getDataType(i) + ",";
+			name.remove(name.size()-1, 1);
+		}
+
+		name+=")";
 	}
 
-	return(name);
+	code_field_txt->insertPlainText(name);
 }

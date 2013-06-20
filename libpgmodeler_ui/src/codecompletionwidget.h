@@ -50,7 +50,9 @@ class CodeCompletionWidget: public QWidget
 		QTextCursor new_txt_cur,
 
 		//! \brief Stores the current text cursor position on the code field
-		prev_txt_cur;
+		prev_txt_cur,
+
+		lvl_cur;
 
 		//! \brief Current typed word
 		QString word;
@@ -75,14 +77,8 @@ class CodeCompletionWidget: public QWidget
 		//! \brief Store the objects selected for each qualifying level
 		vector<BaseObject *> sel_objects;
 
-		/*! \brief Creates a more detailed object name. This applies only for tables, functions, aggregates
-		 and casts as follow:
-
-		 Tables: table_name(colum1, column2,...,columnN)
-		 Function: function_name(param1, param2, ..., paramN)
-		 Aggregate: aggregate_name(param1, param2, ..., paramN)
-		 Cast: cast(input_type AS output_type) */
-		QString expandObjectName(BaseObject *obj);
+		//! \brief Puts the selected object name on the current cursor position.
+		void insertObjectName(BaseObject *obj);
 
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items
 		bool eventFilter(QObject *object, QEvent *event);

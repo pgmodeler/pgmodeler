@@ -2332,6 +2332,7 @@ void ModelWidget::appendSQL(void)
 
 	sqlappend_wgt->setAttributes(db_model, obj);
 	sqlappend_wgt->show();
+	this->modified=(sqlappend_wgt->result()==QDialog::Accepted);
 }
 
 void ModelWidget::showObjectMenu(void)

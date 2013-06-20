@@ -18,7 +18,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 		sqlcode_cp=new CodeCompletionWidget(sqlcode_txt);
 
 		parent_form->setWindowTitle(trUtf8("Append SQL code"));
-		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
+		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 		parent_form->setMinimumSize(800, 600);
 
 		font=name_edt->font();
@@ -29,18 +29,52 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setReadOnly(true);
 		comment_lbl->setText(trUtf8("Type:"));
 
-		action_basic_cmd=new QAction(trUtf8("Basic command"), this);
-		action_inc_serials=new QAction(trUtf8("Include serials"), this);
-		action_exc_serials=new QAction(trUtf8("Exclude serials"), this);
-		insert_menu.addAction(action_basic_cmd);
+		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
+		action_gen_insert->setObjectName("action_gen_insert");
+		action_inc_serials=new QAction(trUtf8("Include serial columns"), this);
+		action_inc_serials->setObjectName("action_inc_serials");
+		action_exc_serials=new QAction(trUtf8("Exclude serial columns"), this);
+		action_exc_serials->setObjectName("action_exc_serials");
+		action_gen_select=new QAction(trUtf8("Generic SELECT"), this);
+		action_gen_select->setObjectName("action_gen_select");
+		action_tab_select=new QAction(trUtf8("Table SELECT"), this);
+		action_tab_select->setObjectName("action_tab_select");
+		action_gen_update=new QAction(trUtf8("Generic UPDATE"), this);
+		action_gen_update->setObjectName("action_gen_update");
+		action_tab_update=new QAction(trUtf8("Table UPDATE"), this);
+		action_tab_update->setObjectName("action_tab_update");
+		action_gen_delete=new QAction(trUtf8("Generic DELETE"), this);
+		action_gen_delete->setObjectName("action_gen_delete");
+		action_tab_delete=new QAction(trUtf8("Table DELETE"), this);
+		action_tab_delete->setObjectName("action_tab_delete");
+
 		insert_menu.addAction(action_inc_serials);
 		insert_menu.addAction(action_exc_serials);
+		insert_menu.addAction(action_gen_insert);
+		select_menu.addAction(action_tab_select);
+		select_menu.addAction(action_gen_select);
+		update_menu.addAction(action_tab_update);
+		update_menu.addAction(action_gen_update);
+		delete_menu.addAction(action_tab_delete);
+		delete_menu.addAction(action_gen_delete);
 
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addInsertCommand(void)));
-		connect(action_basic_cmd, SIGNAL(triggered(void)), this, SLOT(addInsertCommand(void)));
-		connect(action_inc_serials, SIGNAL(triggered(void)), this, SLOT(addInsertCommand(void)));
-		connect(action_exc_serials, SIGNAL(triggered(void)), this, SLOT(addInsertCommand(void)));
+		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
+
+		connect(clear_tb, SIGNAL(clicked(bool)), sqlcode_txt, SLOT(clear(void)));
+		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
+		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
+		connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
+		connect(delete_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
+		connect(action_gen_insert, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_inc_serials, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_exc_serials, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_gen_select, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_tab_select, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_gen_update, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_tab_update, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_gen_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(action_tab_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
 	}
 	catch(Exception &e)
 	{
@@ -51,11 +85,23 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 void SQLAppendWidget::configureMenus(void)
 {
 	ObjectType obj_type=this->object->getObjectType();
+	QToolButton *btns[]={ insert_tb, select_tb , delete_tb, update_tb };
+	int count=sizeof(btns)/sizeof(QToolButton *);
 
-	if(obj_type==OBJ_TABLE)
-		insert_tb->setMenu(&insert_menu);
-	else
-		insert_tb->setMenu(nullptr);
+	for(int i=0; i < count; i++)
+		btns[i]->setMenu(nullptr);
+
+	if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+	{
+		if(obj_type==OBJ_TABLE)
+		{
+			insert_tb->setMenu(&insert_menu);
+			delete_tb->setMenu(&delete_menu);
+			update_tb->setMenu(&delete_menu);
+		}
+
+		select_tb->setMenu(&select_menu);
+	}
 }
 
 void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
@@ -103,37 +149,71 @@ void SQLAppendWidget::applyConfiguration(void)
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
 
 	this->object->setAppendedSQL(sqlcode_txt->toPlainText());
-	parent_form->close();
+	this->accept();
 }
 
-void SQLAppendWidget::addInsertCommand(void)
+void SQLAppendWidget::addCommand(void)
 {
 	Table *table=dynamic_cast<Table *>(this->object);
+	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
+	QString cmd,
+			ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),
+			sel_cmd=QString("SELECT * FROM %1;"),
+			del_cmd=QString("DELETE * FROM %1;"),
+			upd_cmd=QString("UPDATE %1 SET ;");
 
-	if(!table || sender()==action_basic_cmd)
-		sqlcode_txt->insertPlainText("\nINSERT INTO object VALUES (values);");
-	else if(table)
+	if(sender()->objectName().contains("insert") ||
+		 sender()->objectName().contains("serial"))
 	{
-		bool inc_serials=(sender()==action_inc_serials);
-		QString cols, vals;
-		unsigned val_id=1;
-
-		for(unsigned i=0; i < table->getColumnCount(); i++)
+		if(!table || sender()==action_gen_insert)
+			cmd=ins_cmd.arg("table").arg("cols").arg("values");
+		else if(table)
 		{
-			if(inc_serials ||
-				 (!inc_serials && table->getColumn(i)->getType()!="serial" &&
-					table->getColumn(i)->getType()!="smallserial" &&
-					table->getColumn(i)->getType()!="bigserial"))
+			bool inc_serials=(sender()==action_inc_serials);
+			QString cols, vals;
+			unsigned val_id=1;
+
+			for(unsigned i=0; i < table->getColumnCount(); i++)
 			{
-				cols+=table->getColumn(i)->getName(true) + ",";
-				vals+=QString("val%1,").arg(val_id++);
+				if(inc_serials ||
+					 (!inc_serials && table->getColumn(i)->getType()!="serial" &&
+						table->getColumn(i)->getType()!="smallserial" &&
+						table->getColumn(i)->getType()!="bigserial"))
+				{
+					cols+=table->getColumn(i)->getName(true) + ",";
+					vals+=QString("val%1,").arg(val_id++);
+				}
 			}
+
+			cols.remove(cols.size()-1, 1);
+			vals.remove(vals.size()-1, 1);
+			cmd=ins_cmd.arg(table->getName(true)).arg(cols).arg(vals);
 		}
-
-		cols.remove(cols.size()-1, 1);
-		vals.remove(vals.size()-1, 1);
-
-		sqlcode_txt->insertPlainText(QString("\nINSERT INTO %1 (%2) VALUES (%3);")
-																 .arg(table->getName(true)).arg(cols).arg(vals));
 	}
+	else if(sender()->objectName().contains("select"))
+	{
+		if(!base_table || sender()==action_gen_select)
+			cmd=sel_cmd.arg("object");
+		else if(base_table)
+			cmd=sel_cmd.arg(base_table->getName(true));
+	}
+	else if(sender()->objectName().contains("delete"))
+	{
+		if(!table || sender()==action_gen_delete)
+			cmd=del_cmd.arg("object");
+		else if(table)
+			cmd=del_cmd.arg(table->getName(true));
+	}
+	else
+	{
+		if(!table || sender()==action_gen_update)
+			cmd=upd_cmd.arg("object");
+		else if(table)
+			cmd=upd_cmd.arg(table->getName(true));
+	}
+
+	if(!sqlcode_txt->toPlainText().isEmpty())
+		sqlcode_txt->insertPlainText("\n");
+
+	sqlcode_txt->insertPlainText(cmd);
 }
