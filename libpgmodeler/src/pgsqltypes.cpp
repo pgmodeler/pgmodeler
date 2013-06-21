@@ -1070,6 +1070,13 @@ bool PgSQLType::isRangeType(void)
 				 type_list[this->type_idx]=="tstzrange" || type_list[this->type_idx]=="daterange");
 }
 
+bool PgSQLType::isSerialType(void)
+{
+	return(type_list[this->type_idx]=="serial" ||
+				 type_list[this->type_idx]=="smallserial" ||
+				 type_list[this->type_idx]=="bigserial");
+}
+
 bool PgSQLType::hasVariableLength(void )
 {
 	return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
@@ -1084,6 +1091,18 @@ bool PgSQLType::acceptsPrecision(void )
 	return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
 			type_list[this->type_idx]=="time" || type_list[this->type_idx]=="timestamp" ||
 			type_list[this->type_idx]=="interval");
+}
+
+PgSQLType PgSQLType::getAliasType(void)
+{
+	if(type_list[this->type_idx]=="serial")
+		return(PgSQLType("integer"));
+	else if(type_list[this->type_idx]=="smallserial")
+		return(PgSQLType("smallint"));
+	else if(type_list[this->type_idx]=="bigserial")
+		return(PgSQLType("bigint"));
+	else
+		return(PgSQLType(type_list[this->type_idx]));
 }
 
 void PgSQLType::setDimension(unsigned dim)

@@ -61,7 +61,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
 
-		connect(clear_tb, SIGNAL(clicked(bool)), sqlcode_txt, SLOT(clear(void)));
+		connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearCode(void)));
 		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
 		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
 		connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
@@ -176,9 +176,7 @@ void SQLAppendWidget::addCommand(void)
 			for(unsigned i=0; i < table->getColumnCount(); i++)
 			{
 				if(inc_serials ||
-					 (!inc_serials && table->getColumn(i)->getType()!="serial" &&
-						table->getColumn(i)->getType()!="smallserial" &&
-						table->getColumn(i)->getType()!="bigserial"))
+					 (!inc_serials && !table->getColumn(i)->getType().isSerialType()))
 				{
 					cols+=table->getColumn(i)->getName(true) + ",";
 					vals+=QString("val%1,").arg(val_id++);
@@ -216,4 +214,12 @@ void SQLAppendWidget::addCommand(void)
 		sqlcode_txt->insertPlainText("\n");
 
 	sqlcode_txt->insertPlainText(cmd);
+}
+
+void SQLAppendWidget::clearCode(void)
+{
+	QTextCursor tc=sqlcode_txt->textCursor();
+	tc.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+	tc.movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);
+	tc.removeSelectedText();
 }

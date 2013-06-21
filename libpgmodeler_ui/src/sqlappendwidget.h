@@ -34,6 +34,7 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 		Q_OBJECT
 
 		SyntaxHighlighter *sqlcode_hl;
+
 		CodeCompletionWidget *sqlcode_cp;
 
 		QMenu insert_menu,
@@ -63,6 +64,7 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 
 	private slots:
 		void addCommand(void);
+		void clearCode(void);
 };
 
 #endif

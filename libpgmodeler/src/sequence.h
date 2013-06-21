@@ -66,8 +66,15 @@ class Sequence: public BaseObject {
 
 	public:
 		//! \brief Constants that indicates the maximum and minimum values accepted by sequence
-		static const QString MAX_POSITIVE_VALUE;
-		static const QString MAX_NEGATIVE_VALUE;
+		static const QString //For serial sequences
+												 MAX_POSITIVE_VALUE,
+												 MAX_NEGATIVE_VALUE,
+												 //For smallserial sequences
+												 MAX_SMALL_POSITIVE_VALUE,
+												 MAX_SMALL_NEGATIVE_VALUE,
+												 //For bigserial sequences
+												 MAX_BIG_POSITIVE_VALUE,
+												 MAX_BIG_NEGATIVE_VALUE;
 
 		Sequence(void);
 
@@ -76,6 +83,10 @@ class Sequence: public BaseObject {
 
 		//! \brief Sets at once all the necessary fields to define a sequence
 		void setValues(QString minv, QString maxv, QString inc, QString start, QString cache);
+
+		/*! \brief Sets all values at once based on the serial type specified (smallserial, serial or bigserial).
+		If other type the three serial types are passed the method will consider as 'serial' */
+		void setDefaultValues(PgSQLType serial_type);
 
 		//! \brief Defines the owner column using a table and a column name
 		void setOwnerColumn(Table *tabela, const QString &col_name);

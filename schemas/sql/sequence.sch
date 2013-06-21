@@ -38,6 +38,12 @@ $tb [OWNED BY ]
 %if @{owner} %then @{owner} %else NONE %end
 ; $br
 
+%if @{owner} %then
+$br
+[ALTER TABLE ] @{table} [ ALTER COLUMN ] @{column} $br
+[      SET DEFAULT nextval('] @{name} ['::regclass);] $br
+%end
+
 %if @{comment} %then @{comment} %end
 %if @{appended-sql} %then @{appended-sql} %end
 
