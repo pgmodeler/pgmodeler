@@ -14,10 +14,11 @@
 
   %if @{columns} %then @{columns} %end
   %if @{constraints} %then , $br @{constraints} %end
-$br ) $br
+$br )
 
 
-[WITH (OIDS=] %if @{oids} %then TRUE %else FALSE %end )
+%if @{oids} %then [WITH ( OIDS = TRUE )] %end
+
 %if @{tablespace} %then
  $br [TABLESPACE ] @{tablespace}
 %end

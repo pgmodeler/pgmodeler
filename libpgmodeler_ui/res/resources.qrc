@@ -154,6 +154,7 @@
         <file>icones/filter.png</file>
         <file>icones/sqlappend.png</file>
         <file>icones/keyword.png</file>
+        <file>icones/breakrelline.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

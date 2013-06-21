@@ -254,6 +254,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
 	action_create_seq_col->setToolTip(trUtf8("Creates a sequence associated to the column."));
 
+	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
+	action_break_rel_line->setToolTip(trUtf8("Breaks the relationship line in straight angles."));
+	action_break_rel_line->setShortcut(QKeySequence("Alt+B"));
+
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
@@ -301,6 +305,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
 	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceForColumn(void)));
+	connect(action_break_rel_line, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2550,7 +2555,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		else if(objects.size()==1)
 		{
 			BaseObject *obj=objects[0];
-			Relationship *rel=dynamic_cast<Relationship *>(obj);
+			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
 					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
 										OBJ_RULE, OBJ_TRIGGER },
@@ -2562,24 +2567,40 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 							 sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
 
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
-				 (!obj->isProtected() && (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
+				 (!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
+																	obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
 			{
 				if(obj_type == OBJ_TABLE)
 				{
 					for(i=0; i < tab_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
+
+					popup_menu.addAction(action_new_object);
 				}
-				else if(obj_type==OBJ_RELATIONSHIP)
+				else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 				{
-					for(i=0; i < 2; i++)
-						new_object_menu.addAction(actions_new_objects[types[i]]);
-					action_new_object->setMenu(&new_object_menu);
+
+					if(obj_type==OBJ_RELATIONSHIP)
+					{
+						for(i=0; i < 2; i++)
+							new_object_menu.addAction(actions_new_objects[types[i]]);
+						action_new_object->setMenu(&new_object_menu);
+					}
+
+					if(obj_type!=BASE_RELATIONSHIP)
+						popup_menu.addAction(action_new_object);
 
 					if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 					{
 						action_convert_relnn->setData(QVariant::fromValue<void *>(rel));
 						popup_menu.addAction(action_convert_relnn);
+					}
+
+					if(!rel->isSelfRelationship())
+					{
+						action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
+						popup_menu.addAction(action_break_rel_line);
 					}
 				}
 				else if(obj_type == OBJ_SCHEMA)
@@ -2587,9 +2608,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					for(i=0; i < sch_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
+					popup_menu.addAction(action_new_object);
 				}
-
-				popup_menu.addAction(action_new_object);
 			}
 
 			/* Adding the action to highlight the object only when the sender is not one of the
@@ -2602,6 +2622,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			}
 
 			configureSubmenu(obj);
+			popup_menu.addAction(action_edit);
 			popup_menu.addSeparator();
 
 			action_edit->setData(QVariant::fromValue<void *>(obj));
@@ -2609,7 +2630,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 			tab_obj=dynamic_cast<TableObject *>(obj);
 
-			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
 
 			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
@@ -2853,6 +2873,19 @@ void ModelWidget::createSequenceForColumn(void)
 		tab->setModified(true);
 		this->setModified(true);
 		emit s_objectCreated();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelWidget::breakRelationshipLine(void)
+{
+	try
+	{
+		QAction *action=dynamic_cast<QAction *>(sender());
+		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
 	}
 	catch(Exception &e)
 	{

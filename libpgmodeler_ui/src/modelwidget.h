@@ -114,7 +114,8 @@ class ModelWidget: public QWidget {
 						*action_highlight_object,
 						*action_parent_rel,
 						*action_append_sql,
-						*action_create_seq_col;
+						*action_create_seq_col,
+						*action_break_rel_line;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -277,6 +278,8 @@ class ModelWidget: public QWidget {
 		/*! \brief Creates a sequence based upon the selected column. This method changes the default value
 		for the column as well the type. */
 		void createSequenceForColumn(void);
+
+		void breakRelationshipLine(void);
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt);

@@ -21,7 +21,7 @@
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=true;
+	with_oid=false;
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::INDEXES]="";
