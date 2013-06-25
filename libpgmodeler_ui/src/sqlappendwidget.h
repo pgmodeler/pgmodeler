@@ -52,6 +52,7 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 						*action_gen_delete,
 						*action_tab_delete;
 
+		//! \brief Configures the code template menus according to the loaded object
 		void configureMenus(void);
 
 	public:

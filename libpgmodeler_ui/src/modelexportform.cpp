@@ -76,9 +76,11 @@ void ModelExportForm::show(ModelWidget *model)
 
 void ModelExportForm::updateProgress(int progress, QString msg)
 {
- progress_lbl->setText(msg);
- progress_pb->setValue(progress);
- this->repaint();
+	msg.replace("`","<strong>");
+	msg.replace("'","</strong>");
+	progress_lbl->setText(msg);
+	progress_pb->setValue(progress);
+	this->repaint();
 }
 
 void ModelExportForm::hideEvent(QHideEvent *)

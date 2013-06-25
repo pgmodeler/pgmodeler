@@ -2957,6 +2957,7 @@ void ModelWidget::breakRelationshipLine(void)
 		}
 
 		rel->setModified(true);
+		this->setModified(true);
 		emit s_objectModified();
 	}
 	catch(Exception &e)
@@ -2977,6 +2978,7 @@ void ModelWidget::removeRelationshipPoints(void)
 		scene->clearSelection();
 
 		rel->setModified(true);
+		this->setModified(true);
 		emit s_objectModified();
 	}
 	catch(Exception &e)

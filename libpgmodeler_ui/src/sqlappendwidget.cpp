@@ -97,7 +97,7 @@ void SQLAppendWidget::configureMenus(void)
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);
-			update_tb->setMenu(&delete_menu);
+			update_tb->setMenu(&update_menu);
 		}
 
 		select_tb->setMenu(&select_menu);
