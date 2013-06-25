@@ -5278,6 +5278,9 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		if(!attribs[ParsersAttributes::COLOR].isEmpty())
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
+
+		if(!attribs[ParsersAttributes::FONT_SIZE].isEmpty())
+			txtbox->setFontSize(attribs[ParsersAttributes::FONT_SIZE].toFloat());
 	}
 	catch(Exception &e)
 	{

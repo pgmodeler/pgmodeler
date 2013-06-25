@@ -21,7 +21,9 @@
 TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXTBOX)
 {
 	Ui_TextboxWidget::setupUi(this);
-	configureFormLayout(caixatexto_grid, OBJ_TEXTBOX);
+	configureFormLayout(textbox_grid, OBJ_TEXTBOX);
+
+	text_txt->removeEventFilter(this);
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
 	parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
@@ -55,6 +57,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		bold_chk->setChecked(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		italic_chk->setChecked(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
+		font_size_sb->setValue(txtbox->getFontSize());
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, txtbox, nullptr, obj_px, obj_py);
@@ -90,6 +93,7 @@ void TextboxWidget::applyConfiguration(void)
 		txtbox->setTextAttribute(Textbox::BOLD_TXT, bold_chk->isChecked());
 		txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, underline_chk->isChecked());
 		txtbox->setTextColor(color_select_tb->palette().color(QPalette::Button));
+		txtbox->setFontSize(font_size_sb->value());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

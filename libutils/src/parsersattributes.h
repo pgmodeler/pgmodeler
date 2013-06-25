@@ -380,7 +380,8 @@ namespace ParsersAttributes {
 	FILE_ASSOCIATED="file-associated",
 	COMPLETION_TRIGGER="completion-trigger",
 	APPENDED_SQL="appended-sql",
-	APPEND_AT_EOD="append-at-eod";
+	APPEND_AT_EOD="append-at-eod",
+	FONT_SIZE="font-size";
 }
 
 #endif

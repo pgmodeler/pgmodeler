@@ -21,11 +21,13 @@
 Textbox::Textbox(void)
 {
 	obj_type=OBJ_TEXTBOX;
+	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[ParsersAttributes::ITALIC]="";
 	attributes[ParsersAttributes::BOLD]="";
 	attributes[ParsersAttributes::UNDERLINE]="";
 	attributes[ParsersAttributes::COLOR]="";
+	attributes[ParsersAttributes::FONT_SIZE]="";
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
@@ -48,6 +50,8 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(text_color.name()!="#000000")
 			attributes[ParsersAttributes::COLOR]=text_color.name();
 
+		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);
+
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::XML_DEFINITION));
 	}
 }
@@ -60,6 +64,7 @@ void Textbox::operator = (Textbox &txtbox)
 	this->text_attributes[1]=txtbox.text_attributes[1];
 	this->text_attributes[2]=txtbox.text_attributes[2];
 	this->text_color=txtbox.text_color;
+	this->font_size=txtbox.font_size;
 }
 
 void Textbox::setTextAttribute(unsigned attrib, bool value)
@@ -86,5 +91,15 @@ bool Textbox::getTextAttribute(unsigned attrib)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(text_attributes[attrib]);
+}
+
+void Textbox::setFontSize(float size)
+{
+	font_size=(size <= 0 ? 1 : size);
+}
+
+float Textbox::getFontSize(void)
+{
+	return(font_size);
 }
 
