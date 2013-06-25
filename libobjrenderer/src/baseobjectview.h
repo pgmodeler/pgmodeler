@@ -136,6 +136,11 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Pure virtual object (the derived classes must implement it)
 		virtual void configureObject(void)=0;
 
+		/*! \brief Returns the center point of the whole object.
+		Note: this is not the same as calling boundingRect()->center(). Instead, this
+		method calculates the center point based upon the current object's position */
+		virtual QPointF getCenter(void);
+
 	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);

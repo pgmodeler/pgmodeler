@@ -88,6 +88,11 @@ vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
 ModelWidget *ModelWidget::src_model=nullptr;
 
+const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
+const unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES=1;
+const unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES=2;
+const unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES=3;
+
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
 	QFont font;
@@ -256,7 +261,34 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
 	action_break_rel_line->setToolTip(trUtf8("Breaks the relationship line in straight angles."));
-	action_break_rel_line->setShortcut(QKeySequence("Alt+B"));
+	//action_break_rel_line->setShortcut(QKeySequence("Alt+B"));
+
+	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
+	action_remove_rel_points->setToolTip(trUtf8("Removes all user added points from relationship."));
+	//action_remove_rel_points->setShortcut(QKeySequence("Alt+D"));
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dh.png")), trUtf8("90° (horizontal)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dv.png")), trUtf8("90° + 90° (vertical)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_2NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dh.png")), trUtf8("90° + 90° (horizontal)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_2NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action_break_rel_line->setMenu(&break_rel_menu);
+
 
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
@@ -305,7 +337,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
 	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceForColumn(void)));
-	connect(action_break_rel_line, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2484,7 +2516,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(!TableObject::isTableObject(obj->getObjectType()))
+		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
 			quick_actions_menu.addAction(action_append_sql);
@@ -2536,12 +2568,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			configureSubmenu(db_model);
 
-			popup_menu.addSeparator();
-
 			action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 			action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 
 			popup_menu.addAction(action_edit);
+
+			popup_menu.addSeparator();
 			popup_menu.addAction(action_source_code);
 
 			if(db_model->isProtected())
@@ -2566,6 +2598,9 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
 							 sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
 
+			configureSubmenu(obj);
+			popup_menu.addAction(action_edit);
+
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
 				 (!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
 																	obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
@@ -2575,8 +2610,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					for(i=0; i < tab_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
-
-					popup_menu.addAction(action_new_object);
+					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
 				else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 				{
@@ -2585,11 +2619,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					{
 						for(i=0; i < 2; i++)
 							new_object_menu.addAction(actions_new_objects[types[i]]);
-						action_new_object->setMenu(&new_object_menu);
-					}
 
-					if(obj_type!=BASE_RELATIONSHIP)
-						popup_menu.addAction(action_new_object);
+						action_new_object->setMenu(&new_object_menu);
+						popup_menu.insertAction(action_quick_actions, action_new_object);
+					}
 
 					if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 					{
@@ -2599,8 +2632,16 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 					if(!rel->isSelfRelationship())
 					{
-						action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
-						popup_menu.addAction(action_break_rel_line);
+						if(rel->getPoints().empty())
+						{
+							action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
+							popup_menu.addAction(action_break_rel_line);
+						}
+						else
+						{
+							action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
+							popup_menu.addAction(action_remove_rel_points);
+						}
 					}
 				}
 				else if(obj_type == OBJ_SCHEMA)
@@ -2608,7 +2649,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					for(i=0; i < sch_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
-					popup_menu.addAction(action_new_object);
+					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
 			}
 
@@ -2621,19 +2662,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				action_highlight_object->setData(QVariant::fromValue<void *>(obj));
 			}
 
-			configureSubmenu(obj);
-			popup_menu.addAction(action_edit);
-			popup_menu.addSeparator();
-
 			action_edit->setData(QVariant::fromValue<void *>(obj));
 			action_source_code->setData(QVariant::fromValue<void *>(obj));
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 			tab_obj=dynamic_cast<TableObject *>(obj);
 
-			popup_menu.addAction(action_source_code);
-
-			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
-				popup_menu.addAction(action_deps_refs);
 
 			if(tab_obj &&  tab_obj->getObjectType()==OBJ_COLUMN)
 			{
@@ -2650,6 +2683,14 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					popup_menu.addAction(action_create_seq_col);
 				}
 			}
+
+			popup_menu.addSeparator();
+			popup_menu.addAction(action_source_code);
+
+			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+				popup_menu.addAction(action_deps_refs);
+
+
 		}
 	}
 
@@ -2785,8 +2826,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				for(i=0; i < count; i++)
 					submenu->addMenu(submenus[i]);
 
-				popup_menu.addSeparator();
-				popup_menu.addMenu(submenu);
+				popup_menu.insertMenu(action_edit, submenu);
 			}
 		}
 	}
@@ -2885,11 +2925,62 @@ void ModelWidget::breakRelationshipLine(void)
 	try
 	{
 		QAction *action=dynamic_cast<QAction *>(sender());
-		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
+		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
+		BaseTableView *src_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject()),
+									*dst_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+		float dx, dy;
+		unsigned break_type=action->data().toUInt();
+
+		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+
+		if(break_type==BREAK_VERT_NINETY_DEGREES)
+			rel->setPoints({ QPointF(src_tab->getCenter().x(), dst_tab->getCenter().y()) });
+		else if(break_type==BREAK_HORIZ_NINETY_DEGREES)
+			rel->setPoints({ QPointF(dst_tab->getCenter().x(), src_tab->getCenter().y()) });
+		else if(break_type==BREAK_HORIZ_2NINETY_DEGREES)
+		{
+			//Calculates the midle vertical point between the tables centers
+			dy=(src_tab->getCenter().y() + dst_tab->getCenter().y())/2;
+
+			//Adds two points on the middle space between tables creating two 90° angles
+			rel->setPoints({ QPointF(src_tab->getCenter().x(), dy),
+											 QPointF(dst_tab->getCenter().x(), dy) });
+		}
+		else
+		{
+			//Calculates the middle horizontal point between the tables centers
+			dx=(src_tab->getCenter().x() + dst_tab->getCenter().x())/2;
+
+			//Adds two points on the middle space between tables creating two 90° angles
+			rel->setPoints({ QPointF(dx, src_tab->getCenter().y()),
+											 QPointF(dx, dst_tab->getCenter().y()) });
+		}
+
+		rel->setModified(true);
+		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
 
+void ModelWidget::removeRelationshipPoints(void)
+{
+	try
+	{
+		QAction *action=dynamic_cast<QAction *>(sender());
+		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
+
+		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+		rel->setPoints({});
+		scene->clearSelection();
+
+		rel->setModified(true);
+		emit s_objectModified();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }

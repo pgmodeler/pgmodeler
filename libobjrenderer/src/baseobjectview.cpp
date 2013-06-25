@@ -536,3 +536,9 @@ unsigned BaseObjectView::getSelectionOrder(void)
 {
 	return(sel_order);
 }
+
+QPointF BaseObjectView::getCenter(void)
+{
+	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0f,
+								 this->pos().y() + this->boundingRect().height()/2.0f));
+}

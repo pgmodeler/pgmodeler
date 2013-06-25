@@ -91,7 +91,9 @@ class ModelWidget: public QWidget {
 					schemas_menu,
 
 					//! \brief Stores the role names used by the "change owner" operation
-					owners_menu;
+					owners_menu,
+
+					break_rel_menu;
 
 		QAction *action_source_code,
 						*action_edit,
@@ -115,7 +117,8 @@ class ModelWidget: public QWidget {
 						*action_parent_rel,
 						*action_append_sql,
 						*action_create_seq_col,
-						*action_break_rel_line;
+						*action_break_rel_line,
+						*action_remove_rel_points;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -138,10 +141,16 @@ class ModelWidget: public QWidget {
 						//! \brief Stores the temporary database model filename
 						tmp_filename;
 
+
 	protected:
 		static constexpr float MINIMUM_ZOOM=0.35f,
 													 MAXIMUM_ZOOM=4.0f,
 													 ZOOM_INCREMENT=0.05f;
+
+		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
+													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
+													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
+													BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -279,7 +288,11 @@ class ModelWidget: public QWidget {
 		for the column as well the type. */
 		void createSequenceForColumn(void);
 
+		//! \brief Break the relationship line in one or two straight angles (see BREAK_??? constants)
 		void breakRelationshipLine(void);
+
+		//! \brief Removes any user added point from relationship
+		void removeRelationshipPoints(void);
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt);

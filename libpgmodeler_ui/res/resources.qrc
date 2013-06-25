@@ -155,6 +155,12 @@
         <file>icones/sqlappend.png</file>
         <file>icones/keyword.png</file>
         <file>icones/breakrelline.png</file>
+        <file>icones/removepoints.png</file>
+        <file>icones/breakline_90dv.png</file>
+        <file>icones/breakline_290dh.png</file>
+        <file>icones/breakline_290dv.png</file>
+        <file>icones/breakline_90dh.png</file>
+        <file>icones/brazil_flag.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
