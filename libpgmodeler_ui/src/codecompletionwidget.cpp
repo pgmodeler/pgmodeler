@@ -60,7 +60,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				this->show();
 			}
 			//Filters the Crtl+Space to trigger the code completion
-			else if(k_event->key()==Qt::Key_Space && k_event->modifiers()==Qt::ControlModifier)
+			else if(k_event->key()==Qt::Key_Space && (k_event->modifiers()==Qt::ControlModifier || k_event->modifiers()==Qt::MetaModifier))
 			{
 				this->show();
 				return(true);

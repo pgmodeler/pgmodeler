@@ -193,38 +193,32 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
 	action_unprotect=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Unprotect"), this);
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
-	action_unprotect->setToolTip(trUtf8("Unprotect objetc(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence("Del"));
-	action_remove->setToolTip(trUtf8("Delete the selected object(s)"));
 
 	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
 	action_select_all->setShortcut(QKeySequence("Ctrl+A"));
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
 	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert"), this);
-	action_convert_relnn->setToolTip(trUtf8("Converts the n-n relationship into table"));
 
 	action_copy=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
 	action_copy->setShortcut(QKeySequence("Ctrl+C"));
-	action_copy->setToolTip(trUtf8("Copy the selected objects(s)"));
 
 	action_paste=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence("Ctrl+V"));
-	action_paste->setToolTip(trUtf8("Paste the previous copied object(s)"));
 
 	action_cut=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));
-	action_cut->setToolTip(trUtf8("Cut the selected object(s)"));
 
 	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Deps && Referrers"), this);
-	action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
+	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
 	action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
@@ -232,40 +226,25 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_rename->setToolTip(trUtf8("Quick rename the object"));
 
 	action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
-	action_moveto_schema->setToolTip(trUtf8("Move the object to another schema"));
 	action_moveto_schema->setMenu(&schemas_menu);
 
 	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
-	action_edit_perms->setToolTip(trUtf8("Edit object's permissions"));
 	action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
 
 	action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
-	action_change_owner->setToolTip(trUtf8("Change object's owner"));
 	action_change_owner->setMenu(&owners_menu);
 
 	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
-	action_sel_sch_children->setToolTip(trUtf8("Selects all the children graphical objects on the selected schema"));
-
 	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
-	action_highlight_object->setToolTip(trUtf8("Clears the current selection and centers the model view on the selected object."));
-
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
-	action_parent_rel->setToolTip(trUtf8("Opens the properties form of the column's parent relationship."));
 
 	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
-	action_append_sql->setToolTip(trUtf8("Append/Prepend SQL commands to database code definition."));
 	action_append_sql->setShortcut(QKeySequence("Alt+Q"));
 
 	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
-	action_create_seq_col->setToolTip(trUtf8("Creates a sequence associated to the column."));
-
 	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
-	action_break_rel_line->setToolTip(trUtf8("Breaks the relationship line in straight angles."));
-	//action_break_rel_line->setShortcut(QKeySequence("Alt+B"));
 
 	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
-	action_remove_rel_points->setToolTip(trUtf8("Removes all user added points from relationship."));
-	//action_remove_rel_points->setShortcut(QKeySequence("Alt+D"));
 
 	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
@@ -289,7 +268,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_break_rel_line->setMenu(&break_rel_menu);
 
-
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
@@ -299,7 +277,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		actions_new_objects[types[i]]->setData(QVariant(types[i]));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
-
 
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);

@@ -879,6 +879,9 @@
    <property name="text">
     <string>Export</string>
    </property>
+   <property name="toolTip">
+    <string>Export the current opened model in different modes</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
@@ -996,6 +999,9 @@
    <property name="text">
     <string>Settings</string>
    </property>
+   <property name="toolTip">
+    <string>Edit pgModeler settings</string>
+   </property>
   </action>
   <action name="actionWidgets">
    <property name="text">
@@ -1038,6 +1044,9 @@
    </property>
    <property name="text">
     <string>Wiki</string>
+   </property>
+   <property name="toolTip">
+    <string>Access the wiki pages</string>
    </property>
    <property name="shortcut">
     <string>F1</string>

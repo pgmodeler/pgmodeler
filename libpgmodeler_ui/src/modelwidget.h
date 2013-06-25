@@ -141,7 +141,6 @@ class ModelWidget: public QWidget {
 						//! \brief Stores the temporary database model filename
 						tmp_filename;
 
-
 	protected:
 		static constexpr float MINIMUM_ZOOM=0.35f,
 													 MAXIMUM_ZOOM=4.0f,

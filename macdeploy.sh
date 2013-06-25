@@ -4,15 +4,15 @@ USR=`whoami`
 QT_ROOT=/Users/$USR/Qt5.0.2/5.0.2/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang-libc++"
 LOG=macdeploy.log
-PKGFILE=$PKGNAME.dmg
-APPNAME=pgmodeler
-BUNDLE=$APPNAME.app
 
 # Detecting current pgModeler version
 DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
 DEPLOY_VER=${DEPLOY_VER/\",/}
 
 PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
+PKGFILE=$PKGNAME.dmg
+APPNAME=pgmodeler
+BUNDLE=$APPNAME.app
 
 clear
 echo
