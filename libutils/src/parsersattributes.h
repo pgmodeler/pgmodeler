@@ -377,7 +377,11 @@ namespace ParsersAttributes {
 	CONSTR_INDEXES="constr-indexes",
 	ICON="icon",
 	ROOT_DIR="root-dir",
-	FILE_ASSOCIATED="file-associated";
+	FILE_ASSOCIATED="file-associated",
+	COMPLETION_TRIGGER="completion-trigger",
+	APPENDED_SQL="appended-sql",
+	APPEND_AT_EOD="append-at-eod",
+	FONT_SIZE="font-size";
 }
 
 #endif

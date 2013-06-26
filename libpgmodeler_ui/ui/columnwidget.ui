@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>56</height>
+    <height>107</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,6 +48,19 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="3">
+    <widget class="QCheckBox" name="notnull_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Not null</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1" colspan="2">
     <widget class="QTextEdit" name="def_value_txt">
      <property name="maximumSize">
@@ -85,35 +98,12 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="notnull_lbl">
-     <property name="text">
-      <string>Not Null:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="notnull_chk">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>240</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>def_value_txt</tabstop>
+  <tabstop>notnull_chk</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

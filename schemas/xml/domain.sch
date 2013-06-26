@@ -27,6 +27,7 @@
   %if @{owner} %then @{owner} %end
   %if @{collation} %then @{collation} %end
   %if @{comment} %then @{comment} %end
+  %if @{appended-sql} %then @{appended-sql} %end
 
   $tb @{type}
 

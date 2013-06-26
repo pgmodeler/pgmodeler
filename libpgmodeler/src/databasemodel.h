@@ -106,7 +106,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Indicates if the model was invalidated due to operations like insert / remove objects.
 		When this flag is set it's recommend to revalidate the model using the Model validation tool */
-		invalidated;
+		invalidated,
+
+		//! \brief Indicates that appended SQL commands must be put at the very end of model definition
+		append_at_eod;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -152,8 +155,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Validates all the relationship, propagating all column modifications over the tables
 		void validateRelationships(void);
 
-		//! \brief Returns the list of objects that belongs to the passed schema
+		//! \brief Returns the list of specified object type that belongs to the passed schema
 		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
+
+		//! \brief Returns the list of objects (all types) that belongs to the passed schema
+		vector<BaseObject *> getObjects(BaseObject *schema);
 
 		//! \brief Returns the object index searching by its name
 		int getObjectIndex(const QString &name, ObjectType obj_type);
@@ -193,6 +199,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Sets the protection for all objects on the model
 		void setProtected(bool value);
+
+		//! \brief Sets the sql appending at end of entire model definition
+		void setAppendAtEOD(bool value);
+
+		//! \brief Returns the current state of the sql appeding at end of entire model definition
+		bool isAppendAtEOD(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);
@@ -409,7 +421,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		objects if some of them already exists */
 		void createSystemObjects(bool create_public);
 
-		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive=false, bool is_regexp=false, bool exact_match=false);
+		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
+		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
+		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
+																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

@@ -35,14 +35,17 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
-		column_grid->addWidget(data_type,3,0,1,0);
+		column_grid->addWidget(data_type,0,0,1,0);
+		column_grid->addWidget(def_value_lbl,1,0,1,1);
+		column_grid->addWidget(def_value_txt,1,1,1,1);
+		column_grid->addWidget(notnull_chk,1,2,1,1);
 		column_grid->addItem(spacer,column_grid->count(),0);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(530, 450);
-		parent_form->setMaximumHeight(450);
+		parent_form->setMinimumSize(530, 430);
+		parent_form->setMaximumHeight(430);
 	}
 	catch(Exception &e)
 	{

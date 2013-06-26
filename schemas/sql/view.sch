@@ -22,4 +22,5 @@
 %if @{triggers} %then @{triggers} %end
 %if @{rules} %then @{rules} %end
 %if @{comment} %then @{comment} %end
+%if @{appended-sql} %then @{appended-sql} %end
 

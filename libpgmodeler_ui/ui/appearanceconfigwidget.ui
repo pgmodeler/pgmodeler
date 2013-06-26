@@ -481,6 +481,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>element_cmb</tabstop>
+  <tabstop>font_cmb</tabstop>
+  <tabstop>font_size_spb</tabstop>
+  <tabstop>bold_chk</tabstop>
+  <tabstop>italic_chk</tabstop>
+  <tabstop>underline_chk</tabstop>
+  <tabstop>color1_tb</tabstop>
+  <tabstop>color2_tb</tabstop>
+  <tabstop>color3_tb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

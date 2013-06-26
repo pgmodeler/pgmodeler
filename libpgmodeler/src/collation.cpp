@@ -101,7 +101,12 @@ QString Collation::getCodeDefinition(unsigned def_type)
 QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	if(!locale.isEmpty())
+	{
 		attributes[ParsersAttributes::LOCALE]=locale;
+
+		if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null)
+			attributes[ParsersAttributes::LOCALE]=locale + "." + (~encoding).toLower();
+	}
 	else if(collation)
 		attributes[ParsersAttributes::COLLATION]=collation->getName(true);
 	else

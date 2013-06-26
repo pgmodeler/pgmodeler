@@ -141,7 +141,9 @@ class BaseObject {
 		//! \brief Comments related to object
 		QString comment,
 						//! \brief Object's name (in PostgreSQL accepted format)
-						obj_name;
+						obj_name,
+
+						appended_sql;
 
 		/*! \brief Type of object, may have one of the values ​​of the enum ObjectType OBJ_*
 		 It was used a numeric type to avoid the use excessive of RTTI. */
@@ -208,6 +210,9 @@ class BaseObject {
 		//! \brief Defines the objects name. If the passed name isn't valid it'll raise an error
 		virtual void setName(const QString &name);
 
+			//! \brief Toggles the object's modify protection
+		virtual void setProtected(bool value);
+
 		/*! \brief Defines the schema that the object belongs. An error is raised if the
 		 passed schema is not valid or the object does not accepts the use of schemas. */
 		virtual void setSchema(BaseObject *schema);
@@ -220,12 +225,11 @@ class BaseObject {
 		 passed tablespace is not valid or the object does not accepts the use of tablespaces. */
 		virtual void setTablespace(BaseObject *tablespace);
 
-		//! \brief Toggles the object's modify protection
-		virtual void setProtected(bool value);
-
 		/*! \brief Defines the collation which the objects will use. An error is raised if the
 		 passed collation is not valid or the object does not accepts the use of collations. */
 		virtual void setCollation(BaseObject *collation);
+
+		void setAppendedSQL(const QString &sql);
 
 		//! \brief Disables the SQL code commenting it on generation
 		void setSQLDisabled(bool value);
@@ -271,6 +275,8 @@ class BaseObject {
 		//! \brief Returns the collation that the object makes use
 		BaseObject *getCollation(void);
 
+		QString getAppendedSQL(void);
+
 		//! \brief Returns the object's generated id
 		unsigned getObjectId(void);
 
@@ -310,6 +316,9 @@ class BaseObject {
 		//! \brief Returns if the specified type accepts to have a collation assigned
 		static bool acceptsCollation(ObjectType obj_type);
 
+		//! \brief Returns if the specified type accepts to have appended sql commands
+		static bool acceptsAppendedSQL(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
 
@@ -322,12 +331,17 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have a collation assigned
 		bool acceptsCollation(void);
 
+		//! \brief Returns if the object accepts to have appended sql commands
+		bool acceptsAppendedSQL(void);
+
 		//! \brief Swap the the ids of the specified objects
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
 
 		/*! \brief Returns the valid object types in a vector. The types
-		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector */
-		static vector<ObjectType> getObjectTypes(void);
+		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
+		By default table objects (columns, trigger, constraints, etc) are included. To
+		avoid the insertion of these types set the boolean param to false. */
+		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
 
 		friend class DatabaseModel;
 };

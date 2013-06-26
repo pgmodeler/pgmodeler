@@ -30,6 +30,8 @@ like columns, rules, triggers, indexes, constraints.
 #include "basetable.h"
 
 class TableObject: public BaseObject {
+	private:
+
 	protected:
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;
@@ -81,6 +83,9 @@ class TableObject: public BaseObject {
 		/*! \brief Returns whether the object was added by relationship (covering all the
 		 possible relationship types) */
 		bool isAddedByRelationship(void);
+
+		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
+		static bool isTableObject(ObjectType type);
 
 		void operator = (TableObject &object);
 

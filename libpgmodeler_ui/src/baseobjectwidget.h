@@ -156,6 +156,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 	protected slots:
 		void editPermissions(void);
+		void appendSQL(void);
 
 	public slots:
 		void show(void);

@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	QTextStream out(stdout);
 
 	try
-	{
+  {
 		PgModelerCLI pgmodeler_cli(argc, argv);
 		QTranslator translator;
 

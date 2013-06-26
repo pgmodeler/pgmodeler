@@ -357,6 +357,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>ref_type_cmb</tabstop>
+  <tabstop>select_from_chk</tabstop>
+  <tabstop>from_where_chk</tabstop>
+  <tabstop>after_where_chk</tabstop>
+  <tabstop>view_def_chk</tabstop>
+  <tabstop>tab_alias_edt</tabstop>
+  <tabstop>col_alias_edt</tabstop>
+  <tabstop>expression_txt</tabstop>
+  <tabstop>expr_alias_edt</tabstop>
+  <tabstop>cte_expression_txt</tabstop>
+  <tabstop>code_txt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

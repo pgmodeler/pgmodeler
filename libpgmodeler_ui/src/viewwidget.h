@@ -29,6 +29,7 @@
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
 #include "objecttablewidget.h"
+#include "codecompletionwidget.h"
 
 /* Declaring the Reference class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -54,6 +55,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		SyntaxHighlighter *expression_hl,
 											*code_hl,
 											*cte_expression_hl;
+
+		CodeCompletionWidget *cte_expression_cp,
+												 *expression_cp;
 
 		ObjectSelectorWidget *table_sel,
 												*column_sel;

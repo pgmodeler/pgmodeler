@@ -48,6 +48,7 @@
 #include "permissionwidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
+#include "sqlappendwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -80,11 +81,17 @@ extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
+extern SQLAppendWidget *sqlappend_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
 ModelWidget *ModelWidget::src_model=nullptr;
+
+const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
+const unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES=1;
+const unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES=2;
+const unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES=3;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
@@ -186,38 +193,32 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
 	action_unprotect=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Unprotect"), this);
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
-	action_unprotect->setToolTip(trUtf8("Unprotect objetc(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence("Del"));
-	action_remove->setToolTip(trUtf8("Delete the selected object(s)"));
 
 	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
 	action_select_all->setShortcut(QKeySequence("Ctrl+A"));
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
 	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert"), this);
-	action_convert_relnn->setToolTip(trUtf8("Converts the n-n relationship into table"));
 
 	action_copy=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
 	action_copy->setShortcut(QKeySequence("Ctrl+C"));
-	action_copy->setToolTip(trUtf8("Copy the selected objects(s)"));
 
 	action_paste=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence("Ctrl+V"));
-	action_paste->setToolTip(trUtf8("Paste the previous copied object(s)"));
 
 	action_cut=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));
-	action_cut->setToolTip(trUtf8("Cut the selected object(s)"));
 
 	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Deps && Referrers"), this);
-	action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
+	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
 	action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
@@ -225,22 +226,47 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_rename->setToolTip(trUtf8("Quick rename the object"));
 
 	action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
-	action_moveto_schema->setToolTip(trUtf8("Move the object to another schema"));
 	action_moveto_schema->setMenu(&schemas_menu);
 
 	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
-	action_edit_perms->setToolTip(trUtf8("Edit object's permissions"));
 	action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
 
 	action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
-	action_change_owner->setToolTip(trUtf8("Change object's owner"));
 	action_change_owner->setMenu(&owners_menu);
 
 	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
-	action_sel_sch_children->setToolTip(trUtf8("Selects all the children graphical objects on the selected schema"));
-
 	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
-	action_highlight_object->setToolTip(trUtf8("Clears the current selection and centers the model view on the selected object."));
+	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
+
+	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
+	action_append_sql->setShortcut(QKeySequence("Alt+Q"));
+
+	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
+	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
+
+	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dh.png")), trUtf8("90° (horizontal)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dv.png")), trUtf8("90° + 90° (vertical)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_2NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dh.png")), trUtf8("90° + 90° (horizontal)"), this);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
+	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_2NINETY_DEGREES));
+	break_rel_menu.addAction(action);
+
+	action_break_rel_line->setMenu(&break_rel_menu);
 
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
@@ -251,7 +277,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		actions_new_objects[types[i]]->setData(QVariant(types[i]));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
-
 
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
@@ -286,6 +311,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
+	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
+	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
+	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceForColumn(void)));
+	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -372,13 +401,10 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 			//Get the graphical representation of the current object
 			obj=dynamic_cast<BaseObjectView *>(obj_nav_list.at(obj_nav_idx)->getReceiverObject());
 
-			//If the object is visible selects it
-			//if(obj && obj->isVisible())
-			//{
 				scene->clearSelection();
 				obj->setSelected(true);
 				viewport->centerOn(obj);
-			//}
+
 
 			//Navigate forward if the right key is pressed
 			if(event->key()==Qt::Key_Right)
@@ -492,7 +518,6 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 	}
 
 	this->modified=true;
-	//this->invalidated=true;
 }
 
 void ModelWidget::addNewObject(void)
@@ -509,7 +534,7 @@ void ModelWidget::addNewObject(void)
 		uses as parent object the selected object, because the user only can add
 		these types after select a table or schema, respectively */
 		if(selected_objects.size()==1 &&
-			 (PgModelerNS::isTableObject(obj_type) ||
+			 (TableObject::isTableObject(obj_type) ||
 				selected_objects[0]->getObjectType()==OBJ_SCHEMA))
 			parent_obj=selected_objects[0];
 
@@ -1159,7 +1184,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			if(object && obj_type!=object->getObjectType())
 				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			//If the user try to call the table object form without specify a parent object
-			else if(!parent_obj && PgModelerNS::isTableObject(obj_type))
+			else if(!parent_obj && TableObject::isTableObject(obj_type))
 				throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
@@ -1312,10 +1337,13 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				column_wgt->show();
 				res=(column_wgt->result()==QDialog::Accepted);
 
-				if(col)
-					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
-				else
-					db_model->validateRelationships();
+				if(res==QDialog::Accepted)
+				{
+					if(col)
+						db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
+					else
+						db_model->validateRelationships();
+				}
 			break;
 
 			case OBJ_CONSTRAINT:
@@ -1325,10 +1353,13 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				constraint_wgt->show();
 				res=(constraint_wgt->result()==QDialog::Accepted);
 
-				if(constr && parent_obj->getObjectType()==OBJ_TABLE)
-					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
-				else
-					db_model->validateRelationships();
+				if(res==QDialog::Accepted)
+				{
+					if(constr && parent_obj->getObjectType()==OBJ_TABLE)
+						db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
+					else
+						db_model->validateRelationships();
+				}
 			break;
 
 			case OBJ_RULE:
@@ -1535,9 +1566,6 @@ void ModelWidget::editPermissions(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
-
-	//if(obj->isSystemObject() /* isReservedObject(obj) */)
-	//	throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	permission_wgt->setAttributes(this->db_model, nullptr, obj);
 	permission_wgt->show();
@@ -2315,6 +2343,16 @@ void ModelWidget::removeObjects(void)
 	}
 }
 
+void ModelWidget::appendSQL(void)
+{
+	QAction *act=dynamic_cast<QAction *>(sender());
+	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+
+	sqlappend_wgt->setAttributes(db_model, obj);
+	sqlappend_wgt->show();
+	this->modified=(sqlappend_wgt->result()==QDialog::Accepted);
+}
+
 void ModelWidget::showObjectMenu(void)
 {
 	BaseTableView *tab=nullptr;
@@ -2455,6 +2493,12 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
 
+		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
+		{
+			action_append_sql->setData(QVariant::fromValue<void *>(obj));
+			quick_actions_menu.addAction(action_append_sql);
+		}
+
 		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
 	}
@@ -2501,11 +2545,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			configureSubmenu(db_model);
 
-			popup_menu.addSeparator();
-
 			action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 			action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
+
 			popup_menu.addAction(action_edit);
+
+			popup_menu.addSeparator();
 			popup_menu.addAction(action_source_code);
 
 			if(db_model->isProtected())
@@ -2519,7 +2564,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		else if(objects.size()==1)
 		{
 			BaseObject *obj=objects[0];
-			Relationship *rel=dynamic_cast<Relationship *>(obj);
+			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
 					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
 										OBJ_RULE, OBJ_TRIGGER },
@@ -2530,25 +2575,50 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
 							 sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
 
+			configureSubmenu(obj);
+			popup_menu.addAction(action_edit);
+
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
-				 (!obj->isProtected() && (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
+				 (!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
+																	obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
 			{
 				if(obj_type == OBJ_TABLE)
 				{
 					for(i=0; i < tab_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
+					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
-				else if(obj_type==OBJ_RELATIONSHIP)
+				else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 				{
-					for(i=0; i < 2; i++)
-						new_object_menu.addAction(actions_new_objects[types[i]]);
-					action_new_object->setMenu(&new_object_menu);
+
+					if(obj_type==OBJ_RELATIONSHIP)
+					{
+						for(i=0; i < 2; i++)
+							new_object_menu.addAction(actions_new_objects[types[i]]);
+
+						action_new_object->setMenu(&new_object_menu);
+						popup_menu.insertAction(action_quick_actions, action_new_object);
+					}
 
 					if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 					{
 						action_convert_relnn->setData(QVariant::fromValue<void *>(rel));
 						popup_menu.addAction(action_convert_relnn);
+					}
+
+					if(!rel->isSelfRelationship())
+					{
+						if(rel->getPoints().empty())
+						{
+							action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
+							popup_menu.addAction(action_break_rel_line);
+						}
+						else
+						{
+							action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
+							popup_menu.addAction(action_remove_rel_points);
+						}
 					}
 				}
 				else if(obj_type == OBJ_SCHEMA)
@@ -2556,9 +2626,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					for(i=0; i < sch_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
+					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
-
-				popup_menu.addAction(action_new_object);
 			}
 
 			/* Adding the action to highlight the object only when the sender is not one of the
@@ -2570,19 +2639,35 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				action_highlight_object->setData(QVariant::fromValue<void *>(obj));
 			}
 
-			configureSubmenu(obj);
-			popup_menu.addSeparator();
-
 			action_edit->setData(QVariant::fromValue<void *>(obj));
 			action_source_code->setData(QVariant::fromValue<void *>(obj));
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 			tab_obj=dynamic_cast<TableObject *>(obj);
 
-			popup_menu.addAction(action_edit);
+
+			if(tab_obj &&  tab_obj->getObjectType()==OBJ_COLUMN)
+			{
+				Column *col=dynamic_cast<Column *>(tab_obj);
+
+				if(tab_obj->isAddedByRelationship())
+				{
+					action_parent_rel->setData(QVariant::fromValue<void *>(dynamic_cast<Column *>(tab_obj)->getParentRelationship()));
+					popup_menu.addAction(action_parent_rel);
+				}
+				else if(col->getType().isSerialType())
+				{
+					action_create_seq_col->setData(QVariant::fromValue<void *>(col));
+					popup_menu.addAction(action_create_seq_col);
+				}
+			}
+
+			popup_menu.addSeparator();
 			popup_menu.addAction(action_source_code);
 
 			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 				popup_menu.addAction(action_deps_refs);
+
+
 		}
 	}
 
@@ -2718,8 +2803,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				for(i=0; i < count; i++)
 					submenu->addMenu(submenus[i]);
 
-				popup_menu.addSeparator();
-				popup_menu.addMenu(submenu);
+				popup_menu.insertMenu(action_edit, submenu);
 			}
 		}
 	}
@@ -2766,5 +2850,116 @@ void ModelWidget::highlightObject(void)
 			obj_view->setSelected(true);
 			viewport->centerOn(obj_view);
 		}
+	}
+}
+
+void ModelWidget::createSequenceForColumn(void)
+{
+	try
+	{
+		QAction *action=dynamic_cast<QAction *>(sender());
+		Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
+		Sequence *seq=nullptr;
+		Table *tab=dynamic_cast<Table *>(col->getParentTable());
+
+		op_list->startOperationChain();
+		op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
+
+		//Creates a sequence which name is like the ones auto generated by PostgreSQL
+		seq=new Sequence;
+		seq->setName(BaseObject::formatName(tab->getName() + "_" + col->getName() + "_seq"));
+		seq->setSchema(tab->getSchema());
+		seq->setDefaultValues(col->getType());
+		seq->setOwnerColumn(col);
+
+		//Changes the column type to the alias for serial type
+		col->setType(col->getType().getAliasType());
+		col->setNotNull(true);
+
+		//Clean up the column's default value since it'll be set when the sequence is created
+		col->setDefaultValue("");
+
+		op_list->registerObject(seq, Operation::OBJECT_CREATED);
+		db_model->addSequence(seq);
+		op_list->finishOperationChain();
+
+		//Revalidate the relationships since the modified column can be a primary key
+		if(tab->getPrimaryKey()->isColumnReferenced(col))
+			db_model->validateRelationships();
+
+		tab->setModified(true);
+		this->setModified(true);
+		emit s_objectCreated();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelWidget::breakRelationshipLine(void)
+{
+	try
+	{
+		QAction *action=dynamic_cast<QAction *>(sender());
+		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
+		BaseTableView *src_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject()),
+									*dst_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+		float dx, dy;
+		unsigned break_type=action->data().toUInt();
+
+		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+
+		if(break_type==BREAK_VERT_NINETY_DEGREES)
+			rel->setPoints({ QPointF(src_tab->getCenter().x(), dst_tab->getCenter().y()) });
+		else if(break_type==BREAK_HORIZ_NINETY_DEGREES)
+			rel->setPoints({ QPointF(dst_tab->getCenter().x(), src_tab->getCenter().y()) });
+		else if(break_type==BREAK_HORIZ_2NINETY_DEGREES)
+		{
+			//Calculates the midle vertical point between the tables centers
+			dy=(src_tab->getCenter().y() + dst_tab->getCenter().y())/2;
+
+			//Adds two points on the middle space between tables creating two 90° angles
+			rel->setPoints({ QPointF(src_tab->getCenter().x(), dy),
+											 QPointF(dst_tab->getCenter().x(), dy) });
+		}
+		else
+		{
+			//Calculates the middle horizontal point between the tables centers
+			dx=(src_tab->getCenter().x() + dst_tab->getCenter().x())/2;
+
+			//Adds two points on the middle space between tables creating two 90° angles
+			rel->setPoints({ QPointF(dx, src_tab->getCenter().y()),
+											 QPointF(dx, dst_tab->getCenter().y()) });
+		}
+
+		rel->setModified(true);
+		this->setModified(true);
+		emit s_objectModified();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelWidget::removeRelationshipPoints(void)
+{
+	try
+	{
+		QAction *action=dynamic_cast<QAction *>(sender());
+		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
+
+		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+		rel->setPoints({});
+		scene->clearSelection();
+
+		rel->setModified(true);
+		this->setModified(true);
+		emit s_objectModified();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

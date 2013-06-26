@@ -20,19 +20,42 @@
 
 QObject *ObjectSelectorWidget::current_selector=nullptr;
 
-ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget *parent): QWidget(parent)
+ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget *parent) : QWidget(parent)
+{
+	try
+	{
+		this->sel_obj_types.push_back(sel_obj_type);
+		configureSelector(install_highlighter);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent) : QWidget(parent)
+{
+	try
+	{
+		this->sel_obj_types=sel_obj_types;
+		configureSelector(install_highlighter);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 {
 	try
 	{
 		Ui_ObjectSelectorWidget::setupUi(this);
-
 		obj_view_wgt=new ModelObjectsWidget(true);
 
 		model=nullptr;
 		selected_obj=nullptr;
 		obj_name_hl=nullptr;
-
-		this->sel_obj_type=sel_obj_type;
 
 		if(install_highlighter)
 		{
@@ -76,7 +99,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 			obj_name=dynamic_cast<Function *>(object)->getSignature();
 		else if(obj_type==OBJ_OPERATOR)
 			obj_name=dynamic_cast<Operator *>(object)->getSignature();
-		else if(PgModelerNS::isTableObject(obj_type))
+		else if(TableObject::isTableObject(obj_type))
 		{
 			BaseObject *tab_pai=dynamic_cast<TableObject *>(object)->getParentTable();
 			if(tab_pai)
@@ -88,7 +111,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 			obj_name=object->getName(true);
 	}
 
-	if(object && obj_type==sel_obj_type)
+	if(object && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
 	{
 		obj_name_txt->setPlainText(Utf8String::create(obj_name));
 		rem_object_tb->setEnabled(object);
@@ -121,7 +144,10 @@ void ObjectSelectorWidget::clearSelector(void)
 void ObjectSelectorWidget::showObjectView(void)
 {
 	ObjectSelectorWidget::current_selector=this;
-	obj_view_wgt->setObjectVisible(sel_obj_type, true);
+
+	for(unsigned i=0; i < sel_obj_types.size(); i++)
+		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
+
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();
 }

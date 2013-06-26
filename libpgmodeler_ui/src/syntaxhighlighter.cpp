@@ -18,13 +18,6 @@
 
 #include "syntaxhighlighter.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
-{
-	this->auto_rehighlight=auto_rehighlight;
-	this->single_line_mode=false;
-	configureAttributes();
-}
-
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
 	parent->setAcceptRichText(true);
@@ -389,9 +382,10 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 			}
 
+
 			//If the word is not empty try to identify the group
 			if(!word.isEmpty())
-			{
+			{	
 				i1=i;
 				while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
 
@@ -493,6 +487,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						{
 							XMLParser::getElementAttributes(attribs);
 							ignored_chars=attribs[ParsersAttributes::VALUE];
+						}
+						else if(elem==ParsersAttributes::COMPLETION_TRIGGER)
+						{
+							XMLParser::getElementAttributes(attribs);
+
+							if(attribs[ParsersAttributes::VALUE].size() >= 1)
+								completion_trigger=attribs[ParsersAttributes::VALUE].at(0);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -660,5 +661,20 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
+}
+
+vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+{
+	map<QString, vector<QRegExp> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+
+	if(expr_map->count(group_name) > 0)
+		return(expr_map->at(group_name));
+	else
+		return(vector<QRegExp>());
+}
+
+QChar SyntaxHighlighter::getCompletionTrigger(void)
+{
+	return(completion_trigger);
 }
 

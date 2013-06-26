@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="element_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -269,6 +278,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>column_rb</tabstop>
+  <tabstop>column_cmb</tabstop>
+  <tabstop>expression_rb</tabstop>
+  <tabstop>elem_expr_txt</tabstop>
+  <tabstop>sorting_chk</tabstop>
+  <tabstop>ascending_rb</tabstop>
+  <tabstop>descending_rb</tabstop>
+  <tabstop>nulls_first_chk</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

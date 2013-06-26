@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT usertype (schema, role?, comment?, type?, collation?, opclass?, (function+ | typeattrib+ | enumeration))>
+<!ELEMENT usertype (schema, role?, comment?, appended-sql?, type?, collation?, opclass?, (function+ | typeattrib+ | enumeration))>
 <!ATTLIST usertype name CDATA #REQUIRED>
 <!ATTLIST usertype configuration (enumeration|composite|base|range) "enumeration">
 <!ATTLIST usertype internal-length CDATA #IMPLIED>
@@ -21,5 +21,5 @@
 <!ELEMENT enumeration EMPTY>
 <!ATTLIST enumeration values CDATA #REQUIRED>
 
-<!ELEMENT typeattrib (type, collation)>
+<!ELEMENT typeattrib (type, collation?)>
 <!ATTLIST typeattrib name CDATA #REQUIRED>

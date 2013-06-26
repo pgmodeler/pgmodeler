@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="trigger_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
     <number>4</number>
    </property>
    <property name="spacing">
@@ -391,7 +400,16 @@
        <string>Arguments</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
         <number>4</number>
        </property>
        <property name="spacing">
@@ -424,7 +442,16 @@
        <string>Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
         <number>4</number>
        </property>
        <property name="spacing">
@@ -561,6 +588,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>firing_mode_cmb</tabstop>
+  <tabstop>exec_per_row_chk</tabstop>
+  <tabstop>insert_chk</tabstop>
+  <tabstop>delete_chk</tabstop>
+  <tabstop>update_chk</tabstop>
+  <tabstop>truncate_chk</tabstop>
+  <tabstop>constr_trig_chk</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_type_cmb</tabstop>
+  <tabstop>cond_expr_txt</tabstop>
+  <tabstop>arg_cols_tbw</tabstop>
+  <tabstop>argument_edt</tabstop>
+  <tabstop>column_cmb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

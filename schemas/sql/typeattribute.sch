@@ -5,7 +5,7 @@
 [  ] @{name} $sp @{type}
 
 %if %not @{pgsql90} %and @{collation} %then
-[ COLLATION ] @{collation}
+[ COLLATE ] @{collation}
 %end
 
 , $br

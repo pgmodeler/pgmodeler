@@ -558,6 +558,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>constr_type_cmb</tabstop>
+  <tabstop>match_cmb</tabstop>
+  <tabstop>no_inherit_chk</tabstop>
+  <tabstop>check_expr_txt</tabstop>
+  <tabstop>fill_factor_sb</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_cmb</tabstop>
+  <tabstop>on_delete_cmb</tabstop>
+  <tabstop>on_update_cmb</tabstop>
+  <tabstop>columns_tbw</tabstop>
+  <tabstop>column_cmb</tabstop>
+  <tabstop>ref_column_cmb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

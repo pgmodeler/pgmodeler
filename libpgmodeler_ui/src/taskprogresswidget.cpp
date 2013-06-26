@@ -21,7 +21,7 @@
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
@@ -40,9 +40,9 @@ void TaskProgressWidget::show(void)
 	QTimer t;
 
 	//Gives 100ms to the task to be shown and update its contents
-	t.singleShot(100, &eventLoop, SLOT(quit(void)));
-	text_lbl->setText(trUtf8("Waiting task to start..."));
-	eventLoop.exec(QEventLoop::AllEvents);
+    t.singleShot(100, &eventLoop, SLOT(quit(void)));
+    text_lbl->setText(trUtf8("Waiting task to start..."));
+    eventLoop.exec(QEventLoop::AllEvents);
 }
 
 void TaskProgressWidget::updateProgress(int progress, const QString &text, unsigned icon_id)
@@ -58,7 +58,18 @@ void TaskProgressWidget::updateProgress(int progress, const QString &text, unsig
 	else
 		icon_lbl->clear();
 
-	this->repaint();
+    this->repaint();
+
+    /* MacOSX workaround: The event loop below is needed because on this system
+       the task progress is not correctly updated. The event loop causes a little
+       delay (1ms) and it`s sufficient to update the entire widget */
+    #ifdef Q_OS_MAC
+       QEventLoop eventLoop;
+       QTimer t;
+       //Gives 1ms to the task to be shown and update its contents
+       t.singleShot(1, &eventLoop, SLOT(quit(void)));
+       eventLoop.exec(QEventLoop::AllEvents);
+    #endif
 }
 
 void TaskProgressWidget::close(void)

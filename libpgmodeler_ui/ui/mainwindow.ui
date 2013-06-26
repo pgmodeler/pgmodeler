@@ -661,8 +661,8 @@
    </attribute>
    <addaction name="action_configuration"/>
    <addaction name="action_plugins"/>
-   <addaction name="action_export"/>
    <addaction name="action_import"/>
+   <addaction name="action_export"/>
    <addaction name="action_wiki"/>
   </widget>
   <action name="action_new_model">
@@ -881,7 +881,7 @@
     <string>Export</string>
    </property>
    <property name="toolTip">
-    <string>Export current model to file or DBMS (forward engineering).</string>
+    <string>Export the current opened model in different modes</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -1001,7 +1001,7 @@
     <string>Settings</string>
    </property>
    <property name="toolTip">
-    <string>Edit pgModeler's settings</string>
+    <string>Edit pgModeler settings</string>
    </property>
   </action>
   <action name="actionWidgets">
@@ -1047,7 +1047,7 @@
     <string>Wiki</string>
    </property>
    <property name="toolTip">
-    <string>Access pgModeler's Wiki pages.</string>
+    <string>Access the wiki pages</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -1111,6 +1111,13 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>models_tbw</tabstop>
+  <tabstop>validation_btn</tabstop>
+  <tabstop>find_obj_btn</tabstop>
+  <tabstop>operations_btn</tabstop>
+  <tabstop>objects_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

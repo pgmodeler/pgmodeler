@@ -85,6 +85,7 @@ void TextboxView::configureObject(void)
 		font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
+		font.setPointSizeF(txtbox->getFontSize());
 
 		text->setFont(font);
 		text->setBrush(txtbox->getTextColor());

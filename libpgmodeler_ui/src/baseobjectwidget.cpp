@@ -18,9 +18,10 @@
 
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
-
+#include "sqlappendwidget.h"
 
 extern PermissionWidget *permission_wgt;
+extern SQLAppendWidget *sqlappend_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -60,6 +61,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		parent_form->setObjectName("parent_form");
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
+		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(appendSQL(void)));
 		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
 		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
@@ -89,8 +91,9 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
 
 		layout->addItem(spacer);
-		layout->addWidget(disable_sql_chk);
+		layout->addWidget(append_sql_tb);
 		layout->addWidget(edt_perms_tb);
+		layout->addWidget(disable_sql_chk);
 
 		baseobject_grid->addLayout(layout,9,0,1,5);
 	}
@@ -275,6 +278,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	name_edt->setFocus();
 	edt_perms_tb->setEnabled(object!=nullptr);
+	append_sql_tb->setEnabled(object!=nullptr);
 
 	owner_sel->setModel(model);
 	schema_sel->setModel(model);
@@ -359,11 +363,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
 	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX);
 
-	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
-		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
-		 obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
-		 obj_type!=OBJ_TABLESPACE)
-		edt_perms_tb->setVisible(false);
+	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
+	append_sql_tb->setVisible(BaseObject::acceptsAppendedSQL(obj_type));
 
 	schema_lbl->setVisible(BaseObject::acceptsSchema(obj_type));
 	schema_sel->setVisible(BaseObject::acceptsSchema(obj_type));
@@ -578,6 +579,12 @@ void BaseObjectWidget::editPermissions(void)
 	permission_wgt->show();
 }
 
+void BaseObjectWidget::appendSQL(void)
+{
+	sqlappend_wgt->setAttributes(this->model, this->object);
+	sqlappend_wgt->show();
+}
+
 void BaseObjectWidget::applyConfiguration(void)
 {
 	if(object)
@@ -702,7 +709,7 @@ void BaseObjectWidget::finishConfiguration(void)
 		if(new_object)
 		{
 			//If the object is a table object and the parent table is specified, adds it to table
-			if(table && PgModelerNS::isTableObject(obj_type))
+			if(table && TableObject::isTableObject(obj_type))
 				table->addObject(this->object);
 			//Adding the object on the relationship, if specified
 			else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))

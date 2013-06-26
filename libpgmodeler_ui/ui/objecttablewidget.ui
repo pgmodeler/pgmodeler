@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="tabelaobj_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -452,6 +461,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>add_tb</tabstop>
+  <tabstop>remove_tb</tabstop>
+  <tabstop>update_tb</tabstop>
+  <tabstop>remove_all_tb</tabstop>
+  <tabstop>edit_tb</tabstop>
+  <tabstop>move_up_tb</tabstop>
+  <tabstop>move_down_tb</tabstop>
+  <tabstop>move_first_tb</tabstop>
+  <tabstop>move_last_tb</tabstop>
+  <tabstop>table_tbw</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

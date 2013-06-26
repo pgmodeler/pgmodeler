@@ -39,27 +39,6 @@ namespace PgModelerNS {
 	/*! \brief This functions is a second way to make a copy between two objects. It simply calls
 		 the template function above. */
 	void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
-
-	/*! \brief Inserts an index element (expression type) into the specified element vector.
-	This function is used in two other classes (Index and Constraint). */
-	void addIndexElement(vector<IndexElement> &elements, const QString &expr, Collation *coll, OperatorClass *op_class,
-											 bool use_sorting, bool asc_order, bool nulls_first);
-
-	/*! \brief Inserts an index element (column type) into the specified element vector.
-	This function is used in two other classes (Index and Constraint). */
-	void addIndexElement(vector<IndexElement> &elements, Column *column, Collation *coll, OperatorClass *op_class,
-											 bool use_sorting, bool asc_order, bool nulls_first);
-
-	/*! \brief Inserts a pre configured index element into the specified element vector.
-	This function is used in two other classes (Index and Constraint). */
-	void addIndexElement(vector<IndexElement> &elements, IndexElement elem);
-
-	/*! \brief Returns if the element exists in the specified list returning its index, a negative
-	index means that the element does not exists. */
-	int isIndexElementExists(vector<IndexElement> &elements, IndexElement elem);
-
-	//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
-	bool isTableObject(ObjectType type);
 }
 
 #endif

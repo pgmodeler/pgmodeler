@@ -49,6 +49,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 
 		model=nullptr;
 		scene=nullptr;
+    executable_dir=QFileInfo(argv[0]).absolutePath();
 
 		initializeOptions();
 
@@ -300,6 +301,10 @@ void PgModelerCLI::parserOptions(map<QString, QString> &opts)
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
 			throw Exception(trUtf8("Incomplete connection information!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+    //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
+    opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
+    opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+
 		parsed_opts=opts;
 	}
 }
@@ -310,6 +315,9 @@ int PgModelerCLI::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
+      //Switch the app working dir in order to make it find the dependencies paths (./schemas, ./conf, etc)
+      QDir::setCurrent(executable_dir);
+
 			if(!silent_mode)
 			{
 				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;

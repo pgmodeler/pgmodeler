@@ -81,6 +81,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::COLLATION]="";
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
+	attributes[ParsersAttributes::APPENDED_SQL]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -404,6 +405,21 @@ bool BaseObject::acceptsCollation(void)
 	return(BaseObject::acceptsCollation(this->obj_type));
 }
 
+bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
+{
+	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
+				 obj_type!=OBJ_RULE &&  obj_type!=OBJ_TRIGGER &&
+				 obj_type!=OBJ_INDEX && obj_type!=OBJ_RELATIONSHIP &&
+				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
+				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
+				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION);
+}
+
+bool BaseObject::acceptsAppendedSQL(void)
+{
+	return(BaseObject::acceptsAppendedSQL(this->obj_type));
+}
+
 void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
@@ -448,6 +464,14 @@ void BaseObject::setCollation(BaseObject *collation)
 	this->collation=collation;
 }
 
+void BaseObject::setAppendedSQL(const QString &sql)
+{
+	if(!acceptsAppendedSQL())
+		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->appended_sql=sql;
+}
+
 QString BaseObject::getName(bool format, bool prepend_schema)
 {
 	if(format)
@@ -459,9 +483,13 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		if(this->schema && prepend_schema)
 			aux_name=formatName(this->schema->getName()) + "." + aux_name;
 
-		return(aux_name);
+		if(!aux_name.isEmpty())
+			return(aux_name);
+		else
+			return(this->obj_name);
 	}
-	else return(this->obj_name);
+	else
+		return(this->obj_name);
 }
 
 QString BaseObject::getComment(void)
@@ -487,6 +515,11 @@ BaseObject *BaseObject::getTablespace(void)
 BaseObject *BaseObject::getCollation(void)
 {
 	return(collation);
+}
+
+QString BaseObject::getAppendedSQL(void)
+{
+	return(appended_sql);
 }
 
 ObjectType BaseObject::getObjectType(void)
@@ -668,10 +701,29 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			}
 		}
 
+
+		if(!appended_sql.isEmpty())
+		{
+			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
+
+			if(def_type==SchemaParser::XML_DEFINITION)
+			{
+				SchemaParser::setIgnoreUnkownAttributes(true);
+				attributes[ParsersAttributes::APPENDED_SQL]=
+						SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
+			}
+			else
+			{
+				attributes[ParsersAttributes::APPENDED_SQL]="-- Appended SQL commands --\n" +	appended_sql + "\n";
+			}
+		}
+
 		if(reduced_form)
 			attributes[ParsersAttributes::REDUCED_FORM]="1";
 		else
 			attributes[ParsersAttributes::REDUCED_FORM]="";
+
+
 
 		try
 		{
@@ -742,16 +794,26 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2)
 	}
 }
 
-vector<ObjectType> BaseObject::getObjectTypes(void)
+vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
 	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_CONVERSION, OBJ_DATABASE,
-											 OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_INDEX,
-											 OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
-											 OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_RULE, OBJ_SCHEMA, OBJ_SEQUENCE,
-											 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TRIGGER,
+											 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION,
+											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
+											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
 											 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
-	return(vector<ObjectType>(types, types + sizeof(types) / sizeof(ObjectType)));
+	vector<ObjectType> vet_types(types, types + sizeof(types) / sizeof(ObjectType));
+
+	if(inc_table_objs)
+	{
+		vet_types.push_back(OBJ_COLUMN);
+		vet_types.push_back(OBJ_CONSTRAINT);
+		vet_types.push_back(OBJ_TRIGGER);
+		vet_types.push_back(OBJ_RULE);
+		vet_types.push_back(OBJ_INDEX);
+	}
+
+	return(vet_types);
 }
 
 void BaseObject::operator = (BaseObject &obj)

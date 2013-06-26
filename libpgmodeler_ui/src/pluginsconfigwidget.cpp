@@ -37,7 +37,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
 	connect(open_fm_tb, SIGNAL(clicked(void)), this, SLOT(openRootPluginDiretory(void)));
 
-	grid->setContentsMargins(2,2,2,2);
+	grid->setContentsMargins(4,4,4,4);
 	grid->addWidget(plugins_tab,0,0,1,1);
 	loaded_plugins_gb->setLayout(grid);
 }

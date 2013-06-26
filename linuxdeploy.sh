@@ -2,8 +2,11 @@
 
 QMAKE_ROOT=/usr/bin
 FALLBACK_QMAKE_ROOT=/usr/local/qt-5.0.2/5.0.2/gcc_64/bin
-DEPLOY_VER=$1
 LOG=linuxdeploy.log
+
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=${DEPLOY_VER/\",/}
 
 # Identify architecture
 case `uname -m` in
@@ -26,14 +29,6 @@ echo
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
-
-if [ -z $DEPLOY_VER ]; then
-  echo
-  echo "** Deploy version not specified!"
-  echo
-  exit 1
-fi
-
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -78,6 +73,7 @@ else
 fi
 
 echo
+echo "Deploying version: $DEPLOY_VER"
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1

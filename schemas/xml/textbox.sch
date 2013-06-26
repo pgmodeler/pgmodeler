@@ -23,6 +23,7 @@
   [ color=] "@{color}"
  %end
 
+  [ font-size=] "@{font-size}"
  > $br
 
  @{position}

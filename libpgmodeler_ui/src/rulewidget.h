@@ -28,6 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
 #include "objecttablewidget.h"
+#include "codecompletionwidget.h"
 
 class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 	private:
@@ -35,6 +36,8 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 
 		SyntaxHighlighter *cond_expr_hl,
 											*command_hl;
+
+		CodeCompletionWidget *command_cp;
 
 		ObjectTableWidget *commands_tab;
 

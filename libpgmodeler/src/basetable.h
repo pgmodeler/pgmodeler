@@ -61,7 +61,9 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns the index for the specified table object
 		virtual int getObjectIndex(BaseObject *obj)=0;
 
-		friend class RelacionamentoBase;
+		//! \brief Returns all child objects of the table
+		virtual vector<BaseObject *> getObjects(void)=0;
+
 		friend class DatabaseModel;
 };
 

@@ -27,6 +27,7 @@
  > $br
 
  %if @{comment} %then @{comment} %end
+ %if @{appended-sql} %then @{appended-sql} %end
 
  %if @{ref-roles} %then $tb [<roles names=] "@{ref-roles}" [ role-type="refer" />] $br  %end
  %if @{member-roles} %then $tb [<roles names=] "@{member-roles}" [ role-type="member" />] $br  %end

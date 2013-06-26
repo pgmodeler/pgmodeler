@@ -29,13 +29,17 @@
 #include "ui_functionwidget.h"
 #include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
+#include "codecompletionwidget.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
 		Q_OBJECT
 
-		//! \brief Function source code highlighter
+		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;
+
+		//! \brief Function's source code completion
+		CodeCompletionWidget *source_code_cp;
 
 		//! \brief Widget used to configure the function's return type
 		PgSQLTypeWidget *ret_type;

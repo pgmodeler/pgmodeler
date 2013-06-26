@@ -17,6 +17,8 @@ $tb [OWNER ] @{owner} $br
 
 $tb [LOCATION ] @{directory}; $br
 
+%if @{appended-sql} %then @{appended-sql} %end
+
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br

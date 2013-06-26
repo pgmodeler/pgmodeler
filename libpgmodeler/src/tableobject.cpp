@@ -75,6 +75,14 @@ bool TableObject::isAddedByRelationship(void)
 	return(add_by_linking || add_by_generalization || add_by_copy);
 }
 
+
+bool TableObject::isTableObject(ObjectType type)
+{
+	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
+				 type==OBJ_RULE || type==OBJ_INDEX);
+}
+
+
 void TableObject::operator = (TableObject &object)
 {
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(object);

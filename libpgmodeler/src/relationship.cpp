@@ -984,6 +984,7 @@ void Relationship::addColumnsRelGen(void)
 						column->setAddedByCopy(true);
 
 					column->setParentTable(nullptr);
+					column->setParentRelationship(this);
 
 					//Converts the type
 					if(column->getType()=="serial")
@@ -1417,7 +1418,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			aux.clear();
 
 			column->setAddedByLinking(true);
-			//recv_tab->addColumn(column, (i < attrib_indexes.size() ? attrib_indexes[i] : -1));
+			column->setParentRelationship(this);
 			recv_tab->addColumn(column);
 		}
 	}
@@ -1492,6 +1493,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			column->setAddedByLinking(true);
 			//Set the parent table as null permiting the column to be added on the receiver table
 			column->setParentTable(nullptr);
+			column->setParentRelationship(this);
 
 			//Converting the serial like types
 			if(column->getType()=="serial")

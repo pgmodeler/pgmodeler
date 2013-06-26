@@ -26,6 +26,7 @@ Column::Column(void)
 	attributes[ParsersAttributes::DEFAULT_VALUE]="";
 	attributes[ParsersAttributes::NOT_nullptr]="";
 	attributes[ParsersAttributes::TABLE]="";
+	parent_rel=nullptr;
 }
 
 void Column::setName(const QString &name)
@@ -100,6 +101,19 @@ QString Column::getOldName(bool format)
 		return(old_name);
 }
 
+void Column::setParentRelationship(BaseObject *parent_rel)
+{
+	if(parent_rel && parent_rel->getObjectType()!=OBJ_RELATIONSHIP)
+		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->parent_rel=parent_rel;
+}
+
+BaseObject *Column::getParentRelationship(void)
+{
+	return(parent_rel);
+}
+
 QString Column::getCodeDefinition(unsigned def_type)
 {
 	if(this->parent_table)
@@ -129,5 +143,6 @@ void Column::operator = (Column &col)
 	this->add_by_linking=false;
 
 	this->not_null=col.not_null;
+	this->parent_rel=col.parent_rel;
 }
 

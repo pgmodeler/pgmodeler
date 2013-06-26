@@ -26,6 +26,18 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="permission_grid">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
    <property name="spacing">
     <number>6</number>
    </property>
@@ -141,7 +153,16 @@
            <string>Privileges</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
             <number>4</number>
            </property>
            <property name="spacing">
@@ -186,7 +207,7 @@
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -356,6 +377,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>perm_id_edt</tabstop>
+  <tabstop>perm_disable_sql_chk</tabstop>
+  <tabstop>grant_rb</tabstop>
+  <tabstop>revoke_rb</tabstop>
+  <tabstop>cascade_chk</tabstop>
+  <tabstop>privileges_tbw</tabstop>
+  <tabstop>add_perm_tb</tabstop>
+  <tabstop>upd_perm_tb</tabstop>
+  <tabstop>cancel_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

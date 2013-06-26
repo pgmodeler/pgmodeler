@@ -636,6 +636,22 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>func_config_twg</tabstop>
+  <tabstop>language_cmb</tabstop>
+  <tabstop>func_type_cmb</tabstop>
+  <tabstop>rows_ret_spb</tabstop>
+  <tabstop>security_cmb</tabstop>
+  <tabstop>exec_cost_spb</tabstop>
+  <tabstop>behavior_cmb</tabstop>
+  <tabstop>window_func_chk</tabstop>
+  <tabstop>simple_rb</tabstop>
+  <tabstop>set_rb</tabstop>
+  <tabstop>table_rb</tabstop>
+  <tabstop>symbol_edt</tabstop>
+  <tabstop>library_edt</tabstop>
+  <tabstop>source_code_txt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

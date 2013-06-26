@@ -25,6 +25,7 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	this->model=nullptr;
 	zoom_factor=1;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void ModelOverviewWidget::show(ModelWidget *model)

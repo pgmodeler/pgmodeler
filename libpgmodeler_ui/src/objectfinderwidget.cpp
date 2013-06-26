@@ -106,8 +106,8 @@ void ObjectFinderWidget::findObjects(void)
 		}
 
 		//Search the objects on model
-		objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, case_sensitive_chk->isChecked(),
-																										regexp_chk->isChecked(), exact_match_chk->isChecked());
+		objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
+																										case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
 
 		//Show the found objects on the result table
 		updateObjectTable(result_tbw, objs);
@@ -161,6 +161,8 @@ void ObjectFinderWidget::editObject(void)
 			model_wgt->configurePopupMenu(vect);
 			model_wgt->editObject();
 		}
+
+		selected_obj=nullptr;
 	}
 }
 

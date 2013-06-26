@@ -405,11 +405,12 @@ class PgSQLType: public BaseType{
 		bool isArrayType(void);
 		bool isGiSType(void);
 		bool isRangeType(void);
+		bool isSerialType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
+		PgSQLType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type="");
-
 		QString operator ~ (void);
 
 		//! \brief Retorns the SQL definition for the type

@@ -48,14 +48,18 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		//! \brief Selected object reference
 		BaseObject *selected_obj;
 
-		//! \brief Object type that the selector is able to pick
-		ObjectType sel_obj_type;
+		//! \brief Object types that the selector is able to pick
+		vector<ObjectType> sel_obj_types;
 
 		//! \brief Stores the database model which the selector must search the object
 		DatabaseModel *model;
 
+		//! \brief Configures the selectors attributes at construction time
+		void configureSelector(bool install_highlighter);
+
 	public:
 		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
+		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
 		~ObjectSelectorWidget(void);
 
 		//! \brief Returns the reference to the selected object

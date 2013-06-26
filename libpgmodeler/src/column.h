@@ -48,6 +48,9 @@ class Column: public TableObject{
 					 for a date the defaul value should be '2006-09-12 ' and so on. */
 		QString default_value;
 
+		//! \brief Stores a reference to the relationship that generates the column
+		BaseObject *parent_rel;
+
 	public:
 		Column(void);
 
@@ -85,10 +88,12 @@ class Column: public TableObject{
 		//! \brief Returns the reference to the column type in the form [schema].table.column_name%TYPE
 		QString getTypeReference(void);
 
+		void setParentRelationship(BaseObject *parent_rel);
+
+		BaseObject *getParentRelationship(void);
+
 		//! \brief Copies on column to other
 		void operator = (Column &col);
-
-		friend class Tabela;
 };
 
 #endif

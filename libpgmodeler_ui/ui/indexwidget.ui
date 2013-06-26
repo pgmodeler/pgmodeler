@@ -20,7 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="index_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -339,6 +348,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>indexing_cmb</tabstop>
+  <tabstop>fill_factor_chk</tabstop>
+  <tabstop>fill_factor_sb</tabstop>
+  <tabstop>concurrent_chk</tabstop>
+  <tabstop>unique_chk</tabstop>
+  <tabstop>fast_update_chk</tabstop>
+  <tabstop>cond_expr_txt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

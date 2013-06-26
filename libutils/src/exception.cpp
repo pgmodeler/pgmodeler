@@ -55,6 +55,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_TABSPC_INV_CONSTR_TYPE", QT_TR_NOOP("Assignment of tablespace to a constraint which type is invalid! To belong to a tablespace the constraint must be a primary key or unique!")},
 	{"ERR_ASG_INV_ROLE_OBJECT", QT_TR_NOOP("Assignment of owner object which type is invalid!")},
 	{"ERR_ASG_ROLE_OBJECT_INV_TYPE", QT_TR_NOOP("Assignment of owner to an invalid object!")},
+	{"ERR_ASG_APPSQL_OBJECT_INV_TYPE", QT_TR_NOOP("Assignment of appened SQL to an invalid object!")},
 	{"ERR_REF_FUNCTION_INV_TYPE", QT_TR_NOOP("Reference to a function with invalid type!")},
 	{"ERR_REF_OPER_ARG_INV_TYPE", QT_TR_NOOP("Reference to an argument of the operator with invalid type!")},
 	{"ERR_REF_OPER_INV_TYPE", QT_TR_NOOP("Reference to an operator with invalid type!")},

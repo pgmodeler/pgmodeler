@@ -223,6 +223,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>passwd_edt</tabstop>
+  <tabstop>encrypt_pass_chk</tabstop>
+  <tabstop>validity_chk</tabstop>
+  <tabstop>validity_dte</tabstop>
+  <tabstop>conn_limit_sb</tabstop>
+  <tabstop>superusr_chk</tabstop>
+  <tabstop>inh_perm_chk</tabstop>
+  <tabstop>create_db_chk</tabstop>
+  <tabstop>can_login_chk</tabstop>
+  <tabstop>create_role_chk</tabstop>
+  <tabstop>can_replicate_chk</tabstop>
+  <tabstop>members_twg</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

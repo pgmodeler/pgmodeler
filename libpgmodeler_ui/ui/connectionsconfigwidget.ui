@@ -702,6 +702,31 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>new_tb</tabstop>
+  <tabstop>cancel_tb</tabstop>
+  <tabstop>edit_tb</tabstop>
+  <tabstop>remove_tb</tabstop>
+  <tabstop>alias_edt</tabstop>
+  <tabstop>conn_db_edt</tabstop>
+  <tabstop>host_edt</tabstop>
+  <tabstop>port_sbp</tabstop>
+  <tabstop>user_edt</tabstop>
+  <tabstop>passwd_edt</tabstop>
+  <tabstop>timeout_sbp</tabstop>
+  <tabstop>ssl_mode_cmb</tabstop>
+  <tabstop>client_cert_edt</tabstop>
+  <tabstop>client_key_edt</tabstop>
+  <tabstop>root_cert_edt</tabstop>
+  <tabstop>crl_edt</tabstop>
+  <tabstop>krb_server_edt</tabstop>
+  <tabstop>gssapi_auth_chk</tabstop>
+  <tabstop>options_edt</tabstop>
+  <tabstop>add_tb</tabstop>
+  <tabstop>update_tb</tabstop>
+  <tabstop>test_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

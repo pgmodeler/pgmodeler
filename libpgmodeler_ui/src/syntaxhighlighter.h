@@ -112,8 +112,11 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 						//! \brief Stores the chars ignored by the highlighter during the word reading
 						ignored_chars;
 
-						//! \brief Current block in which the highlighter is positioned
-						int current_block;
+		//! \brief Stores the char that triggers the code completion
+		QChar	completion_trigger;
+
+		//! \brief Current block in which the highlighter is positioned
+		int current_block;
 
 		/*! \brief Multiline info count on the current block. This attribute is used to know when
 		the highlighter must call the rehighlight method to highlight all the document again */
@@ -142,11 +145,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		/*! \brief Install the syntax highlighter in a QTextDocument. The boolean param is used to
-		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
-		every time he modifies the text */
-		SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight);
-
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
@@ -157,6 +155,13 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns if the configuration were successfully loaded
 		bool isConfigurationLoaded(void);
+
+		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
+		that the final expressions must be returned instead of initial expression (default) */
+		vector<QRegExp> getExpressions(const QString &group_name, bool final_expr=false);
+
+		//! \brief Returns the current configured code completion trigger char
+		QChar getCompletionTrigger(void);
 
 	public slots:
 		//! \brief Rehighlight all the document

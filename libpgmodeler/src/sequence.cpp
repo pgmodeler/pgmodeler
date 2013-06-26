@@ -18,16 +18,18 @@
 
 #include "sequence.h"
 
-const QString Sequence::MAX_POSITIVE_VALUE="+9223372036854775807";
-const QString Sequence::MAX_NEGATIVE_VALUE="-9223372036854775808";
+const QString Sequence::MAX_POSITIVE_VALUE="+2147483647";
+const QString Sequence::MAX_NEGATIVE_VALUE="-2147483648";
+const QString Sequence::MAX_SMALL_POSITIVE_VALUE="+32767";
+const QString Sequence::MAX_SMALL_NEGATIVE_VALUE="-32768";
+const QString Sequence::MAX_BIG_POSITIVE_VALUE="+9223372036854775807";
+const QString Sequence::MAX_BIG_NEGATIVE_VALUE="-9223372036854775808";
 
 Sequence::Sequence(void)
 {
 	obj_type=OBJ_SEQUENCE;
 	cycle=false;
-	increment=start=cache="1";
-	min_value="0";
-	max_value=MAX_POSITIVE_VALUE;
+	setDefaultValues(PgSQLType("serial"));
 	owner_col=nullptr;
 
 	attributes[ParsersAttributes::INCREMENT]="";
@@ -37,6 +39,8 @@ Sequence::Sequence(void)
 	attributes[ParsersAttributes::CACHE]="";
 	attributes[ParsersAttributes::CYCLE]="";
 	attributes[ParsersAttributes::OWNER_COLUMN]="";
+	attributes[ParsersAttributes::TABLE]="";
+	attributes[ParsersAttributes::COLUMN]="";
 }
 
 bool Sequence::isNullValue(const QString &value)
@@ -59,7 +63,7 @@ bool Sequence::isValidValue(const QString &value)
 {
 	/* To be valid the value can be start with + or -, have only numbers and
 		it's length must not exceed the MAX_POSITIVE_VALUE length */
-	if(value.size() > MAX_POSITIVE_VALUE.size())
+	if(value.size() > MAX_BIG_POSITIVE_VALUE.size())
 		return(false);
 	else
 	{
@@ -155,6 +159,30 @@ int Sequence::compareValues(QString value1, QString value2)
 			return(1);
 	}
 }
+
+void Sequence::setDefaultValues(PgSQLType serial_type)
+{
+	QString min, max;
+
+	if(serial_type=="smallserial")
+	{
+		min=MAX_SMALL_NEGATIVE_VALUE;
+		max=MAX_SMALL_POSITIVE_VALUE;
+	}
+	else if(serial_type=="bigserial")
+	{
+		min=MAX_BIG_NEGATIVE_VALUE;
+		max=MAX_BIG_POSITIVE_VALUE;
+	}
+	else
+	{
+		min=MAX_NEGATIVE_VALUE;
+		max=MAX_POSITIVE_VALUE;
+	}
+
+	setValues(min, max, "1", "1", "1");
+}
+
 
 void Sequence::setName(const QString &name)
 {
@@ -345,6 +373,9 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 		str_aux=table->getName(true) + "." + owner_col->getName(true);
 	}
 	attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
+
+	attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
+	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : "");
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;

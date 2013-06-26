@@ -219,7 +219,7 @@
   <widget class="QToolButton" name="edt_perms_tb">
    <property name="geometry">
     <rect>
-     <x>168</x>
+     <x>338</x>
      <y>316</y>
      <width>148</width>
      <height>29</height>
@@ -244,7 +244,7 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Edit Permissions</string>
+    <string>Edit object's permissions</string>
    </property>
    <property name="text">
     <string>Edit permissions</string>
@@ -353,7 +353,7 @@
   <widget class="QCheckBox" name="disable_sql_chk">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>490</x>
      <y>320</y>
      <width>137</width>
      <height>21</height>
@@ -391,7 +391,61 @@
     <string>Collation:</string>
    </property>
   </widget>
+  <widget class="QToolButton" name="append_sql_tb">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>320</y>
+     <width>121</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Append a set of SQL commands to the object's definition.</string>
+   </property>
+   <property name="text">
+    <string>Append SQL</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/sqlappend.png</normaloff>:/icones/icones/sqlappend.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>name_edt</tabstop>
+  <tabstop>comment_edt</tabstop>
+  <tabstop>append_sql_tb</tabstop>
+  <tabstop>edt_perms_tb</tabstop>
+  <tabstop>disable_sql_chk</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

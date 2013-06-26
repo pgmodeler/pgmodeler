@@ -13,7 +13,7 @@
 <!ENTITY % trigger SYSTEM "trigger.dtd">
 %trigger;
 
-<!ELEMENT table (schema,tablespace?,comment?,position,column*,constraint*,index*,rule*,trigger*,consttrigger*)>
+<!ELEMENT table (schema,tablespace?,comment?, appended-sql?,position,column*,constraint*,index*,rule*,trigger*,consttrigger*)>
 <!ATTLIST table name CDATA #REQUIRED>
 <!ATTLIST table oids (true | false) "false">
 <!ATTLIST table protected (false|true) "false">

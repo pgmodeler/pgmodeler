@@ -523,6 +523,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>show_errors_txt_tb</tabstop>
+  <tabstop>show_errors_tb</tabstop>
+  <tabstop>yes_ok_btn</tabstop>
+  <tabstop>no_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>exceptions_txt</tabstop>
+  <tabstop>exceptions_trw</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>
