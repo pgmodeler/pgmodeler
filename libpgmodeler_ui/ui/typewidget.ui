@@ -510,6 +510,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>base_type_rb</tabstop>
+  <tabstop>enumeration_rb</tabstop>
+  <tabstop>composite_rb</tabstop>
+  <tabstop>range_rb</tabstop>
+  <tabstop>enum_name_edt</tabstop>
+  <tabstop>attrib_name_edt</tabstop>
+  <tabstop>base_attribs_twg</tabstop>
+  <tabstop>internal_len_sb</tabstop>
+  <tabstop>storage_cmb</tabstop>
+  <tabstop>by_value_chk</tabstop>
+  <tabstop>category_cmb</tabstop>
+  <tabstop>preferred_chk</tabstop>
+  <tabstop>delimiter_edt</tabstop>
+  <tabstop>collatable_chk</tabstop>
+  <tabstop>default_value_edt</tabstop>
+  <tabstop>alignment_cmb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

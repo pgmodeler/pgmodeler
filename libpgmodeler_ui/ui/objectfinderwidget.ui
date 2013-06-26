@@ -619,6 +619,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>pattern_edt</tabstop>
+  <tabstop>find_btn</tabstop>
+  <tabstop>filter_btn</tabstop>
+  <tabstop>clear_res_btn</tabstop>
+  <tabstop>highlight_btn</tabstop>
+  <tabstop>obj_types_lst</tabstop>
+  <tabstop>regexp_chk</tabstop>
+  <tabstop>exact_match_chk</tabstop>
+  <tabstop>case_sensitive_chk</tabstop>
+  <tabstop>select_all_btn</tabstop>
+  <tabstop>clear_all_btn</tabstop>
+  <tabstop>result_tbw</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

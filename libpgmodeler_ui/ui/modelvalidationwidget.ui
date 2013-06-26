@@ -630,6 +630,19 @@
   <zorder>fix_btn</zorder>
   <zorder>options_btn</zorder>
  </widget>
+ <tabstops>
+  <tabstop>validate_btn</tabstop>
+  <tabstop>fix_btn</tabstop>
+  <tabstop>clear_btn</tabstop>
+  <tabstop>options_btn</tabstop>
+  <tabstop>fix_steps_chk</tabstop>
+  <tabstop>fix_steps_sb</tabstop>
+  <tabstop>sql_validation_chk</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>version_cmb</tabstop>
+  <tabstop>output_trw</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

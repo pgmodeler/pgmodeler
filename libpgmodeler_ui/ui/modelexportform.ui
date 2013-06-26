@@ -1200,6 +1200,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>export_to_file_rb</tabstop>
+  <tabstop>file_edt</tabstop>
+  <tabstop>select_file_tb</tabstop>
+  <tabstop>pgsqlvers_cmb</tabstop>
+  <tabstop>export_to_img_rb</tabstop>
+  <tabstop>image_edt</tabstop>
+  <tabstop>select_img_tb</tabstop>
+  <tabstop>show_grid_chk</tabstop>
+  <tabstop>show_delim_chk</tabstop>
+  <tabstop>export_to_dbms_rb</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>pgsqlvers_chk</tabstop>
+  <tabstop>pgsqlvers1_cmb</tabstop>
+  <tabstop>ignorar_dup_chk</tabstop>
+  <tabstop>export_btn</tabstop>
+  <tabstop>close_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

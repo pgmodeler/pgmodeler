@@ -283,6 +283,15 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>end_of_model_chk</tabstop>
+  <tabstop>select_tb</tabstop>
+  <tabstop>insert_tb</tabstop>
+  <tabstop>update_tb</tabstop>
+  <tabstop>delete_tb</tabstop>
+  <tabstop>clear_tb</tabstop>
+  <tabstop>sqlcode_txt</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

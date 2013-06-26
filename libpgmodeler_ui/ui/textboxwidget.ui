@@ -182,6 +182,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>font_size_sb</tabstop>
+  <tabstop>bold_chk</tabstop>
+  <tabstop>italic_chk</tabstop>
+  <tabstop>underline_chk</tabstop>
+  <tabstop>color_select_tb</tabstop>
+  <tabstop>text_txt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

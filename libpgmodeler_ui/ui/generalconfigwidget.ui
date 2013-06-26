@@ -762,6 +762,25 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>grid_size_spb</tabstop>
+  <tabstop>oplist_size_spb</tabstop>
+  <tabstop>autosave_interv_chk</tabstop>
+  <tabstop>autosave_interv_spb</tabstop>
+  <tabstop>hide_rel_name_chk</tabstop>
+  <tabstop>hide_ext_attribs_chk</tabstop>
+  <tabstop>save_session_chk</tabstop>
+  <tabstop>print_grid_chk</tabstop>
+  <tabstop>print_pg_num_chk</tabstop>
+  <tabstop>paper_cmb</tabstop>
+  <tabstop>landscape_rb</tabstop>
+  <tabstop>portrait_rb</tabstop>
+  <tabstop>unity_cmb</tabstop>
+  <tabstop>left_marg</tabstop>
+  <tabstop>top_marg</tabstop>
+  <tabstop>right_marg</tabstop>
+  <tabstop>bottom_marg</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -1188,6 +1188,39 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rel_11_rb</tabstop>
+  <tabstop>rel_1n_rb</tabstop>
+  <tabstop>rel_nn_rb</tabstop>
+  <tabstop>rel_gen_rb</tabstop>
+  <tabstop>rel_dep_rb</tabstop>
+  <tabstop>rel_fk_rb</tabstop>
+  <tabstop>identifier_chk</tabstop>
+  <tabstop>ref_table_txt</tabstop>
+  <tabstop>recv_table_txt</tabstop>
+  <tabstop>table1_mand_chk</tabstop>
+  <tabstop>table2_mand_chk</tabstop>
+  <tabstop>relnn_tab_name_edt</tabstop>
+  <tabstop>defaults_rb</tabstop>
+  <tabstop>including_rb</tabstop>
+  <tabstop>excluding_rb</tabstop>
+  <tabstop>all_chk</tabstop>
+  <tabstop>defaults_chk</tabstop>
+  <tabstop>constraints_chk</tabstop>
+  <tabstop>indexes_chk</tabstop>
+  <tabstop>storage_chk</tabstop>
+  <tabstop>comments_chk</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_cmb</tabstop>
+  <tabstop>src_col_pattern_txt</tabstop>
+  <tabstop>dst_col_pattern_txt</tabstop>
+  <tabstop>src_fk_pattern_txt</tabstop>
+  <tabstop>dst_fk_pattern_txt</tabstop>
+  <tabstop>pk_pattern_txt</tabstop>
+  <tabstop>uq_pattern_txt</tabstop>
+  <tabstop>rel_columns_lst</tabstop>
+  <tabstop>rel_attribs_tbw</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

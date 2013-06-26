@@ -254,6 +254,12 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>version_cmb</tabstop>
+  <tabstop>sourcecode_twg</tabstop>
+  <tabstop>sqlcode_txt</tabstop>
+  <tabstop>xmlcode_txt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -377,6 +377,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>perm_id_edt</tabstop>
+  <tabstop>perm_disable_sql_chk</tabstop>
+  <tabstop>grant_rb</tabstop>
+  <tabstop>revoke_rb</tabstop>
+  <tabstop>cascade_chk</tabstop>
+  <tabstop>privileges_tbw</tabstop>
+  <tabstop>add_perm_tb</tabstop>
+  <tabstop>upd_perm_tb</tabstop>
+  <tabstop>cancel_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

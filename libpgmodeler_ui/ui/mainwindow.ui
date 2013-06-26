@@ -1098,6 +1098,13 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>models_tbw</tabstop>
+  <tabstop>validation_btn</tabstop>
+  <tabstop>find_obj_btn</tabstop>
+  <tabstop>operations_btn</tabstop>
+  <tabstop>objects_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

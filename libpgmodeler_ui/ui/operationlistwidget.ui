@@ -394,6 +394,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>operations_tw</tabstop>
+  <tabstop>rem_operations_tb</tabstop>
+  <tabstop>undo_tb</tabstop>
+  <tabstop>redo_tb</tabstop>
+  <tabstop>hide_tb</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>
