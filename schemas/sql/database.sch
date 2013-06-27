@@ -17,6 +17,14 @@
   $tb [ENCODING = ] @{encoding} $br
 %end
 
+  %if @{lc-collate} %then
+	$tb [LC_COLLATE = ] @{lc-collate} $br
+  %end
+
+  %if @{lc-ctype} %then
+	$tb [LC_CTYPE = ] @{lc-ctype} $br
+  %end
+
 %if @{tablespace} %then
   $tb [TABLESPACE = ] @{tablespace} $br
 %end

@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libdbconnect
+\ingroup libpgconnector
 \class ResultSet
 \brief This class encapsulates some functions implemented by libpq for manipulation of resultsets returned by PostgreSQL SQL commands
 \note <strong>Creation date:</strong> 14/07/2009

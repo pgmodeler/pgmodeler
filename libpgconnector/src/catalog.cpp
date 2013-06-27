@@ -1,5 +1,5 @@
 #include "catalog.h"
 
-Catalog::Catalog()
+Catalog::Catalog(Connection &conn)
 {
 }

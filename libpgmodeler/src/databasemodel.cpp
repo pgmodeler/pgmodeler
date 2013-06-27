@@ -5785,14 +5785,24 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
+		QString loc_attribs[]={ ParsersAttributes::_LC_CTYPE_,  ParsersAttributes::_LC_COLLATE_ };
+
 		if(encoding!=BaseType::null)
 			attributes[ParsersAttributes::ENCODING]="'" + (~encoding) + "'";
 
-		if(!localizations[1].isEmpty())
-			attributes[ParsersAttributes::_LC_COLLATE_]="'" + localizations[1] + "'";
+		for(unsigned i=0; i < 2; i++)
+		{
+			if(!localizations[i].isEmpty())
+			{
+				attributes[loc_attribs[i]]=localizations[i];
 
-		if(!localizations[0].isEmpty())
-			attributes[ParsersAttributes::_LC_CTYPE_]="'" + localizations[0]  + "'";
+				if(localizations[i]!="C" && encoding!=BaseType::null)
+					attributes[loc_attribs[i]]+= "." + ~encoding;
+
+				attributes[loc_attribs[i]]="'" +  attributes[loc_attribs[i]] + "'";
+			}
+		}
+
 	}
 	else
 	{
