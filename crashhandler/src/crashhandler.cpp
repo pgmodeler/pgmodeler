@@ -19,6 +19,7 @@
 #include "crashhandler.h"
 
 const char CrashHandler::CHR_DELIMITER=static_cast<char>(3);
+const QString CrashHandler::ANALYSIS_MODE="analysis-mode";
 
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -29,6 +30,8 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(create_btn, SIGNAL(clicked(void)), this, SLOT(generateReport(void)));
 	connect(actions_txt, SIGNAL(textChanged(void)), this, SLOT(enableGeneration(void)));
+	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadReport(void)));
+	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveModel(void)));
 
 	//Open for reading the stack trace file generated on the last crash
 	input.setFileName(GlobalAttributes::TEMPORARY_DIR +
@@ -86,10 +89,6 @@ void CrashHandler::loadReport(const QString &filename)
 	input.setFileName(filename);
 	input.open(QFile::ReadOnly);
 
-	title_lbl->setText(trUtf8("pgModeler crash file analysis"));
-	create_btn->setVisible(false);
-	msg_lbl->clear();
-
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
 		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), Messagebox::ERROR_ICON);
@@ -99,8 +98,6 @@ void CrashHandler::loadReport(const QString &filename)
 		QString buf_aux, str_aux;
 		int i, idx;
 		QTextEdit *txt_widgets[]={ actions_txt, model_txt , stack_txt};
-
-		msg_lbl->setText(trUtf8("File: %1\nSize: %2 bytes\n\n").arg(filename).arg(fi.size()));
 
 		//Creates a text buffer
 		buf=new char[fi.size()];
@@ -172,5 +169,76 @@ void CrashHandler::generateReport(void)
 
 		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), Messagebox::INFO_ICON);
 		this->close();
+	}
+}
+
+void CrashHandler::loadReport(void)
+{
+	QFileDialog file_dlg;
+
+	try
+	{
+		file_dlg.setNameFilter(trUtf8("pgModeler crash report (*.crash);;All files (*.*)"));
+		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
+		file_dlg.setWindowTitle(trUtf8("Load report"));
+		file_dlg.setFileMode(QFileDialog::ExistingFiles);
+		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+
+		if(file_dlg.exec()==QFileDialog::Accepted)
+			loadReport(file_dlg.selectedFiles().at(0));
+	}
+	catch(Exception &e)
+	{
+		Messagebox msgbox;
+		msgbox.show(e);
+	}
+}
+
+void CrashHandler::saveModel(void)
+{
+	QFileDialog file_dlg;
+
+	try
+	{
+		file_dlg.setDefaultSuffix("dbm");
+		file_dlg.setWindowTitle(trUtf8("Save model"));
+		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setFileMode(QFileDialog::AnyFile);
+		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		file_dlg.setModal(true);
+
+		if(file_dlg.exec()==QFileDialog::Accepted)
+		{
+			QFile output(file_dlg.selectedFiles().at(0));
+			QByteArray buf;
+
+			output.open(QFile::WriteOnly);
+
+			if(!output.isOpen())
+				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(file_dlg.selectedFiles().at(0)),
+												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			buf.append(model_txt->toPlainText());
+			output.write(buf.data(),buf.size());
+			output.close();
+		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox msgbox;
+		msgbox.show(e);
+	}
+}
+
+void CrashHandler::setAnalysisMode(bool value)
+{
+	create_btn->setVisible(!value);
+	load_tb->setVisible(value);
+	save_tb->setVisible(value);
+
+	if(value)
+	{
+		title_lbl->setText(trUtf8("pgModeler crash handler"));
+		msg_lbl->setText(trUtf8("Crash report analysis mode activated!"));
 	}
 }

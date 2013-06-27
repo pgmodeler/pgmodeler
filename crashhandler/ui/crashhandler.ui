@@ -205,7 +205,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="msg_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -241,6 +241,12 @@
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -261,6 +267,26 @@
        <property name="bottomMargin">
         <number>6</number>
        </property>
+       <item row="0" column="2">
+        <widget class="QToolButton" name="save_tb">
+         <property name="toolTip">
+          <string>Save the model embedded on the crash report onto filesystem</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
+           <normaloff>:/icones/icones/salvar_como.png</normaloff>:/icones/icones/salvar_como.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
@@ -268,10 +294,30 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="1" column="0" colspan="3">
         <widget class="QTextEdit" name="actions_txt">
          <property name="acceptRichText">
           <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QToolButton" name="load_tb">
+         <property name="toolTip">
+          <string>Load crash report.</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
+           <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
          </property>
         </widget>
        </item>

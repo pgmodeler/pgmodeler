@@ -43,15 +43,20 @@ class CrashHandler : public QDialog, Ui::CrashHandler
 		//! \brief Delimiter character which separates the sections of the compressed file
 		const static char CHR_DELIMITER;
 
-	public:
-		CrashHandler(QWidget * parent = 0, Qt::WindowFlags f = 0);
-
 		//! \brief Load a report file showing its contents on the form
 		void loadReport(const QString &filename);
+
+	public:
+		const static QString ANALYSIS_MODE;
+
+		CrashHandler(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		void setAnalysisMode(bool value);
 
 	public slots:
 		void generateReport(void);
 		void enableGeneration(void);
+		void loadReport(void);
+		void saveModel(void);
 };
 
 #endif

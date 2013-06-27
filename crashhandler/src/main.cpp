@@ -34,9 +34,7 @@ int main(int argc, char **argv)
 
 		CrashHandler crashhandler;
 
-		if(argc > 1)
-			crashhandler.loadReport(argv[1]);
-
+		crashhandler.setAnalysisMode(argc > 1 && argv[1]==CrashHandler::ANALYSIS_MODE);
 		crashhandler.show();
 		app.exec();
 
