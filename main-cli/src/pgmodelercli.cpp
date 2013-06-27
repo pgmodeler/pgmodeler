@@ -131,11 +131,11 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				}
 				else
 				{
-					connection.setConnectionParam(DBConnection::PARAM_SERVER_FQDN, parsed_opts[HOST]);
-					connection.setConnectionParam(DBConnection::PARAM_USER, parsed_opts[USER]);
-					connection.setConnectionParam(DBConnection::PARAM_PORT, parsed_opts[PORT]);
-					connection.setConnectionParam(DBConnection::PARAM_PASSWORD, parsed_opts[PASSWD]);
-					connection.setConnectionParam(DBConnection::PARAM_DB_NAME, parsed_opts[INITIAL_DB]);
+					connection.setConnectionParam(Connection::PARAM_SERVER_FQDN, parsed_opts[HOST]);
+					connection.setConnectionParam(Connection::PARAM_USER, parsed_opts[USER]);
+					connection.setConnectionParam(Connection::PARAM_PORT, parsed_opts[PORT]);
+					connection.setConnectionParam(Connection::PARAM_PASSWORD, parsed_opts[PASSWD]);
+					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INITIAL_DB]);
 				}
 			}
 
@@ -263,7 +263,7 @@ void PgModelerCLI::parserOptions(map<QString, QString> &opts)
 	//Listing connections
 	else if(opts.count(LIST_CONNS))
 	{
-		map<QString, DBConnection *>::iterator itr=connections.begin();
+		map<QString, Connection *>::iterator itr=connections.begin();
 
 		if(connections.empty())
 			out << endl <<  trUtf8("There is no connections configured.") << endl << endl;

@@ -27,7 +27,7 @@
 
 #include "ui_connectionsconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "dbconnection.h"
+#include "connection.h"
 #include "messagebox.h"
 
 class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidget, public BaseConfigWidget {
@@ -35,7 +35,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		Q_OBJECT
 
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
-		void configureConnection(DBConnection *conn);
+		void configureConnection(Connection *conn);
 
 		void hideEvent(QHideEvent *);
 
@@ -47,7 +47,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void loadConfiguration(void);
 
 		//! \brief Fills the passed map with all the loaded connections.
-		void getConnections(map<QString, DBConnection *> &conns);
+		void getConnections(map<QString, Connection *> &conns);
 
 	public slots:
 		void restoreDefaults(void);

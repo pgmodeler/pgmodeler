@@ -54,10 +54,10 @@ class PgModelerCLI: public QApplication {
 		ObjectsScene *scene;
 
 		//Stores the configured connection
-		DBConnection connection;
+		Connection connection;
 
 		//Loaded connections
-		map<QString, DBConnection *> connections;
+		map<QString, Connection *> connections;
 
 		//Connection configuration widget used to load available connections from file
 		ConnectionsConfigWidget conn_conf;

@@ -16,36 +16,36 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "dbconnection.h"
+#include "connection.h"
 
-const QString DBConnection::SSL_DESABLE="disable";
-const QString DBConnection::SSL_ALLOW="allow";
-const QString DBConnection::SSL_PREFER="prefer";
-const QString DBConnection::SSL_REQUIRE="require";
-const QString DBConnection::SSL_CA_VERIF="verify-ca";
-const QString DBConnection::SSL_FULL_VERIF="verify-full";
-const QString DBConnection::PARAM_SERVER_FQDN="host";
-const QString DBConnection::PARAM_SERVER_IP="hostaddr";
-const QString DBConnection::PARAM_PORT="port";
-const QString DBConnection::PARAM_DB_NAME="dbname";
-const QString DBConnection::PARAM_USER="user";
-const QString DBConnection::PARAM_PASSWORD="password";
-const QString DBConnection::PARAM_CONN_TIMEOUT="connect_timeout";
-const QString DBConnection::PARAM_OPTIONS="options";
-const QString DBConnection::PARAM_SSL_MODE="sslmode";
-const QString DBConnection::PARAM_SSL_CERT="sslcert";
-const QString DBConnection::PARAM_SSL_KEY="sslkey";
-const QString DBConnection::PARAM_SSL_ROOT_CERT="sslrootcert";
-const QString DBConnection::PARAM_SSL_CRL="sslcrl";
-const QString DBConnection::PARAM_KERBEROS_SERVER="krbsrvname";
-const QString DBConnection::PARAM_LIB_GSSAPI="gsslib";
+const QString Connection::SSL_DESABLE="disable";
+const QString Connection::SSL_ALLOW="allow";
+const QString Connection::SSL_PREFER="prefer";
+const QString Connection::SSL_REQUIRE="require";
+const QString Connection::SSL_CA_VERIF="verify-ca";
+const QString Connection::SSL_FULL_VERIF="verify-full";
+const QString Connection::PARAM_SERVER_FQDN="host";
+const QString Connection::PARAM_SERVER_IP="hostaddr";
+const QString Connection::PARAM_PORT="port";
+const QString Connection::PARAM_DB_NAME="dbname";
+const QString Connection::PARAM_USER="user";
+const QString Connection::PARAM_PASSWORD="password";
+const QString Connection::PARAM_CONN_TIMEOUT="connect_timeout";
+const QString Connection::PARAM_OPTIONS="options";
+const QString Connection::PARAM_SSL_MODE="sslmode";
+const QString Connection::PARAM_SSL_CERT="sslcert";
+const QString Connection::PARAM_SSL_KEY="sslkey";
+const QString Connection::PARAM_SSL_ROOT_CERT="sslrootcert";
+const QString Connection::PARAM_SSL_CRL="sslcrl";
+const QString Connection::PARAM_KERBEROS_SERVER="krbsrvname";
+const QString Connection::PARAM_LIB_GSSAPI="gsslib";
 
-DBConnection::DBConnection(void)
+Connection::Connection(void)
 {
 	connection=nullptr;
 }
 
-DBConnection::DBConnection(const QString &server_fqdn, const QString &port, const QString &user, const QString &passwd, const QString &db_name)
+Connection::Connection(const QString &server_fqdn, const QString &port, const QString &user, const QString &passwd, const QString &db_name)
 {
 	//Configures the basic connection params
 	setConnectionParam(PARAM_SERVER_FQDN, server_fqdn);
@@ -58,13 +58,13 @@ DBConnection::DBConnection(const QString &server_fqdn, const QString &port, cons
 	connect();
 }
 
-DBConnection::~DBConnection(void)
+Connection::~Connection(void)
 {
 	if(connection)
 		PQfinish(connection);
 }
 
-void DBConnection::setConnectionParam(const QString &param, const QString &value)
+void Connection::setConnectionParam(const QString &param, const QString &value)
 {
 	//Regexp used to validate the host address
 	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
@@ -78,7 +78,7 @@ void DBConnection::setConnectionParam(const QString &param, const QString &value
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
 	if(param==PARAM_SERVER_FQDN && ip_regexp.exactMatch(value))
-		connection_params[DBConnection::PARAM_SERVER_IP]=value;
+		connection_params[Connection::PARAM_SERVER_IP]=value;
 	else
 		connection_params[param]=value;
 
@@ -86,7 +86,7 @@ void DBConnection::setConnectionParam(const QString &param, const QString &value
 	generateConnectionString();
 }
 
-void DBConnection::generateConnectionString(void)
+void Connection::generateConnectionString(void)
 {
 	map<QString, QString>::iterator itr;
 
@@ -102,7 +102,7 @@ void DBConnection::generateConnectionString(void)
 	}
 }
 
-void DBConnection::connect(void)
+void Connection::connect(void)
 {
 	QString str_aux;
 
@@ -127,7 +127,7 @@ void DBConnection::connect(void)
 	}
 }
 
-void DBConnection::close(void)
+void Connection::close(void)
 {
 	//Raise an erro in case the user try to close a not opened connection
 	if(!connection)
@@ -138,7 +138,7 @@ void DBConnection::close(void)
 	connection=nullptr;
 }
 
-void DBConnection::reset(void)
+void Connection::reset(void)
 {
 	//Raise an erro in case the user try to reset a not opened connection
 	if(!connection)
@@ -148,27 +148,27 @@ void DBConnection::reset(void)
 	PQreset(connection);
 }
 
-QString DBConnection::getConnectionParam(const QString &param)
+QString Connection::getConnectionParam(const QString &param)
 {
 	return(connection_params[param]);
 }
 
-map<QString, QString> DBConnection::getConnectionParams(void)
+map<QString, QString> Connection::getConnectionParams(void)
 {
 	return(connection_params);
 }
 
-QString DBConnection::getConnectionString(void)
+QString Connection::getConnectionString(void)
 {
 	return(connection_str);
 }
 
-bool DBConnection::isStablished(void)
+bool Connection::isStablished(void)
 {
 	return(connection!=nullptr);
 }
 
-QString  DBConnection::getDBMSVersion(void)
+QString  Connection::getDBMSVersion(void)
 {
 	QString version;
 
@@ -183,7 +183,7 @@ QString  DBConnection::getDBMSVersion(void)
 				 .arg(version.mid(4,1).toInt()));
 }
 
-void DBConnection::executeDMLCommand(const QString &sql, ResultSet &result)
+void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 {
 	ResultSet *new_res=nullptr;
 	PGresult *sql_res=nullptr;
@@ -214,7 +214,7 @@ void DBConnection::executeDMLCommand(const QString &sql, ResultSet &result)
 	delete(new_res);
 }
 
-void DBConnection::executeDDLCommand(const QString &sql)
+void Connection::executeDDLCommand(const QString &sql)
 {
 	PGresult *sql_res=nullptr;
 
@@ -234,7 +234,7 @@ void DBConnection::executeDDLCommand(const QString &sql)
 	}
 }
 
-void DBConnection::operator = (DBConnection &conn)
+void Connection::operator = (Connection &conn)
 {
 	if(this->isStablished())
 		this->close();

@@ -102,7 +102,7 @@ class ResultSet {
   //! \brief Make a copy between two resultsets
   void operator = (ResultSet &res);
 
-  friend class DBConnection;
+	friend class Connection;
 };
 
 #endif

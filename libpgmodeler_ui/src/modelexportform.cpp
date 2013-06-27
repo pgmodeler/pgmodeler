@@ -51,8 +51,8 @@ void ModelExportForm::show(ModelWidget *model)
 {
 	if(model)
 	{
-		map<QString, DBConnection *> connections;
-		map<QString, DBConnection *>::iterator itr;
+		map<QString, Connection *> connections;
+		map<QString, Connection *>::iterator itr;
 
 		this->model=model;
 
@@ -126,7 +126,7 @@ void ModelExportForm::exportModel(void)
 				else
 				{
 					QString version;
-					DBConnection conn=*(reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+					Connection conn=*(reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
 
 					//If the user chose a specific version
 					if(pgsqlvers1_cmb->isEnabled())

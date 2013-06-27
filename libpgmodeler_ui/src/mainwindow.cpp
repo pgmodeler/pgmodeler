@@ -537,7 +537,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::updateConnections(void)
 {
 	ConnectionsConfigWidget *conn_cfg_wgt=nullptr;
-	map<QString, DBConnection *> connections;
+	map<QString, Connection *> connections;
 
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 	conn_cfg_wgt->getConnections(connections);

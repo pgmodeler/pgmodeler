@@ -26,7 +26,7 @@
 #define MODEL_VALIDATION_WIDGET_H
 
 #include "ui_modelvalidationwidget.h"
-#include "dbconnection.h"
+#include "connection.h"
 #include "modelwidget.h"
 #include "modelvalidationhelper.h"
 
@@ -54,7 +54,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void setModel(ModelWidget *model_wgt);
 
 		//! \brief Updates the connections combo
-		void updateConnections(map<QString, DBConnection *> &conns);
+		void updateConnections(map<QString, Connection *> &conns);
 
 	private slots:
 		void applyFix(void);

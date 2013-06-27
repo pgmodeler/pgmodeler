@@ -26,7 +26,7 @@
 #define MODEL_EXPORT_HELPER_H
 
 #include "modelwidget.h"
-#include "dbconnection.h"
+#include "connection.h"
 
 class ModelExportHelper: public QObject {
 	private:
@@ -46,7 +46,7 @@ class ModelExportHelper: public QObject {
 		map<ObjectType, int> created_objs;
 
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
-		void undoDBMSExport(DatabaseModel *db_model, DBConnection &conn);
+		void undoDBMSExport(DatabaseModel *db_model, Connection &conn);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
@@ -61,7 +61,7 @@ class ModelExportHelper: public QObject {
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors */
-		void exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate=false);
+		void exportToDBMS(DatabaseModel *db_model, Connection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate=false);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

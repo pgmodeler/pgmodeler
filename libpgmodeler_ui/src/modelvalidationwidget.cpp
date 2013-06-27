@@ -69,9 +69,9 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	clearOutput();
 }
 
-void ModelValidationWidget::updateConnections(map<QString, DBConnection *> &conns)
+void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 {
-	map<QString, DBConnection *>::iterator itr=conns.begin();
+	map<QString, Connection *>::iterator itr=conns.begin();
 	connections_cmb->clear();
 
 	//Add the connections to the combo
@@ -215,14 +215,14 @@ void ModelValidationWidget::validateModel(void)
 {
 	try
 	{
-		DBConnection *conn=nullptr;
+		Connection *conn=nullptr;
 		QString ver;
 
 		//Get the connection only the checkbox is checked.
 		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
 		{
 			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
-			conn=reinterpret_cast<DBConnection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		}
 
 		clearOutput();

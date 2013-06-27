@@ -81,11 +81,11 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
 	QString  version, sql_buf, sql_cmd, lin;
-	DBConnection new_db_conn;
+	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
@@ -202,7 +202,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 		//Connects to the new created database to create the other objects
 		progress=30;
 		new_db_conn=conn;
-		new_db_conn.setConnectionParam(DBConnection::PARAM_DB_NAME, db_model->getName());
+		new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 		emit s_progressUpdated(progress, trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
 
 		new_db_conn.connect();
@@ -340,7 +340,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, DBConnection &conn
 	}
 }
 
-void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, DBConnection &conn)
+void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn)
 {
  QString drop_cmd=QString("DROP %1 %2;");
  ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};

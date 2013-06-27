@@ -88,7 +88,7 @@ macx:LIB_EXT = dylib
 
 SUBDIRS = libutils \
           libparsers \
-          libdbconnect \
+	  libpgconnector \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
@@ -118,7 +118,7 @@ linux|windows {
 #Creating the project's libraries names based upon the running OS
 LIBUTILS=$${LIB_PREFIX}utils.$${LIB_EXT}
 LIBPARSERS=$${LIB_PREFIX}parsers.$${LIB_EXT}
-LIBDBCONNECT=$${LIB_PREFIX}dbconnect.$${LIB_EXT}
+LIBPGCONNECTOR=$${LIB_PREFIX}pgconnector.$${LIB_EXT}
 LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
@@ -126,7 +126,7 @@ LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
 	       $$PWD/libutils/src \
-               $$PWD/libdbconnect/src \
+	       $$PWD/libpgconnector/src \
                $$PWD/libparsers/src \
                $$PWD/libpgmodeler/src \
                $$PWD/libobjrenderer/src \

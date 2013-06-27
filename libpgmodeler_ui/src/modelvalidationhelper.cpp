@@ -25,7 +25,7 @@ ModelValidationHelper::ModelValidationHelper(void)
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(redirectExportProgress(int,QString)));
 }
 
-void ModelValidationHelper::validateModel(DatabaseModel *model, DBConnection *conn, const QString &pgsql_ver)
+void ModelValidationHelper::validateModel(DatabaseModel *model, Connection *conn, const QString &pgsql_ver)
 {
 	if(!model)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

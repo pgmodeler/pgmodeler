@@ -18,19 +18,19 @@
 
 /**
 \ingroup libdbconnect
-\class DBConnection
+\class Connection
 \brief This class encapsulates some connection manipulation functions implemented by the PostgreSQL libpq
 \note <strong>Creation date:</strong> 13/07/2009
 */
 
-#ifndef DBCONNECTION_H
-#define DBCONNECTION_H
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 #include "resultset.h"
 #include <map>
 #include <QRegExp>
 
-class DBConnection {
+class Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;
@@ -68,9 +68,9 @@ class DBConnection {
 													SSL_CA_VERIF,
 													SSL_FULL_VERIF;
 
-		DBConnection(void);
-		DBConnection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
-		~DBConnection(void);
+		Connection(void);
+		Connection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
+		~Connection(void);
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */
@@ -110,7 +110,7 @@ class DBConnection {
 		void executeDDLCommand(const QString &sql);
 
 		//! \brief Makes an copy between two connections
-		void operator = (DBConnection &conn);
+		void operator = (Connection &conn);
 };
 
 #endif
