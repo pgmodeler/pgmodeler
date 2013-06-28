@@ -95,7 +95,7 @@ class Connection {
 		QString getConnectionString(void);
 
 		//! \brief Returns the DBMS version in format XX.YY.ZZ
-		QString getDBMSVersion(void);
+		QString getPgSQLVersion(void);
 
 		//! \brief Returns if the connections is stablished
 		bool isStablished(void);

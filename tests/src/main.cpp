@@ -1,30 +1,25 @@
 #include <iostream>
 #include "exception.h"
 #include "mainwindow.h"
+#include "catalog.h"
 
 int main(int argc, char **argv)
 {
 	try
 	{
-		QString buf;
-		map<QString, QString> attribs;
+		Connection conn;
+		conn.setConnectionParam(Connection::PARAM_DB_NAME, "postgres");
+		conn.setConnectionParam(Connection::PARAM_USER, "postgres");
+		conn.setConnectionParam(Connection::PARAM_PASSWORD, "postgres");
+		conn.setConnectionParam(Connection::PARAM_SERVER_FQDN, "localhost");
 
-		buf+="# comment tst \n";
-		buf+="\n";
-		buf+="  %if %not @{a3} %and @{a3} %then \n";
-		buf+=" true \n";
-		buf+=" %else \n";
-		buf+=" false \n";
-		buf+=" %end\n";
+		Catalog catalog;
+		catalog.setConnection(conn);
 
-		attribs["a1"]="attrib 1";
-		attribs["a2"]="attrib 2";
-		attribs["a3"]="";
-		//SchemaParser::loadBuffer(buf);
-		SchemaParser::loadFile("/root/buf.sch");
-		cout << SchemaParser::getCodeDefinition(attribs).toStdString() << endl;
+		//cout << catalog.getObjectCount(OBJ_DATABASE) << endl;
+		vector<QString> v=catalog.getObjectNames(OBJ_DATABASE);
 
-	 return(0);
+		return(0);
 	}
 	catch(Exception &e)
 	{

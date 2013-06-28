@@ -32,17 +32,24 @@ This class is the basis for the reverse engineering feature.
 class Catalog
 {
 	private:
-		Connection conn;
+		static const QString QUERY_LIST,
+		QUERY_COUNT,
+		QUERY_ATTRIBS,
+		CATALOG_SCH_DIR;
+
+		Connection connection;
+
+		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, map<QString, QString> attribs=map<QString, QString>());
 
 	public:
-		Catalog(Connection &conn);
+		Catalog(void){}
+		Catalog(Connection &connection);
 
-		vector<map<QString, QString> > getDatabaseObjects(const QString &db_name);
-		vector<map<QString, QString> > getSchemaObjects(const QString &sch_name);
-		vector<map<QString, QString> > getTableObjects(const QString &tab_name);
-		vector<map<QString, QString> > getObjects(const QString &obj_type);
+		void setConnection(Connection &conn);
 
-		map<QString, QString> getObjectAttributes(const QString &obj_name, ObjectType obj_type, ObjectType attrib_type);
+		unsigned getObjectCount(ObjectType obj_type);
+
+		vector<QString> getObjectNames(ObjectType obj_type);
 };
 
 #endif

@@ -118,7 +118,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		conn.connect();
 
 		//Retrive the DBMS version in order to generate the correct code
-		version=(conn.getDBMSVersion()).mid(0,3);
+		version=(conn.getPgSQLVersion()).mid(0,3);
 
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())

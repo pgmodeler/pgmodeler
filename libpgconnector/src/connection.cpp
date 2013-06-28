@@ -168,7 +168,7 @@ bool Connection::isStablished(void)
 	return(connection!=nullptr);
 }
 
-QString  Connection::getDBMSVersion(void)
+QString  Connection::getPgSQLVersion(void)
 {
 	QString version;
 
@@ -241,6 +241,6 @@ void Connection::operator = (Connection &conn)
 
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
-	connect();
+	//connect();
 }
 
