@@ -92,19 +92,53 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		QStringList params;
+		QString app_style;
+		int idx=0, idx1;
+		bool enable_stylesheet=true;
+
+		for(int param=0; param < argc; param++)
+			params.push_back(argv[param]);
+
+		//Checking if the user want to disable stylesheets using param: -no-stylesheet
+		idx1=params.indexOf(QRegExp("-no-stylesheet", Qt::CaseSensitive, QRegExp::FixedString));
+
+		//Cheking if the user want to use a different theme from default Fusion
+		idx=params.indexOf(QRegExp("-style", Qt::CaseSensitive, QRegExp::FixedString));
+
+		//Getting the theme name
+		if(idx>=0 && idx < params.size() - 1)
+		{
+			app_style=params[idx+1];
+			params.erase(params.begin() + idx);
+			params.erase(params.begin() + idx);
+		}
+
+		//Disabling the stylesheet
+		if(idx1>=0)
+		{
+			params.erase(params.begin() + idx1);
+			enable_stylesheet=false;
+		}
+
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
+		argc=1;
 		Application app(argc,argv);
 		QTranslator translator;
 		QFile ui_style(GlobalAttributes::CONFIGURATIONS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
 									 GlobalAttributes::UI_STYLE_CONF +
 									 GlobalAttributes::CONFIGURATION_EXT);
-		QString style;
+		QString stylesheet;
 		QFileInfo fi(argv[0]);
-		QApplication::setStyle(QStyleFactory::create("Fusion"));
+
+		if(app_style.isEmpty())
+			QApplication::setStyle(QStyleFactory::create("Fusion"));
+		else
+			QApplication::setStyle(QStyleFactory::create(app_style));
 
 		//Changing the current working dir to the executable's directory in
 		QDir::setCurrent(fi.absolutePath());
@@ -140,29 +174,30 @@ int main(int argc, char **argv)
 		//Indicating that the splash screen must be closed when the main window is shown
 		splash.finish(&fmain);
 
-		//Loading app style sheet
-		ui_style.open(QFile::ReadOnly);
-
-		//Raises an error if ui style is not found
-		if(!ui_style.isOpen())
+		if(enable_stylesheet)
 		{
-		 Messagebox msg;
-		 msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
-												 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-		}
-		else
-			style=ui_style.readAll();
+			//Loading app style sheet
+			ui_style.open(QFile::ReadOnly);
 
-		app.setStyleSheet(style);
+			//Raises an error if ui style is not found
+			if(!ui_style.isOpen())
+			{
+				Messagebox msg;
+				msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
+													 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			}
+			else
+				stylesheet=ui_style.readAll();
+
+			app.setStyleSheet(stylesheet);
+		}
+
 		fmain.showMaximized();
 
 		//If the user specifies a list of files to be loaded
-		if(app.arguments().size() > 1)
-		{
-			QStringList list=app.arguments();
-			list.pop_front();
-			fmain.loadModels(list);
-		}
+		params.pop_front();
+		if(!params.isEmpty())
+			fmain.loadModels(params);
 
 		app.exec();
 		return(0);
