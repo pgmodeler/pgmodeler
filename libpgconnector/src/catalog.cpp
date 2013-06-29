@@ -53,6 +53,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type)
 		ResultSet res;
 
 		executeCatalogQuery(QUERY_COUNT, obj_type, res);
+		res.accessTuple(ResultSet::FIRST_TUPLE);
 
 		return(QString(res.getColumnValue(0)).toUInt());
 	}
@@ -62,7 +63,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type)
 	}
 }
 
-vector<QString> Catalog::getObjectNames(ObjectType obj_type)
+vector<QString> Catalog::getObjects(ObjectType obj_type)
 {
 	try
 	{
@@ -71,7 +72,7 @@ vector<QString> Catalog::getObjectNames(ObjectType obj_type)
 
 		executeCatalogQuery(QUERY_LIST, obj_type, res);
 
-		if(res.getTupleCount() > 0)
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			do
 			{
@@ -87,3 +88,108 @@ vector<QString> Catalog::getObjectNames(ObjectType obj_type)
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
+
+vector<map<QString, QString> > Catalog::getObjectAttributes(const QString &obj_name, ObjectType obj_type, map<QString, QString> extra_attribs)
+{
+	try
+	{
+		ResultSet res;
+		map<QString, QString> tuple;
+		vector<map<QString, QString> > obj_attribs;
+
+		extra_attribs[ParsersAttributes::NAME]=obj_name;
+		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, extra_attribs);
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				for(int col=0; col < res.getColumnCount(); col++)
+					tuple[res.getColumnName(col)]=res.getColumnValue(col);
+
+				obj_attribs.push_back(tuple);
+				tuple.clear();
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+		}
+
+		return(obj_attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+/*unsigned Catalog::getDatabaseCount(void)
+{
+	try
+	{
+		return(getObjectCount(OBJ_DATABASE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<QString> Catalog::getDatabases(void)
+{
+	try
+	{
+		return(getObjectNames(OBJ_DATABASE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+map<QString, QString> Catalog::getDatabaseAttributes(const QString &db_name)
+{
+	try
+	{
+		return(getObjectAttributes(db_name, OBJ_DATABASE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+unsigned Catalog::getRoleCount(void)
+{
+	try
+	{
+		return(getObjectCount(OBJ_ROLE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<QString> Catalog::getRoles(void)
+{
+	try
+	{
+		return(getObjectNames(OBJ_ROLE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+map<QString, QString> Catalog::getRoleAttributes(const QString &rol_name)
+{
+	try
+	{
+		return(getObjectAttributes(rol_name, OBJ_ROLE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+} */
+

@@ -64,7 +64,7 @@ ResultSet::ResultSet(PGresult *sql_result)
 		case PGRES_COPY_IN:
 		default:
 			empty_result=(res_state!=PGRES_TUPLES_OK);
-			current_tuple=0;
+			current_tuple=-1;
 			is_res_copied=false;
 		break;
 	}
@@ -125,6 +125,8 @@ char *ResultSet::getColumnValue(const QString &column_name)
 		 that is, which command do not return lines but only do updates or removal */
 		if(getTupleCount()==0 || empty_result)
 			throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		else if(current_tuple < 0 || current_tuple >= getTupleCount())
+			throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Get the column index through its name
 		col_idx=getColumnIndex(column_name);
@@ -149,6 +151,8 @@ char *ResultSet::getColumnValue(int column_idx)
 		that is, which command do not return lines but only do updates or removal */
 	else if(getTupleCount()==0 || empty_result)
 		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(current_tuple < 0 || current_tuple >= getTupleCount())
+		throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column value on the current tuple
 	return(PQgetvalue(sql_result, current_tuple, column_idx));
@@ -160,6 +164,14 @@ int ResultSet::getColumnSize(const QString &column_name)
 
 	try
 	{
+		/* Raises an error if the user try to get the value of a column in
+		 a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
+		 that is, which command do not return lines but only do updates or removal */
+		if(getTupleCount()==0 || empty_result)
+			throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		else if(current_tuple < 0 || current_tuple >= getTupleCount())
+			throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 		//Get the column index wich length must be detected
 		col_idx=getColumnIndex(column_name);
 	}
@@ -178,6 +190,8 @@ int ResultSet::getColumnSize(int column_idx)
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
 		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(current_tuple < 0 || current_tuple >= getTupleCount())
+		throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Retorns the column value length on the current tuple
 	return(PQgetlength(sql_result, current_tuple, column_idx));
@@ -239,37 +253,43 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 bool ResultSet::accessTuple(unsigned tuple_type)
 {
 	int tuple_count=getTupleCount();
-	bool accessed=true;
 
-	/* Raises an error if the result does not have any lines or
+	/* Raises an error if the result
 		is derived from a command which affects only rows or
 		The tuple type to be accessed is invalid, out of
 		set defined by the class */
-	if(tuple_count==0 || empty_result || tuple_type > NEXT_TUPLE)
+	if(empty_result || tuple_type > NEXT_TUPLE)
 		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	switch(tuple_type)
+	if(tuple_count==0)
+		return(false);
+	else
 	{
-		case FIRST_TUPLE:
-			current_tuple=0;
-		break;
+		bool accessed=true;
 
-		case LAST_TUPLE:
-			current_tuple=tuple_count-1;
-		break;
+		switch(tuple_type)
+		{
+			case FIRST_TUPLE:
+				current_tuple=0;
+			break;
 
-		case PREVIOUS_TUPLE:
-			accessed=(current_tuple > 0);
-			if(accessed) current_tuple--;
-		break;
+			case LAST_TUPLE:
+				current_tuple=tuple_count-1;
+			break;
 
-		case NEXT_TUPLE:
-			accessed=(current_tuple < (tuple_count-1));
-			if(accessed) current_tuple++;
-		break;
+			case PREVIOUS_TUPLE:
+				accessed=(current_tuple > 0);
+				if(accessed) current_tuple--;
+			break;
+
+			case NEXT_TUPLE:
+				accessed=(current_tuple < (tuple_count-1));
+				if(accessed) current_tuple++;
+			break;
+		}
+
+		return(accessed);
 	}
-
-	return(accessed);
 }
 
 void ResultSet::operator = (ResultSet &res)

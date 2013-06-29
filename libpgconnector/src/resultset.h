@@ -19,7 +19,8 @@
 /**
 \ingroup libpgconnector
 \class ResultSet
-\brief This class encapsulates some functions implemented by libpq for manipulation of resultsets returned by PostgreSQL SQL commands
+\brief This class encapsulates some functions implemented by libpq for manipulation of resultsets returned by PostgreSQL SQL commands.
+It the resultset contains data the user must call ResultSet::accessTuple() to access the first tuple in order to perform operations on it.
 \note <strong>Creation date:</strong> 14/07/2009
 */
 

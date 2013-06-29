@@ -191,6 +191,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_TUPLE_COL_INV_INDEX", QT_TR_NOOP("Reference to a column of tuple with invalid index!")},
 	{"ERR_REF_TUPLE_COL_INV_NAME", QT_TR_NOOP("Reference to a column of tuple with invalid name!")},
 	{"ERR_REF_TUPLE_INEXISTENT", QT_TR_NOOP("Reference to a tuple with index invalid or the result is empty (no tuples)!")},
+	{"ERR_REF_INV_TUPLE_COLUMN", QT_TR_NOOP("Reference to a column of a tuple which was not yet initialized (tuple navigation not started)!")},
 	{"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: %1")},
 	{"ERR_INV_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!")},
 	{"ERR_ASG_SEC_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Assignment of a second definition expression to the view!")},

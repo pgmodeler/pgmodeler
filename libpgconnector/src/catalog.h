@@ -29,13 +29,12 @@ This class is the basis for the reverse engineering feature.
 #include "connection.h"
 #include "baseobject.h"
 
-class Catalog
-{
+class Catalog {
 	private:
 		static const QString QUERY_LIST,
-		QUERY_COUNT,
-		QUERY_ATTRIBS,
-		CATALOG_SCH_DIR;
+												 QUERY_COUNT,
+												 QUERY_ATTRIBS,
+												 CATALOG_SCH_DIR;
 
 		Connection connection;
 
@@ -43,13 +42,21 @@ class Catalog
 
 	public:
 		Catalog(void){}
-		Catalog(Connection &connection);
 
+		Catalog(Connection &connection);
 		void setConnection(Connection &conn);
 
 		unsigned getObjectCount(ObjectType obj_type);
+		vector<QString> getObjects(ObjectType obj_type);
+		vector<map<QString, QString> > getObjectAttributes(const QString &obj_name, ObjectType obj_type, map<QString, QString> extra_attribs=map<QString,QString>());
 
-		vector<QString> getObjectNames(ObjectType obj_type);
+		/*unsigned getDatabaseCount(void);
+		vector<QString> getDatabases(void);
+		map<QString, QString> getDatabaseAttributes(const QString &db_name);
+
+		unsigned getRoleCount(void);
+		vector<QString> getRoles(void);
+		map<QString, QString> getRoleAttributes(const QString &rol_name);*/
 };
 
 #endif

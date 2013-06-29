@@ -170,6 +170,7 @@
         <file>imagens/pgmodeler_name.png</file>
         <file>imagens/pgmodeler_splash.png</file>
         <file>imagens/brazil_flag.png</file>
+        <file>imagens/crashhandler.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>
