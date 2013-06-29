@@ -88,8 +88,8 @@ macx:LIB_EXT = dylib
 
 SUBDIRS = libutils \
           libparsers \
-	  libpgconnector \
           libpgmodeler \
+	  libpgconnector \
           libobjrenderer \
           libpgmodeler_ui \
 	  crashhandler \
