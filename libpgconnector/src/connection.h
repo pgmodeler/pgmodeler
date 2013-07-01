@@ -97,6 +97,12 @@ class Connection {
 		//! \brief Returns the DBMS version in format XX.YY.ZZ
 		QString getPgSQLVersion(void);
 
+		/*! \brief Change the current database to the specified db name using the parameters from the current
+		stablished connection causing the connection to be reset and moved to the new database.
+		The effect of this is the same by type \c dbname on psql console. In case of errors the method will
+		raise an exception and switch back to the previous database. */
+		void switchToDatabase(const QString &dbname);
+
 		//! \brief Returns if the connections is stablished
 		bool isStablished(void);
 

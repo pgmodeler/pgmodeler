@@ -5,9 +5,6 @@
 %if @{list} %then
   [SELECT rolname AS name FROM pg_roles]
 %else
-  %if @{count} %then
-    [SELECT count(rolname) AS count FROM pg_roles]
-  %else
     %if @{attribs} %then
 	%if @{member-roles} %then
 	  [SELECT rl1.rolname AS name, am.admin_option]
@@ -25,5 +22,4 @@
 	  [ WHERE rolname = ] '@{name}'
 	%end
     %end
-  %end
 %end

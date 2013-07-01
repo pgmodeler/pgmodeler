@@ -16,32 +16,30 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		cout << catalog.getObjectCount(OBJ_ROLE) << endl;
+		cout << "[object]: " << BaseObject::getTypeName(OBJ_TABLESPACE).toStdString() << endl;
+		cout << "[cout]: " << catalog.getObjectCount(OBJ_TABLESPACE) << endl;
 
-		vector<QString> v1=catalog.getObjects(OBJ_ROLE);
+		cout << "[list]: ";
+		vector<QString> v1=catalog.getObjects(OBJ_TABLESPACE);
 		while(!v1.empty())
 		{
-			cout << v1.back().toStdString() << endl;
+			cout << v1.back().toStdString() << " ";
 			v1.pop_back();
 		}
 
-		vector<map<QString, QString>> v=catalog.getObjectAttributes("mediawiki", OBJ_ROLE);
+		cout << endl;
+
+		vector<map<QString, QString>> v=catalog.getObjectAttributes("pg_default", OBJ_TABLESPACE);
 		map<QString, QString>::iterator itr;
 
+		cout << "[attribs]: ";
 		for(int i=0; i < v.size(); i++)
 		{
 			for(itr=v[i].begin(); itr!=v[i].end(); itr++)
-				cout << itr->first.toStdString() << " = " << itr->second.toStdString() << endl;
+				cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
 		}
 
-		cout << "---" << endl;
-
-		v=catalog.getObjectAttributes("mediawiki", OBJ_ROLE, {{"member-roles","1"}});
-		for(int i=0; i < v.size(); i++)
-		{
-			for(itr=v[i].begin(); itr!=v[i].end(); itr++)
-				cout << itr->first.toStdString() << " = " << itr->second.toStdString() << endl;
-		}
+		cout << endl;
 
 		return(0);
 	}

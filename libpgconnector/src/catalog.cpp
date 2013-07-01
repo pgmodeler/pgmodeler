@@ -1,7 +1,6 @@
 #include "catalog.h"
 
 const QString Catalog::QUERY_LIST="list";
-const QString Catalog::QUERY_COUNT="count";
 const QString Catalog::QUERY_ATTRIBS="attribs";
 const QString Catalog::CATALOG_SCH_DIR="catalog";
 
@@ -21,10 +20,9 @@ void Catalog::setConnection(Connection &conn)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-
 }
 
-void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, map<QString, QString> attribs)
+void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, attribs_map attribs)
 {
 	try
 	{
@@ -52,10 +50,10 @@ unsigned Catalog::getObjectCount(ObjectType obj_type)
 	{
 		ResultSet res;
 
-		executeCatalogQuery(QUERY_COUNT, obj_type, res);
+		executeCatalogQuery(QUERY_LIST, obj_type, res);
 		res.accessTuple(ResultSet::FIRST_TUPLE);
 
-		return(QString(res.getColumnValue(0)).toUInt());
+		return(res.getTupleCount());
 	}
 	catch(Exception &e)
 	{
@@ -89,13 +87,13 @@ vector<QString> Catalog::getObjects(ObjectType obj_type)
 	}
 }
 
-vector<map<QString, QString> > Catalog::getObjectAttributes(const QString &obj_name, ObjectType obj_type, map<QString, QString> extra_attribs)
+vector<attribs_map> Catalog::getObjectAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs)
 {
 	try
 	{
 		ResultSet res;
-		map<QString, QString> tuple;
-		vector<map<QString, QString> > obj_attribs;
+		attribs_map tuple;
+		vector<attribs_map> obj_attribs;
 
 		extra_attribs[ParsersAttributes::NAME]=obj_name;
 		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, extra_attribs);
@@ -121,11 +119,26 @@ vector<map<QString, QString> > Catalog::getObjectAttributes(const QString &obj_n
 	}
 }
 
-/*unsigned Catalog::getDatabaseCount(void)
+attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
+{
+	map<QString,QString>::const_iterator itr=attribs.begin();
+	map<QString,QString> new_attribs;
+	QString attr_name;
+
+	while(itr!=attribs.end())
+	{
+		attr_name=QString(itr->first).replace("_","-");
+		new_attribs[attr_name]=itr->second;
+		itr++;
+	}
+}
+
+attribs_map Catalog::getDatabaseAttributes(const QString &db_name)
 {
 	try
 	{
-		return(getObjectCount(OBJ_DATABASE));
+		vector<attribs_map> dbs=getObjectAttributes(db_name, OBJ_DATABASE);
+		return(!dbs.empty() ? changeAttributeNames(dbs.at(0)) : attribs_map());
 	}
 	catch(Exception &e)
 	{
@@ -133,59 +146,29 @@ vector<map<QString, QString> > Catalog::getObjectAttributes(const QString &obj_n
 	}
 }
 
-vector<QString> Catalog::getDatabases(void)
+/* map<QString, QString> Catalog::getRoleAttributes(const QString &rol_name)
 {
 	try
 	{
-		return(getObjectNames(OBJ_DATABASE));
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
+		vector<map<QString, QString>> roles=getObjectAttributes(rol_name, OBJ_ROLE);
+		vector<map<QString, QString>> members=getObjectAttributes(rol_name, OBJ_ROLE, {"member-roles", "1"});
 
-map<QString, QString> Catalog::getDatabaseAttributes(const QString &db_name)
-{
-	try
-	{
-		return(getObjectAttributes(db_name, OBJ_DATABASE));
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
+		if(roles.empty() && members.empty())
+		{
+			QString str_member;
 
-unsigned Catalog::getRoleCount(void)
-{
-	try
-	{
-		return(getObjectCount(OBJ_ROLE));
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
+			while(!members.empty())
+			{
+				str_member+=members.back() + ",";
+				members.pop_back();
+			}
 
-vector<QString> Catalog::getRoles(void)
-{
-	try
-	{
-		return(getObjectNames(OBJ_ROLE));
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
+			str_member.remove(str_member.size()-1, 1);
+			roles[ParsersAttributes::MEMBER_ROLES]
+		}
 
-map<QString, QString> Catalog::getRoleAttributes(const QString &rol_name)
-{
-	try
-	{
-		return(getObjectAttributes(rol_name, OBJ_ROLE));
+
+		return(roles);
 	}
 	catch(Exception &e)
 	{
@@ -193,3 +176,26 @@ map<QString, QString> Catalog::getRoleAttributes(const QString &rol_name)
 	}
 } */
 
+/* map<QString, QString> Catalog::getSchemaAttributes(const QString &sch_name)
+{
+	try
+	{
+		return(getObjectAttributes(sch_name, OBJ_SCHEMA));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+map<QString, QString> Catalog::getFunctionAttributes(const QString &func_name)
+{
+	try
+	{
+		return(getObjectAttributes(func_name, OBJ_FUNCTION));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+} */

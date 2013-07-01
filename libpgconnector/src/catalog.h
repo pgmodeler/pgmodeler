@@ -32,13 +32,13 @@ This class is the basis for the reverse engineering feature.
 class Catalog {
 	private:
 		static const QString QUERY_LIST,
-												 QUERY_COUNT,
 												 QUERY_ATTRIBS,
 												 CATALOG_SCH_DIR;
 
 		Connection connection;
 
-		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, map<QString, QString> attribs=map<QString, QString>());
+		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, attribs_map attribs=attribs_map());
+		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 	public:
 		Catalog(void){}
@@ -48,15 +48,12 @@ class Catalog {
 
 		unsigned getObjectCount(ObjectType obj_type);
 		vector<QString> getObjects(ObjectType obj_type);
-		vector<map<QString, QString> > getObjectAttributes(const QString &obj_name, ObjectType obj_type, map<QString, QString> extra_attribs=map<QString,QString>());
+		vector<attribs_map> getObjectAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
-		/*unsigned getDatabaseCount(void);
-		vector<QString> getDatabases(void);
-		map<QString, QString> getDatabaseAttributes(const QString &db_name);
-
-		unsigned getRoleCount(void);
-		vector<QString> getRoles(void);
-		map<QString, QString> getRoleAttributes(const QString &rol_name);*/
+		attribs_map getDatabaseAttributes(const QString &db_name);
+		attribs_map getRoleAttributes(const QString &rol_name);
+		//attrib_map getSchemaAttributes(const QString &sch_name);
+		//attrib_map getFunctionAttributes(const QString &func_name);
 };
 
 #endif

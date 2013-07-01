@@ -33,6 +33,10 @@
 #include <QTextStream>
 #include "xmlparser.h"
 
+/*! \brief Typedef used to replace maps with the signature map<QString,QString> commonly used
+to store objects attributes and used by SchemaParser */
+typedef map<QString, QString> attribs_map;
+
 class SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown

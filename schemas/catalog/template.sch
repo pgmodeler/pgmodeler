@@ -5,12 +5,8 @@
 %if @{list} %then
 
 %else
-  %if @{count} %then
-
-  %else
     %if @{attribs} %then
 
 
     %end
-  %end
 %end
