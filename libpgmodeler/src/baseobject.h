@@ -152,7 +152,7 @@ class BaseObject {
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
 		 by SchemaParser on the object's code definition creation. The attribute
 		 name related to model objects are defined in ParsersAttributes namespace. */
-		map<QString, QString> attributes;
+		attribs_map attributes;
 
 		/*! \brief This method calls the getCodeDefinition(unsigned, bool) method with the 'reduced_form' defined as 'false',
 		 This is the real implementation of the virtual method getCodeDefinition(unsigned). */

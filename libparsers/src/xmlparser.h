@@ -30,9 +30,10 @@
 #include <libxml/tree.h>
 #include "schemaparser.h"
 #include "exception.h"
-#include <map>
 #include <stack>
 #include <iostream>
+#include "attribsmap.h"
+
 using namespace std;
 
 class XMLParser {
@@ -121,7 +122,7 @@ class XMLParser {
 		static bool hasAttributes(void);
 
 		//! \brief Stores on a map the atrributes (names and values) of the current element
-		static void getElementAttributes(map<QString, QString> &attributes);
+		static void getElementAttributes(attribs_map &attributes);
 
 		/*! \brief Returns the content text of the element, used only for elements which do not have children
 		 and that are filled by simple texts */

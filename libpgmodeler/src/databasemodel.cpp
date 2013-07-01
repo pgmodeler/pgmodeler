@@ -2528,7 +2528,7 @@ void DatabaseModel::loadModel(const QString &filename)
 	{
 		QString dtd_file, str_aux, elem_name;
 		ObjectType obj_type;
-		map<QString, QString> attribs;
+		attribs_map attribs;
 		BaseObject *object=nullptr;
 		bool protected_model=false;
 		map<unsigned, QString>::iterator itr, itr_end;
@@ -2764,7 +2764,7 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 
 void DatabaseModel::setBasicAttributes(BaseObject *object)
 {
-	map<QString, QString> attribs, attribs_aux;
+	attribs_map attribs, attribs_aux;
 	QString elem_name;
 	BaseObject *tabspc=nullptr, *owner=nullptr, *collation=nullptr;
 	Schema *schema=nullptr;
@@ -2894,7 +2894,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 Role *DatabaseModel::createRole(void)
 {
-	map<QString, QString> attribs, attribs_aux;
+	attribs_map attribs, attribs_aux;
 	Role *role=nullptr, *ref_role=nullptr;
 	int i, len;
 	bool marked;
@@ -2998,7 +2998,7 @@ Role *DatabaseModel::createRole(void)
 
 Tablespace *DatabaseModel::createTablespace(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Tablespace *tabspc=nullptr;
 
 	try
@@ -3025,7 +3025,7 @@ Tablespace *DatabaseModel::createTablespace(void)
 Schema *DatabaseModel::createSchema(void)
 {
 	Schema *schema=nullptr;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 
 	try
 	{
@@ -3050,7 +3050,7 @@ Schema *DatabaseModel::createSchema(void)
 
 Language *DatabaseModel::createLanguage(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Language *lang=nullptr;
 	BaseObject *func=nullptr;
 	QString signature, ref_type;
@@ -3131,7 +3131,7 @@ Language *DatabaseModel::createLanguage(void)
 
 Function *DatabaseModel::createFunction(void)
 {
-	map<QString, QString> attribs, attribs_aux;
+	attribs_map attribs, attribs_aux;
 	Function *func=nullptr;
 	ObjectType obj_type;
 	BaseObject *object=nullptr;
@@ -3285,7 +3285,7 @@ Function *DatabaseModel::createFunction(void)
 Parameter DatabaseModel::createParameter(void)
 {
 	Parameter param;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	QString elem;
 
 	try
@@ -3332,7 +3332,7 @@ Parameter DatabaseModel::createParameter(void)
 TypeAttribute DatabaseModel::createTypeAttribute(void)
 {
 	TypeAttribute tpattrib;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	QString elem;
 	BaseObject *collation=nullptr;
 
@@ -3395,7 +3395,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 
 PgSQLType DatabaseModel::createPgSQLType(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	unsigned length=1, dimension=0, type_idx=0;
 	int precision=-1;
 	QString name;
@@ -3443,7 +3443,7 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 
 Type *DatabaseModel::createType(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	map<QString, unsigned> func_types;
 	Type *type=nullptr;
 	int count, i;
@@ -3630,7 +3630,7 @@ Type *DatabaseModel::createType(void)
 
 Domain *DatabaseModel::createDomain(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Domain *domain=nullptr;
 	QString elem;
 
@@ -3690,7 +3690,7 @@ Domain *DatabaseModel::createDomain(void)
 
 Cast *DatabaseModel::createCast(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Cast *cast=nullptr;
 	QString elem;
 	unsigned type_idx=0;
@@ -3766,7 +3766,7 @@ Cast *DatabaseModel::createCast(void)
 
 Conversion *DatabaseModel::createConversion(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Conversion *conv=nullptr;
 	QString elem;
 	BaseObject *func=nullptr;
@@ -3828,7 +3828,7 @@ Conversion *DatabaseModel::createConversion(void)
 
 Operator *DatabaseModel::createOperator(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	map<QString, unsigned> func_types;
 	map<QString, unsigned> oper_types;
 	Operator *oper=nullptr;
@@ -3927,7 +3927,7 @@ Operator *DatabaseModel::createOperator(void)
 
 OperatorClass *DatabaseModel::createOperatorClass(void)
 {
-	map<QString, QString> attribs, attribs_aux;
+	attribs_map attribs, attribs_aux;
 	map<QString, unsigned> elem_types;
 	BaseObject *object=nullptr;
 	QString elem;
@@ -4052,7 +4052,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 OperatorFamily *DatabaseModel::createOperatorFamily(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	OperatorFamily *op_family=nullptr;
 
 	try
@@ -4078,7 +4078,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 
 Aggregate *DatabaseModel::createAggregate(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	BaseObject *func=nullptr;
 	QString elem;
 	PgSQLType type;
@@ -4152,7 +4152,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 
 Table *DatabaseModel::createTable(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	QString elem;
 	Table *table=nullptr;
 	TableObject *object=nullptr;
@@ -4215,7 +4215,7 @@ Table *DatabaseModel::createTable(void)
 
 Column *DatabaseModel::createColumn(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Column *column=nullptr;
 	QString elem;
 
@@ -4261,7 +4261,7 @@ Column *DatabaseModel::createColumn(void)
 
 Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Constraint *constr=nullptr;
 	BaseObject *ref_table=nullptr;
 	Table *table=nullptr,*table_aux=nullptr;
@@ -4477,7 +4477,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Column *column=nullptr;
 	OperatorClass *op_class=nullptr;
 	Operator *oper=nullptr;
@@ -4604,7 +4604,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 Index *DatabaseModel::createIndex(Table *table)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Index *index=nullptr;
 	QString elem, str_aux;
 	bool inc_idx_table=false;
@@ -4690,7 +4690,7 @@ Index *DatabaseModel::createIndex(Table *table)
 
 Rule *DatabaseModel::createRule(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	QStringList cmd_list;
 	Rule *rule=nullptr;
 	QString elem, str_aux;
@@ -4755,7 +4755,7 @@ Rule *DatabaseModel::createRule(void)
 
 Trigger *DatabaseModel::createTrigger(BaseTable *table)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Trigger *trigger=nullptr;
 	QString elem, str_aux;
 	QStringList list_aux;
@@ -4923,7 +4923,7 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	Sequence *sequence=nullptr;
 	BaseObject *table=nullptr;
 	Column *column=nullptr;
@@ -5005,7 +5005,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 View *DatabaseModel::createView(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	View *view=nullptr;
 	Column *column=nullptr;
 	Table *table=nullptr;
@@ -5172,7 +5172,7 @@ Collation *DatabaseModel::createCollation(void)
 	Collation *collation=nullptr;
 	BaseObject *copy_coll=nullptr;
 	EncodingType encoding;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 
 	try
 	{
@@ -5230,7 +5230,7 @@ Collation *DatabaseModel::createCollation(void)
 Extension *DatabaseModel::createExtension(void)
 {
 	Extension *extension=nullptr;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 
 	try
 	{
@@ -5258,7 +5258,7 @@ Extension *DatabaseModel::createExtension(void)
 Textbox *DatabaseModel::createTextbox(void)
 {
 	Textbox *txtbox=nullptr;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 
 	try
 	{
@@ -5299,7 +5299,7 @@ Textbox *DatabaseModel::createTextbox(void)
 BaseRelationship *DatabaseModel::createRelationship(void)
 {
 	vector<unsigned> cols_special_pk;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
@@ -5569,8 +5569,8 @@ Permission *DatabaseModel::createPermission(void)
 	BaseObject *object=nullptr;
 	Table *parent_table=nullptr;
 	Role *role=nullptr;
-	map<QString, QString> priv_attribs, attribs;
-	map<QString, QString>::iterator itr, itr_end;
+	attribs_map priv_attribs, attribs;
+	attribs_map::iterator itr, itr_end;
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
@@ -5843,7 +5843,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
-	map<QString, QString> attribs_aux;
+	attribs_map attribs_aux;
 	unsigned count1, i, count;
 	float general_obj_cnt, gen_defs_count;
 	bool sql_disabled=false;

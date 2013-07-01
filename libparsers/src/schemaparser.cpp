@@ -49,7 +49,7 @@ const QString SchemaParser::PGSQL_VERSION_91="9.1";
 const QString SchemaParser::PGSQL_VERSION_92="9.2";
 
 vector<QString> SchemaParser::buffer;
-map<QString,QString> SchemaParser::attributes;
+attribs_map SchemaParser::attributes;
 QString SchemaParser::filename="";
 unsigned SchemaParser::line=0;
 unsigned SchemaParser::column=0;
@@ -495,7 +495,7 @@ bool SchemaParser::evaluateExpression(void)
 	return(expr_is_true);
 }
 
-QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, QString> &attribs, unsigned def_type)
+QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
 {
 	try
 	{
@@ -622,7 +622,7 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 	return(buf_aux);
 }
 
-QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
+QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 {
 	QString object_def;
 	unsigned end_cnt, if_cnt;
@@ -1017,7 +1017,7 @@ QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
 }
 
 
-QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QString> &attribs)
+QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
 {
 	try
 	{

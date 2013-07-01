@@ -18,13 +18,13 @@
 
 #include "baseconfigwidget.h"
 
-void BaseConfigWidget::addConfigurationParam(const QString &param, const map<QString, QString> &attribs)
+void BaseConfigWidget::addConfigurationParam(const QString &param, const attribs_map &attribs)
 {
 	if(!param.isEmpty() && !attribs.empty())
 		config_params[param]=attribs;
 }
 
-map<QString, map<QString, QString> > BaseConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map > BaseConfigWidget::getConfigurationParams(void)
 {
 	return(config_params);
 }
@@ -57,8 +57,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 									 conf_id +
 									 GlobalAttributes::CONFIGURATION_EXT;
 	QFile output(cfg_filename);
-	map<QString, QString> attribs;
-	map<QString, map<QString, QString> >::iterator itr, itr_end;
+	attribs_map attribs;
+	map<QString, attribs_map >::iterator itr, itr_end;
 
 	try
 	{
@@ -174,8 +174,8 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 
 void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs)
 {
-	map<QString, QString> aux_attribs;
-	map<QString, QString>::iterator itr, itr_end;
+	attribs_map aux_attribs;
+	attribs_map::iterator itr, itr_end;
 	QString key;
 
 	XMLParser::getElementAttributes(aux_attribs);

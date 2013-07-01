@@ -128,7 +128,7 @@ bool OperatorClassElement::isForOrderBy(void)
 
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 {
-	map<QString, QString> attributes;
+	attribs_map attributes;
 
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::STRATEGY_NUM]="";

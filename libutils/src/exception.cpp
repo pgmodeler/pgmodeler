@@ -183,6 +183,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_CONN_PARAM", QT_TR_NOOP("Assignment of a value to an invalid connection parameter!")},
 	{"ERR_OPR_NOT_ALOC_CONN", QT_TR_NOOP("Operation on connection not established!")},
 	{"ERR_CONNECTION_NOT_CONFIGURED", QT_TR_NOOP("Attempt to connect without define configuration parameters!")},
+	{"ERR_CONNECTION_ALREADY_STABLISHED", QT_TR_NOOP("Attempt to start a connection already stablished!")},
 	{"ERR_CONNECTION_NOT_STABLISHED", QT_TR_NOOP("Could not connect to the database.\nMessage returned: '%1'")},
 	{"ERR_ASG_SQL_RESULT_NOT_ALOC", QT_TR_NOOP("Assignment of not allocated SQL command result!")},
 	{"ERR_INCOMPREHENSIBLE_DBMS_RESP", QT_TR_NOOP("Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!")},

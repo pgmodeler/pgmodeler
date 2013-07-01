@@ -109,7 +109,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 {
 	if(tab_obj && !tab_obj->getComment().isEmpty())
 	{
-		map<QString, QString> attribs;
+		attribs_map attribs;
 
 		attribs[ParsersAttributes::DIF_SQL]="1";
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();

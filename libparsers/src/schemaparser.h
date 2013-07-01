@@ -32,10 +32,7 @@
 #include <QDir>
 #include <QTextStream>
 #include "xmlparser.h"
-
-/*! \brief Typedef used to replace maps with the signature map<QString,QString> commonly used
-to store objects attributes and used by SchemaParser */
-typedef map<QString, QString> attribs_map;
+#include "attribsmap.h"
 
 class SchemaParser {
 	private:
@@ -125,7 +122,7 @@ class SchemaParser {
 										 reference to the line on file that has syntax errors */
 										comment_count;
 
-		static map<QString, QString> attributes;
+		static attribs_map attributes;
 
 		//! \brief PostgreSQL version currently used by the parser
 		static QString pgsql_version;
@@ -150,17 +147,17 @@ class SchemaParser {
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL
 		 in order to the to correct schema be loaded */
-		static QString getCodeDefinition(const QString &obj_name, map<QString, QString> &attribs, unsigned def_type);
+		static QString getCodeDefinition(const QString &obj_name, attribs_map &attribs, unsigned def_type);
 
 		/*! \brief Generic method that loads a schema file and for a given map of attributes
 		 this method returns the data of the file analyzed and filled with the values ​​of the
 		 attributes map */
-		static QString getCodeDefinition(const QString &filename, map<QString, QString> &attribs);
+		static QString getCodeDefinition(const QString &filename, attribs_map &attribs);
 
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		static QString getCodeDefinition(map<QString, QString> &attribs);
+		static QString getCodeDefinition(attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
 		static void loadBuffer(const QString &buf);

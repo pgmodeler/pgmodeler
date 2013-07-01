@@ -31,28 +31,54 @@ This class is the basis for the reverse engineering feature.
 
 class Catalog {
 	private:
-		static const QString QUERY_LIST,
-												 QUERY_ATTRIBS,
-												 CATALOG_SCH_DIR;
+		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
+		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
+		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
+		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
+		PGSQL_FALSE; //! \brief Replacement for false 'f' boolean value
 
+		//! \brief Connection used to query the pg_catalog
 		Connection connection;
 
-		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, attribs_map attribs=attribs_map());
+		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
+		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
+		use them when parsing the schema file for the object */
+		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
+														 bool single_result=false, attribs_map attribs=attribs_map());
+
+		/*! \brief Recreates the attribute map in such way that attribute names that have
+		underscores have this char replaced by dashes */
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 	public:
 		Catalog(void){}
-
 		Catalog(Connection &connection);
+
+		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
+		//! \brief Returns the count for the specified object type
 		unsigned getObjectCount(ObjectType obj_type);
-		vector<QString> getObjects(ObjectType obj_type);
-		vector<attribs_map> getObjectAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
+		//! \brief Returns a list containing the names of the objects of the specified type
+		vector<QString> getObjects(ObjectType obj_type);
+
+		//! \brief Returns a single attribute set (only one tuple)
+		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		//! \brief Returns a set of multiple attributes (several tuples)
+		vector<attribs_map> getMultipleAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		//! \brief Retrieve the attributes for the specified database
 		attribs_map getDatabaseAttributes(const QString &db_name);
+
+		//! \brief Retrieve the attributes for the specified role
 		attribs_map getRoleAttributes(const QString &rol_name);
-		//attrib_map getSchemaAttributes(const QString &sch_name);
+
+		//! \brief Retrieve the attributes for the specified schema
+		attribs_map getSchemaAttributes(const QString &sch_name);
+
+		//! \brief Retrieve the attributes for the specified function
 		//attrib_map getFunctionAttributes(const QString &func_name);
 };
 

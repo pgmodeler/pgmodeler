@@ -58,7 +58,7 @@ void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 void ConnectionsConfigWidget::loadConfiguration(void)
 {
 	vector<QString> key_attribs;
-	map<QString, map<QString, QString> >::iterator itr, itr_end;
+	map<QString, attribs_map >::iterator itr, itr_end;
 	Connection *conn=nullptr;
 
 	//Destroy all the loaded connections
@@ -351,7 +351,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	{
 		int i, count;
 		Connection *conn=nullptr;
-		map<QString, QString> attribs;
+		attribs_map attribs;
 
 		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
 		count=connections_cmb->count();

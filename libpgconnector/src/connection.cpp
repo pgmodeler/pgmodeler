@@ -88,7 +88,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 
 void Connection::generateConnectionString(void)
 {
-	map<QString, QString>::iterator itr;
+	attribs_map::iterator itr;
 
 	itr=connection_params.begin();
 
@@ -109,6 +109,8 @@ void Connection::connect(void)
 		thus an error is raised */
 	if(connection_str=="")
 		throw Exception(ERR_CONNECTION_NOT_CONFIGURED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(connection)
+		throw Exception(ERR_CONNECTION_ALREADY_STABLISHED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Try to connect to the database
 	connection=PQconnectdb(connection_str.toStdString().c_str());
@@ -150,7 +152,7 @@ QString Connection::getConnectionParam(const QString &param)
 	return(connection_params[param]);
 }
 
-map<QString, QString> Connection::getConnectionParams(void)
+attribs_map Connection::getConnectionParams(void)
 {
 	return(connection_params);
 }

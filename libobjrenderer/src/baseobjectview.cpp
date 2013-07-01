@@ -187,7 +187,7 @@ void BaseObjectView::loadObjectsStyle(void)
 	QColor *colors=nullptr;
 	QTextCharFormat font_fmt;
 	QFont font;
-	map<QString, QString> attribs;
+	attribs_map attribs;
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,

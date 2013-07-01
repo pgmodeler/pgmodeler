@@ -35,7 +35,7 @@ Collation *IndexElement::getCollation(void)
 
 QString IndexElement::getCodeDefinition(unsigned def_type)
 {
-	map<QString, QString> attributes;
+	attribs_map attributes;
 
 	attributes[ParsersAttributes::COLLATION]="";
 

@@ -7,6 +7,7 @@ TARGET = utils
 HEADERS += src/exception.h \
 	   src/globalattributes.h \
 	   src/parsersattributes.h \
-	   src/utf8string.h
+	   src/utf8string.h \
+    src/attribsmap.h
 
 SOURCES += src/exception.cpp

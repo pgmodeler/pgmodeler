@@ -28,6 +28,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #define RESULTSET_H
 
 #include "exception.h"
+#include "attribsmap.h"
 #include <libpq-fe.h>
 #include <cstdlib>
 
@@ -75,6 +76,9 @@ class ResultSet {
   //! \brief Returns the data allocated size of a column (searching by name or index)
   int getColumnSize(const QString &column_name);
   int getColumnSize(int column_idx);
+
+	//! \brief Returns all the column names / values for the current tuple.
+	attribs_map getTupleValues(void);
 
   /*! \brief Returns the number of rows affected by the command that generated
      the result if it is an INSERT, DELETE, UPDATE or the number of

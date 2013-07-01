@@ -1163,7 +1163,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		return(*(*this));
 	else
 	{
-		map<QString, QString> attribs;
+		attribs_map attribs;
 
 		attribs[ParsersAttributes::LENGTH]="";
 		attribs[ParsersAttributes::DIMENSION]="";

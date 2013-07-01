@@ -91,7 +91,7 @@ OperatorClass *Element::getOperatorClass(void)
 	return(operator_class);
 }
 
-void Element::configureAttributes(map<QString, QString> &attributes, unsigned def_type)
+void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
 	attributes[ParsersAttributes::COLUMN]="";
 	attributes[ParsersAttributes::EXPRESSION]="";

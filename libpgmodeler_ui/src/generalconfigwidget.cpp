@@ -94,7 +94,7 @@ void GeneralConfigWidget::saveConfiguration()
 {
 	try
 	{
-		map<QString, map<QString, QString> >::iterator itr, itr_end;
+		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir;
 
 		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
@@ -210,7 +210,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
          msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
 
  #ifdef Q_OS_LINUX
-  map<QString,QString> attribs;
+  attribs_map attribs;
 	QString str_aux,
 
 			 //Configures the path to the application logo

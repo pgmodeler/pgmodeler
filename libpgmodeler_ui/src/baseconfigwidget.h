@@ -35,7 +35,7 @@ class BaseConfigWidget {
 		/*! \brief Stores the configuration params, the main key is the xml element name
 		 and the value is a map where the key is the attribute name and the value
 		 is the current attribute value */
-		map<QString, map<QString, QString> > config_params;
+		map<QString, attribs_map > config_params;
 
 		/*! \brief Saves the configuration on file. The conf_id param indicates the type of
 		 configuration to be saved. (see GlobalAttributes::*_CONF) */
@@ -55,10 +55,10 @@ class BaseConfigWidget {
 		BaseConfigWidget(void){}
 
 		//! \brief Adds a configuration param to the configuration map. Replaces the values if the param already exists.
-		void addConfigurationParam(const QString &param, const map<QString, QString> &attribs);
+		void addConfigurationParam(const QString &param, const attribs_map &attribs);
 
 		//! \brief Gets the parameters loaded from file
-		map<QString, map<QString, QString> > getConfigurationParams(void);
+		map<QString, attribs_map > getConfigurationParams(void);
 
 		//! \brief Removes the values for the specified configuration parameter
 		void removeConfigurationParam(const QString &param);

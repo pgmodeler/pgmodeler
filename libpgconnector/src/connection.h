@@ -27,7 +27,7 @@
 #define CONNECTION_H
 
 #include "resultset.h"
-#include <map>
+#include "attribsmap.h"
 #include <QRegExp>
 
 class Connection {
@@ -36,7 +36,7 @@ class Connection {
 		PGconn *connection;
 
 		//! \brief Parameters map used to generate the connection string
-		map<QString, QString> connection_params;
+		attribs_map connection_params;
 
 		//! \brief Formated connection string
 		QString connection_str;
@@ -89,7 +89,7 @@ class Connection {
 		QString getConnectionParam(const QString &param);
 
 		//! \brief Returns the full parameter map
-		map<QString, QString> getConnectionParams(void);
+		attribs_map getConnectionParams(void);
 
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);

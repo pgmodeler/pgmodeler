@@ -197,7 +197,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 QString Reference::getXMLDefinition(void)
 {
-	map<QString, QString> attribs;
+	attribs_map attribs;
 
 	attribs[ParsersAttributes::TABLE]="";
 	attribs[ParsersAttributes::COLUMN]="";

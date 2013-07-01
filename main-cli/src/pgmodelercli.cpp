@@ -45,7 +45,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		QString op, value;
 		bool accepts_val=false;
 		int eq_pos=-1;
-		map<QString, QString> opts;
+		attribs_map opts;
 
 		model=nullptr;
 		scene=nullptr;
@@ -197,7 +197,7 @@ void PgModelerCLI::initializeOptions(void)
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
 {
-	map<QString, QString>::iterator itr=short_opts.begin();
+	attribs_map::iterator itr=short_opts.begin();
 	bool found=false;
 
 	while(itr!=short_opts.end() && !found)
@@ -249,7 +249,7 @@ modes are described below.") << endl;
 	out << endl;
 }
 
-void PgModelerCLI::parserOptions(map<QString, QString> &opts)
+void PgModelerCLI::parserOptions(attribs_map &opts)
 {
 	//Loading connections
 	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))

@@ -92,9 +92,9 @@ SQLAppendWidget *sqlappend_wgt=nullptr;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	int i, count;
-	map<QString, map<QString, QString> >confs;
-	map<QString, map<QString, QString> >::iterator itr, itr_end;
-	map<QString, QString> attribs;
+	map<QString, attribs_map >confs;
+	map<QString, attribs_map >::iterator itr, itr_end;
+	attribs_map attribs;
 	QStringList prev_session_files;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
@@ -453,7 +453,7 @@ void MainWindow::showEvent(QShowEvent *)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	GeneralConfigWidget *conf_wgt=nullptr;
-	map<QString, map<QString, QString> > confs;
+	map<QString, attribs_map > confs;
 	bool save_conf=false, modified=false;
 	int i=0;
 
@@ -490,7 +490,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			int i, count;
 			ModelWidget *model=nullptr;
 			QString param_id;
-			map<QString, QString> attribs;
+			attribs_map attribs;
 
 			count=models_tbw->count();
 			for(i=0; i < count; i++)
@@ -515,7 +515,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		{
 			int i=0;
 			QString param_id;
-			map<QString, QString> attribs;
+			attribs_map attribs;
 
 			while(!recent_models.isEmpty())
 			{

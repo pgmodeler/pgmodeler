@@ -381,7 +381,8 @@ namespace ParsersAttributes {
 	COMPLETION_TRIGGER="completion-trigger",
 	APPENDED_SQL="appended-sql",
 	APPEND_AT_EOD="append-at-eod",
-	FONT_SIZE="font-size";
+	FONT_SIZE="font-size",
+	ADMIN_OPTION="admin-option";
 }
 
 #endif

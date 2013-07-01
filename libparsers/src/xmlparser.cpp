@@ -352,7 +352,7 @@ const xmlNode *XMLParser::getCurrentElement(void)
 	return(curr_elem);
 }
 
-void XMLParser::getElementAttributes(map<QString, QString> &attributes)
+void XMLParser::getElementAttributes(attribs_map &attributes)
 {
 	xmlAttr *elem_attribs=nullptr;
 	QString attrib, value;

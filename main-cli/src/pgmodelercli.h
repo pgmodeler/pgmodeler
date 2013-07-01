@@ -69,10 +69,10 @@ class PgModelerCLI: public QApplication {
 		map<QString, bool> long_opts;
 
 		//Stores the short option names.
-		map<QString, QString> short_opts;
+		attribs_map short_opts;
 
 		//Stores the parsed options names and values.
-		map<QString, QString> parsed_opts;
+		attribs_map parsed_opts;
 
 		//Indicates if the cli must run in silent mode
 		bool silent_mode;
@@ -98,7 +98,7 @@ class PgModelerCLI: public QApplication {
 		LIST_CONNS;
 
 		//Parsers the options and executes the action specified by them
-		void parserOptions(map<QString, QString> &parsed_opts);
+		void parserOptions(attribs_map &parsed_opts);
 
 		//Shows the options menu
 		void showMenu(void);

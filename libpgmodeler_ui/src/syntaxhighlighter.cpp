@@ -441,7 +441,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
 	if(filename!="")
 	{
-		map<QString, QString> attribs;
+		attribs_map attribs;
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
 				bold=false, italic=false,

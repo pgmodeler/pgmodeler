@@ -770,7 +770,7 @@ void BaseObject::setAttribute(const QString &attrib, const QString &value)
 
 void BaseObject::clearAttributes(void)
 {
-	map<QString, QString>::iterator itr, itr_end;
+	attribs_map::iterator itr, itr_end;
 
 	itr=attributes.begin();
 	itr_end=attributes.end();

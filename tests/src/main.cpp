@@ -16,11 +16,11 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		cout << "[object]: " << BaseObject::getTypeName(OBJ_TABLESPACE).toStdString() << endl;
-		cout << "[cout]: " << catalog.getObjectCount(OBJ_TABLESPACE) << endl;
+		cout << "[object]: " << BaseObject::getTypeName(OBJ_DATABASE).toStdString() << endl;
+		cout << "[cout]: " << catalog.getObjectCount(OBJ_DATABASE) << endl;
 
 		cout << "[list]: ";
-		vector<QString> v1=catalog.getObjects(OBJ_TABLESPACE);
+		vector<QString> v1=catalog.getObjects(OBJ_DATABASE);
 		while(!v1.empty())
 		{
 			cout << v1.back().toStdString() << " ";
@@ -29,15 +29,12 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		vector<map<QString, QString>> v=catalog.getObjectAttributes("pg_default", OBJ_TABLESPACE);
-		map<QString, QString>::iterator itr;
+		attribs_map v=catalog.getDatabaseAttributes("ncsat_main");
+		attribs_map::iterator itr;
 
 		cout << "[attribs]: ";
-		for(int i=0; i < v.size(); i++)
-		{
-			for(itr=v[i].begin(); itr!=v[i].end(); itr++)
-				cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
-		}
+		for(itr=v.begin(); itr!=v.end(); itr++)
+			cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
 
 		cout << endl;
 

@@ -49,7 +49,7 @@ class Element {
 				 sorting_enabled;
 
 	protected:
-		void configureAttributes(map<QString, QString> &attributes, unsigned def_type);
+		void configureAttributes(attribs_map &attributes, unsigned def_type);
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element

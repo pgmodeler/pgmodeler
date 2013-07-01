@@ -197,6 +197,19 @@ int ResultSet::getColumnSize(int column_idx)
 	return(PQgetlength(sql_result, current_tuple, column_idx));
 }
 
+attribs_map ResultSet::getTupleValues(void)
+{
+	attribs_map tup_vals;
+
+	if(current_tuple < 0 || current_tuple >= getTupleCount())
+		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	for(int col=0; col < getColumnCount(); col++)
+		tup_vals[getColumnName(col)]=getColumnValue(col);
+
+	return(tup_vals);
+}
+
 int ResultSet::getTupleCount(void)
 {
 	//In case the result has some tuples

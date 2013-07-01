@@ -185,7 +185,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 {
 	try
 	{
-		map<QString, QString> attribs;
+		attribs_map attribs;
 		vector<AppearanceConfigItem>::iterator itr, itr_end;
 		AppearanceConfigItem item;
 		QString attrib_id;

@@ -17,7 +17,7 @@ Operator *ExcludeElement::getOperator(void)
 
 QString ExcludeElement::getCodeDefinition(unsigned def_type)
 {
-	map<QString, QString> attributes;
+	attribs_map attributes;
 
 	attributes[ParsersAttributes::OPERATOR]="";
 
