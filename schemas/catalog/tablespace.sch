@@ -8,14 +8,14 @@
     %if @{attribs} %then
 	%if %not @{pgsql90} %and %not @{pgsql91} %then
 	  [SELECT ts.spcname AS name, pg_tablespace_location(ts.oid) AS directory, ]
-	  [       rl.rolname AS owner, sd.description AS comment ]
+	  [       rl.rolname AS owner, sd.description AS comment, ts.spcacl AS permissions ]
 	  [ FROM pg_tablespace AS ts ]
 	  [ LEFT JOIN pg_roles AS rl ON rl.oid = ts.spcowner ]
 	  [ LEFT JOIN pg_shdescription AS sd ON sd.objoid = ts.oid ]
 	  [ WHERE ts.spcname = ] '@{name}'
 	%else
 	  [SELECT ts.spcname AS name, spclocation AS directory, rl.rolname AS owner, ]
-	  [       sd.description AS comment ]
+	  [       sd.description AS comment, ts.spcacl AS permissions ]
 	  [ FROM pg_tablespace AS ts ]
 	  [ LEFT JOIN pg_roles AS rl ON rl.oid = ts.spcowner ]
 	  [ LEFT JOIN pg_shdescription AS sd ON sd.objoid = ts.oid ]

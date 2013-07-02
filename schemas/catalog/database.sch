@@ -8,7 +8,7 @@
     %if @{attribs} %then
       [SELECT db.datname AS name, pg_encoding_to_char(db.encoding) AS encoding, rl.rolname AS owner, ]
       [       db.datcollate AS lc_collate, db.datctype AS lc_ctype, db.datconnlimit AS connlimit, ]
-      [       ts.spcname AS tablespace, sd.description AS comment ]
+      [       ts.spcname AS tablespace, sd.description AS comment, db.datacl AS permissions ]
       [ FROM pg_database AS db ]
       [ LEFT JOIN pg_tablespace AS ts ON ts.oid = db.dattablespace ]
       [ LEFT JOIN pg_description AS ds ON ds.objoid = db.oid ]

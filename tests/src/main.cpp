@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		attribs_map v=catalog.getDatabaseAttributes("ncsat_main");
+		attribs_map v=catalog.getDatabaseAttributes("rmfa");
 		attribs_map::iterator itr;
 
 		cout << "[attribs]: ";

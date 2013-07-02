@@ -230,3 +230,15 @@ attribs_map Catalog::getSchemaAttributes(const QString &sch_name)
 	}
 }
 
+attribs_map Catalog::getTablespaceAttributes(const QString &spc_name)
+{
+	try
+	{
+		return(getAttributes(spc_name, OBJ_TABLESPACE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+

@@ -19,7 +19,7 @@
 #include "crashhandler.h"
 
 const char CrashHandler::CHR_DELIMITER=static_cast<char>(3);
-const QString CrashHandler::ANALYSIS_MODE="analysis-mode";
+const QString CrashHandler::ANALYSIS_MODE="-analysis-mode";
 
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

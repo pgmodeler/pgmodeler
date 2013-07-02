@@ -26,6 +26,39 @@ This class is the basis for the reverse engineering feature.
 #ifndef CATALOG_H
 #define CATALOG_H
 
+
+/* Possible way to determine the order to import object from database:
+ * 1) Order object by type (list below)
+ * 2) For each type objects by name
+
+ROLE						(pg_role)
+TABLESPACE			(pg_tablespace)
+DATABASE				(pg_database)
+SCHEMA					(pg_namespace)
+EXTENSION				(pg_extension)
+USERTYPE				(pg_type)
+FUNCTION				(pg_proc)
+LANGUAGE				(pg_language) [user-defined]
+FUNCTION				(pg_proc)			[user-defined]
+AGGREGATE				(pg_aggregate)
+OPERATOR				(pg_operator)
+OPCLASS					(pg_opclass)
+OPFAMILY				(pg_opfamily)
+COLLATION				(pg_collation)
+CONVERSION			(pg_conversion)
+TABLE						(pg_tables)
+COLUMN					(pg_attribute, pg_attrdef)
+INDEX						(pg_index)
+RULE						(pg_rule)
+TRIGGER					(pg_trigger)
+CONSTRAINT			(pg_constraints)
+CAST						(pg_cast)
+TABLE INHERITS	(pg_inherits)
+VIEW						(pg_view)
+PERMISSION			(???)
+
+** Details can be found on pg_dump_sort.c line 82 **/
+
 #include "connection.h"
 #include "baseobject.h"
 
@@ -77,6 +110,9 @@ class Catalog {
 
 		//! \brief Retrieve the attributes for the specified schema
 		attribs_map getSchemaAttributes(const QString &sch_name);
+
+		//! \brief Retrieve the attributes for the specified tablespace
+		attribs_map getTablespaceAttributes(const QString &spc_name);
 
 		//! \brief Retrieve the attributes for the specified function
 		//attrib_map getFunctionAttributes(const QString &func_name);
