@@ -49,8 +49,8 @@ HEADERS += src/textbox.h \
 	   src/operation.h \
 	   src/copyoptions.h \
 	   src/typeattribute.h \
-    src/extension.h \
-    src/pgmodelerns.h
+	   src/extension.h \
+	   src/pgmodelerns.h
 
 
 SOURCES +=  src/textbox.cpp \
@@ -94,5 +94,5 @@ SOURCES +=  src/textbox.cpp \
 	    src/parameter.cpp \
 	    src/copyoptions.cpp \
 	    src/typeattribute.cpp \
-    src/extension.cpp \
-    src/pgmodelerns.cpp
+	    src/extension.cpp \
+	    src/pgmodelerns.cpp

@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 	try
 	{
 		Connection conn;
-		conn.setConnectionParam(Connection::PARAM_DB_NAME, "postgres");
+		conn.setConnectionParam(Connection::PARAM_DB_NAME, "rmfa");
 		conn.setConnectionParam(Connection::PARAM_USER, "postgres");
 		conn.setConnectionParam(Connection::PARAM_PASSWORD, "postgres");
 		conn.setConnectionParam(Connection::PARAM_SERVER_FQDN, "localhost");
@@ -16,11 +16,11 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		cout << "[object]: " << BaseObject::getTypeName(OBJ_DATABASE).toStdString() << endl;
-		cout << "[cout]: " << catalog.getObjectCount(OBJ_DATABASE) << endl;
+		cout << "[object]: " << BaseObject::getTypeName(OBJ_EXTENSION).toStdString() << endl;
+		cout << "[cout]: " << catalog.getObjectCount(OBJ_EXTENSION) << endl;
 
 		cout << "[list]: ";
-		vector<QString> v1=catalog.getObjects(OBJ_DATABASE);
+		vector<QString> v1=catalog.getObjects(OBJ_EXTENSION);
 		while(!v1.empty())
 		{
 			cout << v1.back().toStdString() << " ";
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		attribs_map v=catalog.getDatabaseAttributes("rmfa");
+		attribs_map v=catalog.getExtensionAttributes("hstore","public");
 		attribs_map::iterator itr;
 
 		cout << "[attribs]: ";

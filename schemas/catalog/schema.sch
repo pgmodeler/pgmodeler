@@ -7,9 +7,11 @@
   [ WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
 %else
     %if @{attribs} %then
-      [SELECT ns.nspname AS name, ns.nspacl AS permissions, rl.rolname AS owner, sd.description AS comment ]
-      [  FROM pg_namespace AS ns ]
-      [  LEFT JOIN pg_roles AS rl ON rl.oid = ns.nspowner ]
-      [  LEFT JOIN pg_description AS sd ON sd.objoid = ns.oid WHERE ns.nspname=] '@{name}'
+      [SELECT ns.nspname AS name, ns.nspacl AS permissions, ]
+      [       rl.rolname AS owner, ds.description AS comment ]
+      [ FROM pg_namespace AS ns ]
+      [ LEFT JOIN pg_roles AS rl ON rl.oid = ns.nspowner ]
+      [ LEFT JOIN pg_description AS ds ON ds.objoid = ns.oid ]
+      [ WHERE ns.nspname = ] '@{name}'
     %end
 %end

@@ -55,6 +55,7 @@ unsigned SchemaParser::line=0;
 unsigned SchemaParser::column=0;
 unsigned SchemaParser::comment_count=0;
 bool SchemaParser::ignore_unk_atribs=false;
+bool SchemaParser::ignore_empty_atribs=false;
 
 QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_92;
 
@@ -544,6 +545,11 @@ void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
 	ignore_unk_atribs=ignore;
 }
 
+void SchemaParser::setIgnoreEmptyAttributes(bool ignore)
+{
+	ignore_empty_atribs=ignore;
+}
+
 QString SchemaParser::convertCharsToXMLEntities(QString buf)
 {
 	//Configures a text stream to read the entire buffer line by line
@@ -767,7 +773,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					}
 					else
 					{
-						if(attribs[atrib]=="")
+						/* If the attribute has no value set and parser must not ignore empty values
+						raises an exception */
+						if(attribs[atrib]=="" && !ignore_empty_atribs)
 						{
 							str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
 											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -904,8 +912,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 										atrib=word.mid(2,word.size()-3);
 										word=attribs[atrib];
 
-										//If the attribute has no value set raises an exception
-										if(word=="")
+										/* If the attribute has no value set and parser must not ignore empty values
+										raises an exception */
+										if(word=="" && !ignore_empty_atribs)
 										{
 											str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
 															.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -1013,6 +1022,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 	restartParser();
 	ignore_unk_atribs=false;
+	ignore_empty_atribs=false;
 	return(object_def);
 }
 

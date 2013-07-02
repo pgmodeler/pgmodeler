@@ -245,6 +245,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 					if(reg.exactMatch(sql_cmd))
 					{
 						QString obj_type, obj_name;
+						QRegExp reg_aux;
 						ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
 																		 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 																		 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
@@ -254,23 +255,22 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 						unsigned count=sizeof(obj_types)/sizeof(ObjectType);
 						int pos=0;
 
+						//Get the fisrt line of the sql command, that contains the CREATE ... statement
+						lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
+
 						for(unsigned i=0; i < count; i++)
 						{
 							//Check if the keyword for the current object exists on string
-							pos=sql_cmd.indexOf(BaseObject::getSQLName(obj_types[i]));
+							reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[i])));
+							pos=reg_aux.indexIn(lin);
 
 							if(pos >= 0)
 							{
 								//Extracts from the line the string starting with the object's name
-								lin=sql_cmd.mid(pos + BaseObject::getSQLName(obj_types[i]).size(),
-																sql_cmd.indexOf('\n')).simplified();
+								lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 
 								//Stores the object type name
 								obj_type=BaseObject::getTypeName(obj_types[i]);
-
-								//Special case of indexes, removes the "concurrently" keyword that cames after INDEX keyword
-								if(obj_types[i]==OBJ_INDEX)
-									lin.replace("CONCURRENTLY","");
 
 								//The object name is the first element when splitting the string with space separator
 								obj_name=lin.split(' ').at(0);
@@ -318,16 +318,24 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		removing the created objects */
 		if(simulate)
 			undoDBMSExport(db_model, conn);
+
+		if(conn.isStablished())	conn.close();
 	}
 	catch(Exception &e)
 	{
 		disconnect(db_model, nullptr, this, nullptr);
 
-		//Closes the new opened connection
-		if(new_db_conn.isStablished()) new_db_conn.close();
+		try
+		{
+			//Closes the new opened connection
+			if(new_db_conn.isStablished()) new_db_conn.close();
 
-		//Undo the export removing the created objects
-		undoDBMSExport(db_model, conn);
+			//Undo the export removing the created objects
+			undoDBMSExport(db_model, conn);
+		}
+		catch(Exception &){}
+
+		if(conn.isStablished())	conn.close();
 
 		//Redirects any error to the user
 		if(errors.empty())

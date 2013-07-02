@@ -40,6 +40,10 @@ class SchemaParser {
 		 attributes avoiding raising exceptions */
 		static bool ignore_unk_atribs;
 
+		/*! \brief Indicates that the parser should ignore empty
+		 attributes avoiding raising exceptions */
+		static bool ignore_empty_atribs;
+
 		static const char CHR_COMMENT,			//! \brief Character that starts a comment
 											CHR_LINE_END,			//! \brief Character that indicates end of line
 											CHR_SPACE,        //! \brief Character that indicates spacing
@@ -117,7 +121,6 @@ class SchemaParser {
 
 		static unsigned line, //! \brief Current line where the parser reading is
 										column, //! \brief Current column where the parser reading is
-
 										/*! \brief Comment line ammout extracted. This attribute is used to make the correct
 										 reference to the line on file that has syntax errors */
 										comment_count;
@@ -177,6 +180,9 @@ class SchemaParser {
 
 		//! \brief Set if the parser must ignore unknown attributes avoiding expcetion throwing
 		static void setIgnoreUnkownAttributes(bool ignore);
+
+		//! \brief Set if the parser must ignore empty attributes avoiding expcetion throwing
+		static void setIgnoreEmptyAttributes(bool ignore);
 };
 
 #endif

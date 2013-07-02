@@ -83,6 +83,9 @@ class Catalog {
 		underscores have this char replaced by dashes */
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
+		//! \brief Returns a attribute set for the specified object type and name
+		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
 	public:
 		Catalog(void){}
 		Catalog(Connection &connection);
@@ -91,13 +94,10 @@ class Catalog {
 		void setConnection(Connection &conn);
 
 		//! \brief Returns the count for the specified object type
-		unsigned getObjectCount(ObjectType obj_type);
+		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="");
 
 		//! \brief Returns a list containing the names of the objects of the specified type
-		vector<QString> getObjects(ObjectType obj_type);
-
-		//! \brief Returns a single attribute set (only one tuple)
-		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		vector<QString> getObjects(ObjectType obj_type, const QString &sch_name="");
 
 		//! \brief Returns a set of multiple attributes (several tuples)
 		vector<attribs_map> getMultipleAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
@@ -114,8 +114,11 @@ class Catalog {
 		//! \brief Retrieve the attributes for the specified tablespace
 		attribs_map getTablespaceAttributes(const QString &spc_name);
 
+		//! \brief Retrieve the attributes for the specified extension the parent's schema name must be informed
+		attribs_map getExtensionAttributes(const QString &ext_name, const QString &sch_name);
+
 		//! \brief Retrieve the attributes for the specified function
-		//attrib_map getFunctionAttributes(const QString &func_name);
+		//attribs_map getFunctionAttributes(const QString &func_name);
 };
 
 #endif

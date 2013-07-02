@@ -32,6 +32,8 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 
 		attribs[qry_type]="1";
 		SchemaParser::setIgnoreUnkownAttributes(true);
+		SchemaParser::setIgnoreEmptyAttributes(true);
+
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
 																				CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
@@ -53,13 +55,13 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	}
 }
 
-unsigned Catalog::getObjectCount(ObjectType obj_type)
+unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name)
 {
 	try
 	{
 		ResultSet res;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res);
+		executeCatalogQuery(QUERY_LIST, obj_type, res, false, {{ParsersAttributes::SCHEMA, sch_name}});
 		res.accessTuple(ResultSet::FIRST_TUPLE);
 		return(res.getTupleCount());
 	}
@@ -69,14 +71,14 @@ unsigned Catalog::getObjectCount(ObjectType obj_type)
 	}
 }
 
-vector<QString> Catalog::getObjects(ObjectType obj_type)
+vector<QString> Catalog::getObjects(ObjectType obj_type, const QString &sch_name)
 {
 	try
 	{
 		ResultSet res;
 		vector<QString> names;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res);
+		executeCatalogQuery(QUERY_LIST, obj_type, res, false, {{ParsersAttributes::SCHEMA, sch_name}});
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
@@ -235,6 +237,23 @@ attribs_map Catalog::getTablespaceAttributes(const QString &spc_name)
 	try
 	{
 		return(getAttributes(spc_name, OBJ_TABLESPACE));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+attribs_map Catalog::getExtensionAttributes(const QString &ext_name, const QString &sch_name)
+{
+	try
+	{
+		attribs_map extension=getAttributes(ext_name, OBJ_EXTENSION, {{ParsersAttributes::SCHEMA, sch_name}});
+		attribs_map types=getAttributes(ext_name, OBJ_EXTENSION, {{ParsersAttributes::SCHEMA, sch_name},
+																															{ParsersAttributes::HANDLES_TYPE, "1"}});
+
+		extension[ParsersAttributes::HANDLES_TYPE]=(!types.empty() ? "1" : "");
+		return(extension);
 	}
 	catch(Exception &e)
 	{
