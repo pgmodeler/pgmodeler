@@ -261,3 +261,15 @@ attribs_map Catalog::getExtensionAttributes(const QString &ext_name, const QStri
 	}
 }
 
+attribs_map Catalog::getFunctionAttributes(const QString &func_name, const QString &sch_name)
+{
+	try
+	{
+		attribs_map func=getAttributes(func_name, OBJ_FUNCTION, {{ParsersAttributes::SCHEMA, sch_name}});
+		return(func);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}

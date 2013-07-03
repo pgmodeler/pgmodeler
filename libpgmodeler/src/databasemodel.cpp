@@ -3153,6 +3153,10 @@ Function *DatabaseModel::createFunction(void)
 			func->setWindowFunction(attribs[ParsersAttributes::WINDOW_FUNC]==
 					ParsersAttributes::_TRUE_);
 
+		if(!attribs[ParsersAttributes::LEAKPROOF].isEmpty())
+			func->setLeakProof(attribs[ParsersAttributes::LEAKPROOF]==
+					ParsersAttributes::_TRUE_);
+
 		if(!attribs[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
 			func->setBehaviorType(BehaviorType(attribs[ParsersAttributes::BEHAVIOR_TYPE]));
 
@@ -3296,6 +3300,7 @@ Parameter DatabaseModel::createParameter(void)
 		param.setName(attribs[ParsersAttributes::NAME]);
 		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
 		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
+		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::_TRUE_);
 		param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

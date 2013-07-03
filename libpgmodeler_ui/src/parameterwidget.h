@@ -45,6 +45,9 @@ class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 
 	public slots:
 		void applyConfiguration(void);
+
+	private slots:
+		void enableVariadic(void);
 };
 
 #endif

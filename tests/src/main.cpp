@@ -16,11 +16,11 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		cout << "[object]: " << BaseObject::getTypeName(OBJ_EXTENSION).toStdString() << endl;
-		cout << "[cout]: " << catalog.getObjectCount(OBJ_EXTENSION) << endl;
+		cout << "[object]: " << BaseObject::getTypeName(OBJ_FUNCTION).toStdString() << endl;
+		cout << "[cout]: " << catalog.getObjectCount(OBJ_FUNCTION, "public") << endl;
 
 		cout << "[list]: ";
-		vector<QString> v1=catalog.getObjects(OBJ_EXTENSION);
+		vector<QString> v1=catalog.getObjects(OBJ_FUNCTION, "public");
 		while(!v1.empty())
 		{
 			cout << v1.back().toStdString() << " ";
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		attribs_map v=catalog.getExtensionAttributes("hstore","public");
+		attribs_map v=catalog.getFunctionAttributes("funct_teste_abc", "public");
 		attribs_map::iterator itr;
 
 		cout << "[attribs]: ";

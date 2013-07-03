@@ -56,7 +56,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/parameter.png"),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
 		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
-		parameters_tab->setHeaderLabel(trUtf8("IN/OUT"),2);
+		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
 		grid=new QGridLayout;
@@ -74,9 +74,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(func_type_lbl);
-		value_map[func_type_lbl].push_back(~FunctionType(FunctionType::leakproof));
-		value_map[func_type_lbl].push_back(~FunctionType(FunctionType::not_leakproof));
+		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(func_config_twg->widget(0));
@@ -189,6 +187,7 @@ Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
 				str_aux=tab->getCellText(row, 2);
 				param.setIn(str_aux.contains("IN"));
 				param.setOut(str_aux.contains("OUT"));
+				param.setVariadic(str_aux=="VARIADIC");
 				param.setDefaultValue(tab->getCellText(row,3));
 			}
 		}
@@ -213,8 +212,13 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 
 		if(tab==parameters_tab)
 		{
-			if(param.isIn()) str_aux="IN";
-			if(param.isOut()) str_aux+="OUT";
+			if(param.isVariadic())
+				str_aux="VARIADIC";
+			else
+			{
+				if(param.isIn()) str_aux="IN";
+				if(param.isOut()) str_aux+="OUT";
+			}
 
 			tab->setCellText(str_aux,row,2);
 			tab->setCellText(Utf8String::create(param.getDefaultValue()),row,3);
@@ -253,6 +257,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		language_cmb->setCurrentIndex(language_cmb->findText(func->getLanguage()->getName()));
 		func_type_cmb->setCurrentIndex(func_type_cmb->findText(~func->getFunctionType()));
 		window_func_chk->setChecked(func->isWindowFunction());
+		leakproof_chk->setChecked(func->isLeakProof());
 		exec_cost_spb->setValue(func->getExecutionCost());
 		rows_ret_spb->setValue(func->getRowAmount());
 		behavior_cmb->setCurrentIndex(behavior_cmb->findText(~func->getBehaviorType()));
@@ -499,6 +504,7 @@ void FunctionWidget::applyConfiguration(void)
 		func->setLanguage(model->getObject(language_cmb->currentText(), OBJ_LANGUAGE));
 		func->setFunctionType(func_type_cmb->currentText());
 		func->setWindowFunction(window_func_chk->isChecked());
+		func->setLeakProof(leakproof_chk->isChecked());
 		func->setExecutionCost(exec_cost_spb->value());
 		func->setRowAmount(rows_ret_spb->value());
 		func->setBehaviorType(behavior_cmb->currentText());
@@ -515,6 +521,7 @@ void FunctionWidget::applyConfiguration(void)
 			str_aux=parameters_tab->getCellText(i,2);
 			param.setIn(str_aux.indexOf("IN") >= 0);
 			param.setOut(str_aux.indexOf("OUT") >= 0);
+			param.setVariadic(str_aux.indexOf("VARIADIC") >= 0);
 
 			param.setDefaultValue(parameters_tab->getCellText(i,3));
 

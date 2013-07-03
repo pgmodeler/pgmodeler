@@ -4,6 +4,7 @@
 $tb [<parameter name=] "@{name}"
  %if @{in} %then [ in=] "true" %end
  %if @{out} %then [ out=] "true" %end
+ %if @{variadic} %then [ variadic=] "true" %end
  %if @{default-value} %then [ default-value=] "@{default-value}" %end
 >$br
 

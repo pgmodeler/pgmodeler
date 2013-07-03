@@ -219,7 +219,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension '%1' is registered as a data type and cannot have the attribute 'handles datatype' modified!")},
 	{"ERR_ALOC_INV_FK_RELATIONSHIP", QT_TR_NOOP("The fk relationship '%1' cannot be created because the foreign-key that represents it wasn't created on table '%2'!")},
 	{"ERR_ASG_INV_NAME_PATTERN", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship '%1'!")},
-	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship '%1'!")}
+	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship '%1'!")},
+	{"ERR_INV_USE_VARIADIC_PARAM_MODE", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with array data types!")}
 };
 
 Exception::Exception(void)

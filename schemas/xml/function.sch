@@ -28,6 +28,9 @@
 
   $br
   $tb $tb window-func=%if @{window-func} %then "true" %else "false" %end $br
+
+  %if @{leakproof} %then $tb $tb leakproof="true" $br %end
+
   $tb $tb returns-setof=%if @{returns-setof} %then "true" %else "false" %end $br
   $tb $tb behavior-type="@{behavior-type}" $br
   $tb $tb function-type="@{function-type}" $br

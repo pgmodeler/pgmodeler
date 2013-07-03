@@ -6,20 +6,18 @@
   [SELECT spcname AS name FROM pg_tablespace]
 %else
     %if @{attribs} %then
+	[SELECT ts.oid, ts.spcname AS name, ]
+
 	%if %not @{pgsql90} %and %not @{pgsql91} %then
-	  [SELECT ts.spcname AS name, pg_tablespace_location(ts.oid) AS directory, ]
-	  [       rl.rolname AS owner, sd.description AS comment, ts.spcacl AS permissions ]
-	  [ FROM pg_tablespace AS ts ]
-	  [ LEFT JOIN pg_roles AS rl ON rl.oid = ts.spcowner ]
-	  [ LEFT JOIN pg_shdescription AS sd ON sd.objoid = ts.oid ]
-	  [ WHERE ts.spcname = ] '@{name}'
+	  [ pg_tablespace_location(ts.oid) AS directory, ]
 	%else
-	  [SELECT ts.spcname AS name, spclocation AS directory, rl.rolname AS owner, ]
-	  [       sd.description AS comment, ts.spcacl AS permissions ]
-	  [ FROM pg_tablespace AS ts ]
-	  [ LEFT JOIN pg_roles AS rl ON rl.oid = ts.spcowner ]
-	  [ LEFT JOIN pg_shdescription AS sd ON sd.objoid = ts.oid ]
-	  [ WHERE ts.spcname = ] '@{name}'
+	  [ ts.spclocation AS directory ]
 	%end
+
+	[       rl.rolname AS owner, sd.description AS comment, ts.spcacl AS permissions
+	  FROM pg_tablespace AS ts
+	  LEFT JOIN pg_roles AS rl ON rl.oid = ts.spcowner
+	  LEFT JOIN pg_shdescription AS sd ON sd.objoid = ts.oid
+	  WHERE ts.spcname = ] '@{name}'
     %end
 %end

@@ -6,6 +6,7 @@
 <!ATTLIST function name CDATA #IMPLIED>
 <!ATTLIST function returns-setof (true|false) "false">
 <!ATTLIST function window-func (true|false) "false">
+<!ATTLIST function leakproof (true|false) "false">
 <!ATTLIST function behavior-type CDATA #IMPLIED>
 <!ATTLIST function function-type CDATA #IMPLIED>
 <!ATTLIST function security-type CDATA #IMPLIED>
@@ -21,5 +22,6 @@
 <!ATTLIST parameter default-value CDATA #IMPLIED>
 <!ATTLIST parameter in (true|false) "false">
 <!ATTLIST parameter out (true|false) "false">
+<!ATTLIST parameter variadic (true|false) "false">
 
 <!ELEMENT return-type (type?,parameter*)>

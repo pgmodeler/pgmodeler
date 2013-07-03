@@ -29,8 +29,8 @@
 class Parameter: public Column {
 	private:
 		/*! \brief This attributes indicates whether the parameter
-		is in, out or both (IN, OUT, INOUT) */
-		bool is_in, is_out;
+		is in, out or both (IN, OUT, INOUT, VARIADIC) */
+		bool is_in, is_out, is_variadic;
 
 	public:
 		Parameter(void);
@@ -39,9 +39,11 @@ class Parameter: public Column {
 
 		void setIn(bool value);
 		void setOut(bool value);
+		void setVariadic(bool value);
 
 		bool isIn(void);
 		bool isOut(void);
+		bool isVariadic(void);
 
 		//! \brief Returns the SQL / XML code definition for the parameter
 		virtual QString getCodeDefinition(unsigned def_type) final;

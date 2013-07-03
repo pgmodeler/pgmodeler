@@ -78,7 +78,7 @@
     <rect>
      <x>83</x>
      <y>129</y>
-     <width>137</width>
+     <width>197</width>
      <height>24</height>
     </rect>
    </property>
@@ -97,6 +97,13 @@
      <widget class="QCheckBox" name="param_out_chk">
       <property name="text">
        <string>OUT</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="param_variadic_chk">
+      <property name="text">
+       <string>VARIADIC</string>
       </property>
      </widget>
     </item>

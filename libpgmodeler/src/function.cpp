@@ -24,6 +24,7 @@ Function::Function(void)
 	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
+	is_leakproof=false;
 	obj_type=OBJ_FUNCTION;
 
 	execution_cost=100;
@@ -45,6 +46,7 @@ Function::Function(void)
 	attributes[ParsersAttributes::RETURN_TABLE]="";
 	attributes[ParsersAttributes::LIBRARY]="";
 	attributes[ParsersAttributes::SYMBOL]="";
+	attributes[ParsersAttributes::LEAKPROOF]="";
 }
 
 void Function::setName(const QString &name)
@@ -219,6 +221,11 @@ void Function::setWindowFunction(bool value)
 	is_wnd_function=value;
 }
 
+void Function::setLeakProof(bool value)
+{
+	is_leakproof=value;
+}
+
 void Function::setSecurityType(SecurityType sec_type)
 {
 	security_type=sec_type;
@@ -277,6 +284,11 @@ bool Function::isReturnTable(void)
 bool Function::isWindowFunction(void)
 {
 	return(is_wnd_function);
+}
+
+bool Function::isLeakProof(void)
+{
+	return(is_leakproof);
 }
 
 SecurityType Function::getSecurityType(void)
@@ -436,6 +448,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? "1" : "");
 	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? "1" : "");
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? "1" : "");
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;

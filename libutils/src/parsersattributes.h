@@ -133,6 +133,7 @@ namespace ParsersAttributes {
 	ROLE="role",
 	PARAM_IN="in",
 	PARAM_OUT="out",
+	PARAM_VARIADIC="variadic",
 	PARAMETER="parameter",
 	PARAMETERS="parameters",
 	PER_ROW="per-line",
@@ -382,7 +383,8 @@ namespace ParsersAttributes {
 	APPENDED_SQL="appended-sql",
 	APPEND_AT_EOD="append-at-eod",
 	FONT_SIZE="font-size",
-	ADMIN_OPTION="admin-option";
+	ADMIN_OPTION="admin-option",
+	LEAKPROOF="leakproof";
 }
 
 #endif

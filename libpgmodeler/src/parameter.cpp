@@ -26,17 +26,31 @@ Parameter::Parameter(void)
 
 void Parameter::setType(PgSQLType type)
 {
+	if(!type.isArrayType() && is_variadic)
+		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	this->type=type;
 }
 
 void Parameter::setIn(bool value)
 {
 	is_in=value;
+	is_variadic=false;
 }
 
 void Parameter::setOut(bool value)
 {
 	is_out=value;
+	is_variadic=false;
+}
+
+void Parameter::setVariadic(bool value)
+{
+	if(value && !type.isArrayType())
+		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	is_variadic=value;
+	if(value)	is_in=is_out=false;
 }
 
 bool Parameter::isIn(void)
@@ -49,6 +63,11 @@ bool Parameter::isOut(void)
 	return(is_out);
 }
 
+bool Parameter::isVariadic(void)
+{
+	return(is_variadic);
+}
+
 void Parameter::operator = (const Parameter &param)
 {
 	this->obj_name=param.obj_name;
@@ -56,6 +75,7 @@ void Parameter::operator = (const Parameter &param)
 	this->default_value=param.default_value;
 	this->is_in=param.is_in;
 	this->is_out=param.is_out;
+	this->is_variadic=param.is_variadic;
 }
 
 QString Parameter::getCodeDefinition(unsigned def_type)
@@ -72,6 +92,7 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[ParsersAttributes::PARAM_IN]=(is_in ? "1" : "");
 	attributes[ParsersAttributes::PARAM_OUT]=(is_out ? "1" : "");
+	attributes[ParsersAttributes::PARAM_VARIADIC]=(is_variadic ? "1" : "");
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 

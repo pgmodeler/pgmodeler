@@ -36,8 +36,8 @@ TABLESPACE			(pg_tablespace)
 DATABASE				(pg_database)
 SCHEMA					(pg_namespace)
 EXTENSION				(pg_extension)
+FUNCTION				(pg_proc)			[c,sql,internal langs]
 USERTYPE				(pg_type)
-FUNCTION				(pg_proc)
 LANGUAGE				(pg_language) [user-defined]
 FUNCTION				(pg_proc)			[user-defined]
 AGGREGATE				(pg_aggregate)
@@ -117,8 +117,8 @@ class Catalog {
 		//! \brief Retrieve the attributes for the specified extension the parent's schema name must be informed
 		attribs_map getExtensionAttributes(const QString &ext_name, const QString &sch_name);
 
-		//! \brief Retrieve the attributes for the specified function
-		//attribs_map getFunctionAttributes(const QString &func_name);
+		//! \brief Retrieve the attributes for the specified function the parent's schema name must be informed
+		attribs_map getFunctionAttributes(const QString &func_name, const QString &sch_name);
 };
 
 #endif

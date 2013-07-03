@@ -50,10 +50,13 @@ class Function: public BaseObject {
 		vector<Parameter> parameters;
 
 		//! \brief Indicates whether the function returns a set of data (RETURNS SET OF)
-		bool returns_setof;
+		bool returns_setof,
 
 		//! \brief Indicate whether the object is a windows function or not
-		bool is_wnd_function;
+		is_wnd_function,
+
+		//! \brief Indicate whether the object is leak proof or not
+		is_leakproof;
 
 		//! \brief Type of execution behavior applied to the function
 		BehaviorType behavior_type;
@@ -123,6 +126,9 @@ class Function: public BaseObject {
 		//! \brief Defines whether the function is a windows function or not
 		void setWindowFunction(bool value);
 
+		//! \brief Defines whether the function is leak proof or not
+		void setLeakProof(bool value);
+
 		//! \brief Defines the function's execution behavior
 		void setBehaviorType(BehaviorType behav_type);
 
@@ -167,6 +173,9 @@ class Function: public BaseObject {
 
 		//! \brief Indicates whether the function is window or not
 		bool isWindowFunction(void);
+
+		//! \brief Indicates whether the function is leak proof or not
+		bool isLeakProof(void);
 
 		//! \brief Returns the function execution behavior
 		BehaviorType getBehaviorType(void);

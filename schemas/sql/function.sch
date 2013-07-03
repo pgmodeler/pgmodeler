@@ -22,7 +22,8 @@ $tb [LANGUAGE ] @{language} $br
  $tb WINDOW $br
 %end
 
-$tb @{function-type} $br
+$tb @{function-type} $sp %if @{leakproof} %then LEAKPROOF %end $br
+
 $tb @{behavior-type} $br
 $tb @{security-type} $br
 $tb [COST ] @{execution-cost} $br
