@@ -61,14 +61,18 @@ PERMISSION			(???)
 
 #include "connection.h"
 #include "baseobject.h"
+#include <QTextStream>
 
 class Catalog {
 	private:
 		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
 		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
+		QUERY_GETDEPOBJ,  //! \brief Executes a dependency object (e.g. tablespace, owner, collation, schema) retrieving command on catalog
+		QUERY_GETCOMMENT,  //! \brief Executes a comment retrieving command on catalog
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
-		PGSQL_FALSE; //! \brief Replacement for false 'f' boolean value
+		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
+		BOOL_FIELD;
 
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
@@ -80,11 +84,16 @@ class Catalog {
 														 bool single_result=false, attribs_map attribs=attribs_map());
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
-		underscores have this char replaced by dashes */
+		underscores have this char replaced by dashes. Another special operation made is to replace
+		the values of fiels which suffix is _bool to '1' when 't' and to empty when 'f', this is because
+		the resultant attribs_map will be passed to XMLParser/SchemaParser which understands bool values as 1 (one) or '' (empty) */
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 		//! \brief Returns a attribute set for the specified object type and name
 		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		QString getDependencyObject(const QString &tbs_oid, ObjectType obj_type);
+		QString getObjectComment(const QString &obj_oid, bool is_shared_obj=false);
 
 	public:
 		Catalog(void){}

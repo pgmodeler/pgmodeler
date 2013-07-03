@@ -2,9 +2,12 @@
 
 const QString Catalog::QUERY_LIST="list";
 const QString Catalog::QUERY_ATTRIBS="attribs";
+const QString Catalog::QUERY_GETDEPOBJ="get";
+const QString Catalog::QUERY_GETCOMMENT="getcomment";
 const QString Catalog::CATALOG_SCH_DIR="catalog";
 const QString Catalog::PGSQL_TRUE="t";
 const QString Catalog::PGSQL_FALSE="f";
+const QString Catalog::BOOL_FIELD="_bool";
 
 Catalog::Catalog(Connection &conn)
 {
@@ -30,21 +33,39 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	{
 		QString sql;
 
-		attribs[qry_type]="1";
-		SchemaParser::setIgnoreUnkownAttributes(true);
-		SchemaParser::setIgnoreEmptyAttributes(true);
-
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
-		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
-																				CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-																				BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
-																				attribs).simplified();
 
-		//Append a LIMIT clause when the single_result is set
-		if(single_result)
+		if(qry_type!=QUERY_GETDEPOBJ && qry_type!=QUERY_GETCOMMENT)
 		{
-			if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-			sql+=" LIMIT 1";
+			attribs[qry_type]="1";
+			SchemaParser::setIgnoreUnkownAttributes(true);
+			SchemaParser::setIgnoreEmptyAttributes(true);
+
+			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
+																					attribs).simplified();
+
+			//Append a LIMIT clause when the single_result is set
+			if(single_result)
+			{
+				if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
+				sql+=" LIMIT 1";
+			}
+		}
+		else if(qry_type==QUERY_GETDEPOBJ)
+		{
+			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					QUERY_GETDEPOBJ + BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
+																					attribs).simplified();
+		}
+		else if(qry_type==QUERY_GETCOMMENT)
+		{
+			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					QUERY_GETCOMMENT + GlobalAttributes::SCHEMA_EXT,
+																					attribs).simplified();
 		}
 
 		connection.executeDMLCommand(sql, result);
@@ -149,16 +170,66 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &obj_name, Obje
 	}
 }
 
+QString Catalog::getDependencyObject(const QString &oid, ObjectType obj_type)
+{
+	try
+	{
+		ResultSet res;
+
+		executeCatalogQuery(QUERY_GETDEPOBJ, obj_type, res, true, {{ParsersAttributes::OID, oid}});
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+			return(res.getColumnValue(ParsersAttributes::NAME));
+		else
+			return(QString());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+QString Catalog::getObjectComment(const QString &obj_oid, bool is_shared_obj)
+{
+	try
+	{
+		ResultSet res;
+
+		executeCatalogQuery(QUERY_GETCOMMENT, BASE_OBJECT, res, true,
+												{{ParsersAttributes::OID, obj_oid},
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "") }});
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+			return(res.getColumnValue(ParsersAttributes::COMMENT));
+		else
+			return(QString());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 {
 	attribs_map::const_iterator itr=attribs.begin();
 	attribs_map new_attribs;
-	QString attr_name;
+	QString attr_name, value;
 
 	while(itr!=attribs.end())
 	{
-		attr_name=QString(itr->first).replace("_","-");
-		new_attribs[attr_name]=itr->second;
+		attr_name=itr->first;
+		value=itr->second;
+
+		if(attr_name.endsWith(BOOL_FIELD))
+		{
+			attr_name.remove(BOOL_FIELD);
+			if(value==PGSQL_FALSE) value.clear();
+			else value="1";
+		}
+
+		attr_name.replace("_","-");
+		new_attribs[attr_name]=value;
 		itr++;
 	}
 
@@ -169,7 +240,16 @@ attribs_map Catalog::getDatabaseAttributes(const QString &db_name)
 {
 	try
 	{
-		return(getAttributes(db_name, OBJ_DATABASE));
+		attribs_map database=getAttributes(db_name, OBJ_DATABASE);
+
+		if(!database.empty())
+		{
+			database[ParsersAttributes::TABLESPACE]=getDependencyObject(database[ParsersAttributes::TABLESPACE], OBJ_TABLESPACE);
+			database[ParsersAttributes::OWNER]=getDependencyObject(database[ParsersAttributes::OWNER], OBJ_ROLE);
+			database[ParsersAttributes::COMMENT]=getObjectComment(database[ParsersAttributes::OID], true);
+		}
+
+		return(database);
 	}
 	catch(Exception &e)
 	{
@@ -207,10 +287,13 @@ attribs_map Catalog::getRoleAttributes(const QString &rol_name)
 			members.remove(members.size()-1, 1);
 			admins.remove(admins.size()-1, 1);
 
-			//Inserte the members/admins as attributes of the retrieved role
+			//Insert the members/admins as attributes of the retrieved role
 			role[ParsersAttributes::MEMBER_ROLES]=members;
 			role[ParsersAttributes::ADMIN_ROLES]=admins;
 		}
+
+		if(!role.empty())
+		 role[ParsersAttributes::COMMENT]=getObjectComment(role[ParsersAttributes::OID], true);
 
 		return(role);
 	}
@@ -224,7 +307,15 @@ attribs_map Catalog::getSchemaAttributes(const QString &sch_name)
 {
 	try
 	{
-		return(getAttributes(sch_name, OBJ_SCHEMA));
+		attribs_map schema=getAttributes(sch_name, OBJ_SCHEMA);
+
+		if(!schema.empty())
+		{
+			schema[ParsersAttributes::OWNER]=getDependencyObject(schema[ParsersAttributes::OWNER], OBJ_ROLE);
+			schema[ParsersAttributes::COMMENT]=getObjectComment(schema[ParsersAttributes::OID]);
+		}
+
+		return(schema);
 	}
 	catch(Exception &e)
 	{
@@ -236,7 +327,15 @@ attribs_map Catalog::getTablespaceAttributes(const QString &spc_name)
 {
 	try
 	{
-		return(getAttributes(spc_name, OBJ_TABLESPACE));
+		attribs_map tablespace=getAttributes(spc_name, OBJ_TABLESPACE);
+
+		if(!tablespace.empty())
+		{
+			tablespace[ParsersAttributes::OWNER]=getDependencyObject(tablespace[ParsersAttributes::OWNER], OBJ_ROLE);
+			tablespace[ParsersAttributes::COMMENT]=getObjectComment(tablespace[ParsersAttributes::OID]);
+		}
+
+		return(tablespace);
 	}
 	catch(Exception &e)
 	{
@@ -253,6 +352,8 @@ attribs_map Catalog::getExtensionAttributes(const QString &ext_name, const QStri
 																															{ParsersAttributes::HANDLES_TYPE, "1"}});
 
 		extension[ParsersAttributes::HANDLES_TYPE]=(!types.empty() ? "1" : "");
+		extension[ParsersAttributes::COMMENT]=getObjectComment(extension[ParsersAttributes::OID]);
+
 		return(extension);
 	}
 	catch(Exception &e)
@@ -266,6 +367,13 @@ attribs_map Catalog::getFunctionAttributes(const QString &func_name, const QStri
 	try
 	{
 		attribs_map func=getAttributes(func_name, OBJ_FUNCTION, {{ParsersAttributes::SCHEMA, sch_name}});
+
+		if(!func.empty())
+		{
+			func[ParsersAttributes::OWNER]=getDependencyObject(func[ParsersAttributes::OWNER], OBJ_ROLE);
+			func[ParsersAttributes::COMMENT]=getObjectComment(func[ParsersAttributes::OID]);
+		}
+
 		return(func);
 	}
 	catch(Exception &e)

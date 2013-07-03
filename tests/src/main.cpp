@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		attribs_map v=catalog.getFunctionAttributes("funct_teste_abc", "public");
+		attribs_map v=catalog.getFunctionAttributes("funct_teste_abc","public");
 		attribs_map::iterator itr;
 
 		cout << "[attribs]: ";

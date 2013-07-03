@@ -3,15 +3,15 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT proname FROM pg_proc AS pr
+  [SELECT proname AS name FROM pg_proc AS pr
     LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
     WHERE ns.nspname = ] '@{schema}'
 %else
     %if @{attribs} %then
 	[SELECT pr.oid,
 		ns.nspname AS schema,
+		pr.proowner AS owner,
 		pr.proacl AS permissions,
-		ow.rolname AS owner,
 		pr.proname AS name,
 		la.lanname AS language,
 		pr.procost AS execution_cost,
@@ -30,7 +30,6 @@
 		pr.proargdefaults AS arg_defaults,
 		pr.prosrc AS definition,
 		pr.probin AS library,
-		ds.description AS comment,
 
 		CASE
 		   WHEN pr.prosecdef  THEN 'SECURITY DEFINER'
@@ -57,8 +56,6 @@
 	[ FROM pg_proc AS pr
 	    LEFT JOIN pg_language AS la ON pr.prolang = la.oid
 	    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-	    LEFT JOIN pg_authid AS ow ON pr.proowner = ow.oid
-	    LEFT JOIN pg_description AS ds ON pr.oid = ds.objoid
 	    WHERE ns.nspname = ] '@{schema}' [ AND pr.proname = ] '@{name}'
     %end
 %end

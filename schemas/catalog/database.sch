@@ -6,14 +6,10 @@
   [SELECT datname AS name FROM pg_database WHERE datistemplate = FALSE]
 %else
     %if @{attribs} %then
-      [SELECT db.datname AS name, pg_encoding_to_char(db.encoding) AS encoding, rl.rolname AS owner,
-	      db.datcollate AS lc_collate, db.datctype AS lc_ctype, db.datconnlimit AS connlimit,
-	      ts.spcname AS tablespace, sd.description AS comment, db.datacl AS permissions
-	FROM pg_database AS db
-	LEFT JOIN pg_tablespace AS ts ON ts.oid = db.dattablespace
-	LEFT JOIN pg_description AS ds ON ds.objoid = db.oid
-	LEFT JOIN pg_roles AS rl ON rl.oid = db.datdba
-	LEFT JOIN pg_shdescription AS sd ON sd.objoid = db.oid
-	WHERE db.datname = ] '@{name}'
+      [SELECT oid, datname AS name, pg_encoding_to_char(encoding) AS encoding, datdba AS owner,
+	      datcollate AS lc_collate, datctype AS lc_ctype, datconnlimit AS connlimit,
+	      dattablespace AS tablespace, datacl AS permissions
+	FROM pg_database
+	WHERE datname = ] '@{name}'
     %end
 %end

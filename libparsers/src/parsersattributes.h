@@ -17,7 +17,7 @@
 */
 
 /**
-\ingroup libutils
+\ingroup libparsers
 \namespace ParsersAttributes
 \brief Definition of parsers attributes namespace which stores a series of static strings constants used
  to reference the attributes of objects in SQL/XML generation methods.
@@ -120,6 +120,7 @@ namespace ParsersAttributes {
 	OBJECT="object",
 	SQL_OBJECT="sql-object",
 	OBJECTS="objects",
+	OID="oid",
 	OIDS="oids",
 	COMMUTATOR_OP="commutator-op",
 	NEGATOR_OP="negator-op",
@@ -384,7 +385,8 @@ namespace ParsersAttributes {
 	APPEND_AT_EOD="append-at-eod",
 	FONT_SIZE="font-size",
 	ADMIN_OPTION="admin-option",
-	LEAKPROOF="leakproof";
+	LEAKPROOF="leakproof",
+	SHARED_OBJ="shared-obj";
 }
 
 #endif
