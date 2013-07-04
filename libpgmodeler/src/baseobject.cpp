@@ -101,9 +101,9 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		return("");
 }
 
-QString BaseObject::getSchemaName(ObjectType obj_type )
+QString BaseObject::getSchemaName(ObjectType obj_type)
 {
-	return(objs_schemas[obj_type ]);
+	return(objs_schemas[obj_type]);
 }
 
 QString BaseObject::getSQLName(ObjectType obj_type)

@@ -386,7 +386,8 @@ namespace ParsersAttributes {
 	FONT_SIZE="font-size",
 	ADMIN_OPTION="admin-option",
 	LEAKPROOF="leakproof",
-	SHARED_OBJ="shared-obj";
+	SHARED_OBJ="shared-obj",
+	FROM_EXTENSION="from-extension";
 }
 
 #endif

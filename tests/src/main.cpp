@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
+		long time1=QDateTime::currentMSecsSinceEpoch();
 		cout << "[object]: " << BaseObject::getTypeName(OBJ_FUNCTION).toStdString() << endl;
 		cout << "[cout]: " << catalog.getObjectCount(OBJ_FUNCTION, "public") << endl;
 
@@ -37,6 +38,8 @@ int main(int argc, char **argv)
 			cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
 
 		cout << endl;
+		long time2=QDateTime::currentMSecsSinceEpoch();
+		cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 
 		return(0);
 	}

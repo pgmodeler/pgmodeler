@@ -69,6 +69,7 @@ class Catalog {
 		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
 		QUERY_GETDEPOBJ,  //! \brief Executes a dependency object (e.g. tablespace, owner, collation, schema) retrieving command on catalog
 		QUERY_GETCOMMENT,  //! \brief Executes a comment retrieving command on catalog
+		QUERY_ISFROMEXT,  //! \brief Executes a catalog query to check if the object belongs to extension
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
@@ -91,6 +92,10 @@ class Catalog {
 
 		//! \brief Returns a attribute set for the specified object type and name
 		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		/*! \brief Returns if the object (specified by its oid) is part of a extension. Being part of
+		a extension will cause the object to be created as system object and with SQL code disabled */
+		bool isObjectFromExtension(const QString &oid);
 
 		QString getDependencyObject(const QString &tbs_oid, ObjectType obj_type);
 		QString getObjectComment(const QString &obj_oid, bool is_shared_obj=false);

@@ -4,6 +4,7 @@ const QString Catalog::QUERY_LIST="list";
 const QString Catalog::QUERY_ATTRIBS="attribs";
 const QString Catalog::QUERY_GETDEPOBJ="get";
 const QString Catalog::QUERY_GETCOMMENT="getcomment";
+const QString Catalog::QUERY_ISFROMEXT="isfromextension";
 const QString Catalog::CATALOG_SCH_DIR="catalog";
 const QString Catalog::PGSQL_TRUE="t";
 const QString Catalog::PGSQL_FALSE="f";
@@ -31,41 +32,46 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 {
 	try
 	{
-		QString sql;
+		QString sql,
+						catalog_dir=GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+												CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR;
 
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 
-		if(qry_type!=QUERY_GETDEPOBJ && qry_type!=QUERY_GETCOMMENT)
+		if(qry_type==QUERY_LIST || qry_type==QUERY_ATTRIBS)
 		{
 			attribs[qry_type]="1";
 			SchemaParser::setIgnoreUnkownAttributes(true);
 			SchemaParser::setIgnoreEmptyAttributes(true);
 
-			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+			sql=SchemaParser::getCodeDefinition(catalog_dir +
 																					BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
 																					attribs).simplified();
-
-			//Append a LIMIT clause when the single_result is set
-			if(single_result)
-			{
-				if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-				sql+=" LIMIT 1";
-			}
 		}
 		else if(qry_type==QUERY_GETDEPOBJ)
 		{
-			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+			sql=SchemaParser::getCodeDefinition(catalog_dir +
 																					QUERY_GETDEPOBJ + BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
 																					attribs).simplified();
 		}
 		else if(qry_type==QUERY_GETCOMMENT)
 		{
-			sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+			sql=SchemaParser::getCodeDefinition(catalog_dir +
 																					QUERY_GETCOMMENT + GlobalAttributes::SCHEMA_EXT,
 																					attribs).simplified();
+		}
+		else if(qry_type==QUERY_ISFROMEXT)
+		{
+			sql=SchemaParser::getCodeDefinition(catalog_dir +
+																					QUERY_ISFROMEXT + GlobalAttributes::SCHEMA_EXT,
+																					attribs).simplified();
+		}
+
+		//Append a LIMIT clause when the single_result is set
+		if(single_result)
+		{
+			if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
+			sql+=" LIMIT 1";
 		}
 
 		connection.executeDMLCommand(sql, result);
@@ -210,6 +216,21 @@ QString Catalog::getObjectComment(const QString &obj_oid, bool is_shared_obj)
 	}
 }
 
+bool Catalog::isObjectFromExtension(const QString &oid)
+{
+	try
+	{
+		ResultSet res;
+
+		executeCatalogQuery(QUERY_ISFROMEXT, BASE_OBJECT, res, true, {{ParsersAttributes::OID, oid}});
+		return(res.getTupleCount() > 0);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 {
 	attribs_map::const_iterator itr=attribs.begin();
@@ -313,6 +334,7 @@ attribs_map Catalog::getSchemaAttributes(const QString &sch_name)
 		{
 			schema[ParsersAttributes::OWNER]=getDependencyObject(schema[ParsersAttributes::OWNER], OBJ_ROLE);
 			schema[ParsersAttributes::COMMENT]=getObjectComment(schema[ParsersAttributes::OID]);
+			schema[ParsersAttributes::FROM_EXTENSION]=(isObjectFromExtension(schema[ParsersAttributes::OID]) ? "1" : "");
 		}
 
 		return(schema);
@@ -372,6 +394,7 @@ attribs_map Catalog::getFunctionAttributes(const QString &func_name, const QStri
 		{
 			func[ParsersAttributes::OWNER]=getDependencyObject(func[ParsersAttributes::OWNER], OBJ_ROLE);
 			func[ParsersAttributes::COMMENT]=getObjectComment(func[ParsersAttributes::OID]);
+			func[ParsersAttributes::FROM_EXTENSION]=(isObjectFromExtension(func[ParsersAttributes::OID]) ? "1" : "");
 		}
 
 		return(func);

@@ -147,4 +147,5 @@ unix {
 INSTALLS += pgmodeler
 
 OTHER_FILES += \
-    schemas/catalog/extension.sch
+    schemas/catalog/extension.sch \
+    schemas/catalog/isfromextension.sch
