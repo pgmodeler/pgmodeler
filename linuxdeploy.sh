@@ -1,5 +1,8 @@
 #/bin/bash
 
+alias grep="grep --color=never"
+shopt -s expand_aliases
+
 QMAKE_ROOT=/usr/bin
 FALLBACK_QMAKE_ROOT=/usr/local/qt-5.0.2/5.0.2/gcc_64/bin
 LOG=linuxdeploy.log
