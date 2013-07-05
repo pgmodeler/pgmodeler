@@ -113,7 +113,7 @@ namespace ParsersAttributes {
 	LOGIN="login",
 	MEMBER="member",
 	MERGES="merges",
-	NOT_nullptr="not-null",
+	NOT_NULL="not-null",
 	NAME="name",
 	NAMES="names",
 	STRATEGY_NUM="stg-number",
@@ -387,7 +387,9 @@ namespace ParsersAttributes {
 	ADMIN_OPTION="admin-option",
 	LEAKPROOF="leakproof",
 	SHARED_OBJ="shared-obj",
-	FROM_EXTENSION="from-extension";
+	FROM_EXTENSION="from-extension",
+	FILTER_OIDS="filter-oids",
+	GEN_ALTER_CMDS="gen-alter-cmds";
 }
 
 #endif

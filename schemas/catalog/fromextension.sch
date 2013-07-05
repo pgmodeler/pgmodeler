@@ -4,6 +4,11 @@
 
 # If the query return at least one result indicates that the object is part
 # of a extension and it will not reverse engineered, instead, it's parent extension will
-[SELECT objid FROM pg_depend ]
-[ WHERE (objid = ] @{oid} [ OR refobjid = ] @{oid} )
-[ AND deptype IN ('e') ]
+[SELECT CASE
+	  WHEN count(objid) >= 1 THEN
+	   TRUE
+	  ELSE
+	   FALSE
+	END
+  FROM pg_depend
+  WHERE (objid = ] @{oid} [ OR refobjid = ] @{oid} [) AND deptype = 'e' ]

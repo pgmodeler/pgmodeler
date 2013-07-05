@@ -461,6 +461,7 @@ class Relationship: public BaseRelationship {
 
 		friend class DatabaseModel;
 		friend class RelationshipWidget;
+		friend class ModelExportHelper;
 };
 
 #endif

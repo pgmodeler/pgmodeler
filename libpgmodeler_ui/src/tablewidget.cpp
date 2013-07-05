@@ -250,20 +250,6 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		for(i=0; i < 5; i++)
 		{
 			listObjects(types[i]);
-
-			/* if the type is COLUMN or CONSTRAINT disable the move buttons for the two tables
-			 because columns/constraints only can be moved when the table does not reference
-			 objects created by relationship */
-			/*if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
-			{
-				//if(this->new_object || !table->isReferRelationshipAddedObject())
-					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
-																														(ObjectTableWidget::UPDATE_BUTTON));
-				else
-					objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
-																														(ObjectTableWidget::UPDATE_BUTTON |
-																														 ObjectTableWidget::MOVE_BUTTONS));
-			}*/
 			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
 																												(ObjectTableWidget::UPDATE_BUTTON));
 		}
@@ -290,11 +276,10 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		parent_tables->clearSelection();
 		with_oids_chk->setChecked(table->isWithOIDs());
+		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
 	}
 	catch(Exception &e)
 	{
-		/*if(this->new_object && table)
-			delete(table); */
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -615,6 +600,7 @@ void TableWidget::applyConfiguration(void)
 
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
+		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
 
 		BaseObjectWidget::applyConfiguration();
 

@@ -282,8 +282,8 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	attributes[ParsersAttributes::CONDITION]=conditional_expr;
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 
-	if(this->parent_table)
-		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	if(this->indexing_type==IndexingType::gin)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");

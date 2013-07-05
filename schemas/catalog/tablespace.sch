@@ -3,10 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT spcname AS name FROM pg_tablespace]
+  [SELECT oid, spcname AS name FROM pg_tablespace
+    WHERE spcname LIKE 'pg_%']
 %else
     %if @{attribs} %then
-	[SELECT oid, spcname AS name, ]
+	[SELECT oid, spcname AS name, spcacl AS permissions, ]
 
 	%if %not @{pgsql90} %and %not @{pgsql91} %then
 	  [ pg_tablespace_location(oid) AS directory, ]
@@ -14,8 +15,13 @@
 	  [ ts.spclocation AS directory ]
 	%end
 
-	[       spcowner AS owner, spcacl AS permissions
-	  FROM pg_tablespace
-	  WHERE spcname = ] '@{name}'
+	(@{owner}) [ AS owner, ]
+	(@{comment}) [ AS comment ]
+
+	[ FROM pg_tablespace ]
+
+	%if @{filter-oids} %then
+	 [ WHERE oid IN (] @{filter-oids} )
+	%end
     %end
 %end

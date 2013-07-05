@@ -122,9 +122,8 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::EXEC_TYPE]=(~execution_type);
 	attributes[ParsersAttributes::EVENT_TYPE]=(~event_type);
 
-	if(this->parent_table)
-		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
-
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

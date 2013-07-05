@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[SELECT description AS comment FROM ]
+[SELECT description FROM ]
 
 %if @{shared-obj} %then
   pg_shdescription
@@ -10,4 +10,4 @@
   pg_description
 %end
 
-[ WHERE objoid=] @{oid}
+[ WHERE objoid = ] @{oid}

@@ -99,14 +99,23 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 			42P06 	duplicate_schema
 			42P07 	duplicate_table
 			42710 	duplicate_object
+			42701   duplicate_column
+			42P16   invalid_table_definition
 
 		 Reference:
 			http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-	QString error_codes[]={"42P04", "42723", "42P06", "42P07", "42710"};
+	QString error_codes[]={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
 	vector<QString> err_codes_vect(error_codes, error_codes + sizeof(error_codes) / sizeof(QString));
+
 
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	/* If the export is called using ignore duplications and simulation mode at same time
+	an error is raised because the simulate mode (mainly used as SQL validation) cannot
+	undo column addition (this can be changed in the future) */
+	if(simulate && ignore_dup)
+		throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -133,7 +142,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		}
 
 		if(ignore_dup)
+		{
 			emit s_progressUpdated(progress, trUtf8("Ignoring object duplication error..."));
+
+			//Save the current status for ALTER command generation for table columns/constraints
+			saveGenAtlerCmdsStatus(db_model);
+		}
+
 
 		//Creates the roles and tablespaces separately from the other objects
 		for(type_id=0; type_id < 2; type_id++)
@@ -292,24 +307,32 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 					if(!sql_cmd.isEmpty())
 						new_db_conn.executeDDLCommand(sql_cmd);
 
-					ddl_tk_found=false;
 					sql_cmd.clear();
+					ddl_tk_found=false;
 					i++;
 				}
 			}
 			catch(Exception &e)
 			{
+				if(ddl_tk_found) ddl_tk_found=false;
+
 				if(!ignore_dup ||
 					 (ignore_dup &&
 						std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
 					throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
 													ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 				else
+				{
+					sql_cmd.clear();
 					errors.push_back(e);
+				}
 			}
 		}
 
 		disconnect(db_model, nullptr, this, nullptr);
+
+		if(ignore_dup)
+			restoreGenAtlerCmdsStatus();
 
 		//Closes the new opened connection
 		if(new_db_conn.isStablished()) new_db_conn.close();
@@ -324,6 +347,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 	catch(Exception &e)
 	{
 		disconnect(db_model, nullptr, this, nullptr);
+
+		if(ignore_dup)
+			restoreGenAtlerCmdsStatus();
 
 		try
 		{
@@ -346,6 +372,57 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 			throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 		}
 	}
+}
+
+void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
+{
+	vector<BaseObject *> objects;
+	Table *tab=nullptr;
+	Relationship *rel=nullptr;
+
+	objects.insert(objects.end(), db_model->getObjectList(OBJ_TABLE)->begin(),
+								 db_model->getObjectList(OBJ_TABLE)->end());
+
+	//Store the relationship on the auxiliary vector but only many-to-many are considered
+	objects.insert(objects.end(), db_model->getObjectList(OBJ_RELATIONSHIP)->begin(),
+								 db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+
+	alter_cmds_status.clear();
+
+	while(!objects.empty())
+	{
+		rel=dynamic_cast<Relationship *>(objects.back());
+
+		/* If the current object is a relationship try to get the
+		generated table (if the relationship is many-to-many only) */
+		if(rel)
+			tab=rel->getGeneratedTable();
+		else
+			tab=dynamic_cast<Table *>(objects.back());
+
+		if(tab)
+		{
+			//Store the current alter state
+			alter_cmds_status[tab]=tab->isGenerateAlterCmds();
+			//Forcing columns and constraints to be generated via ALTER command
+			tab->setGenerateAlterCmds(true);
+		}
+
+		objects.pop_back();
+	}
+}
+
+void ModelExportHelper::restoreGenAtlerCmdsStatus(void)
+{
+	map<Table *, bool>::iterator itr=alter_cmds_status.begin();
+
+	while(itr!=alter_cmds_status.end())
+	{
+		itr->first->setGenerateAlterCmds(itr->second);
+		itr++;
+	}
+
+	alter_cmds_status.clear();
 }
 
 void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn)

@@ -4,12 +4,20 @@
 
 %if @{list} %then
   # Schemas pg_catalog, pg_toast and information_schema aren't listed
-  [SELECT nspname AS name FROM pg_namespace
+  [SELECT oid, nspname AS name FROM pg_namespace
     WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
 %else
     %if @{attribs} %then
-      [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner
-       FROM pg_namespace
-       WHERE nspname = ] '@{name}'
+      [SELECT oid, nspname AS name, nspacl AS permissions, ]
+
+	(@{owner})[ AS owner, ]
+	(@{comment}) [ AS comment
+
+       FROM pg_namespace ]
+
+       %if @{filter-oids} %then
+	 [ WHERE oid IN (] @{filter-oids} )
+       %end
+
     %end
 %end

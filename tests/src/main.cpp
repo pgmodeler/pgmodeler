@@ -18,26 +18,32 @@ int main(int argc, char **argv)
 
 		long time1=QDateTime::currentMSecsSinceEpoch();
 		cout << "[object]: " << BaseObject::getTypeName(OBJ_FUNCTION).toStdString() << endl;
-		cout << "[cout]: " << catalog.getObjectCount(OBJ_FUNCTION, "public") << endl;
+		cout << "[count]: " << catalog.getObjectCount(OBJ_FUNCTION,"public") << endl;
 
 		cout << "[list]: ";
-		vector<QString> v1=catalog.getObjects(OBJ_FUNCTION, "public");
-		while(!v1.empty())
+		attribs_map v1=catalog.getObjects(OBJ_FUNCTION,"public");
+		attribs_map::iterator itr1=v1.begin();
+
+		while(itr1!=v1.end())
 		{
-			cout << v1.back().toStdString() << " ";
-			v1.pop_back();
+			cout << itr1->first.toStdString() <<  ":" <<itr1->second.toStdString() << " ";
+			itr1++;
 		}
 
 		cout << endl;
 
-		attribs_map v=catalog.getFunctionAttributes("funct_teste_abc","public");
+		vector<attribs_map> v=catalog.getFunctions("public");//{"99","11195"});
 		attribs_map::iterator itr;
 
-		cout << "[attribs]: ";
-		for(itr=v.begin(); itr!=v.end(); itr++)
-			cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
+		while(!v.empty())
+		{
+			cout << "[attribs]: ";
+			for(itr=v.back().begin(); itr!=v.back().end(); itr++)
+				cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
 
-		cout << endl;
+			cout << endl;
+			v.pop_back();
+		}
 		long time2=QDateTime::currentMSecsSinceEpoch();
 		cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 

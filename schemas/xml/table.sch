@@ -2,7 +2,8 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 [<table name=] "@{name}" 
- [ oids=] %if @{oids} %then "true" %else "false" %end
+  %if @{oids} %then [ oids="true"] %end
+  %if @{gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
  
  %if @{protected} %then 
   [ protected=] "true"

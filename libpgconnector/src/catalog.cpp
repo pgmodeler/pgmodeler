@@ -2,9 +2,9 @@
 
 const QString Catalog::QUERY_LIST="list";
 const QString Catalog::QUERY_ATTRIBS="attribs";
-const QString Catalog::QUERY_GETDEPOBJ="get";
-const QString Catalog::QUERY_GETCOMMENT="getcomment";
-const QString Catalog::QUERY_ISFROMEXT="isfromextension";
+//const QString Catalog::QUERY_GETDEPOBJ="get";
+//const QString Catalog::QUERY_GETCOMMENT="getcomment";
+//const QString Catalog::QUERY_ISFROMEXT="isfromextension";
 const QString Catalog::CATALOG_SCH_DIR="catalog";
 const QString Catalog::PGSQL_TRUE="t";
 const QString Catalog::PGSQL_FALSE="f";
@@ -32,23 +32,20 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 {
 	try
 	{
-		QString sql,
-						catalog_dir=GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
-												CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR;
+		QString sql;
 
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 
-		if(qry_type==QUERY_LIST || qry_type==QUERY_ATTRIBS)
-		{
-			attribs[qry_type]="1";
-			SchemaParser::setIgnoreUnkownAttributes(true);
-			SchemaParser::setIgnoreEmptyAttributes(true);
+		attribs[qry_type]="1";
+		SchemaParser::setIgnoreUnkownAttributes(true);
+		SchemaParser::setIgnoreEmptyAttributes(true);
 
-			sql=SchemaParser::getCodeDefinition(catalog_dir +
-																					BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
-																					attribs).simplified();
-		}
-		else if(qry_type==QUERY_GETDEPOBJ)
+		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																				CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																				BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
+																				attribs).simplified();
+
+		/*else if(qry_type==QUERY_GETDEPOBJ)
 		{
 			sql=SchemaParser::getCodeDefinition(catalog_dir +
 																					QUERY_GETDEPOBJ + BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
@@ -65,7 +62,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			sql=SchemaParser::getCodeDefinition(catalog_dir +
 																					QUERY_ISFROMEXT + GlobalAttributes::SCHEMA_EXT,
 																					attribs).simplified();
-		}
+		} */
 
 		//Append a LIMIT clause when the single_result is set
 		if(single_result)
@@ -98,12 +95,12 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name)
 	}
 }
 
-vector<QString> Catalog::getObjects(ObjectType obj_type, const QString &sch_name)
+attribs_map Catalog::getObjects(ObjectType obj_type, const QString &sch_name)
 {
 	try
 	{
 		ResultSet res;
-		vector<QString> names;
+		attribs_map objects;
 
 		executeCatalogQuery(QUERY_LIST, obj_type, res, false, {{ParsersAttributes::SCHEMA, sch_name}});
 
@@ -111,12 +108,12 @@ vector<QString> Catalog::getObjects(ObjectType obj_type, const QString &sch_name
 		{
 			do
 			{
-				names.push_back(res.getColumnValue(0));
+				objects[res.getColumnValue(ParsersAttributes::OID)]=res.getColumnValue(ParsersAttributes::NAME);
 			}
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
 
-		return(names);
+		return(objects);
 	}
 	catch(Exception &e)
 	{
@@ -146,7 +143,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 	}
 }
 
-vector<attribs_map> Catalog::getMultipleAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs)
+vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs)
 {
 	try
 	{
@@ -154,10 +151,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &obj_name, Obje
 		attribs_map tuple;
 		vector<attribs_map> obj_attribs;
 
-		//Add the name of the object as extra attrib in order to retrieve the data only for it
-		extra_attribs[ParsersAttributes::NAME]=obj_name;
-		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, true, extra_attribs);
-
+		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, false, extra_attribs);
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			do
@@ -176,18 +170,16 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &obj_name, Obje
 	}
 }
 
-QString Catalog::getDependencyObject(const QString &oid, ObjectType obj_type)
+QString Catalog::getDepObjectQuery(const QString &oid_field, ObjectType obj_type)
 {
 	try
 	{
-		ResultSet res;
+		attribs_map attribs={{ParsersAttributes::OID, oid_field}};
 
-		executeCatalogQuery(QUERY_GETDEPOBJ, obj_type, res, true, {{ParsersAttributes::OID, oid}});
-
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
-			return(res.getColumnValue(ParsersAttributes::NAME));
-		else
-			return(QString());
+		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 "get" + BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
+																					 attribs).simplified());
 	}
 	catch(Exception &e)
 	{
@@ -195,20 +187,17 @@ QString Catalog::getDependencyObject(const QString &oid, ObjectType obj_type)
 	}
 }
 
-QString Catalog::getObjectComment(const QString &obj_oid, bool is_shared_obj)
+QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
 	try
 	{
-		ResultSet res;
+		attribs_map attribs={{ParsersAttributes::OID, oid_field},
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "")}};
 
-		executeCatalogQuery(QUERY_GETCOMMENT, BASE_OBJECT, res, true,
-												{{ParsersAttributes::OID, obj_oid},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "") }});
-
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
-			return(res.getColumnValue(ParsersAttributes::COMMENT));
-		else
-			return(QString());
+		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 "get" + ParsersAttributes::COMMENT + GlobalAttributes::SCHEMA_EXT,
+																					 attribs).simplified());
 	}
 	catch(Exception &e)
 	{
@@ -216,14 +205,16 @@ QString Catalog::getObjectComment(const QString &obj_oid, bool is_shared_obj)
 	}
 }
 
-bool Catalog::isObjectFromExtension(const QString &oid)
+QString Catalog::getFromExtensionQuery(const QString &oid_field)
 {
 	try
 	{
-		ResultSet res;
+		attribs_map attribs={{ParsersAttributes::OID, oid_field}};
 
-		executeCatalogQuery(QUERY_ISFROMEXT, BASE_OBJECT, res, true, {{ParsersAttributes::OID, oid}});
-		return(res.getTupleCount() > 0);
+		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 "fromextension" + GlobalAttributes::SCHEMA_EXT,
+																					 attribs).simplified());
 	}
 	catch(Exception &e)
 	{
@@ -257,20 +248,30 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 	return(new_attribs);
 }
 
-attribs_map Catalog::getDatabaseAttributes(const QString &db_name)
+QString Catalog::createOidFilter(const vector<QString> &oids)
+{
+	QString filter;
+
+	for(unsigned i=0; i < oids.size(); i++)
+		filter+=oids.at(i) + ",";
+
+	if(!filter.isEmpty())
+		filter.remove(filter.size()-1,1);
+
+	return(filter);
+}
+
+vector<attribs_map> Catalog::getDatabases(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map database=getAttributes(db_name, OBJ_DATABASE);
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::TABLESPACE]=getDepObjectQuery("dattablespace", OBJ_TABLESPACE);
+		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("datdba", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		if(!database.empty())
-		{
-			database[ParsersAttributes::TABLESPACE]=getDependencyObject(database[ParsersAttributes::TABLESPACE], OBJ_TABLESPACE);
-			database[ParsersAttributes::OWNER]=getDependencyObject(database[ParsersAttributes::OWNER], OBJ_ROLE);
-			database[ParsersAttributes::COMMENT]=getObjectComment(database[ParsersAttributes::OID], true);
-		}
-
-		return(database);
+		return(getMultipleAttributes(OBJ_DATABASE, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -278,45 +279,15 @@ attribs_map Catalog::getDatabaseAttributes(const QString &db_name)
 	}
 }
 
-attribs_map Catalog::getRoleAttributes(const QString &rol_name)
+vector<attribs_map> Catalog::getRoles(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map role=getAttributes(rol_name, OBJ_ROLE);
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		//Retrieving the member roles
-		vector<attribs_map> member_roles=getMultipleAttributes(rol_name, OBJ_ROLE, {{ParsersAttributes::MEMBER_ROLES, "1"}});
-
-		//If a role was retrieved as well its members
-		if(!role.empty() && !member_roles.empty())
-		{
-			QString members, admins;
-
-			/* Appending the member names in separeted strings:
-			1) members: store the ordinary members
-			2) admins: store the members with admin option set */
-			while(!member_roles.empty())
-			{
-				if(member_roles.back()[ParsersAttributes::ADMIN_OPTION]==PGSQL_TRUE)
-					admins+=member_roles.back()[ParsersAttributes::NAME] + ",";
-				else
-					members+=member_roles.back()[ParsersAttributes::NAME] + ",";
-
-				member_roles.pop_back();
-			}
-
-			members.remove(members.size()-1, 1);
-			admins.remove(admins.size()-1, 1);
-
-			//Insert the members/admins as attributes of the retrieved role
-			role[ParsersAttributes::MEMBER_ROLES]=members;
-			role[ParsersAttributes::ADMIN_ROLES]=admins;
-		}
-
-		if(!role.empty())
-		 role[ParsersAttributes::COMMENT]=getObjectComment(role[ParsersAttributes::OID], true);
-
-		return(role);
+		return(getMultipleAttributes(OBJ_ROLE, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -324,20 +295,16 @@ attribs_map Catalog::getRoleAttributes(const QString &rol_name)
 	}
 }
 
-attribs_map Catalog::getSchemaAttributes(const QString &sch_name)
+vector<attribs_map> Catalog::getSchemas(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map schema=getAttributes(sch_name, OBJ_SCHEMA);
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", false);
+		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("nspowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		if(!schema.empty())
-		{
-			schema[ParsersAttributes::OWNER]=getDependencyObject(schema[ParsersAttributes::OWNER], OBJ_ROLE);
-			schema[ParsersAttributes::COMMENT]=getObjectComment(schema[ParsersAttributes::OID]);
-			schema[ParsersAttributes::FROM_EXTENSION]=(isObjectFromExtension(schema[ParsersAttributes::OID]) ? "1" : "");
-		}
-
-		return(schema);
+		return(getMultipleAttributes(OBJ_SCHEMA, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -345,19 +312,16 @@ attribs_map Catalog::getSchemaAttributes(const QString &sch_name)
 	}
 }
 
-attribs_map Catalog::getTablespaceAttributes(const QString &spc_name)
+vector<attribs_map> Catalog::getTablespaces(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map tablespace=getAttributes(spc_name, OBJ_TABLESPACE);
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
+		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("spcowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		if(!tablespace.empty())
-		{
-			tablespace[ParsersAttributes::OWNER]=getDependencyObject(tablespace[ParsersAttributes::OWNER], OBJ_ROLE);
-			tablespace[ParsersAttributes::COMMENT]=getObjectComment(tablespace[ParsersAttributes::OID]);
-		}
-
-		return(tablespace);
+		return(getMultipleAttributes(OBJ_TABLESPACE, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -365,18 +329,16 @@ attribs_map Catalog::getTablespaceAttributes(const QString &spc_name)
 	}
 }
 
-attribs_map Catalog::getExtensionAttributes(const QString &ext_name, const QString &sch_name)
+vector<attribs_map> Catalog::getExtensions(const QString &schema, const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map extension=getAttributes(ext_name, OBJ_EXTENSION, {{ParsersAttributes::SCHEMA, sch_name}});
-		attribs_map types=getAttributes(ext_name, OBJ_EXTENSION, {{ParsersAttributes::SCHEMA, sch_name},
-																															{ParsersAttributes::HANDLES_TYPE, "1"}});
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("ex.oid", false);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 
-		extension[ParsersAttributes::HANDLES_TYPE]=(!types.empty() ? "1" : "");
-		extension[ParsersAttributes::COMMENT]=getObjectComment(extension[ParsersAttributes::OID]);
-
-		return(extension);
+		return(getMultipleAttributes(OBJ_EXTENSION, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -384,20 +346,18 @@ attribs_map Catalog::getExtensionAttributes(const QString &ext_name, const QStri
 	}
 }
 
-attribs_map Catalog::getFunctionAttributes(const QString &func_name, const QString &sch_name)
+vector<attribs_map> Catalog::getFunctions(const QString &schema, const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map func=getAttributes(func_name, OBJ_FUNCTION, {{ParsersAttributes::SCHEMA, sch_name}});
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("pr.oid", false);
+		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("pr.proowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("pr.oid");
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 
-		if(!func.empty())
-		{
-			func[ParsersAttributes::OWNER]=getDependencyObject(func[ParsersAttributes::OWNER], OBJ_ROLE);
-			func[ParsersAttributes::COMMENT]=getObjectComment(func[ParsersAttributes::OID]);
-			func[ParsersAttributes::FROM_EXTENSION]=(isObjectFromExtension(func[ParsersAttributes::OID]) ? "1" : "");
-		}
-
-		return(func);
+		return(getMultipleAttributes(OBJ_FUNCTION, extra_attribs));
 	}
 	catch(Exception &e)
 	{

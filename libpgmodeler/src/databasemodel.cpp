@@ -3651,7 +3651,7 @@ Domain *DatabaseModel::createDomain(void)
 		if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
 			domain->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-		domain->setNotNull(attribs[ParsersAttributes::NOT_nullptr]==
+		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==
 				ParsersAttributes::_TRUE_);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -4169,6 +4169,7 @@ Table *DatabaseModel::createTable(void)
 		XMLParser::getElementAttributes(attribs);
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
+		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4230,7 +4231,7 @@ Column *DatabaseModel::createColumn(void)
 		setBasicAttributes(column);
 
 		XMLParser::getElementAttributes(attribs);
-		column->setNotNull(attribs[ParsersAttributes::NOT_nullptr]==ParsersAttributes::_TRUE_);
+		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

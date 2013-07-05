@@ -625,12 +625,14 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 
-	if(this->parent_table)
-		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	/* Case the constraint doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute. */
-	if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
+	if(!isDeclaredInTable())
+		attributes[ParsersAttributes::DECL_IN_TABLE]="";
+	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
 		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
 	if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)

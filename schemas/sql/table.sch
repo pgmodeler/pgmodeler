@@ -12,13 +12,14 @@
     $br
   %end
 
-  %if @{columns} %then @{columns} %end
-  %if @{constraints} %then , $br @{constraints} %end
+  %if %not @{gen-alter-cmds} %then
+    %if @{columns} %then @{columns} %end
+    %if @{constraints} %then , $br @{constraints} %end
+  %end
+
 $br )
 
-
 %if @{oids} %then [WITH ( OIDS = TRUE )] %end
-
 %if @{tablespace} %then
  $br [TABLESPACE ] @{tablespace}
 %end
@@ -26,7 +27,12 @@ $br )
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+[-- ddl-end --] $br
+
+%if @{gen-alter-cmds} %then
+  %if @{columns} %then $br @{columns} %end
+  %if @{constraints} %then $br @{constraints} %end
+%end
 
 %if @{indexes} %then @{indexes} $br %end
 %if @{triggers} %then @{triggers} $br %end
@@ -35,9 +41,10 @@ $br )
 %if @{comment} %then @{comment} %end
 %if @{cols-comment} %then @{cols-comment} %end
 %if @{owner} %then @{owner} %end
-
 %if @{appended-sql} %then @{appended-sql} %end
 
+%if @{comment} %or @{cols-comment} %or @{owner} %or @{appended-sql} %then
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
+%end

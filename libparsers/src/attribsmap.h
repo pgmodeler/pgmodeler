@@ -27,7 +27,7 @@ to store objects attributes and used by SchemaParser, XMLParser and several othe
 #define ATTRIBSMAP_H
 
 #include <map>
+#include <QString>
 using namespace std;
 typedef map<QString, QString> attribs_map;
-
 #endif

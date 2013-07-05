@@ -3,13 +3,20 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT datname AS name FROM pg_database WHERE datistemplate = FALSE]
+  [SELECT oid, datname AS name FROM pg_database WHERE datistemplate = FALSE]
 %else
     %if @{attribs} %then
       [SELECT oid, datname AS name, pg_encoding_to_char(encoding) AS encoding, datdba AS owner,
 	      datcollate AS lc_collate, datctype AS lc_ctype, datconnlimit AS connlimit,
-	      dattablespace AS tablespace, datacl AS permissions
-	FROM pg_database
-	WHERE datname = ] '@{name}'
+	      datacl AS permissions, ]
+	      (@{tablespace}) [ AS tablespace, ]
+	      (@{owner}) [ AS owner, ]
+	      (@{comment}) [ AS comment ]
+      [ FROM pg_database WHERE datistemplate = FALSE ]
+
+      %if @{filter-oids} %then
+	[ AND oid IN (] @{filter-oids} )
+      %end
+
     %end
 %end

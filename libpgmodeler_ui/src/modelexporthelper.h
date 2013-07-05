@@ -45,6 +45,15 @@ class ModelExportHelper: public QObject {
 		This attribute is used to drop the created roles / tablespaces from server */
 		map<ObjectType, int> created_objs;
 
+		//! \brief Stores the current state of ALTER command generation for table columns/constraints
+		map<Table *, bool> alter_cmds_status;
+
+		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
+		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
+
+		//! \brief Retores the previous ALTER command generation state for table columns/constraints
+		void restoreGenAtlerCmdsStatus(void);
+
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
 		void undoDBMSExport(DatabaseModel *db_model, Connection &conn);
 

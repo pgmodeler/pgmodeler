@@ -24,8 +24,9 @@ Column::Column(void)
 	not_null=false;
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	attributes[ParsersAttributes::NOT_nullptr]="";
+	attributes[ParsersAttributes::NOT_NULL]="";
 	attributes[ParsersAttributes::TABLE]="";
+	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	parent_rel=nullptr;
 }
 
@@ -82,8 +83,8 @@ bool Column::isNotNull(void)
 
 QString Column::getTypeReference(void)
 {
-	if(parent_table)
-		return(parent_table->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
+	if(getParentTable())
+		return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
 	else
 		return("");
 }
@@ -116,12 +117,14 @@ BaseObject *Column::getParentRelationship(void)
 
 QString Column::getCodeDefinition(unsigned def_type)
 {
-	if(this->parent_table)
-		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
-	attributes[ParsersAttributes::NOT_nullptr]=(!not_null ? "" : "1");
+	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
+	attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
+
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
@@ -137,12 +140,12 @@ void Column::operator = (Column &col)
 	this->type=col.type;
 	this->default_value=col.default_value;
 
-	this->parent_table=col.parent_table;
-	this->add_by_copy=false;
-	this->add_by_generalization=false;
-	this->add_by_linking=false;
-
 	this->not_null=col.not_null;
 	this->parent_rel=col.parent_rel;
+
+	this->setParentTable(col.getParentTable());
+	this->setAddedByCopy(false);
+	this->setAddedByGeneralization(false);
+	this->setAddedByLinking(false);
 }
 

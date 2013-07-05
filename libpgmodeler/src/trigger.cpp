@@ -349,8 +349,8 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(!isReferRelationshipAddedColumn())
 		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
-	if(this->parent_table)
-		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? "1" : "");
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
@@ -372,9 +372,9 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 
 void Trigger::validateTrigger(void)
 {
-	if(parent_table)
+	if(getParentTable())
 	{
-		ObjectType parent_type=parent_table->getObjectType();
+		ObjectType parent_type=getParentTable()->getObjectType();
 
 		if(!is_constraint)
 		{

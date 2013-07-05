@@ -3,9 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT proname AS name FROM pg_proc AS pr
-    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-    WHERE ns.nspname = ] '@{schema}'
+  [SELECT pr.oid, proname AS name FROM pg_proc AS pr ]
+
+  %if @{schema} %then
+   [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
+      WHERE ns.nspname = ] '@{schema}'
+  %end
+
 %else
     %if @{attribs} %then
 	[SELECT pr.oid,
@@ -48,14 +52,34 @@
 		END AS behavior_type, ]
 
 		%if @{pgsql90} %or @{pgsql91} %then
-		 [ NULL AS leakproof_bool ]
+		 [ NULL AS leakproof_bool, ]
 		%else
-		 [ pr.proleakproof AS leakproof_bool ]
+		 [ pr.proleakproof AS leakproof_bool, ]
 		%end
+
+	(@{owner}) [ AS owner, ]
+	(@{comment}) [ AS comment, ]
+	(@{from-extension}) [ AS from_extension_bool ]
 
 	[ FROM pg_proc AS pr
 	    LEFT JOIN pg_language AS la ON pr.prolang = la.oid
-	    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-	    WHERE ns.nspname = ] '@{schema}' [ AND pr.proname = ] '@{name}'
+	    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+
+       %if @{filter-oids} %or @{schema} %then
+	 [ WHERE ]
+
+	 %if @{filter-oids} %then
+	   [ pr.oid IN (] @{filter-oids} )
+
+	   %if @{schema} %then
+	     [ AND ]
+	   %end
+	 %end
+
+	 %if @{schema} %then
+	   [ ns.nspname = ] '@{schema}'
+	 %end
+       %end
+
     %end
 %end

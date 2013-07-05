@@ -3,7 +3,16 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-$tb @{name} $sp @{type}
+%if @{decl-in-table} %then
+ $tb
+%else
+[-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
+ %if @{table} %then
+  [ALTER TABLE ] @{table} [ ADD COLUMN ]
+  %end
+%end
+
+@{name} $sp @{type}
 
 %if @{not-null} %then
  [ NOT NULL]
@@ -12,4 +21,14 @@ $tb @{name} $sp @{type}
 %if @{default-value} %then
  [ DEFAULT ] @{default-value}
 %end
-,$br
+
+%if @{decl-in-table} %then
+[,]
+%else
+[;]
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+$br [-- ddl-end --] $br
+%end
+
+$br

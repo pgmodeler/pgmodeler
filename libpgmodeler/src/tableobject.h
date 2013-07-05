@@ -31,8 +31,6 @@ like columns, rules, triggers, indexes, constraints.
 
 class TableObject: public BaseObject {
 	private:
-
-	protected:
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;
 
@@ -48,6 +46,9 @@ class TableObject: public BaseObject {
 		 "copy" relationships */
 		bool add_by_copy;
 
+		bool decl_in_table;
+
+	protected:
 		//! \brief Defines that the object is included by relationship (1-1, 1-n, n-n)
 		void setAddedByLinking(bool value);
 
@@ -56,6 +57,12 @@ class TableObject: public BaseObject {
 
 		//! \brief Defines that the object is include by copy relationship
 		void setAddedByCopy(bool value);
+
+		/*! \brief Defines that the object's SQL code must be created inside parent's
+		table declaration, this is true by default. This attribute is only changed
+		on export operations. This attribute is used only by columns and constraints, other
+		types of child objects will ignore it */
+		void setDeclaredInTable(bool value);
 
 	public:
 		TableObject(void);
@@ -84,12 +91,15 @@ class TableObject: public BaseObject {
 		 possible relationship types) */
 		bool isAddedByRelationship(void);
 
+		bool isDeclaredInTable(void);
+
 		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
 		static bool isTableObject(ObjectType type);
 
 		void operator = (TableObject &object);
 
 		friend class Relationship;
+		friend class Table;
 };
 
 #endif

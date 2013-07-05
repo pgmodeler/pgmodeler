@@ -21,6 +21,7 @@
 TableObject::TableObject(void)
 {
 	parent_table=nullptr;
+	decl_in_table=true;
 	add_by_linking=add_by_generalization=add_by_copy=false;
 }
 
@@ -53,6 +54,11 @@ void TableObject::setAddedByGeneralization(bool value)
 	add_by_copy=false;
 }
 
+void TableObject::setDeclaredInTable(bool value)
+{
+	decl_in_table=value;
+}
+
 bool TableObject::isAddedByGeneralization(void)
 {
 	return(add_by_generalization);
@@ -75,13 +81,16 @@ bool TableObject::isAddedByRelationship(void)
 	return(add_by_linking || add_by_generalization || add_by_copy);
 }
 
+bool  TableObject::isDeclaredInTable(void)
+{
+	return(decl_in_table);
+}
 
 bool TableObject::isTableObject(ObjectType type)
 {
 	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
 				 type==OBJ_RULE || type==OBJ_INDEX);
 }
-
 
 void TableObject::operator = (TableObject &object)
 {
@@ -90,4 +99,5 @@ void TableObject::operator = (TableObject &object)
 	this->add_by_copy=false;
 	this->add_by_generalization=false;
 	this->add_by_linking=false;
+	this->decl_in_table=object.decl_in_table;
 }

@@ -67,9 +67,9 @@ class Catalog {
 	private:
 		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
 		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
-		QUERY_GETDEPOBJ,  //! \brief Executes a dependency object (e.g. tablespace, owner, collation, schema) retrieving command on catalog
-		QUERY_GETCOMMENT,  //! \brief Executes a comment retrieving command on catalog
-		QUERY_ISFROMEXT,  //! \brief Executes a catalog query to check if the object belongs to extension
+		//QUERY_GETDEPOBJ,  //! \brief Executes a dependency object (e.g. tablespace, owner, collation, schema) retrieving command on catalog
+		//QUERY_GETCOMMENT,  //! \brief Executes a comment retrieving command on catalog
+		//QUERY_ISFROMEXT,  //! \brief Executes a catalog query to check if the object belongs to extension
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
@@ -82,7 +82,7 @@ class Catalog {
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object */
 		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
-														 bool single_result=false, attribs_map attribs=attribs_map());
+														 bool single_result=false, attribs_map attribs={});
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
 		underscores have this char replaced by dashes. Another special operation made is to replace
@@ -91,14 +91,22 @@ class Catalog {
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 		//! \brief Returns a attribute set for the specified object type and name
-		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs={});
 
-		/*! \brief Returns if the object (specified by its oid) is part of a extension. Being part of
-		a extension will cause the object to be created as system object and with SQL code disabled */
-		bool isObjectFromExtension(const QString &oid);
+		/*! \brief Returns the query to retrieve the information if the object (specified by its oid field) is part of
+		 a extension. Being part of a extension will cause the object to be created as system object and with
+		 SQL code disabled */
+		QString getFromExtensionQuery(const QString &oid_field);
 
-		QString getDependencyObject(const QString &tbs_oid, ObjectType obj_type);
-		QString getObjectComment(const QString &obj_oid, bool is_shared_obj=false);
+		//! \brief Returns the query that is used to retrieve an objects dependency (tablespace, owners, collations, etc)
+		QString getDepObjectQuery(const QString &oid_field, ObjectType obj_type);
+
+		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
+		to query the pg_shdescription instead of pg_description */
+		QString getCommentQuery(const QString &oid_field, bool is_shared_obj=false);
+
+		//! \brief Creates a comma separated string containing all the oids to be filtered
+		QString createOidFilter(const vector<QString> &oids);
 
 	public:
 		Catalog(void){}
@@ -107,32 +115,37 @@ class Catalog {
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
-		//! \brief Returns the count for the specified object type
+		/*! \brief Returns the count for the specified object type. A schema name can be specified
+		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="");
 
-		//! \brief Returns a list containing the names of the objects of the specified type
-		vector<QString> getObjects(ObjectType obj_type, const QString &sch_name="");
+		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
+		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
+		attribs_map getObjects(ObjectType obj_type, const QString &sch_name="");
 
-		//! \brief Returns a set of multiple attributes (several tuples)
-		vector<attribs_map> getMultipleAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
+		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs={});
 
-		//! \brief Retrieve the attributes for the specified database
-		attribs_map getDatabaseAttributes(const QString &db_name);
+		//! \brief Retrieve all available databases. User can filter items by oids
+		vector<attribs_map> getDatabases(const vector<QString> &filter_oids={});
 
-		//! \brief Retrieve the attributes for the specified role
-		attribs_map getRoleAttributes(const QString &rol_name);
+		//! \brief Retrieve all available roles. User can filter items by oids
+		vector<attribs_map> getRoles(const vector<QString> &filter_oids={});
 
-		//! \brief Retrieve the attributes for the specified schema
-		attribs_map getSchemaAttributes(const QString &sch_name);
+		//! \brief Retrieve all available schemas. User can filter items by oids
+		vector<attribs_map> getSchemas(const vector<QString> &filter_oids={});
 
-		//! \brief Retrieve the attributes for the specified tablespace
-		attribs_map getTablespaceAttributes(const QString &spc_name);
+		//! \brief Retrieve all available languages. User can filter items by oids
+		vector<attribs_map> getLanguages(const vector<QString> &filter_oids={});
 
-		//! \brief Retrieve the attributes for the specified extension the parent's schema name must be informed
-		attribs_map getExtensionAttributes(const QString &ext_name, const QString &sch_name);
+		//! \brief Retrieve all available tablespaces. User can filter items by oids
+		vector<attribs_map> getTablespaces(const vector<QString> &filter_oids={});
 
-		//! \brief Retrieve the attributes for the specified function the parent's schema name must be informed
-		attribs_map getFunctionAttributes(const QString &func_name, const QString &sch_name);
+		//! \brief Retrieve all available extension. User can filter items by oids as well by schema
+		vector<attribs_map> getExtensions(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available functions. User can filter items by oids as well by schema
+		vector<attribs_map> getFunctions(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif

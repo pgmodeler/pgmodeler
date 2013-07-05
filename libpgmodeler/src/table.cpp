@@ -21,7 +21,7 @@
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=false;
+	with_oid=gen_alter_cmds=false;
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::INDEXES]="";
@@ -30,6 +30,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
 }
@@ -354,6 +355,9 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						else
 							obj_list->push_back(tab_obj);
 					}
+
+					if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
+						updateAlterCmdsStatus();
 				break;
 
 				case OBJ_TABLE:
@@ -1079,9 +1083,32 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 	return(found);
 }
 
+void Table::setGenerateAlterCmds(bool value)
+{
+	gen_alter_cmds=value;
+	updateAlterCmdsStatus();
+}
+
+bool Table::isGenerateAlterCmds(void)
+{
+	return(gen_alter_cmds);
+}
+
+void Table::updateAlterCmdsStatus(void)
+{
+	unsigned i;
+
+	for(i=0; i < columns.size(); i++)
+		columns[i]->setDeclaredInTable(!gen_alter_cmds);
+
+	for(i=0; i < constraints.size(); i++)
+		constraints[i]->setDeclaredInTable(!gen_alter_cmds);
+}
+
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
@@ -1107,6 +1134,8 @@ void Table::operator = (Table &tab)
 
 	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
 	this->with_oid=tab.with_oid;
+
+	setGenerateAlterCmds(tab.gen_alter_cmds);
 	setProtected(tab.is_protected);
 
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));

@@ -4,5 +4,5 @@
 
 # System tablespaces like pg_default and pg_global aren't listed
 
-[SELECT spcname AS name FROM pg_tablespace ]
+[SELECT spcname FROM pg_tablespace ]
 [ WHERE oid = ] @{oid} [ AND spcname NOT LIKE 'pg_%']

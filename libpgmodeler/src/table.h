@@ -55,7 +55,12 @@ class Table: public BaseTable {
 		CopyOptions copy_op;
 
 		//! \brief Indicates if the table accepts OIDs
-		bool with_oid;
+		bool with_oid,
+
+		/*! \brief Indicates that constraints and columns are generated in for of ALTER commands.
+		When true this will cause constraints and columsn to be created in a separated command
+		outside tha table's declaration */
+		gen_alter_cmds;
 
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
@@ -81,6 +86,10 @@ class Table: public BaseTable {
 
 		//! \brief Removes an acestor table using its index
 		void removeAncestorTable(unsigned idx);
+
+		/*! \brief Updates the "decl_in_table" status for columns/constraints
+		indicating if ALTER commands must be generated or not */
+		void updateAlterCmdsStatus(void);
 
 	public:
 		Table(void);
@@ -251,6 +260,12 @@ class Table: public BaseTable {
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);
+
+		//! \brief Toggles the generation of columns and constraints in form of ALTER commands
+		void setGenerateAlterCmds(bool value);
+
+		//! \brief Returns the current status of generation of ALTER commands for columns and constraints
+		bool isGenerateAlterCmds(void);
 
 		/*! \brief Returns if the specified column is referenced by one of the constraints on table.
 		 The user must specify the constraint type */
