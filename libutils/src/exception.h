@@ -257,6 +257,7 @@ enum ErrorType {
 
 class Exception {
 	private:
+
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
 		vector<Exception> exceptions;

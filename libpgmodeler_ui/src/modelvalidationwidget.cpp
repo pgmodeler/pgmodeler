@@ -26,17 +26,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	setupUi(this);
 	this->setModel(nullptr);
 
-	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
-	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
-	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
-	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
-	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
-	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
-	connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
-	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
-	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
-	connect(fix_steps_chk, SIGNAL(toggled(bool)), fix_steps_sb, SLOT(setEnabled(bool)));
-
 	SchemaParser::getPgSQLVersions(vers);
 	version_cmb->addItem(trUtf8("Autodetect"));
 	while(!vers.empty())
@@ -47,12 +36,69 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 	options_frm->setVisible(false);
 	curr_step=0;
+
+	validation_thread=new QThread(this);
+	validation_helper.moveToThread(validation_thread);
+
+	//connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
+	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
+	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
+	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
+	connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
+	connect(fix_steps_chk, SIGNAL(toggled(bool)), fix_steps_sb, SLOT(setEnabled(bool)));
+	connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
+	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
+	connect(sql_validation_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
+
+	connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
+	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
+	connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
+	connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
+	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), cancel_btn, SLOT(setEnabled(bool)));
+	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
+	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
+	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelValidation(void)));
 }
 
 void ModelValidationWidget::hide(void)
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
+}
+
+void ModelValidationWidget::reenableValidation(void)
+{
+	validation_thread->quit();
+	model_wgt->setEnabled(true);
+	validate_btn->setEnabled(true);
+	cancel_btn->setEnabled(false);
+	fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
+	clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
+	options_btn->setEnabled(true);
+	options_frm->setEnabled(true);
+	emit s_validationInProgress(false);
+}
+
+void ModelValidationWidget::clearOutput(void)
+{
+	output_trw->clear();
+	clear_btn->setEnabled(false);
+	prog_info_wgt->setVisible(false);
+	fix_btn->setEnabled(false);
+	validation_prog_pb->setValue(0);
+	warn_count_lbl->setText(QString("%1").arg(0));
+	error_count_lbl->setText(QString("%1").arg(0));
+}
+
+void ModelValidationWidget::cancelValidation(void)
+{
+ validation_helper.cancelValidation();
+ cancel_btn->setEnabled(false);
 }
 
 void ModelValidationWidget::setModel(ModelWidget *model_wgt)
@@ -67,6 +113,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	fix_btn->setEnabled(false);
 	curr_step=0;
 	clearOutput();
+	configureValidation();
 }
 
 void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
@@ -128,7 +175,8 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		QStringList errors=val_info.getErrors();
 		QFont fnt;
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		validation_prog_pb->setValue(validation_prog_pb->maximum());
+		validation_prog_pb->setValue(validation_prog_pb->maximum());		
+		reenableValidation();
 
 		if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
 		{
@@ -200,12 +248,10 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	}
 
 	output_trw->setItemWidget(item, 0, label);
-
 	item->setExpanded(false);
 
 	//Stores the validatin on the current tree item
 	item->setData(0, Qt::UserRole, QVariant::fromValue<ValidationInfo>(val_info));
-
 	warn_count_lbl->setText(QString("%1").arg(validation_helper.getWarningCount()));
 	error_count_lbl->setText(QString("%1").arg(validation_helper.getErrorCount()));
 	output_trw->scrollToBottom();
@@ -213,79 +259,43 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 void ModelValidationWidget::validateModel(void)
 {
-	try
-	{
-		Connection *conn=nullptr;
-		QString ver;
+	emit s_validationInProgress(true);
 
-		//Get the connection only the checkbox is checked.
-		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
-		{
-			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
-			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		}
-
-		clearOutput();
-		prog_info_wgt->setVisible(true);
-		validate_btn->setEnabled(false);
-		model_wgt->setEnabled(false);
-
-		clear_btn->setEnabled(true);
-		validation_helper.validateModel(model_wgt->getDatabaseModel(), conn, ver);
-
-		model_wgt->setEnabled(true);
-		validate_btn->setEnabled(true);
-		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
-	}
-	catch(Exception &e)
-	{
-		output_trw->scrollToBottom();
-		model_wgt->setEnabled(true);
-		validate_btn->setEnabled(true);
-		throw Exception(ERR_VALIDATION_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	clearOutput();
+	prog_info_wgt->setVisible(true);
+	validate_btn->setEnabled(false);
+	model_wgt->setEnabled(false);
+	cancel_btn->setEnabled(false);
+	validation_thread->start();
 }
 
 void ModelValidationWidget::applyFix(void)
 {
-	try
+	if(validation_helper.getErrorCount() > 0)
 	{
 		ValidationInfo val_info;
 
+		//Get the first validation info and try to resolve the conflict
 		val_info=output_trw->topLevelItem(0)->data(0, Qt::UserRole).value<ValidationInfo>();
 		validation_helper.resolveConflict(val_info);
 		model_wgt->setModified(true);
 
-		//Every time the user apply some fix is necessary to revalidate the model
-		validateModel();
-
+		//If there is more validation infos redo the validation to update the info list
 		if(fix_steps_chk->isChecked() && curr_step < fix_steps_sb->value() &&
 			 validation_helper.getErrorCount() > 0)
 		{
+			output_trw->clear();
+			validation_helper.validateModel();
 			curr_step++;
 			this->applyFix();
 		}
-		else
-			curr_step=0;
+
 	}
-	catch(Exception &e)
+	else
 	{
-		QTreeWidgetItem *item=new QTreeWidgetItem;
-		QLabel *label=new QLabel;
-
-		label->setText(trUtf8("The validation process failed due to external errors! You can restart the validation by clicking <strong>Validate</strong> again."));
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-
+		//If there is no issus proceed to SQL validation (if enabled by user)
 		curr_step=0;
-		output_trw->clear();
-		output_trw->insertTopLevelItem(0, item);
-		output_trw->setItemWidget(item, 0, label);
-
-		warn_count_lbl->setText(QString("%1").arg(0));
-		error_count_lbl->setText(QString("%1").arg(0));
-		fix_btn->setEnabled(false);
-
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		validateModel();
 	}
 }
 
@@ -334,13 +344,20 @@ void ModelValidationWidget::updateProgress(int prog, QString msg)
 	this->repaint();
 }
 
-void ModelValidationWidget::clearOutput(void)
+void ModelValidationWidget::configureValidation(void)
 {
-	output_trw->clear();
-	clear_btn->setEnabled(false);
-	prog_info_wgt->setVisible(false);
-	fix_btn->setEnabled(false);
-	validation_prog_pb->setValue(0);
-	warn_count_lbl->setText(QString("%1").arg(0));
-	error_count_lbl->setText(QString("%1").arg(0));
+	if(model_wgt)
+	{
+		Connection *conn=nullptr;
+		QString ver;
+
+		//Get the connection only the checkbox is checked.
+		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
+		{
+			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
+			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+		}
+
+		validation_helper.setValidationParams(model_wgt->getDatabaseModel(), conn, ver);
+	}
 }

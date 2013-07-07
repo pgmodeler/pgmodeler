@@ -47,7 +47,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void loadConfiguration(void);
 
 		//! \brief Fills the passed map with all the loaded connections.
-		void getConnections(map<QString, Connection *> &conns);
+		void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 
 	public slots:
 		void restoreDefaults(void);

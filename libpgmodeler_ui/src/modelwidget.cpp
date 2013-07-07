@@ -564,7 +564,7 @@ void ModelWidget::addNewObject(void)
 			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
 			viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
 			this->new_obj_type=obj_type;
-			this->disableModelActions();
+			this->enableModelActions(false);
 		}
 	}
 }
@@ -2388,21 +2388,21 @@ void ModelWidget::configureObjectMenu(BaseObject *object)
 	this->configurePopupMenu(vet);
 }
 
-void ModelWidget::disableModelActions(void)
+void ModelWidget::enableModelActions(bool value)
 {
-	action_source_code->setEnabled(false);
-	action_edit->setEnabled(false);
-	action_protect->setEnabled(false);
-	action_unprotect->setEnabled(false);
-	action_select_all->setEnabled(false);
-	action_convert_relnn->setEnabled(false);
-	action_deps_refs->setEnabled(false);
-	action_new_object->setEnabled(false);
-	action_copy->setEnabled(false);
-	action_paste->setEnabled(false);
-	action_cut->setEnabled(false);
-	action_remove->setEnabled(false);
-	action_quick_actions->setEnabled(false);
+	action_source_code->setEnabled(value);
+	action_edit->setEnabled(value);
+	action_protect->setEnabled(value);
+	action_unprotect->setEnabled(value);
+	action_select_all->setEnabled(value);
+	action_convert_relnn->setEnabled(value);
+	action_deps_refs->setEnabled(value);
+	action_new_object->setEnabled(value);
+	action_copy->setEnabled(value);
+	action_paste->setEnabled(value);
+	action_cut->setEnabled(value);
+	action_remove->setEnabled(value);
+	action_quick_actions->setEnabled(value);
 }
 
 void ModelWidget::configureSubmenu(BaseObject *obj)
@@ -2520,7 +2520,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	quick_actions_menu.clear();
 	popup_menu.clear();
 
-	this->disableModelActions();
+	this->enableModelActions(false);
 	this->selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
 

@@ -37,6 +37,7 @@ QString PgModelerCLI::PASSWD="--passwd";
 QString PgModelerCLI::INITIAL_DB="--initial-db";
 QString PgModelerCLI::SILENT="--silent";
 QString PgModelerCLI::LIST_CONNS="--list-conns";
+QString PgModelerCLI::SIMULATE="--simulate";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -93,7 +94,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		}
 
 		//Validates and executes the options
-		parserOptions(opts);
+		parseOptions(opts);
 
 		if(!parsed_opts.empty())
 		{
@@ -174,6 +175,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[PASSWD]=true;
 	long_opts[INITIAL_DB]=true;
 	long_opts[LIST_CONNS]=false;
+	long_opts[SIMULATE]=false;
 
 	short_opts[INPUT]="-i";
 	short_opts[OUTPUT]="-o";
@@ -193,6 +195,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[INITIAL_DB]="-D";
 	short_opts[SILENT]="-s";
 	short_opts[LIST_CONNS]="-L";
+	short_opts[SIMULATE]="-S";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -240,6 +243,7 @@ modes are described below.") << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
+	out << trUtf8("   %1, %2\t\t Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
 	out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
 	out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
 	out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
@@ -249,13 +253,13 @@ modes are described below.") << endl;
 	out << endl;
 }
 
-void PgModelerCLI::parserOptions(attribs_map &opts)
+void PgModelerCLI::parseOptions(attribs_map &opts)
 {
 	//Loading connections
 	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
 	{
 		conn_conf.loadConfiguration();
-		conn_conf.getConnections(connections);
+		conn_conf.getConnections(connections, false);
 	}
 
 	if(opts.empty() || opts.count(HELP))
@@ -266,13 +270,15 @@ void PgModelerCLI::parserOptions(attribs_map &opts)
 		map<QString, Connection *>::iterator itr=connections.begin();
 
 		if(connections.empty())
-			out << endl <<  trUtf8("There is no connections configured.") << endl << endl;
+			out << endl <<  trUtf8("There are no connections configured.") << endl << endl;
 		else
 		{
+			unsigned id=0;
+
 			out << endl << trUtf8("Available connections (alias : conn. string)") << endl;
 			while(itr != connections.end())
 			{
-				out << itr->first << " : " << itr->second->getConnectionString() << endl;
+				out << "[" << id++ <<  "] " << itr->first << " : " << itr->second->getConnectionString() << endl;
 				itr++;
 			}
 			out << endl;
@@ -355,7 +361,7 @@ int PgModelerCLI::exec(void)
 				if(!silent_mode)
 					out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
 
-				export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], !parsed_opts[IGNORE_DUPLICATES].isEmpty());
+				export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(SIMULATE) > 0);
 			}
 
 			if(!silent_mode)

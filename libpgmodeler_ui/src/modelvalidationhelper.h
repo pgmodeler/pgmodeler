@@ -38,12 +38,21 @@ class ModelValidationHelper: public QObject {
 		//! \brief Reference database model
 		DatabaseModel *db_model;
 
+		//! \brief Connection used to validate model on DBMS
+		Connection *conn;
+
+		//! \brief Selected PostgreSQL syntax to validate model on DBMS
+		QString pgsql_ver;
+
 		//! \brief DBMS export helper used to execute SQL code validation
 		ModelExportHelper export_helper;
+
+		QThread *export_thread;
 
 		//! \brief Warning and error counters
 		unsigned warn_count, error_count;
 
+		//! \brief Validation progress
 		int progress;
 
 	public:
@@ -51,7 +60,7 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void validateModel(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="");
+		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="");
 
 		//! \brief Returns the error count (only when executing SQL validation)
 		unsigned getErrorCount(void);
@@ -64,6 +73,13 @@ class ModelValidationHelper: public QObject {
 
 	private slots:
 		void redirectExportProgress(int prog, QString msg);
+		void captureThreadError(Exception e);
+		void emitExportCanceled(void);
+		void emitValidationFinished(void);
+
+	public slots:
+		void validateModel(void);
+		void cancelValidation(void);
 
 	signals:
 		//! \brief This signal is emitted when a validation info is generated
@@ -71,6 +87,15 @@ class ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the validation progress changes
 		void s_progressUpdated(int prog, QString msg);
+
+		//! \brief This signal is emitted when the validation was sucessfully finished
+		void s_validationFinished(void);
+
+		//! \brief This signal is emitted when the validation was canceled by user
+		void s_validationCanceled(void);
+
+		//! \brief This signal is emitted when the dbms export thread start to run
+		void s_sqlValidationStarted(bool);
 };
 
 #endif

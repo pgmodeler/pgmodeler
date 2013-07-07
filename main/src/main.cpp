@@ -96,6 +96,9 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		qRegisterMetaType<Exception>("Exception");
+		qRegisterMetaType<ValidationInfo>("ValidationInfo");
+
 		QStringList params;
 		int idx=0, idx1;
 		bool enable_stylesheet=true;

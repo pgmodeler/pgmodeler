@@ -44,6 +44,16 @@ class Connection {
 		//! \brief Generates the connection string based on the parameter map
 		void generateConnectionString(void);
 
+		/*! \brief This static method disable the notice messages when executing commands.
+		By default all connections are created with notice disabled. To enable it the user
+		must call Connection::setNoticeEnabled(). Note: connections already stablished
+		aren't affected when calling this method the user must disconnect then connect again
+		to enable output. */
+		static void disableNoticeOutput(void *, const PGresult *){}
+
+		//! \brief Indicates if notices are enabled
+		static bool notice_enabled;
+
 	public:
 		//! \brief Constants used to reference the connections parameters
 		static const QString	PARAM_SERVER_FQDN,
@@ -71,6 +81,12 @@ class Connection {
 		Connection(void);
 		Connection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
 		~Connection(void);
+
+		//! \brief Toggles the notice output for connections. By default any notice are omitted
+		static void setNoticeEnabled(bool value);
+
+		//! \brief Returns the current state for notice output
+		static bool isNoticeEnabled(void);
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */

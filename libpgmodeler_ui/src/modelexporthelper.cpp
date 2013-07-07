@@ -3,8 +3,11 @@
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
 	sql_gen_progress=progress=0;
-	db_created=false;
+	db_created=ignore_dup=simulate=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
+	db_model=nullptr;
+	connection=nullptr;
+	export_canceled=false;
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
@@ -81,7 +84,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
 	QString  version, sql_buf, sql_cmd, lin;
@@ -107,20 +110,20 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 	QString error_codes[]={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
 	vector<QString> err_codes_vect(error_codes, error_codes + sizeof(error_codes) / sizeof(QString));
 
-
-	if(!db_model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	/* If the export is called using ignore duplications and simulation mode at same time
-	an error is raised because the simulate mode (mainly used as SQL validation) cannot
-	undo column addition (this can be changed in the future) */
-	if(simulate && ignore_dup)
-		throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
-
 	try
 	{
+		if(!db_model)
+			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		/* If the export is called using ignore duplications and simulation mode at same time
+		an error is raised because the simulate mode (mainly used as SQL validation) cannot
+		undo column addition (this can be changed in the future) */
+		if(simulate && ignore_dup)
+			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+
+		export_canceled=false;
 		db_created=false;
 		progress=sql_gen_progress=0;
 		created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
@@ -143,15 +146,17 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 
 		if(ignore_dup)
 		{
-			emit s_progressUpdated(progress, trUtf8("Ignoring object duplication error..."));
+			emit s_progressUpdated(progress, trUtf8("Ignoring object duplication errors..."));
 
 			//Save the current status for ALTER command generation for table columns/constraints
 			saveGenAtlerCmdsStatus(db_model);
 		}
 
+		if(simulate)
+			emit s_progressUpdated(progress, trUtf8("Simulation mode activated..."));
 
 		//Creates the roles and tablespaces separately from the other objects
-		for(type_id=0; type_id < 2; type_id++)
+		for(type_id=0; type_id < 2 && !export_canceled; type_id++)
 		{
 			count=db_model->getObjectCount(types[type_id]);
 
@@ -192,7 +197,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 
 		try
 		{
-			if(!db_model->isSQLDisabled())
+			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress, trUtf8("Creating database `%1'...").arg(Utf8String::create(db_model->getName())));
@@ -215,13 +220,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		}
 
 		//Connects to the new created database to create the other objects
-		progress=30;
+		progress=20;
 		new_db_conn=conn;
 		new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 		emit s_progressUpdated(progress, trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
 
 		new_db_conn.connect();
-		progress=50;
+		progress=30;
 		//Creating the other object types
 		emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'...").arg(Utf8String::create(db_model->getName())));
 
@@ -231,16 +236,20 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		/* Extract each SQL command from the buffer and execute them separately. This is done
 			 to permit the user, in case of error, identify what object is wrongly configured. */
 		ts.setString(&sql_buf);
-		i=1;
+		unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
+
 		progress+=(sql_gen_progress/progress);
 		sql_cmd.clear();
 
-		while(!ts.atEnd())
+		while(!ts.atEnd() && !export_canceled)
 		{
 			try
 			{
 				//Cleanup single line comments
 				lin=ts.readLine();
+				curr_size+=lin.size();
+				aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
+
 				ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
 				lin.remove(QRegExp("^(--)+(.)+$"));
 
@@ -295,13 +304,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 							}
 						}
 
-						emit s_progressUpdated(progress + (i/progress), trUtf8("Creating object `%1' (%2)...")
+						emit s_progressUpdated(aux_prog, trUtf8("Creating object `%1' (%2)...")
 																	 .arg(obj_name)
 																	 .arg(obj_type));
 					}
 					else
 						//General commands like alter / set aren't explicitly shown
-						emit s_progressUpdated(progress + (i/progress), trUtf8("Executing auxiliary command..."));
+						emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command..."));
+
 
 					//Executes the extracted SQL command
 					if(!sql_cmd.isEmpty())
@@ -309,7 +319,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 
 					sql_cmd.clear();
 					ddl_tk_found=false;
-					i++;
 				}
 			}
 			catch(Exception &e)
@@ -337,12 +346,18 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 		//Closes the new opened connection
 		if(new_db_conn.isStablished()) new_db_conn.close();
 
-		/* If the process was a simulation undo the export
+		/* If the process was a simulation or even canceled undo the export
 		removing the created objects */
-		if(simulate)
+		if(simulate || export_canceled)
 			undoDBMSExport(db_model, conn);
 
-		if(conn.isStablished())	conn.close();
+		if(conn.isStablished())
+			conn.close();
+
+		if(!export_canceled)
+			emit s_exportFinished();
+		else
+			emit s_exportCanceled();
 	}
 	catch(Exception &e)
 	{
@@ -363,13 +378,23 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection &conn, 
 
 		if(conn.isStablished())	conn.close();
 
-		//Redirects any error to the user
-		if(errors.empty())
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		else
+		/* When running in a separated thread (other than the main application thread)
+		redirects the error in form of signal */
+		if(this->thread() && this->thread()!=qApp->thread())
 		{
 			errors.push_back(e);
-			throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+			emit s_exportAborted(Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
+		}
+		else
+		{
+			//Redirects any error to the user
+			if(errors.empty())
+				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			else
+			{
+				errors.push_back(e);
+				throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+			}
 		}
 	}
 }
@@ -435,7 +460,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
  //In case of error during the export all created object are removed
  if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)
  {
-	 emit s_progressUpdated(progress, trUtf8("Destroying created objects..."));
+	 emit s_progressUpdated(100, trUtf8("Destroying created objects..."));
 
 	 //Dropping the database
 	 if(db_created)
@@ -466,4 +491,24 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned)
 	sql_gen_progress=prog;
 	if(aux_prog > 100) aux_prog=100;
 	emit s_progressUpdated(aux_prog, object_id);
+}
+
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
+{
+	this->db_model=db_model;
+	this->connection=conn;
+	this->pgsql_ver=pgsql_ver;
+	this->ignore_dup=ignore_dup;
+	this->simulate=simulate;
+}
+
+void ModelExportHelper::exportToDBMS(void)
+{
+	if(connection)
+		exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, simulate);
+}
+
+void ModelExportHelper::cancelExport(void)
+{
+	export_canceled=true;
 }

@@ -40,6 +40,8 @@ const QString Connection::PARAM_SSL_CRL="sslcrl";
 const QString Connection::PARAM_KERBEROS_SERVER="krbsrvname";
 const QString Connection::PARAM_LIB_GSSAPI="gsslib";
 
+bool Connection::notice_enabled=false;
+
 Connection::Connection(void)
 {
 	connection=nullptr;
@@ -102,6 +104,16 @@ void Connection::generateConnectionString(void)
 	}
 }
 
+void Connection::setNoticeEnabled(bool value)
+{
+	notice_enabled=value;
+}
+
+bool Connection::isNoticeEnabled(void)
+{
+	return(notice_enabled);
+}
+
 void Connection::connect(void)
 {
 	/* If the connection string is not established indicates that the user
@@ -124,6 +136,9 @@ void Connection::connect(void)
 										.arg(PQerrorMessage(connection)), ERR_CONNECTION_NOT_STABLISHED,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
+
+	if(!notice_enabled)
+		PQsetNoticeReceiver(connection, disableNoticeOutput, nullptr);
 }
 
 void Connection::close(void)

@@ -393,15 +393,23 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	}
 }
 
-void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns)
+void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, bool inc_hosts)
 {
 	int i, count;
+	QString alias;
 
 	conns.clear();
 	count=connections_cmb->count();
 
 	for(i=0; i < count; i++)
-		conns[connections_cmb->itemText(i)]=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
+	{
+		alias=connections_cmb->itemText(i);
+
+		if(!inc_hosts)
+			alias.remove(QRegExp(" \\((.)*\\)"));
+
+		conns[alias]=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
+	}
 }
 
 

@@ -34,12 +34,31 @@ class ModelExportHelper: public QObject {
 
 		//! \brief  Stores the total progress
 		int progress,
+
 		//! \brief  Stores the sql generation progress
 		sql_gen_progress;
 
 		/*! \brief Indicates if the database was created on the server (only dbms export).
 		This attribute is used to drop the database from server */
 		bool db_created;
+
+		//! \brief PostgreSQL version used by the exporter (only in thread mode)
+		QString pgsql_ver;
+
+		//! \brief Indicates to the exporter to ignore object duplicity (only in thread mode)
+		bool ignore_dup,
+
+		//! \brief Indicates to the exporter to run as a simulator[model validation] (only in thread mode)
+		simulate,
+
+		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
+		export_canceled;
+
+		//! \brief Database model used as reference on export operation (only in thread mode)
+		DatabaseModel *db_model;
+
+		//! \brief Database connection used to export data to DBMS (only in thread mode)
+		Connection *connection;
 
 		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
 		This attribute is used to drop the created roles / tablespaces from server */
@@ -57,6 +76,10 @@ class ModelExportHelper: public QObject {
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
 		void undoDBMSExport(DatabaseModel *db_model, Connection &conn);
 
+	protected:
+		//! \brief Configures the DBMS export params before start the export thread (only in thread mode)
+		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false, bool simulate=false);
+
 	public:
 		ModelExportHelper(QObject *parent = 0);
 
@@ -70,15 +93,30 @@ class ModelExportHelper: public QObject {
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors */
-		void exportToDBMS(DatabaseModel *db_model, Connection &conn, const QString &pgsql_ver, bool ignore_dup, bool simulate=false);
+		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false, bool simulate=false);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString object_id);
 
+		//! \brief This signal is emited when the export has finished
+		void s_exportFinished(void);
+
+		//! \brief This signal is emited when the export has been cancelled
+		void s_exportCanceled(void);
+
+		//! \brief This signal is emited when the export has encountered a critical error (only in thread mode)
+		void s_exportAborted(Exception e);
+
+	protected slots:
+		void exportToDBMS(void);
+		void cancelExport(void);
+
 	private slots:
 		//! \brief Updates the exporting progress with the internal progress of sql generation of objects
 		void updateProgress(int progress, QString object_id, unsigned);
+
+	friend class ModelValidationHelper;
 };
 
 #endif

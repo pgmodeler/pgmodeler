@@ -171,7 +171,7 @@ class ModelWidget: public QWidget {
 		void cancelObjectAddition(void);
 
 		//! \brief Disables the model actions when some new object action is active
-		void disableModelActions(void);
+		void enableModelActions(bool value);
 
 	public:
 		ModelWidget(QWidget *parent = 0);

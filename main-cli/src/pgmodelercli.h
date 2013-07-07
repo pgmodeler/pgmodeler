@@ -95,10 +95,11 @@ class PgModelerCLI: public QApplication {
 		PASSWD,
 		INITIAL_DB,
 		SILENT,
-		LIST_CONNS;
+		LIST_CONNS,
+		SIMULATE;
 
 		//Parsers the options and executes the action specified by them
-		void parserOptions(attribs_map &parsed_opts);
+		void parseOptions(attribs_map &parsed_opts);
 
 		//Shows the options menu
 		void showMenu(void);

@@ -39,9 +39,13 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Thread used to control the validation helper
+		QThread *validation_thread;
+
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
+		//! \brief Object that handles the model validation steps
 		ModelValidationHelper validation_helper;
 
 		//! \brief Current fix step
@@ -61,6 +65,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateValidation(ValidationInfo val_info);
 		void updateProgress(int prog, QString msg);
 		void validateModel(void);
+		void reenableValidation(void);
+		void configureValidation(void);
+		void cancelValidation(void);
 
 	public slots:
 		void hide(void);
@@ -68,6 +75,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 	signals:
 		void s_visibilityChanged(bool);
+		void s_validationInProgress(bool);
 };
 
 #endif

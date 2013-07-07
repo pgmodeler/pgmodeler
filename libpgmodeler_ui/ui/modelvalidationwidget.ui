@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
+    <width>989</width>
     <height>282</height>
    </rect>
   </property>
@@ -52,7 +52,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Vali&amp;date</string>
+      <string>Va&amp;lidate</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
@@ -66,7 +66,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="7">
+   <item row="2" column="0" colspan="10">
     <widget class="QWidget" name="prog_info_wgt" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
@@ -238,7 +238,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="6">
+   <item row="0" column="9">
     <widget class="QToolButton" name="hide_tb">
      <property name="minimumSize">
       <size>
@@ -267,7 +267,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="7">
+   <item row="3" column="0" colspan="10">
     <widget class="QTreeWidget" name="output_trw">
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -297,7 +297,7 @@
      </column>
     </widget>
    </item>
-   <item row="1" column="0" colspan="7">
+   <item row="1" column="0" colspan="10">
     <widget class="QFrame" name="options_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -496,6 +496,46 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="QToolButton" name="fix_btn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Try to resolve the reported issues.</string>
+     </property>
+     <property name="text">
+      <string>Apply Fix</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+     <property name="arrowType">
+      <enum>Qt::NoArrow</enum>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="clear_btn">
      <property name="enabled">
@@ -524,46 +564,6 @@
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QToolButton" name="fix_btn">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>Try to apply a fix on the selected validation info.</string>
-     </property>
-     <property name="text">
-      <string>Apply Fix</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::NoArrow</enum>
      </property>
     </widget>
    </item>
@@ -607,7 +607,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4" colspan="2">
+   <item row="0" column="5" colspan="4">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -620,21 +620,41 @@
      </property>
     </spacer>
    </item>
+   <item row="0" column="4">
+    <widget class="QToolButton" name="cancel_btn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Cancel the SQL validation in progress.</string>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
-  <zorder>validate_btn</zorder>
-  <zorder>prog_info_wgt</zorder>
-  <zorder>hide_tb</zorder>
-  <zorder>output_trw</zorder>
-  <zorder>clear_btn</zorder>
-  <zorder>options_frm</zorder>
-  <zorder>fix_btn</zorder>
-  <zorder>options_btn</zorder>
  </widget>
  <tabstops>
   <tabstop>validate_btn</tabstop>
-  <tabstop>fix_btn</tabstop>
-  <tabstop>clear_btn</tabstop>
-  <tabstop>options_btn</tabstop>
   <tabstop>fix_steps_chk</tabstop>
   <tabstop>fix_steps_sb</tabstop>
   <tabstop>sql_validation_chk</tabstop>
