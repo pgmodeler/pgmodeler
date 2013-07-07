@@ -2636,7 +2636,7 @@ void DatabaseModel::loadModel(const QString &filename)
 
 										if(!signalsBlocked())
 										{
-											emit s_objectLoaded(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
+											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount()) * 0.70,
 																					trUtf8("Loading object: %1 (%2)")
 																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),

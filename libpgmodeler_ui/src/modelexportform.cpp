@@ -87,8 +87,17 @@ void ModelExportForm::hideEvent(QHideEvent *)
 {
 	this->model=nullptr;
 	file_edt->clear();
+	image_edt->clear();
+	pgsqlvers_chk->setChecked(false);
+	ignorar_dup_chk->setChecked(false);
 	export_to_file_rb->setChecked(true);
 	export_btn->setEnabled(false);
+	export_to_dbms_rb->setChecked(true);
+	pgsqlvers1_cmb->setCurrentIndex(0);
+	pgsqlvers_cmb->setCurrentIndex(0);
+	show_delim_chk->setChecked(false);
+	show_grid_chk->setChecked(false);
+	connections_cmb->setCurrentIndex(0);
 }
 
 void ModelExportForm::exportModel(void)

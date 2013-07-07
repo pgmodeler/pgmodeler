@@ -129,23 +129,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QFrame" name="ln1_frm">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>15</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::HLine</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout_3">
         <property name="bottomMargin">
          <number>15</number>
@@ -423,7 +407,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="4" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="bottomMargin">
          <number>15</number>
@@ -458,6 +442,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QLineEdit" name="file_edt">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="dragEnabled">
              <bool>false</bool>
             </property>
@@ -468,6 +455,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="select_file_tb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="minimumSize">
              <size>
               <width>30</width>
@@ -496,6 +486,9 @@
         </item>
         <item row="1" column="1" rowspan="3">
          <widget class="QLabel" name="model_sql_lbl">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -557,7 +550,7 @@
           <item>
            <widget class="QComboBox" name="pgsqlvers_cmb">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="minimumSize">
              <size>
@@ -606,7 +599,7 @@
            <string/>
           </property>
           <property name="checked">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -631,7 +624,7 @@
           <item>
            <widget class="QLabel" name="hint_lbl">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="palette">
              <palette>
@@ -692,7 +685,103 @@
         </item>
        </layout>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="8" column="0" colspan="2">
+       <widget class="QFrame" name="ln2_frm">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="progress_lbl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Progress label...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QProgressBar" name="progress_pb">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="ico_lbl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>ico</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="2" colspan="2">
          <widget class="QLabel" name="connections_lbl">
@@ -719,7 +808,7 @@
         <item row="1" column="4" colspan="2">
          <widget class="QComboBox" name="connections_cmb">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="minimumSize">
            <size>
@@ -735,7 +824,7 @@
         <item row="1" column="1" rowspan="4">
          <widget class="QLabel" name="modelo_sgbd">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -769,7 +858,7 @@
         <item row="2" column="2" colspan="2">
          <widget class="QCheckBox" name="pgsqlvers_chk">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -791,7 +880,7 @@
         <item row="2" column="4">
          <widget class="QComboBox" name="pgsqlvers1_cmb">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -846,6 +935,9 @@
           <property name="text">
            <string/>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item row="3" column="2" colspan="4">
@@ -869,7 +961,7 @@
           <item>
            <widget class="QLabel" name="hint2_lbl">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="palette">
              <palette>
@@ -935,7 +1027,7 @@
             <item>
              <widget class="QCheckBox" name="ignorar_dup_chk">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -971,7 +1063,7 @@
             <item>
              <widget class="QLabel" name="hint3_lbl">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="palette">
                <palette>
@@ -1048,8 +1140,8 @@
         </item>
        </layout>
       </item>
-      <item row="6" column="0" colspan="2">
-       <widget class="QFrame" name="ln2_frm">
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="ln1_frm">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -1063,86 +1155,6 @@
          <enum>QFrame::Sunken</enum>
         </property>
        </widget>
-      </item>
-      <item row="7" column="0" colspan="2">
-       <layout class="QGridLayout" name="gridLayout_4">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="progress_lbl">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Progress label...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QProgressBar" name="progress_pb">
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="ico_lbl">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>ico</string>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

@@ -74,9 +74,9 @@ void TaskProgressWidget::updateProgress(int progress, const QString &text, unsig
 
 void TaskProgressWidget::close(void)
 {
+	QDialog::close();
 	progress_pb->setValue(0);
 	text_lbl->clear();
 	icon_lbl->clear();
-	QDialog::close();
 }
 
