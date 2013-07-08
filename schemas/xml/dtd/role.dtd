@@ -7,7 +7,7 @@
 <!ATTLIST role superuser (true|false) "false">
 <!ATTLIST role createrole (true|false) "false">
 <!ATTLIST role createdb (true|false) "false">
-<!ATTLIST role replicate (true|false) "false">
+<!ATTLIST role replication (true|false) "false">
 <!ATTLIST role inherit (true|false) "false">
 <!ATTLIST role login (true|false) "false">
 <!ATTLIST role connlimit CDATA #IMPLIED>

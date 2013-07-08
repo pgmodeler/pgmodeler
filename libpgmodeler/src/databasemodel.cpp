@@ -2909,7 +2909,8 @@ Role *DatabaseModel::createRole(void)
 
 	unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
 											 Role::OP_CREATEROLE, Role::OP_INHERIT,
-											 Role::OP_LOGIN, Role::OP_ENCRYPTED };
+											 Role::OP_LOGIN, Role::OP_ENCRYPTED,
+											 Role::OP_REPLICATION };
 
 	try
 	{
@@ -2926,7 +2927,7 @@ Role *DatabaseModel::createRole(void)
 			role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 6; i++)
+		for(i=0; i < 7; i++)
 		{
 			marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
 			role->setOption(op_vect[i], marked);
