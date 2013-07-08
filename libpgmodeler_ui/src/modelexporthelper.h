@@ -97,7 +97,7 @@ class ModelExportHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString object_id);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished(void);
@@ -114,7 +114,7 @@ class ModelExportHelper: public QObject {
 
 	private slots:
 		//! \brief Updates the exporting progress with the internal progress of sql generation of objects
-		void updateProgress(int progress, QString object_id, unsigned);
+		void updateProgress(int progress, QString object_id, unsigned obj_type);
 
 	friend class ModelValidationHelper;
 	friend class ModelExportForm;

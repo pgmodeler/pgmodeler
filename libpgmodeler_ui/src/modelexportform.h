@@ -61,7 +61,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void exportModel(void);
 		void selectOutputFile(void);
 		void hideProgress(bool value=true);
-		void updateProgress(int progress, QString msg);
+		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void captureThreadError(Exception e);
 		void cancelExport(void);
 		void handleExportFinished(void);

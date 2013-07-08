@@ -42,7 +42,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 	//connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
-	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
 	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
 	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
@@ -299,7 +299,7 @@ void ModelValidationWidget::applyFix(void)
 	}
 }
 
-void ModelValidationWidget::updateProgress(int prog, QString msg)
+void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type)
 {
 	QTreeWidgetItem *item=nullptr;
 	QLabel *label=nullptr;
@@ -335,7 +335,12 @@ void ModelValidationWidget::updateProgress(int prog, QString msg)
 		}
 
 		label->setText(msg);
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
+		if(obj_type!=BASE_OBJECT)
+			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		else
+			item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
 		output_trw->addTopLevelItem(item);
 		output_trw->setItemWidget(item, 0, label);
 	}

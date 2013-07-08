@@ -312,6 +312,23 @@ vector<attribs_map> Catalog::getSchemas(const vector<QString> &filter_oids)
 	}
 }
 
+vector<attribs_map> Catalog::getLanguages(const vector<QString> &filter_oids)
+{
+	try
+	{
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
+		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("lanowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+
+		return(getMultipleAttributes(OBJ_LANGUAGE, extra_attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 vector<attribs_map> Catalog::getTablespaces(const vector<QString> &filter_oids)
 {
 	try

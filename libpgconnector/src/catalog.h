@@ -31,14 +31,14 @@ This class is the basis for the reverse engineering feature.
  * 1) Order object by type (list below)
  * 2) For each type objects by name
 
-ROLE						(pg_role)
-TABLESPACE			(pg_tablespace)
-DATABASE				(pg_database)
-SCHEMA					(pg_namespace)
-EXTENSION				(pg_extension)
-FUNCTION				(pg_proc)			[c,sql,internal langs]
+ROLE						(pg_role)				**OK!**
+TABLESPACE			(pg_tablespace) **OK!**
+DATABASE				(pg_database)		**OK!**
+SCHEMA					(pg_namespace)	**OK!**
+EXTENSION				(pg_extension)	**OK!**
+FUNCTION				(pg_proc)				**OK!** [c,sql,internal langs]
 USERTYPE				(pg_type)
-LANGUAGE				(pg_language) [user-defined]
+LANGUAGE				(pg_language)	[user-defined]
 FUNCTION				(pg_proc)			[user-defined]
 AGGREGATE				(pg_aggregate)
 OPERATOR				(pg_operator)

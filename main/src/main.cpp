@@ -96,6 +96,9 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		/* Registering the below classes as metatypes in order to make
+		them liable to be sent through signal parameters. */
+		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
 

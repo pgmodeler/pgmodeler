@@ -428,13 +428,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
-		void s_objectAdded(BaseObject *objeto);
+		void s_objectAdded(BaseObject *object);
 
 		//! \brief Signal emitted when an object is removed from the model
-		void s_objectRemoved(BaseObject *objeto);
+		void s_objectRemoved(BaseObject *object);
 
 		//! \brief Signal emitted when an object is created from a xml code
-		void s_objectLoaded(int progress, QString object_id, unsigned icon_id);
+		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
 
 	friend class ModelValidationHelper;
 };

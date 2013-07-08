@@ -26,7 +26,7 @@ ModelValidationHelper::ModelValidationHelper(void)
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
 
-	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(redirectExportProgress(int,QString)));
+	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType)), this, SLOT(redirectExportProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), export_thread, SLOT(quit(void)));
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
@@ -143,10 +143,10 @@ unsigned ModelValidationHelper::getErrorCount(void)
 	return(error_count);
 }
 
-void ModelValidationHelper::redirectExportProgress(int prog, QString msg)
+void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type)
 {
 	progress=40 + (prog * 0.3);
-	emit s_progressUpdated(progress, msg);
+	emit s_progressUpdated(progress, msg, obj_type);
 }
 
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver)

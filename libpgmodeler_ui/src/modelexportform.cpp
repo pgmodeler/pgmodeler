@@ -41,7 +41,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(select_img_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(export_btn, SIGNAL(clicked(void)), this, SLOT(exportModel(void)));
 
-	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
 	connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
 	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled(void)));
@@ -86,12 +86,18 @@ void ModelExportForm::show(ModelWidget *model)
 	}
 }
 
-void ModelExportForm::updateProgress(int progress, QString msg)
+void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
 	msg.replace("`","<strong>");
 	msg.replace("'","</strong>");
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
+
+	if(obj_type!=BASE_OBJECT)
+		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+	else
+		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
 	this->repaint();
 }
 
@@ -167,6 +173,7 @@ void ModelExportForm::hideProgress(bool value)
 	progress_pb->setHidden(value);
 	cancel_btn->setHidden(value);
 	progress_pb->setValue(0);
+	ico_lbl->setHidden(value);
 
 	if(value)
 		this->resize(this->minimumSize());
@@ -248,6 +255,7 @@ void ModelExportForm::selectOutputFile(void)
 void ModelExportForm::captureThreadError(Exception e)
 {
 	finishExport(trUtf8("Exporting process aborted!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
@@ -260,11 +268,13 @@ void ModelExportForm::cancelExport(void)
 void ModelExportForm::handleExportCanceled(void)
 {
 	finishExport(trUtf8("Exporting process canceled by user!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 }
 
 void ModelExportForm::handleExportFinished(void)
 {
 	finishExport(trUtf8("Exporting process sucessfuly ended!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 }
 
 void ModelExportForm::finishExport(const QString &msg)

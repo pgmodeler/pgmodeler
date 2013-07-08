@@ -21,7 +21,9 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	{
 		progress=sql_gen_progress=0;
 		SchemaParser::setPgSQLVersion(pgsql_ver);
-		emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 version code generation...").arg(SchemaParser::getPgSQLVersion()));
+		emit s_progressUpdated(progress,
+													 trUtf8("PostgreSQL %1 version code generation...").arg(SchemaParser::getPgSQLVersion()),
+													 OBJ_DATABASE);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
 
@@ -171,7 +173,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 				//Emits a signal indicating that the object is being exported
 				emit s_progressUpdated(progress,
-															 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()));
+															 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
+															 object->getObjectType());
 
 				try
 				{
@@ -204,7 +207,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
 				//Creating the database on the DBMS
-				emit s_progressUpdated(progress, trUtf8("Creating database `%1'...").arg(Utf8String::create(db_model->getName())));
+				emit s_progressUpdated(progress,
+															 trUtf8("Creating database `%1'...").arg(Utf8String::create(db_model->getName())),
+															 OBJ_DATABASE);
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
@@ -227,7 +232,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		progress=20;
 		new_db_conn=conn;
 		new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
-		emit s_progressUpdated(progress, trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
+		emit s_progressUpdated(progress,
+													 trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
 
 		new_db_conn.connect();
 		progress=30;
@@ -274,6 +280,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						QString obj_type, obj_name;
 						QRegExp reg_aux;
+						unsigned obj_id;
 						ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
 																		 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 																		 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
@@ -286,10 +293,10 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 						//Get the fisrt line of the sql command, that contains the CREATE ... statement
 						lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
 
-						for(unsigned i=0; i < count; i++)
+						for(obj_id=0; obj_id < count; obj_id++)
 						{
 							//Check if the keyword for the current object exists on string
-							reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[i])));
+							reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[obj_id])));
 							pos=reg_aux.indexIn(lin);
 
 							if(pos >= 0)
@@ -298,7 +305,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 								lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 
 								//Stores the object type name
-								obj_type=BaseObject::getTypeName(obj_types[i]);
+								obj_type=BaseObject::getTypeName(obj_types[obj_id]);
 
 								//The object name is the first element when splitting the string with space separator
 								obj_name=lin.split(' ').at(0);
@@ -308,9 +315,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 							}
 						}
 
-						emit s_progressUpdated(aux_prog, trUtf8("Creating object `%1' (%2)...")
-																	 .arg(obj_name)
-																	 .arg(obj_type));
+						emit s_progressUpdated(aux_prog,
+																	 trUtf8("Creating object `%1' (%2)...").arg(obj_name).arg(obj_type),
+																	 obj_types[obj_id]);
 					}
 					else
 						//General commands like alter / set aren't explicitly shown
@@ -495,12 +502,12 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
  }
 }
 
-void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned)
+void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
 {
 	int aux_prog=progress + (prog/progress);
 	sql_gen_progress=prog;
 	if(aux_prog > 100) aux_prog=100;
-	emit s_progressUpdated(aux_prog, object_id);
+	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
 }
 
 void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)

@@ -63,7 +63,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private slots:
 		void applyFix(void);
 		void updateValidation(ValidationInfo val_info);
-		void updateProgress(int prog, QString msg);
+		void updateProgress(int prog, QString msg, ObjectType obj_type);
 		void validateModel(void);
 		void reenableValidation(void);
 		void configureValidation(void);
