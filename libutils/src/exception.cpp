@@ -231,7 +231,7 @@ Exception::Exception(void)
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
-	configureException(msg,error_type, method, file, line, extra_info);
+	configureException(msg,ERR_CUSTOM, method, file, line, extra_info);
 	if(exception) addException(*exception);
 }
 
@@ -275,11 +275,24 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 {
 	vector<Exception>::iterator itr, itr_end;
 
-	configureException(msg,error_type, method, file, line, extra_info);
+	configureException(msg,ERR_CUSTOM, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
 	while(itr!=itr_end)
+	{
+		addException((*itr));
+		itr++;
+	}
+}
+
+Exception::Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+{
+	vector<Exception>::iterator itr=exceptions.begin();
+
+	configureException(msg,error_type, method, file, line, extra_info);
+
+	while(itr!=exceptions.end())
 	{
 		addException((*itr));
 		itr++;
@@ -293,7 +306,7 @@ void Exception::configureException(const QString &msg, ErrorType error_type, con
 	this->method=method;
 	this->file=file;
 	this->line=line;
-	this->extra_info=extra_info;
+	this->extra_info=QString(extra_info);
 }
 
 QString Exception::getErrorMessage(void)

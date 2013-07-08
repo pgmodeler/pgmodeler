@@ -117,6 +117,7 @@ class ModelExportHelper: public QObject {
 		void updateProgress(int progress, QString object_id, unsigned);
 
 	friend class ModelValidationHelper;
+	friend class ModelExportForm;
 };
 
 #endif

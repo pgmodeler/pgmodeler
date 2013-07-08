@@ -37,6 +37,18 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		//! \brief Stores the model widget which will be exported
 		ModelWidget *model;
 
+		//! \brief Export helper
+		ModelExportHelper export_hlp;
+
+		//! \brief Thread used to manage the export helper when dealing with dbms export
+		QThread *export_thread;
+
+		QTimer timer;
+
+		void finishExport(const QString &msg);
+		void enableExportModes(bool value);
+		void closeEvent(QCloseEvent *event);
+
 	public:
 		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
@@ -45,11 +57,15 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void hideEvent(QHideEvent *);
 
 	private slots:
-		void enableExportType(void);
+		void enableExportMode(void);
 		void exportModel(void);
 		void selectOutputFile(void);
-		void hideProgress(void);
+		void hideProgress(bool value=true);
 		void updateProgress(int progress, QString msg);
+		void captureThreadError(Exception e);
+		void cancelExport(void);
+		void handleExportFinished(void);
+		void handleExportCanceled(void);
 };
 
 #endif

@@ -24,6 +24,8 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 version code generation...").arg(SchemaParser::getPgSQLVersion()));
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
+
+		emit s_exportFinished();
 	}
 	catch(Exception &e)
 	{
@@ -77,6 +79,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		if(!pix.save(filename))
 			throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(filename)),
 											ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		emit s_exportFinished();
 	}
 	catch(Exception &e)
 	{
@@ -312,7 +316,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 						//General commands like alter / set aren't explicitly shown
 						emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command..."));
 
-
 					//Executes the extracted SQL command
 					if(!sql_cmd.isEmpty())
 						new_db_conn.executeDDLCommand(sql_cmd);
@@ -334,6 +337,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				{
 					sql_cmd.clear();
 					errors.push_back(e);
+
+					/* Since the export with "ignore duplicates" is faster than normal export some times the thread
+					cannot be aborted externally (cancel the export) so puts the thread to sleep for 10 ms to give
+					time the user to activate the cancel export operation, if desired. Note: this is done only if the
+					exporter is running in a different thread other than the main application thread*/
+					if(this->thread()!=qApp->thread())
+						QThread::msleep(10);
 				}
 			}
 		}
@@ -383,7 +393,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
 			errors.push_back(e);
-			emit s_exportAborted(Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
+			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
 		}
 		else
 		{

@@ -77,7 +77,7 @@
        <property name="iconSize">
         <size>
          <width>20</width>
-         <height>16</height>
+         <height>20</height>
         </size>
        </property>
        <property name="default">
@@ -109,7 +109,7 @@
        <property name="iconSize">
         <size>
          <width>20</width>
-         <height>16</height>
+         <height>20</height>
         </size>
        </property>
        <property name="flat">

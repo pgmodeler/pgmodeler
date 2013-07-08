@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>334</height>
+    <height>335</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -326,8 +326,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>20</width>
+            <height>20</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -352,8 +352,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>20</width>
+            <height>20</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -378,8 +378,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>22</width>
-            <height>22</height>
+            <width>20</width>
+            <height>20</height>
            </size>
           </property>
           <property name="autoRaise">

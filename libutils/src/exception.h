@@ -299,10 +299,12 @@ class Exception {
 	public:
 		Exception(void);
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
+		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
+		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
 		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
 		Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
-		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+
 		~Exception(void){}
 		QString getErrorMessage(void);
 		static QString getErrorMessage(ErrorType error_type);

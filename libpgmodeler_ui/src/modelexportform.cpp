@@ -27,16 +27,28 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	vector<QString> versions;
 
 	model=nullptr;
-
 	setupUi(this);
-	connect(export_to_file_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportType(void)));
-	connect(export_to_dbms_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportType(void)));
-	connect(export_to_img_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportType(void)));
+
+	export_thread=new QThread(this);
+	export_hlp.moveToThread(export_thread);
+
+	connect(export_to_file_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
+	connect(export_to_dbms_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
+	connect(export_to_img_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
 	connect(pgsqlvers_chk, SIGNAL(toggled(bool)), pgsqlvers1_cmb, SLOT(setEnabled(bool)));
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(select_file_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(select_img_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(export_btn, SIGNAL(clicked(void)), this, SLOT(exportModel(void)));
+
+	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+	connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
+	connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
+	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled(void)));
+	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
+
+	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 
 	SchemaParser::getPgSQLVersions(versions);
 	pgsqlvers_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
@@ -104,85 +116,63 @@ void ModelExportForm::exportModel(void)
 {
 	try
 	{
-		ModelExportHelper export_hlp(this->model);
-
 		this->resize(this->maximumSize());
 
-		progress_pb->setValue(0);
-		ln2_frm->setVisible(true);
-		progress_lbl->setVisible(true);
-		progress_pb->setVisible(true);
-		ico_lbl->setVisible(false);
+		timer.stop();
+		hideProgress(false);
 
 		//Export to png
 		if(export_to_img_rb->isChecked())
 			export_hlp.exportToPNG(model->scene, image_edt->text(), show_grid_chk->isChecked(), show_delim_chk->isChecked());
 		else
 		{
-			try
+			progress_lbl->setText(trUtf8("Initializing model export..."));
+
+			//Exporting to sql file
+			if(export_to_file_rb->isChecked())
 			{
-				progress_lbl->setText(trUtf8("Initializing model export..."));
-				progress_lbl->repaint();
-				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
-
-				//Exporting to sql file
-				if(export_to_file_rb->isChecked())
-				{
-					progress_lbl->setText(trUtf8("Saving file '%1'").arg(file_edt->text()));
-					export_hlp.exportToSQL(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
-				}
-				//Exporting directly to DBMS
-				else
-				{
-					QString version;
-					Connection conn=*(reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
-
-					//If the user chose a specific version
-					if(pgsqlvers1_cmb->isEnabled())
-						version=pgsqlvers1_cmb->currentText();
-
-					export_hlp.exportToDBMS(model->db_model, conn, version, ignorar_dup_chk->isChecked());
-				}
+				progress_lbl->setText(trUtf8("Saving file '%1'").arg(file_edt->text()));
+				export_hlp.exportToSQL(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
 			}
-			catch(Exception &e)
-			{		
-				disconnect(&export_hlp, nullptr, this, nullptr);
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			//Exporting directly to DBMS
+			else
+			{
+				QString version;
+				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+				//If the user chose a specific version
+				if(pgsqlvers1_cmb->isEnabled())
+					version=pgsqlvers1_cmb->currentText();
+
+				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignorar_dup_chk->isChecked());
+				export_thread->start();
+				enableExportModes(false);
+				cancel_btn->setEnabled(true);
 			}
 		}
-
-		progress_pb->setValue(100);
-		progress_lbl->setText(trUtf8("Exporting process sucessfuly ended!"));
-		progress_lbl->repaint();
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-		ico_lbl->setVisible(true);
-		QTimer::singleShot(5000, this, SLOT(hideProgress(void)));
-		disconnect(&export_hlp, nullptr, this, nullptr);
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
 
-		progress_lbl->setText(trUtf8("Error on export!"));
-		progress_lbl->repaint();
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-		ico_lbl->setVisible(true);
-
-		QTimer::singleShot(5000, this, SLOT(hideProgress(void)));
+		finishExport(trUtf8("Exporting process aborted!"));
 		msg_box.show(e);
 	}
 }
 
-void ModelExportForm::hideProgress(void)
+void ModelExportForm::hideProgress(bool value)
 {
-	ln2_frm->setVisible(false);
-	progress_lbl->setVisible(false);
-	progress_pb->setVisible(false);
-	ico_lbl->setVisible(false);
-	this->resize(this->minimumSize());
+	ln2_frm->setHidden(value);
+	progress_lbl->setHidden(value);
+	progress_pb->setHidden(value);
+	cancel_btn->setHidden(value);
+	progress_pb->setValue(0);
+
+	if(value)
+		this->resize(this->minimumSize());
 }
 
-void ModelExportForm::enableExportType(void)
+void ModelExportForm::enableExportMode(void)
 {
 	bool exp_file=(sender()==export_to_file_rb), exp_png=(sender()==export_to_img_rb);
 
@@ -255,3 +245,55 @@ void ModelExportForm::selectOutputFile(void)
 	export_btn->setEnabled(!file_edt->text().isEmpty() || !image_edt->text().isEmpty());
 }
 
+void ModelExportForm::captureThreadError(Exception e)
+{
+	finishExport(trUtf8("Exporting process aborted!"));
+	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+}
+
+void ModelExportForm::cancelExport(void)
+{
+	export_hlp.cancelExport();
+	cancel_btn->setEnabled(false);
+}
+
+void ModelExportForm::handleExportCanceled(void)
+{
+	finishExport(trUtf8("Exporting process canceled by user!"));
+}
+
+void ModelExportForm::handleExportFinished(void)
+{
+	finishExport(trUtf8("Exporting process sucessfuly ended!"));
+}
+
+void ModelExportForm::finishExport(const QString &msg)
+{
+	if(export_thread->isRunning())
+		export_thread->quit();
+
+	enableExportModes(true);
+
+	cancel_btn->setEnabled(false);
+	progress_pb->setValue(100);
+	progress_lbl->setText(msg);
+	progress_lbl->repaint();
+	timer.start(5000);
+}
+
+void ModelExportForm::enableExportModes(bool value)
+{
+	export_to_dbms_rb->setEnabled(value);
+	export_to_file_rb->setEnabled(value);
+	export_to_img_rb->setEnabled(value);
+	export_btn->setEnabled(value);
+	close_btn->setEnabled(value);
+}
+
+void ModelExportForm::closeEvent(QCloseEvent *event)
+{
+	/* Ignore the close event when the thread is running this avoid
+	close the form and make thread execute in background */
+	if(export_thread->isRunning())
+		event->ignore();
+}

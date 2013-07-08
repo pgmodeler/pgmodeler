@@ -159,6 +159,12 @@
         <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
          <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="default">
         <bool>true</bool>
        </property>
@@ -184,6 +190,12 @@
        <property name="icon">
         <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
          <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
        <property name="flat">
         <bool>false</bool>
@@ -287,8 +299,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>22</width>
-           <height>22</height>
+           <width>20</width>
+           <height>20</height>
           </size>
          </property>
         </widget>
@@ -321,8 +333,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>22</width>
-           <height>22</height>
+           <width>20</width>
+           <height>20</height>
           </size>
          </property>
         </widget>
