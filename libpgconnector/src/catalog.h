@@ -59,6 +59,32 @@ PERMISSION			(???)
 
 ** Details can be found on pg_dump_sort.c line 82 **/
 
+
+/* Objects that can belongs to a extension
+AGGREGATE agg_name (agg_type [, ...] ) |
+	CAST (source_type AS target_type) |
+	COLLATION object_name |
+	CONVERSION object_name |
+	DOMAIN object_name |
+	FOREIGN DATA WRAPPER object_name |
+	FOREIGN TABLE object_name |
+	FUNCTION function_name ( [ [ argmode ] [ argname ] argtype [, ...] ] ) |
+	OPERATOR operator_name (left_type, right_type) |
+	OPERATOR CLASS object_name USING index_method |
+	OPERATOR FAMILY object_name USING index_method |
+	[ PROCEDURAL ] LANGUAGE object_name |
+	SCHEMA object_name |
+	SEQUENCE object_name |
+	SERVER object_name |
+	TABLE object_name |
+	TEXT SEARCH CONFIGURATION object_name |
+	TEXT SEARCH DICTIONARY object_name |
+	TEXT SEARCH PARSER object_name |
+	TEXT SEARCH TEMPLATE object_name |
+	TYPE object_name |
+	VIEW object_name */
+
+
 #include "connection.h"
 #include "baseobject.h"
 #include <QTextStream>

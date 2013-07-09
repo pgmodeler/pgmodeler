@@ -17,11 +17,11 @@ int main(int argc, char **argv)
 		catalog.setConnection(conn);
 
 		long time1=QDateTime::currentMSecsSinceEpoch();
-		cout << "[object]: " << BaseObject::getTypeName(OBJ_OPERATOR).toStdString() << endl;
-		cout << "[count]: " << catalog.getObjectCount(OBJ_OPERATOR,"public") << endl;
+		cout << "[object]: " << BaseObject::getTypeName(OBJ_LANGUAGE).toStdString() << endl;
+		cout << "[count]: " << catalog.getObjectCount(OBJ_LANGUAGE,"public") << endl;
 
 		cout << "[list]: ";
-		attribs_map v1=catalog.getObjects(OBJ_OPERATOR,"public");
+		attribs_map v1=catalog.getObjects(OBJ_LANGUAGE,"public");
 		attribs_map::iterator itr1=v1.begin();
 
 		while(itr1!=v1.end())
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
 		cout << endl;
 
-		vector<attribs_map> v=catalog.getOperators("public", {"75651", "75652"});
+		vector<attribs_map> v=catalog.getLanguages();
 		attribs_map::iterator itr;
 
 		while(!v.empty())

@@ -266,8 +266,6 @@ vector<attribs_map> Catalog::getDatabases(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
-		//extra_attribs[ParsersAttributes::TABLESPACE]=getDepObjectQuery("dattablespace", OBJ_TABLESPACE);
-		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("datdba", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
@@ -300,7 +298,7 @@ vector<attribs_map> Catalog::getSchemas(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
-		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("nspowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("oid");
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", false);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
@@ -317,7 +315,7 @@ vector<attribs_map> Catalog::getLanguages(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
-		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("lanowner", OBJ_ROLE);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("oid");
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
@@ -334,7 +332,6 @@ vector<attribs_map> Catalog::getTablespaces(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
-		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("spcowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 

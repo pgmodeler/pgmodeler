@@ -12,7 +12,8 @@
 	      lanplcallfoid AS handler_func, laninline AS inline_func,
 	      lanvalidator AS validator_func, lanacl AS permissions, lanowner AS owner, ]
 
-      (@{comment}) [ AS comment ]
+      (@{comment}) [ AS comment, ]
+      (@{from-extension}) [ AS from_extension_bool ]
 
       [ FROM pg_language WHERE  lanispl IS TRUE ]
 

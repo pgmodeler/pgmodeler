@@ -10,9 +10,10 @@
     %if @{attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]
 
-	(@{comment}) [ AS comment
+	(@{comment}) [ AS comment, ]
+	(@{from-extension}) [ AS from_extension_bool ]
 
-       FROM pg_namespace ]
+       [ FROM pg_namespace ]
 
        %if @{filter-oids} %then
 	 [ WHERE oid IN (] @{filter-oids} )
