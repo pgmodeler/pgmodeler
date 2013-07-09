@@ -145,14 +145,14 @@ class BaseObject {
 
 						appended_sql;
 
-		/*! \brief Type of object, may have one of the values ​​of the enum ObjectType OBJ_*
-		 It was used a numeric type to avoid the use excessive of RTTI. */
-		ObjectType obj_type;
-
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
 		 by SchemaParser on the object's code definition creation. The attribute
 		 name related to model objects are defined in ParsersAttributes namespace. */
 		attribs_map attributes;
+
+		/*! \brief Type of object, may have one of the values ​​of the enum ObjectType OBJ_*
+		 It was used a numeric type to avoid the use excessive of RTTI. */
+		ObjectType obj_type;
 
 		/*! \brief This method calls the getCodeDefinition(unsigned, bool) method with the 'reduced_form' defined as 'false',
 		 This is the real implementation of the virtual method getCodeDefinition(unsigned). */
@@ -163,6 +163,9 @@ class BaseObject {
 							 be removed from the database, only the attribute will be set as nullptr and
 							 if the user calls getDatabase() in further operations may result in crash */
 		void setDatabase(BaseObject *db);
+
+		//! \brief Swap the the ids of the specified objects
+		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
@@ -334,9 +337,6 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsAppendedSQL(void);
 
-		//! \brief Swap the the ids of the specified objects
-		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
-
 		/*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
@@ -344,6 +344,8 @@ class BaseObject {
 		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
 
 		friend class DatabaseModel;
+		friend class ModelValidationHelper;
+		friend class ChangeObjectOrderWidget;
 };
 
 #endif

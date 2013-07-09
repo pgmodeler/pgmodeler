@@ -659,11 +659,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_wiki"/>
    <addaction name="action_configuration"/>
    <addaction name="action_plugins"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
-   <addaction name="action_wiki"/>
+   <addaction name="action_change_order"/>
   </widget>
   <action name="action_new_model">
    <property name="icon">
@@ -1108,6 +1109,21 @@
    </property>
    <property name="toolTip">
     <string>Import existing database to new model (reverse engineering)</string>
+   </property>
+  </action>
+  <action name="action_change_order">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/swapobjs.png</normaloff>:/icones/icones/swapobjs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Swap</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the creation order for two objects by swapping their ids</string>
    </property>
   </action>
  </widget>

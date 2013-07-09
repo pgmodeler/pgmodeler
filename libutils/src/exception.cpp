@@ -157,7 +157,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_GROUP_DECL_NOT_DEFINED", QT_TR_NOOP("The group '%1' has been declared but not built!")},
 	{"ERR_REF_COL_OBJTAB_INV_INDEX", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"ERR_REF_LIN_OBJTAB_INV_INDEX", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
-	{"ERR_OPR_RESERVED_OBJECT", QT_TR_NOOP("The schema public and the languages plpgsql, c and sql can not be manipulated because they are reserved to PostgreSQL! They are present in the model database only as a reference!")},
+	{"ERR_OPR_RESERVED_OBJECT", QT_TR_NOOP("The object '%1' (%2) can not be manipulated because it's reserved to PostgreSQL! This object is present in the database model only as a reference!")},
 	{"ERR_FUNC_CONFIG_INV_OBJECT", QT_TR_NOOP("The new configuration function invalidates the object '%1' (%2)! In this case it is needed to undo the relationship between the affected object and function so that the new configuration of the latter to take effect!")},
 	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!")},
 	{"ERR_CONSTR_NO_COLUMNS", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},

@@ -171,15 +171,15 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				object=db_model->getObject(i, types[type_id]);
 				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
 
-				//Emits a signal indicating that the object is being exported
-				emit s_progressUpdated(progress,
-															 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
-															 object->getObjectType());
-
 				try
 				{
 					if(!object->isSQLDisabled())
 					{
+						//Emits a signal indicating that the object is being exported
+						emit s_progressUpdated(progress,
+																	 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
+																	 object->getObjectType());
+
 						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 						conn.executeDDLCommand(sql_cmd);
 					}

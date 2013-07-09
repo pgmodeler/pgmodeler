@@ -1193,7 +1193,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
 		that can be edited only on its fill color an rectangle attributes */
 		if(object && object->isSystemObject() && object->getName()!="public")
-			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+											.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		switch(obj_type)
 		{
@@ -1486,8 +1488,10 @@ void ModelWidget::renameObject(void)
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-	if(obj->isSystemObject() /*isReservedObject(obj)*/)
-		throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(obj->isSystemObject())
+		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+										.arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
+										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	objectrename_wgt->setAttributes(obj, this->db_model, this->op_list);
 	objectrename_wgt->exec();
@@ -1541,8 +1545,10 @@ void ModelWidget::changeOwner(void)
 	BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
 			*obj=(!selected_objects.empty() ? selected_objects[0] : this->db_model);
 
-	if(selected_objects[0]->isSystemObject() /*isReservedObject(selected_objects[0])*/)
-		throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(selected_objects[0]->isSystemObject())
+		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+										.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -1636,8 +1642,10 @@ void ModelWidget::protectObject(void)
 			else
 			{
 				//Raise an error if the user try to modify a reserved object protection
-				if(this->selected_objects[0]->isSystemObject() /*isReservedObject(this->selected_objects[0])*/)
-					throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				if(this->selected_objects[0]->isSystemObject())
+					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+													.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
 			}
@@ -1663,8 +1671,10 @@ void ModelWidget::protectObject(void)
 
 				obj_type=object->getObjectType();
 
-				if(object->isSystemObject() /* isReservedObject(object)*/)
-					throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				if(object->isSystemObject())
+					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+													.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
 					tab_obj=dynamic_cast<TableObject *>(object);
@@ -1722,7 +1732,9 @@ void ModelWidget::copyObjects(void)
 	{
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
-			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+											.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	//Ask for confirmation to copy the dependencies of the object(s)
@@ -2226,8 +2238,10 @@ void ModelWidget::removeObjects(void)
 					obj_type=object->getObjectType();
 
 					//Raises an error if the user try to remove a reserved object
-					if(object->isSystemObject() /*isReservedObject(object)*/)
-						throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					if(object->isSystemObject())
+						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+														.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
 					{

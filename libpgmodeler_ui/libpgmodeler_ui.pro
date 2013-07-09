@@ -75,7 +75,8 @@ SOURCES += src/mainwindow.cpp \
 	   src/databaseimporthelper.cpp \
 	   src/databaseimportform.cpp \
 	   src/sqlappendwidget.cpp \
-	   src/codecompletionwidget.cpp
+	   src/codecompletionwidget.cpp \
+    src/changeobjectorderwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -140,7 +141,8 @@ HEADERS += src/mainwindow.h \
 	   src/databaseimporthelper.h \
 	   src/databaseimportform.h \
 	   src/sqlappendwidget.h \
-	   src/codecompletionwidget.h
+	   src/codecompletionwidget.h \
+    src/changeobjectorderwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -196,4 +198,5 @@ FORMS += ui/mainwindow.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
 	 ui/databaseimportform.ui \
-	 ui/sqlappendwidget.ui
+	 ui/sqlappendwidget.ui \
+    ui/changeobjectorderwidget.ui

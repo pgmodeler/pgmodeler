@@ -36,6 +36,7 @@
 
 using namespace std;
 
+
 class XMLParser {
 	private:
 		/*! \brief Stores the name of the file that generated the xml buffer when

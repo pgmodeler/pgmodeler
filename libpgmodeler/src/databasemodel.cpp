@@ -2636,7 +2636,7 @@ void DatabaseModel::loadModel(const QString &filename)
 
 										if(!signalsBlocked())
 										{
-											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount()) * 0.70,
+											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
 																					trUtf8("Loading object: %1 (%2)")
 																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),
@@ -5907,11 +5907,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()!="public") ||
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
-					if(object->getObjectType()==OBJ_TABLESPACE && def_type==SchemaParser::SQL_DEFINITION)
+					/* The Tablespace has the SQL code definition disabled when generating the
+						code of the entire model because this object cannot be created from a multiline sql command */
+					if(object->getObjectType()==OBJ_TABLESPACE && !object->isSystemObject() && def_type==SchemaParser::SQL_DEFINITION)
 					{
-						/* The Tablespace has the SQL code definition disabled when generating the
-							code of the entire model because this object cannot be created from a multiline sql command */
-
 						//Saving the sql disabled state
 						sql_disabled=object->isSQLDisabled();
 
@@ -5922,7 +5921,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 						//Restore the original sql disabled state
 						object->setSQLDisabled(sql_disabled);
 					}
-					else
+					//System object doesn't has the XML generated (the only exception is for public schema)
+					else if(!object->isSystemObject() || object->getObjectType()==OBJ_SCHEMA)
 					{
 						//Generates the code definition and concatenates to the others
 						attribs_aux[attrib]+=object->getCodeDefinition(def_type);
@@ -7658,6 +7658,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 {
 	Schema *public_sch=nullptr;
 	Language *lang=nullptr;
+	Tablespace *tbspace=nullptr;
 	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
 
 
@@ -7669,7 +7670,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		public_sch=new Schema;
 		public_sch->setName("public");
 		public_sch->setSystemObject(true);
-		addObject(public_sch);
+		addSchema(public_sch);
 	}
 
 	for(unsigned i=0; i < sizeof(lang_types)/sizeof(LanguageType); i++)
@@ -7679,9 +7680,21 @@ void DatabaseModel::createSystemObjects(bool create_public)
 			lang=new Language;
 			lang->BaseObject::setName(~LanguageType(lang_types[i]));
 			lang->setSystemObject(true);
-			addObject(lang);
+			addLanguage(lang);
 		}
 	}
+
+	tbspace=new Tablespace;
+	tbspace->BaseObject::setName("pg_global");
+	tbspace->setDirectory("_pg_global_dir_");
+	tbspace->setSystemObject(true);
+	addTablespace(tbspace);
+
+	tbspace=new Tablespace;
+	tbspace->BaseObject::setName("pg_default");
+	tbspace->setDirectory("_pg_default_dir_");
+	tbspace->setSystemObject(true);
+	addTablespace(tbspace);
 }
 
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)

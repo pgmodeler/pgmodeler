@@ -403,7 +403,10 @@ int XMLParser::getCurrentBufferLine(void)
 int XMLParser::getBufferLineCount(void)
 {
 	if(xml_doc)
-		return(xml_doc->last->line);
+		/* To get the very last line of the document is necessary to call
+		the last element of the last because xml_doc->last->line stores the
+		last line of the root element */
+		return(xml_doc->last->last->line);
 	else
 		return(0);
 }
