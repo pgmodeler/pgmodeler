@@ -915,7 +915,6 @@ void ModelWidget::loadModel(const QString &filename)
 
 		protected_model_frm->setVisible(db_model->isProtected());
 		this->modified=false;
-		//this->invalidated=false;
 	}
 	catch(Exception &e)
 	{

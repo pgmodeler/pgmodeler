@@ -28,6 +28,7 @@ ModelValidationHelper::ModelValidationHelper(void)
 
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType)), this, SLOT(redirectExportProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
+	connect(&export_helper, SIGNAL(s_exportFinished(void)), export_thread, SLOT(quit(void)));
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
 	connect(&export_helper, SIGNAL(s_exportCanceled()), this, SLOT(emitExportCanceled(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
@@ -144,7 +145,7 @@ unsigned ModelValidationHelper::getErrorCount(void)
 
 void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type)
 {
-	progress=40 + (prog * 0.3);
+	progress=41 + (prog * 0.55);
 	emit s_progressUpdated(progress, msg, obj_type);
 }
 
@@ -354,11 +355,8 @@ void ModelValidationHelper::validateModel(void)
 
 void ModelValidationHelper::cancelValidation(void)
 {
-	if(export_thread->isRunning())
-	{
-		export_thread->quit();
-		export_helper.cancelExport();
-	}
+	export_thread->quit();
+	export_helper.cancelExport();
 }
 
 void ModelValidationHelper::captureThreadError(Exception e)
@@ -377,6 +375,8 @@ void ModelValidationHelper::emitExportCanceled(void)
 
 void ModelValidationHelper::emitValidationFinished(void)
 {
+	export_thread->quit();
+
 	/* Indicates the model invalidation only when there are validation warnings (broken refs. or no unique name)
 	sql errors are ignored since validator cannot fix SQL related problems */
 	db_model->setInvalidated(error_count > 0);

@@ -78,6 +78,13 @@ void ModelRestorationForm::removeTemporaryModels(void)
 	}
 }
 
+void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)
+{
+	QDir tmp_file;
+	QString file=QFileInfo(tmp_model).fileName();
+	tmp_file.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file);
+}
+
 void ModelRestorationForm::enableRestoration(void)
 {
 	restore_btn->setEnabled(!tmp_files_lst->selectedItems().isEmpty());

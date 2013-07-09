@@ -48,6 +48,9 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 		//! \brief Clears the tmp/ dir removing all temporary files
 		void removeTemporaryModels(void);
 
+		//! \brief Remove only the specified temp model
+		void removeTemporaryModel(const QString &tmp_model);
+
 		//! \brief Checks if there is at least one temporary file on tmp/ dir
 		bool hasTemporaryModels(void);
 
