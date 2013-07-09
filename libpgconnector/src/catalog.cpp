@@ -170,7 +170,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 	}
 }
 
-QString Catalog::getDepObjectQuery(const QString &oid_field, ObjectType obj_type)
+/* QString Catalog::getDepObjectQuery(const QString &oid_field, ObjectType obj_type)
 {
 	try
 	{
@@ -185,7 +185,7 @@ QString Catalog::getDepObjectQuery(const QString &oid_field, ObjectType obj_type
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
+} */
 
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
@@ -266,8 +266,8 @@ vector<attribs_map> Catalog::getDatabases(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::TABLESPACE]=getDepObjectQuery("dattablespace", OBJ_TABLESPACE);
-		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("datdba", OBJ_ROLE);
+		//extra_attribs[ParsersAttributes::TABLESPACE]=getDepObjectQuery("dattablespace", OBJ_TABLESPACE);
+		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("datdba", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
@@ -300,8 +300,8 @@ vector<attribs_map> Catalog::getSchemas(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
+		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("nspowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", false);
-		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("nspowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		return(getMultipleAttributes(OBJ_SCHEMA, extra_attribs));
@@ -317,8 +317,8 @@ vector<attribs_map> Catalog::getLanguages(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
+		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("lanowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("lanowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		return(getMultipleAttributes(OBJ_LANGUAGE, extra_attribs));
@@ -334,8 +334,8 @@ vector<attribs_map> Catalog::getTablespaces(const vector<QString> &filter_oids)
 	try
 	{
 		attribs_map extra_attribs;
+		//extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("spcowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("spcowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		return(getMultipleAttributes(OBJ_TABLESPACE, extra_attribs));
@@ -369,12 +369,47 @@ vector<attribs_map> Catalog::getFunctions(const QString &schema, const vector<QS
 	{
 		attribs_map extra_attribs;
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("pr.oid", false);
-		extra_attribs[ParsersAttributes::OWNER]=getDepObjectQuery("pr.proowner", OBJ_ROLE);
 		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("pr.oid");
 		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 
 		return(getMultipleAttributes(OBJ_FUNCTION, extra_attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getAggregates(const QString &schema, const vector<QString> &filter_oids)
+{
+	try
+	{
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("pr.oid", false);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("pr.oid");
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+
+		return(getMultipleAttributes(OBJ_AGGREGATE, extra_attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getOperators(const QString &schema, const vector<QString> &filter_oids)
+{
+	try
+	{
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("op.oid", false);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("op.oid");
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+
+		return(getMultipleAttributes(OBJ_OPERATOR, extra_attribs));
 	}
 	catch(Exception &e)
 	{

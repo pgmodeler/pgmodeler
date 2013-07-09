@@ -8,9 +8,7 @@
     %if @{attribs} %then
       [SELECT oid, datname AS name, pg_encoding_to_char(encoding) AS encoding, datdba AS owner,
 	      datcollate AS lc_collate, datctype AS lc_ctype, datconnlimit AS connlimit,
-	      datacl AS permissions, ]
-	      (@{tablespace}) [ AS tablespace, ]
-	      (@{owner}) [ AS owner, ]
+	      datacl AS permissions, dattablespace AS tablespace, datdba AS owner, ]
 	      (@{comment}) [ AS comment ]
       [ FROM pg_database WHERE datistemplate = FALSE ]
 

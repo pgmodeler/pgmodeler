@@ -166,7 +166,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			count=db_model->getObjectCount(types[type_id]);
 
-			for(i=0; i < count; i++)
+			for(i=0; i < count && !export_canceled; i++)
 			{
 				object=db_model->getObject(i, types[type_id]);
 				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
@@ -228,129 +228,132 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				errors.push_back(e);
 		}
 
-		//Connects to the new created database to create the other objects
-		progress=20;
-		new_db_conn=conn;
-		new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
-		emit s_progressUpdated(progress,
-													 trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
-
-		new_db_conn.connect();
-		progress=30;
-		//Creating the other object types
-		emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'...").arg(Utf8String::create(db_model->getName())));
-
-		//Generates the sql from entire model
-		sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
-
-		/* Extract each SQL command from the buffer and execute them separately. This is done
-			 to permit the user, in case of error, identify what object is wrongly configured. */
-		ts.setString(&sql_buf);
-		unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
-
-		progress+=(sql_gen_progress/progress);
-		sql_cmd.clear();
-
-		while(!ts.atEnd() && !export_canceled)
+		if(!export_canceled)
 		{
-			try
+			//Connects to the new created database to create the other objects
+			progress=20;
+			new_db_conn=conn;
+			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
+			emit s_progressUpdated(progress,
+														 trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
+
+			new_db_conn.connect();
+			progress=30;
+			//Creating the other object types
+			emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'...").arg(Utf8String::create(db_model->getName())));
+
+			//Generates the sql from entire model
+			sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+
+			/* Extract each SQL command from the buffer and execute them separately. This is done
+			 to permit the user, in case of error, identify what object is wrongly configured. */
+			ts.setString(&sql_buf);
+			unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
+
+			progress+=(sql_gen_progress/progress);
+			sql_cmd.clear();
+
+			while(!ts.atEnd() && !export_canceled)
 			{
-				//Cleanup single line comments
-				lin=ts.readLine();
-				curr_size+=lin.size();
-				aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
-
-				ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
-				lin.remove(QRegExp("^(--)+(.)+$"));
-
-				//If the line isn't empty after cleanup it will be included on sql command
-				if(!lin.isEmpty())
-					sql_cmd += lin + "\n";
-
-				//If the ddl end token is found
-				if(ddl_tk_found)
+				try
 				{
-					//Regexp used to extract the object being created
-					QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
+					//Cleanup single line comments
+					lin=ts.readLine();
+					curr_size+=lin.size();
+					aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
 
-					sql_cmd.simplified();
+					ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+					lin.remove(QRegExp("^(--)+(.)+$"));
 
-					//Check if the regex matches the sql command
-					if(reg.exactMatch(sql_cmd))
+					//If the line isn't empty after cleanup it will be included on sql command
+					if(!lin.isEmpty())
+						sql_cmd += lin + "\n";
+
+					//If the ddl end token is found
+					if(ddl_tk_found)
 					{
-						QString obj_type, obj_name;
-						QRegExp reg_aux;
-						unsigned obj_id;
-						ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
-																		 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
-																		 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
-																		 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
-																		 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
-																		 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
-						unsigned count=sizeof(obj_types)/sizeof(ObjectType);
-						int pos=0;
+						//Regexp used to extract the object being created
+						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
 
-						//Get the fisrt line of the sql command, that contains the CREATE ... statement
-						lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
+						sql_cmd.simplified();
 
-						for(obj_id=0; obj_id < count; obj_id++)
+						//Check if the regex matches the sql command
+						if(reg.exactMatch(sql_cmd))
 						{
-							//Check if the keyword for the current object exists on string
-							reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[obj_id])));
-							pos=reg_aux.indexIn(lin);
+							QString obj_type, obj_name;
+							QRegExp reg_aux;
+							unsigned obj_id;
+							ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+																			 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
+																			 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
+																			 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
+																			 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
+																			 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
+							unsigned count=sizeof(obj_types)/sizeof(ObjectType);
+							int pos=0;
 
-							if(pos >= 0)
+							//Get the fisrt line of the sql command, that contains the CREATE ... statement
+							lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
+
+							for(obj_id=0; obj_id < count; obj_id++)
 							{
-								//Extracts from the line the string starting with the object's name
-								lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+								//Check if the keyword for the current object exists on string
+								reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[obj_id])));
+								pos=reg_aux.indexIn(lin);
 
-								//Stores the object type name
-								obj_type=BaseObject::getTypeName(obj_types[obj_id]);
+								if(pos >= 0)
+								{
+									//Extracts from the line the string starting with the object's name
+									lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 
-								//The object name is the first element when splitting the string with space separator
-								obj_name=lin.split(' ').at(0);
-								obj_name.remove('(');
-								obj_name.remove(';');
-								break;
+									//Stores the object type name
+									obj_type=BaseObject::getTypeName(obj_types[obj_id]);
+
+									//The object name is the first element when splitting the string with space separator
+									obj_name=lin.split(' ').at(0);
+									obj_name.remove('(');
+									obj_name.remove(';');
+									break;
+								}
 							}
+
+							emit s_progressUpdated(aux_prog,
+																		 trUtf8("Creating object `%1' (%2)...").arg(obj_name).arg(obj_type),
+																		 obj_types[obj_id]);
 						}
+						else
+							//General commands like alter / set aren't explicitly shown
+							emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command..."));
 
-						emit s_progressUpdated(aux_prog,
-																	 trUtf8("Creating object `%1' (%2)...").arg(obj_name).arg(obj_type),
-																	 obj_types[obj_id]);
+						//Executes the extracted SQL command
+						if(!sql_cmd.isEmpty())
+							new_db_conn.executeDDLCommand(sql_cmd);
+
+						sql_cmd.clear();
+						ddl_tk_found=false;
 					}
-					else
-						//General commands like alter / set aren't explicitly shown
-						emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command..."));
-
-					//Executes the extracted SQL command
-					if(!sql_cmd.isEmpty())
-						new_db_conn.executeDDLCommand(sql_cmd);
-
-					sql_cmd.clear();
-					ddl_tk_found=false;
 				}
-			}
-			catch(Exception &e)
-			{
-				if(ddl_tk_found) ddl_tk_found=false;
-
-				if(!ignore_dup ||
-					 (ignore_dup &&
-						std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-					throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
-													ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-				else
+				catch(Exception &e)
 				{
-					sql_cmd.clear();
-					errors.push_back(e);
+					if(ddl_tk_found) ddl_tk_found=false;
 
-					/* Since the export with "ignore duplicates" is faster than normal export some times the thread
+					if(!ignore_dup ||
+						 (ignore_dup &&
+							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
+						throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
+														ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+					else
+					{
+						sql_cmd.clear();
+						errors.push_back(e);
+
+						/* Since the export with "ignore duplicates" is faster than normal export some times the thread
 					cannot be aborted externally (cancel the export) so puts the thread to sleep for 10 ms to give
 					time the user to activate the cancel export operation, if desired. Note: this is done only if the
 					exporter is running in a different thread other than the main application thread*/
-					if(this->thread()!=qApp->thread())
-						QThread::msleep(10);
+						if(this->thread()!=qApp->thread())
+							QThread::msleep(10);
+					}
 				}
 			}
 		}

@@ -6291,14 +6291,38 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			//** Getting the dependecies for operator class **
 			if(obj_type==OBJ_OPCLASS)
 			{
-				OperatorClass *op_class=dynamic_cast<OperatorClass *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(op_class->getDataType());
+				OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
+				BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
+				unsigned i, cnt;
+				OperatorClassElement elem;
 
 				if(usr_type)
 					getObjectDependecies(usr_type, deps, inc_indirect_deps);
 
-				if(op_class->getFamily())
-					getObjectDependecies(op_class->getFamily(), deps, inc_indirect_deps);
+				if(opclass->getFamily())
+					getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
+
+				cnt=opclass->getElementCount();
+
+				for(i=0; i < cnt; i++)
+				{
+					elem=opclass->getElement(i);
+
+					if(elem.getFunction())
+						getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
+
+					if(elem.getOperator())
+						getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
+
+					if(elem.getOperatorFamily())
+						getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
+
+					if(elem.getStorage().isUserType())
+					{
+						usr_type=getObjectPgSQLType(elem.getStorage());
+						getObjectDependecies(usr_type, deps, inc_indirect_deps);
+					}
+				}
 			}
 			//** Getting the dependecies for domain **
 			else if(obj_type==OBJ_DOMAIN)
@@ -6424,7 +6448,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				{
 					if(oper->getOperator(i))
 						getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
-				}
+				}		
 			}
 			//** Getting the dependecies for role **
 			else if(obj_type==OBJ_ROLE)

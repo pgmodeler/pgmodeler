@@ -7,7 +7,7 @@
     WHERE spcname LIKE 'pg_%']
 %else
     %if @{attribs} %then
-	[SELECT oid, spcname AS name, spcacl AS permissions, ]
+	[SELECT oid, spcname AS name, spcacl AS permissions, spcowner AS owner, ]
 
 	%if %not @{pgsql90} %and %not @{pgsql91} %then
 	  [ pg_tablespace_location(oid) AS directory, ]
@@ -15,7 +15,6 @@
 	  [ ts.spclocation AS directory ]
 	%end
 
-	(@{owner}) [ AS owner, ]
 	(@{comment}) [ AS comment ]
 
 	[ FROM pg_tablespace ]

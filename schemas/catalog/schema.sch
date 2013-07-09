@@ -8,9 +8,8 @@
     WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
 %else
     %if @{attribs} %then
-      [SELECT oid, nspname AS name, nspacl AS permissions, ]
+      [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]
 
-	(@{owner})[ AS owner, ]
 	(@{comment}) [ AS comment
 
        FROM pg_namespace ]

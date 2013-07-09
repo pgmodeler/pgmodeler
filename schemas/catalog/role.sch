@@ -11,11 +11,11 @@
 		  rolconnlimit AS connlimit, rolvaliduntil AS validity,
 	    (SELECT passwd FROM pg_shadow WHERE usesysid=oid),
 
-	    (SELECT array_agg(rl.rolname) AS members FROM pg_auth_members AS am
+	    (SELECT array_agg(rl.oid) AS members FROM pg_auth_members AS am
 	     LEFT JOIN pg_roles AS rl ON rl.oid=am.member
 	     WHERE am.roleid=rl1.oid AND am.admin_option IS FALSE),
 
-	    (SELECT array_agg(rl.rolname) AS admins FROM pg_auth_members AS am
+	    (SELECT array_agg(rl.oid) AS admins FROM pg_auth_members AS am
 	     LEFT JOIN pg_roles AS rl ON rl.oid=am.member
 	     WHERE am.roleid=rl1.oid AND am.admin_option IS TRUE), ]
 

@@ -64,15 +64,16 @@ QString BaseType::type_list[types_count]=
 	"IMMUTABLE",
 
 	//Types used by the class IndexingType
-	//offsets 21 to 25
+	//offsets 21 to 26
 	"btree",
 	"rtree",
 	"gist",
 	"hash",
 	"gin",
+	"spgist",
 
 	//Types used by the class PgSQLType
-	//offsets 26 to 66
+	//offsets 27 to 67
 	"smallint", "integer", "bigint", "decimal", "numeric",
 	"real", "double precision", "float", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",
@@ -85,48 +86,48 @@ QString BaseType::type_list[types_count]=
 	"smallserial",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 67 to 71
+	//offsets 68 to 72
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
 
 	//Range-types
-	//offsets 72 to 77
+	//offsets 73 to 78
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 78 to 89
+	//offsets 79 to 90
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",
 
 	//Pseudo-types
-	//offsets 90 to 101
+	//offsets 91 to 102
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray","cstring","internal","language_handler",
 	"record","trigger","void","opaque",
 
 	//Interval types
-	//offsets 102 to 114
+	//offsets 103 to 115
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 115 to 117
+	//offsets 116 to 118
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 118 to 119
+	//offsets 119 to 120
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 120 to 125
+	//offsets 121 to 126
 	"sql",
 	"c",
 	"plpgsql",
@@ -135,7 +136,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 126 to 166
+	//offsets 127 to 167
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -147,25 +148,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 167 to 170
+	//offsets 168 to 171
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 171 to 173
+	//offsets 172 to 174
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 174 to 175
+	//offsets 175 to 176
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 176 to 189 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 177 to 190 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -182,7 +183,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 190 to 192
+	//offsets 191 to 193
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -191,7 +192,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 193 to 199
+	//offsets 194 to 200
 	"POINT",
 	"LINESTRING",
 	"POLYGON",

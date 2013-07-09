@@ -38,10 +38,6 @@ Operator::Operator(void)
 	attributes[ParsersAttributes::RIGHT_TYPE]="";
 	attributes[ParsersAttributes::COMMUTATOR_OP]="";
 	attributes[ParsersAttributes::NEGATOR_OP]="";
-	//attributes[ParsersAttributes::SORT_OP]="";
-	//attributes[ParsersAttributes::SORT2_OP]="";
-	//attributes[ParsersAttributes::LESS_OP]="";
-	//attributes[ParsersAttributes::GREATER_OP]="";
 	attributes[ParsersAttributes::RESTRICTION_FUNC]="";
 	attributes[ParsersAttributes::JOIN_FUNC]="";
 	attributes[ParsersAttributes::OPERATOR_FUNC]="";

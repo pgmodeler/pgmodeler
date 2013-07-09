@@ -254,6 +254,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	item->setData(0, Qt::UserRole, QVariant::fromValue<ValidationInfo>(val_info));
 	warn_count_lbl->setText(QString("%1").arg(validation_helper.getWarningCount()));
 	error_count_lbl->setText(QString("%1").arg(validation_helper.getErrorCount()));
+	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
 }
 
@@ -312,8 +313,9 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		item=new QTreeWidgetItem;
 		label=new QLabel;
 
-		label->setText(trUtf8("The validation process ended up without any issues."));
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
+		label->setText(trUtf8("The validation process ended up without any issues."));
+
 		warn_count_lbl->setText(QString("%1").arg(0));
 		error_count_lbl->setText(QString("%1").arg(0));
 		fix_btn->setEnabled(false);
@@ -334,17 +336,18 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			msg.replace(")",")</em>");
 		}
 
-		label->setText(msg);
-
 		if(obj_type!=BASE_OBJECT)
 			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 		else
 			item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
+		label->setText(msg);
+
 		output_trw->addTopLevelItem(item);
 		output_trw->setItemWidget(item, 0, label);
 	}
 
+	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
 	this->repaint();
 }

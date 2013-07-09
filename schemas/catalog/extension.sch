@@ -12,7 +12,8 @@
 
 %else
     %if @{attribs} %then
-	[SELECT ex.oid, ex.extname AS name, ex.extversion AS curr_version, ns.nspname AS schema,
+	[SELECT ex.oid, ex.extname AS name, ex.extversion AS curr_version,
+		ex.extowner, ex.extnamespace,
 	  (SELECT CASE
 		    WHEN  count(objid) >= 1 THEN TRUE
 		    ELSE FALSE
@@ -24,8 +25,11 @@
 
 	  (@{comment}) [ AS comment ]
 
-	 [ FROM pg_extension AS ex
-	   LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid ]
+	 [ FROM pg_extension AS ex ]
+
+      %if @{schema} %then
+       [ LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid ]
+      %end
 
        %if @{filter-oids} %or @{schema} %then
 	 [ WHERE ]

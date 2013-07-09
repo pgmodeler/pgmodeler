@@ -7,17 +7,19 @@
 
   %if @{schema} %then
    [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-      WHERE ns.nspname = ] '@{schema}'
+      WHERE pr.proisagg IS FALSE AND ns.nspname = ] '@{schema}'
+  %else
+   [ WHERE pr.proisagg IS FALSE ]
   %end
 
 %else
     %if @{attribs} %then
 	[SELECT pr.oid,
-		ns.nspname AS schema,
+		pronamespace AS schema,
 		pr.proowner AS owner,
 		pr.proacl AS permissions,
 		pr.proname AS name,
-		la.lanname AS language,
+		pr.prolang AS language,
 		pr.procost AS execution_cost,
 		pr.prorows AS row_amount,
 		pr.proiswindow AS window_func_bool,
@@ -57,29 +59,25 @@
 		 [ pr.proleakproof AS leakproof_bool, ]
 		%end
 
-	(@{owner}) [ AS owner, ]
 	(@{comment}) [ AS comment, ]
 	(@{from-extension}) [ AS from_extension_bool ]
 
-	[ FROM pg_proc AS pr
-	    LEFT JOIN pg_language AS la ON pr.prolang = la.oid
-	    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+	[ FROM pg_proc AS pr ]
 
-       %if @{filter-oids} %or @{schema} %then
-	 [ WHERE ]
+	%if @{schema} %then
+	 [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+	%end
 
-	 %if @{filter-oids} %then
-	   [ pr.oid IN (] @{filter-oids} )
+	[ WHERE pr.proisagg IS FALSE ]
 
-	   %if @{schema} %then
-	     [ AND ]
-	   %end
-	 %end
+	%if @{filter-oids} %or @{schema} %then
+	  %if @{filter-oids} %then
+	   [ AND pr.oid IN (] @{filter-oids} )
+	  %end
 
-	 %if @{schema} %then
-	   [ ns.nspname = ] '@{schema}'
-	 %end
+	  %if @{schema} %then
+	   [ AND  ns.nspname = ] '@{schema}'
+	  %end
        %end
-
     %end
 %end

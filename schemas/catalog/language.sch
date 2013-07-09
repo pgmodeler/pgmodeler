@@ -9,10 +9,9 @@
 %else
     %if @{attribs} %then
       [SELECT oid, lanname AS name, lanpltrusted AS trusted_bool,
-	      lanplcallfoid::regproc AS handler_func, laninline::regproc AS inline_func,
-	      lanvalidator::regproc AS validator_func, lanacl AS permissions, ]
+	      lanplcallfoid AS handler_func, laninline AS inline_func,
+	      lanvalidator AS validator_func, lanacl AS permissions, lanowner AS owner, ]
 
-      (@{owner})[ AS owner, ]
       (@{comment}) [ AS comment ]
 
       [ FROM pg_language WHERE  lanispl IS TRUE ]

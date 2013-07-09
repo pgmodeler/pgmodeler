@@ -38,10 +38,10 @@ SCHEMA					(pg_namespace)	**OK!**
 EXTENSION				(pg_extension)	**OK!**
 FUNCTION				(pg_proc)				**OK!** [c,sql,internal langs]
 USERTYPE				(pg_type)
-LANGUAGE				(pg_language)	[user-defined]
-FUNCTION				(pg_proc)			[user-defined]
-AGGREGATE				(pg_aggregate)
-OPERATOR				(pg_operator)
+LANGUAGE				(pg_language)	  **OK!** [user-defined]
+FUNCTION				(pg_proc)			  **OK!** [user-defined]
+AGGREGATE				(pg_aggregate)  **OK!**
+OPERATOR				(pg_operator)   **OK!**
 OPCLASS					(pg_opclass)
 OPFAMILY				(pg_opfamily)
 COLLATION				(pg_collation)
@@ -99,7 +99,7 @@ class Catalog {
 		QString getFromExtensionQuery(const QString &oid_field);
 
 		//! \brief Returns the query that is used to retrieve an objects dependency (tablespace, owners, collations, etc)
-		QString getDepObjectQuery(const QString &oid_field, ObjectType obj_type);
+		//QString getDepObjectQuery(const QString &oid_field, ObjectType obj_type);
 
 		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
 		to query the pg_shdescription instead of pg_description */
@@ -146,6 +146,12 @@ class Catalog {
 
 		//! \brief Retrieve all available functions. User can filter items by oids as well by schema
 		vector<attribs_map> getFunctions(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available aggregate functions. User can filter items by oids as well by schema
+		vector<attribs_map> getAggregates(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available operators. User can filter items by oids as well by schema
+		vector<attribs_map> getOperators(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif
