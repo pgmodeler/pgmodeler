@@ -354,6 +354,11 @@ class PgSQLType: public BaseType{
 		//! \brief Renames a user defined type
 		static void renameUserType(const QString &type_name, void *ptype, const QString &new_name);
 
+		/*! \brief Removes all registered types for the specified database model. Caution:
+		This method must be called only when destroying the model. Calling it in any other
+		situation can cause unexpected results */
+		static void removeUserTypes(void *pmodel);
+
 		//! \brief Returns the name of the type using its id
 		static QString getUserTypeName(unsigned type_id);
 

@@ -29,11 +29,6 @@ Domain::Domain(void)
 	attributes[ParsersAttributes::CONSTRAINT]="";
 }
 
-Domain::~Domain(void)
-{
-	PgSQLType::removeUserType(this->getName(true), this);
-}
-
 void Domain::setName(const QString &name)
 {
 	QString prev_name, new_name;

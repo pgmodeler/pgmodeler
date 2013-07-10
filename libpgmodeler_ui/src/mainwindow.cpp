@@ -167,7 +167,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
 		sqlappend_wgt=new SQLAppendWidget(this);
-		changeobjorder_wgt=new SwapObjectsIdsWidget(this);
 	}
 	catch(Exception &e)
 	{
@@ -244,7 +243,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel()));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
-	connect(action_change_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
@@ -671,7 +669,7 @@ void MainWindow::setCurrentModel(void)
 
 	//Removing model specific actions from general toolbar
 	act_list=general_tb->actions();
-	while(act_list.size() > 5)
+	while(act_list.size() > 4)
 	{
 		general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -1114,7 +1112,6 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
-	action_change_order->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);
@@ -1199,10 +1196,4 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
-}
-
-void MainWindow::swapObjectsIds(void)
-{
-	changeobjorder_wgt->setModel(current_model->getDatabaseModel());
-	changeobjorder_wgt->show();
 }

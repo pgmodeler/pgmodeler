@@ -9,12 +9,6 @@ Extension::Extension(void)
 	attributes[ParsersAttributes::OLD_VERSION]="";
 }
 
-Extension::~Extension(void)
-{
-	if(handles_type)
-		PgSQLType::removeUserType(this->getName(true), this);
-}
-
 void Extension::setName(const QString &name)
 {
 	if(!handles_type)

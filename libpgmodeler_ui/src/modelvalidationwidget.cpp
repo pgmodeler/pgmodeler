@@ -26,6 +26,8 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	setupUi(this);
 	this->setModel(nullptr);
 
+	swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
+
 	SchemaParser::getPgSQLVersions(vers);
 	version_cmb->addItem(trUtf8("Autodetect"));
 	while(!vers.empty())
@@ -63,6 +65,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
+	connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 }
 
 void ModelValidationWidget::hide(void)
@@ -76,6 +79,7 @@ void ModelValidationWidget::reenableValidation(void)
 	validation_thread->quit();
 	model_wgt->setEnabled(true);
 	validate_btn->setEnabled(true);
+	swap_ids_btn->setEnabled(true);
 	cancel_btn->setEnabled(false);
 	fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
 	clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
@@ -108,6 +112,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
+	swap_ids_btn->setEnabled(enable);
 	options_btn->setEnabled(enable);
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
@@ -265,6 +270,8 @@ void ModelValidationWidget::validateModel(void)
 	clearOutput();
 	prog_info_wgt->setVisible(true);
 	validate_btn->setEnabled(false);
+	swap_ids_btn->setEnabled(false);
+	options_btn->setEnabled(false);
 	model_wgt->setEnabled(false);
 	cancel_btn->setEnabled(false);
 	validation_thread->start();
@@ -368,4 +375,10 @@ void ModelValidationWidget::configureValidation(void)
 
 		validation_helper.setValidationParams(model_wgt->getDatabaseModel(), conn, ver);
 	}
+}
+
+void ModelValidationWidget::swapObjectsIds(void)
+{
+	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
+	swapobjectsids_wgt->show();
 }

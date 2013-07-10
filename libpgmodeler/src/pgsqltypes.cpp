@@ -957,6 +957,30 @@ void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QStri
 	}
 }
 
+void PgSQLType::removeUserTypes(void *pmodel)
+{
+	if(pmodel)
+	{
+		vector<UserTypeConfig>::iterator itr;
+		unsigned idx=0;
+
+		itr=user_types.begin();
+		while(itr!=user_types.end())
+		{
+			if(itr->pmodel==pmodel)
+			{
+				user_types.erase(itr);
+				itr=user_types.begin() + idx;
+			}
+			else
+			{
+				idx++;
+				itr++;
+			}
+		}
+	}
+}
+
 unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 {
 	return(getType(type_name,offset,types_count));

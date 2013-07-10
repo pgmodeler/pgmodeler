@@ -43,7 +43,6 @@ class Extension: public BaseObject {
 		static constexpr unsigned CUR_VERSION=0,
 															OLD_VERSION=1;
 		Extension(void);
-		~Extension(void);
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);

@@ -46,7 +46,6 @@ class Domain: public BaseObject{
 
 	public:
 		Domain(void);
-		~Domain(void);
 
 		//! \brief Sets the domain's constraint name
 		void setConstraintName(const QString &constr_name);

@@ -29,6 +29,7 @@
 #include "connection.h"
 #include "modelwidget.h"
 #include "modelvalidationhelper.h"
+#include "swapobjectsidswidget.h"
 
 /* Declaring the ValidationInfo class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -44,6 +45,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		//! \brief Object that handles the model validation steps
 		ModelValidationHelper validation_helper;
+
+		//! \brief Object creation order modifier
+		SwapObjectsIdsWidget *swapobjectsids_wgt;
 
 		//! \brief Current fix step
 		int curr_step;
@@ -69,6 +73,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void reenableValidation(void);
 		void configureValidation(void);
 		void cancelValidation(void);
+		void swapObjectsIds(void);
 
 	public slots:
 		void hide(void);

@@ -122,7 +122,6 @@ class Type: public BaseObject {
 															SUBTYPE_DIFF_FUNC=8;
 
 		Type(void);
-		~Type(void);
 
 		//! \brief Sets the type name
 		void setName(const QString &name);

@@ -744,6 +744,8 @@ void DatabaseModel::destroyObjects(void)
 			list->pop_back();
 		}
 	}
+
+	PgSQLType::removeUserTypes(this);
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)

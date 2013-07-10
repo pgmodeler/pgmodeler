@@ -54,12 +54,6 @@ Type::Type(void)
 	BaseObject::attributes[ParsersAttributes::OP_CLASS]="";
 }
 
-Type::~Type(void)
-{
-	//When destroyed the type must be removed from the PostgreSQL base types list
-	PgSQLType::removeUserType(this->getName(true), this);
-}
-
 void Type::setName(const QString &name)
 {
 	QString prev_name;
