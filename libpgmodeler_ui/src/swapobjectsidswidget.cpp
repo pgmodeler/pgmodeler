@@ -1,6 +1,6 @@
-#include "changeobjectorderwidget.h"
+#include "swapobjectsidswidget.h"
 
-ChangeObjectOrderWidget::ChangeObjectOrderWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	try
 	{
@@ -12,6 +12,7 @@ ChangeObjectOrderWidget::ChangeObjectOrderWidget(QWidget *parent, Qt::WindowFlag
 		parent_form.generalwidget_wgt->setCurrentIndex(0);
 		parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
+		//Remove unused object types from vector
 		types.erase(std::find(types.begin(), types.end(), OBJ_PERMISSION));
 		types.erase(std::find(types.begin(), types.end(), OBJ_ROLE));
 		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
@@ -49,13 +50,13 @@ ChangeObjectOrderWidget::ChangeObjectOrderWidget(QWidget *parent, Qt::WindowFlag
 	}
 }
 
-void ChangeObjectOrderWidget::show(void)
+void SwapObjectsIdsWidget::show(void)
 {
 	QDialog::show();
 	parent_form.exec();
 }
 
-void ChangeObjectOrderWidget::setModel(DatabaseModel *model)
+void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 {
 	this->model=model;
 	src_object_sel->setModel(model);
@@ -66,18 +67,18 @@ void ChangeObjectOrderWidget::setModel(DatabaseModel *model)
 	dst_object_sel->clearSelector();
 }
 
-void ChangeObjectOrderWidget::close(void)
+void SwapObjectsIdsWidget::close(void)
 {
 	this->setResult(QDialog::Rejected);
 	parent_form.close();
 }
 
-void ChangeObjectOrderWidget::hideEvent(QHideEvent *)
+void SwapObjectsIdsWidget::hideEvent(QHideEvent *)
 {
 	this->setModel(nullptr);
 }
 
-void ChangeObjectOrderWidget::showObjectId(void)
+void SwapObjectsIdsWidget::showObjectId(void)
 {
 	QLabel *ico_lbl=nullptr, *id_lbl=nullptr;
 	BaseObject *sel_obj=nullptr;
@@ -114,15 +115,19 @@ void ChangeObjectOrderWidget::showObjectId(void)
 	}
 }
 
-void ChangeObjectOrderWidget::changeObjectsIds(void)
+void SwapObjectsIdsWidget::changeObjectsIds(void)
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 						 *dst_obj=dst_object_sel->getSelectedObject();
 
-	if(src_obj!=dst_obj)
+	try
 	{
-		BaseObject::swapObjectsIds(src_obj, dst_obj);
+		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 		this->accept();
 		parent_form.close();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

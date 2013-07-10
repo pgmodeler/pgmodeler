@@ -782,11 +782,29 @@ void BaseObject::clearAttributes(void)
 	}
 }
 
-void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2)
+void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap)
 {
+	//Raises an error if some of the objects aren't allocated
 	if(!obj1 || !obj2)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(obj1 != obj2)
+	//Raises an error if the involved objects are the same
+	else if(obj1==obj2)
+		throw Exception(ERR_INV_ID_SWAP_SAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the some of the objects are system objects
+	else if(obj1->isSystemObject())
+		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+										.arg(obj1->getName()).arg(Utf8String::create(obj1->getTypeName())),
+										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(obj2->isSystemObject())
+		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+										.arg(obj2->getName()).arg(Utf8String::create(obj2->getTypeName())),
+										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
+	else if(!enable_cl_obj_swap &&
+					(obj1->getObjectType()==OBJ_DATABASE || obj1->getObjectType()==OBJ_TABLESPACE || obj1->getObjectType()==OBJ_ROLE ||
+					 obj2->getObjectType()==OBJ_DATABASE || obj2->getObjectType()==OBJ_TABLESPACE || obj2->getObjectType()==OBJ_ROLE))
+		throw Exception(ERR_INV_ID_SWAP_INV_OBJ_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else
 	{
 		unsigned id_bkp=obj1->object_id;
 		obj1->object_id=obj2->object_id;

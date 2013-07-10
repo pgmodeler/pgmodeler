@@ -43,9 +43,9 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	//connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 	connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
-	connect(fix_btn, SIGNAL(clicked(bool)), this, SLOT(applyFix(void)));
-	connect(clear_btn, SIGNAL(clicked(bool)), this, SLOT(clearOutput(void)));
+	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
+	connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFix(void)));
+	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 	connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
@@ -55,14 +55,14 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	connect(sql_validation_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
 
 	connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
-	connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
+	connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
 	connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
 	connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), cancel_btn, SLOT(setEnabled(bool)));
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 	connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelValidation(void)));
+	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 }
 
 void ModelValidationWidget::hide(void)

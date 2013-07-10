@@ -378,6 +378,11 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_exportFinished();
 		else
 			emit s_exportCanceled();
+
+		/* Puts the thread to sleep by 20ms at end of process export to give time to external operations
+		to be correctly finished before completely quit the thread itself */
+		if(this->thread() && qApp->thread()!=this->thread())
+			QThread::msleep(20);
 	}
 	catch(Exception &e)
 	{

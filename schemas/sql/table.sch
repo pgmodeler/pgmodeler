@@ -14,7 +14,11 @@
 
   %if %not @{gen-alter-cmds} %then
     %if @{columns} %then @{columns} %end
-    %if @{constraints} %then , $br @{constraints} %end
+
+    %if @{constraints} %then
+	%if %not @{constr-sql-disabled} %then [,] %end
+	$br @{constraints}
+    %end
   %end
 
 $br )

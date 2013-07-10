@@ -31,6 +31,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
+	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
 }
@@ -121,6 +122,10 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
 		SchemaParser::setIgnoreUnkownAttributes(true);
+
+		if(tab_obj->isSQLDisabled())
+			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
+
 		attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs,
 																																								 SchemaParser::SQL_DEFINITION);
 		SchemaParser::setIgnoreUnkownAttributes(false);
@@ -167,6 +172,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	unsigned i, count;
 	bool inc_added_by_rel;
 	Constraint *constr=nullptr;
+	vector<QString> lines;
 
 	count=constraints.size();
 	for(i=0; i < count; i++)
@@ -181,21 +187,40 @@ void Table::setConstraintsAttribute(unsigned def_type)
 				 (constr->getConstraintType()==ConstraintType::primary_key))))
 		{
 			inc_added_by_rel=(def_type==SchemaParser::SQL_DEFINITION);
-			str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
+
+			if(def_type==SchemaParser::XML_DEFINITION)
+				str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
+			else
+				//For sql definition the generated constraints are stored in a vector to be treated below
+				lines.push_back(constr->getCodeDefinition(def_type,inc_added_by_rel));
 
 			if(def_type==SchemaParser::SQL_DEFINITION)
 				setCommentAttribute(constr);
 		}
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	/* Check if some constraint has its sql disabled. If so,
+		it necessary to make some tweaks in order to not generate bad sql code */
+	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty())
 	{
-		if(str_constr!="")
+		i=lines.size()-1;
+		unsigned dis_sql_cnt=0;
+
+		//If the last line starts with -- indicates that sql code for the constraint is disable
+		if(lines[i].startsWith("--") && i > 0)
+			//Removes the comma from the above line in order to avoid bad sql
+			lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
+		else
+			//Otherwise removes the comma from the last line
+			lines[i].remove(lines[i].lastIndexOf(','),1);
+
+		for(i=0; i < lines.size(); i++)
 		{
-			count=str_constr.size();
-			if(str_constr[count-2]==',' || str_constr[count-2]=='\n')
-				str_constr.remove(count-2,2);
+			if(lines[i].startsWith("--")) dis_sql_cnt++;
+			str_constr+=lines[i];
 		}
+
+		attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? "1" : "");
 	}
 
 	attributes[ParsersAttributes::CONSTRAINTS]=str_constr;

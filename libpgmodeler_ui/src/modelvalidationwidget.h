@@ -39,9 +39,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Thread used to control the validation helper
-		QThread *validation_thread;
-
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
@@ -50,6 +47,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		//! \brief Current fix step
 		int curr_step;
+
+	protected:
+		//! \brief Thread used to control the validation helper
+		QThread *validation_thread;
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
@@ -76,6 +77,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	signals:
 		void s_visibilityChanged(bool);
 		void s_validationInProgress(bool);
+
+	friend class MainWindow;
 };
 
 #endif

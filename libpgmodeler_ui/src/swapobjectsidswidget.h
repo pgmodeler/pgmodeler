@@ -22,29 +22,31 @@
 \brief Implements the operations to swap objects ids to cover the cases where model validation cannot reach.
 */
 
-#ifndef CHANGE_OBJECT_ORDER_WIDGET_H
-#define CHANGE_OBJECT_ORDER_WIDGET_H
+#ifndef SWAP_OBJECTS_IDS_WIDGET_H
+#define SWAP_OBJECTS_IDS_WIDGET_H
 
-#include "ui_changeobjectorderwidget.h"
+#include "ui_swapobjectsidswidget.h"
 #include <QWidget>
 #include "baseform.h"
 #include "objectselectorwidget.h"
 
-class ChangeObjectOrderWidget: public QDialog, public Ui::ChangeObjectOrderWidget {
+class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Reference database model
 		DatabaseModel *model;
 
+		//! \brief Widget's parent form (with bottom right control buttons)
 		BaseForm parent_form;
 
+		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
 		void hideEvent(QHideEvent *);
 
 	public:
-		ChangeObjectOrderWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
-
+		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
 		void setModel(DatabaseModel *model);
 		
 	signals:

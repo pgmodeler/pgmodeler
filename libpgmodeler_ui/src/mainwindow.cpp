@@ -167,7 +167,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
 		sqlappend_wgt=new SQLAppendWidget(this);
-		changeobjorder_wgt=new ChangeObjectOrderWidget(this);
+		changeobjorder_wgt=new SwapObjectsIdsWidget(this);
 	}
 	catch(Exception &e)
 	{
@@ -244,7 +244,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel()));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
-	connect(action_change_order, SIGNAL(triggered(bool)), this, SLOT(changeObjectsOrder(void)));
+	connect(action_change_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
@@ -671,7 +671,7 @@ void MainWindow::setCurrentModel(void)
 
 	//Removing model specific actions from general toolbar
 	act_list=general_tb->actions();
-	while(act_list.size() > 6)
+	while(act_list.size() > 5)
 	{
 		general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -924,13 +924,22 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
-			bool sql_val_checked=model_valid_wgt->sql_validation_chk->isChecked();
+			bool sql_val_checked=model_valid_wgt->sql_validation_chk->isChecked(),
+					 val_wgt_checked=validation_btn->isChecked();
 
 			if(model->isModified())
 			{
+				validation_btn->setChecked(true);
 				model_valid_wgt->sql_validation_chk->setChecked(false);
 				model_valid_wgt->validate_btn->click();
+
+				//Creates a local event loop to block operations while the validation thread is running
+				QEventLoop eventLoop;
+				connect(model_valid_wgt->validation_thread, SIGNAL(finished(void)), &eventLoop, SLOT(quit(void)));
+				eventLoop.exec(QEventLoop::AllEvents);
+
 				model_valid_wgt->sql_validation_chk->setChecked(sql_val_checked);
+				validation_btn->setChecked(val_wgt_checked);
 			}
 
 			/* The model is saved only when is modified and is not invalidated or the user
@@ -1192,14 +1201,8 @@ void MainWindow::openWiki(void)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
 }
 
-void MainWindow::changeObjectsOrder(void)
+void MainWindow::swapObjectsIds(void)
 {
 	changeobjorder_wgt->setModel(current_model->getDatabaseModel());
 	changeobjorder_wgt->show();
-
-	if(changeobjorder_wgt->result()==QDialog::Accepted)
-	{
-		validation_btn->setChecked(true);
-		model_valid_wgt->validate_btn->click();
-	}
 }

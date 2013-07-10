@@ -76,7 +76,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/databaseimportform.cpp \
 	   src/sqlappendwidget.cpp \
 	   src/codecompletionwidget.cpp \
-    src/changeobjectorderwidget.cpp
+    src/swapobjectsidswidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -142,7 +142,7 @@ HEADERS += src/mainwindow.h \
 	   src/databaseimportform.h \
 	   src/sqlappendwidget.h \
 	   src/codecompletionwidget.h \
-    src/changeobjectorderwidget.h
+    src/swapobjectsidswidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -199,4 +199,4 @@ FORMS += ui/mainwindow.ui \
 	 ui/objectfinderwidget.ui \
 	 ui/databaseimportform.ui \
 	 ui/sqlappendwidget.ui \
-    ui/changeobjectorderwidget.ui
+    ui/swapobjectsidswidget.ui

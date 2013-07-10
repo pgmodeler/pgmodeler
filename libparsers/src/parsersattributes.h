@@ -347,6 +347,7 @@ namespace ParsersAttributes {
 	STORAGE_PARAMS="stg-params",
 	DDL_END_TOKEN="-- ddl-end --",
 	SQL_DISABLED="sql-disabled",
+	CONSTR_SQL_DISABLED="constr-sql-disabled",
 	REVOKE="revoke",
 	CASCADE="cascade",
 	CTE_EXPRESSION="cte-exp",

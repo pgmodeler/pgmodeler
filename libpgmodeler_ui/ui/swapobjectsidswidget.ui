@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ChangeObjectOrderWidget</class>
- <widget class="QWidget" name="ChangeObjectOrderWidget">
+ <class>SwapObjectsIdsWidget</class>
+ <widget class="QWidget" name="SwapObjectsIdsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
-    <height>140</height>
+    <width>533</width>
+    <height>145</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -181,7 +181,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Changing the creation order in this form implies the execution of model validation. It's recommended to use this feature only when the SQL validation fails in cases that a object is referenced inside some expression before it's creation.</string>
+         <string>It's recommended to use this feature only when the SQL validation fails in cases when a object is being referenced in portions where the ordinary validation couldn't reach, e.g., inside of a rule command or check constraint expression.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

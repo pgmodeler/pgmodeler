@@ -164,8 +164,10 @@ class BaseObject {
 							 if the user calls getDatabase() in further operations may result in crash */
 		void setDatabase(BaseObject *db);
 
-		//! \brief Swap the the ids of the specified objects
-		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2);
+		/*! \brief Swap the the ids of the specified objects. The method will raise errors if the objects are the same,
+		or some of them are system object. The boolean param enables the id swap between ordinary object and
+		cluster level objects (database, tablespace and roles). */
+		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
@@ -345,7 +347,7 @@ class BaseObject {
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;
-		friend class ChangeObjectOrderWidget;
+		friend class SwapObjectsIdsWidget;
 };
 
 #endif

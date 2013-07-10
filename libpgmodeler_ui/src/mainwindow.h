@@ -41,7 +41,7 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
-#include "changeobjectorderwidget.h"
+#include "swapobjectsidswidget.h"
 
 using namespace std;
 
@@ -83,7 +83,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		ObjectFinderWidget *obj_finder_wgt;
 
 		//! \brief Object creation order modifier
-		ChangeObjectOrderWidget *changeobjorder_wgt;
+		SwapObjectsIdsWidget *changeobjorder_wgt;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;
@@ -197,7 +197,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void updateConnections(void);
 
-		void changeObjectsOrder(void);
+		void swapObjectsIds(void);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);

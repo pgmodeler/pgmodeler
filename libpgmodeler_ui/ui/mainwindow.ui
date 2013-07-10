@@ -662,7 +662,6 @@
    <addaction name="action_wiki"/>
    <addaction name="action_configuration"/>
    <addaction name="action_plugins"/>
-   <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_change_order"/>
   </widget>
