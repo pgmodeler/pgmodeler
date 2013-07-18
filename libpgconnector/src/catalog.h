@@ -108,7 +108,7 @@ class Catalog {
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object */
 		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
-														 bool single_result=false, attribs_map attribs={});
+                                 bool single_result=false, attribs_map attribs=attribs_map());
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
 		underscores have this char replaced by dashes. Another special operation made is to replace
@@ -117,7 +117,7 @@ class Catalog {
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 		//! \brief Returns a attribute set for the specified object type and name
-		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs={});
+        attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns the query to retrieve the information if the object (specified by its oid field) is part of
 		 a extension. Being part of a extension will cause the object to be created as system object and with
@@ -150,7 +150,7 @@ class Catalog {
 		attribs_map getObjects(ObjectType obj_type, const QString &sch_name="");
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
-		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs={});
+        vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Retrieve all available databases. User can filter items by oids
 		vector<attribs_map> getDatabases(const vector<QString> &filter_oids={});
