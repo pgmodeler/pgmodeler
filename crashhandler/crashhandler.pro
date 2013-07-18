@@ -3,7 +3,7 @@ include(../pgmodeler.pro)
 TEMPLATE = app
 TARGET = crashhandler
 
-windows:RC_FILE=../main/res/windows_ico.qrc
+windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
 LIBS += $$LIBDESTDIR/$$LIBUTILS \
