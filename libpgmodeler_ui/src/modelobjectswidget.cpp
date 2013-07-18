@@ -973,25 +973,20 @@ void ModelObjectsWidget::saveTreeState(bool value)
 
 void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
 {
-	QList<QTreeWidgetItem *> items;
+	QTreeWidgetItemIterator itr(objectstree_tw);
 	BaseObject *obj=nullptr;
 	QTreeWidgetItem *item=nullptr;
 
-	tree_items.clear();
-	items=objectstree_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
-
-	while(!items.isEmpty())
+	while(*itr)
 	{
-		item=items.front();
+		item=*itr;
 		obj=reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
 
 		if(obj && item->parent() && item->parent()->isExpanded())
 			tree_items.push_back(obj);
 
-		items.pop_front();
+		++itr;
 	}
-
-	unique(tree_items.begin(), tree_items.end());
 }
 
 void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
@@ -1021,23 +1016,21 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 {
 	if(object)
 	{
-		QList<QTreeWidgetItem *> items;
+		QTreeWidgetItemIterator itr(objectstree_tw);
 		BaseObject *aux_obj=nullptr;
 		QTreeWidgetItem *item=nullptr;
 
-		items=objectstree_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
-
-		while(!items.isEmpty())
+		while(*itr)
 		{
-			item=items.front();
-			aux_obj=reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+			aux_obj=reinterpret_cast<BaseObject *>((*itr)->data(0,Qt::UserRole).value<void *>());
 
 			if(aux_obj==object)
+			{
+				item=*itr;
 				break;
-			else
-				item=nullptr;
+			}
 
-			items.pop_front();
+			++itr;
 		}
 
 		return(item);

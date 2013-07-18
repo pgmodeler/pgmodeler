@@ -240,7 +240,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
-	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel()));
+	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), &tmpmodel_thread, SLOT(start(void)));
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
 
@@ -454,7 +454,7 @@ void MainWindow::showEvent(QShowEvent *)
 		model_save_timer.start(save_interval);
 
 	//The temporary model timer is always of 1 minute
-	tmpmodel_save_timer.start(60000);
+	//tmpmodel_save_timer.start(60000);
 
  #ifndef Q_OS_MAC
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
@@ -608,8 +608,12 @@ void MainWindow::addModel(const QString &filename)
 
 	//Add the tab to the tab widget
 	obj_name=model_tab->db_model->getName();
+
+	models_tbw->blockSignals(true);
 	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
+	models_tbw->blockSignals(false);
+
 	layout=models_tbw->currentWidget()->layout();
 	layout->setContentsMargins(4,4,4,4);
 
@@ -621,7 +625,7 @@ void MainWindow::addModel(const QString &filename)
 		try
 		{
 			model_tab->loadModel(filename);
-
+			models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
 			//Get the "public" schema and set as system object
 			public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", OBJ_SCHEMA));
 			if(public_sch)	public_sch->setSystemObject(true);
@@ -639,6 +643,8 @@ void MainWindow::addModel(const QString &filename)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
+	else
+		models_tbw->setTabToolTip(models_tbw->currentIndex(), trUtf8("(model not saved yet)"));
 
 	//The model is set to modified when no model file is loaded
 	model_tab->setModified(filename.isEmpty());
@@ -680,11 +686,17 @@ void MainWindow::setCurrentModel(void)
 	edit_menu->addAction(action_redo);
 	edit_menu->addSeparator();
 
-	//Update the navigation buttons
-	if(object==action_next)
-		models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
-	else if(object==action_previous)
-		models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
+	if(object==action_next || object==action_previous)
+	{
+		models_tbw->blockSignals(true);
+
+		if(object==action_next)
+			models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
+		else if(object==action_previous)
+			models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
+
+		models_tbw->blockSignals(false);
+	}
 
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
@@ -694,6 +706,7 @@ void MainWindow::setCurrentModel(void)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
+
 	if(current_model)
 	{
 		this->applyZoom();
@@ -761,7 +774,8 @@ void MainWindow::setCurrentModel(void)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
-	this->saveTemporaryModel(true);
+	tmpmodel_thread.setModel(current_model);
+	tmpmodel_thread.start();
 }
 
 void MainWindow::setGridOptions(void)
@@ -964,6 +978,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
 					recent_models.push_front(file_dlg.selectedFiles().at(0));
 					updateRecentModelsMenu();
+					models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
 				}
 				else
 					model->saveModel();
@@ -1174,10 +1189,10 @@ void MainWindow::executePlugin(void)
 	}
 }
 
-void MainWindow::saveTemporaryModel(bool force)
+void MainWindow::saveTemporaryModel(void)
 {
-	if(current_model && (this->isActiveWindow() || force))
-		current_model->db_model->saveModel(current_model->getTempFilename(), SchemaParser::XML_DEFINITION);
+	if(current_model && this->isActiveWindow())
+		tmpmodel_thread.start();
 }
 
 void MainWindow::showOverview(bool show)

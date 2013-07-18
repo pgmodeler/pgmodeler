@@ -41,12 +41,16 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
+#include "temporarymodelthread.h"
 
 using namespace std;
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
+
+		//! \brief Thread that controls temporary model file savings
+		TemporaryModelThread tmpmodel_thread;
 
 		//! \brief Dialog used to configure printing options.
 		QPrintDialog *print_dlg;
@@ -172,9 +176,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void executePlugin(void);
 
 		/*! \brief Saves a temporary model file related to the currently edited model. In case of failure (crash)
-		pgModeler can restore the previous model. Generally the temp file is saved only when the main window is focused
-		so the 'force' parameter is used to force the saving of temp file event pgModeler does not show its main window */
-		void saveTemporaryModel(bool force=false);
+		pgModeler can restore the previous model. */
+		void saveTemporaryModel(void);
 
 		//! \brief Toggles the overview widget for the currently opened model
 		void showOverview(bool show);

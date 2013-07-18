@@ -5,8 +5,7 @@ FALLBACK_QMAKE_ROOT=/usr/local/qt-5.0.2/5.0.2/gcc_64/bin
 LOG=linuxdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
-DEPLOY_VER=${DEPLOY_VER/\",/}
+DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
 
 # Identify architecture
 case `uname -m` in
@@ -32,13 +31,13 @@ echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER_1=`$QMAKE_ROOT/qmake --version | grep -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_1=`$QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
 if [ -e "$FALLBACK_QMAKE_ROOT/qmake" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_2=${QT_VER_2:0:5}
 fi
 
