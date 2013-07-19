@@ -2500,12 +2500,6 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(obj->getObjectType()==OBJ_SCHEMA)
-		{
-			quick_actions_menu.addAction(action_sel_sch_children);
-			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
-		}
-
 		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
@@ -2595,7 +2589,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				 (!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
 																	obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
 			{
-				if(obj_type == OBJ_TABLE)
+				if(obj_type==OBJ_TABLE)
 				{
 					for(i=0; i < tab_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
@@ -2640,6 +2634,9 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
+
+					popup_menu.addAction(action_sel_sch_children);
+					action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 				}
 			}
 
@@ -2679,8 +2676,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 				popup_menu.addAction(action_deps_refs);
-
-
 		}
 	}
 

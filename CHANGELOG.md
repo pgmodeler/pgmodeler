@@ -14,6 +14,7 @@ v0.6.0-alpha
 [New] User now can completely disabled UI stylesheets by calling executable with param "-no-stylesheet".
 [New] Added the class Catalog to handle the basis of reverse engineering by reading the pgcatalog/information_schema.
 [New] System tablespaces pg_global and pg_default are now automatically created as new models are added.
+[Change] Minor change on schema area selection. The entire schema area and children can be selected (and moved) by using "Select children" action or SHIFT + left-click.
 [Change] Improved the transition between opened models. The problem was solved putting the temporary models saving in a separated thread.
 [Change] Minor improvement on model restoration operation. Models that fails to be restored can be kept so the user can try to fix them manually (until pgModeler is closed).
 [Change] Minor adjustments on model loading progress.

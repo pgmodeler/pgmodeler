@@ -37,27 +37,38 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	this->obj_shadow=nullptr;
 
 	this->configureObject();
+	all_selected=false;
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//If the user press SHIFT + left-click select all the schema children
 	if(event->modifiers()==Qt::ShiftModifier &&
-		 event->buttons()==Qt::LeftButton)
+		 event->buttons()==Qt::LeftButton && !all_selected)
 	{
-		this->setFlag(QGraphicsItem::ItemIsMovable, false);
-		this->setFlag(QGraphicsItem::ItemIsSelectable, false);
-		this->scene()->clearSelection();
 		this->selectChildren();
 	}
 	//Selects the schema
-	else
+	else if(event->modifiers()==Qt::NoModifier  && !all_selected)
 	{
 		this->setFlag(QGraphicsItem::ItemIsMovable);
 		this->setFlag(QGraphicsItem::ItemIsSelectable);
 		BaseObjectView::mousePressEvent(event);
 		this->setFlag(QGraphicsItem::ItemIsMovable, false);
 	}
+}
+
+QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+	//If the schema is unselected makes it not movable and selectable
+	if(change==QGraphicsItem::ItemSelectedChange && value.toBool()==false)
+	{
+		all_selected=false;
+		this->setFlag(QGraphicsItem::ItemIsMovable, false);
+		this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+	}
+
+	return(BaseObjectView::itemChange(change, value));
 }
 
 void SchemaView::fetchChildren(void)
@@ -83,11 +94,20 @@ void SchemaView::selectChildren(void)
 {
 	QList<BaseObjectView *>::Iterator itr=children.begin();
 
+	//Clears the current scene selection because only one schema and its children can be selected at once
+	this->scene()->clearSelection();
+
 	while(itr!=children.end())
 	{
 		(*itr)->setSelected(true);
 		itr++;
 	}
+
+	//Mark the schema as selectable/movable
+	this->setFlag(QGraphicsItem::ItemIsMovable, true);
+	this->setFlag(QGraphicsItem::ItemIsSelectable, true);
+	this->setSelected(true);
+	all_selected=true;
 }
 
 void SchemaView::configureObject(void)

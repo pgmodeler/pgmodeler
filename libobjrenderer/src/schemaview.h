@@ -18,8 +18,8 @@
 
 /**
 \ingroup libobjrenderer
-\class TextboxView
-\brief Represents the textbox in a graphical way on the object scene
+\class SchemaView
+\brief Represents the schema in a graphical way on the object scene
 */
 
 #ifndef SCHEMA_VIEW_H
@@ -33,13 +33,20 @@ class SchemaView: public BaseObjectView
 {
 	private:
 		Q_OBJECT
+
 		QGraphicsSimpleTextItem *sch_name;
+
 		QGraphicsPolygonItem *box;
+
+		//! \brief Indicates if all children objects are selected
+		bool all_selected;
 
 		//! \brief Stores the views and tables that belongs to this schema
 		QList<BaseObjectView *> children;
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 		//! \brief Fills the children vector
 		void fetchChildren(void);
