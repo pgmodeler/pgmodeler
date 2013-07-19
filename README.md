@@ -61,36 +61,36 @@ Change Log
 v0.6.0-alpha
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
-<em>Release date: July 18, 2013</em>
+<em>Release date: July 19, 2013</em>
 
-[New] Added the widget to swap objects IDs on model validation form.
-[New] Added indexing type "spgist" to IndexingType class.
-[New] Model validation and export now works with threads.
-[New] Functions now have a "leak proof" attribute.
-[New] VARIADIC key attribute added to function parameters.
-[New] User now can completely disabled UI stylesheets by calling executable with param "-no-stylesheet".
-[New] Added the class Catalog to handle the basis of reverse engineering by reading the pgcatalog/information_schema.
-[New] System tablespaces pg_global and pg_default are now automatically created as new models are added.
-[Change] Minor change on schema area selection. The entire schema area and children can be selected (and moved) by using "Select children" action or SHIFT + left-click.
-[Change] Improved the transition between opened models. The problem was solved putting the temporary models saving in a separated thread.
-[Change] Minor improvement on model restoration operation. Models that fails to be restored can be kept so the user can try to fix them manually (until pgModeler is closed).
-[Change] Minor adjustments on model loading progress.
-[Change] Minor chages on model export form. Export to DBMS is the default option.
-[Change] Minor improvements on pgmodeler-cli. Added "--simulate" option to export dbms.
-[Change] Disabled notice output to console for Connection class. User can re-enable it by calling Connection::setNoticeEnabled() [recompile source needed].
-[Change] Minor changes on PgSQL base types. "[NO] LEAKPROOF" removed from FunctionType class.
-[Change] Minor improvements on SchemaParser, now its possible to make parser ignore empty attributes.
-[Change] libdbconnect renamed to libpgconnector for semantics reasons.
-[Change] Minor improvements on CrashHandler. Added buttons to load report and save embedded model when in analysis mode.
-[Fix] Minor fix on linuxdeploy.sh script related to grep command execution.
-[Fix] Fixed some leaks when destroying objects that are registered as PgSQLType (table, sequence, extension, domain, view, type). Now these type are correctly remove from user type listing.
-[Fix] Fixed bad sql code generation when disabling sql of columns/constraints.
-[Fix] Fixed dependency retrieving for operator classes.
-[Fix] Fixed incorrect reference to "replicate" option on Roles.
-[Fix] Fixed the "ignore duplicity" bug for columns when exporting model.
-[Fix] Fixed library build order now libpgmodeler is built before libpgconnector.
-[Fix] Minor fix on UI stylesheet related tooltips when using Fusion theme.
-[Fix] Fixed the assignment of LC_COLLATE, LC_CTYPE and template db to database instance on DatabaseWidget.
+* [New] Added the widget to swap objects IDs on model validation form.
+* [New] Added indexing type "spgist" to IndexingType class.
+* [New] Model validation and export now works with threads.
+* [New] Functions now have a "leak proof" attribute.
+* [New] VARIADIC key attribute added to function parameters.
+* [New] User now can completely disabled UI stylesheets by calling executable with param "-no-stylesheet".
+* [New] Added the class Catalog to handle the basis of reverse engineering by reading the pgcatalog/information_schema.
+* [New] System tablespaces pg_global and pg_default are now automatically created as new models are added.
+* [Change] Minor change on schema area selection. The entire schema area and children can be selected (and moved) by using "Select children" action or SHIFT + left-click.
+* [Change] Improved the transition between opened models. The problem was solved putting the temporary models saving in a separated thread.
+* [Change] Minor improvement on model restoration operation. Models that fails to be restored can be kept so the user can try to fix them manually (until pgModeler is closed).
+* [Change] Minor adjustments on model loading progress.
+* [Change] Minor chages on model export form. Export to DBMS is the default option.
+* [Change] Minor improvements on pgmodeler-cli. Added "--simulate" option to export dbms.
+* [Change] Disabled notice output to console for Connection class. User can re-enable it by calling Connection::setNoticeEnabled() [recompile source needed].
+* [Change] Minor changes on PgSQL base types. "[NO] LEAKPROOF" removed from FunctionType class.
+* [Change] Minor improvements on SchemaParser, now its possible to make parser ignore empty attributes.
+* [Change] libdbconnect renamed to libpgconnector for semantics reasons.
+* [Change] Minor improvements on CrashHandler. Added buttons to load report and save embedded model when in analysis mode.
+* [Fix] Minor fix on linuxdeploy.sh script related to grep command execution.
+* [Fix] Fixed some leaks when destroying objects that are registered as PgSQLType (table, sequence, extension, domain, view, type). Now these type are correctly remove from user type listing.
+* [Fix] Fixed bad sql code generation when disabling sql of columns/constraints.
+* [Fix] Fixed dependency retrieving for operator classes.
+* [Fix] Fixed incorrect reference to "replicate" option on Roles.
+* [Fix] Fixed the "ignore duplicity" bug for columns when exporting model.
+* [Fix] Fixed library build order now libpgmodeler is built before libpgconnector.
+* [Fix] Minor fix on UI stylesheet related tooltips when using Fusion theme.
+* [Fix] Fixed the assignment of LC_COLLATE, LC_CTYPE and template db to database instance on DatabaseWidget.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
