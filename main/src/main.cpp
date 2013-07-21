@@ -44,12 +44,12 @@ void startCrashHandler(int signal)
 		symbols = backtrace_symbols(stack, stack_size);
 
 		#ifdef Q_OS_MAC
-				cmd="startapp crashhandler -style " + app_style;
+				cmd="startapp pgmodeler-ch -style " + app_style;
 		#else
-				cmd="crashhandler -style " + app_style;
+				cmd="pgmodeler-ch -style " + app_style;
 		#endif
 	#else
-		cmd="crashhandler.exe -style " + app_style;
+		cmd="pgmodeler-ch.exe -style " + app_style;
 	#endif
 
 	//Creates the stacktrace file

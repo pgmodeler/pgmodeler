@@ -1,7 +1,7 @@
 include(../pgmodeler.pro)
 
 TEMPLATE = app
-TARGET = crashhandler
+TARGET = pgmodeler-ch
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
