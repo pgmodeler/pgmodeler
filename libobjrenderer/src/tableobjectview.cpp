@@ -187,8 +187,10 @@ void TableObjectView::configureObject(void)
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::null;
+		bool sql_disabled=false;
 
 		tooltip=Utf8String::create(tab_obj->getName()) + " (" + tab_obj->getTypeName() + ")";
+		sql_disabled=tab_obj->isSQLDisabled();
 
 		if(column)
 		{
@@ -254,6 +256,12 @@ void TableObjectView::configureObject(void)
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		//Configuring tha name label
 		lables[0]->setText(Utf8String::create(tab_obj->getName()));
+
+		//Strikeout the column name when its SQL is disabled
+		QFont font=fmt.font();
+		font.setStrikeOut(sql_disabled);
+		fmt.setFont(font);
+
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);

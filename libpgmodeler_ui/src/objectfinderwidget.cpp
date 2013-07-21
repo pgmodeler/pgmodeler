@@ -215,7 +215,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				fnt.setItalic(true);
 				tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
 			}
+
+			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
 			tab_item->setFont(fnt);
+			fnt.setStrikeOut(false);
 
 			//Second column: Object type
 			if(tab_wgt->columnCount() > 1)

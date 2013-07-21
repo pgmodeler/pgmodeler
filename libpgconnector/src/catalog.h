@@ -150,7 +150,7 @@ class Catalog {
 		attribs_map getObjects(ObjectType obj_type, const QString &sch_name="");
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
-        vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Retrieve all available databases. User can filter items by oids
 		vector<attribs_map> getDatabases(const vector<QString> &filter_oids={});

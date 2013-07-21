@@ -344,13 +344,16 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					updatePermissionTree(item2, schema);
 				}
 
+				font=item2->font(0);
+				font.setStrikeOut(schema->isSQLDisabled() && !schema->isSystemObject());
+
 				if(schema && schema->isProtected())
 				{
-					font=item2->font(0);
 					font.setItalic(true);
-					item2->setFont(0,font);
 					item2->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
+
+				item2->setFont(0,font);
 
 				//Updates the table subtree for the current schema
 				updateTableTree(item2, schema);
@@ -390,13 +393,16 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 							updatePermissionTree(item4, object);
 
+							font=item4->font(0);
+							font.setStrikeOut(object->isSQLDisabled());
+
 							if(object->isProtected())
 							{
-								font=item4->font(0);
 								font.setItalic(true);
-								item4->setFont(0,font);
 								item4->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 							}
+
+							item4->setFont(0,font);
 
 							if(types[i1]==OBJ_FUNCTION)
 							{
@@ -483,13 +489,16 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 
 				updatePermissionTree(item1, table);
 
+				font=item1->font(0);
+				font.setStrikeOut(table->isSQLDisabled());
+
 				if(table->isProtected())
 				{
-					font=item1->font(0);
 					font.setItalic(true);
-					item1->setFont(0,font);
 					item1->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
+
+				item1->setFont(0,font);
 
 				//Creating the group for the child objects (column, rules, triggers, indexes and constraints)
 				for(i1=0; i1 < type_cnt; i1++)
@@ -520,20 +529,21 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 
 							updatePermissionTree(item3, object);
 
+							font=item3->font(0);
+							font.setStrikeOut(object->isSQLDisabled());
+
 							if(dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 							{
-								font=item3->font(0);
 								font.setItalic(true);
-								item3->setFont(0,font);
 								item3->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
 							}
 							else if(object->isProtected())
 							{
-								font=item3->font(0);
 								font.setItalic(true);
-								item3->setFont(0,font);
 								item3->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 							}
+
+							item3->setFont(0,font);
 
 							switch(types[i1])
 							{
@@ -617,13 +627,16 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 
 				updatePermissionTree(item1, view);
 
+				font=item1->font(0);
+				font.setStrikeOut(view->isSQLDisabled());
+
 				if(view->isProtected())
 				{
-					font=item1->font(0);
 					font.setItalic(true);
-					item1->setFont(0,font);
 					item1->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
+
+				item1->setFont(0,font);
 
 				//Creating the group for the child objects (rules, triggers)
 				for(i1=0; i1 < type_cnt; i1++)
@@ -652,15 +665,16 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 							item3->setToolTip(0,Utf8String::create(object->getName()));
 							item3->setData(0, Qt::UserRole, generateItemValue(object));
 
+							font=item3->font(0);
+							font.setStrikeOut(object->isSQLDisabled());
 
 							if(object->isProtected())
 							{
-								font=item3->font(0);
 								font.setItalic(true);
-								item3->setFont(0,font);
 								item3->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 							}
 
+							item3->setFont(0,font);
 							item3->setIcon(0,QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i1]) + QString(".png")));
 						}
 					}
@@ -741,13 +755,15 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 				updatePermissionTree(root, db_model);
 
+				font=root->font(0);
+				font.setStrikeOut(db_model->isSQLDisabled());
+
 				if(db_model->isProtected())
 				{
-					font=root->font(0);
 					font.setItalic(true);
-					root->setFont(0,font);
 					root->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
+				root->setFont(0,font);
 
 				updateSchemaTree(root);
 
@@ -789,14 +805,16 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 							item2->setData(0, Qt::UserRole, generateItemValue(object));
 
 							updatePermissionTree(item2, object);
+							font=item2->font(0);
+							font.setStrikeOut(object->isSQLDisabled() && !object->isSystemObject());
 
 							if(object->isProtected())
 							{
-								font=item2->font(0);
 								font.setItalic(true);
-								item2->setFont(0,font);
 								item2->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 							}
+
+							item2->setFont(0,font);
 
 							switch(types[i])
 							{

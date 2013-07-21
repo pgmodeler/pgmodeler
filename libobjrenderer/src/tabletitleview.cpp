@@ -50,6 +50,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	QString name_attrib, schema_name_attrib, title_color_attrib;
 	QPen pen;
 	Schema *schema=dynamic_cast<Schema *>(object->getSchema());
+	QFont font;
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
@@ -72,8 +73,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		title_color_attrib=ParsersAttributes::TABLE_TITLE;
 	}
 
+	//Strike out the table name when its sql is disabled
 	fmt=font_config[schema_name_attrib];
-	schema_name->setFont(fmt.font());
+	font=fmt.font();
+	font.setStrikeOut(object->isSQLDisabled());
+
+	schema_name->setFont(font);
 	schema_name->setBrush(fmt.foreground());
 
 	if(schema->isRectVisible())
@@ -82,7 +87,10 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		schema_name->setText(Utf8String::create(schema->getName() + "."));
 
 	fmt=font_config[name_attrib];
-	obj_name->setFont(fmt.font());
+	font=fmt.font();
+	font.setStrikeOut(object->isSQLDisabled());
+
+	obj_name->setFont(font);
 	obj_name->setBrush(fmt.foreground());
 	obj_name->setText(Utf8String::create(object->getName()));
 

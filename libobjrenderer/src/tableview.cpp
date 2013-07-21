@@ -170,7 +170,9 @@ void TableView::configureObject(void)
 	{
 		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
 		bodies[idx]->setPolygon(pol);
+
 		bodies[idx]->setBrush(this->getFillStyle(atribs[idx]));
+
 		pen=this->getBorderStyle(atribs[idx]);
 		bodies[idx]->setPen(pen);
 
