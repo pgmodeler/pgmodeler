@@ -68,7 +68,7 @@ namespace GlobalAttributes {
 		#endif
 	#else
 		//For MacOSX the crash handler path is fixed (inside bundle)
-		CRASHHANDLER_PATH=QString("startapp pgmodeler-ch");
+        CRASH_HANDLER_PATH=QString("startapp pgmodeler-ch");
 	#endif
 
 	static const QString
