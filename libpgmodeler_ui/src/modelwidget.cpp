@@ -529,7 +529,6 @@ void ModelWidget::addNewObject(void)
 		BaseObject *parent_obj=nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(action->data().toUInt());
 
-
 		/* If the user wants to add a table object or a object inside a schema
 		uses as parent object the selected object, because the user only can add
 		these types after select a table or schema, respectively */

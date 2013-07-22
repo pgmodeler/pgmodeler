@@ -39,17 +39,14 @@ void startCrashHandler(int signal)
 		void *stack[20];
 		size_t stack_size, i;
 		char **symbols=nullptr;
-
 		stack_size = backtrace(stack, 20);
 		symbols = backtrace_symbols(stack, stack_size);
+	#endif
 
-		#ifdef Q_OS_MAC
-				cmd="startapp pgmodeler-ch -style " + app_style;
-		#else
-				cmd="pgmodeler-ch -style " + app_style;
-		#endif
+	#ifdef Q_OS_MAC
+		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CRASH_HANDLER_PATH + " -style " + app_style;
 	#else
-		cmd="pgmodeler-ch.exe -style " + app_style;
+		cmd=GlobalAttributes::CRASH_HANDLER_PATH + " -style " + app_style;
 	#endif
 
 	//Creates the stacktrace file
@@ -86,10 +83,12 @@ void startCrashHandler(int signal)
 		output.close();
 	}
 
-	//Executes the crashhandler command (which must be on the same directory as the pgModeler executable)
-	cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
+	/* Changing the working dir to the main executable in order to call the crash handler
+	if the PGMODELER_CHANDLER_PATH isn't set */
+	QDir dir;
+	dir.cd(QApplication::applicationDirPath());
 
-    exit(1 + system(cmd.toStdString().c_str()));
+	exit(1 + system(cmd.toStdString().c_str()));
 }
 
 int main(int argc, char **argv)

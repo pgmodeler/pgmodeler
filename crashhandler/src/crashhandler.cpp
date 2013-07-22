@@ -140,7 +140,7 @@ void CrashHandler::generateReport(void)
 	//Configures the path to the .crash file generated
 	QString crash_file=(GlobalAttributes::TEMPORARY_DIR +
 											GlobalAttributes::DIR_SEPARATOR +
-											GlobalAttributes::CRASH_HANDLER_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
+											GlobalAttributes::CRASH_REPORT_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
 
 	//Opens the file for writting
 	output.setFileName(crash_file);

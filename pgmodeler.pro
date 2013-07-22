@@ -86,6 +86,8 @@ unix:LIB_EXT = so
 windows:LIB_EXT = dll
 macx:LIB_EXT = dylib
 
+QMAKE_CXXFLAGS+= -Wl,--gc-sections -Wl,--export-dynamic
+
 SUBDIRS = libutils \
           libparsers \
           libpgmodeler \
@@ -134,7 +136,7 @@ INCLUDEPATH += $$XML_INC \
                $$PWD/libpgmodeler_ui/src
 
 #Adding xml and PostgreSQL libs
-LIBS = $$XML_LIB $$PGSQL_LIB
+#LIBS = $$XML_LIB $$PGSQL_LIB
 
 #Deployment configurations
 pgmodeler.path = $$DESTDIR

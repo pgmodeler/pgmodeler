@@ -1,6 +1,6 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
+DESTDIR = $$LIBDESTDIR
 TEMPLATE = lib
 TARGET = utils
 
@@ -9,3 +9,5 @@ HEADERS += src/exception.h \
 	   src/utf8string.h
 
 SOURCES += src/exception.cpp
+
+LIBS -=

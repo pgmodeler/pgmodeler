@@ -56,14 +56,27 @@ namespace GlobalAttributes {
 	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
 	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
 	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
-	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
+	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
+
+	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
+	different location for pgmodeler-ch */
+	#ifndef Q_OS_MAC
+		#ifdef Q_OS_LINUX
+			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("pgmodeler-ch"));
+		#else
+			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("pgmodeler-ch.exe"));
+		#endif
+	#else
+		//For MacOSX the crash handler path is fixed (inside bundle)
+		CRASHHANDLER_PATH=QString("startapp pgmodeler-ch");
+	#endif
 
 	static const QString
 	PGMODELER_VERSION="0.6.0-alpha",
 	PGMODELER_VER_CODENAME="Daring Mammoth",
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
-	CRASH_HANDLER_FILE="pgmodeler%1.crash",
+	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
 
 	DIR_SEPARATOR="/",

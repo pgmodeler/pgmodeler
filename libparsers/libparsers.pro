@@ -4,7 +4,8 @@ DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = parsers
 
-LIBS += $$DESTDIR/$$LIBUTILS
+LIBS += $$DESTDIR/$$LIBUTILS \
+	$$XML_LIB
 
 HEADERS += src/schemaparser.h \
 	   src/xmlparser.h \
