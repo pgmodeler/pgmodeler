@@ -86,8 +86,6 @@ unix:LIB_EXT = so
 windows:LIB_EXT = dll
 macx:LIB_EXT = dylib
 
-QMAKE_CXXFLAGS+= -Wl,--gc-sections -Wl,--export-dynamic
-
 SUBDIRS = libutils \
           libparsers \
           libpgmodeler \
