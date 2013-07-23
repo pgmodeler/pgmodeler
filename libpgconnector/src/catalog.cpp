@@ -413,3 +413,21 @@ vector<attribs_map> Catalog::getOperators(const QString &schema, const vector<QS
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
+
+vector<attribs_map> Catalog::getOperatorClasses(const QString &schema, const vector<QString> &filter_oids)
+{
+	try
+	{
+		attribs_map extra_attribs;
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("op.oid", false);
+		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("op.oid");
+		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+
+		return(getMultipleAttributes(OBJ_OPCLASS, extra_attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}

@@ -178,6 +178,9 @@ class Catalog {
 
 		//! \brief Retrieve all available operators. User can filter items by oids as well by schema
 		vector<attribs_map> getOperators(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available operator classes. User can filter items by oids as well by schema
+		vector<attribs_map> getOperatorClasses(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif
