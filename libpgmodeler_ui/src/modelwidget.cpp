@@ -1895,13 +1895,15 @@ void ModelWidget::pasteObjects(void)
 					aux_object=sel_table->getObject(aux_name, obj_type);
 			}
 
-			/* The second validation is check, when the object is found on the model, if the XML code of the found object
-			 and the object to be paster are different. When the XML defintion are the same the object isn't pasted because
+			/* The second validation is to check, when the object is found on the model, if the XML code of the found object
+			 and the object to be pasted are different. When the XML defintion are the same the object isn't pasted because
 			 the found object can be used as substitute of the object to be pasted. This operation is not applied to graphical
-			 objects because they are ALWAYS pasted on the model */
+			 objects because they are ALWAYS pasted on the model. The only exception is that the below code is executed when the
+			 found object is the same as the copied object (this means that user is copying and pasting the object at the same database) */
 			if(tab_obj ||
 				 (aux_object &&
 					(dynamic_cast<BaseGraphicObject *>(object) ||
+					 (aux_object->getDatabase()==object->getDatabase()) ||
 						 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
 							object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION)))))
 			{

@@ -6824,18 +6824,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Function *func=dynamic_cast<Function *>(object);
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[7]={OBJ_CAST, OBJ_CONVERSION,
-															 OBJ_AGGREGATE, OBJ_OPERATOR,
-															 OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
-			unsigned i, i1, count;
+			ObjectType obj_types[]={OBJ_CAST, OBJ_CONVERSION,
+															OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_OPCLASS,
+															OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
+			unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
 			Table *tab=nullptr;
 			Aggregate *aggreg=nullptr;
 			Operator *oper=nullptr;
 			Trigger *trig=nullptr;
 			Type *type=nullptr;
 			Language *lang=nullptr;
+			OperatorClass *opclass=nullptr;
 
-			for(i=0; i < 7 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+			for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
 				obj_list=getObjectList(obj_types[i]);
 				itr=obj_list->begin();
@@ -6892,6 +6893,24 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							refer=true;
 							refs.push_back(oper);
+						}
+						itr++;
+					}
+				}
+				else if(obj_types[i]==OBJ_OPCLASS)
+				{
+					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						opclass=dynamic_cast<OperatorClass *>(*itr);
+						count=opclass->getElementCount();
+
+						for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+						{
+							if(opclass->getElement(i1).getFunction()==func)
+							{
+								refer=true;
+								refs.push_back(opclass);
+							}
 						}
 						itr++;
 					}
@@ -6991,6 +7010,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 															OBJ_OPERATOR, OBJ_TYPE, OBJ_RELATIONSHIP };
 			unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
 			OperatorClass *op_class=nullptr;
+			OperatorClassElement elem;
 			Table *tab=nullptr;
 			Column *col=nullptr;
 			Cast *cast=nullptr;
@@ -7071,6 +7091,16 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							refer=true;
 							refs.push_back(op_class);
+						}
+
+						for(i1=0; i1 < op_class->getElementCount() && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+						{
+							elem=op_class->getElement(i1);
+							if(elem.getStorage()==ptr_pgsqltype)
+							{
+								refer=true;
+								refs.push_back(op_class);
+							}
 						}
 					}
 				}

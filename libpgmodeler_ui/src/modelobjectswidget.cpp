@@ -274,9 +274,6 @@ void ModelObjectsWidget::updateObjectsView(void)
 
 void ModelObjectsWidget::updateObjectsList(void)
 {
-	while(objectslist_tbw->rowCount() > 0)
-		objectslist_tbw->removeRow(objectslist_tbw->rowCount()-1);
-
 	if(db_model)
 	{
 		vector<BaseObject *> objects=db_model->findObjects("", BaseObject::getObjectTypes(),true, false, false, false);

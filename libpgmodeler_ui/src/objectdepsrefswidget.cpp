@@ -28,6 +28,7 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	parent_form->setMinimumSize(550, 300);
 
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateDependencies(void)));
 }
 
 void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
@@ -45,12 +46,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
 																	BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
 
-	model->getObjectDependecies(object, objs);
-
-	/* As the list of dependencies include the this->object itself is necessary
-	to remove only for semantics reasons */
-	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
+	updateDependencies();
 
 	model->getObjectReferences(object, objs);
 	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
@@ -70,4 +66,15 @@ void ObjectDepsRefsWidget::hideEvent(QHideEvent *event)
 		references_tbw->removeRow(0);
 
 	BaseObjectWidget::hideEvent(event);
+}
+
+void ObjectDepsRefsWidget::updateDependencies(void)
+{
+	vector<BaseObject *> objs;
+	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
+
+	/* As the list of dependencies include the this->object itself is necessary
+	to remove only for semantics reasons */
+	objs.erase(std::find(objs.begin(), objs.end(), this->object));
+	ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
 }

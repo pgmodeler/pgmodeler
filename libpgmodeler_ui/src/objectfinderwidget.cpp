@@ -184,6 +184,9 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		QFont fnt;
 		QString str_aux;
 
+		while(tab_wgt->rowCount() > 0)
+			tab_wgt->removeRow(0);
+
 		tab_wgt->setSortingEnabled(false);
 
 		for(lin_idx=0, i=0; i < objs.size(); i++)
