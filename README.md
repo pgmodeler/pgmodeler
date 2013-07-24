@@ -3,7 +3,7 @@ Introduction
 
 PostgreSQL Database Modeler, or simply, pgModeler is an open source tool for modeling databases that merges the classical concepts of entity-relationship diagrams with specific features that only PostgreSQL implements. The pgModeler translates the models created by the user to SQL code and apply them onto database clusters (Version 9.x).
 
-Please, let me know how the pgModeler is working on your system! Help to improve this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionaly, follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+Please, let me know how the pgModeler is working on your system! Help to improve this project, give your feedback about the software or report any bug at [Issues](https://bitbucket.org/pgmodeler/pgmodeler/issues) page. Additionaly, follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
 
 Licensing
 ---------
@@ -12,7 +12,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
+See [LICENSE](https://bitbucket.org/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
 
 Donate to pgModeler
 -------------------
@@ -92,7 +92,7 @@ v0.6.0-alpha
 * [Fix] Minor fix on UI stylesheet related tooltips when using Fusion theme.
 * [Fix] Fixed the assignment of LC_COLLATE, LC_CTYPE and template db to database instance on DatabaseWidget.
 
-The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The complete change log can be found on [CHANGELOG.md](https://bitbucket.org/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------
