@@ -29,6 +29,9 @@
 #include "resultset.h"
 #include "attribsmap.h"
 #include <QRegExp>
+#include <iostream>
+
+using namespace std;
 
 class Connection {
 	private:
@@ -52,7 +55,10 @@ class Connection {
 		static void disableNoticeOutput(void *, const PGresult *){}
 
 		//! \brief Indicates if notices are enabled
-		static bool notice_enabled;
+		static bool notice_enabled,
+
+		//! \brief Indicates if executed sql must be printed (stdout) [default is false]
+		print_sql;
 
 	public:
 		//! \brief Constants used to reference the connections parameters
@@ -87,6 +93,12 @@ class Connection {
 
 		//! \brief Returns the current state for notice output
 		static bool isNoticeEnabled(void);
+
+		//! \brief Toggles the executed sql output for connections. By default any sql are omitted
+		static void setPrintSQL(bool value);
+
+		//! \brief Returns the current state for sql output
+		static bool isSQLPrinted(void);
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */

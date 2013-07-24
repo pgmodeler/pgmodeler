@@ -43,8 +43,8 @@ FUNCTION				(pg_proc)			  **OK!** [user-defined]
 AGGREGATE				(pg_aggregate)  **OK!**
 OPERATOR				(pg_operator)   **OK!**
 OPCLASS					(pg_opclass)    **OK!**
-OPFAMILY				(pg_opfamily)
-COLLATION				(pg_collation)
+OPFAMILY				(pg_opfamily)   **OK!**
+COLLATION				(pg_collation)  **OK!**
 CONVERSION			(pg_conversion)
 TABLE						(pg_tables)
 COLUMN					(pg_attribute, pg_attrdef)
@@ -191,6 +191,9 @@ class Catalog {
 
 		//! \brief Retrieve all available operator families. User can filter items by oids as well by schema
 		vector<attribs_map> getOperatorFamilies(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available collations. User can filter items by oids as well by schema
+		vector<attribs_map> getCollations(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif

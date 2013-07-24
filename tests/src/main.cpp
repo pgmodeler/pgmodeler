@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 	try
 	{
 		Connection conn;
+		Connection::setPrintSQL(true);
 		conn.setConnectionParam(Connection::PARAM_DB_NAME, "rmfa");
 		conn.setConnectionParam(Connection::PARAM_USER, "postgres");
 		conn.setConnectionParam(Connection::PARAM_PASSWORD, "postgres");
@@ -18,7 +19,7 @@ int main(int argc, char **argv)
 
 		ObjectType types[]={ /*OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
 												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
-												 OBJ_OPERATOR, OBJ_OPCLASS, */ OBJ_OPFAMILY };
+												 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, */ OBJ_COLLATION };
 
 		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
 
 			cout << endl;
 
-			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"public",{});
+			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"public",{"11220"});
 			attribs_map::iterator itr;
 
 			while(!v.empty())

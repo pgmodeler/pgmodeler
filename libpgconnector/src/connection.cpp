@@ -41,6 +41,7 @@ const QString Connection::PARAM_KERBEROS_SERVER="krbsrvname";
 const QString Connection::PARAM_LIB_GSSAPI="gsslib";
 
 bool Connection::notice_enabled=false;
+bool Connection::print_sql=false;
 
 Connection::Connection(void)
 {
@@ -112,6 +113,16 @@ void Connection::setNoticeEnabled(bool value)
 bool Connection::isNoticeEnabled(void)
 {
 	return(notice_enabled);
+}
+
+void Connection::setPrintSQL(bool value)
+{
+	print_sql=value;
+}
+
+bool Connection::isSQLPrinted(void)
+{
+	return(print_sql);
 }
 
 void Connection::connect(void)
@@ -209,6 +220,10 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	//Alocates a new result to receive the resultset returned by the sql command
 	sql_res=PQexec(connection, sql.toStdString().c_str());
 
+	//Prints the SQL to stdout when the flag is active
+	if(print_sql)
+		cout << sql.toStdString() << endl;
+
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection))>0)
 	{
@@ -237,6 +252,10 @@ void Connection::executeDDLCommand(const QString &sql)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	sql_res=PQexec(connection, sql.toStdString().c_str());
+
+	//Prints the SQL to stdout when the flag is active
+	if(print_sql)
+		cout << sql.toStdString() << endl;
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)

@@ -334,6 +334,10 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 			return(getOperatorFamilies(schema, filter_oids));
 		break;
 
+		case OBJ_COLLATION:
+			return(getCollations(schema, filter_oids));
+		break;
+
 		default:
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
@@ -465,6 +469,18 @@ vector<attribs_map> Catalog::getOperatorFamilies(const QString &schema, const ve
 	try
 	{
 		return(getMultipleAttributes(OBJ_OPFAMILY, configureExtraAttributes(OBJ_OPFAMILY, "op.oid", filter_oids, schema)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getCollations(const QString &schema, const vector<QString> &filter_oids)
+{
+	try
+	{
+		return(getMultipleAttributes(OBJ_COLLATION, configureExtraAttributes(OBJ_COLLATION, "cl.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{
