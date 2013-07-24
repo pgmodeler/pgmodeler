@@ -42,7 +42,7 @@ LANGUAGE				(pg_language)	  **OK!** [user-defined]
 FUNCTION				(pg_proc)			  **OK!** [user-defined]
 AGGREGATE				(pg_aggregate)  **OK!**
 OPERATOR				(pg_operator)   **OK!**
-OPCLASS					(pg_opclass)
+OPCLASS					(pg_opclass)    **OK!**
 OPFAMILY				(pg_opfamily)
 COLLATION				(pg_collation)
 CONVERSION			(pg_conversion)
@@ -117,7 +117,7 @@ class Catalog {
 		attribs_map changeAttributeNames(const attribs_map &attribs);
 
 		//! \brief Returns a attribute set for the specified object type and name
-        attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns the query to retrieve the information if the object (specified by its oid field) is part of
 		 a extension. Being part of a extension will cause the object to be created as system object and with
@@ -134,6 +134,9 @@ class Catalog {
 		//! \brief Creates a comma separated string containing all the oids to be filtered
 		QString createOidFilter(const vector<QString> &oids);
 
+		attribs_map configureExtraAttributes(ObjectType obj_type, const QString &oid_field,
+																				 const vector<QString> &filter_oids={}, const QString &schema="");
+
 	public:
 		Catalog(void){}
 		Catalog(Connection &connection);
@@ -147,10 +150,14 @@ class Catalog {
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
-		attribs_map getObjects(ObjectType obj_type, const QString &sch_name="");
+		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="");
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
+		specified type. User can filter items by oids as well by schema (in the object type is suitable to accept schema */
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const vector<QString> &filter_oids={});
 
 		//! \brief Retrieve all available databases. User can filter items by oids
 		vector<attribs_map> getDatabases(const vector<QString> &filter_oids={});
@@ -181,6 +188,9 @@ class Catalog {
 
 		//! \brief Retrieve all available operator classes. User can filter items by oids as well by schema
 		vector<attribs_map> getOperatorClasses(const QString &schema="", const vector<QString> &filter_oids={});
+
+		//! \brief Retrieve all available operator families. User can filter items by oids as well by schema
+		vector<attribs_map> getOperatorFamilies(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif

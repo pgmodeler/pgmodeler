@@ -4,8 +4,8 @@
 
 %if @{list} %then
   # Built-in languages aren't shown: internal, C, SQL, plpgsql
-  [SELECT oid, lanname AS name FROM pg_language
-    WHERE lanname <> 'plpgsql' AND lanispl IS TRUE]
+  [SELECT oid, lanname AS name FROM pg_language ]
+  #  WHERE lanname <> 'plpgsql' AND lanispl IS TRUE]
 %else
     %if @{attribs} %then
       [SELECT oid, lanname AS name, lanpltrusted AS trusted_bool,

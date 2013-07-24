@@ -3,8 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT oid, spcname AS name FROM pg_tablespace
-    WHERE spcname LIKE 'pg_%']
+  [SELECT oid, spcname AS name FROM pg_tablespace ]
+  #  WHERE spcname LIKE 'pg_%']
 %else
     %if @{attribs} %then
 	[SELECT oid, spcname AS name, spcacl AS permissions, spcowner AS owner, ]

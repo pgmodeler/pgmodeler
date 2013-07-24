@@ -95,7 +95,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name)
 	}
 }
 
-attribs_map Catalog::getObjects(ObjectType obj_type, const QString &sch_name)
+attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name)
 {
 	try
 	{
@@ -261,15 +261,90 @@ QString Catalog::createOidFilter(const vector<QString> &oids)
 	return(filter);
 }
 
-vector<attribs_map> Catalog::getDatabases(const vector<QString> &filter_oids)
+attribs_map Catalog::configureExtraAttributes(ObjectType obj_type, const QString &oid_field, const vector<QString> &filter_oids, const QString &schema)
 {
 	try
 	{
 		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||
+												obj_type==OBJ_TABLESPACE || obj_type==OBJ_LANGUAGE);
 
-		return(getMultipleAttributes(OBJ_DATABASE, extra_attribs));
+		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_field, is_shared_obj);
+		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+
+		if(!filter_oids.empty())
+			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+
+		if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE &&
+			 obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+			extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_field);
+
+		return(extra_attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const vector<QString> &filter_oids)
+{
+	switch (obj_type) {
+		case OBJ_DATABASE:
+			return(getDatabases(filter_oids));
+		break;
+
+		case OBJ_TABLESPACE:
+			return(getTablespaces(filter_oids));
+		break;
+
+		case OBJ_ROLE:
+			return(getRoles(filter_oids));
+		break;
+
+		case OBJ_SCHEMA:
+			return(getSchemas(filter_oids));
+		break;
+
+		case OBJ_LANGUAGE:
+			return(getLanguages(filter_oids));
+		break;
+
+		case OBJ_EXTENSION:
+			return(getExtensions(schema, filter_oids));
+		break;
+
+		case OBJ_FUNCTION:
+			return(getFunctions(schema, filter_oids));
+		break;
+
+		case OBJ_AGGREGATE:
+			return(getAggregates(schema, filter_oids));
+		break;
+
+		case OBJ_OPERATOR:
+			return(getOperators(schema, filter_oids));
+		break;
+
+		case OBJ_OPCLASS:
+			return(getOperatorClasses(schema, filter_oids));
+		break;
+
+		case OBJ_OPFAMILY:
+			return(getOperatorFamilies(schema, filter_oids));
+		break;
+
+		default:
+			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		break;
+	}
+}
+
+vector<attribs_map> Catalog::getDatabases(const vector<QString> &filter_oids)
+{
+	try
+	{
+		return(getMultipleAttributes(OBJ_DATABASE, configureExtraAttributes(OBJ_DATABASE, "oid", filter_oids)));
 	}
 	catch(Exception &e)
 	{
@@ -281,11 +356,7 @@ vector<attribs_map> Catalog::getRoles(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-
-		return(getMultipleAttributes(OBJ_ROLE, extra_attribs));
+		return(getMultipleAttributes(OBJ_ROLE, configureExtraAttributes(OBJ_ROLE, "oid", filter_oids)));
 	}
 	catch(Exception &e)
 	{
@@ -297,12 +368,7 @@ vector<attribs_map> Catalog::getSchemas(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("oid");
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", false);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-
-		return(getMultipleAttributes(OBJ_SCHEMA, extra_attribs));
+		return(getMultipleAttributes(OBJ_SCHEMA, configureExtraAttributes(OBJ_SCHEMA, "oid", filter_oids)));
 	}
 	catch(Exception &e)
 	{
@@ -314,12 +380,7 @@ vector<attribs_map> Catalog::getLanguages(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("oid");
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-
-		return(getMultipleAttributes(OBJ_LANGUAGE, extra_attribs));
+		return(getMultipleAttributes(OBJ_LANGUAGE, configureExtraAttributes(OBJ_LANGUAGE, "oid", filter_oids)));
 	}
 	catch(Exception &e)
 	{
@@ -331,11 +392,7 @@ vector<attribs_map> Catalog::getTablespaces(const vector<QString> &filter_oids)
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("oid", true);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-
-		return(getMultipleAttributes(OBJ_TABLESPACE, extra_attribs));
+		return(getMultipleAttributes(OBJ_TABLESPACE, configureExtraAttributes(OBJ_TABLESPACE, "oid", filter_oids)));
 	}
 	catch(Exception &e)
 	{
@@ -347,12 +404,7 @@ vector<attribs_map> Catalog::getExtensions(const QString &schema, const vector<Q
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("ex.oid", false);
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-
-		return(getMultipleAttributes(OBJ_EXTENSION, extra_attribs));
+		return(getMultipleAttributes(OBJ_EXTENSION, configureExtraAttributes(OBJ_EXTENSION, "ex.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{
@@ -364,13 +416,7 @@ vector<attribs_map> Catalog::getFunctions(const QString &schema, const vector<QS
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("pr.oid", false);
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("pr.oid");
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-
-		return(getMultipleAttributes(OBJ_FUNCTION, extra_attribs));
+		return(getMultipleAttributes(OBJ_FUNCTION, configureExtraAttributes(OBJ_FUNCTION, "pr.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{
@@ -382,13 +428,7 @@ vector<attribs_map> Catalog::getAggregates(const QString &schema, const vector<Q
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("pr.oid", false);
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("pr.oid");
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-
-		return(getMultipleAttributes(OBJ_AGGREGATE, extra_attribs));
+		return(getMultipleAttributes(OBJ_AGGREGATE, configureExtraAttributes(OBJ_AGGREGATE, "pr.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{
@@ -400,13 +440,7 @@ vector<attribs_map> Catalog::getOperators(const QString &schema, const vector<QS
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("op.oid", false);
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("op.oid");
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-
-		return(getMultipleAttributes(OBJ_OPERATOR, extra_attribs));
+		return(getMultipleAttributes(OBJ_OPERATOR, configureExtraAttributes(OBJ_OPERATOR, "op.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{
@@ -418,13 +452,19 @@ vector<attribs_map> Catalog::getOperatorClasses(const QString &schema, const vec
 {
 	try
 	{
-		attribs_map extra_attribs;
-		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery("op.oid", false);
-		extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery("op.oid");
-		extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+		return(getMultipleAttributes(OBJ_OPCLASS, configureExtraAttributes(OBJ_OPCLASS, "op.oid", filter_oids, schema)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
 
-		return(getMultipleAttributes(OBJ_OPCLASS, extra_attribs));
+vector<attribs_map> Catalog::getOperatorFamilies(const QString &schema, const vector<QString> &filter_oids)
+{
+	try
+	{
+		return(getMultipleAttributes(OBJ_OPFAMILY, configureExtraAttributes(OBJ_OPFAMILY, "op.oid", filter_oids, schema)));
 	}
 	catch(Exception &e)
 	{

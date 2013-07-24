@@ -3,9 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  # Schemas pg_catalog, pg_toast and information_schema aren't listed
-  [SELECT oid, nspname AS name FROM pg_namespace
-    WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
+  [SELECT oid, nspname AS name FROM pg_namespace ]
+  #WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
 %else
     %if @{attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]

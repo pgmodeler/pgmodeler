@@ -16,36 +16,47 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		long time1=QDateTime::currentMSecsSinceEpoch();
-		cout << "[object]: " << BaseObject::getTypeName(OBJ_OPCLASS).toStdString() << endl;
-		cout << "[count]: " << catalog.getObjectCount(OBJ_OPCLASS,"public") << endl;
+		ObjectType types[]={ /*OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
+												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
+												 OBJ_OPERATOR, OBJ_OPCLASS, */ OBJ_OPFAMILY };
 
-		cout << "[list]: ";
-		attribs_map v1=catalog.getObjects(OBJ_OPCLASS,"public");
-		attribs_map::iterator itr1=v1.begin();
+		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
-		while(itr1!=v1.end())
+		for(i=0; i < cnt; i++)
 		{
-			cout << itr1->first.toStdString() <<  ":" <<itr1->second.toStdString() << " ";
-			itr1++;
-		}
+			long time1=QDateTime::currentMSecsSinceEpoch();
+			cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
+			cout << "[count]: " << catalog.getObjectCount(types[i],"public") << endl;
 
-		cout << endl;
+			cout << "[list]: ";
+			attribs_map v1=catalog.getObjectsNames(types[i],"public");
+			attribs_map::iterator itr1=v1.begin();
 
-		vector<attribs_map> v=catalog.getOperatorClasses("public");
-		attribs_map::iterator itr;
-
-		while(!v.empty())
-		{
-			cout << "[attribs]: ";
-			for(itr=v.back().begin(); itr!=v.back().end(); itr++)
-				cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
+			while(itr1!=v1.end())
+			{
+				cout << itr1->first.toStdString() <<  ":" <<itr1->second.toStdString() << " ";
+				itr1++;
+			}
 
 			cout << endl;
-			v.pop_back();
+
+			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"public",{});
+			attribs_map::iterator itr;
+
+			while(!v.empty())
+			{
+				cout << "[attribs]: ";
+				for(itr=v.back().begin(); itr!=v.back().end(); itr++)
+					cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
+
+				cout << endl;
+				v.pop_back();
+			}
+			long time2=QDateTime::currentMSecsSinceEpoch();
+			cout << "[Execution]: " << time2 - time1 << " ms" << endl;
+
+			//cin.get();
 		}
-		long time2=QDateTime::currentMSecsSinceEpoch();
-		cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 
 		return(0);
 	}
