@@ -7,10 +7,14 @@
 
 [CREATE CAST (] @{source-type} [ AS ] @{destiny-type} ) $br
 
-%if @{signature} %then
- $tb [WITH FUNCTION ] @{signature}
+%if @{io-cast} %then
+  $tb [WITH INOUT ]
 %else
- $tb [WITHOUT FUNCTION]
+  %if @{signature} %then
+    $tb [WITH FUNCTION ] @{signature}
+  %else
+    $tb [WITHOUT FUNCTION]
+  %end
 %end
 
 %if @{cast-type} %then

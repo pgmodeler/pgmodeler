@@ -53,7 +53,8 @@ class Cast: public BaseObject {
 															DST_TYPE=1,
 															//! \brief Constants used to define the cast type
 															ASSIGNMENT=10,
-															IMPLICIT=20;
+															IMPLICIT=20,
+															EXPLICIT=30;
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast

@@ -3713,8 +3713,10 @@ Cast *DatabaseModel::createCast(void)
 
 		if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::IMPLICIT)
 			cast->setCastType(Cast::IMPLICIT);
-		else
+		else if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::ASSIGNMENT)
 			cast->setCastType(Cast::ASSIGNMENT);
+		else
+			cast->setCastType(Cast::EXPLICIT);
 
 		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 

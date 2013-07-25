@@ -187,6 +187,7 @@ namespace ParsersAttributes {
 	VALUES="values",
 	_TRUE_="true",
 	IMPLICIT="implicit",
+	EXPLICIT="explicit",
 	ASSIGNMENT="assignment",
 	NONE="none",
 	SRC_COLUMNS="src-columns",

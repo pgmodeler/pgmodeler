@@ -3,7 +3,7 @@
            Unexpected results may occur if the code is changed deliberately.
 -->
 <!ELEMENT cast (comment?,appended-sql?, type, type, function?)>
-<!ATTLIST cast cast-type (implicit|assignment) "implicit">
+<!ATTLIST cast cast-type (implicit|assignment|explicit) "explicit">
 <!ATTLIST cast protected (false|true) "false">
 <!ATTLIST cast io-cast (false|true) "false">
 <!ATTLIST cast sql-disabled (false|true) "false">

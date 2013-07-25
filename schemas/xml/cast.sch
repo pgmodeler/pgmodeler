@@ -24,8 +24,5 @@
 @{destiny-type}
 
 %if @{signature} %then @{signature} %end
-#%if @{function} %then
-# $tb [<function signature=] "@{signature}" /> $br
-#%end
 
 </cast>  $br $br

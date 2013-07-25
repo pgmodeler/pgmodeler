@@ -22,7 +22,7 @@ Cast::Cast(void)
 {
 	obj_type=OBJ_CAST;
 	cast_function=nullptr;
-	cast_type=IMPLICIT;
+	cast_type=EXPLICIT;
 	is_in_out=false;
 	attributes[ParsersAttributes::SOURCE_TYPE]="";
 	attributes[ParsersAttributes::DEST_TYPE]="";
@@ -158,23 +158,25 @@ QString Cast::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::DEST_TYPE]=types[DST_TYPE].getCodeDefinition(def_type);
 	}
 
-	if(cast_function)
+	if(!is_in_out && cast_function)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			attributes[ParsersAttributes::SIGNATURE]=cast_function->getSignature();
 		else
 			attributes[ParsersAttributes::SIGNATURE]=cast_function->getCodeDefinition(def_type, true);
 	}
+	else
+		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? "1" : "");
 
 	if(cast_type==ASSIGNMENT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
-	else
+	else if(cast_type==IMPLICIT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
+	else
+		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::EXPLICIT;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();
-
-	attributes[ParsersAttributes::IO_CAST]=(is_in_out ? "1" : "");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

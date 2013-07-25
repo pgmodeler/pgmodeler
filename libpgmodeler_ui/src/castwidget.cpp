@@ -32,9 +32,9 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		trg_datatype=new PgSQLTypeWidget(this, trUtf8("Target data type"));
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
-		cast_grid->addWidget(conv_func_sel,1,1,1,3);
-		cast_grid->addWidget(src_datatype,2,0,1,4);
-		cast_grid->addWidget(trg_datatype,3,0,1,4);
+		cast_grid->addWidget(conv_func_sel,1,1,1,4);
+		cast_grid->addWidget(src_datatype,2,0,1,5);
+		cast_grid->addWidget(trg_datatype,3,0,1,5);
 
 		configureFormLayout(cast_grid, OBJ_CAST);
 
@@ -49,6 +49,8 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		frame->setParent(this);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(input_output_chk, SIGNAL(toggled(bool)), conv_func_sel, SLOT(setDisabled(bool)));
+		connect(input_output_chk, SIGNAL(toggled(bool)), conv_func_sel, SLOT(clearSelector(void)));
 
 		parent_form->setMinimumSize(530, 520);
 		parent_form->setMaximumHeight(520);
@@ -84,8 +86,9 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 
 		conv_func_sel->setSelectedObject(cast->getCastFunction());
 		input_output_chk->setChecked(cast->isInOut());
+		explicit_rb->setChecked(cast->getCastType()==Cast::EXPLICIT);
 		implicit_rb->setChecked(cast->getCastType()==Cast::IMPLICIT);
-		assignment_rb->setChecked(!implicit_rb->isChecked());
+		assignment_rb->setChecked(cast->getCastType()==Cast::ASSIGNMENT);
 	}
 
 	src_datatype->setAttributes(src_type,model);

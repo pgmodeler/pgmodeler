@@ -52,7 +52,7 @@ INDEX						(pg_index)
 RULE						(pg_rule)
 TRIGGER					(pg_trigger)
 CONSTRAINT			(pg_constraints)
-CAST						(pg_cast)
+CAST						(pg_cast)       **OK!**
 TABLE INHERITS	(pg_inherits)
 VIEW						(pg_view)
 PERMISSION			(???)

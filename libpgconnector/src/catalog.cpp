@@ -12,7 +12,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{OBJ_LANGUAGE, "oid"}, {OBJ_TABLESPACE, "oid"}, {OBJ_EXTENSION, "ex.oid"},
 	{OBJ_FUNCTION, "pr.oid"}, {OBJ_AGGREGATE, "pr.oid"}, {OBJ_OPERATOR, "op.oid"},
 	{OBJ_OPCLASS, "op.oid"}, {OBJ_OPFAMILY, "op.oid"}, {OBJ_COLLATION, "cl.oid"},
-	{OBJ_CONVERSION, "cn.oid"}
+	{OBJ_CONVERSION, "cn.oid"}, {OBJ_CAST, "cs.oid"}
 };
 
 void Catalog::setConnection(Connection &conn)
@@ -230,7 +230,8 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 	try
 	{
 		attribs_map extra_attribs;
-		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||	obj_type==OBJ_TABLESPACE || obj_type==OBJ_LANGUAGE);
+		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||	obj_type==OBJ_TABLESPACE ||
+												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
 
 		extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
