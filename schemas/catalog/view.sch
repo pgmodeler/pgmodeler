@@ -1,0 +1,40 @@
+# Catalog queries for views
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
+
+%if @{list} %then
+  [SELECT vw.oid, vw.relname AS name FROM pg_class AS vw ]
+
+  %if @{schema} %then
+    [ LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace
+      WHERE vw.relkind='v' AND ns.nspname= ] '@{schema}'
+  %else
+    [ WHERE vw.relkind='v']
+  %end
+%else
+    %if @{attribs} %then
+      [SELECT vw.oid, vw.relname, vw.relnamespace, vw.relowner, _vw1.definition, ]
+
+      (@{comment}) [ AS comment, ]
+      (@{from-extension}) [ AS from_extension_bool ]
+
+      [ FROM pg_class AS vw
+	LEFT JOIN pg_views AS _vw1 ON _vw1.viewname=vw.relname
+	WHERE vw.relkind='v' ]
+
+	%if @{filter-oids} %or @{schema} %then
+	[ AND ]
+	  %if @{filter-oids} %then
+	   [ vw.oid IN (] @{filter-oids} )
+
+	    %if @{schema} %then
+	      [ AND ]
+	    %end
+	  %end
+
+	  %if @{schema} %then
+	   [ _vw1.schemaname= ] '@{schema}'
+	  %end
+       %end
+    %end
+%end

@@ -55,7 +55,42 @@ CONSTRAINT			(pg_constraints)
 CAST						(pg_cast)       **OK!**
 TABLE INHERITS	(pg_inherits)
 VIEW						(pg_view)
+SEQUENCE        (pg_sequence)   **OK!**
 PERMISSION			(???)
+OBJ_DOMAIN      (???)
+
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	,
+	OBJ_RELATIONSHIP,
+	OBJ_TEXTBOX,
+	OBJ_PERMISSION,
+	OBJ_PARAMETER,
+	OBJ_TYPE_ATTRIBUTE,
+	BASE_RELATIONSHIP,
+	BASE_OBJECT,
+	BASE_TABLE
 
 ** Details can be found on pg_dump_sort.c line 82 **/
 
