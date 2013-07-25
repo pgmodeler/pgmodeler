@@ -45,7 +45,7 @@ OPERATOR				(pg_operator)   **OK!**
 OPCLASS					(pg_opclass)    **OK!**
 OPFAMILY				(pg_opfamily)   **OK!**
 COLLATION				(pg_collation)  **OK!**
-CONVERSION			(pg_conversion)
+CONVERSION			(pg_conversion) **OK!**
 TABLE						(pg_tables)
 COLUMN					(pg_attribute, pg_attrdef)
 INDEX						(pg_index)
@@ -88,18 +88,20 @@ AGGREGATE agg_name (agg_type [, ...] ) |
 #include "connection.h"
 #include "baseobject.h"
 #include <QTextStream>
+#include <QApplication>
 
 class Catalog {
 	private:
 		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
 		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
-		//QUERY_GETDEPOBJ,  //! \brief Executes a dependency object (e.g. tablespace, owner, collation, schema) retrieving command on catalog
-		//QUERY_GETCOMMENT,  //! \brief Executes a comment retrieving command on catalog
-		//QUERY_ISFROMEXT,  //! \brief Executes a catalog query to check if the object belongs to extension
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
 		BOOL_FIELD;
+
+		/*! \brief This map stores the oid field name for each object type. The oid field name can be
+		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
+		static map<ObjectType, QString> oid_fields;
 
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
@@ -124,9 +126,6 @@ class Catalog {
 		 SQL code disabled */
 		QString getFromExtensionQuery(const QString &oid_field);
 
-		//! \brief Returns the query that is used to retrieve an objects dependency (tablespace, owners, collations, etc)
-		//QString getDepObjectQuery(const QString &oid_field, ObjectType obj_type);
-
 		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
 		to query the pg_shdescription instead of pg_description */
 		QString getCommentQuery(const QString &oid_field, bool is_shared_obj=false);
@@ -134,12 +133,8 @@ class Catalog {
 		//! \brief Creates a comma separated string containing all the oids to be filtered
 		QString createOidFilter(const vector<QString> &oids);
 
-		attribs_map configureExtraAttributes(ObjectType obj_type, const QString &oid_field,
-																				 const vector<QString> &filter_oids={}, const QString &schema="");
-
 	public:
 		Catalog(void){}
-		Catalog(Connection &connection);
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
@@ -158,42 +153,6 @@ class Catalog {
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids as well by schema (in the object type is suitable to accept schema */
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available databases. User can filter items by oids
-		vector<attribs_map> getDatabases(const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available roles. User can filter items by oids
-		vector<attribs_map> getRoles(const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available schemas. User can filter items by oids
-		vector<attribs_map> getSchemas(const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available languages. User can filter items by oids
-		vector<attribs_map> getLanguages(const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available tablespaces. User can filter items by oids
-		vector<attribs_map> getTablespaces(const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available extension. User can filter items by oids as well by schema
-		vector<attribs_map> getExtensions(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available functions. User can filter items by oids as well by schema
-		vector<attribs_map> getFunctions(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available aggregate functions. User can filter items by oids as well by schema
-		vector<attribs_map> getAggregates(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available operators. User can filter items by oids as well by schema
-		vector<attribs_map> getOperators(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available operator classes. User can filter items by oids as well by schema
-		vector<attribs_map> getOperatorClasses(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available operator families. User can filter items by oids as well by schema
-		vector<attribs_map> getOperatorFamilies(const QString &schema="", const vector<QString> &filter_oids={});
-
-		//! \brief Retrieve all available collations. User can filter items by oids as well by schema
-		vector<attribs_map> getCollations(const QString &schema="", const vector<QString> &filter_oids={});
 };
 
 #endif

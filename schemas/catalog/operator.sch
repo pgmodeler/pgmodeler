@@ -12,7 +12,7 @@
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.oprname AS name, op.oprnamespace AS schema, op.oprowner AS owner,
-	      op.oprcanmerge AS merges, op.oprcanhash AS hashes, op.oprleft AS left_type,
+	      op.oprcanmerge AS merges_bool, op.oprcanhash AS hashes_bool, op.oprleft AS left_type,
 	      op.oprright AS right_type, op.oprcom AS commutator_op, op.oprnegate AS negator_op,
 	      op.oprrest::oid AS restriction_func, op.oprjoin::oid AS join_func,
 	      op.oprcode::oid AS operator_func, ]

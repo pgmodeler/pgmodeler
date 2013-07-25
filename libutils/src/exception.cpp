@@ -403,7 +403,13 @@ QString Exception::getExceptionsText(void)
 	{
 		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
 		exceptions_txt+=QString("  %1\n").arg(itr->getMethod());
-		exceptions_txt+=QString("    [%1] %2\n\n").arg(Exception::getErrorCode(itr->getErrorType())).arg(itr->getErrorMessage());
+		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorType())).arg(itr->getErrorMessage());
+
+		if(!itr->getExtraInfo().isEmpty())
+			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
+		else
+			exceptions_txt+="\n";
+
 		itr++; idx--;
 	}
 
