@@ -148,4 +148,5 @@ INSTALLS += pgmodeler
 
 OTHER_FILES += \
     schemas/catalog/extension.sch \
-    schemas/catalog/fromextension.sch
+    schemas/catalog/fromextension.sch \
+    schemas/catalog/usertype.sch

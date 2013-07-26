@@ -31,66 +31,33 @@ This class is the basis for the reverse engineering feature.
  * 1) Order object by type (list below)
  * 2) For each type objects by name
 
-ROLE						(pg_role)				**OK!**
-TABLESPACE			(pg_tablespace) **OK!**
-DATABASE				(pg_database)		**OK!**
-SCHEMA					(pg_namespace)	**OK!**
-EXTENSION				(pg_extension)	**OK!**
-FUNCTION				(pg_proc)				**OK!** [c,sql,internal langs]
-USERTYPE				(pg_type)
-LANGUAGE				(pg_language)	  **OK!** [user-defined]
-FUNCTION				(pg_proc)			  **OK!** [user-defined]
-AGGREGATE				(pg_aggregate)  **OK!**
-OPERATOR				(pg_operator)   **OK!**
-OPCLASS					(pg_opclass)    **OK!**
-OPFAMILY				(pg_opfamily)   **OK!**
-COLLATION				(pg_collation)  **OK!**
-CONVERSION			(pg_conversion) **OK!**
-TABLE						(pg_tables)
-COLUMN					(pg_attribute, pg_attrdef)
-INDEX						(pg_index)
-RULE						(pg_rule)
-TRIGGER					(pg_trigger)
-CONSTRAINT			(pg_constraints)
-CAST						(pg_cast)       **OK!**
-TABLE INHERITS	(pg_inherits)
-VIEW						(pg_view)
-SEQUENCE        (pg_sequence)   **OK!**
-PERMISSION			(???)
-OBJ_DOMAIN      (???)
-
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	,
-	OBJ_RELATIONSHIP,
-	OBJ_TEXTBOX,
-	OBJ_PERMISSION,
-	OBJ_PARAMETER,
-	OBJ_TYPE_ATTRIBUTE,
-	BASE_RELATIONSHIP,
-	BASE_OBJECT,
-	BASE_TABLE
+**OK!**		ROLE						(pg_role)
+**OK!**		TABLESPACE			(pg_tablespace)
+**OK!**		DATABASE				(pg_database)
+**OK!**		SCHEMA					(pg_namespace)
+**OK!**		EXTENSION				(pg_extension)
+**OK!**		FUNCTION				(pg_proc)	[c,sql,internal langs]
+					USERTYPE				(pg_type)
+**OK!**		LANGUAGE				(pg_language) [user-defined]
+**OK!**		FUNCTION				(pg_proc) [user-defined]
+**OK!**		AGGREGATE				(pg_aggregate)
+**OK!**		OPERATOR				(pg_operator)
+**OK!**		OPCLASS					(pg_opclass)
+**OK!**		OPFAMILY				(pg_opfamily)
+**OK!**		COLLATION				(pg_collation)
+**OK!**		CONVERSION			(pg_conversion)
+					TABLE						(pg_tables)
+					COLUMN					(pg_attribute, pg_attrdef)
+					INDEX						(pg_index)
+					RULE						(pg_rule)
+					TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
+					CONSTRAINT			(pg_constraints)
+**OK!**		CAST						(pg_cast)
+					TABLE INHERITS	(pg_inherits)
+**OK!**		VIEW						(pg_view, pg_class [relkind='v'])
+**OK!**		SEQUENCE        (pg_class [relkind='S'], information_schema.sequences)
+					PERMISSION			(???)
+**OK!**		OBJ_DOMAIN      (information_schema.domains)
 
 ** Details can be found on pg_dump_sort.c line 82 **/
 

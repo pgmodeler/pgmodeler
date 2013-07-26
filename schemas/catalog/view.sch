@@ -13,7 +13,8 @@
   %end
 %else
     %if @{attribs} %then
-      [SELECT vw.oid, vw.relname, vw.relnamespace, vw.relowner, _vw1.definition, ]
+      [SELECT vw.oid, vw.relname, vw.relnamespace, vw.relowner,
+	      vw.relacl AS permissions, _vw1.definition, ]
 
       (@{comment}) [ AS comment, ]
       (@{from-extension}) [ AS from_extension_bool ]

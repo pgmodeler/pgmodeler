@@ -17,10 +17,10 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
+		ObjectType types[]={ /*OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
 												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
-												 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW };
+												 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE , OBJ_DOMAIN */ OBJ_TYPE };
 
 		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
@@ -28,10 +28,10 @@ int main(int argc, char **argv)
 		{
 			long time1=QDateTime::currentMSecsSinceEpoch();
 			cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
-			cout << "[count]: " << catalog.getObjectCount(types[i],"") << endl;
+			cout << "[count]: " << catalog.getObjectCount(types[i],"public") << endl;
 
 			cout << "[list]: ";
-			attribs_map v1=catalog.getObjectsNames(types[i],"");
+			attribs_map v1=catalog.getObjectsNames(types[i],"public");
 			attribs_map::iterator itr1=v1.begin();
 
 			while(itr1!=v1.end())
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
 			cout << endl;
 
-			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"");
+			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"public");
 			attribs_map::iterator itr;
 
 			while(!v.empty())
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 			long time2=QDateTime::currentMSecsSinceEpoch();
 			cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 
-			cin.get();
+			//cin.get();
 		}
 
 		return(0);
