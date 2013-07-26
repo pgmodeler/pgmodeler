@@ -137,7 +137,6 @@ void Table::setColumnsAttribute(unsigned def_type)
 	QString str_cols;
 	unsigned i, count;
 
-	//Concatena a definiação SQL das colunas
 	count=columns.size();
 	for(i=0; i < count; i++)
 	{
@@ -201,7 +200,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 
 	/* Check if some constraint has its sql disabled. If so,
 		it necessary to make some tweaks in order to not generate bad sql code */
-	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty())
+	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty() && !gen_alter_cmds)
 	{
 		i=lines.size()-1;
 		unsigned dis_sql_cnt=0;

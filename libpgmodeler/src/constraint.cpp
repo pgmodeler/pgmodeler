@@ -196,7 +196,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	{
 		col=col_vector->at(i);
 
-		/* For XML definition the columns added to the restriction
+		/* For XML definition the columns added to the constraint
 		 through relationship can not be included because they are inserted
 		 to the restriction on the time of creation of the relationship from its XML
 		 so the parameter 'inc_addedbyrel' can be used to solve this case. */
