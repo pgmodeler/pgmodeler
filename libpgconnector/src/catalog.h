@@ -37,7 +37,7 @@ This class is the basis for the reverse engineering feature.
 **OK!**		SCHEMA					(pg_namespace)
 **OK!**		EXTENSION				(pg_extension)
 **OK!**		FUNCTION				(pg_proc)	[c,sql,internal langs]
-					USERTYPE				(pg_type)
+**OK!**		USERTYPE				(pg_type)
 **OK!**		LANGUAGE				(pg_language) [user-defined]
 **OK!**		FUNCTION				(pg_proc) [user-defined]
 **OK!**		AGGREGATE				(pg_aggregate)
@@ -56,8 +56,8 @@ This class is the basis for the reverse engineering feature.
 					TABLE INHERITS	(pg_inherits)
 **OK!**		VIEW						(pg_view, pg_class [relkind='v'])
 **OK!**		SEQUENCE        (pg_class [relkind='S'], information_schema.sequences)
-					PERMISSION			(???)
 **OK!**		OBJ_DOMAIN      (information_schema.domains)
+					PERMISSION			(???)
 
 ** Details can be found on pg_dump_sort.c line 82 **/
 
