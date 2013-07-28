@@ -24,10 +24,6 @@
 #include "execinfo.h"
 #endif
 
-/* Fusion is the default widget style for pgModeler. User can change this by calling
-the executable using -style option. This same style is applied to crashhandler. */
-QString app_style="Fusion";
-
 void startCrashHandler(int signal)
 {
 	QFile output;
@@ -44,9 +40,10 @@ void startCrashHandler(int signal)
 	#endif
 
 	#ifdef Q_OS_MAC
-		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CRASH_HANDLER_PATH + " -style " + app_style;
+		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
+				GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
 	#else
-		cmd=GlobalAttributes::CRASH_HANDLER_PATH + " -style " + app_style;
+		cmd=GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
 	#endif
 
 	//Creates the stacktrace file
@@ -95,6 +92,8 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		QString app_style=GlobalAttributes::DEFAULT_QT_STYLE;
+
 		/* Registering the below classes as metatypes in order to make
 		them liable to be sent through signal parameters. */
 		qRegisterMetaType<ObjectType>("ObjectType");

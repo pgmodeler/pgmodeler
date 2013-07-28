@@ -102,7 +102,11 @@ namespace GlobalAttributes {
 	PATTERN_HIGHLIGHT_CONF="pattern-highlight", //! \brief Configuration file for name patterns highlight (relationship editing form)
 
 	EXAMPLE_MODEL="example.dbm", //! \brief Default name for the sample model loaded on appearence configuration form
-	UI_STYLE_CONF="ui-style"; //! \brief Configuration file ui style
+	UI_STYLE_CONF="ui-style", //! \brief Configuration file ui style
+
+	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
+	the executable using -style option. This same style is applied to crash handler. */
+	DEFAULT_QT_STYLE="Fusion";
 }
 
 #endif
