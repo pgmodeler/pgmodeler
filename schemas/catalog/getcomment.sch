@@ -10,4 +10,4 @@
   pg_description
 %end
 
-[ WHERE objoid = ] @{oid}
+[ WHERE objoid = ] @{oid} [ AND objsubid = 0 ]

@@ -1,0 +1,42 @@
+# Catalog queries for tables
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
+
+%if @{list} %then
+  [ SELECT tb.oid, tb.relname AS name FROM pg_class AS tb]
+
+  %if @{schema} %then
+    [ LEFT JOIN pg_namespace AS ns ON ns.oid=tb.relnamespace
+      WHERE tb.relkind='r' AND ns.nspname= ] '@{schema}'
+  %else
+    [ WHERE tb.relkind='r']
+  %end
+%else
+    %if @{attribs} %then
+    [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
+	    tb.reltablespace AS tablespace, tb.relacl AS permissions, relhasoids AS oids_bool, ]
+
+    (@{comment}) [ AS comment, ]
+    (@{from-extension}) [ AS from_extension_bool ]
+
+    [ FROM pg_class AS tb
+      LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname
+      WHERE tb.relkind='r' ]
+
+      %if @{filter-oids} %or @{schema} %then
+      [ AND ]
+	%if @{filter-oids} %then
+	 [ tb.oid IN (] @{filter-oids} )
+
+	  %if @{schema} %then
+	    [ AND ]
+	  %end
+	%end
+
+	%if @{schema} %then
+	 [ _tb1.schemaname= ] '@{schema}'
+	%end
+     %end
+
+    %end
+%end

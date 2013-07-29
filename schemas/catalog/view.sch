@@ -13,7 +13,7 @@
   %end
 %else
     %if @{attribs} %then
-      [SELECT vw.oid, vw.relname, vw.relnamespace, vw.relowner,
+      [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
 	      vw.relacl AS permissions, _vw1.definition, ]
 
       (@{comment}) [ AS comment, ]

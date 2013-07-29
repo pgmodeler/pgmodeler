@@ -46,7 +46,7 @@ This class is the basis for the reverse engineering feature.
 **OK!**		OPFAMILY				(pg_opfamily)
 **OK!**		COLLATION				(pg_collation)
 **OK!**		CONVERSION			(pg_conversion)
-					TABLE						(pg_tables)
+**OK!**		TABLE						(pg_tables)
 					COLUMN					(pg_attribute, pg_attrdef)
 					INDEX						(pg_index)
 					RULE						(pg_rule)
@@ -89,6 +89,7 @@ AGGREGATE agg_name (agg_type [, ...] ) |
 
 #include "connection.h"
 #include "baseobject.h"
+#include "tableobject.h"
 #include <QTextStream>
 #include <QApplication>
 
@@ -143,18 +144,18 @@ class Catalog {
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
-		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="");
+		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="");
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
-		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="");
+		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="");
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids as well by schema (in the object type is suitable to accept schema */
-		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const vector<QString> &filter_oids={});
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<QString> &filter_oids={});
 };
 
 #endif
