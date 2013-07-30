@@ -14,7 +14,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{OBJ_OPCLASS, "op.oid"}, {OBJ_OPFAMILY, "op.oid"}, {OBJ_COLLATION, "cl.oid"},
 	{OBJ_CONVERSION, "cn.oid"}, {OBJ_CAST, "cs.oid"}, {OBJ_VIEW, "vw.oid"},
 	{OBJ_SEQUENCE, "sq.oid"}, {OBJ_DOMAIN, "dm.oid"}, {OBJ_TYPE, "tp.oid"},
-	{OBJ_TABLE, "tb.oid"},
+	{OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"}
 };
 
 void Catalog::setConnection(Connection &conn)
@@ -238,7 +238,6 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
 
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-		extra_attribs[ParsersAttributes::TABLE]=table;
 
 		if(!TableObject::isTableObject(obj_type))
 		{
@@ -248,6 +247,13 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 
 			if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 				extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
+		}
+		else
+		{
+			if(table.isEmpty() || schema.isEmpty())
+				throw Exception(ERR_INSUF_PARAM_CATALOG_QRY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			extra_attribs[ParsersAttributes::TABLE]=table;
 		}
 
 		return(getMultipleAttributes(obj_type, extra_attribs));

@@ -198,28 +198,38 @@ void Table::setConstraintsAttribute(unsigned def_type)
 		}
 	}
 
-	/* Check if some constraint has its sql disabled. If so,
-		it necessary to make some tweaks in order to not generate bad sql code */
-	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty() && !gen_alter_cmds)
+	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty())
 	{
-		i=lines.size()-1;
-		unsigned dis_sql_cnt=0;
-
-		//If the last line starts with -- indicates that sql code for the constraint is disable
-		if(lines[i].startsWith("--") && i > 0)
-			//Removes the comma from the above line in order to avoid bad sql
-			lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
-		else
-			//Otherwise removes the comma from the last line
-			lines[i].remove(lines[i].lastIndexOf(','),1);
-
-		for(i=0; i < lines.size(); i++)
+		/* When the coistraints are being generated in form of ALTER commands
+		simply concatenates all the lines */
+		if(gen_alter_cmds)
 		{
-			if(lines[i].startsWith("--")) dis_sql_cnt++;
-			str_constr+=lines[i];
+			for(i=0; i < lines.size(); i++)
+				str_constr+=lines[i];
 		}
+		else
+		{
+			/* Check if some constraint has its sql disabled. If so,
+				it necessary to make some tweaks in order to not generate bad sql code */
+			i=lines.size()-1;
+			unsigned dis_sql_cnt=0;
 
-		attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? "1" : "");
+			//If the last line starts with -- indicates that sql code for the constraint is disable
+			if(lines[i].startsWith("--") && i > 0)
+				//Removes the comma from the above line in order to avoid bad sql
+				lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
+			else
+				//Otherwise removes the comma from the last line
+				lines[i].remove(lines[i].lastIndexOf(','),1);
+
+			for(i=0; i < lines.size(); i++)
+			{
+				if(lines[i].startsWith("--")) dis_sql_cnt++;
+				str_constr+=lines[i];
+			}
+
+			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? "1" : "");
+		}
 	}
 
 	attributes[ParsersAttributes::CONSTRAINTS]=str_constr;

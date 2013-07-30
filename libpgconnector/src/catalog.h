@@ -47,7 +47,7 @@ This class is the basis for the reverse engineering feature.
 **OK!**		COLLATION				(pg_collation)
 **OK!**		CONVERSION			(pg_conversion)
 **OK!**		TABLE						(pg_tables)
-					COLUMN					(pg_attribute, pg_attrdef)
+**OK!**		COLUMN					(pg_attribute, pg_attrdef)
 					INDEX						(pg_index)
 					RULE						(pg_rule)
 					TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
@@ -154,7 +154,8 @@ class Catalog {
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
-		specified type. User can filter items by oids as well by schema (in the object type is suitable to accept schema */
+		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
+		and by table name (only when retriving child objects for a specific table) */
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<QString> &filter_oids={});
 };
 

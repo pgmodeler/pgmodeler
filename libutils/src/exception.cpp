@@ -223,7 +223,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_USE_VARIADIC_PARAM_MODE", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with array data types!")},
 	{"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes. 'Ignore object duplications' and 'simulate export' are mutually exclusive!")},
 	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
-	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")}
+	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
+	{"ERR_INSUF_PARAM_CATALOG_QRY", QT_TR_NOOP("Insufficient parameters specified for table child objects catalog query! It's mandatory to specify a table name as well the schema name!")},
 };
 
 Exception::Exception(void)
