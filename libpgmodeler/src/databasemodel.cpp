@@ -7347,6 +7347,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
+		if(obj_type==OBJ_OPCLASS && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			#warning "TODO!"
+			//Check if user defined types (ranges) references opclass
+			//Check if indexes references opclass
+			//Check if constraints (exclude) references opclass
+		}
+
 		if(obj_type==OBJ_OPERATOR && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=nullptr;
