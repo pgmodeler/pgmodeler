@@ -9,11 +9,12 @@
    WHERE relkind='r' AND relname=] '@{table}' [ AND nspname= ] '@{schema}'
 %else
     %if @{attribs} %then
-     [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table,
+     [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table, ds.description AS comment,
 	     cs.conkey AS src_columns, cs.confkey AS dst_columns,
 	     cs.connoinherit AS no_inherit_bool, cs.consrc AS expression,
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
-	     cl.reltablespace AS tablespace,
+	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
+	     cl.relam AS index_type,
 
 	CASE cs.contype
 	  WHEN 'p' THEN 'pk-constr'
@@ -55,6 +56,7 @@
 
      FROM pg_constraint AS cs
      LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
+     LEFT JOIN pg_description AS ds ON ds.objoid=cs.oid
      LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
      LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
      WHERE tb.relkind='r' AND tb.relname= ] '@{table}' [ AND ns.nspname= ] '@{schema}'

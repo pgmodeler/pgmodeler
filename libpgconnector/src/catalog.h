@@ -51,7 +51,7 @@ This class is the basis for the reverse engineering feature.
 					INDEX						(pg_index)
 					RULE						(pg_rule)
 					TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
-					CONSTRAINT			(pg_constraints)
+**OK!**		CONSTRAINT			(pg_constraints)
 **OK!**		CAST						(pg_cast)
 					TABLE INHERITS	(pg_inherits)
 **OK!**		VIEW						(pg_view, pg_class [relkind='v'])
