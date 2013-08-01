@@ -7129,7 +7129,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 						if(type->getAlignment()==ptr_pgsqltype ||
 							 type->getElement()==ptr_pgsqltype ||
-							 type->getLikeType()==ptr_pgsqltype)
+							 type->getLikeType()==ptr_pgsqltype ||
+							 type->getSubtype()==ptr_pgsqltype)
 						{
 							refer=true;
 							refs.push_back(type);
@@ -7349,10 +7350,69 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 		if(obj_type==OBJ_OPCLASS && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
-			#warning "TODO!"
-			//Check if user defined types (ranges) references opclass
-			//Check if indexes references opclass
-			//Check if constraints (exclude) references opclass
+			vector<BaseObject *>::iterator itr, itr_end;
+			Type *usertype=nullptr;
+			Index *ind=nullptr;
+			Constraint *constr=nullptr;
+			Table *table=nullptr;
+
+			itr=types.begin();
+			itr_end=types.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				usertype=dynamic_cast<Type *>(*itr);
+
+				if(usertype->getSubtypeOpClass()==object)
+				{
+					refer=true;
+					refs.push_back(usertype);
+				}
+				itr++;
+			}
+
+			itr=tables.begin();
+			itr_end=tables.end();
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				table=dynamic_cast<Table *>(*itr);
+
+				//Checking if the indexes are referencing the operator class
+				for(unsigned idx=0; idx < table->getIndexCount() &&
+											 (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+				{
+					ind=table->getIndex(idx);
+
+					for(unsigned id_elem=0; id_elem < ind->getIndexElementCount() &&
+											 (!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
+					{
+						if(ind->getIndexElement(id_elem).getOperatorClass()==object)
+						{
+							refer=true;
+							refs.push_back(ind);
+						}
+					}
+				}
+
+				//Checking if the constraints are referencing the operator class
+				for(unsigned idx=0; idx < table->getConstraintCount() &&
+											 (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+				{
+					constr=table->getConstraint(idx);
+
+					for(unsigned id_elem=0; id_elem < constr->getExcludeElementCount() &&
+											 (!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
+					{
+						if(constr->getExcludeElement(id_elem).getOperatorClass()==object)
+						{
+							refer=true;
+							refs.push_back(constr);
+						}
+					}
+				}
+
+				itr++;
+			}
 		}
 
 		if(obj_type==OBJ_OPERATOR && (!exclusion_mode || (exclusion_mode && !refer)))

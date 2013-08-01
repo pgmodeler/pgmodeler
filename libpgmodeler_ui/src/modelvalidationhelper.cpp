@@ -166,7 +166,7 @@ void ModelValidationHelper::validateModel(void)
 	{
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-												OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW },
+												 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW },
 								aux_types[]={ OBJ_TABLE, OBJ_VIEW },
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
