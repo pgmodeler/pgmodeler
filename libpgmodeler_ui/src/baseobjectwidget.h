@@ -127,8 +127,6 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
 	 void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
-		void setRequiredField(QWidget *widget);
-
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
 		static constexpr unsigned UNTIL_VERSION=0,
@@ -150,6 +148,9 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
+
+		//! \brief Highlights the specified widget as a required field
+		static void setRequiredField(QWidget *widget);
 
 		//! \brief Filters the ENTER/RETURN key press forcing the button "Apply" to be clicked
 		bool eventFilter(QObject *object, QEvent *event);

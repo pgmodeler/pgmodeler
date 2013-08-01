@@ -22,7 +22,16 @@
 
 %if @{pk-constr} %then [ PRIMARY KEY ] (@{src-columns}) %end
 %if @{uq-constr} %then [ UNIQUE ] (@{src-columns}) %end
-%if @{ex-constr} %then [ EXCLUDE ] $br $tb ( @{elements} $br $tb ) %end
+%if @{ex-constr} %then
+ [ EXCLUDE ] $br
+  $tb
+
+  %if @{index-type} %then
+   [USING ] @{index-type}
+  %end
+
+  ( @{elements} $br $tb )
+%end
 
 %if @{tablespace} %then
   $br

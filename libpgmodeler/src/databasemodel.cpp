@@ -4393,6 +4393,10 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		{
 			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::_TRUE_);
 		}
+		else if(constr_type==ConstraintType::exclude &&	!attribs[ParsersAttributes::INDEX_TYPE].isEmpty())
+		{
+			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
+		}
 
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

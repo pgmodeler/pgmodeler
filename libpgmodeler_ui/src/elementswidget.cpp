@@ -74,6 +74,9 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		collation_lbl->setVisible(false);
 		operator_sel->setVisible(false);
 		operator_lbl->setVisible(false);
+
+		BaseObjectWidget::setRequiredField(operator_sel);
+		BaseObjectWidget::setRequiredField(operator_lbl);
 	}
 	catch(Exception &e)
 	{

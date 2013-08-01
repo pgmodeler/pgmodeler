@@ -29,6 +29,4 @@ $br $tb $sp $sp
   %end
 %end
 
-%if @{operator} %then
-   [ WITH ] @{operator}
-%end
+[ WITH ] @{operator}

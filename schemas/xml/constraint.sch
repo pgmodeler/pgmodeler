@@ -25,6 +25,10 @@
     [ no-inherit="true"]
  %end
 
+ %if @{ex-constr} %and @{index-type} %then
+    [ index-type=]"@{index-type}"
+ %end
+
  %if @{factor} %then
   [ factor=] "@{factor}"
  %end

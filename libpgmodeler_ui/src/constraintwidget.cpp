@@ -82,6 +82,9 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		on_delete_cmb->addItems(list);
 		on_update_cmb->addItems(list);
 
+		IndexingType::getTypes(list);
+		indexing_cmb->addItems(list);
+
 		info_frm=generateInformationFrame(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
@@ -95,6 +98,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
+		connect(indexing_chk, SIGNAL(toggled(bool)), indexing_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
@@ -349,6 +353,9 @@ void ConstraintWidget::selectConstraintType(void)
 	columns_tbw->setVisible(constr_type!=ConstraintType::check &&
 													constr_type!=ConstraintType::exclude);
 
+	indexing_chk->setVisible(constr_type==ConstraintType::exclude);
+	indexing_cmb->setVisible(constr_type==ConstraintType::exclude);
+
 	if(constr_type!=ConstraintType::foreign_key)
 		columns_tbw->removeTab(1);
 	else
@@ -405,6 +412,9 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	if(constr)
 	{
 		excl_elems = constr->getExcludeElements();
+
+		indexing_chk->setChecked(constr->getIndexType()!=BaseType::null);
+		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~constr->getIndexType()));
 
 		constr_type_cmb->setCurrentIndex(constr_type_cmb->findText(~constr->getConstraintType()));
 		constr_type_cmb->setEnabled(false);
@@ -468,6 +478,11 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setActionType(ActionType(on_delete_cmb->currentText()),false);
 		constr->setActionType(ActionType(on_update_cmb->currentText()),true);
 		constr->setNoInherit(no_inherit_chk->isChecked());
+
+		if(indexing_chk->isChecked())
+			constr->setIndexType(IndexingType(indexing_cmb->currentText()));
+		else
+			constr->setIndexType(BaseType::null);
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));

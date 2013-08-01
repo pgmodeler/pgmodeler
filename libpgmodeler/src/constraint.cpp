@@ -25,6 +25,7 @@ Constraint::Constraint(void)
 	deferrable=false;
 	no_inherit=false;
 	fill_factor=100;
+	index_type=BaseType::null;
 
 	attributes[ParsersAttributes::PK_CONSTR]="";
 	attributes[ParsersAttributes::FK_CONSTR]="";
@@ -40,6 +41,7 @@ Constraint::Constraint(void)
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::COMPARISON_TYPE]="";
 	attributes[ParsersAttributes::DEFER_TYPE]="";
+	attributes[ParsersAttributes::INDEX_TYPE]="";
 	attributes[ParsersAttributes::DEFERRABLE]="";
 	attributes[ParsersAttributes::TABLE]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
@@ -563,6 +565,16 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
+void Constraint::setIndexType(IndexingType index_type)
+{
+	this->index_type=index_type;
+}
+
+IndexingType Constraint::getIndexType(void)
+{
+	return(index_type);
+}
+
 QString Constraint::getCodeDefinition(unsigned def_type)
 {
 	return(getCodeDefinition(def_type, false));
@@ -624,6 +636,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? "1" : "");
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+	attributes[ParsersAttributes::INDEX_TYPE]=(~ index_type);
 
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
