@@ -21,8 +21,8 @@ int main(int argc, char **argv)
 												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
 												 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE ,
-												 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT, */
-												 OBJ_RULE };
+												 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT,
+												 OBJ_RULE, */ OBJ_TRIGGER };
 
 		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 

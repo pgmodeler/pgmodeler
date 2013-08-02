@@ -24,6 +24,8 @@ $tb [ON ] @{table} $br
 
 $tb [FOR EACH ] %if @{per-line} %then ROW %else STATEMENT %end $br
 
+%if @{condition} %then $tb WHEN $sp (@{condition}) $br %end
+
 $tb [EXECUTE PROCEDURE ] @{trigger-func}(
 %if @{arguments} %then @{arguments} %end ); $br
 

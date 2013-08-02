@@ -129,7 +129,8 @@ void Trigger::addColumn(Column *column)
 										.arg(this->getName(true))
 										.arg(this->getTypeName()),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(column->getParentTable() != this->getParentTable())
+	else if(this->getParentTable() &&
+					column->getParentTable() != this->getParentTable())
 		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
 										.arg(column->getName(true))
 										.arg(this->getName(true)),

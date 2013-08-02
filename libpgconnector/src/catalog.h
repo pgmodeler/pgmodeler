@@ -49,7 +49,7 @@ This class is the basis for the reverse engineering feature.
 **OK!**		TABLE						(pg_tables)
 **OK!**		COLUMN					(pg_attribute, pg_attrdef)
 					INDEX						(pg_index)
-					RULE						(pg_rule)
+**OK!**		RULE						(pg_rule)
 					TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
 **OK!**		CONSTRAINT			(pg_constraints)
 **OK!**		CAST						(pg_cast)
