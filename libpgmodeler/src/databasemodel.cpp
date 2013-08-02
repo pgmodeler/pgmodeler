@@ -5139,9 +5139,17 @@ View *DatabaseModel::createView(void)
 						XMLParser::restorePosition();
 					}
 					else if(elem==BaseObject::getSchemaName(OBJ_RULE))
+					{
+						XMLParser::savePosition();
 						view->addRule(createRule());
+						XMLParser::restorePosition();
+					}
 					else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
+					{
+						XMLParser::savePosition();
 						view->addTrigger(createTrigger(view));
+						XMLParser::restorePosition();
+					}
 				}
 			}
 			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
