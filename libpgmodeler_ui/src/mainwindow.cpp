@@ -240,7 +240,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
-	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), &tmpmodel_thread, SLOT(start(void)));
+
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
 
@@ -378,6 +378,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			QString model_file;
 			QStringList tmp_models=restoration_form->getSelectedModels();
 
+			//Disable the temp. model thread saving execution
+			tmpmodel_thread.setEnabled(false);
+
 			while(!tmp_models.isEmpty())
 			{
 				try
@@ -407,13 +410,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 
 	/* Loading the files from the previous session. The session will be restored only
-	if pgModeler is on model restore mode or pgModeler is opening a model clicked by user
+	if pgModeler is not on model restore mode or pgModeler is not opening a model clicked by user
 	o the file manager */
 	if(QApplication::arguments().size() <= 1 &&
 		 !prev_session_files.isEmpty() && restoration_form->result()==QDialog::Rejected)
 	{
 		try
 		{
+			//Disable the temp. model thread saving execution
+			tmpmodel_thread.setEnabled(false);
+
 			while(!prev_session_files.isEmpty())
 			{
 				this->addModel(prev_session_files.front());
@@ -425,6 +431,26 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			msg_box.show(e);
 		}
 	}
+
+	/* Since the temp. model thread is disabled is necessary to save the temp.
+	models for the loaded/restored models */
+	ModelWidget *model=nullptr;
+	for(i=0; i < models_tbw->count(); i++)
+	{
+		model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+		try
+		{
+			model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+		}
+		catch(Exception &e)
+		{
+			msg_box.show(e);
+		}
+	}
+
+	/* Reenables the thread's execution. This means whenever the user switch tabs the
+	temporary model are saved */
+	tmpmodel_thread.setEnabled(true);
 
 	updateConnections();
 	updateRecentModelsMenu();
@@ -453,9 +479,6 @@ void MainWindow::showEvent(QShowEvent *)
 	if(save_interval > 0)
 		model_save_timer.start(save_interval);
 
-	//The temporary model timer is always of 1 minute
-	//tmpmodel_save_timer.start(60000);
-
  #ifndef Q_OS_MAC
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
@@ -468,6 +491,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	map<QString, attribs_map > confs;
 	bool save_conf=false, modified=false;
 	int i=0;
+	ModelWidget *model=nullptr;
+
+	//Stops the saving timers as well the temp. model saving thread before close pgmodeler
+	model_save_timer.stop();
+	tmpmodel_save_timer.stop();
+	tmpmodel_thread.quit();
+	tmpmodel_thread.setModel(nullptr);
+	tmpmodel_thread.setEnabled(false);
 
 	//Checking if there is modified models and ask the user to save them before close the application
 	if(models_tbw->count() > 0)
@@ -545,6 +576,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt->saveConfiguration();
 
 		restoration_form->removeTemporaryModels();
+	}
+
+	//Deallocating the models
+	while(models_tbw->count() > 0)
+	{
+		model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
+		model->setModified(false);
+		this->closeModel();
 	}
 }
 
@@ -698,12 +737,15 @@ void MainWindow::setCurrentModel(void)
 		models_tbw->blockSignals(false);
 	}
 
-	//Avoids the tree state saving in order to restore the current model tree state
-	model_objs_wgt->saveTreeState(false);
+	if(tmpmodel_thread.isEnabled())
+	{
+		//Avoids the tree state saving in order to restore the current model tree state
+		model_objs_wgt->saveTreeState(false);
 
-	//Restore the tree state
-	if(current_model)
-		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
+		//Restore the tree state
+		if(current_model)
+			model_objs_wgt->saveTreeState(model_tree_states[current_model]);
+	}
 
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
@@ -770,12 +812,17 @@ void MainWindow::setCurrentModel(void)
 	model_valid_wgt->setModel(current_model);
 	obj_finder_wgt->setModel(current_model);
 
-	if(current_model)
-		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
+	/*If the temp. model thread is enabled restore the objects tree state as well
+	saves the temp model for the current model */
+	if(tmpmodel_thread.isEnabled())
+	{
+		if(current_model)
+			model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
-	model_objs_wgt->saveTreeState(true);
-	tmpmodel_thread.setModel(current_model);
-	tmpmodel_thread.start();
+		model_objs_wgt->saveTreeState(true);
+		tmpmodel_thread.setModel(current_model);
+		tmpmodel_thread.start();
+	}
 }
 
 void MainWindow::setGridOptions(void)
@@ -1187,12 +1234,6 @@ void MainWindow::executePlugin(void)
 		if(plugin)
 			plugin->executePlugin(current_model);
 	}
-}
-
-void MainWindow::saveTemporaryModel(void)
-{
-	if(current_model && this->isActiveWindow())
-		tmpmodel_thread.start();
 }
 
 void MainWindow::showOverview(bool show)

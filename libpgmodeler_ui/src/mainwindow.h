@@ -175,10 +175,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Execute the plugin represented by the action that calls the slot
 		void executePlugin(void);
 
-		/*! \brief Saves a temporary model file related to the currently edited model. In case of failure (crash)
-		pgModeler can restore the previous model. */
-		void saveTemporaryModel(void);
-
 		//! \brief Toggles the overview widget for the currently opened model
 		void showOverview(bool show);
 

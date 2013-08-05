@@ -30,11 +30,26 @@
 class TemporaryModelThread: public QThread {
 	private:
 		Q_OBJECT
+
+		//! \brief Model widget which thread operates
 		ModelWidget *model_wgt;
+
+		/*! \brief When this flag is false the methods run() and quit() has no effect.
+		By default any instance of this class is enabled. But when disabled the user must
+		explicity call  setEnabled(true) to reenable thread's execution before call start().
+		This attribute is need because in MainWindow restoration mode the thread cannot
+		be executed while models are being restored. */
+		bool enabled;
 
 	public:
 		TemporaryModelThread(QObject *parent=0);
 		void setModel(ModelWidget *model);
+		bool isEnabled(void);
+
+	public slots:
+		void setEnabled(bool value);
+
+	protected:
 		void run(void) override;
 };
 
