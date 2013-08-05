@@ -118,7 +118,7 @@ void GeneralConfigWidget::saveConfiguration()
 																																										 .arg(right_marg->value())
 																																										 .arg(bottom_marg->value());
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(autosave_interv_chk->isChecked() ? "1" : "");
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(save_session_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
 

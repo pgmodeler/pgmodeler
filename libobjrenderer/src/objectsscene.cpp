@@ -54,13 +54,13 @@ ObjectsScene::~ObjectsScene(void)
 	QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
 													 OBJ_VIEW, OBJ_TABLE };
-	unsigned i;
+	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
 
 	//Destroy the objects in the order defined on obj_types vector
-	for(i=0; i < 4; i++)
+	for(i=0; i < count; i++)
 	{
 		items=this->items();
 
@@ -307,6 +307,9 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		item->setVisible(false);
 		item->setActive(false);
 		QGraphicsScene::removeItem(item);
+
+		if(object)
+			delete(item);
 	}
 }
 

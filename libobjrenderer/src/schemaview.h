@@ -53,6 +53,7 @@ class SchemaView: public BaseObjectView
 
 	public:
 		SchemaView(Schema *schema);
+		~SchemaView(void);
 
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);

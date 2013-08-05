@@ -58,6 +58,9 @@ RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
 
+	this->disconnectTables();
+	disconnect(this, nullptr, this->getSourceObject(), nullptr);
+
 	for(int i=0; i < 3; i++)
 	{
 		if(labels[i])

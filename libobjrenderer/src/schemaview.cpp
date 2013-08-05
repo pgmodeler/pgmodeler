@@ -40,6 +40,11 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	all_selected=false;
 }
 
+SchemaView::~SchemaView()
+{
+	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
+}
+
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//If the user press SHIFT + left-click select all the schema children

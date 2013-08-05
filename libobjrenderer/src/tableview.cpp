@@ -21,13 +21,12 @@
 TableView::TableView(Table *table) : BaseTableView(table)
 {
 	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
-	//sel_child_obj=nullptr;
 	this->configureObject();
 }
 
 TableView::~TableView(void)
 {
-	disconnect(this, SLOT(configureObject(void)));
+	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 
 void TableView::configureObject(void)

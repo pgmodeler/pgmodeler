@@ -30,7 +30,7 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 
 GraphicalView::~GraphicalView(void)
 {
-	disconnect(this, SLOT(configureObject(void)));
+	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 
 void GraphicalView::configureObject(void)
