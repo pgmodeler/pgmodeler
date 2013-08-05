@@ -42,7 +42,7 @@
 	 %end
 
 	 %if @{schema} %then
-	  [ _dm1.sequence_schema= ] '@{schema}'
+	  [ _dm1.domain_schema= ] '@{schema}'
 	 %end
        %end
     %end

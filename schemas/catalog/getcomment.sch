@@ -10,4 +10,8 @@
   pg_description
 %end
 
-[ WHERE objoid = ] @{oid} [ AND objsubid = 0 ]
+[ WHERE objoid = ] @{oid}
+
+%if %not @{shared-obj} %then
+ [ AND objsubid = 0 ]
+%end

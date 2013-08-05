@@ -26,7 +26,6 @@ This class is the basis for the reverse engineering feature.
 #ifndef CATALOG_H
 #define CATALOG_H
 
-
 /* Possible way to determine the order to import object from database:
  * 1) Order object by type (list below)
  * 2) For each type objects by name
@@ -48,16 +47,16 @@ This class is the basis for the reverse engineering feature.
 **OK!**		CONVERSION			(pg_conversion)
 **OK!**		TABLE						(pg_tables)
 **OK!**		COLUMN					(pg_attribute, pg_attrdef)
-					INDEX						(pg_index)
+**OK!**		INDEX						(pg_index)
 **OK!**		RULE						(pg_rule)
-					TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
+**OK!**		TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
 **OK!**		CONSTRAINT			(pg_constraints)
 **OK!**		CAST						(pg_cast)
-					TABLE INHERITS	(pg_inherits)
 **OK!**		VIEW						(pg_view, pg_class [relkind='v'])
 **OK!**		SEQUENCE        (pg_class [relkind='S'], information_schema.sequences)
 **OK!**		OBJ_DOMAIN      (information_schema.domains)
-					PERMISSION			(???)
+					TABLE INHERITS	(Retrieved individually for each table)
+					PERMISSION			(Retrieved individually for each type of object)
 
 ** Details can be found on pg_dump_sort.c line 82 **/
 
@@ -85,8 +84,6 @@ AGGREGATE agg_name (agg_type [, ...] ) |
 	TEXT SEARCH TEMPLATE object_name |
 	TYPE object_name |
 	VIEW object_name */
-
-
 #include "connection.h"
 #include "baseobject.h"
 #include "tableobject.h"

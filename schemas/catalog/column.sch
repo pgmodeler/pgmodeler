@@ -20,6 +20,12 @@
        LEFT JOIN pg_description AS ds ON ds.objoid=cl.attrelid AND ds.objsubid=cl.attnum
        LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
        LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-       WHERE relname= ] '@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ORDER BY attnum ASC ]
+       WHERE relname= ] '@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ]
+
+       %if @{filter-oids} %then
+	[ AND cl.attnum IN (] @{filter-oids} )
+       %end
+
+       [ ORDER BY attnum ASC ]
     %end
 %end

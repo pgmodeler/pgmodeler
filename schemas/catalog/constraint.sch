@@ -60,5 +60,10 @@
      LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
      LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
      WHERE tb.relkind='r' AND tb.relname= ] '@{table}' [ AND ns.nspname= ] '@{schema}'
+
+     %if @{filter-oids} %then
+       [ AND cs.oid IN (] @{filter-oids} )
+     %end
+
     %end
 %end

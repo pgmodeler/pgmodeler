@@ -30,7 +30,7 @@
 	       (B'0010000'::integer & tgtype = 16) AS upd_event_bool,
 	       (B'0100000'::integer & tgtype = 32) AS trunc_event_bool,
 	       tg.tgdeferrable AS deferrable_bool,
-	       (tg.tgconstraint > 0) AS constraint_bool,
+	       (tg.tgconstraint > 0) AS constraint_bool, ds.description AS comment,
 
 	    CASE
 	      WHEN B'0000010'::integer & tgtype = 2 THEN 'BEFORE'
@@ -53,10 +53,15 @@
 	 LEFT JOIN pg_constraint AS cs ON tg.tgconstraint = cs.oid
 	 LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid
 	 LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+	 LEFT JOIN pg_description ds ON ds.objoid = tg.oid
 	 LEFT JOIN information_schema.triggers AS it ON
 		   it.trigger_schema=ns.nspname AND
 		   it.trigger_name=tg.tgname AND
 		   it.event_object_table=tb.relname
 	 WHERE tg.tgisinternal IS FALSE AND relname=]'@{table}' [ AND nspname=] '@{schema}'
+
+	%if @{filter-oids} %then
+	  [ AND tg.oid IN (] @{filter-oids} )
+	%end
     %end
 %end

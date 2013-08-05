@@ -17,12 +17,12 @@ int main(int argc, char **argv)
 		Catalog catalog;
 		catalog.setConnection(conn);
 
-		ObjectType types[]={ /*OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
+		ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
 												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
 												 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE ,
 												 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT,
-												 OBJ_RULE, */ OBJ_TRIGGER };
+												 OBJ_RULE,   OBJ_TRIGGER , OBJ_INDEX };
 
 		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 			long time2=QDateTime::currentMSecsSinceEpoch();
 			cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 
-			//cin.get();
+			cout << endl<< endl;
 		}
 
 		return(0);

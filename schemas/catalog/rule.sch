@@ -39,5 +39,10 @@
       LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
       LEFT JOIN pg_description ds ON ds.objoid = rl.oid
       WHERE cl.relname=]'@{table}' [ AND ns.nspname=] '@{schema}'
+
+      %if @{filter-oids} %then
+	[ AND rl.oid IN (] @{filter-oids} )
+      %end
+
     %end
 %end

@@ -15,7 +15,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{OBJ_CONVERSION, "cn.oid"}, {OBJ_CAST, "cs.oid"}, {OBJ_VIEW, "vw.oid"},
 	{OBJ_SEQUENCE, "sq.oid"}, {OBJ_DOMAIN, "dm.oid"}, {OBJ_TYPE, "tp.oid"},
 	{OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"},
-	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}
+	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.oid"}
 };
 
 void Catalog::setConnection(Connection &conn)
@@ -240,11 +240,12 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 
+		if(!filter_oids.empty())
+			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+
 		if(!TableObject::isTableObject(obj_type))
 		{
 			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
-			if(!filter_oids.empty())
-				extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 			if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 				extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
