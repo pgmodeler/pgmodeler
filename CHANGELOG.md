@@ -1,6 +1,40 @@
 Changelog
 ---------
 
+v0.6.0-alpha1
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: August 05, 2013</em>
+
+* [New] Added catalog query for triggers.
+* [New] Added catalog query for rules.
+* [New] Added indexing method to exclude constraint.
+* [New] Added catalog query for constraints.
+* [New] Added catalog queries for tables and columns
+* [New] Added catalog queries for view, domain, sequence and user defined types.
+* [New] Added catalog query for collation.
+* [New] Added catalog query for operator family.
+* [New] Added catalog query for operator class.
+* [New] Object dependencies form now can list indirect dependencies.
+* [New] Added an environment variable to set a different location for crash handler executable.
+* [New] Objects that has SQL disabled now is shown with name striked out.
+* [Change] Minor change on MainWindow::closeEvent()
+* [Change] Moved app_style variable to GlobalAttributes::DEFAULT_QT_STYLE.
+* [Change] Minor improvement on Exception::getExceptionsText method.
+* [Change] Improvements on copy/paste operations.
+* [Change] Removed unused linker parameters.
+* [Change] Crash handler executable renamed to "pgmodeler-ch".
+* [Fix] Fixed possible leak when destroying a ModelWidget instance. Objects from  scene were not being deleted correclty. Fix tests in progress.
+* [Fix] Fixed the "Save current session" option on GeneralConfigWidget that wasn't doing it's job correctly.
+* [Fix] Fixed a bug that was crashing pgModeler at startup when restoring previous sessions or temporary models.
+* [Fix] Minor fix on trigger code generation.
+* [Fix] Fixed incorrect loading of multiple triggers/rules on views.
+* [Fix] Minor fix on model validation. Operator classes are now checked during the validation process.
+* [Fix] Fixed generation of constraints in form of ALTER command. In some cases the constraint code wasn't appended to table's definition.
+* [Fix] Minor fixes on cast object.
+* [Fix] Minor fixes on databasemodel on retrieving dependencies/references for objects.
+* [Fix] Fixed crash handler path variable on MacOSX.
+
 v0.6.0-alpha
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
