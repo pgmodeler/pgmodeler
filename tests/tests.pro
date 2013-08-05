@@ -1,7 +1,7 @@
 include(../pgmodeler.pro)
 
 TEMPLATE = app
-TARGET = test
+TARGET = pgmodeler-rev
 
 LIBS += $$LIBDESTDIR/$$LIBUTILS \
         $$LIBDESTDIR/$$LIBPARSERS \

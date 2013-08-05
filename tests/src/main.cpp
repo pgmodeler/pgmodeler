@@ -7,62 +7,74 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		Connection conn;
-		Connection::setPrintSQL(true);
-		conn.setConnectionParam(Connection::PARAM_DB_NAME, "rmfa");
-		conn.setConnectionParam(Connection::PARAM_USER, "postgres");
-		conn.setConnectionParam(Connection::PARAM_PASSWORD, "postgres");
-		conn.setConnectionParam(Connection::PARAM_SERVER_FQDN, "localhost");
+		cout << "\npgModeler reverse engineering test tool" << endl << endl;
 
-		Catalog catalog;
-		catalog.setConnection(conn);
-
-		ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
-												 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
-												 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
-												 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE ,
-												 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT,
-												 OBJ_RULE,   OBJ_TRIGGER , OBJ_INDEX };
-
-		unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
-
-		for(i=0; i < cnt; i++)
+		if(argc < 7)
 		{
-			long time1=QDateTime::currentMSecsSinceEpoch();
-			cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
-			cout << "[count]: " << catalog.getObjectCount(types[i],"public","filo") << endl;
+			cout << "** Insufficient parameters!" << endl;
+			cout << "** The correct usage is: pgmodeler-rev [dbname] [dbuser] [dbpass] [dbhost] [schema] [table]" << endl;
+			cout << "** Process aborted!" << endl << endl;
+			return(1);
+		}
+		else
+		{
+			Connection conn;
+			Connection::setPrintSQL(true);
+			conn.setConnectionParam(Connection::PARAM_DB_NAME, argv[1]);
+			conn.setConnectionParam(Connection::PARAM_USER, argv[2]);
+			conn.setConnectionParam(Connection::PARAM_PASSWORD, argv[3]);
+			conn.setConnectionParam(Connection::PARAM_SERVER_FQDN, argv[4]);
 
-			cout << "[list]: ";
-			attribs_map v1=catalog.getObjectsNames(types[i],"public", "filo");
-			attribs_map::iterator itr1=v1.begin();
+			Catalog catalog;
+			catalog.setConnection(conn);
 
-			while(itr1!=v1.end())
+			ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_SCHEMA,
+													 OBJ_LANGUAGE, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_AGGREGATE,
+													 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
+													 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE ,
+													 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT,
+													 OBJ_RULE,   OBJ_TRIGGER , OBJ_INDEX };
+
+			unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
+
+			for(i=0; i < cnt; i++)
 			{
-				cout << itr1->first.toStdString() <<  ":" <<itr1->second.toStdString() << " ";
-				itr1++;
-			}
+				long time1=QDateTime::currentMSecsSinceEpoch();
+				cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
+				cout << "[count]: " << catalog.getObjectCount(types[i],argv[5],argv[6]) << endl;
 
-			cout << endl;
+				cout << "[list]: ";
+				attribs_map v1=catalog.getObjectsNames(types[i],argv[5],argv[6]);
+				attribs_map::iterator itr1=v1.begin();
 
-			vector<attribs_map> v=catalog.getObjectsAttributes(types[i],"public", "filo");
-			attribs_map::iterator itr;
-
-			while(!v.empty())
-			{
-				cout << "[attribs]: ";
-				for(itr=v.back().begin(); itr!=v.back().end(); itr++)
-					cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
+				while(itr1!=v1.end())
+				{
+					cout << itr1->first.toStdString() <<  ":" <<itr1->second.toStdString() << " ";
+					itr1++;
+				}
 
 				cout << endl;
-				v.pop_back();
+
+				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[5],argv[6]);
+				attribs_map::iterator itr;
+
+				while(!v.empty())
+				{
+					cout << "[attribs]: ";
+					for(itr=v.back().begin(); itr!=v.back().end(); itr++)
+						cout << itr->first.toStdString() << "=" << itr->second.toStdString() << " ";
+
+					cout << endl;
+					v.pop_back();
+				}
+				long time2=QDateTime::currentMSecsSinceEpoch();
+				cout << "[Execution]: " << time2 - time1 << " ms" << endl;
+
+				cout << endl<< endl;
 			}
-			long time2=QDateTime::currentMSecsSinceEpoch();
-			cout << "[Execution]: " << time2 - time1 << " ms" << endl;
 
-			cout << endl<< endl;
+			return(0);
 		}
-
-		return(0);
 	}
 	catch(Exception &e)
 	{
