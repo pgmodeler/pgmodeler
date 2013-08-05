@@ -491,7 +491,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	map<QString, attribs_map > confs;
 	bool save_conf=false, modified=false;
 	int i=0;
-	ModelWidget *model=nullptr;
 
 	//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 	model_save_timer.stop();
@@ -576,14 +575,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt->saveConfiguration();
 
 		restoration_form->removeTemporaryModels();
-	}
-
-	//Deallocating the models
-	while(models_tbw->count() > 0)
-	{
-		model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
-		model->setModified(false);
-		this->closeModel();
 	}
 }
 
