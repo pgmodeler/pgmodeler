@@ -21,7 +21,7 @@
       [ SELECT DISTINCT(tg.oid), tg.tgname AS name, tg.tgfoid AS trigger_func,
 
 	#Convert the arguments from bytea to a string array. The last element is always empty and can be discarded
-	string_to_array(encode(tg.tgargs,'escape'), '\000') AS arguments,
+	string_to_array(encode(tg.tgargs,'escape'), E'\\000') AS arguments,
 
 	       it.action_condition AS condition,
 	       (B'0000001'::integer & tgtype = 1) AS per_line_bool,

@@ -188,7 +188,6 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_SQL_RESULT_NOT_ALOC", QT_TR_NOOP("Assignment of not allocated SQL command result!")},
 	{"ERR_INCOMPREHENSIBLE_DBMS_RESP", QT_TR_NOOP("Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!")},
 	{"ERR_DBMS_FATAL_ERROR", QT_TR_NOOP("Unable to allocate command result for the SQL because the server has generated a fatal error!\nMessage returned by the DBMS: %1")},
-	{"ERR_EMPTY_SQL_COMMAND", QT_TR_NOOP("Unable to allocate the result of the SQL command because the command passed was an empty SQL!")},
 	{"ERR_REF_TUPLE_COL_INV_INDEX", QT_TR_NOOP("Reference to a column of tuple with invalid index!")},
 	{"ERR_REF_TUPLE_COL_INV_NAME", QT_TR_NOOP("Reference to a column of tuple with invalid name!")},
 	{"ERR_REF_TUPLE_INEXISTENT", QT_TR_NOOP("Reference to a tuple with index invalid or the result is empty (no tuples)!")},

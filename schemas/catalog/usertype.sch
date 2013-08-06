@@ -17,9 +17,17 @@
 %else
     %if @{attribs} %then
 
-    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner,
-            tp.typacl AS permissions, tp.typcollation AS collation,
-        CASE 
+    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+
+    #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
+    %if @{pgsql90} %then
+      [ NULL AS permissions, NULL AS collation,]
+    %else
+      [ tp.typacl AS permissions, tp.typcollation AS collation,]
+    %end
+
+
+    [   CASE
           WHEN typtype = 'e' THEN 'enumeration'
           WHEN typtype = 'b' THEN 'base'    
           WHEN typtype = 'c' THEN 'composite'
@@ -30,18 +38,23 @@
     [   CASE WHEN typtype = 'e' THEN (SELECT array_agg(enumlabel) FROM pg_enum WHERE enumtypid=tp.oid)
         END AS enumerations, ]
 
-    # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation 
+    # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
     # separating them by colon.
     # (this field is null when the type is not a composite)
-    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||':'|| atttypid ||':'|| attndims||':'|| attcollation) 
-                                FROM pg_attribute 
+    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||':'|| atttypid ||':'|| attndims||':'|| ] %if @{pgsql90} %then NULL %else attcollation %end [)]
+    [                           FROM pg_attribute
                                 WHERE attrelid=(SELECT oid FROM pg_class WHERE reltype=tp.oid))
          END AS typeattrib, ]
-    # Retrieve the range type attributes (is null when the type is not a range)
+
+
+
+    # Retrieve the range type attributes (is null when the type is not a range) (pgsql > 9.0)
+    %if %not @{pgsql90} %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||','||rngcollation||','||rngsubopc::oid||','||
                                            rngcanonical::oid||','||rngsubdiff::oid, ',') 
                                     FROM pg_range WHERE rngtypid=tp.oid)
       END AS rangeattribs, ]
+    %end
 
     [ tp.typinput::oid AS input, tp.typoutput::oid AS output, tp.typreceive::oid AS receive, tp.typsend::oid AS send,
       tp.typmodin::oid AS tpmodin, tp.typmodout::oid AS tpmodout, tp.typanalyze::oid AS analyze,
@@ -63,11 +76,15 @@
 
      tp.typdefault AS default_value, tp.typelem AS element, 
      tp.typdelim AS delimiter, tp.typispreferred AS preferred_bool,
-     tp.typcategory AS category, 
+     tp.typcategory AS category, ]
 
-     CASE WHEN tp.typcollation <> 0 THEN TRUE
-      ELSE FALSE
-     END AS collatable_bool, ]
+     %if @{pgsql90} %then
+      [ FALSE AS collatable_bool, ]
+     %else
+      [ CASE WHEN tp.typcollation <> 0 THEN TRUE
+	 ELSE FALSE
+	END AS collatable_bool, ]
+     %end
      
     (@{comment}) [ AS comment, ]
     (@{from-extension}) [ AS from_extension_bool ]

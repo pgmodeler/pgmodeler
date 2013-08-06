@@ -2,16 +2,16 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
-  [SELECT ex.oid, extname AS name FROM pg_extension AS ex ]
+# Extension exists only on PostgreSQL >= 9.1
+%if @{list} %and %not @{pgsql90} %then
+   [SELECT ex.oid, extname AS name FROM pg_extension AS ex ]
 
-  %if @{schema} %then
+    %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid
-       WHERE ns.nspname = ] '@{schema}'
-  %end
-
+      WHERE ns.nspname = ] '@{schema}'
+   %end
 %else
-    %if @{attribs} %then
+    %if @{attribs} %and %not @{pgsql90}  %then
 	[SELECT ex.oid, ex.extname AS name, ex.extversion AS curr_version,
 		ex.extowner, ex.extnamespace,
 	  (SELECT CASE

@@ -15,7 +15,16 @@
 %else
     %if @{attribs} %then
       [SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
-	      sq.relacl AS permissions,  _sq1.start_value AS start, _sq1.minimum_value AS min_value,
+	      sq.relacl AS permissions,  ]
+
+      #TODO: Discover which field is the start value for sequences on PgSQL 9.0
+      %if @{pgsql90} %then
+       [ 1 AS start, ]
+      %else
+       [ _sq1.start_value AS start, ]
+      %end
+
+      [ _sq1.minimum_value AS min_value,
 	      _sq1.maximum_value AS max_value, _sq1.increment,
 
 	  CASE _sq1.cycle_option

@@ -13,9 +13,16 @@
 %else
     %if @{attribs} %then
      [SELECT cl.attname AS name, cl.atttypid AS type, cl.attlen AS length, cl.attndims AS dimension,
-	     cl.attnotnull AS not_null_bool, cl.attcollation AS collation, cl.attacl AS permissions,
-	     df.adsrc AS default_value, ds.description AS comment
-       FROM pg_attribute AS cl
+	     cl.attnotnull AS not_null_bool, cl.attacl AS permissions, df.adsrc AS default_value,
+	     ds.description AS comment, ]
+
+      %if @{pgsql90} %then
+       [ NULL AS collation ]
+      %else
+       [ cl.attcollation AS collation ]
+      %end
+
+     [ FROM pg_attribute AS cl
        LEFT JOIN pg_attrdef AS df ON df.adrelid=cl.attrelid AND df.adnum=cl.attnum
        LEFT JOIN pg_description AS ds ON ds.objoid=cl.attrelid AND ds.objsubid=cl.attnum
        LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid

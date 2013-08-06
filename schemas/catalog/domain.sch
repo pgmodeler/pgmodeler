@@ -11,13 +11,21 @@
   %end
 %else
     %if @{attribs} %then
-     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, dm.typacl AS permissions,
-	     dm.typcollation, dm.typnotnull AS not_null_bool, _dm1.data_type AS type, _dm1.character_maximum_length AS length,
+     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, ]
+
+	#TODO: Discover which field is the acl for domain on PgSQL 9.0
+	%if @{pgsql90} %then
+	 [ NULL AS permissions, NULL AS collation, ]
+	%else
+	 [ dm.typacl AS permissions, dm.typcollation AS collation, ]
+	%end
+
+	[ dm.typnotnull AS not_null_bool, _dm1.data_type AS type, _dm1.character_maximum_length AS length,
 
 	   CASE
-	    WHEN _dm1.numeric_precision IS NOT NULL THEN _dm1.numeric_precision
-	    WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision
-	    WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision
+	    WHEN _dm1.numeric_precision IS NOT NULL THEN  ] _dm1.numeric_precision  %if @{pgsql90} %then [::varchar] %end
+	[   WHEN _dm1.datetime_precision IS NOT NULL THEN ] _dm1.datetime_precision %if @{pgsql90} %then [::varchar] %end
+	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision
 	    ELSE NULL
 	   END AS precision,
 

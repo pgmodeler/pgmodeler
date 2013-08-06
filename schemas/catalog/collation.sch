@@ -2,10 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
+%if @{list} %and %not @{pgsql90} %then
  [SELECT oid, collname AS name FROM pg_collation]
 %else
-    %if @{attribs} %then
+  %if @{attribs} %and %not @{pgsql90}  %then
       [ SELECT cl.oid, cl.collname AS name, cl.collnamespace AS schema, 
                cl.collowner AS owner, pg_encoding_to_char(cl.collencoding) AS encoding,
                cl.collcollate AS lc_collate, cl.collctype AS lc_ctype, ]

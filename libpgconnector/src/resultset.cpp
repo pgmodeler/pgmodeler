@@ -52,18 +52,13 @@ ResultSet::ResultSet(PGresult *sql_result)
 			throw Exception(str_aux,ERR_DBMS_FATAL_ERROR, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		break;
 
-			//Generating an error in case the user tries to get a result from an empty query
-		case PGRES_EMPTY_QUERY:
-			throw Exception(ERR_EMPTY_SQL_COMMAND, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
-
 			//In case of sucess states the result will be created
 		case PGRES_COMMAND_OK:
 		case PGRES_TUPLES_OK:
 		case PGRES_COPY_OUT:
 		case PGRES_COPY_IN:
 		default:
-			empty_result=(res_state!=PGRES_TUPLES_OK);
+			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_EMPTY_QUERY);
 			current_tuple=-1;
 			is_res_copied=false;
 		break;

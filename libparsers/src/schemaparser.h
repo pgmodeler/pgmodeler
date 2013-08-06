@@ -130,6 +130,10 @@ class SchemaParser {
 		//! \brief PostgreSQL version currently used by the parser
 		static QString pgsql_version;
 
+		/*! \brief Creates an special attribute indicating which version of PostgreSQL the
+		parser is configured */
+		static void storePgSQLVersion(attribs_map &attribs);
+
 	public:
 
 		//! \brief Constants used to refernce PostgreSQL versions.

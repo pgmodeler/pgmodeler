@@ -10,13 +10,19 @@
 %else
     %if @{attribs} %then
      [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table, ds.description AS comment,
-	     cs.conkey AS src_columns, cs.confkey AS dst_columns,
-	     cs.connoinherit AS no_inherit_bool, cs.consrc AS expression,
+	     cs.conkey AS src_columns, cs.confkey AS dst_columns, cs.consrc AS expression,
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
-	     cl.relam AS index_type,
+	     cl.relam AS index_type, ]
 
-	CASE cs.contype
+     %if @{pgsql90} %then
+     [ FALSE AS no_inherit_bool, ]
+     %else
+     [ cs.connoinherit AS no_inherit_bool, ]
+     %end
+
+
+     [	CASE cs.contype
 	  WHEN 'p' THEN 'pk-constr'
 	  WHEN 'u' THEN 'uq-constr'
 	  WHEN 'c' THEN 'ck-constr'

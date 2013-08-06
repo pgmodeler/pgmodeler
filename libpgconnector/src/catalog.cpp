@@ -38,7 +38,6 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		QString sql;
 
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
-
 		attribs[qry_type]="1";
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		SchemaParser::setIgnoreEmptyAttributes(true);

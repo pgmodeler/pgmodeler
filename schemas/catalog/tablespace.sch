@@ -12,7 +12,7 @@
 	%if %not @{pgsql90} %and %not @{pgsql91} %then
 	  [ pg_tablespace_location(oid) AS directory, ]
 	%else
-	  [ ts.spclocation AS directory ]
+	  [ spclocation AS directory, ]
 	%end
 
 	(@{comment}) [ AS comment ]
