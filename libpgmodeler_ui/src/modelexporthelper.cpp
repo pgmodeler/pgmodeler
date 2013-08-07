@@ -298,7 +298,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 							for(obj_id=0; obj_id < count; obj_id++)
 							{
 								//Check if the keyword for the current object exists on string
-								reg_aux.setPattern(QString("(CREATE)(.)*(%1)").arg(BaseObject::getSQLName(obj_types[obj_id])));
+								reg_aux.setPattern(QString("(CREATE)(.)*(%1)%2")
+																	 .arg(BaseObject::getSQLName(obj_types[obj_id]))
+																	 .arg(obj_types[obj_id]==OBJ_INDEX ? "( )*(CONCURRENTLY)?" : ""));
 								pos=reg_aux.indexIn(lin);
 
 								if(pos >= 0)

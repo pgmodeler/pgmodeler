@@ -27,6 +27,8 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(par
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
 	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
 
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection(void)));
+
 	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection(void)));
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
@@ -153,6 +155,30 @@ void ConnectionsConfigWidget::newConnection(void)
 
 	edit_tb->setEnabled(connections_cmb->count() > 0);
 	remove_tb->setEnabled(connections_cmb->count() > 0);
+	duplicate_tb->setEnabled(connections_cmb->count() > 0);
+}
+
+void ConnectionsConfigWidget::duplicateConnection()
+{
+	Connection *conn=nullptr, *new_conn=nullptr;
+	QString alias;
+
+	try
+	{
+		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+		new_conn=new Connection;
+		(*new_conn)=(*conn);
+		alias=QString("cp_%1").arg(connections_cmb->currentText());
+		connections_cmb->addItem(alias,  QVariant::fromValue<void *>(reinterpret_cast<void *>(new_conn)));
+		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
+	}
+	catch(Exception &e)
+	{
+		if(new_conn)
+			delete(new_conn);
+
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void ConnectionsConfigWidget::handleConnection(void)
@@ -253,6 +279,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		connections_cmb->setEnabled(false);
 
 		new_tb->setVisible(false);
+		duplicate_tb->setEnabled(false);
 		cancel_tb->setVisible(true);
 		edit_tb->setEnabled(false);
 	}

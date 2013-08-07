@@ -487,94 +487,100 @@ void MainWindow::showEvent(QShowEvent *)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	GeneralConfigWidget *conf_wgt=nullptr;
-	map<QString, attribs_map > confs;
-	bool save_conf=false, modified=false;
-	int i=0;
-
-	//Stops the saving timers as well the temp. model saving thread before close pgmodeler
-	model_save_timer.stop();
-	tmpmodel_save_timer.stop();
-	tmpmodel_thread.quit();
-	tmpmodel_thread.setModel(nullptr);
-	tmpmodel_thread.setEnabled(false);
-
-	//Checking if there is modified models and ask the user to save them before close the application
-	if(models_tbw->count() > 0)
+	//pgModeler will not close when the validation thread is still running
+	if(model_valid_wgt->validation_thread->isRunning())
+		event->ignore();
+	else
 	{
-		i=0;
-		while(i < models_tbw->count() && !modified)
-			modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
+		GeneralConfigWidget *conf_wgt=nullptr;
+		map<QString, attribs_map > confs;
+		bool save_conf=false, modified=false;
+		int i=0;
 
-		if(modified)
+		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
+		model_save_timer.stop();
+		tmpmodel_save_timer.stop();
+		tmpmodel_thread.quit();
+		tmpmodel_thread.setModel(nullptr);
+		tmpmodel_thread.setEnabled(false);
+
+		//Checking if there is modified models and ask the user to save them before close the application
+		if(models_tbw->count() > 0)
 		{
-			msg_box.show(trUtf8("Save all models"),
-											trUtf8("Some models were modified! Do you want to save them before exit pgModeler?"),
-											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+			i=0;
+			while(i < models_tbw->count() && !modified)
+				modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
 
-			/* If the user accepts the message box the close event will be aborted
-			causing pgModeler not to be finished */
-			if(msg_box.result()==QDialog::Accepted)
-				event->ignore();
-		}
-	}
-
-	if(event->isAccepted())
-	{
-		this->overview_wgt->close();
-		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-		confs=conf_wgt->getConfigurationParams();
-		conf_wgt->removeConfigurationParams();
-
-		//Case is needed to save the session
-		if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
-		{
-			int i, count;
-			ModelWidget *model=nullptr;
-			QString param_id;
-			attribs_map attribs;
-
-			count=models_tbw->count();
-			for(i=0; i < count; i++)
+			if(modified)
 			{
-				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+				msg_box.show(trUtf8("Save all models"),
+										 trUtf8("Some models were modified! Do you want to save them before exit pgModeler?"),
+										 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
-				if(!model->getFilename().isEmpty())
+				/* If the user accepts the message box the close event will be aborted
+			causing pgModeler not to be finished */
+				if(msg_box.result()==QDialog::Accepted)
+					event->ignore();
+			}
+		}
+
+		if(event->isAccepted())
+		{
+			this->overview_wgt->close();
+			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+			confs=conf_wgt->getConfigurationParams();
+			conf_wgt->removeConfigurationParams();
+
+			//Case is needed to save the session
+			if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
+			{
+				int i, count;
+				ModelWidget *model=nullptr;
+				QString param_id;
+				attribs_map attribs;
+
+				count=models_tbw->count();
+				for(i=0; i < count; i++)
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+					model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+					if(!model->getFilename().isEmpty())
+					{
+						param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+						attribs[ParsersAttributes::ID]=param_id;
+						attribs[ParsersAttributes::PATH]=model->getFilename();
+						conf_wgt->addConfigurationParam(param_id, attribs);
+						attribs.clear();
+					}
+				}
+				save_conf=true;
+			}
+
+
+			//Saving recent models list
+			if(!recent_models.isEmpty())
+			{
+				int i=0;
+				QString param_id;
+				attribs_map attribs;
+
+				while(!recent_models.isEmpty())
+				{
+					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
 					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=model->getFilename();
+					attribs[ParsersAttributes::PATH]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
+					recent_models.pop_front();
 				}
+				save_conf=true;
 			}
-			save_conf=true;
+
+			if(save_conf)
+				conf_wgt->saveConfiguration();
+
+			restoration_form->removeTemporaryModels();
 		}
-
-
-		//Saving recent models list
-		if(!recent_models.isEmpty())
-		{
-			int i=0;
-			QString param_id;
-			attribs_map attribs;
-
-			while(!recent_models.isEmpty())
-			{
-				param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
-				attribs[ParsersAttributes::ID]=param_id;
-				attribs[ParsersAttributes::PATH]=recent_models.front();
-				conf_wgt->addConfigurationParam(param_id, attribs);
-				attribs.clear();
-				recent_models.pop_front();
-			}
-			save_conf=true;
-		}
-
-		if(save_conf)
-			conf_wgt->saveConfiguration();
-
-		restoration_form->removeTemporaryModels();
 	}
 }
 

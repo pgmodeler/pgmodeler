@@ -54,6 +54,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 
 	private slots:
 		void newConnection(void);
+		void duplicateConnection(void);
 		void handleConnection(void);
 		void editConnection(void);
 		void testConnection(void);
