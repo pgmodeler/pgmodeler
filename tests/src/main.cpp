@@ -9,10 +9,10 @@ int main(int argc, char **argv)
 	{
 		cout << "\npgModeler reverse engineering test tool" << endl << endl;
 
-		if(argc < 7)
+		if(argc < 8)
 		{
 			cout << "** Insufficient parameters!" << endl;
-			cout << "** The correct usage is: pgmodeler-rev [dbname] [dbuser] [dbpass] [dbhost] [schema] [table]" << endl;
+			cout << "** The correct usage is: pgmodeler-rev [dbname] [dbuser] [dbpass] [dbhost] [dbport] [schema] [table]" << endl;
 			cout << "** Process aborted!" << endl << endl;
 			return(1);
 		}
@@ -24,6 +24,7 @@ int main(int argc, char **argv)
 			conn.setConnectionParam(Connection::PARAM_USER, argv[2]);
 			conn.setConnectionParam(Connection::PARAM_PASSWORD, argv[3]);
 			conn.setConnectionParam(Connection::PARAM_SERVER_FQDN, argv[4]);
+			conn.setConnectionParam(Connection::PARAM_PORT, argv[5]);
 
 			Catalog catalog;
 			catalog.setConnection(conn);
@@ -41,10 +42,10 @@ int main(int argc, char **argv)
 			{
 				long time1=QDateTime::currentMSecsSinceEpoch();
 				cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
-				cout << "[count]: " << catalog.getObjectCount(types[i],argv[5],argv[6]) << endl;
+				cout << "[count]: " << catalog.getObjectCount(types[i],argv[6],argv[7]) << endl;
 
 				cout << "[list]: ";
-				attribs_map v1=catalog.getObjectsNames(types[i],argv[5],argv[6]);
+				attribs_map v1=catalog.getObjectsNames(types[i],argv[6],argv[7]);
 				attribs_map::iterator itr1=v1.begin();
 
 				while(itr1!=v1.end())
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
 
 				cout << endl;
 
-				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[5],argv[6]);
+				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7]);
 				attribs_map::iterator itr;
 
 				while(!v.empty())

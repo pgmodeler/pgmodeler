@@ -20,12 +20,17 @@
     [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
-    %if @{pgsql90} %then
-      [ NULL AS permissions, NULL AS collation,]
+    %if @{pgsql90} %or @{pgsql91} %then
+      [ NULL AS permissions, ]
     %else
-      [ tp.typacl AS permissions, tp.typcollation AS collation,]
+      [ tp.typacl AS permissions,]
     %end
 
+    %if @{pgsql90} %then
+     [ NULL AS collations, ]
+    %else
+     [ tp.typcollation AS collation, ]
+    %end
 
     [   CASE
           WHEN typtype = 'e' THEN 'enumeration'
@@ -48,8 +53,8 @@
 
 
 
-    # Retrieve the range type attributes (is null when the type is not a range) (pgsql > 9.0)
-    %if %not @{pgsql90} %then
+    # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
+    %if @{pgsql92} %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||','||rngcollation||','||rngsubopc::oid||','||
                                            rngcanonical::oid||','||rngsubdiff::oid, ',') 
                                     FROM pg_range WHERE rngtypid=tp.oid)

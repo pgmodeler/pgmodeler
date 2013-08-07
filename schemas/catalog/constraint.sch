@@ -15,7 +15,7 @@
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
 	     cl.relam AS index_type, ]
 
-     %if @{pgsql90} %then
+     %if %not @{pgsql92} %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]
