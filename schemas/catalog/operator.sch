@@ -9,6 +9,16 @@
     [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid
        WHERE ns.nspname = ] '@{schema}'
   %end
+
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+     [ AND ]
+    %else
+     [ WHERE ]
+    %end
+     [ op.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.oprname AS name, op.oprnamespace AS schema, op.oprowner AS owner,
@@ -26,7 +36,7 @@
 	[ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
       %end
 
-	%if @{filter-oids} %or @{schema} %then
+      %if @{filter-oids} %or @{schema} %then
 	[ WHERE ]
 	  %if @{filter-oids} %then
 	   [ op.oid IN (] @{filter-oids} )
@@ -39,6 +49,16 @@
 	  %if @{schema} %then
 	   [ ns.nspname = ] '@{schema}'
 	  %end
-       %end
+      %end
+
+      %if @{last-sys-oid} %then
+	%if @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	[ op.oid > ] @{last-sys-oid}
+      %end
+
     %end
 %end

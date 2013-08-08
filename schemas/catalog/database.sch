@@ -3,7 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT oid, datname AS name FROM pg_database WHERE datistemplate = FALSE]
+  [SELECT oid, datname AS name, datlastsysoid AS last_sys_oid FROM pg_database WHERE datistemplate = FALSE]
+
+  %if @{name} %then
+   [ AND datname = ] '@{name}'
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT oid, datname AS name, pg_encoding_to_char(encoding) AS encoding, datdba AS owner,

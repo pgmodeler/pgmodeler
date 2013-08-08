@@ -10,6 +10,15 @@
        WHERE ns.nspname = ] '@{schema}'
   %end
 
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+     [ AND ]
+    %else
+     [ WHERE ]
+    %end
+     [ cn.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
      [SELECT cn.oid, cn.conname AS name, cn.connamespace AS schema, cn.conowner AS owner,
@@ -26,7 +35,7 @@
 	[ LEFT JOIN pg_namespace AS ns ON cn.connamespace = ns.oid ]
       %end
 
-	%if @{filter-oids} %or @{schema} %then
+      %if @{filter-oids} %or @{schema} %then
 	[ WHERE ]
 	  %if @{filter-oids} %then
 	   [ cn.oid IN (] @{filter-oids} )
@@ -39,7 +48,15 @@
 	  %if @{schema} %then
 	   [ ns.nspname = ] '@{schema}'
 	  %end
-       %end
+      %end
 
+      %if @{last-sys-oid} %then
+	%if  @{filter-oids} %or @{schema} %then
+	 [ AND ]
+	%else
+	 [ WHERE ]
+	%end
+	 [ cn.oid > ] @{last-sys-oid}
+      %end
     %end
 %end

@@ -397,7 +397,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				if(attribs.count(Connection::PARAM_SERVER_FQDN)==0)
 					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
 
-				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i);
+				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i).remove(QRegExp(" \\((.)*\\)"));
 
 				SchemaParser::setIgnoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=

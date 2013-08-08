@@ -3,7 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %and %not @{pgsql90} %then
- [SELECT oid, collname AS name FROM pg_collation]
+ [SELECT oid, collname AS name FROM pg_collation ]
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid}
+  %end
+
 %else
   %if @{attribs} %and %not @{pgsql90}  %then
       [ SELECT cl.oid, cl.collname AS name, cl.collnamespace AS schema, 
@@ -19,8 +24,17 @@
 	[ LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid ]
       %end
 
+      %if @{last-sys-oid} %then
+       [ WHERE cl.oid > ] @{last-sys-oid}
+      %end
+
       %if @{filter-oids} %or @{schema} %then
-	[ WHERE ]
+	%if @{last-sys-oid} %then
+	 [ AND ]
+	%else
+	 [ WHERE ]
+	%end
+
 	  %if @{filter-oids} %then
 	   [ cl.oid IN (] @{filter-oids} )
 

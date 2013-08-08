@@ -18,7 +18,45 @@
 
 #include "databaseimporthelper.h"
 
-DatabaseImportHelper::DatabaseImportHelper(QObject *parent):QObject(parent)
+DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
 
+}
+
+void DatabaseImportHelper::setConnection(Connection &conn)
+{
+	try
+	{
+		connection=conn;
+		catalog.setConnection(conn);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
+{
+	try
+	{
+		connection.switchToDatabase(dbname);
+		catalog.setConnection(connection);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString schema, const QString table)
+{
+	try
+	{
+		return(catalog.getObjectsNames(obj_type, schema, table));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }

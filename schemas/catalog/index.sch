@@ -8,6 +8,11 @@
   LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
   LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
   WHERE tb.relkind = 'r' AND tb.relname = ] '@{table}' [ AND nspname= ] '@{schema}'
+
+  %if @{last-sys-oid} %then
+    [ AND id.indexrelid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,
@@ -32,8 +37,12 @@
 	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
 	WHERE tb.relkind = 'r' AND tb.relname = ] 'filo' [ AND nspname = ] 'public'
 
+      %if @{last-sys-oid} %then
+       [ AND id.indexrelid > ] @{last-sys-oid}
+      %end
+
       %if @{filter-oids} %then
-	[ AND id.oid IN (] @{filter-oids} )
+	[ AND id.indexrelid IN (] @{filter-oids} )
       %end
     %end
 %end

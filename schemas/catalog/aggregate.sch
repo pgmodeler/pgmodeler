@@ -11,6 +11,11 @@
   %else
     [ WHERE pr.proisagg IS TRUE ]
   %end
+
+  %if @{last-sys-oid} %then
+   [ AND pr.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT pr.oid AS oid, ag.aggfnoid AS name, ag.aggtransfn::oid AS transition_func,
@@ -29,6 +34,10 @@
       %end
 
       [ WHERE pr.proisagg IS TRUE ]
+
+      %if @{last-sys-oid} %then
+	[ AND pr.oid > ] @{last-sys-oid}
+      %end
 
       %if @{filter-oids} %or @{schema} %then
 	 %if @{filter-oids} %then

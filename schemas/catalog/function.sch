@@ -12,6 +12,10 @@
    [ WHERE pr.proisagg IS FALSE ]
   %end
 
+  %if @{last-sys-oid} %then
+    [ AND pr.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
 	[SELECT pr.oid,
@@ -69,6 +73,10 @@
 	%end
 
 	[ WHERE pr.proisagg IS FALSE ]
+
+	%if @{last-sys-oid} %then
+	  [ AND pr.oid > ] @{last-sys-oid}
+	%end
 
 	%if @{filter-oids} %or @{schema} %then
 	  %if @{filter-oids} %then

@@ -4,7 +4,11 @@
 
 %if @{list} %then
   [SELECT oid, spcname AS name FROM pg_tablespace ]
-  #  WHERE spcname LIKE 'pg_%']
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
 	[SELECT oid, spcname AS name, spcacl AS permissions, spcowner AS owner, ]
@@ -19,8 +23,18 @@
 
 	[ FROM pg_tablespace ]
 
+	%if @{last-sys-oid} %then
+	  [ WHERE oid > ] @{last-sys-oid}
+	%end
+
 	%if @{filter-oids} %then
-	 [ WHERE oid IN (] @{filter-oids} )
+	  %if @{last-sys-oid} %then
+	   [ AND ]
+	  %else
+	   [ WHERE ]
+	  %end
+
+	 [ oid IN (] @{filter-oids} )
 	%end
     %end
 %end

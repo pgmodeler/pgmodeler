@@ -11,6 +11,11 @@
   %else
     [ WHERE vw.relkind='v']
   %end
+
+   %if @{last-sys-oid} %then
+    [ AND vw.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
@@ -22,6 +27,10 @@
       [ FROM pg_class AS vw
 	LEFT JOIN pg_views AS _vw1 ON _vw1.viewname=vw.relname
 	WHERE vw.relkind='v' ]
+
+       %if @{last-sys-oid} %then
+	[ AND vw.oid > ] @{last-sys-oid}
+       %end
 
 	%if @{filter-oids} %or @{schema} %then
 	[ AND ]

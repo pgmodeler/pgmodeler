@@ -11,6 +11,11 @@
   %else
     [ WHERE tb.relkind='r']
   %end
+
+  %if @{last-sys-oid} %then
+     [ AND tb.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
     [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
@@ -22,6 +27,10 @@
     [ FROM pg_class AS tb
       LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname
       WHERE tb.relkind='r' ]
+
+    %if @{last-sys-oid} %then
+     [ AND tb.oid > ] @{last-sys-oid}
+    %end
 
       %if @{filter-oids} %or @{schema} %then
       [ AND ]

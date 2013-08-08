@@ -259,8 +259,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>18</width>
-               <height>18</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="indentation">
@@ -335,6 +335,12 @@
              </property>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="gridStyle">
               <enum>Qt::SolidLine</enum>

@@ -6,10 +6,20 @@
 %if @{list} %and %not @{pgsql90} %then
    [SELECT ex.oid, extname AS name FROM pg_extension AS ex ]
 
-    %if @{schema} %then
+   %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid
       WHERE ns.nspname = ] '@{schema}'
    %end
+
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+     [ AND ]
+    %else
+     [ WHERE ]
+    %end
+     [ ex.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %and %not @{pgsql90}  %then
 	[SELECT ex.oid, ex.extname AS name, ex.extversion AS curr_version,
@@ -46,5 +56,15 @@
 	   [ nspname = ] '@{schema}'
 	 %end
        %end
+
+       %if @{last-sys-oid} %then
+	 %if @{filter-oids} %or @{schema} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 [ ex.oid > ] @{last-sys-oid}
+       %end
+
     %end
 %end

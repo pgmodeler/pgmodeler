@@ -106,6 +106,12 @@ class Catalog {
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
 
+		//! \brief Stores the last system object identifier. This is used to filter system objects
+		QString last_sys_oid;
+
+		//! \brief Indicates if the catalog must filter system objects
+		bool filter_sys_objs;
+
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object */
@@ -134,10 +140,19 @@ class Catalog {
 		QString createOidFilter(const vector<QString> &oids);
 
 	public:
-		Catalog(void){}
+		Catalog(void);
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
+
+		//! \brief Indicates that the catalog will filter system objects excluding them from result sets
+		void setFilterSysObjects(bool value);
+
+		//! \brief Returns the current state of system object filtering
+		bool isFilterSysObjects(void);
+
+		//! \brief Returns the last system object oid registered on the database
+		QString getLastSysObjectOID(void);
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */

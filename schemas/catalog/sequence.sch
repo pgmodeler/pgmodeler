@@ -12,6 +12,10 @@
     [ WHERE relkind='S']
   %end
 
+  %if @{last-sys-oid} %then
+     [ AND sq.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
@@ -39,6 +43,10 @@
 	LEFT JOIN information_schema.sequences AS _sq1
 	ON _sq1.sequence_schema=(SELECT nspname FROM pg_namespace WHERE oid=sq.relnamespace)
 	WHERE relkind='S' ]
+
+	%if @{last-sys-oid} %then
+	  [ AND sq.oid > ] @{last-sys-oid}
+	%end
 
 	%if @{filter-oids} %or @{schema} %then
 	[ AND ]

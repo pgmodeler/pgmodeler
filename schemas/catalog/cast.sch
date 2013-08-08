@@ -5,6 +5,11 @@
 %if @{list} %then
    [SELECT oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name
      FROM pg_cast ]
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name,
@@ -25,5 +30,10 @@
       (@{from-extension}) [ AS from_extension_bool ]
 
      [ FROM pg_cast AS cs]
+
+      %if @{last-sys-oid} %then
+       [ WHERE oid > ] @{last-sys-oid}
+      %end
+
     %end
 %end

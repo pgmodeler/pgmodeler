@@ -28,11 +28,12 @@ int main(int argc, char **argv)
 
 			Catalog catalog;
 			catalog.setConnection(conn);
+			catalog.setFilterSysObjects(false);
 
-			ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
+			ObjectType types[]={OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
 													 OBJ_LANGUAGE, OBJ_EXTENSION , OBJ_FUNCTION, OBJ_AGGREGATE,
 													 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
-													 OBJ_CONVERSION,  OBJ_CAST, OBJ_VIEW, OBJ_SEQUENCE ,
+													 OBJ_CONVERSION, OBJ_CAST , OBJ_VIEW, OBJ_SEQUENCE ,
 													 OBJ_DOMAIN, OBJ_TYPE , OBJ_TABLE, OBJ_COLUMN, OBJ_CONSTRAINT,
 													 OBJ_RULE,   OBJ_TRIGGER , OBJ_INDEX };
 
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
 
 				cout << endl;
 
-				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7]);
+				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7], {"10000"});
 				attribs_map::iterator itr;
 
 				while(!v.empty())

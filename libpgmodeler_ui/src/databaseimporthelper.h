@@ -26,14 +26,32 @@
 #define DATABASE_IMPORT_HELPER_H
 
 #include <QObject>
+#include "catalog.h"
 
 class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 
+		Catalog catalog;
+
+		Connection connection;
+
 	public:
 		DatabaseImportHelper(QObject *parent=0);
-		
+
+		void setConnection(Connection &conn);
+
+		void setCurrentDatabase(const QString &dbname);
+
+		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
+				must be used only when retrieving table children objects.
+				\note: The database used as reference is the same as the currently connection. So,
+				if the user want a different database it must call Connection::switchToDatabase() method
+				before assigne the connection to this class. */
+		attribs_map getObjects(ObjectType obj_type, const QString schema="", const QString table="");
+
+		//void importObjects(vector<QString> &oids);
+
 	signals:
 		
 	public slots:

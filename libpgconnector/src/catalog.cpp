@@ -18,17 +18,49 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.oid"}
 };
 
+Catalog::Catalog(void)
+{
+	filter_sys_objs=true;
+	last_sys_oid="";
+}
+
 void Catalog::setConnection(Connection &conn)
 {
 	try
 	{
+		ResultSet res;
+
 		this->connection=conn;
 		this->connection.connect();
+
+		executeCatalogQuery(QUERY_LIST, OBJ_DATABASE, res, true,
+												{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::PARAM_DB_NAME)}});
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			attribs_map attribs=changeAttributeNames(res.getTupleValues());
+			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID];
+		}
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void Catalog::setFilterSysObjects(bool value)
+{
+	filter_sys_objs=value;
+}
+
+bool Catalog::isFilterSysObjects()
+{
+	return(filter_sys_objs);
+}
+
+QString Catalog::getLastSysObjectOID()
+{
+	return(last_sys_oid);
 }
 
 void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, bool single_result, attribs_map attribs)
@@ -39,6 +71,10 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 		attribs[qry_type]="1";
+
+		if(filter_sys_objs)
+			attribs[ParsersAttributes::LAST_SYS_OID]=last_sys_oid;
+
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		SchemaParser::setIgnoreEmptyAttributes(true);
 

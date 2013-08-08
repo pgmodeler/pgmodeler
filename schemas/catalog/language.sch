@@ -5,7 +5,11 @@
 %if @{list} %then
   # Built-in languages aren't shown: internal, C, SQL, plpgsql
   [SELECT oid, lanname AS name FROM pg_language ]
-  #  WHERE lanname <> 'plpgsql' AND lanispl IS TRUE]
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT oid, lanname AS name, lanpltrusted AS trusted_bool,
@@ -16,6 +20,10 @@
       (@{from-extension}) [ AS from_extension_bool ]
 
       [ FROM pg_language WHERE  lanispl IS TRUE ]
+
+       %if @{last-sys-oid} %then
+	 [ AND oid > ] @{last-sys-oid}
+       %end
 
        %if @{filter-oids} %then
 	 [ AND oid IN (] @{filter-oids} )

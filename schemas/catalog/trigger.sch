@@ -8,6 +8,11 @@
     LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
     WHERE relkind IN ('r','v') AND relname=] '@{table}'
     [ AND nspname=] '@{schema}' [ AND tgisinternal IS FALSE ]
+
+   %if @{last-sys-oid} %then
+     [ AND tg.oid > ] @{last-sys-oid}
+   %end
+
 %else
     %if @{attribs} %then
     # pg_trigger.tgtype datails:
@@ -59,6 +64,10 @@
 		   it.trigger_name=tg.tgname AND
 		   it.event_object_table=tb.relname
 	 WHERE tg.tgisinternal IS FALSE AND relname=]'@{table}' [ AND nspname=] '@{schema}'
+
+       %if @{last-sys-oid} %then
+	 [ AND tg.oid > ] @{last-sys-oid}
+       %end
 
 	%if @{filter-oids} %then
 	  [ AND tg.oid IN (] @{filter-oids} )

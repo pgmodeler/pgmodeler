@@ -41,7 +41,6 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
-#include "temporarymodelthread.h"
 
 using namespace std;
 
@@ -50,7 +49,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		Q_OBJECT
 
 		//! \brief Thread that controls temporary model file savings
-		TemporaryModelThread tmpmodel_thread;
+		QThread tmpmodel_thread;
 
 		//! \brief Dialog used to configure printing options.
 		QPrintDialog *print_dlg;
@@ -93,9 +92,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Stores the defaul window title
 		QString window_title;
-
-		//! \brief Stores the auto save interval (in miliseconds)
-		int save_interval;
 
 		//! \brief Stores the recent models filenames
 		QStringList recent_models;
@@ -191,6 +187,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateRecentModelsMenu(void);
 
 		void updateConnections(void);
+
+		void saveTemporaryModels(bool force=false);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);

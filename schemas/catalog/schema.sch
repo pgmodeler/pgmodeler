@@ -4,7 +4,11 @@
 
 %if @{list} %then
   [SELECT oid, nspname AS name FROM pg_namespace ]
-  #WHERE nspname <> 'information_schema' AND nspname NOT LIKE  'pg_%']
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid} [ OR nspname = 'public' ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]
@@ -14,8 +18,17 @@
 
        [ FROM pg_namespace ]
 
+       %if @{last-sys-oid} %then
+	 [ WHERE oid > ] @{last-sys-oid} [ OR nspname = 'public' ]
+       %end
+
        %if @{filter-oids} %then
-	 [ WHERE oid IN (] @{filter-oids} )
+	 %if @{last-sys-oid} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 [ oid IN (] @{filter-oids} )
        %end
 
     %end

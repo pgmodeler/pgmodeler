@@ -307,6 +307,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 
+	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
+	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
+
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -378,9 +381,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			QString model_file;
 			QStringList tmp_models=restoration_form->getSelectedModels();
 
-			//Disable the temp. model thread saving execution
-			tmpmodel_thread.setEnabled(false);
-
 			while(!tmp_models.isEmpty())
 			{
 				try
@@ -417,9 +417,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	{
 		try
 		{
-			//Disable the temp. model thread saving execution
-			tmpmodel_thread.setEnabled(false);
-
 			while(!prev_session_files.isEmpty())
 			{
 				this->addModel(prev_session_files.front());
@@ -448,13 +445,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
-	/* Reenables the thread's execution. This means whenever the user switch tabs the
-	temporary model are saved */
-	tmpmodel_thread.setEnabled(true);
+	//If a previous session was restored save the temp models
+	if(models_tbw->count() > 0)
+		saveTemporaryModels(true);
 
 	updateConnections();
 	updateRecentModelsMenu();
 	applyConfigurations();
+
+	//Temporary models are saved every one minute
+	tmpmodel_save_timer.setInterval(60000);
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -475,10 +475,6 @@ MainWindow::~MainWindow(void)
 
 void MainWindow::showEvent(QShowEvent *)
 {
-	//Starts the timer if the interval is set
-	if(save_interval > 0)
-		model_save_timer.start(save_interval);
-
  #ifndef Q_OS_MAC
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
@@ -501,8 +497,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		tmpmodel_thread.quit();
-		tmpmodel_thread.setModel(nullptr);
-		tmpmodel_thread.setEnabled(false);
 
 		//Checking if there is modified models and ask the user to save them before close the application
 		if(models_tbw->count() > 0)
@@ -593,6 +587,30 @@ void MainWindow::updateConnections(void)
 	conn_cfg_wgt->getConnections(connections);
 	model_valid_wgt->updateConnections(connections);
 }
+
+void MainWindow::saveTemporaryModels(bool force)
+{
+	try
+	{
+		ModelWidget *model=nullptr;
+
+		for(int i=0; i < models_tbw->count() && this->isActiveWindow(); i++)
+		{
+			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+			if(model->isModified() || force)
+				model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+		}
+
+		tmpmodel_thread.quit();
+	}
+	catch(Exception &e)
+	{
+		tmpmodel_thread.quit();
+		msg_box.show(e);
+	}
+}
+
 void MainWindow::updateRecentModelsMenu(void)
 {
 	recent_mdls_menu.clear();
@@ -632,6 +650,7 @@ void MainWindow::addModel(const QString &filename)
 	QString obj_name, tab_name, str_aux;
 	Schema *public_sch=nullptr;
 	QLayout *layout=nullptr;
+	bool start_timers=(models_tbw->count() == 0);
 
 	//Set a name for the tab widget
 	str_aux=QString("%1").arg(models_tbw->count());
@@ -685,6 +704,14 @@ void MainWindow::addModel(const QString &filename)
 	//The model is set to modified when no model file is loaded
 	model_tab->setModified(filename.isEmpty());
 	setCurrentModel();
+
+	if(start_timers)
+	{
+		if(model_save_timer.interval() > 0)
+			model_save_timer.start();
+
+		tmpmodel_save_timer.start();
+	}
 }
 
 int MainWindow::getModelCount(void)
@@ -711,7 +738,7 @@ void MainWindow::setCurrentModel(void)
 
 	//Removing model specific actions from general toolbar
 	act_list=general_tb->actions();
-	while(act_list.size() > 4)
+	while(act_list.size() > 5)
 	{
 		general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -734,15 +761,12 @@ void MainWindow::setCurrentModel(void)
 		models_tbw->blockSignals(false);
 	}
 
-	if(tmpmodel_thread.isEnabled())
-	{
-		//Avoids the tree state saving in order to restore the current model tree state
-		model_objs_wgt->saveTreeState(false);
+	//Avoids the tree state saving in order to restore the current model tree state
+	model_objs_wgt->saveTreeState(false);
 
-		//Restore the tree state
-		if(current_model)
-			model_objs_wgt->saveTreeState(model_tree_states[current_model]);
-	}
+	//Restore the tree state
+	if(current_model)
+		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
@@ -809,17 +833,10 @@ void MainWindow::setCurrentModel(void)
 	model_valid_wgt->setModel(current_model);
 	obj_finder_wgt->setModel(current_model);
 
-	/*If the temp. model thread is enabled restore the objects tree state as well
-	saves the temp model for the current model */
-	if(tmpmodel_thread.isEnabled())
-	{
-		if(current_model)
-			model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
+	if(current_model)
+		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
-		model_objs_wgt->saveTreeState(true);
-		tmpmodel_thread.setModel(current_model);
-		tmpmodel_thread.start();
-	}
+	model_objs_wgt->saveTreeState(true);
 }
 
 void MainWindow::setGridOptions(void)
@@ -908,6 +925,8 @@ void MainWindow::closeModel(int model_id)
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
 		oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
 		updateToolsState(true);
+		model_save_timer.stop();
+		tmpmodel_save_timer.stop();
 	}
 	else
 	{
@@ -937,13 +956,13 @@ void MainWindow::applyConfigurations(void)
 		if(!conf_wgt->autosave_interv_chk->isChecked())
 		{
 			//Stop the save timer
-			save_interval=0;
 			model_save_timer.stop();
+			model_save_timer.setInterval(0);
 		}
 		else
 		{
-			save_interval=conf_wgt->autosave_interv_spb->value() * 60000;
-			model_save_timer.start(save_interval);
+			model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
+			model_save_timer.start();
 		}
 
 		//Force the update of all opened models

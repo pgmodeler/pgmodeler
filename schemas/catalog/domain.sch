@@ -9,6 +9,16 @@
   %if @{schema} %then
     [ WHERE domain_schema=] '@{schema}'
   %end
+
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+     [ AND ]
+    %else
+     [ WHERE ]
+    %end
+     [ dm.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
      [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, ]
@@ -52,6 +62,15 @@
 	 %if @{schema} %then
 	  [ _dm1.domain_schema= ] '@{schema}'
 	 %end
-       %end
+      %end
+
+      %if @{last-sys-oid} %then
+	%if @{filter-oids} %or @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	[ dm.oid > ] @{last-sys-oid}
+      %end
     %end
 %end

@@ -4,6 +4,11 @@
 
 %if @{list} %then
   [SELECT oid, rolname AS name FROM pg_roles]
+
+  %if @{last-sys-oid} %then
+   [ WHERE oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
 	[ SELECT  rl1.oid, rolname AS name, rolsuper AS superuser_bool, rolinherit AS inherit_bool,
@@ -23,8 +28,17 @@
 
 	    FROM pg_roles  AS rl1 ]
 
+	    %if @{last-sys-oid} %then
+	     [ WHERE oid > ] @{last-sys-oid}
+	    %end
+
 	    %if @{filter-oids} %then
-	     [ WHERE oid IN (] @{filter-oids} )
+	      %if @{last-sys-oid} %then
+		[ AND ]
+	      %else
+		[ WHERE ]
+	      %end
+	     [ oid IN (] @{filter-oids} )
 	    %end
     %end
 %end

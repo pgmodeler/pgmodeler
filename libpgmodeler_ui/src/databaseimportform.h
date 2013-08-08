@@ -26,19 +26,23 @@
 #define DATABASE_IMPORT_FORM_H
 
 #include "ui_databaseimportform.h"
-#include "schemaparser.h"
-#include "modelwidget.h"
-#include "modelexporthelper.h"
+#include "databaseimporthelper.h"
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
+
+		DatabaseImportHelper dbimport_helper;
+
+		void showEvent(QShowEvent *);
 
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	private slots:
 		void importDatabase(void);
+		void listObjects(void);
+		void listDatabases(void);
 		void hideProgress(void);
 		void updateProgress(int progress, QString msg);
 };

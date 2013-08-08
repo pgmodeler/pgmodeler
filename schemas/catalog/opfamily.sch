@@ -9,6 +9,16 @@
     [ LEFT JOIN pg_namespace AS ns ON op.opfnamespace = ns.oid
        WHERE ns.nspname = ] '@{schema}'
   %end
+
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    [ op.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
 	[ SELECT op.oid, op.opfname AS name, am.amname AS index_type,
@@ -37,6 +47,16 @@
 	  %if @{schema} %then
 	   [ ns.nspname = ] '@{schema}'
 	  %end
+       %end
+
+
+       %if @{last-sys-oid} %then
+	 %if @{schema} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 [ op.oid > ] @{last-sys-oid}
        %end
     %end
 %end
