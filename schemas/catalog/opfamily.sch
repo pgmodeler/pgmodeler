@@ -19,13 +19,21 @@
     [ op.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %or @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
 	[ SELECT op.oid, op.opfname AS name, am.amname AS index_type,
 		 op.opfowner AS owner, op.opfnamespace AS schema, ]
 
-	(@{comment}) [ AS comment, ]
-	(@{from-extension}) [ AS from_extension_bool ]
+	(@{comment}) [ AS comment ]
 
 	[ FROM pg_opfamily AS op
 	  LEFT JOIN pg_am AS am ON op.opfmethod = am.oid ]
@@ -58,5 +66,15 @@
 	 %end
 	 [ op.oid > ] @{last-sys-oid}
        %end
+
+       %if @{from-extension} %then
+	 %if @{last-sys-oid} %or @{schema} %or @{filter-oids} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 (  @{from-extension} ) [ IS FALSE ]
+      %end
+
     %end
 %end

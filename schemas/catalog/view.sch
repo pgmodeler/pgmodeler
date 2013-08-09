@@ -16,13 +16,16 @@
     [ AND vw.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
 	      vw.relacl AS permissions, _vw1.definition, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_class AS vw
 	LEFT JOIN pg_views AS _vw1 ON _vw1.viewname=vw.relname
@@ -30,6 +33,10 @@
 
        %if @{last-sys-oid} %then
 	[ AND vw.oid > ] @{last-sys-oid}
+       %end
+
+       %if @{from-extension} %then
+	 [ AND ] (  @{from-extension} ) [ IS FALSE ]
        %end
 
 	%if @{filter-oids} %or @{schema} %then

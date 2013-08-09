@@ -20,7 +20,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 
 Catalog::Catalog(void)
 {
-	filter_sys_objs=true;
+	filter_sys_objs=filter_ext_objs=true;
 	last_sys_oid="";
 }
 
@@ -48,14 +48,10 @@ void Catalog::setConnection(Connection &conn)
 	}
 }
 
-void Catalog::setFilterSysObjects(bool value)
+void Catalog::setFilter(unsigned filter)
 {
-	filter_sys_objs=value;
-}
-
-bool Catalog::isFilterSysObjects()
-{
-	return(filter_sys_objs);
+	filter_sys_objs=(FILTER_SYSTEM_OBJS & filter) == FILTER_SYSTEM_OBJS;
+	filter_ext_objs=(FILTER_EXTENSION_OBJS & filter) == FILTER_EXTENSION_OBJS;
 }
 
 QString Catalog::getLastSysObjectOID()
@@ -74,6 +70,9 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 
 		if(filter_sys_objs)
 			attribs[ParsersAttributes::LAST_SYS_OID]=last_sys_oid;
+
+		if(filter_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+			attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
 
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		SchemaParser::setIgnoreEmptyAttributes(true);
@@ -282,8 +281,8 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		{
 			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 
-			if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
-				extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
+			/*if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+				extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);*/
 		}
 		else
 		{

@@ -36,6 +36,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		void showEvent(QShowEvent *);
 
+
+		vector<QTreeWidgetItem *> updateObjectsTree(vector<ObjectType> types, QTreeWidgetItem *root=nullptr, ObjectType filter_type=BASE_OBJECT,
+																								const QString &schema="", const QString &table="");
+
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
@@ -45,6 +49,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void listDatabases(void);
 		void hideProgress(void);
 		void updateProgress(int progress, QString msg);
+
+	signals:
+		void s_objectsRetrieved(int prog,QString msg,unsigned obj_id);
 };
 
 #endif

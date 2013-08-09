@@ -901,7 +901,6 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-
 		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));
 		task_prog_wgt->show();
 

@@ -3,11 +3,20 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-   [SELECT oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name
-     FROM pg_cast ]
+   [SELECT cs.oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name
+     FROM pg_cast AS cs]
 
   %if @{last-sys-oid} %then
    [ WHERE oid > ] @{last-sys-oid}
+  %end
+
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %then
+      [ AND ]
+    %else
+     [ WHERE ]
+    %end
+    ( @{from-extension} ) [ IS FALSE ]
   %end
 
 %else
@@ -26,8 +35,7 @@
 	    ELSE FALSE
 	 END AS io_cast_bool, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
      [ FROM pg_cast AS cs]
 
@@ -35,5 +43,13 @@
        [ WHERE oid > ] @{last-sys-oid}
       %end
 
+      %if @{from-extension} %then
+	 %if @{last-sys-oid} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	( @{from-extension} ) [ IS FALSE ]
+      %end
     %end
 %end

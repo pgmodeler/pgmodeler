@@ -12,7 +12,19 @@
     [ WHERE ]
   %end
 
-  [ typtype IN ('b','c','e','r')]
+  #Excluding types related to tables/views/sequeces
+  [ typtype IN ('b','c','e','r')  AND typname NOT LIKE 'pg_%'
+    AND typarray > 0
+    AND typname NOT IN
+    (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
+
+  %if @{last-sys-oid} %then
+     [ AND tp.oid > ] @{last-sys-oid}
+  %end
+
+  %if @{from-extension} %then
+    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+  %end
 
 %else
     %if @{attribs} %then
@@ -91,8 +103,7 @@
 	END AS collatable_bool, ]
      %end
      
-    (@{comment}) [ AS comment, ]
-    (@{from-extension}) [ AS from_extension_bool ]
+    (@{comment}) [ AS comment ]
 
     [ FROM pg_type AS tp ]
 
@@ -100,7 +111,19 @@
       [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
     %end
 
-    [ WHERE typtype IN ('b','c','e','r') ]
+    #Excluding types related to tables/views/sequeces
+    [ WHERE typtype IN ('b','c','e','r') AND typname NOT LIKE 'pg_%'
+      AND typarray > 0
+      AND typname NOT IN
+      (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
+
+    %if @{last-sys-oid} %then
+      [ AND tp.oid > ] @{last-sys-oid}
+    %end
+
+    %if @{from-extension} %then
+      [ AND ] (  @{from-extension} ) [ IS FALSE ]
+    %end
     
     %if @{filter-oids} %or @{schema} %then
 	[ AND ]

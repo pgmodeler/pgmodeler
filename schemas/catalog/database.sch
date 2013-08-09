@@ -3,7 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT oid, datname AS name, datlastsysoid AS last_sys_oid FROM pg_database WHERE datistemplate = FALSE]
+  [SELECT oid, datname AS name, datlastsysoid AS last_sys_oid FROM pg_database
+   WHERE datistemplate = FALSE  AND datname <> 'postgres' ]
 
   %if @{name} %then
    [ AND datname = ] '@{name}'
@@ -15,7 +16,11 @@
 	      datcollate AS lc_collate, datctype AS lc_ctype, datconnlimit AS connlimit,
 	      datacl AS permissions, dattablespace AS tablespace, datdba AS owner, ]
 	      (@{comment}) [ AS comment ]
-      [ FROM pg_database WHERE datistemplate = FALSE ]
+      [ FROM pg_database WHERE datistemplate = FALSE AND datname <> 'postgres' ]
+
+      %if @{last-sys-oid} %then
+       [ AND oid > ] @{last-sys-oid}
+      %end
 
       %if @{filter-oids} %then
 	[ AND oid IN (] @{filter-oids} )

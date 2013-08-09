@@ -3,11 +3,19 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  # Built-in languages aren't shown: internal, C, SQL, plpgsql
   [SELECT oid, lanname AS name FROM pg_language ]
 
   %if @{last-sys-oid} %then
    [ WHERE oid > ] @{last-sys-oid}
+  %end
+
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %then
+      [ AND ]
+    %else
+     [ WHERE ]
+    %end
+    ( @{from-extension} ) [ IS FALSE ]
   %end
 
 %else
@@ -16,13 +24,16 @@
 	      lanplcallfoid AS handler_func, laninline AS inline_func,
 	      lanvalidator AS validator_func, lanacl AS permissions, lanowner AS owner, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_language WHERE  lanispl IS TRUE ]
 
        %if @{last-sys-oid} %then
 	 [ AND oid > ] @{last-sys-oid}
+       %end
+
+       %if @{from-extension} %then
+	 [ AND ] ( @{from-extension} ) [ IS FALSE ]
        %end
 
        %if @{filter-oids} %then

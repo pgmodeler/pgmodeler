@@ -19,6 +19,15 @@
      [ cn.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %or @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    ( @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
      [SELECT cn.oid, cn.conname AS name, cn.connamespace AS schema, cn.conowner AS owner,
@@ -26,8 +35,7 @@
 	   pg_encoding_to_char(contoencoding) AS dst_encoding,
 	   cn.conproc AS function, cn.condefault AS default_bool, ]
 
-     (@{comment}) [ AS comment, ]
-     (@{from-extension}) [ AS from_extension_bool ]
+     (@{comment}) [ AS comment ]
 
      [ FROM pg_conversion AS cn ]
 
@@ -58,5 +66,15 @@
 	%end
 	 [ cn.oid > ] @{last-sys-oid}
       %end
+
+      %if @{from-extension} %then
+	%if @{last-sys-oid} %or @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	( @{from-extension} ) [ IS FALSE ]
+      %end
+
     %end
 %end

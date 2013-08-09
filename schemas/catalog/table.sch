@@ -16,13 +16,16 @@
      [ AND tb.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
     [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
 	    tb.reltablespace AS tablespace, tb.relacl AS permissions, relhasoids AS oids_bool, ]
 
-    (@{comment}) [ AS comment, ]
-    (@{from-extension}) [ AS from_extension_bool ]
+    (@{comment}) [ AS comment ]
 
     [ FROM pg_class AS tb
       LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname
@@ -30,6 +33,10 @@
 
     %if @{last-sys-oid} %then
      [ AND tb.oid > ] @{last-sys-oid}
+    %end
+
+    %if @{from-extension} %then
+     [ AND ] (  @{from-extension} ) [ IS FALSE ]
     %end
 
       %if @{filter-oids} %or @{schema} %then

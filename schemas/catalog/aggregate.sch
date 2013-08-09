@@ -16,6 +16,10 @@
    [ AND pr.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT pr.oid AS oid, ag.aggfnoid AS name, ag.aggtransfn::oid AS transition_func,
@@ -23,8 +27,7 @@
 	      pr.proargtypes AS types, ag.agginitval AS initial_cond, pr.proowner AS owner,
 	      pr.pronamespace AS schema, pr.proacl AS permissions, ]
 
-       (@{comment}) [ AS comment, ]
-       (@{from-extension}) [ AS from_extension_bool ]
+       (@{comment}) [ AS comment ]
 
        [ FROM pg_aggregate AS ag
 	 LEFT JOIN pg_proc AS pr ON pr.oid=ag.aggfnoid::oid ]
@@ -34,9 +37,12 @@
       %end
 
       [ WHERE pr.proisagg IS TRUE ]
-
       %if @{last-sys-oid} %then
 	[ AND pr.oid > ] @{last-sys-oid}
+      %end
+
+      %if @{from-extension} %then
+	[ AND ] ( @{from-extension} ) [ IS FALSE ]
       %end
 
       %if @{filter-oids} %or @{schema} %then

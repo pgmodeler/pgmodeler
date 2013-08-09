@@ -16,6 +16,10 @@
      [ AND sq.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
@@ -36,8 +40,7 @@
 	    ELSE FALSE
 	  END AS cycle_bool, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_class AS sq
 	LEFT JOIN information_schema.sequences AS _sq1
@@ -46,6 +49,10 @@
 
 	%if @{last-sys-oid} %then
 	  [ AND sq.oid > ] @{last-sys-oid}
+	%end
+
+	%if @{from-extension} %then
+	  [ AND ] ( @{from-extension} ) [ IS FALSE ]
 	%end
 
 	%if @{filter-oids} %or @{schema} %then

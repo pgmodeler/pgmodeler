@@ -19,8 +19,10 @@
 #include "databaseimportform.h"
 #include "taskprogresswidget.h"
 #include "configurationform.h"
+#include "taskprogresswidget.h"
 
 extern ConfigurationForm *configuration_form;
+extern TaskProgressWidget *task_prog_wgt;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -48,59 +50,87 @@ void DatabaseImportForm::importDatabase(void)
 	}
 }
 
+vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectType> types, QTreeWidgetItem *root, ObjectType filter_type, const QString &schema, const QString &table)
+{
+	QTreeWidgetItem *group=nullptr, *item=nullptr;
+	QFont grp_fnt=db_objects_tw->font();
+	attribs_map objects;
+	attribs_map::iterator itr;
+	vector<QTreeWidgetItem *> items_vect;
+
+	grp_fnt.setItalic(true);
+
+	for(unsigned i=0; i < types.size(); i++)
+	{
+		objects=dbimport_helper.getObjects(types[i], schema, table);
+		group=new QTreeWidgetItem(root);
+		group->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString("_grp.png")));
+		group->setText(0, BaseObject::getTypeName(types[i]) + QString(" (%1)").arg(objects.size()));
+		group->setFont(0, grp_fnt);
+		db_objects_tw->addTopLevelItem(group);
+
+		itr=objects.begin();
+		while(itr!=objects.end())
+		{
+			item=new QTreeWidgetItem(group);
+			item->setCheckState(0, Qt::Checked);
+			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
+			item->setText(0, itr->second);
+
+			if(filter_type==types[i])
+				items_vect.push_back(item);
+
+			itr++;
+		}
+
+		emit s_objectsRetrieved(((i/static_cast<float>(types.size())) * 100),
+														trUtf8("Retrieving objects... <em>%1</em>")
+														.arg(BaseObject::getTypeName(types[i])),
+														types[i]);
+	}
+
+	return(items_vect);
+}
+
 void DatabaseImportForm::listObjects(void)
 {
 	try
 	{
-		ObjectType shared_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_CAST },
-							 sch_types[]={ OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION,
-														 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE,
-														 OBJ_TABLE, OBJ_VIEW },
-							 tab_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX };
-		unsigned i, cnt=sizeof(shared_types)/sizeof(ObjectType),
-								cnt1,
-								cnt2;
-		QTreeWidgetItem *group=nullptr, *item=nullptr;
-		attribs_map objects, child_objs;
-		attribs_map::iterator itr;
-		QFont grp_fnt=db_objects_tw->font();
+		vector<QTreeWidgetItem *> sch_items, tab_items;
+
+		connect(this, SIGNAL(s_objectsRetrieved(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt->setWindowTitle(trUtf8("Retrieving objects from database..."));
+		task_prog_wgt->show();
 
 		db_objects_tw->clear();
 		dbimport_helper.setCurrentDatabase(database_cmb->currentText());
-		grp_fnt.setItalic(true);
 
-		for(i=0; i < cnt; i++)
+		sch_items=updateObjectsTree({OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_CAST}, nullptr, OBJ_SCHEMA);
+
+		while(!sch_items.empty())
 		{
-			objects=dbimport_helper.getObjects(shared_types[i]);
-			group=new QTreeWidgetItem;
-			group->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(shared_types[i]) + QString("_grp.png")));
-			group->setText(0, BaseObject::getTypeName(shared_types[i]) + QString(" (%1)").arg(objects.size()));
-			group->setFont(0, grp_fnt);
-			db_objects_tw->addTopLevelItem(group);
+			tab_items=updateObjectsTree({OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION,
+																	 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW},
+																	sch_items.back(), OBJ_TABLE, sch_items.back()->text(0));
 
-			itr=objects.begin();
-			while(itr!=objects.end())
+			while(!tab_items.empty())
 			{
-				item=new QTreeWidgetItem(group);
-				item->setCheckState(0, Qt::Checked);
-				item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(shared_types[i]) + QString(".png")));
-				item->setText(0, itr->second);
-
-				if(shared_types[i]==OBJ_SCHEMA)
-				{
-
-				}
-
-				itr++;
+				updateObjectsTree({ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX }, tab_items.back(),
+													BASE_OBJECT, sch_items.back()->text(0), tab_items.back()->text(0));
+				tab_items.pop_back();
 			}
 
-			objects.clear();
+			sch_items.pop_back();
 		}
 
 		db_objects_tw->sortItems(0, Qt::AscendingOrder);
+		task_prog_wgt->close();
+		disconnect(this, nullptr, task_prog_wgt, nullptr);
 	}
 	catch(Exception &e)
 	{
+		task_prog_wgt->close();
+		disconnect(this, nullptr, task_prog_wgt, nullptr);
 		db_objects_tw->clear();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -126,8 +156,6 @@ void DatabaseImportForm::listDatabases()
 														itr->second, itr->first);
 			itr++;
 		}
-
-		listObjects();
 	}
 	catch(Exception &e)
 	{

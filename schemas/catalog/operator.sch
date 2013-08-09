@@ -19,6 +19,15 @@
      [ op.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+   %if @{last-sys-oid} %or @{schema} %then
+    [ AND ]
+   %else
+    [ WHERE ]
+   %end
+  (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.oprname AS name, op.oprnamespace AS schema, op.oprowner AS owner,
@@ -27,8 +36,7 @@
 	      op.oprrest::oid AS restriction_func, op.oprjoin::oid AS join_func,
 	      op.oprcode::oid AS operator_func, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_operator AS op ]
 
@@ -58,6 +66,15 @@
 	  [ WHERE ]
 	%end
 	[ op.oid > ] @{last-sys-oid}
+      %end
+
+      %if @{from-extension} %then
+	%if @{last-sys-oid} %or @{schema} %or @{filter-oids} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	(  @{from-extension} ) [ IS FALSE ]
       %end
 
     %end

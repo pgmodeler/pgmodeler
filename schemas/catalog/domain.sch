@@ -19,6 +19,15 @@
      [ dm.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %or @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
      [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, ]
@@ -42,8 +51,7 @@
 	   _dm1.interval_type, _dm1.domain_default AS default_value,
 	   cn.conname AS constraint, cn.consrc AS expression, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_type AS dm
 	INNER JOIN pg_constraint AS cn ON cn.contypid=dm.oid
@@ -71,6 +79,15 @@
 	  [ WHERE ]
 	%end
 	[ dm.oid > ] @{last-sys-oid}
+      %end
+
+      %if @{from-extension} %then
+	%if @{last-sys-oid} %or @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	( @{from-extension} ) [ IS FALSE ]
       %end
     %end
 %end

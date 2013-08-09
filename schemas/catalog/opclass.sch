@@ -19,6 +19,15 @@
      [ op.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    %if @{last-sys-oid} %or @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.opcname AS name, op.opcnamespace AS schema, op.opcowner AS owner,
@@ -56,6 +65,15 @@
 	  [ WHERE ]
 	%end
 	[ op.oid > ] @{last-sys-oid}
+      %end
+
+      %if @{from-extension} %then
+	%if @{last-sys-oid} %or @{schema} %or @{filter-oids} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	(  @{from-extension} ) [ IS FALSE ]
       %end
 
     %end

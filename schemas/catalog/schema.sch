@@ -9,12 +9,20 @@
    [ WHERE oid > ] @{last-sys-oid} [ OR nspname = 'public' ]
   %end
 
+  %if @{from-extension} %then
+     %if @{last-sys-oid} %then
+       [ AND ]
+     %else
+       [ WHERE ]
+     %end
+     (  @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]
 
-	(@{comment}) [ AS comment, ]
-	(@{from-extension}) [ AS from_extension_bool ]
+	(@{comment}) [ AS comment ]
 
        [ FROM pg_namespace ]
 
@@ -30,6 +38,15 @@
 	 %end
 	 [ oid IN (] @{filter-oids} )
        %end
+
+      %if @{from-extension} %then
+	%if @{last-sys-oid} %or @{filter-oids} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	(  @{from-extension} ) [ IS FALSE ]
+      %end
 
     %end
 %end

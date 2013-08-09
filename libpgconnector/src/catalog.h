@@ -110,7 +110,7 @@ class Catalog {
 		QString last_sys_oid;
 
 		//! \brief Indicates if the catalog must filter system objects
-		bool filter_sys_objs;
+		bool filter_sys_objs, filter_ext_objs;
 
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
@@ -141,15 +141,13 @@ class Catalog {
 
 	public:
 		Catalog(void);
+		static const unsigned FILTER_SYSTEM_OBJS=1,
+													FILTER_EXTENSION_OBJS=2;
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
-		//! \brief Indicates that the catalog will filter system objects excluding them from result sets
-		void setFilterSysObjects(bool value);
-
-		//! \brief Returns the current state of system object filtering
-		bool isFilterSysObjects(void);
+		void setFilter(unsigned filter);
 
 		//! \brief Returns the last system object oid registered on the database
 		QString getLastSysObjectOID(void);

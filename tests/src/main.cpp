@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
 			Catalog catalog;
 			catalog.setConnection(conn);
-			catalog.setFilterSysObjects(false);
+			catalog.setFilter(Catalog::FILTER_SYSTEM_OBJS | Catalog::FILTER_EXTENSION_OBJS);
 
 			ObjectType types[]={OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
 													 OBJ_LANGUAGE, OBJ_EXTENSION , OBJ_FUNCTION, OBJ_AGGREGATE,

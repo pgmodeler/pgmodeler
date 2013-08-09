@@ -40,9 +40,9 @@ void TaskProgressWidget::show(void)
 	QTimer t;
 
 	//Gives 100ms to the task to be shown and update its contents
-    t.singleShot(100, &eventLoop, SLOT(quit(void)));
-    text_lbl->setText(trUtf8("Waiting task to start..."));
-    eventLoop.exec(QEventLoop::AllEvents);
+	t.singleShot(100, &eventLoop, SLOT(quit(void)));
+	text_lbl->setText(trUtf8("Waiting task to start..."));
+	eventLoop.exec(QEventLoop::AllEvents);
 }
 
 void TaskProgressWidget::updateProgress(int progress, const QString &text, unsigned icon_id)

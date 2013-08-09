@@ -16,6 +16,10 @@
     [ AND pr.oid > ] @{last-sys-oid}
   %end
 
+  %if @{from-extension} %then
+    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %end
+
 %else
     %if @{attribs} %then
 	[SELECT pr.oid,
@@ -63,8 +67,7 @@
 		 [ pr.proleakproof AS leakproof_bool, ]
 		%end
 
-	(@{comment}) [ AS comment, ]
-	(@{from-extension}) [ AS from_extension_bool ]
+	(@{comment}) [ AS comment ]
 
 	[ FROM pg_proc AS pr ]
 
@@ -76,6 +79,10 @@
 
 	%if @{last-sys-oid} %then
 	  [ AND pr.oid > ] @{last-sys-oid}
+	%end
+
+	%if @{from-extension} %then
+	  [ AND ] ( @{from-extension} ) [ IS FALSE ]
 	%end
 
 	%if @{filter-oids} %or @{schema} %then
