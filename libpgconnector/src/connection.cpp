@@ -81,7 +81,10 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	One special case is treated here, if user use the parameter SERVER_FQDN and the value
 	is a IP address, the method will assign the value to the SERVER_IP parameter */
 	if(param==PARAM_SERVER_FQDN && ip_regexp.exactMatch(value))
+	{
 		connection_params[Connection::PARAM_SERVER_IP]=value;
+		connection_params[Connection::PARAM_SERVER_FQDN]="";
+	}
 	else
 		connection_params[param]=value;
 

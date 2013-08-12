@@ -394,7 +394,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				conn=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
 				attribs=conn->getConnectionParams();
 
-				if(attribs.count(Connection::PARAM_SERVER_FQDN)==0)
+				if(attribs[Connection::PARAM_SERVER_FQDN].isEmpty())
 					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
 
 				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i).remove(QRegExp(" \\((.)*\\)"));
