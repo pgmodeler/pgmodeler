@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
 				cout << endl;
 
-				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7], {"10000"});
+				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7]);
 				attribs_map::iterator itr;
 
 				while(!v.empty())

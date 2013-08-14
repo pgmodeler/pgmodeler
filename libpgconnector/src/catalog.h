@@ -137,7 +137,7 @@ class Catalog {
 		QString getCommentQuery(const QString &oid_field, bool is_shared_obj=false);
 
 		//! \brief Creates a comma separated string containing all the oids to be filtered
-		QString createOidFilter(const vector<QString> &oids);
+		QString createOidFilter(const vector<unsigned> &oids);
 
 	public:
 		Catalog(void);
@@ -166,7 +166,7 @@ class Catalog {
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
-		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<QString> &filter_oids={});
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={});
 };
 
 #endif

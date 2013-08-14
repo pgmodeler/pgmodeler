@@ -251,12 +251,12 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 	return(new_attribs);
 }
 
-QString Catalog::createOidFilter(const vector<QString> &oids)
+QString Catalog::createOidFilter(const vector<unsigned> &oids)
 {
 	QString filter;
 
 	for(unsigned i=0; i < oids.size(); i++)
-		filter+=oids.at(i) + ",";
+		filter+=QString("%1,").arg(oids.at(i));
 
 	if(!filter.isEmpty())
 		filter.remove(filter.size()-1,1);
@@ -264,7 +264,7 @@ QString Catalog::createOidFilter(const vector<QString> &oids)
 	return(filter);
 }
 
-vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<QString> &filter_oids)
+vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<unsigned> &filter_oids)
 {
 	try
 	{
