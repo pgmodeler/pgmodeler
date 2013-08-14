@@ -59,7 +59,7 @@
 
 
        %if @{last-sys-oid} %then
-	 %if @{schema} %then
+	 %if @{schema} %or @{filter-oids} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]

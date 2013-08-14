@@ -44,7 +44,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
 	connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
-	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled(void)));
+	connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 

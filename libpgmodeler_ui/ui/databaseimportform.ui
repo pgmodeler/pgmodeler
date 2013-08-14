@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>731</width>
-    <height>592</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,7 +28,7 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>16777215</height>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -766,27 +766,7 @@
         <property name="bottomMargin">
          <number>4</number>
         </property>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="progress_lbl">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Progress label...</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
-         <widget class="QProgressBar" name="progress_pb">
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
          <widget class="QLabel" name="ico_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -814,6 +794,49 @@
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="4">
+         <widget class="QLabel" name="progress_lbl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Progress label...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QToolButton" name="cancel_btn">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/resources.qrc">
+            <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QProgressBar" name="progress_pb">
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>

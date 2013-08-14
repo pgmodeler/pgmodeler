@@ -28,8 +28,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 {
 	progress=0;
 	setupUi(this);
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(reject(void)));
-	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
+
+	import_thread=new QThread(this);
+	import_helper.moveToThread(import_thread);
+
+	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll(void)));
@@ -37,13 +40,33 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
 	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
+
+	connect(&import_helper, SIGNAL(s_importFinished(void)), this, SLOT(handleImportFinished(void)));
+	connect(&import_helper, SIGNAL(s_importCanceled(void)), this, SLOT(handleImportCanceled(void)));
+	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+
+	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
+	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
+
+
+	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 }
 
-void DatabaseImportForm::updateProgress(int progress, QString msg)
+void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
- progress_lbl->setText(msg);
- progress_pb->setValue(progress);
- this->repaint();
+	msg.replace("`","<strong>");
+	msg.replace("'","</strong>");
+	progress_lbl->setText(msg);
+	progress_pb->setValue(progress);
+
+	if(obj_type!=BASE_OBJECT)
+		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+	else
+		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
+	this->repaint();
 }
 
 void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
@@ -79,6 +102,18 @@ void DatabaseImportForm::importDatabase(void)
 		map<unsigned, vector<unsigned>> col_oids;
 
 		getCheckedItems(obj_oids, col_oids);
+		import_helper.setObjectsOIDS(obj_oids, col_oids);
+
+		this->resize(this->width(), this->maximumHeight());
+		timer.stop();
+		hideProgress(false);
+
+		cancel_btn->setEnabled(true);
+		import_btn->setEnabled(false);
+		database_gb->setEnabled(false);
+		options_gb->setEnabled(false);
+
+		import_thread->start();
 	}
 	catch(Exception &e)
 	{
@@ -100,7 +135,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 	for(unsigned i=0; i < types.size(); i++)
 	{
 		//Retrieve the objects of the current type from the database
-		objects=dbimport_helper.getObjects(types[i], schema, table);
+		objects=import_helper.getObjects(types[i], schema, table);
 
 		//Create a group item for the current type
 		group=new QTreeWidgetItem(root);
@@ -137,7 +172,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 		}
 
 		emit s_objectsRetrieved(progress,
-														trUtf8("Retrieving objects... <strong><em>%1</em><strong>")
+														trUtf8("Retrieving objects... <strong>%1<strong>")
 														.arg(BaseObject::getTypeName(types[i])),
 														types[i]);
 	}
@@ -212,8 +247,6 @@ void DatabaseImportForm::getCheckedItems(vector<unsigned> &obj_oids, map<unsigne
 
 		++itr;
 	}
-
-	std::sort(obj_oids.begin(), obj_oids.end());
 }
 
 void DatabaseImportForm::listObjects(void)
@@ -233,7 +266,7 @@ void DatabaseImportForm::listObjects(void)
 			task_prog_wgt->show();
 
 			//Set the working database on import helper
-			dbimport_helper.setCurrentDatabase(database_cmb->currentText());
+			import_helper.setCurrentDatabase(database_cmb->currentText());
 
 			//Retrieving and listing the cluster scoped objects
 			progress=0;
@@ -298,8 +331,8 @@ void DatabaseImportForm::listDatabases(void)
 		QStringList list;
 
 		//List the available databases using the selected connection
-		dbimport_helper.setConnection(*conn);
-		db_attribs=dbimport_helper.getObjects(OBJ_DATABASE);
+		import_helper.setConnection(*conn);
+		db_attribs=import_helper.getObjects(OBJ_DATABASE);
 
 		db_objects_tw->clear();
 		database_cmb->clear();
@@ -340,13 +373,17 @@ void DatabaseImportForm::listDatabases(void)
 	}
 }
 
-void DatabaseImportForm::hideProgress(void)
+void DatabaseImportForm::hideProgress(bool value)
 {
-	ln2_frm->setVisible(false);
-	progress_lbl->setVisible(false);
-	progress_pb->setVisible(false);
-	ico_lbl->setVisible(false);
-	this->resize(this->minimumSize());
+	ln2_frm->setHidden(value);
+	progress_lbl->setHidden(value);
+	progress_pb->setHidden(value);
+	cancel_btn->setHidden(value);
+	progress_pb->setValue(0);
+	ico_lbl->setHidden(value);
+
+	if(value)
+		this->resize(this->minimumSize());
 }
 
 void DatabaseImportForm::showEvent(QShowEvent *)
@@ -369,3 +406,52 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 
 	hideProgress();
 }
+
+void DatabaseImportForm::closeEvent(QCloseEvent *event)
+{
+	/* Ignore the close event when the thread is running this avoid
+	close the form and make thread execute in background */
+	if(import_thread->isRunning())
+		event->ignore();
+}
+
+void DatabaseImportForm::captureThreadError(Exception e)
+{
+	finishImport(trUtf8("Importing process aborted!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+}
+
+void DatabaseImportForm::cancelImport(void)
+{
+	import_helper.cancelImport();
+	cancel_btn->setEnabled(false);
+}
+
+void DatabaseImportForm::handleImportCanceled(void)
+{
+	finishImport(trUtf8("Importing process canceled by user!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+}
+
+void DatabaseImportForm::handleImportFinished(void)
+{
+	finishImport(trUtf8("Importing process sucessfuly ended!"));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+}
+
+void DatabaseImportForm::finishImport(const QString &msg)
+{
+	if(import_thread->isRunning())
+		import_thread->quit();
+
+	import_btn->setEnabled(true);
+	cancel_btn->setEnabled(false);
+	options_gb->setEnabled(true);
+	database_gb->setEnabled(true);
+	progress_pb->setValue(100);
+	progress_lbl->setText(msg);
+	progress_lbl->repaint();
+	timer.start(5000);
+}
+

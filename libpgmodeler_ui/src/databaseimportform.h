@@ -27,13 +27,19 @@
 
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
+#include <QTimer>
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 
+		QTimer timer;
+
 		//! \brief Database importer helper
-		DatabaseImportHelper dbimport_helper;
+		DatabaseImportHelper import_helper;
+
+		//! \brief Thead that controls the database import helper
+		QThread *import_thread;
 
 		//! \brief This attribute controls the general import progress
 		int progress;
@@ -59,7 +65,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		"col_oids" stores the columns oids for each selected table */
 		void getCheckedItems(vector<unsigned> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
+		void finishImport(const QString &msg);
+
 		void showEvent(QShowEvent *);
+		void closeEvent(QCloseEvent *event);
 
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -68,8 +77,13 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void importDatabase(void);
 		void listObjects(void);
 		void listDatabases(void);
-		void hideProgress(void);
-		void updateProgress(int progress, QString msg);
+		void hideProgress(bool value=true);
+		void updateProgress(int progress, QString msg, ObjectType obj_type);
+
+		void cancelImport(void);
+		void handleImportCanceled(void);
+		void handleImportFinished(void);
+		void captureThreadError(Exception e);
 
 		//! \brief Toggles the check state for the specified item
 		void setItemCheckState(QTreeWidgetItem *item,int);

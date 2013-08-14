@@ -26,6 +26,7 @@
 #define DATABASE_IMPORT_HELPER_H
 
 #include <QObject>
+#include <QThread>
 #include "catalog.h"
 
 class DatabaseImportHelper: public QObject {
@@ -36,12 +37,18 @@ class DatabaseImportHelper: public QObject {
 
 		Connection connection;
 
+		bool import_canceled;
+
+		vector<unsigned> object_oids;
+
+		map<unsigned, vector<unsigned>> column_oids;
+
 	public:
 		DatabaseImportHelper(QObject *parent=0);
 
 		void setConnection(Connection &conn);
-
 		void setCurrentDatabase(const QString &dbname);
+		void setObjectsOIDS(vector<unsigned> &obj_oids, map<unsigned, vector<unsigned>> col_oids);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
@@ -50,12 +57,26 @@ class DatabaseImportHelper: public QObject {
 				before assigne the connection to this class. */
 		attribs_map getObjects(ObjectType obj_type, const QString schema="", const QString table="");
 
-		//void importObjects(vector<QString> &oids);
-
 	signals:
-		
+		//! \brief This singal is emitted whenever the export progress changes
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+
+		//! \brief This signal is emited when the import has finished
+		void s_importFinished(void);
+
+		//! \brief This signal is emited when the import has been cancelled
+		void s_importCanceled(void);
+
+		//! \brief This signal is emited when the import has encountered a critical error (only in thread mode)
+		void s_importAborted(Exception e);
+
+	protected slots:
+		void cancelImport(void);
+
 	public slots:
+		void importDatabase(void);
 		
+	friend class DatabaseImportForm;
 };
 
 #endif
