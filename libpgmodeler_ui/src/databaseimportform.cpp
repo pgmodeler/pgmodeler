@@ -56,8 +56,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-	msg.replace("`","<strong>");
-	msg.replace("'","</strong>");
+	msg.replace(msg.indexOf('`'), 1 ,"<strong>");
+	msg.replace(msg.indexOf('\''), 1,"</strong>");
+	msg.replace(msg.indexOf('`'), 1 ,"<em>");
+	msg.replace(msg.indexOf('\''), 1,"</em>");
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
@@ -98,11 +100,16 @@ void DatabaseImportForm::importDatabase(void)
 {
 	try
 	{
-		vector<unsigned> obj_oids;
+		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
+		ModelWidget *model_wgt=nullptr;
 
 		getCheckedItems(obj_oids, col_oids);
-		import_helper.setObjectsOIDS(obj_oids, col_oids);
+		obj_oids[OBJ_DATABASE].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
+
+		model_wgt=new ModelWidget;
+		model_wgt->getDatabaseModel()->createSystemObjects(true);
+		import_helper.setImportParams(model_wgt, obj_oids, col_oids, ignore_errors_chk->isChecked());
 
 		this->resize(this->width(), this->maximumHeight());
 		timer.stop();
@@ -218,9 +225,10 @@ bool DatabaseImportForm::hasCheckedItems(void)
 	return(selected);
 }
 
-void DatabaseImportForm::getCheckedItems(vector<unsigned> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
+void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
 {
 	QTreeWidgetItemIterator itr(db_objects_tw);
+	ObjectType obj_type;
 	unsigned tab_oid=0;
 
 	obj_oids.clear();
@@ -231,9 +239,11 @@ void DatabaseImportForm::getCheckedItems(vector<unsigned> &obj_oids, map<unsigne
 		//If the item is checked and its OID is valid
 		if((*itr)->checkState(0)==Qt::Checked && (*itr)->data(0, Qt::UserRole).value<unsigned>() > 0)
 		{
+			obj_type=static_cast<ObjectType>((*itr)->data(1, Qt::UserRole).value<unsigned>());
+
 			//If the object is not a column store it on general object list
-			if((*itr)->data(1, Qt::UserRole).value<unsigned>() != OBJ_COLUMN)
-			 obj_oids.push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
+			if(obj_type!=OBJ_COLUMN)
+			 obj_oids[obj_type].push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
 			//If its a column
 			else
 			{
@@ -329,6 +339,7 @@ void DatabaseImportForm::listDatabases(void)
 		attribs_map db_attribs;
 		attribs_map::iterator itr;
 		QStringList list;
+		vector<unsigned> oids;
 
 		//List the available databases using the selected connection
 		import_helper.setConnection(*conn);
@@ -350,6 +361,7 @@ void DatabaseImportForm::listDatabases(void)
 			while(itr!=db_attribs.end())
 			{
 				list.push_back(itr->second);
+				oids.push_back(itr->first.toUInt());
 				itr++;
 			}
 
@@ -357,7 +369,10 @@ void DatabaseImportForm::listDatabases(void)
 			database_cmb->addItems(list);
 
 			for(int i=0; i < list.count(); i++)
+			{
 				database_cmb->setItemIcon(i, QPixmap(":/icones/icones/" + BaseObject::getSchemaName(OBJ_DATABASE) + ".png"));
+				database_cmb->setItemData(i, oids[i]);
+			}
 
 			database_cmb->insertItem(0, QString("Found %1 database(s)").arg(db_attribs.size()));
 			database_cmb->setCurrentIndex(0);

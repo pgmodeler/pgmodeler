@@ -4,14 +4,26 @@
 
 %if @{list} %then
   [SELECT tg.oid, tgname AS name FROM pg_trigger AS tg
-    LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid
-    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-    WHERE relkind IN ('r','v') AND relname=] '@{table}'
-    [ AND nspname=] '@{schema}' [ AND tgisinternal IS FALSE ]
+    LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v') ]
 
-   %if @{last-sys-oid} %then
-     [ AND tg.oid > ] @{last-sys-oid}
-   %end
+  %if @{schema} %then
+    [  LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+       WHERE ns.nspname= ] '@{schema}'
+
+    %if @{table} %then
+     [ AND tb.relname=]'@{table}'
+    %end
+
+   [ AND ]
+  %else
+   [ WHERE ]
+  %end
+
+  [ tgisinternal IS FALSE ]
+
+  %if @{last-sys-oid} %then
+    [ AND tg.oid > ] @{last-sys-oid}
+  %end
 
 %else
     %if @{attribs} %then
@@ -63,7 +75,15 @@
 		   it.trigger_schema=ns.nspname AND
 		   it.trigger_name=tg.tgname AND
 		   it.event_object_table=tb.relname
-	 WHERE tg.tgisinternal IS FALSE AND relname=]'@{table}' [ AND nspname=] '@{schema}'
+	 WHERE tg.tgisinternal IS FALSE ]
+
+      %if @{schema} %then
+       [  AND ns.nspname= ] '@{schema}'
+
+	%if @{table} %then
+	  [ AND tb.relname=]'@{table}'
+	%end
+      %end
 
        %if @{last-sys-oid} %then
 	 [ AND tg.oid > ] @{last-sys-oid}

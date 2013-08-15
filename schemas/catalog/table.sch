@@ -17,7 +17,7 @@
   %end
 
   %if @{from-extension} %then
-    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+    [ AND ] ( @{from-extension} ) [ IS FALSE ]
   %end
 
 %else

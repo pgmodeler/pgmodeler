@@ -54,8 +54,8 @@
       (@{comment}) [ AS comment ]
 
       [ FROM pg_type AS dm
-	INNER JOIN pg_constraint AS cn ON cn.contypid=dm.oid
-	INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name ]
+	LEFT JOIN pg_constraint AS cn ON cn.contypid=dm.oid
+	LEFT JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name ]
 
       %if @{filter-oids} %or @{schema} %then
       [ WHERE ]

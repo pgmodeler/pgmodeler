@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QThread>
 #include "catalog.h"
+#include "modelwidget.h"
 
 class DatabaseImportHelper: public QObject {
 	private:
@@ -37,18 +38,34 @@ class DatabaseImportHelper: public QObject {
 
 		Connection connection;
 
-		bool import_canceled;
+		bool import_canceled, ignore_errors;
 
-		vector<unsigned> object_oids;
-
+		map<ObjectType, vector<unsigned>> object_oids;
 		map<unsigned, vector<unsigned>> column_oids;
+
+		vector<unsigned> creation_order;
+
+		map<unsigned, BaseObject *> created_objs;
+
+		map<unsigned, attribs_map> loaded_objs;
+
+		ModelWidget *model_wgt;
+
+		DatabaseModel *dbmodel;
+
+		void createObject(ObjectType obj_type, unsigned oid);
+		void createSchema(attribs_map &attribs);
+		//void createRole(unsigned oid);
+
+		void setComment(attribs_map &attribs);
+		void setOwner(attribs_map &attribs);
 
 	public:
 		DatabaseImportHelper(QObject *parent=0);
 
 		void setConnection(Connection &conn);
 		void setCurrentDatabase(const QString &dbname);
-		void setObjectsOIDS(vector<unsigned> &obj_oids, map<unsigned, vector<unsigned>> col_oids);
+		void setImportParams(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids, bool ignore_errors);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.

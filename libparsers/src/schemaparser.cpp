@@ -500,39 +500,27 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 {
 	try
 	{
-		if(obj_name!="")
+		QString filename;
+
+		if(def_type==SQL_DEFINITION)
 		{
-			QString filename;
+			//Formats the filename
+			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+							 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
 
-			if(def_type==SQL_DEFINITION)
-			{
-				//Formats the filename
-				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
+			storePgSQLVersion(attribs);
 
-				/*vector<QString> vers;
-				getPgSQLVersions(vers);
-				while(!vers.empty())
-				{
-					//Setting the @{pgsql[VERSION]} attribute in other to know which version is being used
-					attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
-					vers.pop_back();
-				}*/
-				storePgSQLVersion(attribs);
-
-				//Try to get the object definitin from the specified path
-				return(getCodeDefinition(filename, attribs));
-			}
-			else
-			{
-				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
-								 GlobalAttributes::SCHEMA_EXT;
-
-				return(convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
-			}
+			//Try to get the object definitin from the specified path
+			return(getCodeDefinition(filename, attribs));
 		}
-		else return("");
+		else
+		{
+			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+							 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
+							 GlobalAttributes::SCHEMA_EXT;
+
+			return(convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
+		}
 	}
 	catch(Exception &e)
 	{
@@ -1037,7 +1025,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 	ignore_empty_atribs=false;
 	return(object_def);
 }
-
 
 QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
 {

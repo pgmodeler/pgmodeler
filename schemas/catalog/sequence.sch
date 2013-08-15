@@ -22,7 +22,7 @@
 
 %else
     %if @{attribs} %then
-      [SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
+      [SELECT DISTINCT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
 	      sq.relacl AS permissions,  ]
 
       #TODO: Discover which field is the start value for sequences on PgSQL 9.0

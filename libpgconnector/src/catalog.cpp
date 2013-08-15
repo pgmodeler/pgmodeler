@@ -155,6 +155,8 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 			obj_attribs=changeAttributeNames(res.getTupleValues());
 
+		obj_attribs[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
+
 		return(obj_attribs);
 	}
 	catch(Exception &e)
@@ -176,7 +178,9 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 		{
 			do
 			{
-				obj_attribs.push_back(changeAttributeNames(res.getTupleValues()));
+				tuple=changeAttributeNames(res.getTupleValues());
+				tuple[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
+				obj_attribs.push_back(tuple);
 				tuple.clear();
 			}
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
@@ -273,24 +277,13 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
 
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
+		extra_attribs[ParsersAttributes::TABLE]=table;
 
 		if(!filter_oids.empty())
 			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		if(!TableObject::isTableObject(obj_type))
-		{
 			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
-
-			/*if(!obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
-				extra_attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);*/
-		}
-		else
-		{
-			if(table.isEmpty() || schema.isEmpty())
-				throw Exception(ERR_INSUF_PARAM_CATALOG_QRY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-			extra_attribs[ParsersAttributes::TABLE]=table;
-		}
 
 		return(getMultipleAttributes(obj_type, extra_attribs));
 	}

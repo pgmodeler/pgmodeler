@@ -3,10 +3,27 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-[ SELECT cs.oid, cs.conname AS name FROM pg_constraint AS cs
-   LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
-   LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
-   WHERE relkind='r' AND relname=] '@{table}' [ AND nspname= ] '@{schema}'
+[ SELECT cs.oid, cs.conname AS name FROM pg_constraint AS cs ]
+
+ %if @{schema} %then
+   [ LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
+     LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
+     WHERE nspname= ] '@{schema}'
+
+   %if @{table} %then
+     [ AND relkind='r' AND relname=] '@{table}'
+   %end
+ %end
+
+  %if @{last-sys-oid} %then
+    %if @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    [ cs.oid > ] @{last-sys-oid}
+  %end
+
 %else
     %if @{attribs} %then
      [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table, ds.description AS comment,
@@ -61,14 +78,36 @@
 	END AS comparision_type
 
      FROM pg_constraint AS cs
-     LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
      LEFT JOIN pg_description AS ds ON ds.objoid=cs.oid
-     LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
-     LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
-     WHERE tb.relkind='r' AND tb.relname= ] '@{table}' [ AND ns.nspname= ] '@{schema}'
+     LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid ]
+
+     %if @{schema} %then
+	[ LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
+	  LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
+	  WHERE ns.nspname= ] '@{schema}'
+
+	%if @{table} %then
+	  [ AND tb.relkind='r' AND tb.relname= ] '@{table}'
+	%end
+     %end
+
+     %if @{last-sys-oid} %then
+	%if @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	[ cs.oid > ] @{last-sys-oid}
+     %end
 
      %if @{filter-oids} %then
-       [ AND cs.oid IN (] @{filter-oids} )
+       %if @{schema} %or @{last-sys-oid} %then
+	 [ AND ]
+       %else
+	 [ WHERE ]
+       %end
+
+       [ cs.oid IN (] @{filter-oids} )
      %end
 
     %end

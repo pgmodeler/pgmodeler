@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=205;
+const int ERROR_COUNT=204;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -253,8 +253,7 @@ enum ErrorType {
 	ERR_INV_USE_VARIADIC_PARAM_MODE,
 	ERR_MIX_INCOMP_EXPORT_OPTS,
 	ERR_INV_ID_SWAP_SAME_OBJECT,
-	ERR_INV_ID_SWAP_INV_OBJ_TYPE,
-	ERR_INSUF_PARAM_CATALOG_QRY
+	ERR_INV_ID_SWAP_INV_OBJ_TYPE
 };
 
 class Exception {

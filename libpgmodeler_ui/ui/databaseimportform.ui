@@ -444,7 +444,7 @@
               </spacer>
              </item>
              <item row="3" column="0" colspan="6">
-              <widget class="QCheckBox" name="checkBox">
+              <widget class="QCheckBox" name="ignore_errors_chk">
                <property name="text">
                 <string>Ignore import errors</string>
                </property>

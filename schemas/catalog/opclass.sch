@@ -34,8 +34,7 @@
               op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default,
               op.opckeytype AS storage, ]
 
-      (@{comment}) [ AS comment, ]
-      (@{from-extension}) [ AS from_extension_bool ]
+      (@{comment}) [ AS comment ]
 
       [ FROM pg_opclass AS op ]
 

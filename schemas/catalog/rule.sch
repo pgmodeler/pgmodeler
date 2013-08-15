@@ -9,12 +9,25 @@
 	FROM pg_rewrite AS rw
 	WHERE rw.ev_type <> '1'::"char"
   ) AS rl
-  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v')
-  LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
-  WHERE cl.relname=]'@{table}' [ AND ns.nspname= ] '@{schema}'
+  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v') ]
+
+  %if @{schema} %then
+    [ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
+      WHERE ns.nspname= ] '@{schema}'
+
+    %if @{table} %then
+     [ AND cl.relname=]'@{table}'
+    %end
+  %end
 
   %if @{last-sys-oid} %then
-    [ AND rl.oid > ] @{last-sys-oid}
+    %if @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+
+    [ rl.oid > ] @{last-sys-oid}
   %end
 
 %else
@@ -41,12 +54,25 @@
        ) AS rl
 
       LEFT JOIN pg_class AS cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v')
-      LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
-      LEFT JOIN pg_description ds ON ds.objoid = rl.oid
-      WHERE cl.relname=]'@{table}' [ AND ns.nspname=] '@{schema}'
+      LEFT JOIN pg_description ds ON ds.objoid = rl.oid ]
+
+      %if @{schema} %then
+	[ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
+	  WHERE ns.nspname= ] '@{schema}'
+
+	%if @{table} %then
+	  [ AND cl.relname=]'@{table}'
+	%end
+      %end
 
       %if @{last-sys-oid} %then
-	[ AND rl.oid > ] @{last-sys-oid}
+	%if @{schema} %then
+	 [ AND ]
+	%else
+	 [ WHERE ]
+	%end
+
+	[ rl.oid > ] @{last-sys-oid}
       %end
 
       %if @{filter-oids} %then

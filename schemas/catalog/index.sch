@@ -4,13 +4,25 @@
 
 %if @{list} %then
 [SELECT id.indexrelid AS oid, cl.relname AS name FROM pg_index AS id
-  LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
-  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
-  LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-  WHERE tb.relkind = 'r' AND tb.relname = ] '@{table}' [ AND nspname= ] '@{schema}'
+  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid ]
+
+ %if @{schema} %then
+    [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
+      LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+      WHERE nspname= ] '@{schema}'
+
+   %if @{table} %then
+     [ AND tb.relkind = 'r' AND tb.relname = ] '@{table}'
+   %end
+ %end
 
   %if @{last-sys-oid} %then
-    [ AND id.indexrelid > ] @{last-sys-oid}
+    %if @{schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+    [ id.indexrelid > ] @{last-sys-oid}
   %end
 
 %else
@@ -31,18 +43,37 @@
 	      pg_get_expr(indpred, indrelid, true) condition,
 	      ds.description AS comment
 	FROM pg_index AS id
-	LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
-	LEFT JOIN pg_description ds ON ds.objoid = id.indexrelid
-	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-	WHERE tb.relkind = 'r' AND tb.relname = ] 'filo' [ AND nspname = ] 'public'
+	LEFT JOIN pg_description ds ON ds.objoid = id.indexrelid ]
 
-      %if @{last-sys-oid} %then
-       [ AND id.indexrelid > ] @{last-sys-oid}
-      %end
+     %if @{schema} %then
+	  [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
+	    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+	    WHERE ns.nspname= ] '@{schema}'
 
-      %if @{filter-oids} %then
-	[ AND id.indexrelid IN (] @{filter-oids} )
-      %end
+	%if @{table} %then
+	  [ AND tb.relkind='r' AND tb.relname= ] '@{table}'
+	%end
+     %end
+
+     %if @{last-sys-oid} %then
+	%if @{schema} %then
+	  [ AND ]
+	%else
+	  [ WHERE ]
+	%end
+	[ id.indexrelid > ] @{last-sys-oid}
+     %end
+
+     %if @{filter-oids} %then
+       %if @{schema} %or @{last-sys-oid} %then
+	 [ AND ]
+       %else
+	 [ WHERE ]
+       %end
+
+       [ id.indexrelid IN (] @{filter-oids} )
+     %end
+
     %end
 %end

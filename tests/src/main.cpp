@@ -9,10 +9,10 @@ int main(int argc, char **argv)
 	{
 		cout << "\npgModeler reverse engineering test tool" << endl << endl;
 
-		if(argc < 8)
+		if(argc < 6)
 		{
 			cout << "** Insufficient parameters!" << endl;
-			cout << "** The correct usage is: pgmodeler-rev [dbname] [dbuser] [dbpass] [dbhost] [dbport] [schema] [table]" << endl;
+			cout << "** The correct usage is: pgmodeler-rev {dbname dbuser dbpass dbhost dbport} [schema] [table]" << endl;
 			cout << "** Process aborted!" << endl << endl;
 			return(1);
 		}
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 			catalog.setConnection(conn);
 			catalog.setFilter(Catalog::FILTER_SYSTEM_OBJS | Catalog::FILTER_EXTENSION_OBJS);
 
-			ObjectType types[]={OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
+			ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
 													 OBJ_LANGUAGE, OBJ_EXTENSION , OBJ_FUNCTION, OBJ_AGGREGATE,
 													 OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,
 													 OBJ_CONVERSION, OBJ_CAST , OBJ_VIEW, OBJ_SEQUENCE ,
@@ -39,14 +39,17 @@ int main(int argc, char **argv)
 
 			unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
+			QString schema=(argc <= 7 ? argv[6] : ""),
+							table=(argc <= 8 ? argv[7] : "");
+
 			for(i=0; i < cnt; i++)
 			{
 				long time1=QDateTime::currentMSecsSinceEpoch();
 				cout << "[object]: " << BaseObject::getTypeName(types[i]).toStdString() << endl;
-				cout << "[count]: " << catalog.getObjectCount(types[i],argv[6],argv[7]) << endl;
+				cout << "[count]: " << catalog.getObjectCount(types[i], schema , table) << endl;
 
 				cout << "[list]: ";
-				attribs_map v1=catalog.getObjectsNames(types[i],argv[6],argv[7]);
+				attribs_map v1=catalog.getObjectsNames(types[i], schema , table);
 				attribs_map::iterator itr1=v1.begin();
 
 				while(itr1!=v1.end())
@@ -57,7 +60,7 @@ int main(int argc, char **argv)
 
 				cout << endl;
 
-				vector<attribs_map> v=catalog.getObjectsAttributes(types[i],argv[6],argv[7]);
+				vector<attribs_map> v=catalog.getObjectsAttributes(types[i], schema , table);
 				attribs_map::iterator itr;
 
 				while(!v.empty())

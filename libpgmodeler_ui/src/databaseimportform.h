@@ -63,7 +63,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		/*! \brief Returns the checked items oids on "obj_oids" vector. The second parameter
 		"col_oids" stores the columns oids for each selected table */
-		void getCheckedItems(vector<unsigned> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
 		void finishImport(const QString &msg);
 
