@@ -351,6 +351,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ObjectType getObjectType(const QString &type_name);
 		void setBasicAttributes(BaseObject *object);
 
+		void configureDatabase(attribs_map &attribs);
 		PgSQLType createPgSQLType(void);
 		BaseObject *createObject(ObjectType obj_type);
 		Role *createRole(void);

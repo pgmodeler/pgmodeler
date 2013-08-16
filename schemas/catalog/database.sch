@@ -14,12 +14,13 @@
     %if @{attribs} %then
       [SELECT oid, datname AS name, pg_encoding_to_char(encoding) AS encoding, datdba AS owner,
 	      datcollate AS lc_collate, datctype AS lc_ctype, datconnlimit AS connlimit,
-	      datacl AS permissions, dattablespace AS tablespace, datdba AS owner, ]
+	      datacl AS permissions, dattablespace AS tablespace, datdba AS owner,
+	      NULL AS template, ]
 	      (@{comment}) [ AS comment ]
       [ FROM pg_database WHERE datistemplate = FALSE AND datname <> 'postgres' ]
 
       %if @{last-sys-oid} %then
-       [ AND oid > ] @{last-sys-oid}
+       [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{filter-oids} %then

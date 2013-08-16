@@ -6,7 +6,7 @@
   [SELECT oid, nspname AS name FROM pg_namespace ]
 
   %if @{last-sys-oid} %then
-   [ WHERE oid > ] @{last-sys-oid} [ OR nspname = 'public' ]
+   [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
   %end
 
   %if @{from-extension} %then
@@ -27,7 +27,7 @@
        [ FROM pg_namespace ]
 
        %if @{last-sys-oid} %then
-	 [ WHERE oid > ] @{last-sys-oid} [ OR nspname = 'public' ]
+	 [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
        %end
 
        %if @{filter-oids} %then

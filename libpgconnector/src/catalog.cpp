@@ -20,8 +20,9 @@ map<ObjectType, QString> Catalog::oid_fields=
 
 Catalog::Catalog(void)
 {
-	filter_sys_objs=filter_ext_objs=true;
-	last_sys_oid="";
+	exclude_sys_objs=exclude_ext_objs=true;
+	list_only_sys_objs=false;
+	last_sys_oid=0;
 }
 
 void Catalog::setConnection(Connection &conn)
@@ -39,7 +40,7 @@ void Catalog::setConnection(Connection &conn)
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
-			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID];
+			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID].toUInt();
 		}
 	}
 	catch(Exception &e)
@@ -50,11 +51,18 @@ void Catalog::setConnection(Connection &conn)
 
 void Catalog::setFilter(unsigned filter)
 {
-	filter_sys_objs=(FILTER_SYSTEM_OBJS & filter) == FILTER_SYSTEM_OBJS;
-	filter_ext_objs=(FILTER_EXTENSION_OBJS & filter) == FILTER_EXTENSION_OBJS;
+	list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
+
+	if(!list_only_sys_objs)
+	{
+		exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
+		exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
+	}
+	else
+		exclude_ext_objs=exclude_sys_objs=false;
 }
 
-QString Catalog::getLastSysObjectOID()
+unsigned Catalog::getLastSysObjectOID(void)
 {
 	return(last_sys_oid);
 }
@@ -68,10 +76,15 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 		attribs[qry_type]="1";
 
-		if(filter_sys_objs)
-			attribs[ParsersAttributes::LAST_SYS_OID]=last_sys_oid;
+		if(exclude_sys_objs || list_only_sys_objs)
+			attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
 
-		if(filter_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+		if(list_only_sys_objs)
+			attribs[ParsersAttributes::OID_FILTER_OP]="<=";
+		else
+			attribs[ParsersAttributes::OID_FILTER_OP]=">";
+
+		if(exclude_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 			attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
 
 		SchemaParser::setIgnoreUnkownAttributes(true);

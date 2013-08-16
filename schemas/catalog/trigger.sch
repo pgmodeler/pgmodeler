@@ -22,7 +22,7 @@
   [ tgisinternal IS FALSE ]
 
   %if @{last-sys-oid} %then
-    [ AND tg.oid > ] @{last-sys-oid}
+    [ AND tg.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
 %else
@@ -86,7 +86,7 @@
       %end
 
        %if @{last-sys-oid} %then
-	 [ AND tg.oid > ] @{last-sys-oid}
+	 [ AND tg.oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
 	%if @{filter-oids} %then

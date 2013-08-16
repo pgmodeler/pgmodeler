@@ -16,7 +16,7 @@
     %else
      [ WHERE ]
     %end
-     [ op.oid > ] @{last-sys-oid}
+     [ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -65,7 +65,7 @@
 	%else
 	  [ WHERE ]
 	%end
-	[ op.oid > ] @{last-sys-oid}
+	[ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{from-extension} %then

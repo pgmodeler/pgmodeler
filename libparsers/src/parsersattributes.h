@@ -392,7 +392,8 @@ namespace ParsersAttributes {
 	FROM_EXTENSION="from-extension",
 	FILTER_OIDS="filter-oids",
 	GEN_ALTER_CMDS="gen-alter-cmds",
-	LAST_SYS_OID="last-sys-oid";
+	LAST_SYS_OID="last-sys-oid",
+	OID_FILTER_OP="oid-filter-op";
 }
 
 #endif

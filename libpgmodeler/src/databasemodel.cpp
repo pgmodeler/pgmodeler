@@ -2524,6 +2524,20 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 	}
 }
 
+void DatabaseModel::configureDatabase(attribs_map &attribs)
+{
+	encoding=attribs[ParsersAttributes::ENCODING];
+	template_db=attribs[ParsersAttributes::TEMPLATE_DB];
+	localizations[0]=attribs[ParsersAttributes::_LC_CTYPE_];
+	localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
+	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
+
+	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
+		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
+
+	setBasicAttributes(this);
+}
+
 void DatabaseModel::loadModel(const QString &filename)
 {
 	if(filename!="")
@@ -2612,16 +2626,7 @@ void DatabaseModel::loadModel(const QString &filename)
 							if(obj_type==OBJ_DATABASE)
 							{
 								XMLParser::getElementAttributes(attribs);
-								encoding=attribs[ParsersAttributes::ENCODING];
-								template_db=attribs[ParsersAttributes::TEMPLATE_DB];
-								localizations[0]=attribs[ParsersAttributes::_LC_CTYPE_];
-								localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
-								append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
-
-								if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
-									conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
-
-								setBasicAttributes(this);
+								configureDatabase(attribs);
 							}
 							else
 							{
@@ -7774,7 +7779,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
 	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
-
+	Role *postgres=nullptr;
 
 	/* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
@@ -7809,6 +7814,12 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	tbspace->setDirectory("_pg_default_dir_");
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
+
+	postgres=new Role;
+	postgres->setName("postgres");
+	postgres->setOption(Role::OP_SUPERUSER, true);
+	postgres->setSystemObject(true);
+	addRole(postgres);
 }
 
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)

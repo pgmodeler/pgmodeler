@@ -6,7 +6,7 @@
   [SELECT oid, spcname AS name FROM pg_tablespace ]
 
   %if @{last-sys-oid} %then
-   [ WHERE oid > ] @{last-sys-oid}
+   [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
 %else
@@ -24,7 +24,7 @@
 	[ FROM pg_tablespace ]
 
 	%if @{last-sys-oid} %then
-	  [ WHERE oid > ] @{last-sys-oid}
+	  [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
 	%end
 
 	%if @{filter-oids} %then

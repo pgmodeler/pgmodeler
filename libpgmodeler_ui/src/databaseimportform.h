@@ -35,6 +35,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		QTimer timer;
 
+		ModelWidget *model_wgt;
+
 		//! \brief Database importer helper
 		DatabaseImportHelper import_helper;
 
@@ -70,8 +72,12 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *event);
 
+		void destroyModelWidget();
+
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+
+		ModelWidget *getModelWidget(void);
 
 	private slots:
 		void importDatabase(void);

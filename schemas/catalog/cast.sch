@@ -7,7 +7,7 @@
      FROM pg_cast AS cs]
 
   %if @{last-sys-oid} %then
-   [ WHERE oid > ] @{last-sys-oid}
+   [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -40,7 +40,7 @@
      [ FROM pg_cast AS cs]
 
       %if @{last-sys-oid} %then
-       [ WHERE oid > ] @{last-sys-oid}
+       [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{from-extension} %then

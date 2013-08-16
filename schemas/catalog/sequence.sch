@@ -13,7 +13,7 @@
   %end
 
   %if @{last-sys-oid} %then
-     [ AND sq.oid > ] @{last-sys-oid}
+     [ AND sq.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -48,7 +48,7 @@
 	WHERE relkind='S' ]
 
 	%if @{last-sys-oid} %then
-	  [ AND sq.oid > ] @{last-sys-oid}
+	  [ AND sq.oid ] @{oid-filter-op} $sp @{last-sys-oid}
 	%end
 
 	%if @{from-extension} %then

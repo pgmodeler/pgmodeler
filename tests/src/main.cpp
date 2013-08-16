@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
 			Catalog catalog;
 			catalog.setConnection(conn);
-			catalog.setFilter(Catalog::FILTER_SYSTEM_OBJS | Catalog::FILTER_EXTENSION_OBJS);
+			catalog.setFilter(Catalog::LIST_ONLY_SYS_OBJS);
 
 			ObjectType types[]={ OBJ_DATABASE, OBJ_TABLESPACE , OBJ_ROLE, OBJ_SCHEMA,
 													 OBJ_LANGUAGE, OBJ_EXTENSION , OBJ_FUNCTION, OBJ_AGGREGATE,
@@ -39,8 +39,8 @@ int main(int argc, char **argv)
 
 			unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
-			QString schema=(argc <= 7 ? argv[6] : ""),
-							table=(argc <= 8 ? argv[7] : "");
+			QString schema=(argc >= 7 ? argv[6] : ""),
+							table=(argc >= 8 ? argv[7] : "");
 
 			for(i=0; i < cnt; i++)
 			{

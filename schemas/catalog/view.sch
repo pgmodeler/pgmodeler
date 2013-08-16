@@ -13,7 +13,7 @@
   %end
 
    %if @{last-sys-oid} %then
-    [ AND vw.oid > ] @{last-sys-oid}
+    [ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -32,7 +32,7 @@
 	WHERE vw.relkind='v' ]
 
        %if @{last-sys-oid} %then
-	[ AND vw.oid > ] @{last-sys-oid}
+	[ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
        %if @{from-extension} %then

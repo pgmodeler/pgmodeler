@@ -21,7 +21,7 @@
     %else
       [ WHERE ]
     %end
-    [ cs.oid > ] @{last-sys-oid}
+    [ cs.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
 %else
@@ -97,7 +97,7 @@
 	%else
 	  [ WHERE ]
 	%end
-	[ cs.oid > ] @{last-sys-oid}
+	[ cs.oid ] @{oid-filter-op} $sp @{last-sys-oid}
      %end
 
      %if @{filter-oids} %then

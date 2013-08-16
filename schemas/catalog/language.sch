@@ -6,7 +6,7 @@
   [SELECT oid, lanname AS name FROM pg_language ]
 
   %if @{last-sys-oid} %then
-   [ WHERE oid > ] @{last-sys-oid}
+   [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -26,18 +26,28 @@
 
       (@{comment}) [ AS comment ]
 
-      [ FROM pg_language WHERE  lanispl IS TRUE ]
+      [ FROM pg_language ]
 
        %if @{last-sys-oid} %then
-	 [ AND oid > ] @{last-sys-oid}
+	 [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
        %if @{from-extension} %then
-	 [ AND ] ( @{from-extension} ) [ IS FALSE ]
+	 %if @{last-sys-oid} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 ( @{from-extension} ) [ IS FALSE ]
        %end
 
        %if @{filter-oids} %then
-	 [ AND oid IN (] @{filter-oids} )
+	 %if @{last-sys-oid} %or @{from-extension} %then
+	   [ AND ]
+	 %else
+	   [ WHERE ]
+	 %end
+	 [ oid IN (] @{filter-oids} )
        %end
     %end
 %end

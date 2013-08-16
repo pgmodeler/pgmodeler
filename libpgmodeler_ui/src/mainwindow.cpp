@@ -649,7 +649,6 @@ void MainWindow::addModel(const QString &filename)
 	ModelWidget *model_tab=nullptr;
 	QString obj_name, tab_name, str_aux;
 	Schema *public_sch=nullptr;
-	QLayout *layout=nullptr;
 	bool start_timers=(models_tbw->count() == 0);
 
 	//Set a name for the tab widget
@@ -658,7 +657,7 @@ void MainWindow::addModel(const QString &filename)
 	obj_name+=str_aux;
 	tab_name=obj_name;
 
-	model_tab = new ModelWidget(models_tbw);
+	model_tab=new ModelWidget(models_tbw);
 	model_tab->setObjectName(Utf8String::create(obj_name));
 
 	//Add the tab to the tab widget
@@ -668,9 +667,6 @@ void MainWindow::addModel(const QString &filename)
 	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	models_tbw->blockSignals(false);
-
-	layout=models_tbw->currentWidget()->layout();
-	layout->setContentsMargins(4,4,4,4);
 
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -712,6 +708,20 @@ void MainWindow::addModel(const QString &filename)
 
 		tmpmodel_save_timer.start();
 	}
+}
+
+void MainWindow::addModel(ModelWidget *model_wgt)
+{
+	if(!model_wgt)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(model_wgt->parent())
+		throw Exception(ERR_ASG_WGT_ALREADY_HAS_PARENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	models_tbw->blockSignals(true);
+	models_tbw->addTab(model_wgt, Utf8String::create(model_wgt->getDatabaseModel()->getName()));
+	models_tbw->setCurrentIndex(models_tbw->count()-1);
+	models_tbw->blockSignals(false);
+	setCurrentModel();
 }
 
 int MainWindow::getModelCount(void)
@@ -1074,7 +1084,10 @@ void MainWindow::exportModel(void)
 
 void MainWindow::importDatabase(void)
 {
-	db_import_form->show();
+	db_import_form->exec();
+
+	if(db_import_form->getModelWidget())
+	 this->addModel(db_import_form->getModelWidget());
 }
 
 void MainWindow::printModel(void)

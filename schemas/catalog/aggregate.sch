@@ -13,7 +13,7 @@
   %end
 
   %if @{last-sys-oid} %then
-   [ AND pr.oid > ] @{last-sys-oid}
+   [ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -38,7 +38,7 @@
 
       [ WHERE pr.proisagg IS TRUE ]
       %if @{last-sys-oid} %then
-	[ AND pr.oid > ] @{last-sys-oid}
+	[ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{from-extension} %then

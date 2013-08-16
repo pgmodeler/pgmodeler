@@ -19,7 +19,7 @@
     (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
 
   %if @{last-sys-oid} %then
-     [ AND tp.oid > ] @{last-sys-oid}
+     [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -118,7 +118,7 @@
       (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
 
     %if @{last-sys-oid} %then
-      [ AND tp.oid > ] @{last-sys-oid}
+      [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
     %end
 
     %if @{from-extension} %then
