@@ -76,6 +76,8 @@ void DatabaseImportHelper::setImportParams(ModelWidget *model_wgt, map<ObjectTyp
 	}
 
 	std::sort(creation_order.begin(), creation_order.end());
+	user_objs.clear();
+	system_objs.clear();
 }
 
 attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString schema, const QString table)
@@ -104,6 +106,7 @@ void DatabaseImportHelper::importDatabase(void)
 		unsigned i=0, oid, cnt=sizeof(sys_objs)/sizeof(ObjectType);
 
 		import_canceled=false;
+		Connection::setPrintSQL(true);
 
 		catalog.setFilter(Catalog::LIST_ONLY_SYS_OBJS);
 		for(i=0; i < cnt && !import_canceled; i++)
@@ -123,6 +126,7 @@ void DatabaseImportHelper::importDatabase(void)
 			}
 
 			progress=(i/static_cast<float>(cnt))*10;
+			QThread::msleep(10);
 		}
 
 
@@ -147,6 +151,7 @@ void DatabaseImportHelper::importDatabase(void)
 			objects.clear();
 			progress=10 + (i/static_cast<float>(object_oids.size()))*20;
 			oid_itr++; i++;
+			QThread::msleep(10);
 		}
 
 		for(i=0; i < creation_order.size() && !import_canceled; i++)
@@ -171,6 +176,7 @@ void DatabaseImportHelper::importDatabase(void)
 			}
 
 			progress=30 + ((i/static_cast<float>(creation_order.size())) * 70);
+			QThread::msleep(10);
 		}
 
 		if(!import_canceled)

@@ -2015,7 +2015,6 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 			gen_columns.clear();
 			pk_columns.clear();
-			//prev_ref_col_names.clear();
 
 			if(table_relnn)
 			{
@@ -2403,9 +2402,11 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		}
 
 		reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
-								 attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
-								 attributes[ParsersAttributes::POINTS].isEmpty() &&
-								 attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
+									attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
+									attributes[ParsersAttributes::POINTS].isEmpty() &&
+									attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty() &&
+									attributes[ParsersAttributes::POINTS].isEmpty() &&
+									attributes[ParsersAttributes::LABELS_POS].isEmpty());
 
 
 		return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION, reduced_form));

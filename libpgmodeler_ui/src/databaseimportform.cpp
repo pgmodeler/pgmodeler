@@ -107,6 +107,7 @@ void DatabaseImportForm::importDatabase(void)
 
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
+		cout << database_cmb->currentText().toStdString() << endl;
 
 		model_wgt=new ModelWidget;
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
@@ -115,11 +116,11 @@ void DatabaseImportForm::importDatabase(void)
 		timer.stop();
 		hideProgress(false);
 
+		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
 		database_gb->setEnabled(false);
 		options_gb->setEnabled(false);
-		import_thread->start();
 	}
 	catch(Exception &e)
 	{	
@@ -338,7 +339,7 @@ void DatabaseImportForm::listDatabases(void)
 		attribs_map db_attribs;
 		attribs_map::iterator itr;
 		QStringList list;
-		vector<unsigned> oids;
+		map<QString, unsigned> oids;
 
 		//List the available databases using the selected connection
 		import_helper.setConnection(*conn);
@@ -360,7 +361,7 @@ void DatabaseImportForm::listDatabases(void)
 			while(itr!=db_attribs.end())
 			{
 				list.push_back(itr->second);
-				oids.push_back(itr->first.toUInt());
+				oids[itr->second]=itr->first.toUInt();
 				itr++;
 			}
 
@@ -370,7 +371,7 @@ void DatabaseImportForm::listDatabases(void)
 			for(int i=0; i < list.count(); i++)
 			{
 				database_cmb->setItemIcon(i, QPixmap(":/icones/icones/" + BaseObject::getSchemaName(OBJ_DATABASE) + ".png"));
-				database_cmb->setItemData(i, oids[i]);
+				database_cmb->setItemData(i, oids[list[i]]);
 			}
 
 			database_cmb->insertItem(0, QString("Found %1 database(s)").arg(db_attribs.size()));
@@ -429,6 +430,13 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 	close the form and make thread execute in background */
 	if(import_thread->isRunning())
 		event->ignore();
+	else
+	{
+		if(model_wgt)
+			this->setResult(QDialog::Accepted);
+		else
+			this->setResult(QDialog::Rejected);
+	}
 }
 
 void DatabaseImportForm::captureThreadError(Exception e)
@@ -465,7 +473,7 @@ void DatabaseImportForm::handleImportFinished(void)
 {	
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-	this->accept();
+	this->close();
 }
 
 void DatabaseImportForm::finishImport(const QString &msg)
