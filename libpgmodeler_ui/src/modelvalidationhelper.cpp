@@ -209,7 +209,7 @@ void ModelValidationHelper::validateModel(void)
 						/* If the current referrer object has an id less than reference object's id
 						then it will be pushed into the list of invalid references */
 						if(object != refs.back() &&
-							 ((refs.back()->getObjectId() <= object->getObjectId()) ||
+							 ((!tab_obj && refs.back()->getObjectId() <= object->getObjectId()) ||
 								(tab_obj && !tab_obj->isAddedByRelationship() &&
 								 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))
 						{
