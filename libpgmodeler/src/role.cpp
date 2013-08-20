@@ -145,7 +145,7 @@ void Role::setConnectionLimit(int limit)
 
 void Role::setValidity(const QString &date)
 {
-	validity=date;
+	validity=date.mid(0,19);
 }
 
 void Role::setPassword(const QString &passwd)

@@ -1084,7 +1084,7 @@ void MainWindow::exportModel(void)
 
 void MainWindow::importDatabase(void)
 {
-	db_import_form->show();
+	db_import_form->exec();
 
 	if(db_import_form->result()==QDialog::Accepted && db_import_form->getModelWidget())
 	 this->addModel(db_import_form->getModelWidget());

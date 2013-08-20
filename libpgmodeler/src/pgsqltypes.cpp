@@ -1222,7 +1222,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(with_timezone)
 			attribs[ParsersAttributes::WITH_TIMEZONE]="1";
 
-		return(SchemaParser::getCodeDefinition("basetype",attribs, def_type));
+		return(SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}
 }
 

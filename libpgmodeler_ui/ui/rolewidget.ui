@@ -50,10 +50,13 @@
       <string/>
      </property>
      <property name="displayFormat">
-      <string>yyyy-MMM-dd hh:mm</string>
+      <string>yyyy-MMM-dd hh:mm:ss</string>
      </property>
      <property name="calendarPopup">
       <bool>false</bool>
+     </property>
+     <property name="timeSpec">
+      <enum>Qt::OffsetFromUTC</enum>
      </property>
     </widget>
    </item>

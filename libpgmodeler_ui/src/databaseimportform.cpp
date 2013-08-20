@@ -432,9 +432,7 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 		event->ignore();
 	else
 	{
-		if(model_wgt)
-			this->setResult(QDialog::Accepted);
-		else
+		if(!model_wgt)
 			this->setResult(QDialog::Rejected);
 	}
 }
@@ -473,7 +471,7 @@ void DatabaseImportForm::handleImportFinished(void)
 {	
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-	this->close();
+	this->accept();
 }
 
 void DatabaseImportForm::finishImport(const QString &msg)

@@ -13,7 +13,12 @@
     %if @{attribs} %then
 	[ SELECT  rl1.oid, rolname AS name, rolsuper AS superuser_bool, rolinherit AS inherit_bool,
 		  rolcreaterole AS createrole_bool, rolcreatedb AS createdb_bool, rolcanlogin AS login_bool,
-		  rolconnlimit AS connlimit, rolvaliduntil AS validity, TRUE AS encrypted_bool,  ]
+		  rolconnlimit AS connlimit, TRUE AS encrypted_bool,
+
+	  CASE
+	   WHEN rolvaliduntil = 'infinity' THEN NULL
+	   ELSE rolvaliduntil
+	  END AS validity, ]
 
 	%if %not @{pgsql90} %then
 	  [ rolreplication AS replication_bool, ]

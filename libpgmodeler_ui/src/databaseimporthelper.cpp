@@ -226,15 +226,18 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			attribs[ParsersAttributes::SQL_DISABLED]="";
 			attribs[ParsersAttributes::APPENDED_SQL]="";
 
-			setComment(attribs);
-			setDependencyObject(attribs, ParsersAttributes::OWNER, OBJ_ROLE);
-			setDependencyObject(attribs, ParsersAttributes::TABLESPACE, OBJ_TABLESPACE);
+			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
+			attribs[ParsersAttributes::OWNER]=getDependencyObject(attribs, ParsersAttributes::OWNER, OBJ_ROLE);
+			attribs[ParsersAttributes::TABLESPACE]=getDependencyObject(attribs, ParsersAttributes::TABLESPACE, OBJ_TABLESPACE);
+			attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs, ParsersAttributes::SCHEMA, OBJ_SCHEMA);
 
 			switch(obj_type)
 			{
+				case OBJ_DATABASE: configureDatabase(attribs); break;
 				case OBJ_SCHEMA: createSchema(attribs); break;
 				case OBJ_ROLE: createRole(attribs); break;
-				case OBJ_DATABASE: configureDatabase(attribs); break;
+				case OBJ_DOMAIN: createDomain(attribs); break;
+
 
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
@@ -248,12 +251,16 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::setComment(attribs_map &attribs)
+QString DatabaseImportHelper::getComment(attribs_map &attribs)
 {
 	try
 	{
+		QString xml_def;
+
 		if(!attribs[ParsersAttributes::COMMENT].isEmpty())
-			attribs[ParsersAttributes::COMMENT]=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
+			xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
+
+		return(xml_def);
 	}
 	catch(Exception &e)
 	{
@@ -261,10 +268,12 @@ void DatabaseImportHelper::setComment(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::setDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type)
+QString DatabaseImportHelper::getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type)
 {
 	try
 	{
+		QString xml_def;
+
 		if(attribs.count(attr) && !attribs[attr].isEmpty() && attribs[attr].toUInt() > 0)
 		{
 			unsigned oid=attribs[attr].toUInt();
@@ -272,10 +281,13 @@ void DatabaseImportHelper::setDependencyObject(attribs_map &attribs, const QStri
 
 			aux_attr[ParsersAttributes::NAME]=resolveObjectName(oid);
 			aux_attr[ParsersAttributes::REDUCED_FORM]="1";
+
 			SchemaParser::setIgnoreUnkownAttributes(true);
-			attribs[attr]=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), aux_attr, SchemaParser::XML_DEFINITION);
+			xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), aux_attr, SchemaParser::XML_DEFINITION);
 			SchemaParser::setIgnoreUnkownAttributes(false);
 		}
+
+		return(xml_def);
 	}
 	catch(Exception &e)
 	{
@@ -338,6 +350,24 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 	}
 }
 
+void DatabaseImportHelper::createDomain(attribs_map &attribs)
+{
+	Domain *dom=nullptr;
+
+	try
+	{
+		attribs[ParsersAttributes::TYPE]=getType(attribs);
+		loadObjectXML(OBJ_DOMAIN, attribs);
+		dom=dbmodel->createDomain();
+		dbmodel->addDomain(dom);
+	}
+	catch(Exception &e)
+	{
+		if(dom) delete(dom);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 {
 	try
@@ -387,4 +417,24 @@ QString DatabaseImportHelper::resolveObjectNames(const QString &oid_vect)
 	}
 	else
 		return("");
+}
+
+QString DatabaseImportHelper::getType(attribs_map &attribs)
+{
+	try
+	{
+		attribs_map attr_aux=attribs;
+		QString xml_def;
+
+		attr_aux[ParsersAttributes::NAME]=attribs[ParsersAttributes::TYPE];
+		SchemaParser::setIgnoreUnkownAttributes(true);
+		xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attr_aux, SchemaParser::XML_DEFINITION);
+		SchemaParser::setIgnoreUnkownAttributes(false);
+
+		return(xml_def);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }

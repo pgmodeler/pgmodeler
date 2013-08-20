@@ -30,7 +30,7 @@
 
 %else
     %if @{attribs} %then
-     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, ]
+     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, dm.typnamespace AS schema, dm.typndims AS dimension, ]
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
 	%if %not @{pgsql92} %then
@@ -39,17 +39,21 @@
 	 [ dm.typacl AS permissions, dm.typcollation AS collation, ]
 	%end
 
-	[ dm.typnotnull AS not_null_bool, _dm1.data_type AS type, _dm1.character_maximum_length AS length,
+	[ CASE
+	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_precision_radix
+	    ELSE _dm1.character_maximum_length
+	  END AS length,
 
-	   CASE
-	    WHEN _dm1.numeric_precision IS NOT NULL THEN  ] _dm1.numeric_precision  %if %not @{pgsql92} %then [::varchar] %end
-	[   WHEN _dm1.datetime_precision IS NOT NULL THEN ] _dm1.datetime_precision %if %not @{pgsql92} %then [::varchar] %end
-	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision
-	    ELSE NULL
-	   END AS precision,
+	  CASE
+	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale
+	    WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if %not @{pgsql92} %then [::varchar] %end
+	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if %not @{pgsql92} %then [::varchar] %end
+	[   ELSE NULL
+	 END AS precision,
 
-	   _dm1.interval_type, _dm1.domain_default AS default_value,
-	   cn.conname AS constraint, cn.consrc AS expression, ]
+	  dm.typnotnull AS not_null_bool, replace(_dm1.data_type,'] $ob $cb [','') AS type,
+	  _dm1.interval_type, _dm1.domain_default AS default_value,
+	  cn.conname AS constraint, cn.consrc AS expression, ]
 
       (@{comment}) [ AS comment ]
 

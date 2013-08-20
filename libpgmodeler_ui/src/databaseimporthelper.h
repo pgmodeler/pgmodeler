@@ -53,18 +53,19 @@ class DatabaseImportHelper: public QObject {
 
 		DatabaseModel *dbmodel;
 
+		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
 		void createSchema(attribs_map &attribs);
 		void createRole(attribs_map &attribs);
-		void configureDatabase(attribs_map &attribs);
+		void createDomain(attribs_map &attribs);
 
 		QString resolveObjectName(unsigned oid);
 		QString resolveObjectNames(const QString &oid_vect);
 
-		void setDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
-		void setComment(attribs_map &attribs);
-		void setOwner(attribs_map &attribs);
-		void setTablespace(attribs_map &attribs);
+		//QString getType(unsigned oid);
+		QString getType(attribs_map &attribs);
+		QString getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
+		QString getComment(attribs_map &attribs);
 
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);
 

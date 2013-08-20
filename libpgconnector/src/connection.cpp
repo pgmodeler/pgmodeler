@@ -225,7 +225,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
-		cout << sql.toStdString() << endl;
+		cout << "\n---\n" << sql.toStdString() << endl;
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection))>0)
@@ -258,7 +258,7 @@ void Connection::executeDDLCommand(const QString &sql)
 
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
-		cout << sql.toStdString() << endl;
+		cout << "\n---\n" << sql.toStdString() << endl;
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)
