@@ -22,8 +22,8 @@
 
 %else
     %if @{attribs} %and %not @{pgsql90}  %then
-	[SELECT ex.oid, ex.extname AS name, ex.extversion AS curr_version,
-		ex.extowner, ex.extnamespace,
+	[SELECT ex.oid, ex.extname AS name, ex.extversion AS cur_version, NULL AS old_version,
+		ex.extowner AS owner, ex.extnamespace AS schema,
 	  (SELECT CASE
 		    WHEN  count(objid) >= 1 THEN TRUE
 		    ELSE FALSE

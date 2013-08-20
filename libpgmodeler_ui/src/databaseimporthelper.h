@@ -58,11 +58,14 @@ class DatabaseImportHelper: public QObject {
 		void createSchema(attribs_map &attribs);
 		void createRole(attribs_map &attribs);
 		void createDomain(attribs_map &attribs);
+		void createExtension(attribs_map &attribs);
+		void createOperatorFamily(attribs_map &attribs);
+		void createOperatorClass(attribs_map &attribs);
 
 		QString resolveObjectName(unsigned oid);
 		QString resolveObjectNames(const QString &oid_vect);
 
-		//QString getType(unsigned oid);
+		QString getType(unsigned oid);
 		QString getType(attribs_map &attribs);
 		QString getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
 		QString getComment(attribs_map &attribs);

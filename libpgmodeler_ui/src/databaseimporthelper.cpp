@@ -227,9 +227,15 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			attribs[ParsersAttributes::APPENDED_SQL]="";
 
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
-			attribs[ParsersAttributes::OWNER]=getDependencyObject(attribs, ParsersAttributes::OWNER, OBJ_ROLE);
-			attribs[ParsersAttributes::TABLESPACE]=getDependencyObject(attribs, ParsersAttributes::TABLESPACE, OBJ_TABLESPACE);
-			attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs, ParsersAttributes::SCHEMA, OBJ_SCHEMA);
+
+			if(attribs.count(ParsersAttributes::OWNER))
+				attribs[ParsersAttributes::OWNER]=getDependencyObject(attribs, ParsersAttributes::OWNER, OBJ_ROLE);
+
+			if(attribs.count(ParsersAttributes::TABLESPACE))
+				attribs[ParsersAttributes::TABLESPACE]=getDependencyObject(attribs, ParsersAttributes::TABLESPACE, OBJ_TABLESPACE);
+
+			if(attribs.count(ParsersAttributes::SCHEMA))
+				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs, ParsersAttributes::SCHEMA, OBJ_SCHEMA);
 
 			switch(obj_type)
 			{
@@ -237,7 +243,9 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_SCHEMA: createSchema(attribs); break;
 				case OBJ_ROLE: createRole(attribs); break;
 				case OBJ_DOMAIN: createDomain(attribs); break;
-
+				case OBJ_EXTENSION: createExtension(attribs); break;
+				case OBJ_OPFAMILY: createOperatorFamily(attribs); break;
+				case OBJ_OPCLASS: createOperatorClass(attribs); break;
 
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
@@ -368,6 +376,59 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 	}
 }
 
+void DatabaseImportHelper::createExtension(attribs_map &attribs)
+{
+	Extension *ext=nullptr;
+
+	try
+	{
+		loadObjectXML(OBJ_EXTENSION, attribs);
+		ext=dbmodel->createExtension();
+		dbmodel->addExtension(ext);
+	}
+	catch(Exception &e)
+	{
+		if(ext) delete(ext);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
+{
+	OperatorFamily *opfam=nullptr;
+
+	try
+	{
+		loadObjectXML(OBJ_OPFAMILY, attribs);
+		opfam=dbmodel->createOperatorFamily();
+		dbmodel->addOperatorFamily(opfam);
+	}
+	catch(Exception &e)
+	{
+		if(opfam) delete(opfam);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
+{
+	OperatorClass *opclass=nullptr;
+
+	try
+	{
+		attribs[ParsersAttributes::FAMILY]=resolveObjectName(attribs[ParsersAttributes::FAMILY].toUInt());
+		attribs[ParsersAttributes::STORAGE]=getType(attribs[ParsersAttributes::STORAGE].toUInt());
+		loadObjectXML(OBJ_OPCLASS, attribs);
+		opclass=dbmodel->createOperatorClass();
+		dbmodel->addOperatorClass(opclass);
+	}
+	catch(Exception &e)
+	{
+		if(opclass) delete(opclass);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 {
 	try
@@ -392,8 +453,10 @@ QString DatabaseImportHelper::resolveObjectName(unsigned oid)
 	{
 		if(system_objs.count(oid))
 			return(system_objs[oid].at(ParsersAttributes::NAME));
-		else
+		else if(user_objs.count(oid))
 			return(user_objs[oid].at(ParsersAttributes::NAME));
+		else
+			return("");
 	}
 }
 
@@ -417,6 +480,12 @@ QString DatabaseImportHelper::resolveObjectNames(const QString &oid_vect)
 	}
 	else
 		return("");
+}
+
+QString DatabaseImportHelper::getType(unsigned oid)
+{
+	#warning "TODO!"
+	return("");
 }
 
 QString DatabaseImportHelper::getType(attribs_map &attribs)

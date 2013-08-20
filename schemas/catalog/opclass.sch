@@ -32,11 +32,12 @@
     %if @{attribs} %then
       [SELECT op.oid, op.opcname AS name, op.opcnamespace AS schema, op.opcowner AS owner,
               op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default,
-              op.opckeytype AS storage, ]
+	      op.opckeytype AS storage, am.amname AS index_type, ]
 
       (@{comment}) [ AS comment ]
 
-      [ FROM pg_opclass AS op ]
+      [ FROM pg_opclass AS op
+	LEFT JOIN pg_am AS am ON op.opcmethod = am.oid ]
 
       %if @{schema} %then
 	[ LEFT JOIN pg_namespace AS ns ON op.opcnamespace = ns.oid ]
