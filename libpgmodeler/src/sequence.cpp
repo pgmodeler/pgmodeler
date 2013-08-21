@@ -125,9 +125,14 @@ int Sequence::compareValues(QString value1, QString value2)
 		return(0);
 	else
 	{
-		char ops[2];
+		char ops[2]={'\0','\0'};
 		unsigned i, idx, count;
 		QString *vet_values[2]={&value1, &value2}, aux_value;
+
+		if(value1.size() < value2.size())
+			value1=value1.rightJustified(value1.size() + (value2.size()-value1.size()),'0');
+		else if(value1.size() > value2.size())
+			value2=value2.rightJustified(value2.size() + (value1.size()-value2.size()),'0');
 
 		for(i=0; i < 2; i++)
 		{
@@ -137,12 +142,16 @@ int Sequence::compareValues(QString value1, QString value2)
 			//Case the value doesn't has a + it will be append
 			if(ops[i]!='-' && ops[i]!='+') ops[i]='+';
 
-			idx=1;
+			idx=0;
 			count=vet_values[i]->size();
 			while(idx < count)
 			{
-				if(vet_values[i]->at(idx)!='0')
+				if(vet_values[i]->at(idx)!='+' &&
+					 vet_values[i]->at(idx)!='-')
 					aux_value+=vet_values[i]->at(idx);
+				else
+					aux_value+='0';
+
 				idx++;
 			}
 			(*vet_values[i])=aux_value;

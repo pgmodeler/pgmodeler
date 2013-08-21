@@ -83,7 +83,7 @@ void SequenceWidget::applyConfiguration(void)
 		sequence=dynamic_cast<Sequence *>(this->object);
 		sequence->setCycle(cyclic_chk->isChecked());
 		sequence->setValues(minimum_edt->text(), maximum_edt->text(), increment_edt->text(),
-												 start_edt->text(), cache_edt->text());
+												start_edt->text(), cache_edt->text());
 		sequence->setOwnerColumn(dynamic_cast<Column *>(column_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
