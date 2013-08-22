@@ -3949,7 +3949,6 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	PgSQLType type;
 	OperatorClass *op_class=nullptr;
 	OperatorClassElement class_elem;
-	bool for_order_by;
 	unsigned stg_number, elem_type;
 
 	try
@@ -3999,7 +3998,6 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					{
 						XMLParser::getElementAttributes(attribs);
 
-						for_order_by=attribs[ParsersAttributes::FOR_ORDER_BY]==ParsersAttributes::_TRUE_;
 						stg_number=attribs[ParsersAttributes::STRATEGY_NUM].toUInt();
 						elem_type=elem_types[attribs[ParsersAttributes::TYPE]];
 
@@ -4038,7 +4036,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 																	.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-								class_elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(object), for_order_by);
+								class_elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(object));
 								XMLParser::restorePosition();
 							}
 						}
@@ -4511,7 +4509,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 		XMLParser::getElementAttributes(attribs);
 
 		elem.setSortingAttribute(Element::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
-		elem.setSortingAttribute(Element::nullptrS_FIRST, attribs[ParsersAttributes::nullptrS_FIRST]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(Element::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 
 		XMLParser::savePosition();
@@ -5925,7 +5923,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 				//The "public" schema does not have the SQL code definition generated
 				if(object->getObjectType()!=OBJ_SCHEMA ||
-					 (object->getObjectType()==OBJ_SCHEMA && object->getName()!="public") ||
+					 (object->getObjectType()==OBJ_SCHEMA && (object->getName()!="public" && object->getName()!="pg_catalog")) ||
 					 (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
 					/* The Tablespace has the SQL code definition disabled when generating the
@@ -7775,11 +7773,13 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 
 void DatabaseModel::createSystemObjects(bool create_public)
 {
-	Schema *public_sch=nullptr;
+	Schema *public_sch=nullptr, *pg_catalog=nullptr;
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
 	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
 	Role *postgres=nullptr;
+	Collation *collation=nullptr;
+	QString collnames[]={ "default", "C", "POSIX" };
 
 	/* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
@@ -7790,6 +7790,24 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		public_sch->setName("public");
 		public_sch->setSystemObject(true);
 		addSchema(public_sch);
+	}
+
+	//Create the pg_catalog schema in order to insert default collations in
+	pg_catalog=new Schema;
+	pg_catalog->BaseObject::setName("pg_catalog");
+	pg_catalog->setSystemObject(true);
+	addSchema(pg_catalog);
+
+	//Creating default collations
+	for(unsigned i=0; i < 3; i++)
+	{
+		collation=new Collation;
+		collation->setName(collnames[i]);
+		collation->setSchema(pg_catalog);
+		collation->setEncoding(EncodingType("UTF8"));
+		collation->setLocale("C");
+		collation->setSystemObject(true);
+		addCollation(collation);
 	}
 
 	for(unsigned i=0; i < sizeof(lang_types)/sizeof(LanguageType); i++)

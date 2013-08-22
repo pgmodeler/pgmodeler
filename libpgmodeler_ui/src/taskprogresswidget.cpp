@@ -45,12 +45,15 @@ void TaskProgressWidget::show(void)
 	eventLoop.exec(QEventLoop::AllEvents);
 }
 
-void TaskProgressWidget::updateProgress(int progress, const QString &text, unsigned icon_id)
+void TaskProgressWidget::updateProgress(int progress, QString text, unsigned icon_id)
 {
 	if(progress > progress_pb->maximum())
 		progress=progress_pb->maximum();
 
 	progress_pb->setValue(progress);
+
+	text.replace(text.indexOf('`'), 1 ,"<strong>");
+	text.replace(text.indexOf('\''), 1,"</strong>");
 	text_lbl->setText(text);
 
 	if(icons.count(icon_id))

@@ -34,7 +34,17 @@
               op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default,
 	      op.opckeytype AS storage, am.amname AS index_type, ]
 
+      [(SELECT array_agg(amoplefttype::text || ',' || amoprighttype::text || ',' ||
+			amopstrategy::text || ',' ||
+			amopopr::text || ',' || amopsortfamily::text || ',' ||
+			CASE
+			   WHEN amoppurpose = 's' THEN 't'
+			   ELSE 'f'
+			END)
+	FROM pg_amop AS ap WHERE ap.amopfamily=op.opcfamily AND ap.amopmethod=am.oid) AS operator, ]
+
       (@{comment}) [ AS comment ]
+
 
       [ FROM pg_opclass AS op
 	LEFT JOIN pg_am AS am ON op.opcmethod = am.oid ]

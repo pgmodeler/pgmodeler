@@ -82,7 +82,12 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(list_only_sys_objs)
 			attribs[ParsersAttributes::OID_FILTER_OP]="<=";
 		else
+		{
 			attribs[ParsersAttributes::OID_FILTER_OP]=">";
+
+			if(obj_type==OBJ_TYPE)
+				attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
+		}
 
 		if(exclude_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 			attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);

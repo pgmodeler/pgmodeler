@@ -30,6 +30,9 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	progress=0;
 	setupUi(this);
 
+#warning "Debug!"
+	Connection::setPrintSQL(true);
+
 	import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
@@ -43,7 +46,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 
-	connect(&import_helper, SIGNAL(s_importFinished(void)), this, SLOT(handleImportFinished(void)));
+	connect(&import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 	connect(&import_helper, SIGNAL(s_importCanceled(void)), this, SLOT(handleImportCanceled(void)));
 	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
@@ -107,14 +110,15 @@ void DatabaseImportForm::importDatabase(void)
 
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
-		cout << database_cmb->currentText().toStdString() << endl;
 
 		model_wgt=new ModelWidget;
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 		import_helper.setImportParams(model_wgt, obj_oids, col_oids, ignore_errors_chk->isChecked());
 
 		timer.stop();
-		hideProgress(false);
+
+		if(!progress_pb->isVisible())
+			hideProgress(false);
 
 		import_thread->start();
 		cancel_btn->setEnabled(true);
@@ -467,8 +471,14 @@ void DatabaseImportForm::handleImportCanceled(void)
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 }
 
-void DatabaseImportForm::handleImportFinished(void)
+void DatabaseImportForm::handleImportFinished(Exception e)
 {	
+	if(!e.getErrorMessage().isEmpty())
+	{
+		Messagebox msgbox;
+		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
+	}
+
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 	this->accept();

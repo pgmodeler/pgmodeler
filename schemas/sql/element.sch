@@ -9,13 +9,12 @@
 %if @{operator} %then
  $tb OPERATOR $tb @{stg-number} $tb @{signature}
 
- %if %not @{pgsql90} %and @{opfamily} %then
-    %if @{for-order-by} %then
-	[ FOR ORDER BY ]
+ %if %not @{pgsql90} %then
+    %if @{opfamily} %then
+	[ FOR ORDER BY ] @{opfamily}
     %else
 	[ FOR SEARCH ]
     %end
-    @{opfamily}
  %end
 %end
 

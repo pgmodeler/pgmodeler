@@ -23,7 +23,6 @@ OperatorClassElement::OperatorClassElement(void)
 	element_type=OPERATOR_ELEM;
 	function=nullptr;
 	_operator=nullptr;
-	for_order_by=false;
 	strategy_number=0;
 }
 
@@ -66,7 +65,7 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
 	this->element_type=OPERATOR_ELEM;
 }
 
-void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family, bool for_order_by)
+void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family)
 {
 	if(this->element_type==OPERATOR_ELEM)
 	{
@@ -74,7 +73,6 @@ void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family, bool for
 			throw Exception(ERR_ASG_INV_OPFAM_OPCLSELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->op_family=op_family;
-		this->for_order_by=for_order_by;
 	}
 }
 
@@ -121,11 +119,6 @@ unsigned OperatorClassElement::getStrategyNumber(void)
 	return(strategy_number);
 }
 
-bool OperatorClassElement::isForOrderBy(void)
-{
-	return(for_order_by);
-}
-
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 {
 	attribs_map attributes;
@@ -137,7 +130,6 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OPERATOR]="";
 	attributes[ParsersAttributes::STORAGE]="";
 	attributes[ParsersAttributes::OP_FAMILY]="";
-	attributes[ParsersAttributes::FOR_ORDER_BY]="";
 	attributes[ParsersAttributes::DEFINITION]="";
 
 	if(element_type==FUNCTION_ELEM && function && strategy_number > 0)
@@ -153,12 +145,9 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	}
 	else if(element_type==OPERATOR_ELEM && _operator && strategy_number > 0)
 	{
-		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ RECHECK ]
+		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
 		attributes[ParsersAttributes::OPERATOR]="1";
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
-
-		if(for_order_by)
-			attributes[ParsersAttributes::FOR_ORDER_BY]="1";
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			attributes[ParsersAttributes::SIGNATURE]=_operator->getSignature();

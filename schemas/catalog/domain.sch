@@ -30,7 +30,8 @@
 
 %else
     %if @{attribs} %then
-     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, dm.typnamespace AS schema, dm.typndims AS dimension, ]
+     [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, dm.typnamespace AS schema, dm.typndims AS dimension,
+	     dm.typbasetype AS type, ]
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
 	%if %not @{pgsql92} %then
@@ -51,7 +52,7 @@
 	[   ELSE NULL
 	 END AS precision,
 
-	  dm.typnotnull AS not_null_bool, replace(_dm1.data_type,'] $ob $cb [','') AS type,
+	  dm.typnotnull AS not_null_bool,
 	  _dm1.interval_type, _dm1.domain_default AS default_value,
 	  cn.conname AS constraint, cn.consrc AS expression, ]
 

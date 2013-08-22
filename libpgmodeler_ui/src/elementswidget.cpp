@@ -245,7 +245,7 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 		else
 			elements_tab->setCellText(descending_rb->text(), elem_idx, 4);
 
-		if(elem->getSortingAttribute(IndexElement::nullptrS_FIRST))
+		if(elem->getSortingAttribute(IndexElement::NULLS_FIRST))
 			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 5);
 		else
 			elements_tab->setCellText(trUtf8("No"), elem_idx, 5);
@@ -277,7 +277,7 @@ void ElementsWidget::handleElement(int elem_idx)
 											 dynamic_cast<Element *>(&idxelem));
 
 		elem->setSortingEnabled(sorting_chk->isChecked());
-		elem->setSortingAttribute(IndexElement::nullptrS_FIRST, nulls_first_chk->isChecked());
+		elem->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
 		elem->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
 		elem->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 
@@ -341,7 +341,7 @@ void ElementsWidget::editElement(int elem_idx)
 	else
 		descending_rb->setChecked(true);
 
-	nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::nullptrS_FIRST));
+	nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
 	sorting_chk->setChecked(elem->isSortingEnabled());
 	op_class_sel->setSelectedObject(elem->getOperatorClass());
 

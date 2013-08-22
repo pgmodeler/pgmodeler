@@ -479,7 +479,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::nullptrS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
@@ -510,7 +510,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::nullptrS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)

@@ -54,9 +54,6 @@ class OperatorClassElement {
 		 (only for type STORAGE_ELEM) */
 		PgSQLType storage;
 
-		//! \brief Specifies if the operator family is used with 'FOR ORDER BY' (only for type OPERATOR_ELEM)
-		bool for_order_by;
-
 		/*! \brief Strategy number (or support number for functions). This attribute
 		 must have a value greater than 0 (only for OPERATOR_ELEM and FUNCTION_ELEM) */
 		unsigned strategy_number;
@@ -77,7 +74,7 @@ class OperatorClassElement {
 		void setOperator(Operator *oper, unsigned stg_number);
 
 		//! \brief Defines operator family used by the element (only for Operator elements)
-		void setOperatorFamily(OperatorFamily *op_family, bool for_order_by);
+		void setOperatorFamily(OperatorFamily *op_family);
 
 		//! \brief Defines the element as a storage clause
 		void setStorage(PgSQLType storage);
@@ -99,9 +96,6 @@ class OperatorClassElement {
 
 		//! \brief Storage type of the element
 		PgSQLType getStorage(void);
-
-		//! \brief Returns whether the element's operator family is used on FOR ORDER BY clause
-		bool isForOrderBy(void);
 
 		//! \brief Returns the strategy (support) number of the element
 		unsigned getStrategyNumber(void);

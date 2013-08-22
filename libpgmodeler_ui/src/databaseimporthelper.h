@@ -65,8 +65,8 @@ class DatabaseImportHelper: public QObject {
 		QString resolveObjectName(unsigned oid);
 		QString resolveObjectNames(const QString &oid_vect);
 
-		QString getType(unsigned oid);
-		QString getType(attribs_map &attribs);
+		QString getType(unsigned oid, attribs_map &attribs);
+		//QString getType(attribs_map &attribs);
 		QString getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
 		QString getComment(attribs_map &attribs);
 
@@ -85,14 +85,14 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assigne the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString schema="", const QString table="");
+		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="");
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
 
 		//! \brief This signal is emited when the import has finished
-		void s_importFinished(void);
+		void s_importFinished(Exception e=Exception());
 
 		//! \brief This signal is emited when the import has been cancelled
 		void s_importCanceled(void);

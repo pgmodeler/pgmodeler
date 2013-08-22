@@ -391,7 +391,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 							updatePermissionTree(item4, object);
 
 							font=item4->font(0);
-							font.setStrikeOut(object->isSQLDisabled());
+							font.setStrikeOut(object->isSQLDisabled() && !object->isSystemObject());
 
 							if(object->isProtected())
 							{

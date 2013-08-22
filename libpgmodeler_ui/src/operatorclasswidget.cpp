@@ -43,7 +43,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
-		elements_tab->setHeaderLabel(trUtf8("FOR ORDER BY"),3);
+		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
@@ -61,7 +61,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
 		grid->addWidget(operator_sel, 2,1,1,4);
-		grid->addWidget(elem_family_sel, 3,1,1,2);
+		grid->addWidget(elem_family_sel, 3,1,1,4);
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
@@ -90,7 +90,6 @@ void OperatorClassWidget::hideEvent(QHideEvent *event)
 	function_sel->clearSelector();
 	operator_sel->clearSelector();
 	stg_num_sb->setValue(1);
-	for_order_by_chk->setChecked(false);
 	elements_tab->removeRows();
 	selectElementType(0);
 	BaseObjectWidget::hideEvent(event);
@@ -107,10 +106,8 @@ void OperatorClassWidget::selectElementType(int elem_type)
 	operator_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
 	elem_family_lbl->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
 	elem_family_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	for_order_by_chk->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
 
 	storage_type->setVisible(sel_idx==OperatorClassElement::STORAGE_ELEM);
-
 	stg_num_lbl->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
 	stg_num_sb->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
 }
@@ -125,7 +122,6 @@ void OperatorClassWidget::editElement(int lin_idx)
 	elem_type_cmb->setCurrentIndex(elem.getElementType());
 	function_sel->setSelectedObject(elem.getFunction());
 	operator_sel->setSelectedObject(elem.getOperator());
-	for_order_by_chk->setChecked(elem.isForOrderBy());
 	stg_num_sb->setValue(elem.getStrategyNumber());
 	storage_type->setAttributes(elem.getStorage(),this->model);
 }
@@ -157,13 +153,8 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	else
 		elements_tab->setCellText(" ", lin_idx, 2);
 
-	if(elem_type==OperatorClassElement::OPERATOR_ELEM)
-	{
-		if(elem.isForOrderBy())
-			elements_tab->setCellText(trUtf8("Yes"), lin_idx, 3);
-		else
-			elements_tab->setCellText(trUtf8("No"), lin_idx, 3);
-	}
+	if(elem_type==OperatorClassElement::OPERATOR_ELEM && elem.getOperatorFamily())
+		elements_tab->setCellText(Utf8String::create(elem.getOperatorFamily()->getName(true)), lin_idx, 3);
 	else
 		elements_tab->clearCellText(lin_idx, 3);
 
@@ -185,7 +176,7 @@ void OperatorClassWidget::handleElement(int lin_idx)
 		else  if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 		{
 			elem.setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()), stg_num_sb->value());
-			elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(elem_family_sel->getSelectedObject()), for_order_by_chk->isChecked());
+			elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(elem_family_sel->getSelectedObject()));
 		}
 		else
 			elem.setStorage(storage_type->getPgSQLType());
@@ -195,7 +186,6 @@ void OperatorClassWidget::handleElement(int lin_idx)
 		function_sel->clearSelector();
 		operator_sel->clearSelector();
 		stg_num_sb->setValue(1);
-		for_order_by_chk->setChecked(false);
 		elements_tab->clearSelection();
 	}
 	catch(Exception &e)

@@ -10,10 +10,6 @@ $tb [<element type=]
 %if @{stg-number} %then
  [ stg-number=] "@{stg-number}"
 %end
-
-%if @{for-order-by} %then
- [ for-order-by=] "true"
-%end
 > $br
 $tb @{definition}
 $tb </element> $br

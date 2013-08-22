@@ -4,5 +4,4 @@
 -->
 <!ELEMENT element ((operator, opfamily?) | function | type)>
 <!ATTLIST element type (operator | function | storage) "operator">
-<!ATTLIST element for-order-by (false | true) "false">
 <!ATTLIST element stg-number CDATA #IMPLIED>

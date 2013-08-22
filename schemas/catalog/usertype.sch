@@ -14,12 +14,15 @@
 
   #Excluding types related to tables/views/sequeces
   [ typtype IN ('b','c','e','r')  AND typname NOT LIKE 'pg_%'
-    AND typarray > 0
     AND typname NOT IN
     (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
 
+  %if @{exc-builtin-arrays} %then
+    [ AND tp.typarray > 0 ]
+  %end
+
   %if @{last-sys-oid} %then
-     [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+    [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
@@ -29,7 +32,7 @@
 %else
     %if @{attribs} %then
 
-    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, typcategory AS category, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
     %if @{pgsql90} %or @{pgsql91} %then
@@ -58,7 +61,7 @@
     # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
     # separating them by colon.
     # (this field is null when the type is not a composite)
-    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||':'|| atttypid ||':'|| attndims||':'|| ] %if @{pgsql90} %then NULL %else attcollation %end [)]
+    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||','|| atttypid ||','|| attndims||','|| ] %if @{pgsql90} %then NULL %else attcollation %end [)]
     [                           FROM pg_attribute
                                 WHERE attrelid=(SELECT oid FROM pg_class WHERE reltype=tp.oid))
          END AS typeattrib, ]
@@ -113,9 +116,12 @@
 
     #Excluding types related to tables/views/sequeces
     [ WHERE typtype IN ('b','c','e','r') AND typname NOT LIKE 'pg_%'
-      AND typarray > 0
       AND typname NOT IN
       (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
+
+    %if @{exc-builtin-arrays}  %then
+      [ AND tp.typarray > 0 ]
+    %end
 
     %if @{last-sys-oid} %then
       [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}

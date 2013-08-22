@@ -200,19 +200,6 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="3">
-     <widget class="QCheckBox" name="for_order_by_chk">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>FOR ORDER BY</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QLabel" name="family_lbl">
@@ -239,7 +226,6 @@
   <tabstop>def_class_chk</tabstop>
   <tabstop>indexing_cmb</tabstop>
   <tabstop>elem_type_cmb</tabstop>
-  <tabstop>for_order_by_chk</tabstop>
   <tabstop>stg_num_sb</tabstop>
  </tabstops>
  <resources/>

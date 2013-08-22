@@ -88,7 +88,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		void cancelImport(void);
 		void handleImportCanceled(void);
-		void handleImportFinished(void);
+		void handleImportFinished(Exception e);
 		void captureThreadError(Exception e);
 
 		//! \brief Toggles the check state for the specified item

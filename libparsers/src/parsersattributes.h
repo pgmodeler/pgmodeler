@@ -236,7 +236,7 @@ namespace ParsersAttributes {
 	BOLD="bold",
 	UNDERLINE="underline",
 	OP_CLASS="opclass",
-	nullptrS_FIRST="nulls-first",
+	NULLS_FIRST="nulls-first",
 	ASC_ORDER="asc-order",
 	DECL_IN_TABLE="decl-in-table",
 	HIGHLIGHT_ORDER="highlight-order",
@@ -353,7 +353,6 @@ namespace ParsersAttributes {
 	CASCADE="cascade",
 	CTE_EXPRESSION="cte-exp",
 	LOCALE="locale",
-	FOR_ORDER_BY="for-order-by",
 	OP_FAMILY="opfamily",
 	REPLICATION="replication",
 	NO_INHERIT="no-inherit",
@@ -394,7 +393,8 @@ namespace ParsersAttributes {
 	GEN_ALTER_CMDS="gen-alter-cmds",
 	LAST_SYS_OID="last-sys-oid",
 	OID_FILTER_OP="oid-filter-op",
-	PGSQL_BASE_TYPE="basetype";
+	PGSQL_BASE_TYPE="basetype",
+	EXC_BUILTIN_ARRAYS="exc-builtin-arrays";
 }
 
 #endif
