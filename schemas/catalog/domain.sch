@@ -31,7 +31,7 @@
 %else
     %if @{attribs} %then
      [SELECT dm.oid, dm.typname AS name, dm.typowner AS owner, dm.typnamespace AS schema, dm.typndims AS dimension,
-	     dm.typbasetype AS type, ]
+	     dm.typbasetype::regtype AS type, ]
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
 	%if %not @{pgsql92} %then

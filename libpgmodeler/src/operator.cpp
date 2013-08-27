@@ -323,7 +323,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(functions[i])
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[atribs_funcoes[i]]=functions[i]->getSignature();
+				attributes[atribs_funcoes[i]]=functions[i]->getName(true);
 			else
 			{
 				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);

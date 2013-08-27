@@ -51,15 +51,22 @@ void Catalog::setConnection(Connection &conn)
 
 void Catalog::setFilter(unsigned filter)
 {
-	list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
+	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
 
-	if(!list_only_sys_objs)
-	{
-		exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
-		exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
-	}
+	if(list_all)
+		list_only_sys_objs=exclude_ext_objs=exclude_sys_objs=false;
 	else
-		exclude_ext_objs=exclude_sys_objs=false;
+	{
+		list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
+
+		if(!list_only_sys_objs)
+		{
+			exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
+			exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
+		}
+		else
+			exclude_ext_objs=exclude_sys_objs=false;
+	}
 }
 
 unsigned Catalog::getLastSysObjectOID(void)
@@ -115,14 +122,16 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	}
 }
 
-unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, const QString &tab_name)
+unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
 {
 	try
 	{
 		ResultSet res;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, {{ParsersAttributes::SCHEMA, sch_name},
-																													 {ParsersAttributes::TABLE, tab_name}});
+		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
+		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+
+		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
 		res.accessTuple(ResultSet::FIRST_TUPLE);
 		return(res.getTupleCount());
 	}
@@ -132,15 +141,16 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	}
 }
 
-attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name, const QString &tab_name)
+attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
 {
 	try
 	{
 		ResultSet res;
 		attribs_map objects;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, {{ParsersAttributes::SCHEMA, sch_name},
-																													 {ParsersAttributes::TABLE, tab_name}});
+		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
+		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
@@ -286,11 +296,10 @@ QString Catalog::createOidFilter(const vector<unsigned> &oids)
 	return(filter);
 }
 
-vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<unsigned> &filter_oids)
+vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QString &schema, const QString &table, const vector<unsigned> &filter_oids, attribs_map extra_attribs)
 {
 	try
 	{
-		attribs_map extra_attribs;
 		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||	obj_type==OBJ_TABLESPACE ||
 												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
 

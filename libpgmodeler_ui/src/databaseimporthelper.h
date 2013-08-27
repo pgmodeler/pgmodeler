@@ -34,11 +34,14 @@ class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 
+		//This pattern matches the array of oids in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
+		static const QString ARRAY_PATTERN;
+
 		Catalog catalog;
 
 		Connection connection;
 
-		bool import_canceled, ignore_errors;
+		bool import_canceled, ignore_errors, import_sys_objs;
 
 		map<ObjectType, vector<unsigned>> object_oids;
 		map<unsigned, vector<unsigned>> column_oids;
@@ -59,14 +62,19 @@ class DatabaseImportHelper: public QObject {
 		void createRole(attribs_map &attribs);
 		void createDomain(attribs_map &attribs);
 		void createExtension(attribs_map &attribs);
+		void createFunction(attribs_map &attribs);
+		void createLanguage(attribs_map &attribs);
 		void createOperatorFamily(attribs_map &attribs);
 		void createOperatorClass(attribs_map &attribs);
 
-		QString resolveObjectName(unsigned oid);
-		QString resolveObjectNames(const QString &oid_vect);
+		QStringList parseArrayValue(const QString array_val);
 
-		QString getType(unsigned oid, attribs_map &attribs);
-		//QString getType(attribs_map &attribs);
+		QString getObjectName(unsigned oid);
+		QStringList getObjectNames(const QString &oid_vect);
+
+		QString getType(unsigned oid, attribs_map extra_attribs=attribs_map());
+		QStringList getTypes(const QString &oid_vect, bool generate_xml);
+
 		QString getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
 		QString getComment(attribs_map &attribs);
 
@@ -78,14 +86,17 @@ class DatabaseImportHelper: public QObject {
 
 		void setConnection(Connection &conn);
 		void setCurrentDatabase(const QString &dbname);
-		void setImportParams(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids, bool ignore_errors);
+		void setImportSystemObject(bool value);
+		void setIgnoreErrors(bool value);
+		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		unsigned getLastSystemOID(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assigne the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="");
+		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

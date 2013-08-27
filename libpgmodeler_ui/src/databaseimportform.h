@@ -70,9 +70,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void finishImport(const QString &msg);
 
 		void showEvent(QShowEvent *);
+
 		void closeEvent(QCloseEvent *event);
 
-		void destroyModelWidget();
+		void destroyModelWidget(void);
 
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -90,6 +91,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void handleImportCanceled(void);
 		void handleImportFinished(Exception e);
 		void captureThreadError(Exception e);
+
+		void filterObjects(void);
+
+		void enableFilterButtons(void);
 
 		//! \brief Toggles the check state for the specified item
 		void setItemCheckState(QTreeWidgetItem *item,int);

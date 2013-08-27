@@ -120,6 +120,8 @@ void OperatorClassWidget::editElement(int lin_idx)
 	elem=elements_tab->getRowData(lin_idx).value<OperatorClassElement>();
 
 	elem_type_cmb->setCurrentIndex(elem.getElementType());
+	selectElementType(elem_type_cmb->currentIndex());
+
 	function_sel->setSelectedObject(elem.getFunction());
 	operator_sel->setSelectedObject(elem.getOperator());
 	stg_num_sb->setValue(elem.getStrategyNumber());

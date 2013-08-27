@@ -16,6 +16,7 @@
 > $br
 
  @{schema}
+ %if @{owner} %then @{owner} %end
  %if @{tablespace} %then @{tablespace} %end
  %if @{comment} %then @{comment} %end
  %if @{appended-sql} %then @{appended-sql} %end

@@ -143,7 +143,8 @@ class Catalog {
 		Catalog(void);
 		static const unsigned EXCL_SYSTEM_OBJS=1, //! \brief Excludes the system objects from listing
 													EXCL_EXTENSION_OBJS=2, //! \brief Excludes the extension generated objects from listing
-													LIST_ONLY_SYS_OBJS=4; //! \brief Shows only system objects. Using this filter will disable the other two filters.
+													LIST_ONLY_SYS_OBJS=4, //! \brief Shows only system objects. Using this filter will disable the other two filters.
+													LIST_ALL_OBJS=8;  //! \brief Shows all objects including system objects and extension object.
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
@@ -155,11 +156,11 @@ class Catalog {
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
-		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="");
+		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
-		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="");
+		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
@@ -167,7 +168,7 @@ class Catalog {
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
-		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={});
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 };
 
 #endif

@@ -12,13 +12,16 @@
     [ WHERE ]
   %end
 
+  [ typtype IN ('p','b','c','e','r')  AND typname NOT LIKE 'pg_%' ]
+
   #Excluding types related to tables/views/sequeces
-  [ typtype IN ('b','c','e','r')  AND typname NOT LIKE 'pg_%'
-    AND typname NOT IN
-    (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
+  %if @{filter-tab-types} %then
+   [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v'))=0 ]
+  %end
 
   %if @{exc-builtin-arrays} %then
-    [ AND tp.typarray > 0 ]
+    #The tp.typtype='p' indicates to include pseudo-type even if they are an array construction
+    [ AND (tp.typtype='p' OR tp.typarray > 0) ]
   %end
 
   %if @{last-sys-oid} %then
@@ -52,6 +55,7 @@
           WHEN typtype = 'b' THEN 'base'    
           WHEN typtype = 'c' THEN 'composite'
           WHEN typtype = 'r' THEN 'range'
+	  ELSE typtype
         END AS configuration, ] 
 
     # Retrieve the enumaration labels (is null when the type is not an enumeration)
@@ -115,12 +119,16 @@
     %end
 
     #Excluding types related to tables/views/sequeces
-    [ WHERE typtype IN ('b','c','e','r') AND typname NOT LIKE 'pg_%'
-      AND typname NOT IN
-      (SELECT relname FROM pg_class WHERE relkind IN ('r','S','v')) ]
+    [ WHERE typtype IN ('p','b','c','e','r') AND typname NOT LIKE 'pg_%' ]
+
+    #Excluding types related to tables/views/sequeces
+    %if @{filter-tab-types} %then
+     [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v'))=0 ]
+    %end
 
     %if @{exc-builtin-arrays}  %then
-      [ AND tp.typarray > 0 ]
+    #The tp.typtype='p' indicates to include pseudo-type even if they are an array construction
+      [ AND (tp.typtype='p' OR tp.typarray > 0) ]
     %end
 
     %if @{last-sys-oid} %then

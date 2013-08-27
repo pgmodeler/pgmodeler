@@ -390,11 +390,16 @@ namespace ParsersAttributes {
 	SHARED_OBJ="shared-obj",
 	FROM_EXTENSION="from-extension",
 	FILTER_OIDS="filter-oids",
+	FILTER_TABLE_TYPES="filter-tab-types",
 	GEN_ALTER_CMDS="gen-alter-cmds",
 	LAST_SYS_OID="last-sys-oid",
 	OID_FILTER_OP="oid-filter-op",
 	PGSQL_BASE_TYPE="basetype",
-	EXC_BUILTIN_ARRAYS="exc-builtin-arrays";
+	EXC_BUILTIN_ARRAYS="exc-builtin-arrays",
+	ARG_TYPES="arg-types",
+	ARG_MODES="arg-modes",
+	ARG_NAMES="arg-names",
+	ARG_DEFAULTS="arg-defaults";
 }
 
 #endif

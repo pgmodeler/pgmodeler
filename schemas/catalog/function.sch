@@ -3,7 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT pr.oid, proname AS name FROM pg_proc AS pr ]
+  [SELECT pr.oid,
+    CASE
+     WHEN proallargtypes IS NOT NULL THEN proname || '(' || array_to_string(proallargtypes::regtype] $ob $cb [,',') || ')'
+     ELSE proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')'
+    END AS name
+
+    FROM pg_proc AS pr ]
 
   %if @{schema} %then
    [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
@@ -34,11 +40,13 @@
 		pr.proretset AS returns_setof_bool,
 		pr.pronargs AS arg_count,
 		pr.pronargdefaults AS arg_def_count,
-		pr.prorettype AS return_type,
-		proargtypes::oid ] $ob $cb
+		pr.prorettype AS return_type, ]
 
-	[ AS arg_types,
-		proallargtypes AS all_arg_types,
+	    [ CASE
+		WHEN proallargtypes IS NOT NULL THEN proallargtypes
+		ELSE proargtypes::oid ] $ob $cb
+	    [ END AS arg_types,
+
 		pr.proargmodes AS arg_modes,
 		pr.proargnames AS arg_names,
 		pr.proargdefaults AS arg_defaults,
