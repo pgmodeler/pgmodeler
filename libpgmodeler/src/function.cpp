@@ -238,7 +238,7 @@ void Function::setBehaviorType(BehaviorType behav_type)
 
 void Function::setSourceCode(const QString &src_code)
 {
-	if(language->getName().toLower()==~LanguageType("c"))
+	if(language && language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
 										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -412,7 +412,13 @@ void Function::createSignature(bool format, bool prepend_schema)
 
 	count=parameters.size();
 	for(i=0; i < count; i++)
+	{
+		//OUT parameters is not part of function's signature
+		if(parameters[i].isVariadic() ||
+			 (parameters[i].isIn() && parameters[i].isOut()) ||
+			 (parameters[i].isIn() && !parameters[i].isOut()))
 		str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+	}
 
 	str_param.remove(str_param.length()-1, 1);
 

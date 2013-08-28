@@ -3306,9 +3306,6 @@ Parameter DatabaseModel::createParameter(void)
 		XMLParser::getElementAttributes(attribs);
 
 		param.setName(attribs[ParsersAttributes::NAME]);
-		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
-		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
-		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::_TRUE_);
 		param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -3327,6 +3324,10 @@ Parameter DatabaseModel::createParameter(void)
 			}
 			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 		}
+
+		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
+		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
+		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::_TRUE_);
 
 		XMLParser::restorePosition();
 	}

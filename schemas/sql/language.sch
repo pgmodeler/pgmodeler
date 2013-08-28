@@ -20,6 +20,11 @@
 %if @{validator} %then
  $br $tb [VALIDATOR ] @{validator}
 %end
+
+%if @{inline} %then
+ $br $tb [INLINE ] @{inline}
+%end
+
 ; $br
 
 %if @{owner} %then @{owner} %end

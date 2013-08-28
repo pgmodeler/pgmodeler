@@ -65,8 +65,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		func_config_twg->widget(1)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());
-		grid->addWidget(ret_type, grid->count(), 0, 1, 4);
-		grid->addWidget(ret_table_gb, grid->count()-1, 0, 1, 4);
+		grid->addWidget(ret_type, grid->count(), 0, 1, 5);
+		grid->addWidget(ret_table_gb, grid->count()-1, 0, 1, 5);
 
 		grid1=new QGridLayout;
 		grid1->addWidget(return_tab, 0, 0, 1, 1);
@@ -76,7 +76,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
+		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
 		parent_form->setMinimumSize(645, 675);

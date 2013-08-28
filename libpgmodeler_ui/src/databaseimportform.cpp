@@ -46,9 +46,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
 	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
-	connect(filter_tb, SIGNAL(clicked(bool)), this, SLOT(filterObjects(void)));
-	connect(clear_filter_tb, SIGNAL(clicked(bool)), filter_edt, SLOT(clear(void)));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(enableFilterButtons(void)));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
 	connect(&import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 	connect(&import_helper, SIGNAL(s_importCanceled(void)), this, SLOT(handleImportCanceled(void)));
 	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
@@ -489,35 +487,29 @@ void DatabaseImportForm::filterObjects(void)
 	QTreeWidgetItem *parent=nullptr;
 
 	db_objects_tw->blockSignals(true);
+	db_objects_tw->collapseAll();
 	while(*itr)
 	{
-		db_objects_tw->setItemHidden((*itr), true);
+		(*itr)->setHidden(true);
 		++itr;
 	}
 
 	while(!items.isEmpty())
 	{
-		db_objects_tw->setItemHidden(items.front(), false);
+		items.front()->setExpanded(true);
+		items.front()->setHidden(false);
 		parent=items.front()->parent();
 
 		while(parent)
 		{
-			db_objects_tw->setItemHidden(parent, false);
+			parent->setHidden(false);
+			parent->setExpanded(true);
 			parent=parent->parent();
 		}
 
 		items.pop_front();
 	}
 	db_objects_tw->blockSignals(false);
-}
-
-void DatabaseImportForm::enableFilterButtons(void)
-{
-	if(filter_tb->isEnabled() && filter_edt->text().isEmpty())
-		filterObjects();
-
-	filter_tb->setEnabled(!filter_edt->text().isEmpty());
-	clear_filter_tb->setEnabled(!filter_edt->text().isEmpty());
 }
 
 void DatabaseImportForm::cancelImport(void)

@@ -94,8 +94,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		void filterObjects(void);
 
-		void enableFilterButtons(void);
-
 		//! \brief Toggles the check state for the specified item
 		void setItemCheckState(QTreeWidgetItem *item,int);
 

@@ -21,8 +21,8 @@
 %else
     %if @{attribs} %then
       [SELECT oid, lanname AS name, lanpltrusted AS trusted_bool,
-	      lanplcallfoid AS handler_func, laninline AS inline_func,
-	      lanvalidator AS validator_func, lanacl AS permissions, lanowner AS owner, ]
+	      lanplcallfoid AS handler, laninline AS inline,
+	      lanvalidator AS validator, lanacl AS permissions, lanowner AS owner, ]
 
       (@{comment}) [ AS comment ]
 

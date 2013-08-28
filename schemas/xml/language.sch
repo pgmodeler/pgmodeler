@@ -25,6 +25,7 @@
 
   %if @{handler} %then @{handler} %end
   %if @{validator} %then @{validator} %end
+  %if @{inline} %then @{inline} %end
 
  </language>  $br $br
 %end

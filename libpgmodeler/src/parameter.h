@@ -36,7 +36,6 @@ class Parameter: public Column {
 		Parameter(void);
 
 		void setType(PgSQLType type);
-
 		void setIn(bool value);
 		void setOut(bool value);
 		void setVariadic(bool value);

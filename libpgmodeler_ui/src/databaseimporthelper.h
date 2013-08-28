@@ -69,13 +69,13 @@ class DatabaseImportHelper: public QObject {
 
 		QStringList parseArrayValue(const QString array_val);
 
-		QString getObjectName(unsigned oid);
-		QStringList getObjectNames(const QString &oid_vect);
+		QString getObjectName(unsigned oid, bool signature_form=false);
+		QStringList getObjectNames(const QString &oid_vect, bool signature_form=false);
 
-		QString getType(unsigned oid, attribs_map extra_attribs=attribs_map());
+		QString getType(unsigned oid, bool generate_xml, attribs_map extra_attribs=attribs_map());
 		QStringList getTypes(const QString &oid_vect, bool generate_xml);
 
-		QString getDependencyObject(attribs_map &attribs, const QString &attr, ObjectType obj_type);
+		QString getDependencyObject(unsigned oid, bool use_signature=false, const QString &ref_type="");
 		QString getComment(attribs_map &attribs);
 
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);

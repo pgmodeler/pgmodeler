@@ -3,12 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT pr.oid,
-    CASE
-     WHEN proallargtypes IS NOT NULL THEN proname || '(' || array_to_string(proallargtypes::regtype] $ob $cb [,',') || ')'
-     ELSE proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')'
-    END AS name
-
+  [SELECT pr.oid,  proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name
     FROM pg_proc AS pr ]
 
   %if @{schema} %then
