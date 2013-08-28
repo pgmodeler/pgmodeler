@@ -254,10 +254,10 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 		if(obj_type==OBJ_DATABASE || TableObject::isTableObject(obj_type) || dbmodel->getObjectIndex(obj_name, obj_type) < 0)
 		{
-			attribs[ParsersAttributes::REDUCED_FORM]="";
-			attribs[ParsersAttributes::PROTECTED]="";
+			//attribs[ParsersAttributes::REDUCED_FORM]="";
+			//attribs[ParsersAttributes::PROTECTED]="";
 			attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : "1");
-			attribs[ParsersAttributes::APPENDED_SQL]="";
+			//attribs[ParsersAttributes::APPENDED_SQL]="";
 
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
@@ -281,6 +281,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_LANGUAGE: createLanguage(attribs); break;
 				case OBJ_OPFAMILY: createOperatorFamily(attribs); break;
 				//case OBJ_OPCLASS: createOperatorClass(attribs); break;
+				case OBJ_OPERATOR: createOperator(attribs); break;
 
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
@@ -311,7 +312,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 	}
 }
 
-QString DatabaseImportHelper::getDependencyObject(unsigned oid, bool use_signature, const QString &ref_type)
+QString DatabaseImportHelper::getDependencyObject(unsigned oid, bool use_signature, attribs_map extra_attribs)
 {
 	try
 	{
@@ -321,24 +322,34 @@ QString DatabaseImportHelper::getDependencyObject(unsigned oid, bool use_signatu
 		{
 			attribs_map obj_attr;
 			ObjectType obj_type;
+			attribs_map::iterator itr=extra_attribs.begin();
 
 			if(system_objs.count(oid))
 				obj_attr=system_objs[oid];
 			else
 				obj_attr=user_objs[oid];
 
-			if(use_signature)
-				obj_attr[ParsersAttributes::SIGNATURE]=getObjectName(oid, true);
-			else
-				obj_attr[ParsersAttributes::NAME]=getObjectName(oid);
+			if(!obj_attr.empty())
+			{
+				while(itr!=extra_attribs.end())
+				{
+					obj_attr[itr->first]=itr->second;
+					itr++;
+				}
 
-			obj_attr[ParsersAttributes::REDUCED_FORM]="1";
-			obj_attr[ParsersAttributes::REF_TYPE]=ref_type;
-			obj_type=static_cast<ObjectType>(obj_attr[ParsersAttributes::OBJECT_TYPE].toUInt());
+				if(use_signature)
+					obj_attr[ParsersAttributes::SIGNATURE]=getObjectName(oid, true);
+				else
+					obj_attr[ParsersAttributes::NAME]=getObjectName(oid);
 
-			SchemaParser::setIgnoreUnkownAttributes(true);
-			xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
-			SchemaParser::setIgnoreUnkownAttributes(false);
+				obj_attr[ParsersAttributes::REDUCED_FORM]="1";
+
+				obj_type=static_cast<ObjectType>(obj_attr[ParsersAttributes::OBJECT_TYPE].toUInt());
+
+				SchemaParser::setIgnoreUnkownAttributes(true);
+				xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
+				SchemaParser::setIgnoreUnkownAttributes(false);
+			}
 		}
 
 		return(xml_def);
@@ -354,7 +365,11 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 	try
 	{
 		QString xml_buf;
+		SchemaParser::setIgnoreUnkownAttributes(true);
 		xml_buf=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
+
+		cout << xml_buf.toStdString() << endl;
+		SchemaParser::setIgnoreUnkownAttributes(false);
 		XMLParser::restartParser();
 		XMLParser::loadXMLBuffer(xml_buf);
 	}
@@ -370,8 +385,8 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 
 	try
 	{
-		attribs[ParsersAttributes::RECT_VISIBLE]="";
-		attribs[ParsersAttributes::FILL_COLOR]="";
+		//attribs[ParsersAttributes::RECT_VISIBLE]="";
+		//attribs[ParsersAttributes::FILL_COLOR]="";
 		loadObjectXML(OBJ_SCHEMA, attribs);
 
 		schema=dbmodel->createSchema();
@@ -454,11 +469,11 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 	try
 	{
-		attribs[ParsersAttributes::SIGNATURE]="";
-		attribs[ParsersAttributes::REF_TYPE]="";
-		attribs[ParsersAttributes::RETURN_TABLE]="";
-		attribs[ParsersAttributes::PARAMETERS]="";
-		attribs[ParsersAttributes::SYMBOL]="";
+		//attribs[ParsersAttributes::SIGNATURE]="";
+		//attribs[ParsersAttributes::REF_TYPE]="";
+		//attribs[ParsersAttributes::RETURN_TABLE]="";
+		//attribs[ParsersAttributes::PARAMETERS]="";
+		//attribs[ParsersAttributes::SYMBOL]="";
 
 		param_types=getTypes(attribs[ParsersAttributes::ARG_TYPES], false);
 		param_names=parseArrayValue(attribs[ParsersAttributes::ARG_NAMES]);
@@ -535,7 +550,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 													 ParsersAttributes::INLINE_FUNC };
 
 		for(unsigned i=0; i < 3; i++)
-			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]].toUInt(), true, func_types[i]);
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]].toUInt(), true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		loadObjectXML(OBJ_LANGUAGE, attribs);
 		lang=dbmodel->createLanguage();
@@ -588,6 +603,64 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		if(opclass) delete(opclass);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createOperator(attribs_map &attribs)
+{
+	Operator *oper=nullptr;
+
+	try
+	{
+		int pos;
+		QRegExp regexp;
+		QString op_signature,
+
+						func_types[]={ ParsersAttributes::OPERATOR_FUNC,
+													 ParsersAttributes::RESTRICTION_FUNC,
+													 ParsersAttributes::JOIN_FUNC },
+
+						arg_types[]= { ParsersAttributes::LEFT_TYPE,
+													 ParsersAttributes::RIGHT_TYPE },
+
+						op_types[]=  { ParsersAttributes::COMMUTATOR_OP,
+													 ParsersAttributes::NEGATOR_OP };
+
+		for(unsigned i=0; i < 3; i++)
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]].toUInt(), true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
+
+		for(unsigned i=0; i < 2; i++)
+			attribs[arg_types[i]]=getType(attribs[arg_types[i]].toUInt(), true, {{ParsersAttributes::REF_TYPE, arg_types[i]}});
+
+		regexp.setPattern(ParsersAttributes::SIGNATURE + "(=)(\")");
+		for(unsigned i=0; i < 2; i++)
+		{
+			attribs[op_types[i]]=getDependencyObject(attribs[op_types[i]].toUInt(), true, {{ParsersAttributes::REF_TYPE, op_types[i]}});
+
+			if(!attribs[op_types[i]].isEmpty())
+			{
+				/* Extracting the operator's signature to check if it was previouly created:
+					Defining a operator as ++(A,B) and it's commutator as *++(B,A) PostgreSQL will automatically
+					create on the second operator a commutator reference to ++(A,B). But to pgModeler only the first
+					reference is valid, so the extracted signature is used to check if the commutator was previously
+					created in order to avoid reference errors */
+				pos=regexp.indexIn(attribs[op_types[i]]) + regexp.matchedLength();
+				op_signature=attribs[op_types[i]].mid(pos, (attribs[op_types[i]].indexOf("\"",pos) - pos));
+
+				//If the operator is not defined clear up the reference to it
+				if(dbmodel->getObjectIndex(op_signature, OBJ_OPERATOR) < 0)
+					attribs[op_types[i]].clear();
+			}
+		}
+
+		loadObjectXML(OBJ_OPERATOR, attribs);
+		oper=dbmodel->createOperator();
+		dbmodel->addOperator(oper);
+	}
+	catch(Exception &e)
+	{
+		if(oper) delete(oper);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -653,25 +726,37 @@ QString DatabaseImportHelper::getObjectName(unsigned oid, bool signature_form)
 			if(!sch_name.isEmpty())
 				obj_name.prepend(sch_name + ".");
 
-			if(signature_form && obj_type==OBJ_FUNCTION)
+			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR))
 			{
-				QStringList arg_types=getTypes(obj_attr[ParsersAttributes::ARG_TYPES], false),
-										arg_modes=parseArrayValue(obj_attr[ParsersAttributes::ARG_MODES]),
-										params;
+				QStringList params;
 
-				for(int i=0; i < arg_types.size(); i++)
+				if(obj_type==OBJ_FUNCTION)
 				{
-					if(!arg_modes.isEmpty() && arg_modes[i]!="t" && arg_modes[i]!="o")
+					QStringList arg_types=getTypes(obj_attr[ParsersAttributes::ARG_TYPES], false),
+											arg_modes=parseArrayValue(obj_attr[ParsersAttributes::ARG_MODES]);
+
+					for(int i=0; i < arg_types.size(); i++)
 					{
-						if(arg_modes[i]=="i")
-							params.push_back("IN " + arg_types[i]);
-						else if(arg_modes[i]=="b")
-							params.push_back("INOUT " + arg_types[i]);
+						if(!arg_modes.isEmpty() && arg_modes[i]!="t" && arg_modes[i]!="o")
+						{
+							if(arg_modes[i]=="i")
+								params.push_back("IN " + arg_types[i]);
+							else if(arg_modes[i]=="b")
+								params.push_back("INOUT " + arg_types[i]);
+							else
+								params.push_back("VARIADIC " + arg_types[i]);
+						}
 						else
-							params.push_back("VARIADIC " + arg_types[i]);
+							params.push_back("IN " + arg_types[i]);
 					}
-					else
-						params.push_back("IN " + arg_types[i]);
+				}
+				else
+				{
+					if(obj_attr[ParsersAttributes::LEFT_TYPE].toUInt() > 0)
+						params.push_back(getType(obj_attr[ParsersAttributes::LEFT_TYPE].toUInt(), false));
+
+					if(obj_attr[ParsersAttributes::RIGHT_TYPE].toUInt() > 0)
+						params.push_back(getType(obj_attr[ParsersAttributes::RIGHT_TYPE].toUInt(), false));
 				}
 
 				obj_name+="(" + params.join(",") + ")";
@@ -710,10 +795,10 @@ QString DatabaseImportHelper::getType(unsigned type_oid, bool generate_xml, attr
 				type_attr=user_objs[type_oid];
 
 			if(!type_attr.empty() && type_attr[ParsersAttributes::CATEGORY]=="A" &&
-				 type_attr[ParsersAttributes::NAME].startsWith('_'))
+				 type_attr[ParsersAttributes::NAME].contains("[]"))
 			{
-				obj_name=type_attr[ParsersAttributes::NAME].remove(0,1);
-				if(!generate_xml)	obj_name+="[]";
+				obj_name=type_attr[ParsersAttributes::NAME];
+				if(generate_xml) obj_name.remove("[]");
 			}
 			else
 				obj_name=type_attr[ParsersAttributes::NAME];

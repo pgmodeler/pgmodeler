@@ -7,34 +7,38 @@
 
   %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid
-       WHERE ns.nspname = ] '@{schema}'
+       WHERE oprcode > 0 AND ns.nspname = ] '@{schema}'
+  %else
+    [ WHERE oprcode > 0 ]
   %end
 
   %if @{last-sys-oid} %then
-    %if @{schema} %then
-     [ AND ]
-    %else
-     [ WHERE ]
-    %end
-     [ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+    [ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{from-extension} %then
-   %if @{last-sys-oid} %or @{schema} %then
-    [ AND ]
-   %else
-    [ WHERE ]
-   %end
-  (  @{from-extension} ) [ IS FALSE ]
+   [ AND ] ( @{from-extension} ) [ IS FALSE ]
   %end
 
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.oprname AS name, op.oprnamespace AS schema, op.oprowner AS owner,
 	      op.oprcanmerge AS merges_bool, op.oprcanhash AS hashes_bool, op.oprleft AS left_type,
-	      op.oprright AS right_type, op.oprcom AS commutator_op, op.oprnegate AS negator_op,
-	      op.oprrest::oid AS restriction_func, op.oprjoin::oid AS join_func,
-	      op.oprcode::oid AS operator_func, ]
+	      op.oprright AS right_type, op.oprcom AS commutator_op,
+	      op.oprrest::oid AS restriction, op.oprjoin::oid AS "join",
+	      op.oprcode::oid AS operfunc, ]
+
+      # This case statement selects the correct negator operator for the current operator
+      [ CASE
+	 WHEN op.oprnegate > 0 THEN
+	  (SELECT _op2.oid FROM pg_operator AS _op1
+	     LEFT JOIN pg_operator AS _op2 ON _op1.oprname=_op2.oprname AND _op1.oprnamespace=_op2.oprnamespace
+	     WHERE _op1.oid=op.oprnegate AND _op2.oprcode > 0
+	       AND _op2.oprnegate=0 AND _op2.oprcom=0 AND _op2.oprrest=0 AND _op2.oprjoin=0
+	       AND ((_op2.oprleft > 0 AND _op2.oprright=0) OR (_op2.oprleft=0 AND _op2.oprright > 0)))
+	 ELSE 0
+       END
+       AS negator_op, ]
 
       (@{comment}) [ AS comment ]
 
@@ -44,37 +48,22 @@
 	[ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
       %end
 
-      %if @{filter-oids} %or @{schema} %then
-	[ WHERE ]
-	  %if @{filter-oids} %then
-	   [ op.oid IN (] @{filter-oids} )
+      [ WHERE oprcode > 0 ]
 
-	    %if @{schema} %then
-	      [ AND ]
-	    %end
-	  %end
+      %if @{filter-oids} %then
+	[ AND op.oid IN (] @{filter-oids} )
+      %end
 
-	  %if @{schema} %then
-	   [ ns.nspname = ] '@{schema}'
-	  %end
+      %if @{schema} %then
+	[ AND ns.nspname = ] '@{schema}'
       %end
 
       %if @{last-sys-oid} %then
-	%if @{schema}  %or @{filter-oids} %then
-	  [ AND ]
-	%else
-	  [ WHERE ]
-	%end
-	[ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+	[ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{from-extension} %then
-	%if @{last-sys-oid} %or @{schema} %or @{filter-oids} %then
-	  [ AND ]
-	%else
-	  [ WHERE ]
-	%end
-	(  @{from-extension} ) [ IS FALSE ]
+	[ AND (] @{from-extension} ) [ IS FALSE ]
       %end
 
     %end

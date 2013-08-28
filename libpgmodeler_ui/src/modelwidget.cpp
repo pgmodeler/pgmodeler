@@ -1919,7 +1919,13 @@ void ModelWidget::pasteObjects(void)
 					do
 					{
 						//Creates an name suffix assigned to the object to be pasted in order to resolve conflicts
-						if(idx > 0)	aux_name=QString("_cp%1").arg(idx);
+						if(idx > 0)
+						{
+							if(obj_type==OBJ_OPERATOR)
+								aux_name=QString("").leftJustified(idx,'?');
+							else
+								aux_name=QString("_cp%1").arg(idx);
+						}
 						idx++;
 
 						/* For each object type as follow configures the name and the suffix and store them on the

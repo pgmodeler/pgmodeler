@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT tp.oid, tp.typname AS name FROM pg_type AS tp ]
+  [SELECT tp.oid, tp.oid::regtype::text AS name FROM pg_type AS tp ]
 
   %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid
@@ -35,7 +35,7 @@
 %else
     %if @{attribs} %then
 
-    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, typcategory AS category, ]
+    [SELECT tp.oid, tp.oid::regtype::text AS name, tp.typnamespace AS schema, tp.typowner AS owner, typcategory AS category, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
     %if @{pgsql90} %or @{pgsql91} %then

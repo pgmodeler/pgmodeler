@@ -66,6 +66,7 @@ class DatabaseImportHelper: public QObject {
 		void createLanguage(attribs_map &attribs);
 		void createOperatorFamily(attribs_map &attribs);
 		void createOperatorClass(attribs_map &attribs);
+		void createOperator(attribs_map &attribs);
 
 		QStringList parseArrayValue(const QString array_val);
 
@@ -75,7 +76,7 @@ class DatabaseImportHelper: public QObject {
 		QString getType(unsigned oid, bool generate_xml, attribs_map extra_attribs=attribs_map());
 		QStringList getTypes(const QString &oid_vect, bool generate_xml);
 
-		QString getDependencyObject(unsigned oid, bool use_signature=false, const QString &ref_type="");
+		QString getDependencyObject(unsigned oid, bool use_signature=false, attribs_map extra_attribs=attribs_map());
 		QString getComment(attribs_map &attribs);
 
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);
