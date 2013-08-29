@@ -254,11 +254,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 		if(obj_type==OBJ_DATABASE || TableObject::isTableObject(obj_type) || dbmodel->getObjectIndex(obj_name, obj_type) < 0)
 		{
-			//attribs[ParsersAttributes::REDUCED_FORM]="";
-			//attribs[ParsersAttributes::PROTECTED]="";
 			attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : "1");
-			//attribs[ParsersAttributes::APPENDED_SQL]="";
-
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
 			if(attribs.count(ParsersAttributes::OWNER))
@@ -282,6 +278,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_OPFAMILY: createOperatorFamily(attribs); break;
 				case OBJ_OPCLASS: createOperatorClass(attribs); break;
 				case OBJ_OPERATOR: createOperator(attribs); break;
+				case OBJ_COLLATION: createCollation(attribs); break;
 
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
@@ -755,6 +752,23 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		if(oper) delete(oper);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createCollation(attribs_map &attribs)
+{
+	Collation *coll=nullptr;
+
+	try
+	{
+		loadObjectXML(OBJ_COLLATION, attribs);
+		coll=dbmodel->createCollation();
+		dbmodel->addCollation(coll);
+	}
+	catch(Exception &e)
+	{
+		if(coll) delete(coll);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

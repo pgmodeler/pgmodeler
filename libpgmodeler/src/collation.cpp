@@ -36,14 +36,18 @@ void Collation::setLocale(const QString &locale)
 	this->locale=locale;
 }
 
-void Collation::setLocalization(int lc_id, const QString &lc_name)
+void Collation::setLocalization(int lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
 	{
+		/* Removes encoding specification from localization e.g 'aa_BB.ENC' will
+		 turn into 'aa_BB' since the encoding is appended on code generation */
+		lc_name.remove(lc_name.indexOf('.'), lc_name.size());
+
 		switch(lc_id)
 		{
-			case LC_CTYPE: localization[0]=	lc_name; break;
-			case LC_COLLATE: localization[1]=	lc_name; break;
+			case LC_CTYPE: localization[0]=lc_name; break;
+			case LC_COLLATE: localization[1]=lc_name; break;
 			default:
 				throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			break;

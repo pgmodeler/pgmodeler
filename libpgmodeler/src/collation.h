@@ -56,7 +56,7 @@ class Collation : public BaseObject {
 		void setLocale(const QString &locale);
 
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
-		void setLocalization(int lc_id, const QString &lc_name);
+		void setLocalization(int lc_id, QString lc_name);
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */

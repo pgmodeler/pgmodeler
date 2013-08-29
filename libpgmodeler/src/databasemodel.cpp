@@ -545,7 +545,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	BaseObject *object=nullptr;
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	bool found=false, formatted=false;
+	bool found=false; //, formatted=false;
 	QString aux_name, aux_name1;
 
 	obj_list=getObjectList(obj_type);
@@ -557,17 +557,17 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;
-		formatted=name.contains("\"") || name.contains(".");
-		aux_name1=name;
+
+		//formatted=name.contains("\"") || name.contains(".");
+		aux_name1=QString(name).remove("\"");
 
 		if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
 		{
-			if(!formatted)
-				aux_name1=BaseObject::formatName(aux_name1);
-
+			//if(!formatted)
+			//	aux_name1=BaseObject::formatName(aux_name1);
 			while(itr!=itr_end && !found)
 			{
-				aux_name=(*itr)->getName(true);
+				aux_name=(*itr)->getName(true).remove("\"");
 				found=(aux_name==aux_name1);
 				if(!found) itr++;
 			}
@@ -581,9 +581,9 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 				/* Special case for functions/operators: to check duplicity the signature must be
 			 compared and not only the name */
 				if(obj_type==OBJ_FUNCTION)
-					signature=dynamic_cast<Function *>(*itr)->getSignature();
+					signature=dynamic_cast<Function *>(*itr)->getSignature().remove("\"");
 				else
-					signature=dynamic_cast<Operator *>(*itr)->getSignature();
+					signature=dynamic_cast<Operator *>(*itr)->getSignature().remove("\"");
 
 				found=(signature==aux_name1);
 				if(!found) itr++;

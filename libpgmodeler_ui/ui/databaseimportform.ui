@@ -622,7 +622,8 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>pgModeler will list system objects. By default these objects aren't checked and it's recommend to select only those objects that are directly referenced by the objects to be imported. Note: Selecting all system objects can create unecessary objects and bloat the resultant model.</string>
+                  <string>pgModeler will list system objects. By default these objects aren't checked and it's recommend to select only those objects that are directly referenced by the objects to be imported.
+WARNING: Selecting a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory overuse.</string>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::PlainText</enum>

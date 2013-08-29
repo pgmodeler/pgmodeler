@@ -118,7 +118,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
-	QRegExp regexp_vect[]={
+
+	/*QRegExp regexp_vect[]={
 		QRegExp("(\")(.)+(\")"),
 		QRegExp("(\")(.)+(\")(\\.)(\")(.)+(\")"),
 		QRegExp("(\")(.)+(\")(\\.)(.)+"),
@@ -135,8 +136,11 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		3) "SCHEMA_NAME".OBJECT_NAME
 		4) SCHEMA_NAME."OBJECT_NAME"
 		5) SCHEMA_NAME.OBJECT_NAME */
-	for(i=0; i < 5 && !is_formated; i++)
-		is_formated=regexp_vect[i].exactMatch(name);
+		/* for(i=0; i < 5 && !is_formated; i++)
+				is_formated=regexp_vect[i].exactMatch(name); */
+
+	//Checking if the name is already formated enclosed by quotes
+	is_formated=QRegExp("(\")(.)+(\")").exactMatch(name);
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -152,7 +156,9 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
-		is_upper=(name.indexOf('-')>=0 && !is_operator);
+		is_upper=(name.indexOf('-')>=0 && !is_operator) ||
+						 (name.indexOf('.')>=0 && !is_operator) ||
+						 (name.indexOf('@')>=0 && !is_operator);
 
 		i=0;
 		while(i < qtd && !is_upper)
@@ -242,11 +248,12 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ ] */
+			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @] */
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
-				 chr == '_' || chr == '-')
+					chr == '_' || chr == '-' ||
+					chr == '.' || chr == '@')
 			{
 				valid=true;
 				i++;
@@ -477,11 +484,10 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 	if(format)
 	{
 		QString aux_name;
-
 		aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
 		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName()) + "." + aux_name;
+			aux_name=formatName(this->schema->getName(format)) + "." + aux_name;
 
 		if(!aux_name.isEmpty())
 			return(aux_name);
