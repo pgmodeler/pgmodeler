@@ -280,7 +280,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_FUNCTION: createFunction(attribs); break;
 				case OBJ_LANGUAGE: createLanguage(attribs); break;
 				case OBJ_OPFAMILY: createOperatorFamily(attribs); break;
-				//case OBJ_OPCLASS: createOperatorClass(attribs); break;
+				case OBJ_OPCLASS: createOperatorClass(attribs); break;
 				case OBJ_OPERATOR: createOperator(attribs); break;
 
 				default:
@@ -586,15 +586,61 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 
 	try
 	{
+		attribs_map elem_attr;
+		vector<attribs_map> elems;
+		QStringList array_vals, list;
+
 		attribs[ParsersAttributes::FAMILY]=getObjectName(attribs[ParsersAttributes::FAMILY].toUInt());
 		attribs[ParsersAttributes::TYPE]=getType(attribs[ParsersAttributes::TYPE].toUInt(), true, attribs);
 
-		if(attribs[ParsersAttributes::STORAGE]=="0")
-			attribs[ParsersAttributes::STORAGE]=attribs[ParsersAttributes::TYPE];
-		else
-			attribs[ParsersAttributes::STORAGE]=getType(attribs[ParsersAttributes::STORAGE].toUInt(), true);
+		//Generating attributes for STORAGE elements
+		if(attribs[ParsersAttributes::STORAGE]!="0")
+		{
+			elem_attr[ParsersAttributes::STORAGE]="1";
+			elem_attr[ParsersAttributes::DEFINITION]=getType(attribs[ParsersAttributes::STORAGE].toUInt(), true);
+			elems.push_back(elem_attr);
+		}
 
-		#warning "TODO: Get functions associated with operator class"
+		//Generating attributes for FUNCTION elements
+		if(!attribs[ParsersAttributes::FUNCTION].isEmpty())
+		{
+			elem_attr.clear();
+			elem_attr[ParsersAttributes::FUNCTION]="1";
+			array_vals=parseArrayValue(attribs[ParsersAttributes::FUNCTION]);
+
+			for(int i=0; i < array_vals.size(); i++)
+			{
+				list=array_vals[i].split(':');
+				elem_attr[ParsersAttributes::STRATEGY_NUM]=list[0];
+				elem_attr[ParsersAttributes::DEFINITION]=getDependencyObject(list[1].toUInt(), true);
+				elems.push_back(elem_attr);
+			}
+		}
+
+		//Generating attributes for OPERATOR elements
+		if(!attribs[ParsersAttributes::OPERATOR].isEmpty())
+		{
+			elem_attr.clear();
+			elem_attr[ParsersAttributes::OPERATOR]="1";
+			array_vals=parseArrayValue(attribs[ParsersAttributes::OPERATOR]);
+
+			for(int i=0; i < array_vals.size(); i++)
+			{
+				list=array_vals[i].split(':');
+				elem_attr[ParsersAttributes::STRATEGY_NUM]=list[0];
+				elem_attr[ParsersAttributes::DEFINITION]+=getDependencyObject(list[1].toUInt(), true);
+				elem_attr[ParsersAttributes::DEFINITION]+=getDependencyObject(list[2].toUInt(), true);
+				elems.push_back(elem_attr);
+			}
+		}
+
+		//Generating the complete XML code for operator class elements
+		for(unsigned i=0; i < elems.size(); i++)
+		{
+			SchemaParser::setIgnoreUnkownAttributes(true);
+			attribs[ParsersAttributes::ELEMENTS]+=SchemaParser::getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
+			SchemaParser::setIgnoreUnkownAttributes(false);
+		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
 		opclass=dbmodel->createOperatorClass();

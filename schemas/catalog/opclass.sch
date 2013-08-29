@@ -31,15 +31,13 @@
 %else
     %if @{attribs} %then
       [SELECT op.oid, op.opcname AS name, op.opcnamespace AS schema, op.opcowner AS owner,
-              op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default,
+	      op.opcfamily AS family, op.opcintype AS type, op.opcdefault AS default_bool,
 	      op.opckeytype AS storage, am.amname AS index_type, ]
 
-      [(SELECT array_agg(amoplefttype::text || ',' || amoprighttype::text || ',' ||
-			amopstrategy::text || ',' ||
-			amopopr::text || ',' || amopsortfamily::text || ',')
+      [(SELECT array_agg(amopstrategy::text || ':' || amopopr::text || ':' || amopsortfamily::text)
 	FROM pg_amop AS ap WHERE ap.amopfamily=op.opcfamily AND ap.amopmethod=am.oid) AS operator, ]
 
-      [(SELECT array_agg(amprocnum::text || ',' || amproc::oid::text)
+      [(SELECT array_agg(amprocnum::text || ':' || amproc::oid::text)
 	 FROM pg_amproc AS _ap1 WHERE _ap1.amprocfamily=op.opcfamily) AS function, ]
 
       (@{comment}) [ AS comment ]
