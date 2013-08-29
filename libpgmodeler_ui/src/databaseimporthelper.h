@@ -68,7 +68,8 @@ class DatabaseImportHelper: public QObject {
 		void createOperatorClass(attribs_map &attribs);
 		void createOperator(attribs_map &attribs);
 
-		QStringList parseArrayValue(const QString array_val);
+		QStringList parseArrayValues(const QString array_val);
+		QStringList parseDefaultValues(const QString &def_vals);
 
 		QString getObjectName(unsigned oid, bool signature_form=false);
 		QStringList getObjectNames(const QString &oid_vect, bool signature_form=false);
@@ -99,7 +100,8 @@ class DatabaseImportHelper: public QObject {
 				before assigne the connection to this class. */
 		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
-	signals:
+
+    signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
 

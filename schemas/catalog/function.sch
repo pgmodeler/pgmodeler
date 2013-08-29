@@ -44,7 +44,7 @@
 
 		pr.proargmodes AS arg_modes,
 		pr.proargnames AS arg_names,
-		pr.proargdefaults AS arg_defaults,
+		pg_get_expr(proargdefaults, 'pg_class'::regclass) AS arg_defaults,
 		pr.prosrc AS definition,
 		pr.probin AS library,
 

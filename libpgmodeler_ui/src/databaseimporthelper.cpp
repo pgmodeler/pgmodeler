@@ -385,8 +385,8 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 
 	try
 	{
-		//attribs[ParsersAttributes::RECT_VISIBLE]="";
-		//attribs[ParsersAttributes::FILL_COLOR]="";
+		attribs[ParsersAttributes::RECT_VISIBLE]="1";
+		attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
 		loadObjectXML(OBJ_SCHEMA, attribs);
 
 		schema=dbmodel->createSchema();
@@ -459,25 +459,69 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 	}
 }
 
+QStringList DatabaseImportHelper::parseDefaultValues(const QString &def_vals)
+{
+	int idx=0, aps_start, aps_end, sep_idx, pos=0;
+	QStringList values;
+
+	while(idx < def_vals.size())
+	{
+		//Get the index of string delimiters '
+		aps_start=def_vals.indexOf("'", idx);
+		aps_end=def_vals.indexOf("'", aps_start + 1);
+
+		/* Get the index of value separator on default value string
+			 (by default the pg_get_expr separates values by comma and space (, ) */
+		sep_idx=def_vals.indexOf(", ", idx);
+
+		/* If there is no separator on string (only one value) or the is
+			 beyond the string delimiters or even there is no string delimiter on string */
+		if(sep_idx < 0 ||
+			 (sep_idx >=0 && aps_start >= 0 && aps_end >= 0 &&
+				(sep_idx < aps_start || sep_idx > aps_end)) ||
+			 (sep_idx >=0 && (aps_start < 0 || aps_end < 0)))
+		{
+			//Extract the value from the current position
+			values.push_back(def_vals.mid(pos, sep_idx-pos).trimmed());
+
+			//If there is no separator on string indicates that it contains only one value
+			if(sep_idx < 0)
+				//Forcing the loop abort
+				idx=def_vals.size();
+			else
+			{
+				//Passing to the next value right after the separator
+				pos=sep_idx+1;
+				idx=pos;
+			}
+		}
+		/* If the separator is between a string delimitation e.g.'abc, def' it will be ignored
+		and the current postion will be moved to the first char after string delimiter */
+		else if(aps_start>=0 && aps_end >= 0 &&
+						sep_idx >= aps_start && sep_idx <=aps_end)
+			idx+=aps_end+1;
+		else
+			idx++;
+	}
+
+	return(values);
+}
+
 void DatabaseImportHelper::createFunction(attribs_map &attribs)
 {
 	Function *func=nullptr;
 	Parameter param;
 	PgSQLType type;
 	unsigned dim=0;
-	QStringList param_types, param_names, param_modes;
+	QStringList param_types, param_names, param_modes, param_def_vals;
+	int def_val_idx=0;
 
 	try
 	{
-		//attribs[ParsersAttributes::SIGNATURE]="";
-		//attribs[ParsersAttributes::REF_TYPE]="";
-		//attribs[ParsersAttributes::RETURN_TABLE]="";
-		//attribs[ParsersAttributes::PARAMETERS]="";
-		//attribs[ParsersAttributes::SYMBOL]="";
-
 		param_types=getTypes(attribs[ParsersAttributes::ARG_TYPES], false);
-		param_names=parseArrayValue(attribs[ParsersAttributes::ARG_NAMES]);
-		param_modes=parseArrayValue(attribs[ParsersAttributes::ARG_MODES]);
+		param_names=parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]);
+		param_modes=parseArrayValues(attribs[ParsersAttributes::ARG_MODES]);
+		param_def_vals=parseDefaultValues(attribs[ParsersAttributes::ARG_DEFAULTS]);
 
 		for(int i=0; i < param_types.size(); i++)
 		{
@@ -506,6 +550,10 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				param.setOut(param_modes[i]=="o" || param_modes[i]=="b");
 				param.setVariadic(param_modes[i]=="v");
 			}
+
+			//Setting the default value for the current paramenter. OUT parameter doesn't receive default values.
+			if(def_val_idx < param_def_vals.size() && (!param.isOut() || (param.isIn() && param.isOut())))
+				param.setDefaultValue(param_def_vals[def_val_idx++]);
 
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
 			if(!param_modes.isEmpty() && param_modes[i]=="t")
@@ -606,7 +654,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		{
 			elem_attr.clear();
 			elem_attr[ParsersAttributes::FUNCTION]="1";
-			array_vals=parseArrayValue(attribs[ParsersAttributes::FUNCTION]);
+			array_vals=parseArrayValues(attribs[ParsersAttributes::FUNCTION]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -622,7 +670,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		{
 			elem_attr.clear();
 			elem_attr[ParsersAttributes::OPERATOR]="1";
-			array_vals=parseArrayValue(attribs[ParsersAttributes::OPERATOR]);
+			array_vals=parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -711,7 +759,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	}
 }
 
-QStringList DatabaseImportHelper::parseArrayValue(const QString array_val)
+QStringList DatabaseImportHelper::parseArrayValues(const QString array_val)
 {
 	QRegExp regexp(ARRAY_PATTERN);
 	QStringList list;
@@ -779,7 +827,7 @@ QString DatabaseImportHelper::getObjectName(unsigned oid, bool signature_form)
 				if(obj_type==OBJ_FUNCTION)
 				{
 					QStringList arg_types=getTypes(obj_attr[ParsersAttributes::ARG_TYPES], false),
-											arg_modes=parseArrayValue(obj_attr[ParsersAttributes::ARG_MODES]);
+											arg_modes=parseArrayValues(obj_attr[ParsersAttributes::ARG_MODES]);
 
 					for(int i=0; i < arg_types.size(); i++)
 					{
@@ -815,7 +863,7 @@ QString DatabaseImportHelper::getObjectName(unsigned oid, bool signature_form)
 
 QStringList DatabaseImportHelper::getObjectNames(const QString &oid_vect, bool signature_form)
 {
-	QStringList list=parseArrayValue(oid_vect);
+	QStringList list=parseArrayValues(oid_vect);
 
 	if(!list.isEmpty())
 	{
@@ -875,7 +923,7 @@ QString DatabaseImportHelper::getType(unsigned type_oid, bool generate_xml, attr
 
 QStringList DatabaseImportHelper::getTypes(const QString &oid_vect, bool generate_xml)
 {
-	QStringList list=parseArrayValue(oid_vect);
+	QStringList list=parseArrayValues(oid_vect);
 
 	for(int i=0; i < list.size(); i++)
 		list[i]=getType(list[i].toUInt(), generate_xml);
