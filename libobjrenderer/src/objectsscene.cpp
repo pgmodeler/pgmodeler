@@ -53,7 +53,7 @@ ObjectsScene::~ObjectsScene(void)
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
-													 OBJ_VIEW, OBJ_TABLE };
+													 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 	this->removeItem(selection_rect);
@@ -76,7 +76,8 @@ ObjectsScene::~ObjectsScene(void)
 				 ((dynamic_cast<RelationshipView *>(item) && obj_types[i]==OBJ_RELATIONSHIP) ||
 					(dynamic_cast<TextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
 					(dynamic_cast<GraphicalView *>(item) && obj_types[i]==OBJ_VIEW) ||
-					(dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE)))
+					(dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE) ||
+					(dynamic_cast<SchemaView *>(item) && obj_types[i]==OBJ_SCHEMA)))
 
 			{
 				this->removeItem(item);

@@ -94,7 +94,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 													 OBJ_BORDER_WIDTH=0.80f;
 
 		BaseObjectView(BaseObject *object=nullptr);
-		~BaseObjectView(void);
+		virtual ~BaseObjectView(void);
 
 		//! \brief Returns the object selection order
 		unsigned getSelectionOrder(void);

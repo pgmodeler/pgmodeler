@@ -414,7 +414,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		emit s_objectAdded(object);
 }
 
-void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
+void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_refs)
 {
 	if(!object)
 		throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -433,7 +433,8 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
 			vector<BaseObject *> refs;
 
 			//Get the table references
-			getObjectReferences(object, refs, true);
+			if(check_refs)
+				getObjectReferences(object, refs, true);
 
 			//If there are objects referencing the table
 			if(!refs.empty())
@@ -736,12 +737,13 @@ void DatabaseModel::destroyObjects(void)
 		while(!list->empty())
 		{
 			object=list->back();
+			__removeObject(object,-1,false);
 
 			if(object->getObjectType()==OBJ_RELATIONSHIP)
 				dynamic_cast<Relationship *>(object)->destroyObjects();
 
 			delete(object);
-			list->pop_back();
+			//list->pop_back();
 		}
 	}
 

@@ -43,6 +43,7 @@ class TextboxView: public BaseObjectView {
 
 	public:
 		TextboxView(Textbox *txtbox, bool override_style=false);
+		~TextboxView(void);
 
 		/*! \brief Sets the fill and border color for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
@@ -51,8 +52,6 @@ class TextboxView: public BaseObjectView {
 		/*! \brief Sets the font style for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
 		void setFontStyle(const QTextCharFormat &fmt);
-
-		~TextboxView(void);
 
 	protected slots:
 		void configureObject(void);

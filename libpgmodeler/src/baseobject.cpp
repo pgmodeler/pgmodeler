@@ -125,7 +125,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		QRegExp("(\")(.)+(\")(\\.)(.)+"),
 		QRegExp("(.)+(\\.)(\")(.)+(\")"),
 		QRegExp("(.)+(\\.)(.)+")
-	};
+	};*/
 
 	/* Checks through regular expressions
 		if the name passed to be formatted is yet

@@ -35,7 +35,7 @@ using namespace std;
 
 class BaseType{
 	private:
-		static constexpr unsigned types_count=210;
+		static constexpr unsigned types_count=211;
 
 	protected:
 		static QString type_list[types_count];
@@ -237,7 +237,7 @@ class IntervalType: public BaseType{
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static constexpr unsigned offset=203;
+		static constexpr unsigned offset=204;
 		static constexpr unsigned types_count=7;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -311,15 +311,15 @@ class UserTypeConfig {
 class PgSQLType: public BaseType{
 	private:
 		static constexpr unsigned offset=26;
-		static constexpr unsigned types_count=86;
+		static constexpr unsigned types_count=87;
 
 		//! \brief Offset for oid types
-		static constexpr unsigned oid_start=87;
-		static constexpr unsigned oid_end=99;
+		static constexpr unsigned oid_start=88;
+		static constexpr unsigned oid_end=100;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned pseudo_start=100;
-		static constexpr unsigned pseudo_end=111;
+		static constexpr unsigned pseudo_start=101;
+		static constexpr unsigned pseudo_end=112;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -448,7 +448,7 @@ class PgSQLType: public BaseType{
 
 class BehaviorType: public BaseType{
 	private:
-		static constexpr unsigned offset=125;
+		static constexpr unsigned offset=126;
 		static constexpr unsigned types_count=3;
 
 	public:
@@ -467,7 +467,7 @@ class BehaviorType: public BaseType{
 
 class SecurityType: public BaseType{
 	private:
-		static constexpr unsigned offset=128;
+		static constexpr unsigned offset=129;
 		static constexpr unsigned types_count=2;
 
 	public:
@@ -485,7 +485,7 @@ class SecurityType: public BaseType{
 
 class LanguageType: public BaseType{
 	private:
-		static constexpr unsigned offset=130;
+		static constexpr unsigned offset=131;
 		static constexpr unsigned types_count=6;
 
 	public:
@@ -507,7 +507,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static constexpr unsigned offset=136;
+		static constexpr unsigned offset=137;
 		static constexpr unsigned types_count=41;
 
 	public:
@@ -527,7 +527,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static constexpr unsigned offset=177;
+		static constexpr unsigned offset=178;
 		static constexpr unsigned types_count=4;
 
 	public:
@@ -550,7 +550,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static constexpr unsigned offset=181;
+		static constexpr unsigned offset=182;
 		static constexpr unsigned types_count=3;
 
 	public:
@@ -569,7 +569,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static constexpr unsigned offset=184;
+		static constexpr unsigned offset=185;
 		static constexpr unsigned types_count=2;
 
 	public:
@@ -587,7 +587,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static constexpr unsigned offset=186;
+		static constexpr unsigned offset=187;
 		static constexpr unsigned types_count=14;
 
 	public:
@@ -617,7 +617,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static constexpr unsigned offset=200;
+		static constexpr unsigned offset=201;
 		static constexpr unsigned types_count=3;
 
 	public:
