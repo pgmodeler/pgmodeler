@@ -68,6 +68,9 @@ class DatabaseImportHelper: public QObject {
 		void createOperatorClass(attribs_map &attribs);
 		void createOperator(attribs_map &attribs);
 		void createCollation(attribs_map &attribs);
+		void createCast(attribs_map &attribs);
+		void createConversion(attribs_map &attribs);
+		void createSequence(attribs_map &attribs);
 
 		QStringList parseArrayValues(const QString array_val);
 		QStringList parseDefaultValues(const QString &def_vals);

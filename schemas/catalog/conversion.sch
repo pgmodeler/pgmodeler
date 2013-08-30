@@ -33,7 +33,7 @@
      [SELECT cn.oid, cn.conname AS name, cn.connamespace AS schema, cn.conowner AS owner,
 	   pg_encoding_to_char(conforencoding) AS src_encoding,
 	   pg_encoding_to_char(contoencoding) AS dst_encoding,
-	   cn.conproc AS function, cn.condefault AS default_bool, ]
+	   cn.conproc::oid AS function, cn.condefault AS default_bool, ]
 
      (@{comment}) [ AS comment ]
 

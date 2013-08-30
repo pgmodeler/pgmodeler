@@ -14,7 +14,7 @@ $br $tb
 $br $tb
 [ cache=] "@{cache}"
 [ cycle=] %if @{cycle} %then "true" %else "false" %end
-%if @{owner} %then [ owner=] "@{owner}" %end
+%if @{owner-col} %then [ owner-col=] "@{owner-col}" %end
 
  %if @{protected} %then 
   [ protected=] "true"

@@ -22,7 +22,7 @@
 %else
     %if @{attribs} %then
       [SELECT oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name,
-	      castsource AS source_type, casttarget AS dest_type, castfunc AS function,
+	      castsource AS source_type, casttarget AS destiny_type, castfunc AS function,
 
 	 CASE castcontext
 	    WHEN  'a' THEN 'assignment'

@@ -113,7 +113,7 @@ QString BaseObject::getSQLName(ObjectType obj_type)
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
 {
-	int i;
+	//int i;
 	bool is_formated=false;
 	QString frmt_name;
 	QByteArray raw_name;

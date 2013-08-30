@@ -22,7 +22,9 @@
 
 %else
     %if @{attribs} %then
-      [SELECT DISTINCT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner, ]
+      [SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, ]
+
+      [(SELECT refobjid || ':' || refobjsubid FROM pg_depend WHERE objid=sq.oid AND deptype='a') AS owner_col, ]
 
       #TODO: Discover which field is the start value for sequences on PgSQL 9.0
       %if @{pgsql90} %then
@@ -31,7 +33,8 @@
        [ _sq1.start_value AS start,  sq.relacl AS permissions, ]
       %end
 
-      [ _sq1.minimum_value AS min_value,
+      [ 1 AS cache,
+	_sq1.minimum_value AS min_value,
 	_sq1.maximum_value AS max_value, _sq1.increment,
 
 	  CASE _sq1.cycle_option
@@ -44,6 +47,7 @@
       [ FROM pg_class AS sq
 	LEFT JOIN information_schema.sequences AS _sq1
 	ON _sq1.sequence_schema=(SELECT nspname FROM pg_namespace WHERE oid=sq.relnamespace)
+	  AND _sq1.sequence_name=sq.relname
 	WHERE relkind='S' ]
 
 	%if @{last-sys-oid} %then

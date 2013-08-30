@@ -26,64 +26,6 @@ This class is the basis for the reverse engineering feature.
 #ifndef CATALOG_H
 #define CATALOG_H
 
-/* Possible way to determine the order to import object from database:
- * 1) Order object by type (list below)
- * 2) For each type objects by name
-
-**OK!**		ROLE						(pg_role)
-**OK!**		TABLESPACE			(pg_tablespace)
-**OK!**		DATABASE				(pg_database)
-**OK!**		SCHEMA					(pg_namespace)
-**OK!**		EXTENSION				(pg_extension)
-**OK!**		FUNCTION				(pg_proc)	[c,sql,internal langs]
-**OK!**		USERTYPE				(pg_type)
-**OK!**		LANGUAGE				(pg_language) [user-defined]
-**OK!**		FUNCTION				(pg_proc) [user-defined]
-**OK!**		AGGREGATE				(pg_aggregate)
-**OK!**		OPERATOR				(pg_operator)
-**OK!**		OPCLASS					(pg_opclass)
-**OK!**		OPFAMILY				(pg_opfamily)
-**OK!**		COLLATION				(pg_collation)
-**OK!**		CONVERSION			(pg_conversion)
-**OK!**		TABLE						(pg_tables)
-**OK!**		COLUMN					(pg_attribute, pg_attrdef)
-**OK!**		INDEX						(pg_index)
-**OK!**		RULE						(pg_rule)
-**OK!**		TRIGGER					(pg_trigger, pg_constraint (constraint trigger))
-**OK!**		CONSTRAINT			(pg_constraints)
-**OK!**		CAST						(pg_cast)
-**OK!**		VIEW						(pg_view, pg_class [relkind='v'])
-**OK!**		SEQUENCE        (pg_class [relkind='S'], information_schema.sequences)
-**OK!**		OBJ_DOMAIN      (information_schema.domains)
-					TABLE INHERITS	(Retrieved individually for each table)
-					PERMISSION			(Retrieved individually for each type of object)
-
-** Details can be found on pg_dump_sort.c line 82 **/
-
-
-/* Objects that can belongs to a extension
-AGGREGATE agg_name (agg_type [, ...] ) |
-	CAST (source_type AS target_type) |
-	COLLATION object_name |
-	CONVERSION object_name |
-	DOMAIN object_name |
-	FOREIGN DATA WRAPPER object_name |
-	FOREIGN TABLE object_name |
-	FUNCTION function_name ( [ [ argmode ] [ argname ] argtype [, ...] ] ) |
-	OPERATOR operator_name (left_type, right_type) |
-	OPERATOR CLASS object_name USING index_method |
-	OPERATOR FAMILY object_name USING index_method |
-	[ PROCEDURAL ] LANGUAGE object_name |
-	SCHEMA object_name |
-	SEQUENCE object_name |
-	SERVER object_name |
-	TABLE object_name |
-	TEXT SEARCH CONFIGURATION object_name |
-	TEXT SEARCH DICTIONARY object_name |
-	TEXT SEARCH PARSER object_name |
-	TEXT SEARCH TEMPLATE object_name |
-	TYPE object_name |
-	VIEW object_name */
 #include "connection.h"
 #include "baseobject.h"
 #include "tableobject.h"

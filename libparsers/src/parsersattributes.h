@@ -139,7 +139,7 @@ namespace ParsersAttributes {
 	PARAMETERS="parameters",
 	PER_ROW="per-line",
 	BY_VALUE="by-value",
-	OWNER_COLUMN="owner",
+	OWNER_COLUMN="owner-col",
 	PRECISION="precision",
 	ROW_AMOUNT="row-amount",
 	REFER="refer",

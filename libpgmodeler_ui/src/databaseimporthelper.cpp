@@ -279,6 +279,9 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_OPCLASS: createOperatorClass(attribs); break;
 				case OBJ_OPERATOR: createOperator(attribs); break;
 				case OBJ_COLLATION: createCollation(attribs); break;
+				case OBJ_CAST: createCast(attribs); break;
+				case OBJ_CONVERSION: createConversion(attribs); break;
+				case OBJ_SEQUENCE: createSequence(attribs); break;
 
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
@@ -769,6 +772,62 @@ void DatabaseImportHelper::createCollation(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		if(coll) delete(coll);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createCast(attribs_map &attribs)
+{
+	Cast *cast=nullptr;
+
+	try
+	{
+		attribs[ParsersAttributes::SIGNATURE]=getDependencyObject(attribs[ParsersAttributes::FUNCTION].toUInt(), true);
+		attribs[ParsersAttributes::SOURCE_TYPE]=getType(attribs[ParsersAttributes::SOURCE_TYPE].toUInt(), true);
+		attribs[ParsersAttributes::DEST_TYPE]=getType(attribs[ParsersAttributes::DEST_TYPE].toUInt(), true);
+		loadObjectXML(OBJ_CAST, attribs);
+		cast=dbmodel->createCast();
+		dbmodel->addCast(cast);
+	}
+	catch(Exception &e)
+	{
+		if(cast) delete(cast);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createConversion(attribs_map &attribs)
+{
+	Conversion *conv=nullptr;
+
+	try
+	{
+		attribs[ParsersAttributes::FUNCTION]=getDependencyObject(attribs[ParsersAttributes::FUNCTION].toUInt(), true);
+		loadObjectXML(OBJ_CONVERSION, attribs);
+		conv=dbmodel->createConversion();
+		dbmodel->addConversion(conv);
+	}
+	catch(Exception &e)
+	{
+		if(conv) delete(conv);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createSequence(attribs_map &attribs)
+{
+	Sequence *seq=nullptr;
+
+	try
+	{
+	 #warning "TODO: Generate the string that reference to onwer column"
+		loadObjectXML(OBJ_SEQUENCE, attribs);
+		seq=dbmodel->createSequence();
+		dbmodel->addSequence(seq);
+	}
+	catch(Exception &e)
+	{
+		if(seq) delete(seq);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

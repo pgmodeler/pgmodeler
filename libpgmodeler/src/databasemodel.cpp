@@ -3801,6 +3801,8 @@ Conversion *DatabaseModel::createConversion(void)
 		conv->setEncoding(Conversion::DST_ENCODING,
 											EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
 
+		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
+
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
@@ -4977,7 +4979,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 				tab_name=elem_list[0] + "." + elem_list[1];
 				col_name=elem_list[2];
 			}
-			else
+			else if(count==2)
 			{
 				tab_name=elem_list[0];
 				col_name=elem_list[1];

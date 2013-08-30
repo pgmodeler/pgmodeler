@@ -47,8 +47,8 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(600, 350);
-		parent_form->setMaximumHeight(350);
+		parent_form->setMinimumSize(600, 360);
+		parent_form->setMaximumHeight(360);
 	}
 	catch(Exception &e)
 	{
@@ -71,7 +71,7 @@ void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	if(conv)
 	{
 		conv_func_sel->setSelectedObject(conv->getConversionFunction());
-		conv->setDefault(default_conv_chk->isChecked());
+		default_conv_chk->setChecked(conv->isDefault());
 		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SRC_ENCODING))));
 		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DST_ENCODING))));
 	}

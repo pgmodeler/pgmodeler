@@ -311,9 +311,17 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 									//Stores the object type name
 									obj_type=BaseObject::getTypeName(obj_types[obj_id]);
 
-									//The object name is the first element when splitting the string with space separator
-									obj_name=lin.split(' ').at(0);
-									obj_name.remove('(');
+									if(obj_types[obj_id]!=OBJ_CAST)
+									{
+										//The object name is the first element when splitting the string with space separator
+										obj_name=lin.split(' ').at(0);
+										obj_name.remove('(');
+									}
+									else
+									{
+										obj_name="cast" + lin.replace(" AS ",",");
+									}
+
 									obj_name.remove(';');
 									break;
 								}

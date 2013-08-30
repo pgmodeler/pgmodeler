@@ -9,6 +9,10 @@
   [ protected=] "true"
  %end
 
+ %if @{default} %then
+  [ default=] "true"
+ %end
+
   %if @{sql-disabled} %then
    [ sql-disabled=] "true"
   %end

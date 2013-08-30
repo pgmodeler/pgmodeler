@@ -35,10 +35,10 @@
 $br
 
 $tb [OWNED BY ]
-%if @{owner} %then @{owner} %else NONE %end
+%if @{owner-col} %then @{owner-col} %else NONE %end
 ; $br
 
-%if @{owner} %then
+%if @{owner-col} %then
 $br
 [ALTER TABLE ] @{table} [ ALTER COLUMN ] @{column} $br
 [      SET DEFAULT nextval('] @{name} ['::regclass);] $br

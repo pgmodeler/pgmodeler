@@ -10,7 +10,8 @@
 <!ATTLIST sequence start CDATA #IMPLIED>
 <!ATTLIST sequence cache CDATA #IMPLIED>
 <!ATTLIST sequence cycle (true|false) "false">
-<!ATTLIST sequence owner CDATA #IMPLIED>
+<!ATTLIST sequence column CDATA #IMPLIED>
+<!ATTLIST sequence owner-col CDATA #IMPLIED>
 <!ATTLIST sequence protected (false|true) "false">
 <!ATTLIST sequence sql-disabled (false|true) "false">
 
