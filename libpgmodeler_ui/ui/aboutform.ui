@@ -374,17 +374,17 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>10</height>
+          <height>1</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>10</height>
+          <height>1</height>
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::HLine</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
@@ -446,20 +446,20 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>10</height>
+          <height>1</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>10</height>
+          <height>1</height>
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::HLine</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
+         <enum>QFrame::Plain</enum>
         </property>
        </widget>
       </item>

@@ -593,6 +593,7 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					str_aux.replace('\"',XMLParser::CHAR_QUOT);
 					str_aux.replace('<',XMLParser::CHAR_LT);
 					str_aux.replace('>',XMLParser::CHAR_GT);
+					str_aux.replace('&',XMLParser::CHAR_AMP);
 
 					//Puts on the original XML definition the modified string
 					lin.replace(pos,count,str_aux);
