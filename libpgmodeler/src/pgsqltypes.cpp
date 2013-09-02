@@ -72,7 +72,7 @@ QString BaseType::type_list[types_count]=
 	"spgist",
 
 	//Types used by the class PgSQLType
-	//offsets 26 to 76
+	//offsets 26 to 85
 	//Note: the type char is different from "char" (with quotes)
 	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
 
@@ -86,51 +86,52 @@ QString BaseType::type_list[types_count]=
 	"polygon", "circle", "cidr", "inet",
 	"macaddr", "bit", "bit varying", "varbit", "uuid", "xml", "json",
 	"smallserial", "int2vector", "int2", "int4", "int8", "float4", "float8",
-	"bpchar", "name",
+	"bpchar", "name", "abstime", "aclitem", "gtsvector", "refcursor",
+	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 77 to 81
+	//offsets 86 to 90
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
 
 	//Range-types
-	//offsets 82 to 87
+	//offsets 91 to 96
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 88 to 100
+	//offsets 97 to 109
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",  "oidvector",
 
 	//Pseudo-types
-	//offsets 101 to 112
+	//offsets 110 to 123
 	"any","anyarray","anyelement","anyenum",
-	"anynonarray","cstring","internal","language_handler",
-	"record","trigger","void","opaque",
+	"anynonarray", "anyrange", "cstring","internal","language_handler",
+	"record","trigger","void","opaque", "fdw_handler",
 
 	//Interval types
-	//offsets 113 to 125
+	//offsets 124 to 136
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 126 to 128
+	//offsets 137 to 139
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 129 to 130
+	//offsets 140 to 141
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 131 to 136
+	//offsets 142 to 147
 	"sql",
 	"c",
 	"plpgsql",
@@ -139,7 +140,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 137 to 177
+	//offsets 148 to 188
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -151,25 +152,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 178 to 181
+	//offsets 189 to 192
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 182 to 184
+	//offsets 193 to 195
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 185 to 186
+	//offsets 196 to 197
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 187 to 200 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 198 to 211 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -186,7 +187,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 201 to 203
+	//offsets 212 to 214
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -195,7 +196,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 204 to 210
+	//offsets 215 to 221
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -986,7 +987,13 @@ void PgSQLType::removeUserTypes(void *pmodel)
 
 unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 {
-	return(getType(type_name,offset,types_count));
+	QString aux_name=type_name;
+
+	aux_name.remove("[]");
+	aux_name.remove("\"");
+	aux_name.remove(QRegExp("( )(with)(out)?(.)*"));
+	aux_name=aux_name.trimmed();
+	return(getType(aux_name,offset,types_count));
 }
 
 unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)

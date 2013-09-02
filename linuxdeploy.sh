@@ -1,7 +1,7 @@
 #/bin/bash
 
 QMAKE_ROOT=/usr/bin
-FALLBACK_QMAKE_ROOT=/usr/local/qt-5.0.2/5.0.2/gcc_64/bin
+FALLBACK_QMAKE_ROOT=/usr/local/qt-5.1.1/5.1.1/gcc_64/bin
 LOG=linuxdeploy.log
 
 # Detecting current pgModeler version
