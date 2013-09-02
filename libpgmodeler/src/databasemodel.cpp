@@ -5881,14 +5881,15 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	BaseObject *object=nullptr;
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	vector<unsigned>::iterator itr1, itr1_end;
+	//vector<unsigned>::iterator itr1, itr1_end;
 	QString def,
 			msg=trUtf8("Generating %1 of the object `%2' (%3)"),
 			attrib=ParsersAttributes::OBJECTS,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
 	Type *usr_type=nullptr;
 	map<unsigned, BaseObject *> objects_map;
-	vector<unsigned> ids_objs, ids_tab_objs;
+	map<unsigned, BaseObject *>::iterator obj_itr;
+	//vector<unsigned> ids_objs, ids_tab_objs;
 	Table *table=nullptr;
 	Index *index=nullptr;
 	Trigger *trigger=nullptr;
@@ -5969,7 +5970,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		//Includes the database model on the objects map permitting to create the code in a correct order
 		objects_map[this->getObjectId()]=this;
-		ids_objs.push_back(this->getObjectId());
+		//ids_objs.push_back(this->getObjectId());
 
 		//Generating the definition for the other objects type
 		if(def_type==SchemaParser::XML_DEFINITION)
@@ -5995,7 +5996,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				{
 					object=(*itr);
 					objects_map[object->getObjectId()]=object;
-					ids_objs.push_back(object->getObjectId());
+					//ids_objs.push_back(object->getObjectId());
 					itr++;
 				}
 			}
@@ -6026,7 +6027,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()))))
 				{
 					objects_map[constr->getObjectId()]=constr;
-					ids_tab_objs.push_back(constr->getObjectId());
+					//ids_tab_objs.push_back(constr->getObjectId());
 				}
 			}
 
@@ -6038,7 +6039,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				if(trigger->isReferRelationshipAddedColumn())
 				{
 					objects_map[trigger->getObjectId()]=trigger;
-					ids_tab_objs.push_back(trigger->getObjectId());
+					//ids_tab_objs.push_back(trigger->getObjectId());
 				}
 			}
 
@@ -6050,13 +6051,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				if(index->isReferRelationshipAddedColumn())
 				{
 					objects_map[index->getObjectId()]=index;
-					ids_tab_objs.push_back(index->getObjectId());
+					//ids_tab_objs.push_back(index->getObjectId());
 				}
 			}
 		}
 
-		if(def_type==SchemaParser::XML_DEFINITION)
-			ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
+		//if(def_type==SchemaParser::XML_DEFINITION)
+		//	ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
 		/* SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
 
@@ -6095,7 +6096,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 						if(objects_map.count(objs[i]->getObjectId())==0)
 						{
 							objects_map[objs[i]->getObjectId()]=objs[i];
-							ids_objs.push_back(objs[i]->getObjectId());
+							//ids_objs.push_back(objs[i]->getObjectId());
 						}
 					}
 				}
@@ -6104,17 +6105,17 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					if(objects_map.count(object->getObjectId())==0)
 					{
 						objects_map[object->getObjectId()]=object;
-						ids_objs.push_back(object->getObjectId());
+						//ids_objs.push_back(object->getObjectId());
 					}
 				}
 			}
 		}
 
 		//Sort the objects id vector to created the definition in a correct way
-		sort(ids_objs.begin(), ids_objs.end());
+		//sort(ids_objs.begin(), ids_objs.end());
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
+		//if(def_type==SchemaParser::SQL_DEFINITION)
+		//	ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
 		attribs_aux[ParsersAttributes::SHELL_TYPES]="";
 
@@ -6133,15 +6134,19 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		itr1=ids_objs.begin();
-		itr1_end=ids_objs.end();
+		//itr1=ids_objs.begin();
+		//itr1_end=ids_objs.end();
+		obj_itr=objects_map.begin();
 
 		attrib=ParsersAttributes::OBJECTS;
-		while(itr1!=itr1_end)
+		//while(itr1!=itr1_end)
+		while(obj_itr!=objects_map.end())
 		{
-			object=objects_map[(*itr1)];
+			//object=objects_map[(*itr1)];
+			object=obj_itr->second;
 			obj_type=object->getObjectType();
-			itr1++;
+			//itr1++;
+			obj_itr++;
 
 			if(obj_type==OBJ_TYPE && def_type==SchemaParser::SQL_DEFINITION)
 			{
