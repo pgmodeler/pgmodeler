@@ -3,7 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT tp.oid, tp.oid::regtype::text AS name FROM pg_type AS tp ]
+  #[SELECT tp.oid, tp.oid::regtype::text AS name FROM pg_type AS tp ]
+  [SELECT tp.oid, tp.typname AS name FROM pg_type AS tp ]
 
   %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid
@@ -35,7 +36,8 @@
 %else
     %if @{attribs} %then
 
-    [SELECT tp.oid, tp.oid::regtype::text AS name, tp.typnamespace AS schema, tp.typowner AS owner, typcategory AS category, ]
+    #[SELECT tp.oid, tp.oid::regtype::text AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+    [SELECT tp.oid, tp.typname AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
     %if @{pgsql90} %or @{pgsql91} %then
@@ -55,7 +57,6 @@
           WHEN typtype = 'b' THEN 'base'    
           WHEN typtype = 'c' THEN 'composite'
           WHEN typtype = 'r' THEN 'range'
-	  ELSE typtype
         END AS configuration, ] 
 
     # Retrieve the enumaration labels (is null when the type is not an enumeration)
@@ -65,7 +66,7 @@
     # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
     # separating them by colon.
     # (this field is null when the type is not a composite)
-    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||','|| atttypid ||','|| attndims||','|| ] %if @{pgsql90} %then NULL %else attcollation %end [)]
+    [   CASE WHEN typtype = 'c' THEN (SELECT array_agg(attname ||':'|| format_type(atttypid,atttypmod) ||':'|| ] %if @{pgsql90} %then '0' %else attcollation %end [)]
     [                           FROM pg_attribute
                                 WHERE attrelid=(SELECT oid FROM pg_class WHERE reltype=tp.oid))
          END AS typeattrib, ]
@@ -74,10 +75,10 @@
 
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
     %if @{pgsql92} %then
-    [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||','||rngcollation||','||rngsubopc::oid||','||
-                                           rngcanonical::oid||','||rngsubdiff::oid, ',') 
+    [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
+					   rngcanonical::oid||':'||rngsubdiff::oid, ':')
                                     FROM pg_range WHERE rngtypid=tp.oid)
-      END AS rangeattribs, ]
+      END AS range_attribs, ]
     %end
 
     [ tp.typinput::oid AS input, tp.typoutput::oid AS output, tp.typreceive::oid AS receive, tp.typsend::oid AS send,

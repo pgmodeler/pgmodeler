@@ -334,7 +334,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Group objects:</string>
+                <string>Group tables:</string>
                </property>
               </widget>
              </item>
@@ -372,7 +372,7 @@
               </layout>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="objs_per_row_lbl">
+              <widget class="QLabel" name="tabs_per_row_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -380,12 +380,12 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Object per row:</string>
+                <string>Tables per row:</string>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QSpinBox" name="objs_per_row_sb">
+              <widget class="QSpinBox" name="tabs_per_row_sb">
                <property name="minimum">
                 <number>1</number>
                </property>
@@ -398,7 +398,7 @@
               </widget>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="obj_spacing_lbl">
+              <widget class="QLabel" name="tab_spacing_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -411,7 +411,7 @@
               </widget>
              </item>
              <item row="2" column="3">
-              <widget class="QSpinBox" name="obj_spacing_sb">
+              <widget class="QSpinBox" name="tab_spacing_sb">
                <property name="minimum">
                 <number>10</number>
                </property>
@@ -667,7 +667,7 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
            </widget>
            <widget class="QGroupBox" name="database_gb">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -694,7 +694,7 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
              <item row="1" column="0" colspan="6">
               <widget class="QTreeWidget" name="db_objects_tw">
                <property name="enabled">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="minimumSize">
                 <size>
@@ -935,7 +935,7 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
              <item row="0" column="0" colspan="6">
               <widget class="QComboBox" name="database_cmb">
                <property name="enabled">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="insertPolicy">
                 <enum>QComboBox::InsertAlphabetically</enum>

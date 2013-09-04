@@ -30,7 +30,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	progress=0;
 	setupUi(this);
 
-#warning "Debug!"
+	#warning "Debug!"
 	Connection::setPrintSQL(true);
 
 	import_thread=new QThread(this);
@@ -164,7 +164,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 			item=new QTreeWidgetItem(group);
 
 			if((itr->first.toUInt() > import_helper.getLastSystemOID()) ||
-				 (types[i]==OBJ_SCHEMA && itr->second=="public"))
+				 (types[i]==OBJ_SCHEMA && itr->second=="public") ||
+				 (types[i]==OBJ_COLUMN))
 			{
 				item->setCheckState(0, Qt::Checked);
 				child_checked=true;
@@ -395,7 +396,7 @@ void DatabaseImportForm::listDatabases(void)
 		if(db_attribs.empty())
 		{
 			database_cmb->addItem(QString("No databases found"));
-			database_gb->setEnabled(false);
+			//database_gb->setEnabled(false);
 		}
 		else
 		{
@@ -421,10 +422,12 @@ void DatabaseImportForm::listDatabases(void)
 			database_cmb->insertItem(0, QString("Found %1 database(s)").arg(db_attribs.size()));
 			database_cmb->setCurrentIndex(0);
 			database_cmb->blockSignals(false);
-			database_gb->setEnabled(true);
+			//database_gb->setEnabled(true);
 		}
 
 		database_gb->setEnabled(database_cmb->count() > 1);
+		database_cmb->setEnabled(database_gb->isEnabled());
+		db_objects_tw->setEnabled(database_gb->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -457,10 +460,12 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	import_sys_objs_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(false);
 	grp_schema_rb->setChecked(true);
-	obj_spacing_sb->setValue(10);
-	objs_per_row_sb->setValue(5);
+	tab_spacing_sb->setValue(10);
+	tabs_per_row_sb->setValue(5);
 	database_cmb->clear();
 	db_objects_tw->clear();
+	database_cmb->setEnabled(false);
+	db_objects_tw->setEnabled(false);
 
 	//Get the current connections configured on the connections widget
 	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);

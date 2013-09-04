@@ -20,39 +20,40 @@
 
 ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	QGridLayout *layout=nullptr;
 
-	setupUi(this);
+		QGridLayout *layout=nullptr;
 
-	general_conf=new GeneralConfigWidget(this);
-	appearance_conf=new AppearanceConfigWidget(this);
-	connections_conf=new ConnectionsConfigWidget(this);
-	plugins_conf=new PluginsConfigWidget(this);
+		setupUi(this);
 
-	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
-	layout->addWidget(general_conf);
-	confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
+		general_conf=new GeneralConfigWidget(this);
+		appearance_conf=new AppearanceConfigWidget(this);
+		connections_conf=new ConnectionsConfigWidget(this);
+		plugins_conf=new PluginsConfigWidget(this);
 
-	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
-	layout->addWidget(appearance_conf);
-	confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
+		layout=new QGridLayout;
+		layout->setContentsMargins(4,4,4,4);
+		layout->addWidget(general_conf);
+		confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
 
-	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
-	layout->addWidget(connections_conf);
-	confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
+		layout=new QGridLayout;
+		layout->setContentsMargins(4,4,4,4);
+		layout->addWidget(appearance_conf);
+		confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
 
-	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
-	layout->addWidget(plugins_conf);
-	confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
+		layout=new QGridLayout;
+		layout->setContentsMargins(4,4,4,4);
+		layout->addWidget(connections_conf);
+		confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
 
-	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
-	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
-	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
+		layout=new QGridLayout;
+		layout->setContentsMargins(4,4,4,4);
+		layout->addWidget(plugins_conf);
+		confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
+
+		connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
+		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
+		connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
+		connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 }
 
 void ConfigurationForm::close(void)

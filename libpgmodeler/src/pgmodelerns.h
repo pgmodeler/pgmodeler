@@ -26,7 +26,6 @@
 #define PGMODELER_NS_H
 
 #include "baseobject.h"
-#include "indexelement.h"
 
 namespace PgModelerNS {
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the

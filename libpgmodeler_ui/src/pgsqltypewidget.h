@@ -30,6 +30,7 @@
 #include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "databasemodel.h"
+#include "messagebox.h"
 
 class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 	private:

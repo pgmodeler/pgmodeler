@@ -170,7 +170,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 	catch(Exception &e)
 	{
-		msg_box.show(e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	count=sizeof(obj_types)/sizeof(ObjectType);

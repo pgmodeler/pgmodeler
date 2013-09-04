@@ -30,6 +30,7 @@
 #include "schemaparser.h"
 #include <vector>
 #include <map>
+#include <QRegExp>
 
 using namespace std;
 
@@ -207,7 +208,7 @@ class IndexingType: public BaseType{
 
 class IntervalType: public BaseType{
 	private:
-		static constexpr unsigned offset=112;
+		static constexpr unsigned offset=124;
 		static constexpr unsigned types_count=13;
 
 	public:
@@ -366,20 +367,34 @@ class PgSQLType: public BaseType{
 
 	public:
 		PgSQLType(void);
+
+		/*! \brief Creates a type from a simple string containing the name of the type.
+				\note This method works in different way than PgSQLType::parserString() */
 		PgSQLType(const QString &type_name);
+
+		//! \brief Creates a type from a pointer that references an user defined type (Type class)
 		PgSQLType(void *ptype);
+
 		PgSQLType(const QString &type_name, unsigned length,
 							unsigned dimension, int precision,
 							bool with_timezone, IntervalType interv_type,
 							SpatialType spatial_type);
+
 		PgSQLType(void *ptipo, unsigned length,
 							unsigned dimension, int precision,
 							bool with_timezone, IntervalType interv_type,
 							SpatialType spatial_type);
+
 		PgSQLType(unsigned type_id, unsigned length,
 							unsigned dimension, int precision,
 							bool with_timezone, IntervalType interv_type,
 							SpatialType spatial_type);
+
+		/*! \brief Creates a configured instance of PgSQLType from a string
+		in SQL canonical form, e.g, varchar(255), timestamp with timezone, smallint[] and so on.
+		If the string specifies arrays and length descriptors in wrong positions the method will
+		try to return the correct type. The method will raise errors if the type could not be configured */
+		static PgSQLType parseString(const QString &str);
 
 		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
@@ -409,6 +424,8 @@ class PgSQLType: public BaseType{
 		bool isGiSType(void);
 		bool isRangeType(void);
 		bool isSerialType(void);
+		bool isDateTimeType(void);
+		bool isNumericType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 

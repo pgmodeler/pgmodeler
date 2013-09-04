@@ -12,7 +12,7 @@
    WHERE cl.attisdropped IS FALSE AND relname=]'@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ORDER BY attnum ASC ]
 %else
     %if @{attribs} %then
-     [SELECT cl.attname AS name, cl.atttypid AS type, cl.attlen AS length, cl.attndims AS dimension,
+     [SELECT cl.attnum AS oid, cl.attname AS name, cl.atttypid AS type, cl.attlen AS length, cl.attndims AS dimension,
 	     cl.attnotnull AS not_null_bool, cl.attacl AS permissions, df.adsrc AS default_value,
 	     ds.description AS comment, ]
 

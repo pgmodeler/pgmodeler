@@ -22,9 +22,9 @@
 
 %else
     %if @{attribs} %then
-      [SELECT pr.oid AS oid, ag.aggfnoid AS name, ag.aggtransfn::oid AS transition_func,
-	      ag.aggfinalfn::oid AS final_func, ag.aggsortop::oid AS sort_op, aggtranstype AS state_type,
-	      pr.proargtypes AS types, ag.agginitval AS initial_cond, pr.proowner AS owner,
+      [SELECT pr.oid AS oid, ag.aggfnoid AS name, ag.aggtransfn::oid AS transition,
+	      ag.aggfinalfn::oid AS final, ag.aggsortop::oid AS sort_op, aggtranstype AS state_type,
+	      pr.proargtypes::oid] $ob $cb [ AS types, ag.agginitval AS initial_cond, pr.proowner AS owner,
 	      pr.pronamespace AS schema, pr.proacl AS permissions, ]
 
        (@{comment}) [ AS comment ]

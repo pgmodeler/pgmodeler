@@ -688,25 +688,14 @@ void ModelWidget::configureObjectSelection(void)
 		items.pop_front();
 
 		if(item)
-		{
 			objs_map[item->getSelectionOrder()]=item;
-			//Storing the selection order of the object to a latter sorting
-			//sort_vect.push_front(item->getSelectionOrder());
-		}
 	}
 
-	//Ordena os ids de seleção obtidos anteriomente
-	//std::sort(sort_vect.begin(), sort_vect.end());
-
-	//while(!sort_vect.empty())
 	itr=objs_map.begin();
 	while(itr!=objs_map.end())
 	{
-		//Create the selected objects list with the object sorted by selection order
-		//item=dynamic_cast<BaseObjectView *>(objs_map[sort_vect.front()]);
 		item=dynamic_cast<BaseObjectView *>(itr->second);
 		selected_objects.push_back(item->getSourceObject());
-		//sort_vect.pop_front();
 		itr++;
 	}
 
@@ -1721,9 +1710,7 @@ void ModelWidget::copyObjects(void)
 {
 	map<unsigned, BaseObject *> objs_map;
 	map<unsigned, BaseObject *>::iterator obj_itr;
-	//vector<unsigned> objs_id;
-	vector<BaseObject *>::iterator itr, /*itr_aux,*/ itr_end;
-	//vector<unsigned>::iterator itr1, itr1_end;
+	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> deps;
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
@@ -1810,24 +1797,15 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
-	/* Sort the id vector in order to avoid reference breaking when pasting the objects,
-	creating object with smaller ids first */
-	/*std::sort(objs_id.begin(), objs_id.end());
-	itr1=objs_id.begin();
-	itr1_end=objs_id.end();*/
-
-	//while(itr1!=itr1_end)
 	obj_itr=objs_map.begin();
 	while(obj_itr!=objs_map.end())
 	{
-		//object=objs_map[(*itr1)];
 		object=obj_itr->second;
 
 		//Reserved object aren't copied
 		if(!object->isSystemObject())
 			copied_objects.push_back(object);
 
-		//itr1++;
 		obj_itr++;
 	}
 }

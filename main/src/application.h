@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include "messagebox.h"
+#include <QTextStream>
 
 class Application: public QApplication {
 	private:

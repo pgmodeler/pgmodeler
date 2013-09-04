@@ -33,6 +33,9 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Widget used to select roles on the database model
+		ModelObjectsWidget *object_selection_wgt;
+
 		//! \brief Store the table widgets used to reference the member roles
 		ObjectTableWidget *members_tab[3];
 
@@ -46,6 +49,7 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 
 	public:
 		RoleWidget(QWidget * parent = 0);
+		~RoleWidget(void);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *role);
 

@@ -7,19 +7,21 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		vector<ObjectType> types=BaseObject::getObjectTypes(false);
 		setupUi(this);
 
-		parent_form.setWindowTitle("Change objects creation order");
-		parent_form.generalwidget_wgt->insertWidget(0, this);
-		parent_form.generalwidget_wgt->setCurrentIndex(0);
-		parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-
 		//Remove unused object types from vector
 		types.erase(std::find(types.begin(), types.end(), OBJ_PERMISSION));
 		types.erase(std::find(types.begin(), types.end(), OBJ_ROLE));
 		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
 		types.erase(std::find(types.begin(), types.end(), OBJ_RELATIONSHIP));
 
+		src_object_sel=nullptr;
+		dst_object_sel=nullptr;
 		src_object_sel=new ObjectSelectorWidget(types, true, this);
 		dst_object_sel=new ObjectSelectorWidget(types, true, this);
+
+		parent_form.setWindowTitle("Change objects creation order");
+		parent_form.generalwidget_wgt->insertWidget(0, this);
+		parent_form.generalwidget_wgt->setCurrentIndex(0);
+		parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
 		change_objs_grid->addWidget(src_object_sel, 0, 1,1,1);
 		change_objs_grid->addWidget(src_id_lbl, 0, 2,1,1);
@@ -46,8 +48,13 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+SwapObjectsIdsWidget::~SwapObjectsIdsWidget()
+{
+	parent_form.generalwidget_wgt->removeWidget(this);
 }
 
 void SwapObjectsIdsWidget::show(void)

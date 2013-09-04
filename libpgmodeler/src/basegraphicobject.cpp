@@ -31,7 +31,7 @@ void BaseGraphicObject::setProtected(bool value)
 {
 	BaseObject::setProtected(value);
 
-	if(!this->signalsBlocked())
+	//if(!this->signalsBlocked())
 		emit s_objectProtected(this->isProtected());
 }
 
@@ -39,7 +39,7 @@ void BaseGraphicObject::setSystemObject(bool value)
 {
 	BaseObject::setSystemObject(value);
 
-	 if(!this->signalsBlocked())
+	// if(!this->signalsBlocked())
 		 emit s_objectProtected(this->isProtected());
 }
 
@@ -47,7 +47,7 @@ void BaseGraphicObject::setModified(bool value)
 {
 	is_modified=value;
 
-	if(!this->signalsBlocked() && is_modified)
+	if(/*!this->signalsBlocked() &&*/ is_modified)
 		emit s_objectModified();
 }
 

@@ -47,6 +47,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		~SwapObjectsIdsWidget(void);
 		void setModel(DatabaseModel *model);
 		
 	signals:

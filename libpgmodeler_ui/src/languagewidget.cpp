@@ -46,13 +46,6 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		/* version_key=generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84);
-		field_map[version_key].push_back(func_inline_lbl);
-
-		frame=generateVersionWarningFrame(field_map);
-		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
-		frame->setParent(this); */
-
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->setMinimumSize(540, 440);
@@ -60,7 +53,6 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 	}
 	catch(Exception &e)
 	{
-		//Redireciona o erro
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

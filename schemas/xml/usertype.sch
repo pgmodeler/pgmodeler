@@ -7,6 +7,7 @@ $sp
 %if @{base} %then configuration="base" %end
 %if @{composite} %then configuration="composite" %end
 %if @{enumeration} %then configuration="enumeration" %end
+%if @{range} %then configuration="range" %end
 
 %if @{base} %then
  $br
@@ -70,10 +71,7 @@ $sp
 
  
  %if @{range} %then
-    %if @{subtype} %then
-     $tb [<type name=] "@{subtype}"/> $br
-    %end
-
+    %if @{subtype} %then @{subtype} %end
     %if @{collation} %then @{collation} %end
     %if @{opclass} %then $tb @{opclass} %end
     %if @{canonical} %then @{canonical} %end
@@ -81,10 +79,7 @@ $sp
  %end
  
  %if @{base} %then  
-   %if @{like-type} %then
-     $tb [<type name=] "@{like-type}" /> $br
-   %end
-
+   %if @{like-type} %then @{like-type} %end
    %if @{input} %then @{input} %end 
    %if @{output} %then @{output} %end
    %if @{receive} %then @{receive} %end

@@ -30,6 +30,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	Ui_RoleWidget::setupUi(this);
 	configureFormLayout(role_grid, OBJ_ROLE);
 
+	object_selection_wgt=new ModelObjectsWidget(true);
+
 	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 																				 Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
 
@@ -79,6 +81,12 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	parent_form->setMinimumSize(580, 650);
 
 	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+}
+
+RoleWidget::~RoleWidget()
+{
+	parent_form->generalwidget_wgt->removeWidget(this);
+	delete(object_selection_wgt);
 }
 
 void RoleWidget::uncheckOptions(void)

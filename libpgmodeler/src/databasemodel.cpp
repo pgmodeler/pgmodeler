@@ -410,11 +410,11 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
 	object->setDatabase(this);
 
-	if(!signalsBlocked())
+	//if(!signalsBlocked())
 		emit s_objectAdded(object);
 }
 
-void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_refs)
+void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)//, bool check_refs)
 {
 	if(!object)
 		throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -433,7 +433,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			vector<BaseObject *> refs;
 
 			//Get the table references
-			if(check_refs)
+			//if(check_refs)
 				getObjectReferences(object, refs, true);
 
 			//If there are objects referencing the table
@@ -487,7 +487,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 
 		object->setDatabase(nullptr);
 
-		if(!signalsBlocked())
+		//if(!signalsBlocked())
 			emit s_objectRemoved(object);
 	}
 }
@@ -737,13 +737,16 @@ void DatabaseModel::destroyObjects(void)
 		while(!list->empty())
 		{
 			object=list->back();
-			__removeObject(object,-1,false);
+			//__removeObject(object,-1,false);
+
+			//if(dynamic_cast<BaseGraphicObject *>(object))
+			//	emit s_objectRemoved(object);
 
 			if(object->getObjectType()==OBJ_RELATIONSHIP)
 				dynamic_cast<Relationship *>(object)->destroyObjects();
 
 			delete(object);
-			//list->pop_back();
+			list->pop_back();
 		}
 	}
 
@@ -2643,14 +2646,14 @@ void DatabaseModel::loadModel(const QString &filename)
 										if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
 											addObject(object);
 
-										if(!signalsBlocked())
-										{
+										//if(!signalsBlocked())
+										//{
 											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
 																					trUtf8("Loading object: %1 (%2)")
 																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),
 																					obj_type);
-										}
+										//}
 									}
 
 									XMLParser::restorePosition();
@@ -5881,7 +5884,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	BaseObject *object=nullptr;
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	//vector<unsigned>::iterator itr1, itr1_end;
 	QString def,
 			msg=trUtf8("Generating %1 of the object `%2' (%3)"),
 			attrib=ParsersAttributes::OBJECTS,
@@ -5889,7 +5891,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	Type *usr_type=nullptr;
 	map<unsigned, BaseObject *> objects_map;
 	map<unsigned, BaseObject *>::iterator obj_itr;
-	//vector<unsigned> ids_objs, ids_tab_objs;
 	Table *table=nullptr;
 	Index *index=nullptr;
 	Trigger *trigger=nullptr;
@@ -5955,14 +5956,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 					//Increments the generated definition count and emits the signal
 					gen_defs_count++;
-					if(!signalsBlocked())
-					{
+					//if(!signalsBlocked())
+					//{
 						emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 																msg.arg(def_type_str)
 																.arg(Utf8String::create(object->getName()))
 																.arg(object->getTypeName()),
 																object->getObjectType());
-					}
+					//}
 				}
 				itr++;
 			}
@@ -5970,7 +5971,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		//Includes the database model on the objects map permitting to create the code in a correct order
 		objects_map[this->getObjectId()]=this;
-		//ids_objs.push_back(this->getObjectId());
 
 		//Generating the definition for the other objects type
 		if(def_type==SchemaParser::XML_DEFINITION)
@@ -5996,7 +5996,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				{
 					object=(*itr);
 					objects_map[object->getObjectId()]=object;
-					//ids_objs.push_back(object->getObjectId());
 					itr++;
 				}
 			}
@@ -6025,10 +6024,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				they have the definition generated */
 				if((!constr->isAddedByLinking() &&
 						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()))))
-				{
 					objects_map[constr->getObjectId()]=constr;
-					//ids_tab_objs.push_back(constr->getObjectId());
-				}
 			}
 
 			count=table->getTriggerCount();
@@ -6037,10 +6033,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				trigger=table->getTrigger(i);
 
 				if(trigger->isReferRelationshipAddedColumn())
-				{
 					objects_map[trigger->getObjectId()]=trigger;
-					//ids_tab_objs.push_back(trigger->getObjectId());
-				}
 			}
 
 			count=table->getIndexCount();
@@ -6049,15 +6042,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				index=table->getIndex(i);
 
 				if(index->isReferRelationshipAddedColumn())
-				{
 					objects_map[index->getObjectId()]=index;
-					//ids_tab_objs.push_back(index->getObjectId());
-				}
 			}
 		}
-
-		//if(def_type==SchemaParser::XML_DEFINITION)
-		//	ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
 		/* SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
 
@@ -6094,28 +6081,16 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					for(i=0; i < 3; i++)
 					{
 						if(objects_map.count(objs[i]->getObjectId())==0)
-						{
 							objects_map[objs[i]->getObjectId()]=objs[i];
-							//ids_objs.push_back(objs[i]->getObjectId());
-						}
 					}
 				}
 				else
 				{
 					if(objects_map.count(object->getObjectId())==0)
-					{
 						objects_map[object->getObjectId()]=object;
-						//ids_objs.push_back(object->getObjectId());
-					}
 				}
 			}
 		}
-
-		//Sort the objects id vector to created the definition in a correct way
-		//sort(ids_objs.begin(), ids_objs.end());
-
-		//if(def_type==SchemaParser::SQL_DEFINITION)
-		//	ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
 		attribs_aux[ParsersAttributes::SHELL_TYPES]="";
 
@@ -6134,18 +6109,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		//itr1=ids_objs.begin();
-		//itr1_end=ids_objs.end();
 		obj_itr=objects_map.begin();
-
 		attrib=ParsersAttributes::OBJECTS;
-		//while(itr1!=itr1_end)
+
 		while(obj_itr!=objects_map.end())
 		{
-			//object=objects_map[(*itr1)];
 			object=obj_itr->second;
 			obj_type=object->getObjectType();
-			//itr1++;
 			obj_itr++;
 
 			if(obj_type==OBJ_TYPE && def_type==SchemaParser::SQL_DEFINITION)
@@ -6191,14 +6161,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 
 			gen_defs_count++;
-			if(!signalsBlocked())
-			{
+			//if(!signalsBlocked())
+			//{
 				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
 														.arg(Utf8String::create(object->getName()))
 														.arg(object->getTypeName()),
 														object->getObjectType());
-			}
+			//}
 		}
 
 		//Gernerating the SQL/XML code for permissions
@@ -6211,14 +6181,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			attribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(*itr)->getCodeDefinition(def_type);
 
 			gen_defs_count++;
-			if(!signalsBlocked())
-			{
+			//if(!signalsBlocked())
+			//{
 				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
 														.arg(Utf8String::create((*itr)->getName()))
 														.arg((*itr)->getTypeName()),
 														(*itr)->getObjectType());
-			}
+			//}
 
 			itr++;
 		}

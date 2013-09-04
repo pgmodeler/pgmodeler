@@ -588,7 +588,11 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else if(config==RANGE_TYPE)
 	{
 		BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="1";
-		BaseObject::attributes[ParsersAttributes::SUBTYPE]=(*subtype);
+
+		if(def_type==SchemaParser::SQL_DEFINITION)
+			BaseObject::attributes[ParsersAttributes::SUBTYPE]=(*subtype);
+		else
+			BaseObject::attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 		if(subtype_opclass)
 		{
@@ -624,7 +628,12 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		BaseObject::attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
 
 		if(like_type!="any")
-			BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
+		{
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
+			else
+				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
+		}
 	}
 
 	if(config==BASE_TYPE || config==RANGE_TYPE)

@@ -54,7 +54,6 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 				grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
-		//grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(2)->layout());
 		for(i=Operator::OPER_COMMUTATOR, i1=3; i <= Operator::OPER_NEGATOR; i++,i1++)
 		{
 			operators_sel[i]=nullptr;
@@ -63,15 +62,6 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		}
 
 		operator_grid->addWidget(functions_sel[0],0,1,1,3);
-
-		/*field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort1_op_lbl);
-		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort2_op_lbl);
-		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(lessthan_op_lbl);
-		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(greaterthan_op_lbl);
-		frame=generateVersionWarningFrame(field_map);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(attributes_twg->widget(2)); */
-
 		configureFormLayout(operator_grid, OBJ_OPERATOR);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

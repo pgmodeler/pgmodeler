@@ -158,27 +158,6 @@ int main(int argc, char **argv)
 		//Installs the translator on the application
 		app.installTranslator(&translator);
 
-		//Loading the application splash screen
-		QSplashScreen splash;
-		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
-		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
-
-		#ifndef Q_OS_MAC
-			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
-		#else
-			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-		#endif
-
-		splash.show();
-		splash.repaint();
-
-		//Creates the main form
-		MainWindow fmain;
-
-		//Indicating that the splash screen must be closed when the main window is shown
-		splash.finish(&fmain);
-
 		if(enable_stylesheet)
 		{
 			//Loading app style sheet
@@ -197,18 +176,38 @@ int main(int argc, char **argv)
 			app.setStyleSheet(stylesheet);
 		}
 
-		fmain.showMaximized();
+		//Loading the application splash screen
+		QSplashScreen splash;
+		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+		splash.setPixmap(pix);
+		splash.setMask(pix.mask());
+
+		#ifndef Q_OS_MAC
+			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
+		#else
+			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+		#endif
+
+		splash.showMaximized();
+		app.processEvents();
+
+		//Creates the main form
+		MainWindow fmain;
 
 		//If the user specifies a list of files to be loaded
 		params.pop_front();
 		if(!params.isEmpty())
 			fmain.loadModels(params);
 
-		app.exec();
-		return(0);
+		splash.finish(&fmain);
+		fmain.showMaximized();
+
+		return(app.exec());
 	}
 	catch(Exception &e)
 	{
+		QTextStream ts(stdout);
+		ts << e.getExceptionsText();
 		return(e.getErrorType());
 	}
 }

@@ -34,7 +34,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	Ui_PermissionWidget::setupUi(this);
 
-	objectselection_wgt=new ModelObjectsWidget(true);
+	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
 	parent_form->generalwidget_wgt->insertWidget(0, this);
@@ -125,12 +125,13 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 PermissionWidget::~PermissionWidget(void)
 {
-	delete(objectselection_wgt);
+	parent_form->generalwidget_wgt->removeWidget(this);
+	delete(object_selection_wgt);
 }
 
 void PermissionWidget::hideEvent(QHideEvent *event)
 {
-	disconnect(objectselection_wgt,0,this,0);
+	disconnect(object_selection_wgt,0,this,0);
 	cancelOperation();
 
 	permissions_tab->blockSignals(true);
@@ -156,7 +157,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=nullptr, *chk1=nullptr;
 
-		connect(objectselection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+		connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
@@ -183,9 +184,9 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 void PermissionWidget::selectRole(void)
 {
-	objectselection_wgt->setObjectVisible(OBJ_ROLE, true);
-	objectselection_wgt->setModel(this->model);
-	objectselection_wgt->show();
+	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setModel(this->model);
+	object_selection_wgt->show();
 }
 
 void PermissionWidget::selectPermission(int perm_id)
@@ -258,7 +259,7 @@ void PermissionWidget::showSelectedRoleData(void)
 	int row, row_idx=-1;
 	Role *role=nullptr;
 
-	role=dynamic_cast<Role *>(objectselection_wgt->getSelectedObject());
+	role=dynamic_cast<Role *>(object_selection_wgt->getSelectedObject());
 	row=roles_tab->getSelectedRow();
 
 

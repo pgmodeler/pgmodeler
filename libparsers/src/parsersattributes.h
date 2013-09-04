@@ -399,7 +399,8 @@ namespace ParsersAttributes {
 	ARG_TYPES="arg-types",
 	ARG_MODES="arg-modes",
 	ARG_NAMES="arg-names",
-	ARG_DEFAULTS="arg-defaults";
+	ARG_DEFAULTS="arg-defaults",
+	RANGE_ATTRIBS="range-attribs";
 }
 
 #endif

@@ -51,6 +51,7 @@ class DatabaseImportHelper: public QObject {
 		map<unsigned, BaseObject *> created_objs;
 		map<unsigned, attribs_map> user_objs;
 		map<unsigned, attribs_map> system_objs;
+		map<unsigned, map<unsigned, attribs_map>> columns;
 
 		ModelWidget *model_wgt;
 
@@ -71,17 +72,29 @@ class DatabaseImportHelper: public QObject {
 		void createCast(attribs_map &attribs);
 		void createConversion(attribs_map &attribs);
 		void createSequence(attribs_map &attribs);
+		void createAggregate(attribs_map &attribs);
+		void createType(attribs_map &attribs);
+		void createTable(attribs_map &attribs);
+		//void createView(attribs_map &attribs);
+		//void createConstraint(attribs_map &attribs);
+		//void createIndex(attribs_map &attribs);
+		//void createRule(attribs_map &attribs);
+		//void createTrigger(attribs_map &attribs);
+		//void createPermission(attribs_map &attribs);
+
 
 		QStringList parseArrayValues(const QString array_val);
-		QStringList parseDefaultValues(const QString &def_vals);
+		QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
-		QString getObjectName(unsigned oid, bool signature_form=false);
+		QString getObjectName(const QString &oid, bool signature_form=false);
 		QStringList getObjectNames(const QString &oid_vect, bool signature_form=false);
 
-		QString getType(unsigned oid, bool generate_xml, attribs_map extra_attribs=attribs_map());
+		QString getColumnName(const QString &tab_oid, const QString &col_id, bool prepend_tab_name=false);
+
+		QString getType(const QString &oid, bool generate_xml, attribs_map extra_attribs=attribs_map());
 		QStringList getTypes(const QString &oid_vect, bool generate_xml);
 
-		QString getDependencyObject(unsigned oid, bool use_signature=false, attribs_map extra_attribs=attribs_map());
+		QString getDependencyObject(const QString &oid, bool use_signature=false, attribs_map extra_attribs=attribs_map());
 		QString getComment(attribs_map &attribs);
 
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);

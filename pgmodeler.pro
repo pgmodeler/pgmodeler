@@ -131,7 +131,8 @@ INCLUDEPATH += $$XML_INC \
                $$PWD/libparsers/src \
                $$PWD/libpgmodeler/src \
                $$PWD/libobjrenderer/src \
-               $$PWD/libpgmodeler_ui/src
+	       $$PWD/libpgmodeler_ui/src \
+	       $$PWD/main/src
 
 #Adding xml and PostgreSQL libs
 #LIBS = $$XML_LIB $$PGSQL_LIB

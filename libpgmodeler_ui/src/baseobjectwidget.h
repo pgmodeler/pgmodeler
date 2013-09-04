@@ -48,7 +48,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		int pf_min_height, pf_max_height;
 
 	protected:
-		ModelObjectsWidget *object_selection_wgt;
+		//! \brief Widget used to pick database objects
+		//ModelObjectsWidget *object_selection_wgt;
 
 		static const QColor PROT_LINE_BGCOLOR,
 												PROT_LINE_FGCOLOR,

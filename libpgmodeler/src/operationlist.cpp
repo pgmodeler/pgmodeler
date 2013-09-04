@@ -512,7 +512,7 @@ void OperationList::undoOperation(void)
 		Exception error;
 		unsigned chain_size=0, pos=0;
 
-		if(!this->signalsBlocked())
+		//if(!this->signalsBlocked())
 			chain_size=getChainSize();
 
 		do
@@ -538,7 +538,7 @@ void OperationList::undoOperation(void)
 
 			try
 			{
-				if(!this->signalsBlocked() && chain_size > 0)
+				if(/*!this->signalsBlocked() &&*/ chain_size > 0)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
@@ -577,7 +577,7 @@ void OperationList::redoOperation(void)
 		Exception error;
 		unsigned chain_size=0, pos=0;
 
-		if(!this->signalsBlocked())
+		//if(!this->signalsBlocked())
 			chain_size=getChainSize();
 
 		do

@@ -51,7 +51,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
-		object_selection_wgt=new ModelObjectsWidget(true);
+		//object_selection_wgt=new ModelObjectsWidget(true);
 
 		parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
@@ -99,15 +99,15 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 	}
 	catch(Exception &e)
 	{
-		if(parent_form) delete(parent_form);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 BaseObjectWidget::~BaseObjectWidget(void)
 {
-	delete(object_selection_wgt);
-	delete(parent_form);
+	parent_form->generalwidget_wgt->removeWidget(this);
+	//if(object_selection_wgt) delete(object_selection_wgt);
+	if(parent_form)	delete(parent_form);
 }
 
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)

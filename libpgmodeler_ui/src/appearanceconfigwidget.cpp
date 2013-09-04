@@ -56,7 +56,6 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,500,500));
 
-
 	viewp=new QGraphicsView(scene);
 	viewp->setEnabled(false);
 	viewp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
