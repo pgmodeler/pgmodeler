@@ -590,10 +590,14 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					str_aux=lin.mid(pos, count);
 
 					//Replaces the char by the XML entities
+					if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
+						 !str_aux.contains(XMLParser::CHAR_GT) &&  !str_aux.contains(XMLParser::CHAR_AMP) &&
+						 str_aux.contains('&'))
+					 str_aux.replace('&',XMLParser::CHAR_AMP);
+
 					str_aux.replace('\"',XMLParser::CHAR_QUOT);
 					str_aux.replace('<',XMLParser::CHAR_LT);
 					str_aux.replace('>',XMLParser::CHAR_GT);
-					str_aux.replace('&',XMLParser::CHAR_AMP);
 
 					//Puts on the original XML definition the modified string
 					lin.replace(pos,count,str_aux);

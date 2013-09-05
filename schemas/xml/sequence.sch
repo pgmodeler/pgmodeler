@@ -27,6 +27,7 @@ $br $tb
 > $br
 
   @{schema}
+  %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
   %if @{appended-sql} %then @{appended-sql} %end
 </sequence>  $br $br

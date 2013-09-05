@@ -693,7 +693,6 @@ void MainWindow::addModel(const QString &filename)
 			restoration_form->removeTemporaryModel(model_tab->getTempFilename());
 
 			delete(model_tab);
-
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}

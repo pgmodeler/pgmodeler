@@ -113,6 +113,32 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	}
 }
 
+void DatabaseImportHelper::finishImport(void)
+{
+	Schema *schema=nullptr;
+	BaseObject *table=nullptr, *sequence=nullptr;
+	map<QString, QString>::iterator itr;
+	unsigned i=0, cnt=0;
+
+	//Swapping the id's between sequences and tables to avoid reference breaking on SQL code
+	itr=seq_tab_swap.begin();
+	while(itr!=seq_tab_swap.end())
+	{
+		sequence=dbmodel->getObject(getObjectName(itr->first), OBJ_SEQUENCE);
+		table=dbmodel->getObject(getObjectName(itr->second), OBJ_TABLE);
+		BaseObject::swapObjectsIds(sequence, table, false);
+		itr++;
+	}
+
+	#warning "Testing only!"
+	cnt=dbmodel->getObjectCount(OBJ_SCHEMA);
+	for(i=0; i < cnt; i++)
+	{
+		dbmodel->getSchema(i)->setRectVisible(true);
+		dbmodel->getSchema(i)->setModified(true);
+	}
+}
+
 void DatabaseImportHelper::importDatabase(void)
 {
 	try
@@ -239,8 +265,11 @@ void DatabaseImportHelper::importDatabase(void)
 			QThread::msleep(10);
 		}
 
+
 		if(!import_canceled)
 		{
+			finishImport();
+
 			if(!errors.empty())
 				emit s_importFinished(Exception(trUtf8("The database import ended but some errors were generated. Check the error stack for details"),
 																				__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
@@ -284,8 +313,6 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 		unsigned oid=attribs[ParsersAttributes::OID].toUInt();
 		ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 		QString obj_name=getObjectName(attribs[ParsersAttributes::OID]);
-		Schema *schema=nullptr;
-		unsigned i=0, cnt=0;
 
 		if(obj_type==OBJ_DATABASE || TableObject::isTableObject(obj_type) || dbmodel->getObjectIndex(obj_name, obj_type) < 0)
 		{
@@ -324,14 +351,6 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
 				break;
-			}
-
-			#warning "Testing only!"
-			cnt=dbmodel->getObjectCount(OBJ_SCHEMA);
-			for(i=0; i < cnt; i++)
-			{
-				dbmodel->getSchema(i)->setRectVisible(true);
-				dbmodel->getSchema(i)->setModified(true);
 			}
 		}
 	}
@@ -893,8 +912,13 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 										 ParsersAttributes::MAX_VALUE, ParsersAttributes::INCREMENT,
 										 ParsersAttributes::CACHE, ParsersAttributes::CYCLE };
 
-		if(owner_col.size()==2)
-			attribs[ParsersAttributes::OWNER_COLUMN]=getColumnName(owner_col[0], owner_col[1], true);
+		attribs[ParsersAttributes::OWNER_COLUMN]="";
+
+		/* If there are owner columns and the oid of sequence is greater that the owner column's table oid
+		stores the oid of both (sequence and table) in order to swap it's ids at the end of import to
+		avoid reference breaking when generation SQL code */
+		if(owner_col.size()==2 && attribs[ParsersAttributes::OID].toUInt() > owner_col[0].toUInt())
+			seq_tab_swap[attribs[ParsersAttributes::OID]]=owner_col[0];
 
 		for(int i=0; i < seq_attribs.size(); i++)
 			attribs[attr[i]]=seq_attribs[i];
@@ -955,9 +979,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		attribs[attribs[ParsersAttributes::CONFIGURATION]]="1";
 
 		if(!attribs[ParsersAttributes::ENUM_TYPE].isEmpty())
-		{
 			attribs[ParsersAttributes::ENUMARATIONS]=parseArrayValues(attribs[ParsersAttributes::ENUMARATIONS]).join(",");
-		}
 		else if(!attribs[ParsersAttributes::COMPOSITE_TYPE].isEmpty())
 		{
 			QStringList comp_attribs, values;
@@ -971,7 +993,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				values=comp_attribs[i].split(":");
 
 				type_attrib.setName(values[0].remove("\""));
-				type_attrib.setType(PgSQLType::parseString(values[1]));
+				type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
 				type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
 
 				attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
@@ -1020,12 +1042,33 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 	try
 	{
-		unsigned x=rand() % 500, y=rand() % 500;
-		attribs_map pos_attr={{ ParsersAttributes::X_POS, QString::number(x) },
-											{ ParsersAttributes::Y_POS, QString::number(y) }};
+		Column col;
+		unsigned x=rand() % 1500, y=rand() % 1500;
+		map<unsigned, attribs_map>::iterator itr, itr_end;
+		attribs_map pos_attrib={{ ParsersAttributes::X_POS, QString::number(x) },
+														{ ParsersAttributes::Y_POS, QString::number(y) }};
 
+		attribs[ParsersAttributes::COLUMNS]="";
 		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																				 pos_attr, SchemaParser::XML_DEFINITION);
+																																				 pos_attrib, SchemaParser::XML_DEFINITION);
+
+		//Creating columns
+		itr=columns[attribs[ParsersAttributes::OID].toUInt()].begin();
+		itr_end=columns[attribs[ParsersAttributes::OID].toUInt()].end();
+
+		while(itr!=itr_end)
+		{
+			col.setName(itr->second[ParsersAttributes::NAME]);
+			col.setType(PgSQLType::parseString(itr->second[ParsersAttributes::TYPE]));
+			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
+			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
+			col.setComment(itr->second[ParsersAttributes::COMMENT]);
+			col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
+
+			attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
+			itr++;
+		}
+
 		loadObjectXML(OBJ_TABLE, attribs);
 		table=dbmodel->createTable();
 		dbmodel->addTable(table);

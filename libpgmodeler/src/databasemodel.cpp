@@ -414,7 +414,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		emit s_objectAdded(object);
 }
 
-void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)//, bool check_refs)
+void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_refs)
 {
 	if(!object)
 		throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -433,7 +433,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)//, bool chec
 			vector<BaseObject *> refs;
 
 			//Get the table references
-			//if(check_refs)
+			if(check_refs)
 				getObjectReferences(object, refs, true);
 
 			//If there are objects referencing the table
@@ -737,16 +737,21 @@ void DatabaseModel::destroyObjects(void)
 		while(!list->empty())
 		{
 			object=list->back();
-			//__removeObject(object,-1,false);
 
-			//if(dynamic_cast<BaseGraphicObject *>(object))
-			//	emit s_objectRemoved(object);
+			/* If the object is graphical destroy using the __removeObject in order
+			emit the signal to object scene to remove the graphical representation
+			of the to-be-destroyed object */
+			if(dynamic_cast<BaseGraphicObject *>(object))
+			{
+				__removeObject(object,-1,false);
 
-			if(object->getObjectType()==OBJ_RELATIONSHIP)
-				dynamic_cast<Relationship *>(object)->destroyObjects();
+				if(object->getObjectType()==OBJ_RELATIONSHIP)
+					dynamic_cast<Relationship *>(object)->destroyObjects();
+			}
+			else
+				list->pop_back();
 
 			delete(object);
-			list->pop_back();
 		}
 	}
 

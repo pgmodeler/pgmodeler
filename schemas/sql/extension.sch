@@ -11,11 +11,11 @@
   [      WITH SCHEMA ] @{schema}
     
   %if @{cur-version} %then
-    $br [      VERSION ] @{cur-version}
+    $br [      VERSION ] '@{cur-version}'
   %end
   
   %if @{old-version} %then
-    $br [      FROM ] @{old-version}
+    $br [      FROM ] '@{old-version}'
   %end
 
   ; $br

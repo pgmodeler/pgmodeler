@@ -249,25 +249,21 @@ bool Operator::isMerges(void)
 
 QString Operator::getSignature(bool format_name)
 {
-	QString signature, str_aux;
+	QString signature;
+	QStringList args;
 	unsigned i;
 
 	signature=this->getName(format_name);
 
 	for(i=0; i < 2; i++)
 	{
-		if(argument_types[i]!="any")
-		{
-			if(argument_types[i]=="any")
-				str_aux+="NONE";
-			else
-				str_aux+=(*argument_types[i]);
-		}
-
-		if(i==0 && argument_types[1]!="any")
-			str_aux+=",";
+		if(argument_types[i]=="any")
+			args.push_back("NONE");
+		else
+			args.push_back(*argument_types[i]);
 	}
-	signature+="(" + str_aux + ")";
+
+	signature+="(" + args.join(",") + ")";
 	return(signature);
 }
 
@@ -282,10 +278,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
 			atribs_ops[]={ ParsersAttributes::COMMUTATOR_OP,
 										 ParsersAttributes::NEGATOR_OP },
-										 //ParsersAttributes::SORT_OP,
-										 //ParsersAttributes::SORT2_OP,
-										 //ParsersAttributes::LESS_OP,
-										 //ParsersAttributes::GREATER_OP},
+
 			atribs_funcoes[]={ParsersAttributes::OPERATOR_FUNC,
 												ParsersAttributes::JOIN_FUNC,
 												ParsersAttributes::RESTRICTION_FUNC};

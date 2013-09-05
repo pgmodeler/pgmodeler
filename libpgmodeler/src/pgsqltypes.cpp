@@ -758,11 +758,11 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			interv.clear();
 	}
 
-	//Check if the type contains "with timezone" descriptor
-	with_tz=QRegExp("(.)*(with timezone)(.)*").exactMatch(type_str);
+	//Check if the type contains "with time zone" descriptor
+	with_tz=QRegExp("(.)*(with time zone)(.)*").exactMatch(type_str);
 
 	//Removes the timezone descriptor
-	type_str.remove(QRegExp("(with)(out)*( )(timezone)"));
+	type_str.remove(QRegExp("(with)(out)*( time zone)"));
 
 	//Count the dimension of the type and removes the array descriptor
 	dim=type_str.count("[]");
@@ -798,8 +798,10 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	if(start >=0 && end>=0)
 		type_str.remove(start, end-start+1);
 
-	//The resultant string must be only the name of the type without [] and ()
-	type_str=type_str.trimmed();
+	/* The resultant string must be only the name of the type without [] and ().
+	NOTE: Since the string was converted to lower case at start it's necessary to get
+	it's original form from the input string in order to correctly create the type. */
+	type_str=str.mid(str.indexOf(type_str, 0, Qt::CaseInsensitive),type_str.length()).trimmed();
 
 	try
 	{
@@ -827,7 +829,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, str);
 	}
 }
 

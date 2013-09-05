@@ -347,6 +347,7 @@ class BaseObject {
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;
+		friend class DatabaseImportHelper;
 		friend class SwapObjectsIdsWidget;
 };
 

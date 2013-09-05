@@ -61,12 +61,12 @@
 	 EXECUTE 'SELECT start_value, min_value, max_value, increment_by, cache_value, ' ||
 		 ' CASE WHEN is_cycled IS FALSE THEN NULL ' ||
 		 ' ELSE  is_cycled END FROM ' || $1 || '.' || $2 || ' LIMIT 1;' INTO res;
-	 RETURN translate(translate(res::text,'(','{'),')','}');
+	 RETURN replace(replace(res::text,'(','{'),')','}');
 	END
        $$
        LANGUAGE plpgsql;]
 
-      [ SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema,
+      [ SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
 	 (SELECT refobjid || ':' || refobjsubid FROM pg_depend WHERE objid=sq.oid AND deptype='a') AS owner_col,
 	  (pg_temp.get_seq_attribs(ns.nspname, sq.relname)) AS attribute, ]
 

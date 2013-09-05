@@ -177,7 +177,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 			item->setText(0, itr->second);
 
 			//Disabling items that refers to PostgreSQL's built-in data types
-			if(types[i]==OBJ_TYPE && PgSQLType::getBaseTypeIndex(itr->second)!=BaseType::null)
+			if(types[i]==OBJ_TYPE && itr->first.toUInt() <= import_helper.getLastSystemOID())
 			{
 				item->setDisabled(true);
 				item->setToolTip(0, trUtf8("This is a PostgreSQL built-in data type and cannot be imported."));

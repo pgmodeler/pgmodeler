@@ -120,7 +120,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Generic method that removes an object to the model. The boolean param is used
 		to enable/disable reference checking before remove the object from model. */
-		void __removeObject(BaseObject *object, int obj_idx=-1);//, bool check_refs=true);
+		void __removeObject(BaseObject *object, int obj_idx=-1, bool check_refs=true);
 
 		//! \brief Recreates the special object from the passed xml code buffer
 		void createSpecialObject(const QString &xml_def, unsigned obj_id=0);

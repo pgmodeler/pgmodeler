@@ -53,6 +53,8 @@ class DatabaseImportHelper: public QObject {
 		map<unsigned, attribs_map> system_objs;
 		map<unsigned, map<unsigned, attribs_map>> columns;
 
+		map<QString, QString> seq_tab_swap;
+
 		ModelWidget *model_wgt;
 
 		DatabaseModel *dbmodel;
@@ -75,6 +77,7 @@ class DatabaseImportHelper: public QObject {
 		void createAggregate(attribs_map &attribs);
 		void createType(attribs_map &attribs);
 		void createTable(attribs_map &attribs);
+
 		//void createView(attribs_map &attribs);
 		//void createConstraint(attribs_map &attribs);
 		//void createIndex(attribs_map &attribs);
@@ -118,7 +121,8 @@ class DatabaseImportHelper: public QObject {
 		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
 
-    signals:
+		void finishImport(void);
+	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
 

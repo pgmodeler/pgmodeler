@@ -375,7 +375,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
 				 obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
 				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-				 obj_type==OBJ_CONVERSION ||
+				 obj_type==OBJ_CONVERSION || obj_type==OBJ_SEQUENCE ||
 				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
 				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||

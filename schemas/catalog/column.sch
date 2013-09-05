@@ -12,9 +12,21 @@
    WHERE cl.attisdropped IS FALSE AND relname=]'@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ORDER BY attnum ASC ]
 %else
     %if @{attribs} %then
-     [SELECT cl.attnum AS oid, cl.attname AS name, cl.atttypid AS type, cl.attlen AS length, cl.attndims AS dimension,
-	     cl.attnotnull AS not_null_bool, cl.attacl AS permissions, df.adsrc AS default_value,
+     [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
+	     cl.attacl AS permissions, df.adsrc AS default_value,
 	     ds.description AS comment, ]
+
+     # This subquery retrieve the schema name for the type when it is undeer public schema.
+     # This is necessary because pgModeler identifies user-defined types by the complete
+     # type signature [schema].[typename]
+     [(SELECT
+	CASE
+	 WHEN ns.nspname='public' THEN ns.nspname || '.'
+	 ELSE ''
+	END
+	FROM pg_namespace AS ns
+	LEFT JOIN pg_type AS tp ON tp.typnamespace=ns.oid
+	WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, ]
 
       %if @{pgsql90} %then
        [ NULL AS collation ]
