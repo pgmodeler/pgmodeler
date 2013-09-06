@@ -34,29 +34,56 @@ class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		//This pattern matches the array of oids in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
+		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		static const QString ARRAY_PATTERN;
 
+		//! \brief Instance of catalog class to query system catalogs
 		Catalog catalog;
 
+		//! \brief Instance of a connection to work on
 		Connection connection;
 
-		bool import_canceled, ignore_errors, import_sys_objs;
+		//! \brief Indicates that import was canceled by user (only on thread mode)
+		bool import_canceled,
 
+		//! \brief Indicates that import must ignore any error generated during the import
+		ignore_errors,
+
+		//! \brief Enables the import of system objects (under pg_catalog / information_schema)
+		import_sys_objs;
+
+		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
+
+		//! \brief Stores the selected column ids to be imported
 		map<unsigned, vector<unsigned>> column_oids;
 
+		//! \brief Stores the oid of objects sucessfully created
+		vector<unsigned> created_objs;
+
+		//! \brief Stores the selected objects oids to be imported
 		vector<unsigned> creation_order;
 
-		map<unsigned, BaseObject *> created_objs;
+		//! \brief Stores the user defined objects attributes
 		map<unsigned, attribs_map> user_objs;
+
+		//! \brief Stores the system catalog objects attributes
 		map<unsigned, attribs_map> system_objs;
+
+		//! \brief Stores all defined types attributes
+		map<unsigned, attribs_map> types;
+
+		//! \brief Stores all selected columns attributes
 		map<unsigned, map<unsigned, attribs_map>> columns;
 
+		/*! \brief This special map is used to swap the id of a table and the sequence that
+				is referenced by it in order to avoid reference breaking */
 		map<QString, QString> seq_tab_swap;
 
+		//! \brief Database model widget which will receive the imported objects
 		ModelWidget *model_wgt;
 
+		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
 
 		void configureDatabase(attribs_map &attribs);
@@ -85,32 +112,58 @@ class DatabaseImportHelper: public QObject {
 		//void createTrigger(attribs_map &attribs);
 		//void createPermission(attribs_map &attribs);
 
-
+		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		QStringList parseArrayValues(const QString array_val);
+
+		/*! \brief Parse a function's default value and return the elements in a string list.
+		It can be specified the string delimiter as well the value separator if the input default value
+		contains several values */
 		QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
+		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
+		or operator the signature can be retrieved instead by using the boolean parameter */
 		QString getObjectName(const QString &oid, bool signature_form=false);
+
+		//! \brief Get the names for the objects oids inside the oid vector.
 		QStringList getObjectNames(const QString &oid_vect, bool signature_form=false);
 
+		/*! \brief Returns the column name represented by the parent table's oid and column id.
+		If the boolean parameter is true then the table name is prepend to the column name */
 		QString getColumnName(const QString &tab_oid, const QString &col_id, bool prepend_tab_name=false);
 
+		/*! \brief Returns the name for the type represented by a oid. If the boolean parameter is true then
+		the method will return the xml defintion for the type instead of the name */
 		QString getType(const QString &oid, bool generate_xml, attribs_map extra_attribs=attribs_map());
+
+		//! \brief Returns the type names or xml code for the specified oid vector
 		QStringList getTypes(const QString &oid_vect, bool generate_xml);
 
-		QString getDependencyObject(const QString &oid, bool use_signature=false, attribs_map extra_attribs=attribs_map());
+		/*! \brief Returns the xml definition for the specified oid. If the boolean param is true then the method will
+		return the xml definition with signature attribute instead of name */
+		QString getDependencyObject(const QString &oid, bool use_signature=false, bool recursive_dep_res=true, attribs_map extra_attribs=attribs_map());
+
+		//! \brief Returns the xml defintion for the object's comment
 		QString getComment(attribs_map &attribs);
 
+		/*! \brief Loads the xml parser buffer with the xml schema file relative to the object type
+		using the specified set of attributes */
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);
 
 	public:
 		DatabaseImportHelper(QObject *parent=0);
 		~DatabaseImportHelper(void);
 
+		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);
+
+		//! \brief Set the current database to work on
 		void setCurrentDatabase(const QString &dbname);
+
+		//! \brief Defines the selected object to be imported
+		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+
 		void setImportSystemObject(bool value);
 		void setIgnoreErrors(bool value);
-		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 		unsigned getLastSystemOID(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
@@ -120,8 +173,9 @@ class DatabaseImportHelper: public QObject {
 				before assigne the connection to this class. */
 		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
-
+		//! \brief Execute the last operations before end the import
 		void finishImport(void);
+
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);

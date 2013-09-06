@@ -10,8 +10,11 @@ int main(int argc, char **argv)
 		PgSQLType tp;
 		QTextStream ts(stdout);
 
-		tp=PgSQLType::parseString("timestamp(0) without timezone");
+		tp=PgSQLType::parseString("interval MINUTE TO SECOND []");
 		ts << *tp << endl;
+
+		/*tp=PgSQLType::parseString("timestamp(0) without timezone");
+		ts << *tp << endl;*/
 /*
 		tp=parseString("geography (POINTZ, 4396)");
 		ts << *tp << endl;

@@ -115,11 +115,8 @@
      
     (@{comment}) [ AS comment ]
 
-    [ FROM pg_type AS tp ]
-
-    #%if @{schema} %then
-      [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
-    #%end
+    [ FROM pg_type AS tp
+      LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
     #Excluding types related to tables/views/sequeces
     [ WHERE typtype IN ('p','b','c','e','r') AND typname NOT LIKE 'pg_%' ]
@@ -130,7 +127,7 @@
     %end
 
     %if @{exc-builtin-arrays}  %then
-    #The tp.typtype='p' indicates to include pseudo-type even if they are an array construction
+      #The tp.typtype='p' indicates to include pseudo-type even if they are an array construction
       [ AND (tp.typtype='p' OR tp.typarray > 0) ]
     %end
 

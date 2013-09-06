@@ -53,6 +53,8 @@ void Catalog::setFilter(unsigned filter)
 {
 	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
 
+	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
+
 	if(list_all)
 		list_only_sys_objs=exclude_ext_objs=exclude_sys_objs=false;
 	else
@@ -63,6 +65,7 @@ void Catalog::setFilter(unsigned filter)
 		{
 			exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
 			exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
+
 		}
 		else
 			exclude_ext_objs=exclude_sys_objs=false;
@@ -89,12 +92,10 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(list_only_sys_objs)
 			attribs[ParsersAttributes::OID_FILTER_OP]="<=";
 		else
-		{
 			attribs[ParsersAttributes::OID_FILTER_OP]=">";
 
-			if(obj_type==OBJ_TYPE)
-				attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
-		}
+		if(obj_type==OBJ_TYPE && exclude_array_types)
+			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
 
 		if(exclude_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 			attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);

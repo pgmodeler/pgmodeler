@@ -165,7 +165,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 
 			if((itr->first.toUInt() > import_helper.getLastSystemOID()) ||
 				 (types[i]==OBJ_SCHEMA && itr->second=="public") ||
-				 (types[i]==OBJ_COLUMN))
+				 (types[i]==OBJ_COLUMN && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID()))
 			{
 				item->setCheckState(0, Qt::Checked);
 				child_checked=true;

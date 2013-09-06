@@ -52,7 +52,7 @@ class Catalog {
 		unsigned last_sys_oid;
 
 		//! \brief Indicates if the catalog must filter system objects
-		bool exclude_sys_objs, exclude_ext_objs, list_only_sys_objs;
+		bool exclude_sys_objs, exclude_ext_objs, exclude_array_types, list_only_sys_objs;
 
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
@@ -83,10 +83,24 @@ class Catalog {
 
 	public:
 		Catalog(void);
-		static const unsigned EXCL_SYSTEM_OBJS=1, //! \brief Excludes the system objects from listing
-													EXCL_EXTENSION_OBJS=2, //! \brief Excludes the extension generated objects from listing
-													LIST_ONLY_SYS_OBJS=4, //! \brief Shows only system objects. Using this filter will disable the other two filters.
-													LIST_ALL_OBJS=8;  //! \brief Shows all objects including system objects and extension object.
+
+		//! \brief Excludes the system objects from listing
+		static const unsigned EXCL_SYSTEM_OBJS=1,
+
+		//! \brief Excludes the extension generated objects from listing
+		EXCL_EXTENSION_OBJS=2,
+
+		/*! \brief Excludes the builtin array types. This constant can be used with
+		LIST_ALL_OBJS and LIST_ONLY_SYS_OBJS */
+		EXCL_BUILTIN_ARRAY_TYPES=4,
+
+		/*! \brief Shows only system objects. Using this filter will disable the other two filters.
+		Using this filter implies the listing of extension objects */
+		LIST_ONLY_SYS_OBJS=8,
+
+		/*! \brief Shows all objects including system objects and extension object. Using this filter will
+		cancel the EXCL_EXTENSION_OBJS and EXCL_SYSTEM_OBJS if they are present */
+		LIST_ALL_OBJS=16;
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);

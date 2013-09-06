@@ -748,10 +748,10 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		interv=intervals.back();
 		intervals.pop_back();
 
-		start=type_str.indexOf(interv.toLower());
+		start=type_str.indexOf(QRegExp("( )" + interv.toLower()));
 		if(start>=0)
 		{
-			type_str.remove(start, interv.size());
+			type_str.remove(start, interv.size()+1);
 			break;
 		}
 		else
@@ -865,7 +865,7 @@ unsigned PgSQLType::operator = (const QString &type_name)
 {
 	unsigned type_idx, usr_type_idx;
 
-	type_idx=getBaseTypeIndex(type_name);//BaseType::getType(type_name, offset, types_count);
+	type_idx=getBaseTypeIndex(type_name);
 	usr_type_idx=getUserTypeIndex(type_name, nullptr);
 
 	if(type_idx==0 && usr_type_idx==0)
