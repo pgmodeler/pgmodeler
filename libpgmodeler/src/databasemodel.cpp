@@ -1141,8 +1141,8 @@ void DatabaseModel::validateRelationships(void)
 	vector<BaseObject *>::iterator itr, itr_end, itr_ant;
 	Relationship *rel=nullptr;
 	BaseRelationship *base_rel=nullptr;
-	vector<BaseObject *> vet_rel, vet_rel_inv, rels;
-	bool found_inval_rel;
+	vector<BaseObject *> vet_rel, vet_rel_inv, rels, fail_rels;
+	bool found_inval_rel, valid_fail_rels=false;
 	vector<Exception> errors;
 	map<unsigned, QString>::iterator itr1, itr1_end;
 	map<unsigned, Exception> error_map;
@@ -1256,14 +1256,33 @@ void DatabaseModel::validateRelationships(void)
 						schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
 
 					idx++;
+
+					/* Removes the relationship from the current position and inserts it
+					into the next position after the next relationship to try the reconnection */
+					rels.erase(itr_ant);
+					idx=0;
+
+					/* If the list was emptied and there is relationship that fails to validate,
+					the method will try to validate them one last time */
+					if(rels.size()==0 && !fail_rels.empty() && !valid_fail_rels)
+					{
+						rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
+						//Check this flag indicates that the fail_rels list must be copied only one time
+						valid_fail_rels=true;
+					}
+
+					itr=rels.begin();
+					itr_end=rels.end();
 				}
 				/* Case some error is raised during the connection the relationship is
 			 permanently invalidated and need to be removed from the model */
 				catch(Exception &e)
 				{
 					/* If the relationship connection failed after 'rels_gen_pk' times at the
-					same error it will be deleted from model */
-					if(e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk)
+						different errors or exists on the fail_rels vector (already tried to be validated)
+						it will be deleted from model */
+					if((e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk) ||
+						 (std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
 					{
 						//Removes the relationship
 						__removeObject(rel);
@@ -1274,6 +1293,26 @@ void DatabaseModel::validateRelationships(void)
 						//Stores the error raised in a list
 						errors.push_back(e);
 					}
+					/* If the relationship connection fails with the ERR_LINK_TABLES_NO_PK error and
+					the connection tries exceed the size of the relationship the relationship is isolated
+					on a "failed to validate" list. This list will be appended to the main rel list when
+					there is only one relationship to be validated */
+					else if(e.getErrorType()==ERR_LINK_TABLES_NO_PK &&
+									(conn_tries[rel] > rels.size() ||
+									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
+					{
+						fail_rels.push_back(rel);
+						rels.erase(itr_ant);
+						conn_tries[rel]=0;
+
+						/* If the list was emptied and there is relationship that fails to validate,
+						the method will try to validate them one last time */
+						if(rels.size()==0 && !valid_fail_rels)
+						{
+							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
+							valid_fail_rels=true;
+						}
+					}
 					else
 					{
 						//Increments the connection tries
@@ -1282,7 +1321,12 @@ void DatabaseModel::validateRelationships(void)
 						/* Removes the relationship from the current position and inserts it
 						into the next position after the next relationship to try the reconnection */
 						rels.erase(itr_ant);
-						rels.insert(rels.begin() + idx + 1,rel);
+
+						//If the next index doesn't extrapolates the list size insert it on the next position
+						if(idx+1 < rels.size())
+							rels.insert(rels.begin() + idx + 1,rel);
+						else
+							rels.push_back(rel);
 					}
 
 					/* Points the searching to the iterator immediately after the removed iterator
