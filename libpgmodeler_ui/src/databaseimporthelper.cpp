@@ -120,7 +120,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 
 void DatabaseImportHelper::finishImport(void)
 {
-	Schema *schema=nullptr;
+	//Schema *schema=nullptr;
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
 	unsigned i=0, cnt=0;
@@ -131,7 +131,8 @@ void DatabaseImportHelper::finishImport(void)
 	{
 		sequence=dbmodel->getObject(getObjectName(itr->first), OBJ_SEQUENCE);
 		table=dbmodel->getObject(getObjectName(itr->second), OBJ_TABLE);
-		BaseObject::swapObjectsIds(sequence, table, false);
+		if(sequence && table)
+			BaseObject::swapObjectsIds(sequence, table, false);
 		itr++;
 	}
 
@@ -304,6 +305,7 @@ void DatabaseImportHelper::importDatabase(void)
 		seq_tab_swap.clear();
 		columns.clear();
 		system_objs.clear();
+		created_objs.clear();
 
 		/* Puts the thread to sleep by 20ms at end of process export to give time to external operations
 		to be correctly finished before completely quit the thread itself */
@@ -329,12 +331,12 @@ void DatabaseImportHelper::cancelImport(void)
 
 void DatabaseImportHelper::createObject(attribs_map &attribs)
 {
-	try
-	{
-		unsigned oid=attribs[ParsersAttributes::OID].toUInt();
-		ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
-		QString obj_name=getObjectName(attribs[ParsersAttributes::OID], (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR));
+	unsigned oid=attribs[ParsersAttributes::OID].toUInt();
+	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+	QString obj_name=getObjectName(attribs[ParsersAttributes::OID], (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR));
 
+	try
+	{	
 		if(!import_canceled &&
 			 (obj_type==OBJ_DATABASE || TableObject::isTableObject(obj_type) ||
 
@@ -386,7 +388,9 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(ERR_OBJECT_NOT_IMPORTED)
+										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
+										ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
 	}
 }
 
@@ -455,6 +459,10 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, bool use_s
 				xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
 				SchemaParser::setIgnoreUnkownAttributes(false);
 			}
+			else
+				/* If the object oid is valid but there is no attribute set to it creates a xml definition
+					 containing an alert indicating that the object is unknown */
+				xml_def=QString("\t<!--[ unknown object OID=%1 ]-->\n").arg(oid);
 		}
 
 		return(xml_def);
@@ -467,9 +475,10 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, bool use_s
 
 void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attribs)
 {
+	QString xml_buf;
+
 	try
 	{
-		QString xml_buf;
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		xml_buf=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
 
@@ -480,7 +489,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xml_buf);
 	}
 }
 
@@ -793,6 +802,13 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			elem_attr[ParsersAttributes::DEFINITION]=getType(attribs[ParsersAttributes::STORAGE], true);
 			elems.push_back(elem_attr);
 		}
+		else if(attribs[ParsersAttributes::FUNCTION].isEmpty() &&
+						attribs[ParsersAttributes::OPERATOR].isEmpty())
+		{
+			elem_attr[ParsersAttributes::STORAGE]="1";
+			elem_attr[ParsersAttributes::DEFINITION]=attribs[ParsersAttributes::TYPE];
+			elems.push_back(elem_attr);
+		}
 
 		//Generating attributes for FUNCTION elements
 		if(!attribs[ParsersAttributes::FUNCTION].isEmpty())
@@ -867,7 +883,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 													 ParsersAttributes::NEGATOR_OP };
 
 		for(unsigned i=0; i < 3; i++)
-			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], true, false, {{ParsersAttributes::REF_TYPE, func_types[i]}});
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], true, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		for(unsigned i=0; i < 2; i++)
 			attribs[arg_types[i]]=getType(attribs[arg_types[i]], true, {{ParsersAttributes::REF_TYPE, arg_types[i]}});
@@ -1292,7 +1308,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 	{
 		attribs_map type_attr;
 		QString xml_def, sch_name, obj_name;
-		unsigned type_oid=oid_str.toUInt();
+		unsigned type_oid=oid_str.toUInt(), dimension=0;
 
 		if(type_oid > 0)
 		{
@@ -1303,7 +1319,11 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 type_attr[ParsersAttributes::NAME].contains("[]"))
 			{
 				obj_name=type_attr[ParsersAttributes::NAME];
-				if(generate_xml) obj_name.remove("[]");
+				if(generate_xml)
+				{
+					dimension=type_attr[ParsersAttributes::NAME].count("[]");
+					obj_name.remove("[]");
+				}
 			}
 			else
 				obj_name=type_attr[ParsersAttributes::NAME];
@@ -1316,6 +1336,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(generate_xml)
 			{
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
+				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
 				SchemaParser::setIgnoreUnkownAttributes(true);
 				xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
 				SchemaParser::setIgnoreUnkownAttributes(false);

@@ -428,6 +428,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
+		QString getErrorExtraInfo(void);
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);

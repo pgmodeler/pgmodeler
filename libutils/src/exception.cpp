@@ -223,7 +223,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes. 'Ignore object duplications' and 'simulate export' are mutually exclusive!")},
 	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
-	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")}
+	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
+	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object '%1' (%2) couldn't be imported due to one or more errors! Check the exception stack for more details.")}
 };
 
 Exception::Exception(void)

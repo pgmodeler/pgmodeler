@@ -2953,6 +2953,19 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	}
 }
 
+QString DatabaseModel::getErrorExtraInfo(void)
+{
+	QString extra_info;
+
+	if(!XMLParser::getLoadedFilename().isEmpty())
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+							 .arg(XMLParser::getCurrentElement()->line);
+	else
+		extra_info=XMLParser::getXMLBuffer();
+
+	return extra_info;
+}
+
 Role *DatabaseModel::createRole(void)
 {
 	attribs_map attribs, attribs_aux;
@@ -3046,13 +3059,8 @@ Role *DatabaseModel::createRole(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(role) delete(role);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(role);
@@ -3072,13 +3080,8 @@ Tablespace *DatabaseModel::createTablespace(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(tabspc) delete(tabspc);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(tabspc);
@@ -3099,12 +3102,8 @@ Schema *DatabaseModel::createSchema(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(schema) delete(schema);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(schema);
@@ -3179,13 +3178,8 @@ Language *DatabaseModel::createLanguage(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(lang) delete(lang);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(lang);
@@ -3326,10 +3320,6 @@ Function *DatabaseModel::createFunction(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(func)
 		{
 			str_aux=func->getName(true);
@@ -3340,9 +3330,9 @@ Function *DatabaseModel::createFunction(void)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
 											.arg(Utf8String::create(str_aux))
 											.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, extra_info);
+											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(func);
@@ -3387,9 +3377,7 @@ Parameter DatabaseModel::createParameter(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
+		QString extra_info=getErrorExtraInfo();
 		XMLParser::restorePosition();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
@@ -3451,9 +3439,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
+		QString extra_info=getErrorExtraInfo();
 		XMLParser::restorePosition();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
@@ -3674,10 +3660,6 @@ Type *DatabaseModel::createType(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(type)
 		{
 			str_aux=type->getName(true);
@@ -3688,9 +3670,9 @@ Type *DatabaseModel::createType(void)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
 											.arg(Utf8String::create(str_aux))
 											.arg(type->getTypeName()),
-											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, extra_info);
+											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(type);
@@ -3744,13 +3726,8 @@ Domain *DatabaseModel::createDomain(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(domain) delete(domain);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(domain);
@@ -3822,13 +3799,8 @@ Cast *DatabaseModel::createCast(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(cast) delete(cast);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(cast);
@@ -3886,13 +3858,8 @@ Conversion *DatabaseModel::createConversion(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(conv) delete(conv);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(conv);
@@ -3986,12 +3953,8 @@ Operator *DatabaseModel::createOperator(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(oper) delete(oper);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(oper);
@@ -4108,13 +4071,8 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(op_class) delete(op_class);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(op_class);
@@ -4134,13 +4092,8 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(op_family) delete(op_family);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(op_family);
@@ -4208,13 +4161,8 @@ Aggregate *DatabaseModel::createAggregate(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(aggreg) delete(aggreg);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(aggreg);
@@ -4270,14 +4218,10 @@ Table *DatabaseModel::createTable(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
+		QString extra_info=getErrorExtraInfo();
 		XMLParser::restorePosition();
 
 		if(table) delete(table);
-
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
@@ -4318,13 +4262,8 @@ Column *DatabaseModel::createColumn(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(column) delete(column);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(column);
@@ -4538,13 +4477,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(constr) delete(constr);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(constr);
@@ -4751,13 +4685,8 @@ Index *DatabaseModel::createIndex(Table *table)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(index) delete(index);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(index);
@@ -4817,12 +4746,8 @@ Rule *DatabaseModel::createRule(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(rule) delete(rule);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(rule);
@@ -4985,12 +4910,8 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(trigger) delete(trigger);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(trigger);
@@ -5067,12 +4988,8 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(sequence) delete(sequence);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(sequence);
@@ -5239,12 +5156,8 @@ View *DatabaseModel::createView(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(view) delete(view);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(view);
@@ -5297,14 +5210,8 @@ Collation *DatabaseModel::createCollation(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-									 .arg(XMLParser::getCurrentElement()->line);
-
 		if(collation) delete(collation);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(collation);
@@ -5327,12 +5234,8 @@ Extension *DatabaseModel::createExtension(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(extension) delete(extension);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(extension);
@@ -5367,13 +5270,8 @@ Textbox *DatabaseModel::createTextbox(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-									 .arg(XMLParser::getCurrentElement()->line);
-
 		if(txtbox) delete(txtbox);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(txtbox);
@@ -5622,14 +5520,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
-
 		if(base_rel && base_rel->getObjectType()==OBJ_RELATIONSHIP)
 			delete(base_rel);
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	if(rel)
@@ -5780,12 +5674,8 @@ Permission *DatabaseModel::createPermission(void)
 	}
 	catch(Exception &e)
 	{
-		QString extra_info;
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
 		if(perm) delete(perm);
-
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
 	return(perm);

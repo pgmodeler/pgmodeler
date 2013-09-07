@@ -744,12 +744,26 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
                <property name="expandsOnDoubleClick">
                 <bool>true</bool>
                </property>
+               <property name="columnCount">
+                <number>2</number>
+               </property>
+               <attribute name="headerVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="headerMinimumSectionSize">
+                <number>50</number>
+               </attribute>
                <attribute name="headerShowSortIndicator" stdset="0">
                 <bool>false</bool>
                </attribute>
                <column>
                 <property name="text">
                  <string notr="true">1</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string notr="true">2</string>
                 </property>
                </column>
               </widget>
@@ -970,6 +984,13 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
                 <widget class="QLineEdit" name="filter_edt">
                  <property name="enabled">
                   <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="by_oid_chk">
+                 <property name="text">
+                  <string>By OID</string>
                  </property>
                 </widget>
                </item>

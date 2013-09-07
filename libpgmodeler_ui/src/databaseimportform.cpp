@@ -55,6 +55,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -140,6 +141,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 	attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, "1"}};
 	attribs_map::iterator itr;
 	vector<QTreeWidgetItem *> items_vect;
+	QString tooltip="OID: %1";
 	bool child_checked=false;
 
 	grp_fnt.setItalic(true);
@@ -175,6 +177,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 
 			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
 			item->setText(0, itr->second);
+			item->setText(1, itr->first);
 
 			//Disabling items that refers to PostgreSQL's built-in data types
 			if(types[i]==OBJ_TYPE && itr->first.toUInt() <= import_helper.getLastSystemOID())
@@ -197,6 +200,11 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(vector<ObjectTyp
 
 			//Stores the object's OID as the first data of the item
 			item->setData(0, Qt::UserRole, itr->first.toUInt());
+
+			if(!item->toolTip(0).isEmpty())
+				item->setToolTip(0,item->toolTip(0) + "\n" + tooltip.arg(itr->first));
+			else
+				item->setToolTip(0,tooltip.arg(itr->first));
 
 			//Stores the object's type as the second data of the item
 			item->setData(1, Qt::UserRole, types[i]);
@@ -305,6 +313,7 @@ void DatabaseImportForm::listObjects(void)
 	{
 		bool enable=false;
 		db_objects_tw->clear();
+		db_objects_tw->setColumnHidden(1, true);
 
 		if(database_cmb->currentIndex() > 0)
 		{
@@ -365,6 +374,7 @@ void DatabaseImportForm::listObjects(void)
 		collapse_all_tb->setEnabled(enable);
 		filter_lbl->setEnabled(enable);
 		filter_edt->setEnabled(enable);
+		by_oid_chk->setEnabled(enable);
 		import_btn->setEnabled(hasCheckedItems());
 	}
 	catch(Exception &e)
@@ -506,7 +516,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 void DatabaseImportForm::filterObjects(void)
 {
-	QList<QTreeWidgetItem*> items=db_objects_tw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+	QList<QTreeWidgetItem*> items=db_objects_tw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive, by_oid_chk->isChecked());
 	QTreeWidgetItemIterator itr(db_objects_tw);
 	QTreeWidgetItem *parent=nullptr;
 

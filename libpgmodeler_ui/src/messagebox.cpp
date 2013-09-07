@@ -81,7 +81,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 {
 	vector<Exception> list;
 	vector<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
+	QTreeWidgetItem *root=nullptr,*item=nullptr,*item1=nullptr,*item2=nullptr;
 	QLabel *label=nullptr;
 	int idx=0;
 	Exception *ex=nullptr;
@@ -141,6 +141,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 			label->setWordWrap(true);
 			label->setFont(font);
 			label->setStyleSheet("color: #000080;");
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			exceptions_trw->setItemWidget(item1, 0, label);
 			label->setText(ex->getExtraInfo());
 		}
