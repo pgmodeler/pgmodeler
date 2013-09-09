@@ -7823,10 +7823,12 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 
 				if(tab->getObjectType()==OBJ_TABLE)
 					tab_objs=dynamic_cast<Table *>(tab)->getObjectList(obj_type);
-				else if(obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
+				else if(tab->getObjectType()==OBJ_VIEW &&
+								 (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE))
 					tab_objs=dynamic_cast<View *>(tab)->getObjectList(obj_type);
 
-				objs.insert(objs.end(), tab_objs->begin(), tab_objs->end());
+				if(tab_objs)
+					objs.insert(objs.end(), tab_objs->begin(), tab_objs->end());
 			}
 		}
 	}

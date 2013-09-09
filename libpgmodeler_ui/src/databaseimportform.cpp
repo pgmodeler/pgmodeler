@@ -115,6 +115,7 @@ void DatabaseImportForm::importDatabase(void)
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 
 		import_helper.setIgnoreErrors(ignore_errors_chk->isChecked());
+		import_helper.setAutoResolveDeps(resolve_deps_chk->isChecked());
 		import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
 
 		timer.stop();

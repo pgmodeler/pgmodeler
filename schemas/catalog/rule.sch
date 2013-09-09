@@ -33,7 +33,7 @@
 %else
     %if @{attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,
-	      pg_get_ruledef(rl.oid) AS definition,
+	      pg_get_ruledef(rl.oid) AS commands,
 	      ds.description AS comment,
 	CASE
 	 WHEN rl.is_instead IS TRUE THEN 'INSTEAD'
@@ -41,10 +41,10 @@
 	END exec_type,
 
 	CASE rl.ev_type
-	 WHEN '1'::"char" THEN 'SELECT'::text
-	 WHEN '2'::"char" THEN 'UPDATE'::text
-	 WHEN '3'::"char" THEN 'INSERT'::text
-	 WHEN '4'::"char" THEN 'DELETE'::text
+	 WHEN '1'::"char" THEN 'ON SELECT'::text
+	 WHEN '2'::"char" THEN 'ON UPDATE'::text
+	 WHEN '3'::"char" THEN 'ON INSERT'::text
+	 WHEN '4'::"char" THEN 'ON DELETE'::text
 	 ELSE NULL::text
 	END AS event_type
 

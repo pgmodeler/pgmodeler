@@ -50,7 +50,10 @@ class DatabaseImportHelper: public QObject {
 		ignore_errors,
 
 		//! \brief Enables the import of system objects (under pg_catalog / information_schema)
-		import_sys_objs;
+		import_sys_objs,
+
+		//! \brief Enables the dependency resolution by query the catalog when a needed object wasn't retrieved
+		auto_resolve_deps;
 
 		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
@@ -104,12 +107,12 @@ class DatabaseImportHelper: public QObject {
 		void createAggregate(attribs_map &attribs);
 		void createType(attribs_map &attribs);
 		void createTable(attribs_map &attribs);
+		void createView(attribs_map &attribs);
+		void createRule(attribs_map &attribs);
+		void createTrigger(attribs_map &attribs);
+		void createIndex(attribs_map &attribs);
 
-		//void createView(attribs_map &attribs);
 		//void createConstraint(attribs_map &attribs);
-		//void createIndex(attribs_map &attribs);
-		//void createRule(attribs_map &attribs);
-		//void createTrigger(attribs_map &attribs);
 		//void createPermission(attribs_map &attribs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
@@ -138,9 +141,10 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Returns the type names or xml code for the specified oid vector
 		QStringList getTypes(const QString &oid_vect, bool generate_xml);
 
-		/*! \brief Returns the xml definition for the specified oid. If the boolean param is true then the method will
-		return the xml definition with signature attribute instead of name */
-		QString getDependencyObject(const QString &oid, bool use_signature=false, bool recursive_dep_res=true, attribs_map extra_attribs=attribs_map());
+		/*! \brief Returns the xml definition for the specified oid. If the boolean param 'use_signature' is true then the method will
+		return the xml definition with signature attribute instead of name. If the param 'recursive_dep_res' is true the method will
+		create a dependency if it's attributes exists but it doesn't exists on the model yet (note: this is different from auto_resolve_deps attribute) */
+		QString getDependencyObject(const QString &oid, ObjectType dep_type, bool use_signature=false, bool recursive_dep_res=true, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the xml defintion for the object's comment
 		QString getComment(attribs_map &attribs);
@@ -148,6 +152,9 @@ class DatabaseImportHelper: public QObject {
 		/*! \brief Loads the xml parser buffer with the xml schema file relative to the object type
 		using the specified set of attributes */
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);
+
+		//! \brief Clears the vectors and maps used in the import process
+		void clearImportParams(void);
 
 	public:
 		DatabaseImportHelper(QObject *parent=0);
@@ -164,6 +171,7 @@ class DatabaseImportHelper: public QObject {
 
 		void setImportSystemObject(bool value);
 		void setIgnoreErrors(bool value);
+		void setAutoResolveDeps(bool value);
 		unsigned getLastSystemOID(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"

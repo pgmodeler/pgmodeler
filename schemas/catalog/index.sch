@@ -39,7 +39,7 @@
 
       [       id.indkey::oid] $ob $cb [ AS columns,
 	      id.indclass::oid] $ob $cb [ AS opclass,
-	      string_to_array(pg_get_expr(indexprs, indrelid),',') AS elements,
+	      string_to_array(pg_get_expr(indexprs, indrelid),',') AS expression,
 	      pg_get_expr(indpred, indrelid, true) condition,
 	      ds.description AS comment
 	FROM pg_index AS id

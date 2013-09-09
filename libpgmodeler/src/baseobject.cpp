@@ -379,7 +379,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
 				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
-				 obj_type==OBJ_COLLATION);
+				 obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW);
 }
 
 bool BaseObject::acceptsOwner(void)
