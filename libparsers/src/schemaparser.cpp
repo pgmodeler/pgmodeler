@@ -565,7 +565,7 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 		else
 		{
 			QRegExp regexp_vect[]={
-				QRegExp("(=\")+"), //Regexp to find the attribute start (attrib=")
+				QRegExp("([a-z]+)( )*(=\")"), //Regexp to find the attribute start (attrib=")
 				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)") //Regexp to find the attribute end ("\n|\r|\t/>)
 			};
 
@@ -593,7 +593,7 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
 						 !str_aux.contains(XMLParser::CHAR_GT) &&  !str_aux.contains(XMLParser::CHAR_AMP) &&
 						 str_aux.contains('&'))
-					 str_aux.replace('&',XMLParser::CHAR_AMP);
+						str_aux.replace('&',XMLParser::CHAR_AMP);
 
 					str_aux.replace('\"',XMLParser::CHAR_QUOT);
 					str_aux.replace('<',XMLParser::CHAR_LT);
@@ -601,7 +601,8 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 
 					//Puts on the original XML definition the modified string
 					lin.replace(pos,count,str_aux);
-					pos+=count;
+
+					pos+=str_aux.size()+1;//pos1+1;//count;
 				}
 			}
 

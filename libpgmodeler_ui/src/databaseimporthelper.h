@@ -144,7 +144,8 @@ class DatabaseImportHelper: public QObject {
 		/*! \brief Returns the xml definition for the specified oid. If the boolean param 'use_signature' is true then the method will
 		return the xml definition with signature attribute instead of name. If the param 'recursive_dep_res' is true the method will
 		create a dependency if it's attributes exists but it doesn't exists on the model yet (note: this is different from auto_resolve_deps attribute) */
-		QString getDependencyObject(const QString &oid, ObjectType dep_type, bool use_signature=false, bool recursive_dep_res=true, attribs_map extra_attribs=attribs_map());
+		QString getDependencyObject(const QString &oid, ObjectType dep_type, bool use_signature=false,
+																bool recursive_dep_res=true, bool generate_xml=true, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the xml defintion for the object's comment
 		QString getComment(attribs_map &attribs);

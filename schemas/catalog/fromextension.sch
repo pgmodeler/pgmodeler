@@ -9,6 +9,6 @@
 	   TRUE
 	  ELSE
 	   FALSE
-	END
+	END AS from_extension_bool
   FROM pg_depend
   WHERE (objid = ] @{oid} [ OR refobjid = ] @{oid} [) AND deptype = 'e' ]

@@ -15,9 +15,9 @@ $tb $tb <idxelement
 %if @{column} %then
   $tb $tb $tb [<column name=] "@{column}" /> $br
 %else
- %if @{expression} %then
+ #%if @{expression} %then
   $tb $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
- %end
+ #%end
 %end
 
 %if @{collation} %then

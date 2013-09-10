@@ -2698,7 +2698,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										//if(!signalsBlocked())
 										//{
 											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
-																					trUtf8("Loading object: %1 (%2)")
+																					trUtf8("Loading object: `%1' `(%2)'")
 																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),
 																					obj_type);
@@ -5824,7 +5824,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
 	QString def,
-			msg=trUtf8("Generating %1 of the object `%2' (%3)"),
+			msg=trUtf8("Generating %1 of the object `%2' `(%3)'"),
 			attrib=ParsersAttributes::OBJECTS,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
 	Type *usr_type=nullptr;

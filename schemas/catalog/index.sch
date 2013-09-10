@@ -25,11 +25,20 @@
     [ id.indexrelid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
+  %if %not @{schema} %and %not @{last-sys-oid} %then
+     [ WHERE ]
+   %else
+     [ AND ]
+   %end
+
+   [ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
+     ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+
 %else
     %if @{attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,
-	      cl.relam AS index_type, id.indrelid AS table,
-	      id.indisprimary, id.indisunique AS unique_bool, ]
+	      am.amname AS index_type, id.indrelid AS table,
+	      id.indisunique AS unique_bool, ]
 
       %if @{pgsql90} %then
        [ NULL AS collations, ]
@@ -38,12 +47,13 @@
       %end
 
       [       id.indkey::oid] $ob $cb [ AS columns,
-	      id.indclass::oid] $ob $cb [ AS opclass,
-	      string_to_array(pg_get_expr(indexprs, indrelid),',') AS expression,
+	      id.indclass::oid] $ob $cb [ AS opclasses,
+	      string_to_array(pg_get_expr(indexprs, indrelid),',') AS expressions,
 	      pg_get_expr(indpred, indrelid, true) condition,
 	      ds.description AS comment
 	FROM pg_index AS id
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
+	LEFT JOIN pg_am AS am ON cl.relam  = am.oid
 	LEFT JOIN pg_description ds ON ds.objoid = id.indexrelid ]
 
      %if @{schema} %then
@@ -75,5 +85,13 @@
        [ id.indexrelid IN (] @{filter-oids} )
      %end
 
+     %if %not @{schema} %and %not @{last-sys-oid} %and %not @{filter-oids} %then
+       [ WHERE ]
+     %else
+       [ AND ]
+     %end
+
+     [ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
+       ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
     %end
 %end

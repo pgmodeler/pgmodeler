@@ -54,6 +54,8 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 
 	text.replace(text.indexOf('`'), 1 ,"<strong>");
 	text.replace(text.indexOf('\''), 1,"</strong>");
+	text.replace(text.indexOf('`'), 1 ,"<em>");
+	text.replace(text.indexOf('\''), 1,"</em>");
 	text_lbl->setText(text);
 
 	if(icons.count(icon_id))
