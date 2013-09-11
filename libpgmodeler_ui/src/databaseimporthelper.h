@@ -37,11 +37,15 @@ class DatabaseImportHelper: public QObject {
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		static const QString ARRAY_PATTERN;
 
+		vector<Exception> errors;
+
 		//! \brief Instance of catalog class to query system catalogs
 		Catalog catalog;
 
 		//! \brief Instance of a connection to work on
 		Connection connection;
+
+		unsigned import_filter;
 
 		//! \brief Indicates that import was canceled by user (only on thread mode)
 		bool import_canceled,
@@ -51,6 +55,9 @@ class DatabaseImportHelper: public QObject {
 
 		//! \brief Enables the import of system objects (under pg_catalog / information_schema)
 		import_sys_objs,
+
+		//! \brief Enables the import of extension created objects
+		import_ext_objs,
 
 		//! \brief Enables the dependency resolution by query the catalog when a needed object wasn't retrieved
 		auto_resolve_deps;
@@ -66,6 +73,8 @@ class DatabaseImportHelper: public QObject {
 
 		//! \brief Stores the selected objects oids to be imported
 		vector<unsigned> creation_order;
+
+		vector<unsigned> constr_creation_order;
 
 		//! \brief Stores the user defined objects attributes
 		map<unsigned, attribs_map> user_objs;
@@ -111,9 +120,9 @@ class DatabaseImportHelper: public QObject {
 		void createRule(attribs_map &attribs);
 		void createTrigger(attribs_map &attribs);
 		void createIndex(attribs_map &attribs);
-
-		//void createConstraint(attribs_map &attribs);
-		//void createPermission(attribs_map &attribs);
+		void createConstraint(attribs_map &attribs);
+		void createPermission(attribs_map &attribs);
+		void createTableInheritances(void);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		QStringList parseArrayValues(const QString array_val);
@@ -132,7 +141,11 @@ class DatabaseImportHelper: public QObject {
 
 		/*! \brief Returns the column name represented by the parent table's oid and column id.
 		If the boolean parameter is true then the table name is prepend to the column name */
-		QString getColumnName(const QString &tab_oid, const QString &col_id, bool prepend_tab_name=false);
+		QString getColumnName(const QString &tab_oid_str, const QString &col_id, bool prepend_tab_name=false);
+
+		/*! \brief Returns the list of columns names translated from the id vector. This method works the same way
+		of getColumnName() but returns a list instead of single result */
+		QStringList getColumnNames(const QString &tab_oid_str, const QString &col_id_vect, bool prepend_tab_name=false);
 
 		/*! \brief Returns the name for the type represented by a oid. If the boolean parameter is true then
 		the method will return the xml defintion for the type instead of the name */
@@ -155,7 +168,7 @@ class DatabaseImportHelper: public QObject {
 		void loadObjectXML(ObjectType obj_type, attribs_map &attribs);
 
 		//! \brief Clears the vectors and maps used in the import process
-		void clearImportParams(void);
+		void resetImportParameters(void);
 
 	public:
 		DatabaseImportHelper(QObject *parent=0);
@@ -170,9 +183,8 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Defines the selected object to be imported
 		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
-		void setImportSystemObject(bool value);
-		void setIgnoreErrors(bool value);
-		void setAutoResolveDeps(bool value);
+		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors);
+
 		unsigned getLastSystemOID(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
@@ -185,6 +197,11 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Execute the last operations before end the import
 		void finishImport(void);
 
+		void retrieveSystemObjects(void);
+		void retrieveUserObjects(void);
+		void createObjects(void);
+		void createConstraints(void);
+		void updateFKRelationships(void);
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);

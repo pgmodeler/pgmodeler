@@ -439,15 +439,18 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(row_amount);
 	attributes[ParsersAttributes::FUNCTION_TYPE]=(~function_type);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(language)
 	{
-		attributes[ParsersAttributes::LANGUAGE]=language->getName(false);
-		attributes[ParsersAttributes::RETURN_TYPE]=(*return_type);
-	}
-	else
-	{
-		attributes[ParsersAttributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
-		attributes[ParsersAttributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
+		if(def_type==SchemaParser::SQL_DEFINITION)
+		{
+			attributes[ParsersAttributes::LANGUAGE]=language->getName(false);
+			attributes[ParsersAttributes::RETURN_TYPE]=(*return_type);
+		}
+		else
+		{
+			attributes[ParsersAttributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
+			attributes[ParsersAttributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
+		}
 	}
 
 	setTableReturnTypeAttribute(def_type);

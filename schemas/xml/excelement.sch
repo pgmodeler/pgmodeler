@@ -15,17 +15,17 @@ $tb $tb <excelement
 %if @{column} %then
   $tb $tb $tb [<column name=] "@{column}" /> $br
 %else
- %if @{expression} %then
+ #%if @{expression} %then
   $tb $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
- %end
+ #%end
 %end
 
 %if @{opclass} %then
   $tb $tb $tb @{opclass}
 %end
 
-%if @{operator} %then
-  $tb $tb $tb @{operator}
-%end
+#%if @{operator} %then
+$tb $tb $tb @{operator}
+#%end
 
 $tb $tb </excelement> $br

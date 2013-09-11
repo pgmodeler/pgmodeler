@@ -270,7 +270,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 						sql_cmd += lin + "\n";
 
 					//If the ddl end token is found
-					if(ddl_tk_found)
+					if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
 					{
 						//Regexp used to extract the object being created
 						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);

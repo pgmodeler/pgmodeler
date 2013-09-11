@@ -87,7 +87,7 @@
       %end
 
       %if @{from-extension} %then
-	%if @{last-sys-oid} %or @{schema} %then
+	%if @{last-sys-oid} %or @{filter-oids} %or @{schema} %then
 	  [ AND ]
 	%else
 	  [ WHERE ]

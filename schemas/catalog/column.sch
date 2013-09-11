@@ -9,7 +9,9 @@
 [ SELECT cl.attnum AS oid, cl.attname AS name FROM pg_attribute AS cl
    LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-   WHERE cl.attisdropped IS FALSE AND relname=]'@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ORDER BY attnum ASC ]
+   WHERE cl.attisdropped IS FALSE AND relname=]'@{table}' [ AND nspname= ] '@{schema}'
+#    [ AND attnum >= 0  AND attinhcount = 0 ORDER BY attnum ASC ]
+   [ AND attnum >= 0  ORDER BY attnum ASC ]
 %else
     %if @{attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
@@ -39,7 +41,10 @@
        LEFT JOIN pg_description AS ds ON ds.objoid=cl.attrelid AND ds.objsubid=cl.attnum
        LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
        LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-       WHERE  cl.attisdropped IS FALSE AND relname= ] '@{table}' [ AND nspname= ] '@{schema}' [ AND attnum >= 0 ]
+       WHERE  cl.attisdropped IS FALSE AND relname= ] '@{table}'
+       [ AND nspname= ] '@{schema}'
+       #[ AND attnum >= 0  AND attinhcount = 0 ]
+       [ AND attnum >= 0  ]
 
        %if @{filter-oids} %then
 	[ AND cl.attnum IN (] @{filter-oids} )

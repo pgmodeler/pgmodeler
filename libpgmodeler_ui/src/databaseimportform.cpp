@@ -41,6 +41,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
 	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
+	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll(void)));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll(void)));
 	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
@@ -55,7 +57,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -114,8 +115,8 @@ void DatabaseImportForm::importDatabase(void)
 		model_wgt=new ModelWidget;
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 
-		import_helper.setIgnoreErrors(ignore_errors_chk->isChecked());
-		import_helper.setAutoResolveDeps(resolve_deps_chk->isChecked());
+		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
+																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked());
 		import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
 
 		timer.stop();
@@ -328,7 +329,8 @@ void DatabaseImportForm::listObjects(void)
 
 			//Set the working database on import helper
 			import_helper.setCurrentDatabase(database_cmb->currentText());
-			import_helper.setImportSystemObject(import_sys_objs_chk->isChecked());
+			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
+																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked());
 
 			//Retrieving and listing the cluster scoped objects
 			progress=0;

@@ -66,7 +66,7 @@
  %if @{ck-constr} %or @{ex-constr} %then
    %if @{expression} %then
     %if @{decl-in-table} %then $tb %end
-    $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
+     $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
    %end
  %end
 

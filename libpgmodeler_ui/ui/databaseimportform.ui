@@ -278,8 +278,8 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="connection_lbl">
+             <item row="1" column="0">
+              <widget class="QLabel" name="group_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -287,48 +287,58 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Connection:</string>
+                <string>Group tables:</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="0" colspan="5">
-              <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="import_sys_objs_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Import system objects</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>15</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
+             <item row="3" column="4">
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="tabs_per_row_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Tables per row:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="tab_spacing_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Spacing:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0" colspan="5">
+              <layout class="QGridLayout" name="gridLayout_15">
                <item row="1" column="1">
-                <widget class="QLabel" name="hint2_lbl">
+                <widget class="QLabel" name="hint2_lbl_3">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -378,8 +388,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>pgModeler will list system objects. By default these objects aren't checked and it's recommend to select only those objects that are directly referenced by the ones to be imported.
-WARNING: Selecting a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.</string>
+                  <string>Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.</string>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::PlainText</enum>
@@ -394,7 +403,138 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
                   <number>0</number>
                  </property>
                  <property name="indent">
-                  <number>20</number>
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="import_ext_objs_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Import extension objects</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="connection_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Connection:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSpinBox" name="tabs_per_row_sb">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0" colspan="5">
+              <layout class="QGridLayout" name="gridLayout_9">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="resolve_deps_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Resolve dependencies automatically</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="hint3_lbl_2">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="palette">
+                  <palette>
+                   <active>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </active>
+                   <inactive>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </inactive>
+                   <disabled>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>117</red>
+                       <green>114</green>
+                       <blue>112</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </disabled>
+                  </palette>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>DejaVu Sans</family>
+                   <pointsize>8</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Resolve the object's dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to data types.</string>
+                 </property>
+                 <property name="textFormat">
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="indent">
+                  <number>0</number>
                  </property>
                 </widget>
                </item>
@@ -434,16 +574,105 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
                </item>
               </layout>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="group_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+             <item row="12" column="0" colspan="5">
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="ignore_errors_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Ignore import errors</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="hint3_lbl">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="palette">
+                  <palette>
+                   <active>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </active>
+                   <inactive>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </inactive>
+                   <disabled>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>117</red>
+                       <green>114</green>
+                       <blue>112</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </disabled>
+                  </palette>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>DejaVu Sans</family>
+                   <pointsize>8</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operatoin will be not aborted but an incomplete model will be constructed.</string>
+                 </property>
+                 <property name="textFormat">
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="indent">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="3">
+              <widget class="QSpinBox" name="tab_spacing_sb">
+               <property name="minimum">
+                <number>10</number>
                </property>
-               <property name="text">
-                <string>Group tables:</string>
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+               <property name="value">
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -480,296 +709,132 @@ WARNING: Selecting a huge set of system objects can bloat the resultant model or
                </item>
               </layout>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="tabs_per_row_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Tables per row:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="tab_spacing_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Spacing:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="tabs_per_row_sb">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-               <property name="value">
-                <number>5</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="3">
-              <widget class="QSpinBox" name="tab_spacing_sb">
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>1000</number>
-               </property>
-               <property name="value">
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="4">
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
+             <item row="4" column="0" colspan="5">
+              <widget class="QFrame" name="div_ln_2">
+               <property name="minimumSize">
                 <size>
-                 <width>40</width>
-                 <height>20</height>
+                 <width>0</width>
+                 <height>1</height>
                 </size>
                </property>
-              </spacer>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>1</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+              </widget>
              </item>
              <item row="9" column="0" colspan="5">
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="1" column="1">
+                <widget class="QLabel" name="hint2_lbl">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="palette">
+                  <palette>
+                   <active>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </active>
+                   <inactive>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </inactive>
+                   <disabled>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>117</red>
+                       <green>114</green>
+                       <blue>112</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </disabled>
+                  </palette>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>DejaVu Sans</family>
+                   <pointsize>8</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Enables the import of system built-in objects. It's recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.</string>
+                 </property>
+                 <property name="textFormat">
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                 <property name="indent">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="import_sys_objs_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Import system objects</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="13" column="0" colspan="5">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>328</width>
-                 <height>188</height>
+                 <width>20</width>
+                 <height>40</height>
                 </size>
                </property>
               </spacer>
-             </item>
-             <item row="3" column="0" colspan="5">
-              <layout class="QGridLayout" name="gridLayout_9">
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="resolve_deps_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Resolve dependencies automatically</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <spacer name="horizontalSpacer_7">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>15</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="hint3_lbl_2">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>117</red>
-                       <green>114</green>
-                       <blue>112</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>DejaVu Sans</family>
-                   <pointsize>8</pointsize>
-                   <italic>true</italic>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>pgModeler will try to resolve object's dependencies by query the catalog when a needed object does not exists on the loaded set.</string>
-                 </property>
-                 <property name="textFormat">
-                  <enum>Qt::PlainText</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="indent">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="8" column="0" colspan="5">
-              <layout class="QGridLayout" name="gridLayout_2">
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="ignore_errors_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Ignore import errors</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <spacer name="horizontalSpacer_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>15</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="hint3_lbl">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>117</red>
-                       <green>114</green>
-                       <blue>112</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>DejaVu Sans</family>
-                   <pointsize>8</pointsize>
-                   <italic>true</italic>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>pgModeler ignores import errors and will try to create as many as possible objects. Checking this option the import is not aborted but will create an incomplete model.</string>
-                 </property>
-                 <property name="textFormat">
-                  <enum>Qt::PlainText</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="indent">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </item>
             </layout>
            </widget>

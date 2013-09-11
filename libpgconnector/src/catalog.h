@@ -90,16 +90,14 @@ class Catalog {
 		//! \brief Excludes the extension generated objects from listing
 		EXCL_EXTENSION_OBJS=2,
 
-		/*! \brief Excludes the builtin array types. This constant can be used with
-		LIST_ALL_OBJS and LIST_ONLY_SYS_OBJS */
+		//! \brief Excludes the builtin array types.
 		EXCL_BUILTIN_ARRAY_TYPES=4,
 
 		/*! \brief Shows only system objects. Using this filter will disable the other two filters.
 		Using this filter implies the listing of extension objects */
 		LIST_ONLY_SYS_OBJS=8,
 
-		/*! \brief Shows all objects including system objects and extension object. Using this filter will
-		cancel the EXCL_EXTENSION_OBJS and EXCL_SYSTEM_OBJS if they are present */
+		//! \brief Shows all objects including system objects and extension object.
 		LIST_ALL_OBJS=16;
 
 		//! \brief Changes the current connection used by the catalog

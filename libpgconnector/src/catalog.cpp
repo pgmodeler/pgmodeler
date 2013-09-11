@@ -53,22 +53,31 @@ void Catalog::setFilter(unsigned filter)
 {
 	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
 
+	list_only_sys_objs=false;
 	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
+	exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
+	exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
 
-	if(list_all)
+	/*if(list_all)
 		list_only_sys_objs=exclude_ext_objs=exclude_sys_objs=false;
-	else
+	else*/
+	if(!list_all)
 	{
 		list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
 
-		if(!list_only_sys_objs)
+		if(list_only_sys_objs)
+		{
+			exclude_ext_objs=true;
+			exclude_sys_objs=false;
+		}
+
+		/* if(!list_only_sys_objs)
 		{
 			exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
 			exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
-
 		}
 		else
-			exclude_ext_objs=exclude_sys_objs=false;
+			exclude_ext_objs=exclude_sys_objs=false; */
 	}
 }
 

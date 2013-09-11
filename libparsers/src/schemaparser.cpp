@@ -609,10 +609,11 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 			/* Iterates while the positions of the expressions found is valid.
 			 Positions less than 0 indicates that no regular expressions
 			 managed to find values */
-			while(pos >=0 && pos1 >=0);
+			while(pos >=0 && pos1 >=0 && pos < lin.size());
 		}
 
 		buf_aux+=lin;
+		lin.clear();
 
 		//Reseting the in_comment flag when the current line has a end comment tag
 		if(in_comment && lin.indexOf("-->") >= 0)
