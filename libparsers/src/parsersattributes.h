@@ -405,7 +405,8 @@ namespace ParsersAttributes {
 	ARG_MODES="arg-modes",
 	ARG_NAMES="arg-names",
 	ARG_DEFAULTS="arg-defaults",
-	RANGE_ATTRIBS="range-attribs";
+	RANGE_ATTRIBS="range-attribs",
+	SEARCH_PATH="search-path";
 }
 
 #endif

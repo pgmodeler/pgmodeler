@@ -22,6 +22,7 @@ $br
 $br $br
 
 [SET check_function_bodies = false;] $br
+[SET search_path TO ] @{search-path}; $br
 [-- ddl-end --] $br $br
 
 %if @{export-to-file} %then

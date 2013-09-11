@@ -954,7 +954,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 				rel=getRelationship(table, ref_tab);
 
-				if(rel)
+				if(rel && !rel->isBidirectional())
 					removeRelationship(rel);
 			}
 		}
@@ -972,12 +972,17 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				rel=dynamic_cast<BaseRelationship *>(*itr1);
 
 				if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
-					 rel->getTable(BaseRelationship::SRC_TABLE)==table)
+					 (rel->getTable(BaseRelationship::SRC_TABLE)==table ||
+						rel->getTable(BaseRelationship::DST_TABLE)==table))
 				{
-					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+					if(rel->getTable(BaseRelationship::SRC_TABLE)==table)
+						ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+					else
+						ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
 
 					//Removes the relationship if the table does'nt references the 'ref_tab'
-					if(!table->isReferTableOnForeignKey(ref_tab))
+					if(!table->isReferTableOnForeignKey(ref_tab) &&
+						 (!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table)))
 					{
 						removeRelationship(rel);
 						itr1=base_relationships.begin() + idx;
@@ -985,6 +990,9 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					}
 					else
 					{
+						if(!rel->isSelfRelationship() && ref_tab->isReferTableOnForeignKey(table))
+							rel->setModified(true);
+
 						itr1++; idx++;
 					}
 				}
@@ -1010,6 +1018,8 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 																	 table, ref_tab, false, false);
 					addRelationship(rel);
 				}
+				else if(rel->isBidirectional())
+					rel->setModified(true);
 			}
 		}
 	}
@@ -5821,9 +5831,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	float general_obj_cnt, gen_defs_count;
 	bool sql_disabled=false;
 	BaseObject *object=nullptr;
+	vector<BaseObject *> fkeys;
+	vector<BaseObject *> fk_rels;
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	QString def,
+	QString def, search_path="pg_catalog,public",
 			msg=trUtf8("Generating %1 of the object `%2' `(%3)'"),
 			attrib=ParsersAttributes::OBJECTS,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
@@ -5847,7 +5859,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		general_obj_cnt=this->getObjectCount();
 		gen_defs_count=0;
 
-		/* Treating the objects which have fixed ids, they are: Paper, table space,
+		/* Treating the objects which have fixed ids, they are: role, tablespace,
 		 and Schema. They need to be treated separately in the loop down because they do not
 		 enter in the id sorting performed for other types of objects. */
 		for(i=0; i < 3; i++)
@@ -5889,20 +5901,21 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					//System object doesn't has the XML generated (the only exception is for public schema)
 					else if(!object->isSystemObject() || object->getObjectType()==OBJ_SCHEMA)
 					{
+						if(object->getObjectType()==OBJ_SCHEMA)
+							 search_path+="," + object->getName(true);
+
 						//Generates the code definition and concatenates to the others
 						attribs_aux[attrib]+=object->getCodeDefinition(def_type);
 					}
 
 					//Increments the generated definition count and emits the signal
 					gen_defs_count++;
-					//if(!signalsBlocked())
-					//{
-						emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
-																msg.arg(def_type_str)
-																.arg(Utf8String::create(object->getName()))
-																.arg(object->getTypeName()),
-																object->getObjectType());
-					//}
+
+					emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+															msg.arg(def_type_str)
+															.arg(Utf8String::create(object->getName()))
+															.arg(object->getTypeName()),
+															object->getObjectType());
 				}
 				itr++;
 			}
@@ -5934,7 +5947,17 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				while(itr!=itr_end)
 				{
 					object=(*itr);
-					objects_map[object->getObjectId()]=object;
+
+					/* If the object is a FK relationship it's stored in a separeted list in order to have the
+						 code generated at end of whole definition (after foreign keys defintion) */
+					if(object->getObjectType()==BASE_RELATIONSHIP &&
+						 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+					{
+						fk_rels.push_back(object);
+					}
+					else
+						objects_map[object->getObjectId()]=object;
+
 					itr++;
 				}
 			}
@@ -5961,9 +5984,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				/* Case the constraint is a special object stores it on the objects map. Independently to the
 				configuration, foreign keys are discarded in this iteration because on the end of the method
 				they have the definition generated */
-				if((!constr->isAddedByLinking() &&
-						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()))))
+				if(constr->getConstraintType()!=ConstraintType::foreign_key &&  !constr->isAddedByLinking() &&
+						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())))
 					objects_map[constr->getObjectId()]=constr;
+				else if(constr->getConstraintType()==ConstraintType::foreign_key && !constr->isAddedByLinking())
+					fkeys.push_back(constr);
 			}
 
 			count=table->getTriggerCount();
@@ -6032,6 +6057,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		}
 
 		attribs_aux[ParsersAttributes::SHELL_TYPES]="";
+		attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
@@ -6046,6 +6072,17 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				if(usr_type->getConfiguration()==Type::BASE_TYPE)
 					usr_type->convertFunctionParameters();
 			}
+		}
+
+		//Adding fk relationships and foreign keys at end of objects map
+		i=BaseObject::getGlobalId() + 1;
+		fkeys.insert(fkeys.end(), fk_rels.begin(), fk_rels.end());
+		itr=fkeys.begin();
+
+		while(itr!=fkeys.end())
+		{
+			objects_map[i]=*itr;
+			i++; itr++;
 		}
 
 		obj_itr=objects_map.begin();
@@ -6100,14 +6137,12 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 
 			gen_defs_count++;
-			//if(!signalsBlocked())
-			//{
-				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+
+			emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
 														.arg(Utf8String::create(object->getName()))
 														.arg(object->getTypeName()),
 														object->getObjectType());
-			//}
 		}
 
 		//Gernerating the SQL/XML code for permissions

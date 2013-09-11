@@ -386,6 +386,7 @@ void RelationshipView::configureLine(void)
 		QPolygonF pol_aux;
 		QString tool_tip;
 		int i, i1, count, idx_lin_desc=0;
+		bool bidirectional=base_rel->isBidirectional();
 
 		configuring_line=true;
 
@@ -535,9 +536,9 @@ void RelationshipView::configureLine(void)
 			else
 				lin=lines[i];
 
-			//If the relationship is identifier, the line has its thickness modified
-			if(rel && rel->isIdentifier() && i >= idx_lin_desc)
-				pen.setWidthF(1.6f);
+			//If the relationship is identifier or bidirectional, the line has its thickness modified
+			if(bidirectional || (rel && (rel->isIdentifier() && i >= idx_lin_desc)))
+				pen.setWidthF(1.7f);
 			else
 				pen.setWidthF(1.0f);
 
@@ -792,6 +793,12 @@ void RelationshipView::configureLabels(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
+
+	if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+	{
+		base_rel->setMandatoryTable(BaseRelationship::SRC_TABLE, true);
+		base_rel->setMandatoryTable(BaseRelationship::DST_TABLE, true);
+	}
 
 	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
 

@@ -178,12 +178,14 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
 
-		if((def_type==SchemaParser::SQL_DEFINITION &&
-				(!constr->isReferRelationshipAddedColumn() || constr->getConstraintType()==ConstraintType::primary_key)) ||
+		if(constr->getConstraintType()!=ConstraintType::foreign_key &&
 
-			 (def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
-				((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
-				 (constr->getConstraintType()==ConstraintType::primary_key))))
+			 ((def_type==SchemaParser::SQL_DEFINITION &&
+				 (!constr->isReferRelationshipAddedColumn() || constr->getConstraintType()==ConstraintType::primary_key)) ||
+
+				(def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
+				 ((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
+					(constr->getConstraintType()==ConstraintType::primary_key)))))
 		{
 			inc_added_by_rel=(def_type==SchemaParser::SQL_DEFINITION);
 
@@ -1135,8 +1137,10 @@ void Table::updateAlterCmdsStatus(void)
 	for(i=0; i < columns.size(); i++)
 		columns[i]->setDeclaredInTable(!gen_alter_cmds);
 
+	//Foreign keys are aways created as ALTER form
 	for(i=0; i < constraints.size(); i++)
-		constraints[i]->setDeclaredInTable(!gen_alter_cmds);
+		constraints[i]->setDeclaredInTable(!gen_alter_cmds &&
+																				dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::foreign_key);
 }
 
 QString Table::getCodeDefinition(unsigned def_type)

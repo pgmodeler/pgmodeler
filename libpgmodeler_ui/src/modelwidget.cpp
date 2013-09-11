@@ -2189,6 +2189,9 @@ void ModelWidget::removeObjects(void)
 								aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 								dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false, aux_table);
 
+								aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
+								dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false, aux_table);
+
 								//Adds the fks to the map of objects to be removed
 								while(!constrs.empty())
 								{

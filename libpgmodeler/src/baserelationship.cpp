@@ -217,8 +217,20 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		}
 		else if(rel_type==RELATIONSHIP_FK)
 		{
-			aux=(table_id==SRC_TABLE ? "n" : "1");
-			lables[label_id]->setComment("(" + aux + ")");
+			/* If the relationship isn't bidirectinal is necessary to check where to put
+				 the 'n' descriptor. The 'n' label is put on the table where the foreign key resides. */
+			if(!isBidirectional())
+			{
+				if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
+					 (table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
+					aux="n";
+				else
+					aux="1";
+
+				lables[label_id]->setComment("(" + aux + ")");
+			}
+			else
+				lables[label_id]->setComment("(1,n)");
 		}
 		else if(rel_type==RELATIONSHIP_NN)
 			lables[label_id]->setComment("(n)");
@@ -296,6 +308,20 @@ bool BaseRelationship::isRelationshipConnected(void)
 bool BaseRelationship::isSelfRelationship(void)
 {
 	return(dst_table==src_table);
+}
+
+bool BaseRelationship::isBidirectional(void)
+{
+	if(rel_type!=RELATIONSHIP_FK || isSelfRelationship())
+		return(false);
+	else
+	{
+		Table *src_tab=dynamic_cast<Table *>(src_table),
+					*dst_tab=dynamic_cast<Table *>(dst_table);
+
+		return(src_tab->isReferTableOnForeignKey(dst_tab) &&
+					 dst_tab->isReferTableOnForeignKey(src_tab));
+	}
 }
 
 void BaseRelationship::setRelationshipAttributes(void)

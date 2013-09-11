@@ -31,8 +31,13 @@
      [ AND ]
    %end
 
-   [ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
-     ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+   [ (id.indisprimary IS FALSE ]
+
+   %if %not @{pgsql90} %then
+     [ AND id.indisexclusion IS FALSE ]
+   %end
+
+   [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 %else
     %if @{attribs} %then
@@ -91,7 +96,12 @@
        [ AND ]
      %end
 
-     [ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
-       ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+     [ (id.indisprimary IS FALSE ]
+
+     %if %not @{pgsql90} %then
+       [ AND id.indisexclusion IS FALSE ]
+     %end
+
+     [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
     %end
 %end

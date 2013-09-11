@@ -112,12 +112,6 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 {
 	try
 	{
-		/* If the system object has not to be imported exclude the extension created objects as
-			 well the system objects from catalog query */
-		//if(!import_sys_objs)
-		//	catalog.setFilter(Catalog::EXCL_SYSTEM_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES);
-		//else
-		//	catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES);
 		catalog.setFilter(import_filter);
 		return(catalog.getObjectsNames(obj_type, schema, table, extra_attribs));
 	}
@@ -132,7 +126,9 @@ void DatabaseImportHelper::finishImport(void)
 	//Schema *schema=nullptr;
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
+	vector<BaseObject *> tables;
 	unsigned i=0, cnt=0;
+	BaseTable *tab=nullptr;
 
 	//Swapping the id's between sequences and tables to avoid reference breaking on SQL code
 	itr=seq_tab_swap.begin();
@@ -151,6 +147,19 @@ void DatabaseImportHelper::finishImport(void)
 	{
 		dbmodel->getSchema(i)->setRectVisible(true);
 		dbmodel->getSchema(i)->setModified(true);
+	}
+
+	#warning "Testing only!"
+	tables.insert(tables.end(), dbmodel->getObjectList(OBJ_TABLE)->begin(), dbmodel->getObjectList(OBJ_TABLE)->end());
+	tables.insert(tables.end(), dbmodel->getObjectList(OBJ_VIEW)->begin(), dbmodel->getObjectList(OBJ_VIEW)->end());
+
+	while(!tables.empty())
+	{
+		tab=dynamic_cast<BaseTable *>(tables.back());
+		tables.pop_back();
+
+		tab->setPosition(QPointF(random() % 1000, random() % 1000));
+		tab->setModified(true);
 	}
 }
 
@@ -1463,14 +1472,14 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			else if(i < exprs.size())
 				elem.setExpression(exprs[i]);
 
-			if(collations[i]!="0")
+			if(i < collations.size() && collations[i]!="0")
 			{
 				coll_name=getDependencyObject(collations[i], OBJ_COLLATION, false, true, false);
 				coll=dynamic_cast<Collation *>(dbmodel->getObject(coll_name, OBJ_COLLATION));
 				elem.setCollation(coll);
 			}
 
-			if(opclasses[i]!="0")
+			if(i < opclasses.size() && opclasses[i]!="0")
 			{
 				opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
 				opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
@@ -1528,7 +1537,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				else if(i < exprs.size())
 					elem.setExpression(exprs[i]);
 
-				if(opclasses[i]!="0")
+				if(i < opclasses.size() && opclasses[i]!="0")
 				{
 					opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
 					opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));

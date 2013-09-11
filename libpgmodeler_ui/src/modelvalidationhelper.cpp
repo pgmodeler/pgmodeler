@@ -205,10 +205,14 @@ void ModelValidationHelper::validateModel(void)
 					{
 						//Checking if the referrer object is a table object. In this case its parent table is considered
 						tab_obj=dynamic_cast<TableObject *>(refs.back());
+						constr=dynamic_cast<Constraint *>(tab_obj);
 
 						/* If the current referrer object has an id less than reference object's id
-						then it will be pushed into the list of invalid references */
+						then it will be pushed into the list of invalid references. The only exception is
+						for foreign keys that are discarded from any validation since they are always created
+						at end of code defintion being free of any reference breaking. */
 						if(object != refs.back() &&
+							 (!constr || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
 							 ((!tab_obj && refs.back()->getObjectId() <= object->getObjectId()) ||
 								(tab_obj && !tab_obj->isAddedByRelationship() &&
 								 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))

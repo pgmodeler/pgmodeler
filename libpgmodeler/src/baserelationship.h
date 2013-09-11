@@ -26,7 +26,7 @@
 #ifndef BASE_RELATIONSHIP_H
 #define BASE_RELATIONSHIP_H
 
-#include "basetable.h"
+#include "table.h"
 #include "textbox.h"
 #include "schema.h"
 #include <cmath>
@@ -129,6 +129,10 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
 		bool isSelfRelationship(void);
+
+		/*! \brief Returns whether the envolved tables references each other. This method can return
+		true only for FK relationships, for the other types this method always returns false */
+		bool isBidirectional(void);
 
 		//! \brief Stores the points that defines the custom relationship line
 		void setPoints(const vector<QPointF> &points);
