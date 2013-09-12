@@ -58,7 +58,7 @@ RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
 
-	this->disconnectTables();
+	//this->disconnectTables();
 	disconnect(this, nullptr, this->getSourceObject(), nullptr);
 
 	for(int i=0; i < 3; i++)
@@ -339,7 +339,10 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void RelationshipView::disconnectTables(void)
 {
 	for(unsigned i=0; i < 2; i++)
+	{
 		disconnect(tables[i], nullptr, this, nullptr);
+		tables[i]=nullptr;
+	}
 }
 
 void RelationshipView::configureObject(void)

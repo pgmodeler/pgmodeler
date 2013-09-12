@@ -172,6 +172,7 @@ void OperationListWidget::undoOperation(void)
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
+		this->updateOperationList();
 		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -197,6 +198,7 @@ void OperationListWidget::redoOperation(void)
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
+		this->updateOperationList();
 		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

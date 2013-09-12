@@ -51,7 +51,7 @@ ObjectsScene::ObjectsScene(void)
 ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
-	QList<QGraphicsItem *> items;
+	QList<QGraphicsItem *> items;//, rem_items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
 													 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
@@ -296,10 +296,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 
 		if(rel)
-		{
 			disconnect(rel, nullptr, this, nullptr);
-			rel->disconnectTables();
-		}
 		else if(tab)
 			disconnect(tab, nullptr, this, nullptr);
 		else if(object)
@@ -310,7 +307,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		QGraphicsScene::removeItem(item);
 
 		if(object)
-			delete(item);
+		 delete(item);
 	}
 }
 

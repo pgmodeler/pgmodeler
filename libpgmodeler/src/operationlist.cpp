@@ -385,7 +385,10 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 				if(op_type==Operation::OBJECT_REMOVED)
 					tab_obj->setParentTable(parent_tab);
 
-				operation->xml_definition=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				if(tab_obj->getObjectType()==OBJ_CONSTRAINT)
+					operation->xml_definition=dynamic_cast<Constraint *>(tab_obj)->getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+				else
+					operation->xml_definition=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
 			}
 
 			operation->parent_obj=parent_obj;
@@ -554,6 +557,7 @@ void OperationList::undoOperation(void)
 			}
 			catch(Exception &e)
 			{
+				this->removeOperations();
 				error=e;
 			}
 
@@ -617,6 +621,7 @@ void OperationList::redoOperation(void)
 			}
 			catch(Exception &e)
 			{
+				this->removeOperations();
 				error=e;
 			}
 			current_index++;

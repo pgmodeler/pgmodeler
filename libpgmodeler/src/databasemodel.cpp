@@ -2655,7 +2655,7 @@ void DatabaseModel::loadModel(const QString &filename)
 						if(elem_name==ParsersAttributes::PERMISSION)
 						{
 							//Recreates the special objects before load the permissions
-							if(!xml_special_objs.empty())
+							/* if(!xml_special_objs.empty())
 							{
 								//Makes a backup of the main buffer of the xml parser that contains all the model file definition
 								str_aux=XMLParser::getXMLBuffer();
@@ -2679,7 +2679,7 @@ void DatabaseModel::loadModel(const QString &filename)
 								//Moves the parser to the first permission on the buffer
 								while(XMLParser::getElementName()!=ParsersAttributes::PERMISSION &&
 											XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
-							}
+							}*/
 
 							addPermission(createPermission());
 						}
@@ -2709,7 +2709,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										//if(!signalsBlocked())
 										//{
 											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
-																					trUtf8("Loading object: `%1' `(%2)'")
+																					trUtf8("Loading: `%1' `(%2)'")
 																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),
 																					obj_type);

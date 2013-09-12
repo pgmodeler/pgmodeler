@@ -333,6 +333,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 ModelWidget::~ModelWidget(void)
 {
+	op_list->removeOperations();
+	db_model->destroyObjects();
 	delete(viewport);
 	delete(scene);
 	delete(op_list);
