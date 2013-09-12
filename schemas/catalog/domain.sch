@@ -19,13 +19,13 @@
      [ dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
+  %if @{not-ext-object} %then
     %if @{last-sys-oid} %or @{schema} %then
       [ AND ]
     %else
       [ WHERE ]
     %end
-    (  @{from-extension} ) [ IS FALSE ]
+    (  @{not-ext-object} )
   %end
 
 %else
@@ -35,9 +35,9 @@
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
 	%if %not @{pgsql92} %then
-	 [ NULL AS permissions, NULL AS collation, ]
+	 [ NULL AS permission, NULL AS collation, ]
 	%else
-	 [ dm.typacl AS permissions, dm.typcollation AS collation, ]
+	 [ dm.typacl AS permission, dm.typcollation AS collation, ]
 	%end
 
 	[ CASE
@@ -86,13 +86,13 @@
 	[ dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
-      %if @{from-extension} %then
+      %if @{not-ext-object} %then
 	%if @{last-sys-oid} %or @{filter-oids} %or @{schema} %then
 	  [ AND ]
 	%else
 	  [ WHERE ]
 	%end
-	( @{from-extension} ) [ IS FALSE ]
+	( @{not-ext-object} )
       %end
     %end
 %end

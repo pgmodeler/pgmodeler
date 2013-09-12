@@ -317,7 +317,7 @@ void PermissionWidget::addPermission(void)
 void PermissionWidget::updatePermission(void)
 {
 	Permission *perm=nullptr,*perm_bkp=nullptr;
-	int perm_idx;
+	int perm_idx=-1;
 
 	try
 	{

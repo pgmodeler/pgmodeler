@@ -16,8 +16,8 @@
     [ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-   [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+   [ AND ] ( @{not-ext-object} )
   %end
 
 %else
@@ -62,8 +62,8 @@
 	[ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
-      %if @{from-extension} %then
-	[ AND (] @{from-extension} ) [ IS FALSE ]
+      %if @{not-ext-object} %then
+	[ AND (] @{not-ext-object} )
       %end
 
     %end

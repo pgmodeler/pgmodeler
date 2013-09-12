@@ -17,8 +17,8 @@
     [ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] ( @{not-ext-object} )
   %end
 
 %else
@@ -26,7 +26,7 @@
 	[SELECT pr.oid,
 		pronamespace AS schema,
 		pr.proowner AS owner,
-		pr.proacl AS permissions,
+		pr.proacl AS permission,
 		pr.proname AS name,
 		pr.prolang AS language,
 		pr.procost AS execution_cost,
@@ -84,8 +84,8 @@
 	  [ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
 	%end
 
-	%if @{from-extension} %then
-	  [ AND ] ( @{from-extension} ) [ IS FALSE ]
+	%if @{not-ext-object} %then
+	  [ AND ] ( @{not-ext-object} )
 	%end
 
 	%if @{filter-oids} %or @{schema} %then

@@ -9,20 +9,20 @@
    [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
+  %if @{not-ext-object} %then
     %if @{last-sys-oid} %then
       [ AND ]
     %else
      [ WHERE ]
     %end
-    ( @{from-extension} ) [ IS FALSE ]
+    ( @{not-ext-object} )
   %end
 
 %else
     %if @{attribs} %then
       [SELECT oid, lanname AS name, lanpltrusted AS trusted_bool,
 	      lanplcallfoid AS handler, laninline AS inline,
-	      lanvalidator AS validator, lanacl AS permissions, lanowner AS owner, ]
+	      lanvalidator AS validator, lanacl AS permission, lanowner AS owner, ]
 
       (@{comment}) [ AS comment ]
 
@@ -32,17 +32,17 @@
 	 [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
-       %if @{from-extension} %then
+       %if @{not-ext-object} %then
 	 %if @{last-sys-oid} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]
 	 %end
-	 ( @{from-extension} ) [ IS FALSE ]
+	 ( @{not-ext-object} )
        %end
 
        %if @{filter-oids} %then
-	 %if @{last-sys-oid} %or @{from-extension} %then
+	 %if @{last-sys-oid} %or @{not-ext-object} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]

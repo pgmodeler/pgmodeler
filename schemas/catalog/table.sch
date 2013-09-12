@@ -16,14 +16,14 @@
      [ AND tb.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] ( @{not-ext-object} )
   %end
 
 %else
     %if @{attribs} %then
     [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
-	    tb.reltablespace AS tablespace, tb.relacl AS permissions, relhasoids AS oids_bool, ]
+	    tb.reltablespace AS tablespace, tb.relacl AS permission, relhasoids AS oids_bool, ]
 
     [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid)],
 
@@ -37,8 +37,8 @@
      [ AND tb.oid ] @{oid-filter-op} $sp @{last-sys-oid}
     %end
 
-    %if @{from-extension} %then
-     [ AND ] (  @{from-extension} ) [ IS FALSE ]
+    %if @{not-ext-object} %then
+     [ AND ] (  @{not-ext-object} )
     %end
 
       %if @{filter-oids} %or @{schema} %then

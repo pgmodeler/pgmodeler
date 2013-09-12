@@ -16,8 +16,8 @@
      [ AND sq.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] (  @{not-ext-object} )
   %end
 
 %else
@@ -27,9 +27,9 @@
 
       #TODO: Discover which field is the start value for sequences on PgSQL 9.0
       #%if @{pgsql90} %then
-      # [ 1 AS start,  sq.relacl::text AS permissions,  ]
+      # [ 1 AS start,  sq.relacl::text AS permission,  ]
       #%else
-      # [ _sq1.start_value AS start,  sq.relacl AS permissions, ]
+      # [ _sq1.start_value AS start,  sq.relacl AS permission, ]
       #%end
 
       #[ 1 AS cache,
@@ -80,8 +80,8 @@
 	  [ AND sq.oid ] @{oid-filter-op} $sp @{last-sys-oid}
 	%end
 
-	%if @{from-extension} %then
-	  [ AND ] ( @{from-extension} ) [ IS FALSE ]
+	%if @{not-ext-object} %then
+	  [ AND ] ( @{not-ext-object} )
 	%end
 
 	%if @{filter-oids} %or @{schema} %then

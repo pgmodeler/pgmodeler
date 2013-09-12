@@ -28,8 +28,8 @@
     [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] (  @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] (  @{not-ext-object} )
   %end
 
 %else
@@ -37,9 +37,9 @@
     [SELECT tp.oid, replace(tp.oid::regtype::text, ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
     %if @{pgsql90} %or @{pgsql91} %then
-      [ NULL AS permissions, ]
+      [ NULL AS permission, ]
     %else
-      [ tp.typacl AS permissions,]
+      [ tp.typacl AS permission,]
     %end
 
     %if @{pgsql90} %then
@@ -135,8 +135,8 @@
       [ AND tp.oid ] @{oid-filter-op} $sp @{last-sys-oid}
     %end
 
-    %if @{from-extension} %then
-      [ AND ] (  @{from-extension} ) [ IS FALSE ]
+    %if @{not-ext-object} %then
+      [ AND ] (  @{not-ext-object} )
     %end
     
     %if @{filter-oids} %or @{schema} %then

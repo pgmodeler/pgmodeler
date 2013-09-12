@@ -19,13 +19,13 @@
     [ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
+  %if @{not-ext-object} %then
     %if @{last-sys-oid} %or @{schema} %then
       [ AND ]
     %else
       [ WHERE ]
     %end
-    (  @{from-extension} ) [ IS FALSE ]
+    (  @{not-ext-object} )
   %end
 
 %else
@@ -67,13 +67,13 @@
 	 [ op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
-       %if @{from-extension} %then
+       %if @{not-ext-object} %then
 	 %if @{last-sys-oid} %or @{schema} %or @{filter-oids} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]
 	 %end
-	 (  @{from-extension} ) [ IS FALSE ]
+	 (  @{not-ext-object} )
       %end
 
     %end

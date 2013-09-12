@@ -16,14 +16,14 @@
     [ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] ( @{not-ext-object} )
   %end
 
 %else
     %if @{attribs} %then
       [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
-	      vw.relacl AS permissions, _vw1.definition, ]
+	      vw.relacl AS permission, _vw1.definition, ]
 
       (@{comment}) [ AS comment ]
 
@@ -35,8 +35,8 @@
 	[ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
        %end
 
-       %if @{from-extension} %then
-	 [ AND ] (  @{from-extension} ) [ IS FALSE ]
+       %if @{not-ext-object} %then
+	 [ AND ] (  @{not-ext-object} )
        %end
 
 	%if @{filter-oids} %or @{schema} %then

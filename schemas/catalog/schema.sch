@@ -10,13 +10,13 @@
    [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
   %end
 
-  %if @{from-extension} %then
-   [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+   [ AND ] ( @{not-ext-object} )
   %end
 
 %else
     %if @{attribs} %then
-      [SELECT oid, nspname AS name, nspacl AS permissions, nspowner AS owner, ]
+      [SELECT oid, nspname AS name, nspacl AS permission, nspowner AS owner, ]
 
 	(@{comment}) [ AS comment ]
 
@@ -31,8 +31,8 @@
 	 [ AND oid IN (] @{filter-oids} )
        %end
 
-      %if @{from-extension} %then
-	 [ AND ] ( @{from-extension} ) [ IS FALSE ]
+      %if @{not-ext-object} %then
+	 [ AND ] ( @{not-ext-object} )
       %end
 
     %end

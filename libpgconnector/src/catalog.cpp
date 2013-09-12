@@ -30,10 +30,12 @@ void Catalog::setConnection(Connection &conn)
 	try
 	{
 		ResultSet res;
+		QStringList ext_obj;
 
 		this->connection=conn;
 		this->connection.connect();
 
+		//Retrieving the last system oid
 		executeCatalogQuery(QUERY_LIST, OBJ_DATABASE, res, true,
 												{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::PARAM_DB_NAME)}});
 
@@ -41,6 +43,19 @@ void Catalog::setConnection(Connection &conn)
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
 			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID].toUInt();
+		}
+
+		//Retrieving the list of objects created by extensions
+		this->connection.executeDMLCommand("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'", res);
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				ext_obj.push_back(res.getColumnValue("oid"));
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+
+			ext_obj_oids=ext_obj.join(",");
 		}
 	}
 	catch(Exception &e)
@@ -95,8 +110,8 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(obj_type==OBJ_TYPE && exclude_array_types)
 			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
 
-		if(exclude_ext_objs && !obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
-			attribs[ParsersAttributes::FROM_EXTENSION]=getFromExtensionQuery(oid_fields[obj_type]);
+		if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		SchemaParser::setIgnoreEmptyAttributes(true);
@@ -239,15 +254,16 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	}
 }
 
-QString Catalog::getFromExtensionQuery(const QString &oid_field)
+QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 {
 	try
 	{
-		attribs_map attribs={{ParsersAttributes::OID, oid_field}};
+		attribs_map attribs={{ParsersAttributes::OID, oid_field},
+												 {ParsersAttributes::EXT_OBJ_OIDS, ext_obj_oids}};
 
 		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
 																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 "fromextension" + GlobalAttributes::SCHEMA_EXT,
+																					 "notextobject" + GlobalAttributes::SCHEMA_EXT,
 																					 attribs).simplified());
 	}
 	catch(Exception &e)

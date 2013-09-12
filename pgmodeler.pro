@@ -146,3 +146,6 @@ unix {
 }
 
 INSTALLS += pgmodeler
+
+OTHER_FILES += \
+    schemas/catalog/notextobject.sch

@@ -30,9 +30,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	progress=0;
 	setupUi(this);
 
-	#warning "Debug!"
-	Connection::setPrintSQL(true);
-
 	import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
@@ -345,9 +342,10 @@ void DatabaseImportForm::listObjects(void)
 																		 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW},
 																		sch_items.back(), sch_items.back()->text(0));
 
+
 				while(!tab_items.empty())
 				{
-					inc1=(30/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
+					inc1=(20/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
 
 					//Retrieving and listing the table scoped objects
 					updateObjectsTree({ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX }, tab_items.back(),

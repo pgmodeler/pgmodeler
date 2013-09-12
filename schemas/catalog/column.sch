@@ -15,7 +15,7 @@
 %else
     %if @{attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
-	     cl.attacl AS permissions, df.adsrc AS default_value,
+	     cl.attacl AS permission, df.adsrc AS default_value,
 	     ds.description AS comment, ]
 
      # This subquery retrieve the schema name for the type when it is undeer public schema.

@@ -10,13 +10,13 @@
    [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
+  %if @{not-ext-object} %then
     %if @{last-sys-oid} %then
       [ AND ]
     %else
      [ WHERE ]
     %end
-    ( @{from-extension} ) [ IS FALSE ]
+    ( @{not-ext-object} )
   %end
 
 %else
@@ -43,13 +43,13 @@
        [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
-      %if @{from-extension} %then
+      %if @{not-ext-object} %then
 	 %if @{last-sys-oid} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]
 	 %end
-	( @{from-extension} ) [ IS FALSE ]
+	( @{not-ext-object} )
       %end
     %end
 %end

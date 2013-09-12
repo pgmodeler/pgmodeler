@@ -16,8 +16,8 @@
    [ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
-  %if @{from-extension} %then
-    [ AND ] ( @{from-extension} ) [ IS FALSE ]
+  %if @{not-ext-object} %then
+    [ AND ] ( @{not-ext-object} ) # [ IS FALSE ]
   %end
 
 %else
@@ -25,7 +25,7 @@
       [SELECT pr.oid AS oid, ag.aggfnoid AS name, ag.aggtransfn::oid AS transition,
 	      ag.aggfinalfn::oid AS final, ag.aggsortop::oid AS sort_op, aggtranstype AS state_type,
 	      pr.proargtypes::oid] $ob $cb [ AS types, ag.agginitval AS initial_cond, pr.proowner AS owner,
-	      pr.pronamespace AS schema, pr.proacl AS permissions, ]
+	      pr.pronamespace AS schema, pr.proacl AS permission, ]
 
        (@{comment}) [ AS comment ]
 
@@ -41,8 +41,8 @@
 	[ AND pr.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
-      %if @{from-extension} %then
-	[ AND ] ( @{from-extension} ) [ IS FALSE ]
+      %if @{not-ext-object} %then
+	[ AND ] ( @{not-ext-object} )
       %end
 
       %if @{filter-oids} %or @{schema} %then

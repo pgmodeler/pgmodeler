@@ -41,6 +41,10 @@ class Catalog {
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
 		BOOL_FIELD;
 
+		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
+		attribute is use when filtering objects that are created by extensions */
+		QString ext_obj_oids;
+
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
@@ -69,10 +73,9 @@ class Catalog {
 		//! \brief Returns a attribute set for the specified object type and name
 		attribs_map getAttributes(const QString &obj_name, ObjectType obj_type, attribs_map extra_attribs=attribs_map());
 
-		/*! \brief Returns the query to retrieve the information if the object (specified by its oid field) is part of
-		 a extension. Being part of a extension will cause the object to be created as system object and with
-		 SQL code disabled */
-		QString getFromExtensionQuery(const QString &oid_field);
+		/*! \brief Returns the query to retrieve the information if the object (specified by its oid field) is part or not of
+		 a extension. */
+		QString getNotExtObjectQuery(const QString &oid_field);
 
 		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
 		to query the pg_shdescription instead of pg_description */
