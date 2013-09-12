@@ -982,7 +982,8 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 					//Removes the relationship if the table does'nt references the 'ref_tab'
 					if(!table->isReferTableOnForeignKey(ref_tab) &&
-						 (!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table)))
+							(rel->isSelfRelationship() ||
+							 (!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table))))
 					{
 						removeRelationship(rel);
 						itr1=base_relationships.begin() + idx;
