@@ -508,12 +508,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			if(modified)
 			{
 				msg_box.show(trUtf8("Save all models"),
-										 trUtf8("Some models were modified! Do you want to save them before exit pgModeler?"),
+										 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
 										 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
-				/* If the user accepts the message box the close event will be aborted
+				/* If the user rejects the message box the close event will be aborted
 			causing pgModeler not to be finished */
-				if(msg_box.result()==QDialog::Accepted)
+				if(msg_box.result()==QDialog::Rejected)
 					event->ignore();
 			}
 		}
@@ -670,6 +670,7 @@ void MainWindow::addModel(const QString &filename)
 
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
+	model_tab->db_model->setInvalidated(false);
 
 	if(!filename.isEmpty())
 	{
@@ -899,36 +900,38 @@ void MainWindow::closeModel(int model_id)
 	{
 		ModelWidget *model=dynamic_cast<ModelWidget *>(tab);
 
-		model_tree_states.erase(model);
-
-		disconnect(tab, nullptr, oper_list_wgt, nullptr);
-		disconnect(tab, nullptr, model_objs_wgt, nullptr);
-		disconnect(tab, nullptr, this, nullptr);
-		disconnect(action_alin_objs_grade, nullptr, this, nullptr);
-		disconnect(action_show_grid, nullptr, this, nullptr);
-		disconnect(action_show_delimiters, nullptr, this, nullptr);
-
-		//Remove the temporary file related to the closed model
-		QDir arq_tmp;
-		arq_tmp.remove(model->getTempFilename());
-
 		//Ask the user to save the model if its modified
 		if(model->isModified())
 		{
 			msg_box.show(trUtf8("Save model"),
-											trUtf8("The model were modified! Do you want to save it before close?"),
+											trUtf8("The model was modified! Do you really want to close without save it?"),
 											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
-
-			if(msg_box.result()==QDialog::Accepted)
-				this->saveModel(model);
 		}
 
-		if(model_id >= 0)
-			models_tbw->removeTab(model_id);
-		else
-			models_tbw->removeTab(models_tbw->currentIndex());
+		if(!model->isModified() ||
+			 (model->isModified() && msg_box.result()==QDialog::Accepted))
+		{
 
-		delete(model);
+			model_tree_states.erase(model);
+
+			disconnect(tab, nullptr, oper_list_wgt, nullptr);
+			disconnect(tab, nullptr, model_objs_wgt, nullptr);
+			disconnect(tab, nullptr, this, nullptr);
+			disconnect(action_alin_objs_grade, nullptr, this, nullptr);
+			disconnect(action_show_grid, nullptr, this, nullptr);
+			disconnect(action_show_delimiters, nullptr, this, nullptr);
+
+			//Remove the temporary file related to the closed model
+			QDir arq_tmp;
+			arq_tmp.remove(model->getTempFilename());
+
+			if(model_id >= 0)
+				models_tbw->removeTab(model_id);
+			else
+				models_tbw->removeTab(models_tbw->currentIndex());
+
+			delete(model);
+		}
 	}
 
 	if(models_tbw->count()==0)
@@ -1011,27 +1014,16 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
-			bool sql_val_checked=model_valid_wgt->sql_validation_chk->isChecked(),
-					 val_wgt_checked=validation_btn->isChecked();
-
-			if(model->isModified())
+			if(model->getDatabaseModel()->isInvalidated())
 			{
-				validation_btn->setChecked(true);
-				model_valid_wgt->sql_validation_chk->setChecked(false);
-				model_valid_wgt->validate_btn->click();
-
-				//Creates a local event loop to block operations while the validation thread is running
-				QEventLoop eventLoop;
-				connect(model_valid_wgt->validation_thread, SIGNAL(finished(void)), &eventLoop, SLOT(quit(void)));
-				eventLoop.exec(QEventLoop::AllEvents);
-
-				model_valid_wgt->sql_validation_chk->setChecked(sql_val_checked);
-				validation_btn->setChecked(val_wgt_checked);
+				msg_box.show(trUtf8("Confirmation"),
+												trUtf8("WARNING: The model is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to	cancel the saving and validate the model?"),
+												Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 
-			/* The model is saved only when is modified and is not invalidated or the user
-			confirmed the of invalidated model */
-			if(!model->getDatabaseModel()->isInvalidated() && (model->isModified() || sender()==action_save_as))
+			if((!model->getDatabaseModel()->isInvalidated() ||
+					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Rejected))
+					 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
 				if(sender()==action_save_as || model->filename.isEmpty())
@@ -1060,15 +1052,6 @@ void MainWindow::saveModel(ModelWidget *model)
 
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
-			}
-			//Aborts the model saving and show a warning message when it is invalid
-			else if(model->getDatabaseModel()->isInvalidated())
-			{
-				validation_btn->setChecked(true);
-				msg_box.show(trUtf8("Model not saved"),
-										 trUtf8("Could not save the model '%1' due to some validation errors! Please, use the validation tool to fix any problem and try again.")
-										 .arg(model->getDatabaseModel()->getName()),
-										 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 			}
 		}
 	}

@@ -56,6 +56,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
+		void emitValidationInProgress(void);
+
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
 
@@ -66,7 +68,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateConnections(map<QString, Connection *> &conns);
 
 	private slots:
-		void applyFix(void);
+		void applyFixes(void);
 		void updateValidation(ValidationInfo val_info);
 		void updateProgress(int prog, QString msg, ObjectType obj_type);
 		void validateModel(void);

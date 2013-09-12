@@ -330,78 +330,7 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="1">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>10</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="3">
-       <widget class="QComboBox" name="connections_cmb">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Connection alias</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QCheckBox" name="fix_steps_chk">
-          <property name="toolTip">
-           <string>Enable applying fixes in a loop (steps).</string>
-          </property>
-          <property name="text">
-           <string>Fix steps:</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="fix_steps_sb">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>1000</number>
-          </property>
-          <property name="value">
-           <number>20</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="5" rowspan="2">
+      <item row="0" column="4" rowspan="2">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -414,7 +343,7 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0" colspan="5">
+      <item row="1" column="0" colspan="4">
        <widget class="QLabel" name="label_2">
         <property name="palette">
          <palette>
@@ -464,17 +393,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="QComboBox" name="version_cmb">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="toolTip">
-         <string>PostgreSQL version</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
+      <item row="0" column="0">
        <widget class="QCheckBox" name="sql_validation_chk">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -490,6 +409,38 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="connections_cmb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Connection alias</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" colspan="2">
+       <widget class="QComboBox" name="version_cmb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>PostgreSQL version</string>
         </property>
        </widget>
       </item>
@@ -683,11 +634,6 @@
  </widget>
  <tabstops>
   <tabstop>validate_btn</tabstop>
-  <tabstop>fix_steps_chk</tabstop>
-  <tabstop>fix_steps_sb</tabstop>
-  <tabstop>sql_validation_chk</tabstop>
-  <tabstop>connections_cmb</tabstop>
-  <tabstop>version_cmb</tabstop>
   <tabstop>output_trw</tabstop>
   <tabstop>hide_tb</tabstop>
  </tabstops>

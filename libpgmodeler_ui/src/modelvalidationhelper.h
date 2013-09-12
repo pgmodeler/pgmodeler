@@ -55,12 +55,28 @@ class ModelValidationHelper: public QObject {
 		//! \brief Validation progress
 		int progress;
 
+		//! \brief Indicates if the validation was canceled by the user
+		bool  valid_canceled,
+
+		//! \brief Indicates if the validation is on fix mode.
+		fix_mode;
+
+		/*! \brief Stores the validation infos generated during validation steps.
+		This vector is read when applying fixes */
+		vector<ValidationInfo> val_infos;
+
 	public:
 		ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
 		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="");
+
+		//! \brief Switch the validator to fix mode
+		void switchToFixMode(bool value);
+
+		//! \brief Returns if the validator is on fix mode
+		bool isInFixMode(void);
 
 		//! \brief Returns the error count (only when executing SQL validation)
 		unsigned getErrorCount(void);
@@ -74,11 +90,12 @@ class ModelValidationHelper: public QObject {
 	private slots:
 		void redirectExportProgress(int prog, QString msg, ObjectType obj_type);
 		void captureThreadError(Exception e);
-		void emitExportCanceled(void);
+		void emitValidationCanceled(void);
 		void emitValidationFinished(void);
 
 	public slots:
 		void validateModel(void);
+		void applyFixes(void);
 		void cancelValidation(void);
 
 	signals:
@@ -96,6 +113,9 @@ class ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the dbms export thread start to run
 		void s_sqlValidationStarted(bool);
+
+		//! \brief This signal is emitted when the validator applied some fix on validation info
+		void s_fixApplied(void);
 };
 
 #endif

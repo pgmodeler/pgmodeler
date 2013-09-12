@@ -135,10 +135,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
-	protected:
-		//! \brief Indicate if the model invalidated
-		void setInvalidated(bool value);
-
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
@@ -233,6 +229,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
 		bool isInvalidated(void);
+
+		//! \brief Indicate if the model invalidated
+		void setInvalidated(bool value);
 
 		//! \brief Saves the specified code definition for the model on the specified filename
 		void saveModel(const QString &filename, unsigned def_type);
@@ -429,6 +428,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
 		QString getErrorExtraInfo(void);
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);
@@ -438,8 +438,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
-
-	friend class ModelValidationHelper;
 };
 
 #endif

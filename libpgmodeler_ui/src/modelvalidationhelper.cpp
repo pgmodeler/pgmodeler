@@ -23,14 +23,13 @@ ModelValidationHelper::ModelValidationHelper(void)
 	warn_count=error_count=progress=0;
 	db_model=nullptr;
 	conn=nullptr;
+	valid_canceled=fix_mode=false;
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
 
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType)), this, SLOT(redirectExportProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
-	//connect(&export_helper, SIGNAL(s_exportFinished(void)), export_thread, SLOT(quit(void)));
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
-	connect(&export_helper, SIGNAL(s_exportCanceled()), this, SLOT(emitExportCanceled(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 }
 
@@ -151,10 +150,23 @@ void ModelValidationHelper::redirectExportProgress(int prog, QString msg, Object
 
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver)
 {
+	fix_mode=false;
+	valid_canceled=false;
+	val_infos.clear();
 	this->db_model=model;
 	this->conn=conn;
 	this->pgsql_ver=pgsql_ver;
 	export_helper.setExportToDBMSParams(model, conn, pgsql_ver, false, true);
+}
+
+void ModelValidationHelper::switchToFixMode(bool value)
+{
+	fix_mode=value;
+}
+
+bool ModelValidationHelper::isInFixMode()
+{
+	return(fix_mode);
 }
 
 void ModelValidationHelper::validateModel(void)
@@ -183,10 +195,12 @@ void ModelValidationHelper::validateModel(void)
 		QString name;
 
 		warn_count=error_count=progress=0;
+		val_infos.clear();
+		valid_canceled=false;
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
 		whose id is smaller than the id of the first one. */
-		for(i=0; i < count; i++)
+		for(i=0; i < count && !valid_canceled; i++)
 		{
 			obj_list=db_model->getObjectList(types[i]);
 			itr=obj_list->begin();
@@ -237,6 +251,8 @@ void ModelValidationHelper::validateModel(void)
 						info=ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
 						error_count++;
 
+						val_infos.push_back(info);
+
 						//Emit the signal containing the info
 						emit s_validationInfoGenerated(info);
 					}
@@ -246,6 +262,8 @@ void ModelValidationHelper::validateModel(void)
 			//Emit a signal containing the validation progress
 			progress=((i+1)/static_cast<float>(count))*20;
 			emit s_progressUpdated(progress, "");
+
+			QThread::msleep(5);
 		}
 
 
@@ -255,7 +273,7 @@ void ModelValidationHelper::validateModel(void)
 		itr=obj_list->begin();
 
 		//Searching the model's tables and gathering all the constraints and index
-		while(itr!=obj_list->end())
+		while(itr!=obj_list->end() && !valid_canceled)
 		{
 			table=dynamic_cast<Table *>(*itr);
 			itr++;
@@ -285,11 +303,13 @@ void ModelValidationHelper::validateModel(void)
 						dup_objects[name].push_back(tab_obj);
 				}
 			}
+
+			QThread::msleep(5);
 		}
 
 		/* Inserting the tables and views to the map in order to check if there is table objects
 			 that conflicts with thems */
-		for(i=0; i < aux_cnt; i++)
+		for(i=0; i < aux_cnt && !valid_canceled; i++)
 		{
 			obj_list=db_model->getObjectList(aux_types[i]);
 			itr=obj_list->begin();
@@ -298,12 +318,14 @@ void ModelValidationHelper::validateModel(void)
 				dup_objects[(*itr)->getName(true).remove("\"")].push_back(*itr);
 				itr++;
 			}
+
+			QThread::msleep(5);
 		}
 
 		//Checking the map of duplicated objects
 		mitr=dup_objects.begin();
 		i=1;
-		while(mitr!=dup_objects.end())
+		while(mitr!=dup_objects.end() && !valid_canceled)
 		{
 			/* If the vector of the current map element has more the one object
 			indicates the duplicity thus generates a validation info */
@@ -316,6 +338,8 @@ void ModelValidationHelper::validateModel(void)
 				error_count++;
 				refs.clear();
 
+				val_infos.push_back(info);
+
 				//Emit the signal containing the info
 				emit s_validationInfoGenerated(info);
 			}
@@ -325,29 +349,33 @@ void ModelValidationHelper::validateModel(void)
 			emit s_progressUpdated(progress, "");
 
 			i++; mitr++;
+			QThread::msleep(5);
 		}
 
-		//Step 3 (optional): Validating the SQL code onto a local DBMS.
-		//Case the connection isn't specified indicates that the SQL validation will not be executed
-		if(!conn)
+		if(!valid_canceled)
 		{
-			//Emit a signal indicating the final progress
-			emitValidationFinished();
-		}
-		//SQL validation only occurs when the model is completely validated.
-		else
-		{
-			//If there is no errors start the dbms export thread
-			if(error_count==0)
+			//Step 3 (optional): Validating the SQL code onto a local DBMS.
+			//Case the connection isn't specified indicates that the SQL validation will not be executed
+			if(!conn)
 			{
-				export_thread->start();
-				emit s_sqlValidationStarted(true);
+				//Emit a signal indicating the final progress
+				emitValidationFinished();
 			}
+			//SQL validation only occurs when the model is completely validated.
 			else
 			{
-				warn_count++;
-				emitValidationFinished();
-				emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending errors! SQL validation will not be executed.")));
+				//If there is no errors start the dbms export thread
+				if(error_count==0)
+				{
+					export_thread->start();
+					emit s_sqlValidationStarted(true);
+				}
+				else
+				{
+					warn_count++;
+					emitValidationFinished();
+					emit s_validationInfoGenerated(ValidationInfo(trUtf8("There are pending errors! SQL validation will not be executed.")));
+				}
 			}
 		}
 	}
@@ -357,10 +385,35 @@ void ModelValidationHelper::validateModel(void)
 	}
 }
 
+void ModelValidationHelper::applyFixes(void)
+{
+	if(fix_mode)
+	{
+		while(!val_infos.empty() && !valid_canceled)
+		{
+			resolveConflict(val_infos[0]);
+			emit s_fixApplied();
+
+			validateModel();
+			QThread::msleep(5);
+		}
+
+		if(!valid_canceled && val_infos.empty())
+		{
+			fix_mode=false;
+			emitValidationFinished();
+		}
+	}
+}
+
 void ModelValidationHelper::cancelValidation(void)
 {
+	valid_canceled=true;
+	fix_mode=false;
+	val_infos.clear();
 	export_thread->quit();
 	export_helper.cancelExport();
+	emitValidationCanceled();
 }
 
 void ModelValidationHelper::captureThreadError(Exception e)
@@ -370,11 +423,12 @@ void ModelValidationHelper::captureThreadError(Exception e)
 	emit s_validationInfoGenerated(ValidationInfo(e));
 }
 
-void ModelValidationHelper::emitExportCanceled(void)
+void ModelValidationHelper::emitValidationCanceled(void)
 {
 	export_thread->quit();
-	emit s_validationInfoGenerated(ValidationInfo(trUtf8("SQL validation canceled by the user.")));
+	db_model->setInvalidated(error_count > 0);
 	emit s_validationCanceled();
+	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
 }
 
 void ModelValidationHelper::emitValidationFinished(void)

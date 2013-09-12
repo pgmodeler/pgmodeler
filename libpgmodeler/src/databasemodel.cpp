@@ -409,9 +409,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	}
 
 	object->setDatabase(this);
-
-	//if(!signalsBlocked())
-		emit s_objectAdded(object);
+	emit s_objectAdded(object);
+	this->setInvalidated(true);
 }
 
 void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_refs)
@@ -2649,40 +2648,8 @@ void DatabaseModel::loadModel(const QString &filename)
 					{
 						elem_name=XMLParser::getElementName();
 
-						/* When the current element is a permission, indicates that the parser created all the
-				 other objects. Thus, if there is no incomplete objects that need to be recreated
-				 the permissions will be loaded */
 						if(elem_name==ParsersAttributes::PERMISSION)
-						{
-							//Recreates the special objects before load the permissions
-							/* if(!xml_special_objs.empty())
-							{
-								//Makes a backup of the main buffer of the xml parser that contains all the model file definition
-								str_aux=XMLParser::getXMLBuffer();
-
-								itr=xml_special_objs.begin();
-								itr_end=xml_special_objs.end();
-
-								while(itr!=itr_end)
-								{
-									createSpecialObject(itr->second, itr->first);
-									itr++;
-								}
-
-								xml_special_objs.clear();
-
-								//Reload the main buffer
-								XMLParser::restartParser();
-								XMLParser::loadXMLBuffer(str_aux);
-								XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-
-								//Moves the parser to the first permission on the buffer
-								while(XMLParser::getElementName()!=ParsersAttributes::PERMISSION &&
-											XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
-							}*/
-
 							addPermission(createPermission());
-						}
 						else
 						{
 							//Indentifies the object type to be load according to the current element on the parser
@@ -2706,14 +2673,11 @@ void DatabaseModel::loadModel(const QString &filename)
 										if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
 											addObject(object);
 
-										//if(!signalsBlocked())
-										//{
-											emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
-																					trUtf8("Loading: `%1' `(%2)'")
-																					.arg(Utf8String::create(object->getName()))
-																					.arg(object->getTypeName()),
-																					obj_type);
-										//}
+										emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
+																				trUtf8("Loading: `%1' `(%2)'")
+																				.arg(Utf8String::create(object->getName()))
+																				.arg(object->getTypeName()),
+																				obj_type);
 									}
 
 									XMLParser::restorePosition();
@@ -2734,6 +2698,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->BaseObject::setProtected(protected_model);
 			loading_model=false;
 			this->validateRelationships();
+			this->setInvalidated(false);
 		}
 		catch(Exception &e)
 		{

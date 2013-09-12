@@ -45,28 +45,26 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		validation_thread=new QThread(this);
 		validation_helper.moveToThread(validation_thread);
 
-		//connect(validate_btn, SIGNAL(clicked(bool)), this, SLOT(validateModel(void)));
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFix(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
-		connect(fix_steps_chk, SIGNAL(toggled(bool)), fix_steps_sb, SLOT(setEnabled(bool)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
 		connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
-
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
+		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
+		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
 		connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
 		connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
-		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), cancel_btn, SLOT(setEnabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
+		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
@@ -84,16 +82,32 @@ void ModelValidationWidget::hide(void)
 
 void ModelValidationWidget::reenableValidation(void)
 {
-	validation_thread->quit();
-	model_wgt->setEnabled(true);
-	validate_btn->setEnabled(true);
-	swap_ids_btn->setEnabled(true);
-	cancel_btn->setEnabled(false);
-	fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
-	clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
-	options_btn->setEnabled(true);
-	options_frm->setEnabled(true);
-	emit s_validationInProgress(false);
+	if(!validation_helper.isInFixMode())
+	{
+		validation_thread->quit();
+		model_wgt->setEnabled(true);
+		validate_btn->setEnabled(true);
+		swap_ids_btn->setEnabled(true);
+		cancel_btn->setEnabled(false);
+		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
+		clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
+		options_btn->setEnabled(true);
+		options_frm->setEnabled(true);
+		emit s_validationInProgress(false);
+	}
+}
+
+void ModelValidationWidget::emitValidationInProgress(void)
+{
+	clearOutput();
+	emit s_validationInProgress(true);
+
+	prog_info_wgt->setVisible(true);
+	validate_btn->setEnabled(false);
+	swap_ids_btn->setEnabled(false);
+	options_btn->setEnabled(false);
+	model_wgt->setEnabled(false);
+	cancel_btn->setEnabled(true);
 }
 
 void ModelValidationWidget::clearOutput(void)
@@ -180,7 +194,6 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	else
 		label->setText(val_info.getErrors().at(0));
 
-	output_trw->addTopLevelItem(item);
 
 	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR ||
 		 val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
@@ -260,6 +273,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		}
 	}
 
+	output_trw->addTopLevelItem(item);
 	output_trw->setItemWidget(item, 0, label);
 	item->setExpanded(false);
 
@@ -273,46 +287,16 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 void ModelValidationWidget::validateModel(void)
 {
-	emit s_validationInProgress(true);
-
-	clearOutput();
-	prog_info_wgt->setVisible(true);
-	validate_btn->setEnabled(false);
-	swap_ids_btn->setEnabled(false);
-	options_btn->setEnabled(false);
-	model_wgt->setEnabled(false);
-	cancel_btn->setEnabled(false);
+	emitValidationInProgress();
+	validation_helper.switchToFixMode(false);
 	validation_thread->start();
 }
 
-void ModelValidationWidget::applyFix(void)
+void ModelValidationWidget::applyFixes(void)
 {
-	if(validation_helper.getErrorCount() > 0)
-	{
-		ValidationInfo val_info;
-
-		//Get the first validation info and try to resolve the conflict
-		val_info=output_trw->topLevelItem(0)->data(0, Qt::UserRole).value<ValidationInfo>();
-		validation_helper.resolveConflict(val_info);
-		model_wgt->setModified(true);
-
-		//If there is more validation infos redo the validation to update the info list
-		if(fix_steps_chk->isChecked() && curr_step < fix_steps_sb->value() &&
-			 validation_helper.getErrorCount() > 0)
-		{
-			output_trw->clear();
-			validation_helper.validateModel();
-			curr_step++;
-			this->applyFix();
-		}
-
-	}
-	else
-	{
-		//If there is no issus proceed to SQL validation (if enabled by user)
-		curr_step=0;
-		validateModel();
-	}
+	emitValidationInProgress();
+	validation_helper.switchToFixMode(true);
+	validation_thread->start();
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type)
