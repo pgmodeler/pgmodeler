@@ -470,9 +470,9 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	import_sys_objs_chk->blockSignals(true);
 	import_sys_objs_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(false);
-	grp_schema_rb->setChecked(true);
-	tab_spacing_sb->setValue(10);
+	obj_spacing_sb->setValue(50);
 	tabs_per_row_sb->setValue(5);
+	sch_per_row_sb->setValue(3);
 	database_cmb->clear();
 	db_objects_tw->clear();
 	database_cmb->setEnabled(false);
@@ -576,6 +576,9 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		Messagebox msgbox;
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
+
+	model_wgt->rearrangeSchemas(QPointF(origin_sb->value(), origin_sb->value()),
+															tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));

@@ -34,10 +34,13 @@ class BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
+		/*! \brief Stores the number of relationships connected to this table. This attribute is used
+		by the rearrange method on ModelWidget */
+		int connected_rels;
+
 	protected:
 		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns,
-
 		*ext_attribs;
 
 		static bool hide_ext_attribs;
@@ -59,6 +62,9 @@ class BaseTableView: public BaseObjectView {
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
+		//! \brief Updates the current connected relationship count
+		void updateConnectedRelsCount(int inc);
+
 	public:
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);
@@ -73,12 +79,17 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);
 
+		//! \brief Returns the current count of connected relationships
+		int getConnectRelsCount(void);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
 
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
+
+		friend class RelationshipView;
 };
 
 #endif

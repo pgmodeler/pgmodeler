@@ -1267,3 +1267,9 @@ void MainWindow::openWiki(void)
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
 }
+
+void MainWindow::rearrangeTables()
+{
+	if(current_model)
+		current_model->rearrangeSchemas(QPointF(100,100), 4, 4, 50);
+}

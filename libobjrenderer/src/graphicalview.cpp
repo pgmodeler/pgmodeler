@@ -247,7 +247,10 @@ void GraphicalView::configureObject(void)
 	BaseObjectView::configureObjectSelection();
 
 	this->table_tooltip=Utf8String::create(view->getName(true)) +
-											" (" + view->getTypeName() + ")";
+											" (" + view->getTypeName() + ") \n" +
+											TableObjectView::CONSTR_DELIM_START +
+											trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
+											TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
 }

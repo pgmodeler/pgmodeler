@@ -54,7 +54,7 @@ void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		this->selectChildren();
 	}
 	//Selects the schema
-	else if(event->modifiers()==Qt::NoModifier  && !all_selected)
+	else if(event->modifiers()==Qt::NoModifier && !all_selected)
 	{
 		this->setFlag(QGraphicsItem::ItemIsMovable);
 		this->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -113,6 +113,11 @@ void SchemaView::selectChildren(void)
 	this->setFlag(QGraphicsItem::ItemIsSelectable, true);
 	this->setSelected(true);
 	all_selected=true;
+}
+
+unsigned SchemaView::getChildrenCount()
+{
+	return(children.size());
 }
 
 void SchemaView::configureObject(void)

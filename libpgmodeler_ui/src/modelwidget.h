@@ -204,6 +204,10 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
+		//! \brief Reorganizes the tables over the scene
+		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing);
+		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
+
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);

@@ -199,6 +199,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void showRightWidgetsBar(void);
 		void showBottomWidgetsBar(void);
+
+		void rearrangeTables(void);
 };
 
 #endif

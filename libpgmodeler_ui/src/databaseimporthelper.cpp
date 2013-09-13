@@ -116,14 +116,11 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	}
 }
 
-void DatabaseImportHelper::finishImport(void)
+void DatabaseImportHelper::swapSequencesTablesIds(void)
 {
 	//Schema *schema=nullptr;
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
-	vector<BaseObject *> tables;
-	unsigned i=0, cnt=0;
-	BaseTable *tab=nullptr;
 
 	//Swapping the id's between sequences and tables to avoid reference breaking on SQL code
 	itr=seq_tab_swap.begin();
@@ -134,27 +131,6 @@ void DatabaseImportHelper::finishImport(void)
 		if(sequence && table)
 			BaseObject::swapObjectsIds(sequence, table, false);
 		itr++;
-	}
-
-	#warning "Testing only!"
-	cnt=dbmodel->getObjectCount(OBJ_SCHEMA);
-	for(i=0; i < cnt; i++)
-	{
-		dbmodel->getSchema(i)->setRectVisible(true);
-		dbmodel->getSchema(i)->setModified(true);
-	}
-
-	#warning "Testing only!"
-	tables.insert(tables.end(), dbmodel->getObjectList(OBJ_TABLE)->begin(), dbmodel->getObjectList(OBJ_TABLE)->end());
-	tables.insert(tables.end(), dbmodel->getObjectList(OBJ_VIEW)->begin(), dbmodel->getObjectList(OBJ_VIEW)->end());
-
-	while(!tables.empty())
-	{
-		tab=dynamic_cast<BaseTable *>(tables.back());
-		tables.pop_back();
-
-		tab->setPosition(QPointF(random() % 1000, random() % 1000));
-		tab->setModified(true);
 	}
 }
 
@@ -458,7 +434,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 		if(!import_canceled)
 		{
-			finishImport();
+			swapSequencesTablesIds();
 
 			if(!errors.empty())
 				emit s_importFinished(Exception(trUtf8("The database import ended but some errors were generated. Check the error stack for details"),

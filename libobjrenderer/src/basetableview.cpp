@@ -39,6 +39,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	ext_attribs->setZValue(1);
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
+	connected_rels=0;
 }
 
 BaseTableView::~BaseTableView(void)
@@ -166,3 +167,15 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 	}
 }
+
+void BaseTableView::updateConnectedRelsCount(int inc)
+{
+	connected_rels+=inc;
+	if(connected_rels < 0) connected_rels=0;
+}
+
+int BaseTableView::getConnectRelsCount(void)
+{
+	return(connected_rels);
+}
+

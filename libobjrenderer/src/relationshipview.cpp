@@ -338,10 +338,19 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void RelationshipView::disconnectTables(void)
 {
-	for(unsigned i=0; i < 2; i++)
+	if(tables[0] && tables[1])
 	{
-		disconnect(tables[i], nullptr, this, nullptr);
-		tables[i]=nullptr;
+		BaseRelationship *rel_base=this->getSourceObject();
+		tables[0]->updateConnectedRelsCount(-1);
+
+		if(!rel_base->isSelfRelationship())
+			tables[1]->updateConnectedRelsCount(-1);
+
+		for(unsigned i=0; i < 2; i++)
+		{
+			disconnect(tables[i], nullptr, this, nullptr);
+			tables[i]=nullptr;
+		}
 	}
 }
 
@@ -351,6 +360,11 @@ void RelationshipView::configureObject(void)
 
 	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
 	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+
+	tables[0]->updateConnectedRelsCount(1);
+
+	if(!rel_base->isSelfRelationship())
+		tables[1]->updateConnectedRelsCount(1);
 
 	this->configureLine();
 

@@ -2981,3 +2981,92 @@ void ModelWidget::removeRelationshipPoints(void)
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
+
+void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	Schema *schema=nullptr;
+	SchemaView *sch_view=nullptr;
+	unsigned sch_id=0;
+	float x=origin.x(), y=origin.y(), max_y=-1, cy=0;
+
+	itr=db_model->getObjectList(OBJ_SCHEMA)->begin();
+	itr_end=db_model->getObjectList(OBJ_SCHEMA)->end();
+
+	while(itr!=itr_end)
+	{
+		schema=dynamic_cast<Schema *>(*itr);
+		schema->setRectVisible(true);
+
+		sch_view=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+		schema->setModified(true);
+
+		rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);
+		schema->setModified(true);
+
+		if(sch_view->getChildrenCount() > 0)
+		{
+			cy=sch_view->pos().y() + sch_view->boundingRect().height();
+
+			if(max_y < cy)
+				max_y=cy;
+
+			sch_id++;
+			if(sch_id >= sch_per_row)
+			{
+				sch_id=0;
+				y=max_y + obj_spacing;
+				x=origin.x();
+				max_y=-1;
+			}
+			else
+				x=sch_view->pos().x() + sch_view->boundingRect().width() + obj_spacing;
+		}
+
+		itr++;
+	}
+
+	this->adjustSceneSize();
+}
+
+void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing)
+{
+	if(schema)
+	{
+		vector<BaseObject *> tables, views;
+		vector<BaseObject *>::iterator itr;
+		BaseTableView *tab_view=nullptr;
+		BaseTable *base_tab=nullptr;
+		unsigned tab_id=0;
+		float max_y=-1, x=origin.x(), y=origin.y(), cy=0;
+
+		tables=db_model->getObjects(OBJ_TABLE, schema);
+		views=db_model->getObjects(OBJ_VIEW, schema);
+		tables.insert(tables.end(), views.begin(), views.end());
+
+		itr=tables.begin();
+		while(itr!=tables.end())
+		{
+			base_tab=dynamic_cast<BaseTable *>(*itr);
+			tab_view=dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());			
+			tab_view->setPos(QPointF(x,y));
+
+			cy=tab_view->pos().y()  + tab_view->boundingRect().bottomRight().y();
+			if(max_y < cy)
+				max_y=cy;
+
+			tab_id++;
+			if(tab_id >= tabs_per_row)
+			{
+				tab_id=0;
+				y=max_y + obj_spacing;
+				x=origin.x();
+				max_y=-1;
+			}
+			else
+				x=tab_view->pos().x() + tab_view->boundingRect().width() + obj_spacing;
+
+			itr++;
+		}
+	}
+}

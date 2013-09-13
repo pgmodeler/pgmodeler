@@ -58,6 +58,8 @@ class SchemaView: public BaseObjectView
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
 
+		unsigned getChildrenCount(void);
+
 	public slots:
 		void configureObject(void);
 };

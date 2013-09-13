@@ -296,7 +296,10 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 
 		if(rel)
+		{
 			disconnect(rel, nullptr, this, nullptr);
+			rel->disconnectTables();
+		}
 		else if(tab)
 			disconnect(tab, nullptr, this, nullptr);
 		else if(object)

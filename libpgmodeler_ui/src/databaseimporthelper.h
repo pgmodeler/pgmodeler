@@ -195,9 +195,7 @@ class DatabaseImportHelper: public QObject {
 				before assigne the connection to this class. */
 		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
-		//! \brief Execute the last operations before end the import
-		void finishImport(void);
-
+		void swapSequencesTablesIds(void);
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
 		void createObjects(void);
