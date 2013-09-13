@@ -22,18 +22,10 @@ const QString DatabaseImportHelper::ARRAY_PATTERN="((\\[)[0-9]+(\\:)[0-9]+(\\])=
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
-	#warning "Only for debugging!"
-	Connection::setPrintSQL(true);
-
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
 	model_wgt=nullptr;
-}
-
-DatabaseImportHelper::~DatabaseImportHelper(void)
-{
-
 }
 
 void DatabaseImportHelper::setConnection(Connection &conn)
@@ -369,6 +361,53 @@ void DatabaseImportHelper::createConstraints(void)
 	}
 }
 
+void DatabaseImportHelper::createPermissions(void)
+{
+	try
+	{
+		unsigned i=0, progress=0;
+		map<unsigned, attribs_map>::iterator itr, itr_obj=user_objs.begin();
+		map<unsigned, map<unsigned, attribs_map>>::iterator itr_cols=columns.begin();
+
+
+		while(itr_obj!=user_objs.end())
+		{
+			emit s_progressUpdated(progress, trUtf8("Creating objects permissions..."), OBJ_PERMISSION);
+
+			createPermission(itr_obj->second);
+			itr_obj++;
+
+			progress=((i++)/static_cast<float>(user_objs.size())) * 100;
+			QThread::msleep(5);
+		}
+
+		i=0;
+		while(itr_cols!=columns.end())
+		{
+			emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
+
+			itr=itr_cols->second.begin();
+			while(itr!=itr_cols->second.end())
+			{
+				createPermission(itr->second);
+				itr++;
+			}
+
+			itr_cols++;
+			progress=((i++)/static_cast<float>(columns.size())) * 100;
+			QThread::msleep(5);
+		}
+
+	}
+	catch(Exception &e)
+	{
+		if(ignore_errors)
+			errors.push_back(e);
+		else
+			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void DatabaseImportHelper::updateFKRelationships(void)
 {
 	int progress=0;
@@ -410,19 +449,11 @@ void DatabaseImportHelper::importDatabase(void)
 {
 	try
 	{
-		//Retrieving system objects
 		retrieveSystemObjects();
-
-		//Retrieving user objects
 		retrieveUserObjects();
-
-		//Creating objects (except constraints)
 		createObjects();
-
-		//Creating constraints
 		createConstraints();
-
-		//Updating fk relatinships
+		createPermissions();
 		updateFKRelationships();
 
 		if(!import_canceled)
@@ -523,9 +554,6 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
 				break;
 			}
-
-			//Executing the permission creation after create the entire object and it's dependencies
-			createPermission(attribs);
 
 			/* Register the object oid on the list of created objects to avoid creating it again
 				 on recursive object creation. (see getDependencyObject()) */
@@ -1324,7 +1352,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	try
 	{
 		Column col;
-		map<unsigned, attribs_map>::iterator itr, itr_end;
+		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, "0" },
 														{ ParsersAttributes::Y_POS, "0" }};
 
@@ -1334,7 +1362,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 																																				 pos_attrib, SchemaParser::XML_DEFINITION);
 
 		//Creating columns
-		itr=columns[attribs[ParsersAttributes::OID].toUInt()].begin();
+		itr=itr1=columns[attribs[ParsersAttributes::OID].toUInt()].begin();
 		itr_end=columns[attribs[ParsersAttributes::OID].toUInt()].end();
 
 		while(itr!=itr_end)
@@ -1603,10 +1631,92 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 void DatabaseImportHelper::createPermission(attribs_map &attribs)
 {
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+	Permission *perm=nullptr;
 
 	if(Permission::objectAcceptsPermission(obj_type))
 	{
-		cout << attribs[ParsersAttributes::OID].toStdString() << ":" << attribs[ParsersAttributes::PERMISSION].toStdString() << endl;
+
+		QStringList perm_list;
+		vector<unsigned> privs, gop_privs;
+		QString role_name;
+		Role *role=nullptr;
+		BaseObject *object=nullptr;
+		Table *table=nullptr;
+
+		//Parses the permissions vector string
+		perm_list=parseArrayValues(attribs[ParsersAttributes::PERMISSION]);
+
+		if(!perm_list.isEmpty())
+		{
+			if(obj_type!=OBJ_COLUMN)
+			{
+				if(obj_type==OBJ_DATABASE)
+					object=dbmodel;
+				else
+					object=dbmodel->getObject(getObjectName(attribs[ParsersAttributes::OID]), obj_type);
+			}
+			else
+			{
+				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
+				table=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(attribs[ParsersAttributes::TABLE]), OBJ_TABLE));
+				object=table->getObject(getColumnName(attribs[ParsersAttributes::TABLE], attribs[ParsersAttributes::OID]), OBJ_COLUMN);
+			}
+		}
+
+		for(int i=0; i < perm_list.size(); i++)
+		{
+			//Parses the permission retrieving the role name as well the privileges over the object
+			role_name=Permission::parsePermissionString(perm_list[i], privs, gop_privs);
+
+			if(!privs.empty() || gop_privs.empty())
+			{
+				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
+
+				/* If the role doesn't exists and there is a name defined, throws an error because
+				the roles wasn't found on the model */
+				if(!role && !role_name.isEmpty())
+					throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+													.arg(QString("permission_%1").arg(perm_list[i])).arg(BaseObject::getTypeName(OBJ_PERMISSION))
+													.arg(role_name).arg(BaseObject::getTypeName(OBJ_ROLE))
+													,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				else
+				{
+					try
+					{
+						//Configuring the permisison
+						perm=new Permission(object);
+
+						if(role)
+							perm->addRole(role);
+
+						//Setting the ordinary privileges
+						while(!privs.empty())
+						{
+							perm->setPrivilege(privs.back(), true, false);
+							privs.pop_back();
+						}
+
+						//Setting the grant option privileges
+						while(!gop_privs.empty())
+						{
+							perm->setPrivilege(gop_privs.back(), true, true);
+							gop_privs.pop_back();
+						}
+
+						dbmodel->addPermission(perm);
+					}
+					catch(Exception &e)
+					{
+						if(perm) delete(perm);
+
+						if(ignore_errors)
+							errors.push_back(e);
+						else
+							throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+					}
+				}
+			}
+		}
 	}
 }
 

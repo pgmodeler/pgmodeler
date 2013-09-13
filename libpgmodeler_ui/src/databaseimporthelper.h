@@ -37,6 +37,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		static const QString ARRAY_PATTERN;
 
+		//! \brief Stores the errors generated during the import
 		vector<Exception> errors;
 
 		//! \brief Instance of catalog class to query system catalogs
@@ -74,6 +75,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Stores the selected objects oids to be imported
 		vector<unsigned> creation_order;
 
+		//! \brief Stores the creation order for constraints
 		vector<unsigned> constr_creation_order;
 
 		//! \brief Stores the user defined objects attributes
@@ -172,7 +174,6 @@ class DatabaseImportHelper: public QObject {
 
 	public:
 		DatabaseImportHelper(QObject *parent=0);
-		~DatabaseImportHelper(void);
 
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);
@@ -201,6 +202,7 @@ class DatabaseImportHelper: public QObject {
 		void retrieveUserObjects(void);
 		void createObjects(void);
 		void createConstraints(void);
+		void createPermissions(void);
 		void updateFKRelationships(void);
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

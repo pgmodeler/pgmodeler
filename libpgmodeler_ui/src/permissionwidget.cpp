@@ -239,7 +239,7 @@ void PermissionWidget::listPermissions(void)
 			permissions_tab->addRow();
 			permissions_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(perm)),i);
 			permissions_tab->setCellText(perm->getName(),i,0);
-			permissions_tab->setCellText(perm->getPrivilegeString(),i,2);
+			permissions_tab->setCellText(perm->getPermissionString(),i,2);
 
 			count1=perm->getRoleCount();
 			for(i1=0; i1 < count1; i1++)

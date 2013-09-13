@@ -16,7 +16,7 @@
     %if @{attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
 	     cl.attacl AS permission, df.adsrc AS default_value,
-	     ds.description AS comment, ]
+	     ds.description AS comment, tb.oid AS table, ]
 
      # This subquery retrieve the schema name for the type when it is undeer public schema.
      # This is necessary because pgModeler identifies user-defined types by the complete

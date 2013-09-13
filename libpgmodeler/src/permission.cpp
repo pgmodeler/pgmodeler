@@ -18,6 +18,8 @@
 
 #include "permission.h"
 
+const QString Permission::priv_codes="rawdDxtCcTXU";
+
 Permission::Permission(BaseObject *obj)
 {
 	unsigned priv_id;
@@ -229,9 +231,8 @@ bool Permission::getGrantOption(unsigned priv_id)
 	return(grant_option[priv_id]);
 }
 
-QString Permission::getPrivilegeString(void)
+QString Permission::getPermissionString(void)
 {
-	unsigned char priv_codes[13]="rawdDxtCcTXU";
 	QString str_priv;
 	unsigned i;
 
@@ -266,6 +267,60 @@ QString Permission::getPrivilegeString(void)
 	}
 
 	return(str_priv);
+}
+
+QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs)
+{
+	QString role;
+	QRegExp regexp(QString("(.)*(\\=)([%1*])+((\\/)(.)+)?").arg(priv_codes));
+
+	privs.clear();
+	gop_privs.clear();
+
+	//Checking if the permission string is valid
+	if(!perm_str.isEmpty() && regexp.exactMatch(perm_str))
+	{
+		QStringList list=perm_str.remove(perm_str.indexOf('/'), perm_str.size()).split('=');
+		QChar chr;
+		QString codes=list[1];
+		int priv=-1, i=0;
+		bool gop=false;
+
+		role=list[0];
+
+		while(i < codes.size())
+		{
+			chr=codes[i];
+
+			//Get the privilege code
+			if(chr!='*')
+				priv=priv_codes.indexOf(chr);
+
+			//Checking if the next char is the GRANT OPTION descriptor
+			if(((i+1) < codes.size()) && (codes[i+1]=='*'))
+			{
+				i+=2;
+				gop=true;
+			}
+			else
+				i++;
+
+			if(priv >= 0)
+			{
+				/* If the grant option flag is checked insert the privilege
+				on the grant option list instead of ordinary privilete list */
+				if(gop)
+					gop_privs.push_back(priv);
+				else
+					privs.push_back(priv);
+
+				priv=-1;
+				gop=false;
+			}
+		}
+	}
+
+	return(role);
 }
 
 void Permission::generatePermissionId(void)

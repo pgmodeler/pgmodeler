@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <QTextStream>
 #include <QCryptographicHash>
+#include <QRegExp>
 
 class Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following
@@ -51,6 +52,8 @@ class Permission: public BaseObject {
 				* schema
 				* tablespace */
 	private:
+		static const QString priv_codes;
+
 		//! \brief Object which the permission is applied
 		BaseObject *object;
 
@@ -133,7 +136,11 @@ class Permission: public BaseObject {
 		/*! \brief Returns a string containing all the privileges
 		 configured as the internal format of permissions
 		 as documented on PostgreSQL GRANT command */
-		QString getPrivilegeString(void);
+		QString getPermissionString(void);
+
+		/*! \brief Parses the permission string (e.g. postgres=arwdDxt/postgres) and returns the role name
+		which owns the permission. The parameter vectors stores the ordinary privileges as well the GRANT OPTION privileges */
+		static QString parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs);
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
