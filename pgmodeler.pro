@@ -96,8 +96,11 @@ SUBDIRS = libutils \
 	  main-cli \
 	  main \
 	  plugins/dummy \
-	  plugins/xml2object \
-	  tests
+	  plugins/xml2object
+
+
+#Include the tests subproject only on debug mode
+CONFIG(debug, debug|release):SUBDIRS+=tests
 
 QT += core widgets printsupport
 TEMPLATE = subdirs

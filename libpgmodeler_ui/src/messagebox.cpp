@@ -81,7 +81,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 {
 	vector<Exception> list;
 	vector<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *root=nullptr,*item=nullptr,*item1=nullptr,*item2=nullptr;
+	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
 	QLabel *label=nullptr;
 	int idx=0;
 	Exception *ex=nullptr;
