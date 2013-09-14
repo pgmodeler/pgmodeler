@@ -35,6 +35,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		QTimer timer;
 
+		/*! \brief Model widget allocated during the import. In case of success this model
+		will be transferred to the main window or destroyed in case of failure */
 		ModelWidget *model_wgt;
 
 		//! \brief Database importer helper
@@ -68,16 +70,14 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
 		void finishImport(const QString &msg);
-
 		void showEvent(QShowEvent *);
-
 		void closeEvent(QCloseEvent *event);
-
 		void destroyModelWidget(void);
 
 	public:
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
+		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
 
 	private slots:

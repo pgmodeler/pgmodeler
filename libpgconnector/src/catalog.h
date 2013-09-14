@@ -39,7 +39,7 @@ class Catalog {
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
-		BOOL_FIELD;
+		BOOL_FIELD;     //! \brief Suffix for boolean fields.
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
@@ -56,7 +56,16 @@ class Catalog {
 		unsigned last_sys_oid;
 
 		//! \brief Indicates if the catalog must filter system objects
-		bool exclude_sys_objs, exclude_ext_objs, exclude_array_types, list_only_sys_objs;
+		bool exclude_sys_objs,
+
+		//! \brief Indicates if the catalog must filter extension created objects
+		exclude_ext_objs,
+
+		//! \brief Indicates if the catalog must filter built-in array data types
+		exclude_array_types,
+
+		//! \brief Indicates if the catalog must list only system objects
+		list_only_sys_objs;
 
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
@@ -106,6 +115,7 @@ class Catalog {
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
+		//! \brief Configures the catalog query filter
 		void setFilter(unsigned filter);
 
 		//! \brief Returns the last system object oid registered on the database

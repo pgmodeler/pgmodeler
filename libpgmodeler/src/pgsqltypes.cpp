@@ -1054,7 +1054,12 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 		}
 
 		if(itr!=itr_end)
-			PgSQLType::user_types.erase(itr);
+		{
+			//PgSQLType::user_types.erase(itr);
+			itr->name="__invalidated_type__";
+			itr->ptype=nullptr;
+			itr->invalidated=true;
+		}
 	}
 }
 
@@ -1070,7 +1075,7 @@ void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QStri
 
 		while(itr!=itr_end)
 		{
-			if(itr->name==type_name && itr->ptype==ptype)
+			if(!itr->invalidated && itr->name==type_name && itr->ptype==ptype)
 			{
 				itr->name=new_name;
 				break;
@@ -1127,8 +1132,9 @@ unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void
 
 		while(itr!=itr_end)
 		{
-			if(((type_name!="" && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
-				 ((pmodel && itr->pmodel==pmodel) || !pmodel))
+			if(!itr->invalidated &&
+				 (((type_name!="" && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
+					((pmodel && itr->pmodel==pmodel) || !pmodel)))
 				break;
 
 			idx++;
@@ -1168,7 +1174,7 @@ void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 	for(idx=0; idx < total; idx++)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(user_types[idx].pmodel==pmodel &&
+		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
 			 ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
 			type_list.push_back(user_types[idx].name);
 	}
@@ -1184,7 +1190,7 @@ void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_
 	for(idx=0; idx < total; idx++)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(user_types[idx].pmodel==pmodel &&
+		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
 			 ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
 			ptypes.push_back(user_types[idx].ptype);
 	}

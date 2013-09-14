@@ -46,6 +46,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Instance of a connection to work on
 		Connection connection;
 
+		//! \brief Stores the current configured catalog filter
 		unsigned import_filter;
 
 		//! \brief Indicates that import was canceled by user (only on thread mode)
@@ -61,12 +62,16 @@ class DatabaseImportHelper: public QObject {
 		import_ext_objs,
 
 		//! \brief Enables the dependency resolution by query the catalog when a needed object wasn't retrieved
-		auto_resolve_deps;
+		auto_resolve_deps,
+
+		//! \brief Outputs to STDOUT the executed query catalogs as well the generated XML
+		debug_mode;
 
 		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
 
-		//! \brief Stores the selected column ids to be imported
+		/*! \brief Stores the selected column ids to be imported. The key of this map
+		it the oid of parent table */
 		map<unsigned, vector<unsigned>> column_oids;
 
 		//! \brief Stores the oid of objects sucessfully created
@@ -184,7 +189,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Defines the selected object to be imported
 		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
-		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors);
+		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode);
 
 		unsigned getLastSystemOID(void);
 
@@ -195,13 +200,14 @@ class DatabaseImportHelper: public QObject {
 				before assigne the connection to this class. */
 		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
-		void swapSequencesTablesIds(void);
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
 		void createObjects(void);
 		void createConstraints(void);
 		void createPermissions(void);
+		void swapSequencesTablesIds(void);
 		void updateFKRelationships(void);
+
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);

@@ -113,7 +113,7 @@ void DatabaseImportForm::importDatabase(void)
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 
 		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked());
+																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(), debug_mode_chk->isChecked());
 		import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
 
 		timer.stop();
@@ -327,7 +327,7 @@ void DatabaseImportForm::listObjects(void)
 			//Set the working database on import helper
 			import_helper.setCurrentDatabase(database_cmb->currentText());
 			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked());
+																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(), debug_mode_chk->isChecked());
 
 			//Retrieving and listing the cluster scoped objects
 			progress=0;
@@ -405,10 +405,7 @@ void DatabaseImportForm::listDatabases(void)
 		database_cmb->clear();
 
 		if(db_attribs.empty())
-		{
 			database_cmb->addItem(QString("No databases found"));
-			//database_gb->setEnabled(false);
-		}
 		else
 		{
 			database_cmb->blockSignals(true);
@@ -433,7 +430,6 @@ void DatabaseImportForm::listDatabases(void)
 			database_cmb->insertItem(0, QString("Found %1 database(s)").arg(db_attribs.size()));
 			database_cmb->setCurrentIndex(0);
 			database_cmb->blockSignals(false);
-			//database_gb->setEnabled(true);
 		}
 
 		database_gb->setEnabled(database_cmb->count() > 1);

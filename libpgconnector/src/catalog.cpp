@@ -197,6 +197,8 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 			obj_attribs=changeAttributeNames(res.getTupleValues());
 
+		/* Insert the object type as an attribute of the query result to facilitate the
+		import process on the classes that uses the Catalog */
 		obj_attribs[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
 
 		return(obj_attribs);
@@ -221,7 +223,11 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 			do
 			{
 				tuple=changeAttributeNames(res.getTupleValues());
+
+				/* Insert the object type as an attribute of the query result to facilitate the
+				import process on the classes that uses the Catalog */
 				tuple[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
+
 				obj_attribs.push_back(tuple);
 				tuple.clear();
 			}

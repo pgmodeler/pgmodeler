@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>793</width>
-    <height>644</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -284,6 +284,28 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
+             <item row="7" column="0" colspan="6">
+              <widget class="QFrame" name="div_ln_2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>1</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>1</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+              </widget>
+             </item>
              <item row="14" column="0" colspan="6">
               <layout class="QGridLayout" name="gridLayout_15">
                <item row="1" column="1">
@@ -348,7 +370,7 @@
                   <enum>Qt::PlainText</enum>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                  <set>Qt::AlignJustify|Qt::AlignTop</set>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -410,7 +432,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -542,7 +564,7 @@
                   <enum>Qt::PlainText</enum>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                  <set>Qt::AlignJustify|Qt::AlignTop</set>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -650,7 +672,7 @@
                   <enum>Qt::PlainText</enum>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                  <set>Qt::AlignJustify|Qt::AlignTop</set>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -694,29 +716,6 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="0" colspan="6">
-              <widget class="QFrame" name="div_ln_2">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>1</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>1</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Sunken</enum>
-               </property>
-               <zorder>origin_sb</zorder>
-              </widget>
-             </item>
              <item row="3" column="2">
               <widget class="QLabel" name="sch_per_row_lbl">
                <property name="sizePolicy">
@@ -730,8 +729,8 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="oring_lbl">
+             <item row="2" column="2">
+              <widget class="QLabel" name="tabs_per_row_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -739,7 +738,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Origin point:</string>
+                <string>Tables per row:</string>
                </property>
               </widget>
              </item>
@@ -756,8 +755,8 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="tabs_per_row_lbl">
+             <item row="2" column="0">
+              <widget class="QLabel" name="oring_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -765,7 +764,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Tables per row:</string>
+                <string>Origin point:</string>
                </property>
               </widget>
              </item>
@@ -840,6 +839,95 @@
                 <number>5</number>
                </property>
               </widget>
+             </item>
+             <item row="16" column="0" colspan="6">
+              <layout class="QGridLayout" name="gridLayout_10">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="debug_mode_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Debug mode</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="hint3_lbl_3">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="palette">
+                  <palette>
+                   <active>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </active>
+                   <inactive>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>0</red>
+                       <green>0</green>
+                       <blue>255</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </inactive>
+                   <disabled>
+                    <colorrole role="WindowText">
+                     <brush brushstyle="SolidPattern">
+                      <color alpha="255">
+                       <red>117</red>
+                       <green>114</green>
+                       <blue>112</blue>
+                      </color>
+                     </brush>
+                    </colorrole>
+                   </disabled>
+                  </palette>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>DejaVu Sans</family>
+                   <pointsize>8</pointsize>
+                   <italic>true</italic>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>All catalog queries as well the created objects' source code are printed to standard outupt (stdout).</string>
+                 </property>
+                 <property name="textFormat">
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="indent">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>

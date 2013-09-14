@@ -81,12 +81,15 @@ void DatabaseImportHelper::setSelectedOIDs(ModelWidget *model_wgt, map<ObjectTyp
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode)
 {
 	this->import_sys_objs=import_sys_objs;
 	this->import_ext_objs=import_ext_objs;
 	this->auto_resolve_deps=auto_resolve_deps;
 	this->ignore_errors=ignore_errors;
+	this->debug_mode=debug_mode;
+
+	Connection::setPrintSQL(debug_mode);
 
 	if(!import_sys_objs && import_ext_objs)
 		import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES | Catalog::EXCL_SYSTEM_OBJS;
@@ -217,6 +220,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		QThread::msleep(5);
 	}
 
+	//Retrieving all selected table columns
 	i=0;
 	col_itr=column_oids.begin();
 	while(col_itr!=column_oids.end())
@@ -258,6 +262,8 @@ void DatabaseImportHelper::createObjects(void)
 
 		try
 		{
+			/* Constraints are ignored in these phase being pushed into an auxiliary list
+				 in order to be created later */
 			if(obj_type!=OBJ_CONSTRAINT)
 			{
 				emit s_progressUpdated(progress,
@@ -345,7 +351,7 @@ void DatabaseImportHelper::createPermissions(void)
 		map<unsigned, attribs_map>::iterator itr, itr_obj=user_objs.begin();
 		map<unsigned, map<unsigned, attribs_map>>::iterator itr_cols=columns.begin();
 
-
+		//Create the object level permission
 		while(itr_obj!=user_objs.end())
 		{
 			emit s_progressUpdated(progress, trUtf8("Creating objects permissions..."), OBJ_PERMISSION);
@@ -357,6 +363,7 @@ void DatabaseImportHelper::createPermissions(void)
 			QThread::msleep(5);
 		}
 
+		//Create the column level permission
 		i=0;
 		while(itr_cols!=columns.end())
 		{
@@ -489,6 +496,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(TableObject::isTableObject(obj_type))
 				attribs[ParsersAttributes::DECL_IN_TABLE]="";
 
+			//System objects will have the sql disabled by default
 			attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : "1");
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
@@ -654,6 +662,13 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 		SchemaParser::setIgnoreUnkownAttributes(false);
 		XMLParser::restartParser();
+
+		if(debug_mode)
+		{
+			QTextStream ts(stdout);
+			ts << xml_buf << endl;
+		}
+
 		XMLParser::loadXMLBuffer(xml_buf);
 	}
 	catch(Exception &e)
@@ -664,6 +679,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 void DatabaseImportHelper::resetImportParameters(void)
 {
+	Connection::setPrintSQL(false);
 	import_canceled=false;
 	dbmodel=nullptr;
 	model_wgt=nullptr;
@@ -1770,6 +1786,8 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	try
 	{
 		attribs[ParsersAttributes::APPEND_AT_EOD]="";
+
+		//Removing the encoding suffix from LC_COLLATE and LC_CTYPE attribs
 		attribs[ParsersAttributes::_LC_COLLATE_].remove(QRegExp("(\\.)(.)+"));
 		attribs[ParsersAttributes::_LC_CTYPE_].remove(QRegExp("(\\.)(.)+"));
 		loadObjectXML(OBJ_DATABASE, attribs);
@@ -1792,6 +1810,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 	{
 		attribs_map obj_attr;
 
+		//Get the object from one of the maps of objects
 		if(system_objs.count(obj_oid))
 			obj_attr=system_objs[obj_oid];
 		else if(user_objs.count(obj_oid))
@@ -1805,12 +1824,14 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 							obj_name=obj_attr[ParsersAttributes::NAME];
 			ObjectType obj_type=static_cast<ObjectType>(obj_attr[ParsersAttributes::OBJECT_TYPE].toUInt());
 
+			//If the object accepts an schema retrieve the schema name too
 			if(BaseObject::acceptsSchema(obj_type))
 				sch_name=getObjectName(obj_attr[ParsersAttributes::SCHEMA]);
 
 			if(!sch_name.isEmpty())
 				obj_name.prepend(sch_name + ".");
 
+			//Formatting the name in form of signature (only for functions and operators)
 			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR))
 			{
 				QStringList params;
@@ -1923,6 +1944,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(types.count(type_oid))
 				type_attr=types[type_oid];
 
+			//Special treatment for array types. Removes the [] descriptor when generating XML code for the type
 			if(!type_attr.empty() && type_attr[ParsersAttributes::CATEGORY]=="A" &&
 				 type_attr[ParsersAttributes::NAME].contains("[]"))
 			{
@@ -1936,8 +1958,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			else
 				obj_name=type_attr[ParsersAttributes::NAME];
 
+			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-
 			if(!sch_name.isEmpty() && sch_name!="pg_catalog" && sch_name!="information_schema")
 				obj_name.prepend(sch_name + ".");
 

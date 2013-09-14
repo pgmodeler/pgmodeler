@@ -190,7 +190,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	}
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
-		label->setText(trUtf8("SQL validation failed due to error(s) below."));
+		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model.</em>"));
 	else
 		label->setText(val_info.getErrors().at(0));
 
@@ -313,7 +313,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		label=new QLabel;
 
 		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
-		label->setText(trUtf8("The validation process ended up without any issues."));
+		label->setText(trUtf8("Database model sucessfully validated."));
 
 		warn_count_lbl->setText(QString("%1").arg(0));
 		error_count_lbl->setText(QString("%1").arg(0));

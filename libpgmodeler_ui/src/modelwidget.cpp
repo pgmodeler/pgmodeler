@@ -1421,7 +1421,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 
 		if(!this->modified && res==QDialog::Accepted)
+		{
 			this->modified=true;
+			this->db_model->setInvalidated(true);
+		}
 
 		this->setFocus();
 	}
@@ -2996,36 +2999,47 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 	while(itr!=itr_end)
 	{
 		schema=dynamic_cast<Schema *>(*itr);
+
+		/* Forcing the schema rectangle to be visible in order to correctly positioin
+			 schemas over the screen */
 		schema->setRectVisible(true);
 
 		sch_view=dynamic_cast<SchemaView *>(schema->getReceiverObject());
 		schema->setModified(true);
 
-		rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);
-		schema->setModified(true);
-
+		//The schema is processed only there are tables inside of it
 		if(sch_view->getChildrenCount() > 0)
 		{
+			//Organizing the tables inside the schema
+			rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);
+			schema->setModified(true);
+
 			cy=sch_view->pos().y() + sch_view->boundingRect().height();
 
+			//Defining the maximum y position to avoid schema boxes colliding vertically
 			if(max_y < cy)
 				max_y=cy;
 
 			sch_id++;
+
+			//It the current schema is the last of it`s row
 			if(sch_id >= sch_per_row)
 			{
+				//Incrementing the row position
 				sch_id=0;
 				y=max_y + obj_spacing;
 				x=origin.x();
 				max_y=-1;
 			}
 			else
+				//Configuring the x position for the next schema on the current row
 				x=sch_view->pos().x() + sch_view->boundingRect().width() + obj_spacing;
 		}
 
 		itr++;
 	}
 
+	//Adjust the whole scene size due to table/schema repositioning
 	this->adjustSceneSize();
 }
 
@@ -3040,6 +3054,7 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 		unsigned tab_id=0;
 		float max_y=-1, x=origin.x(), y=origin.y(), cy=0;
 
+		//Get the tables and views for the specified schema
 		tables=db_model->getObjects(OBJ_TABLE, schema);
 		views=db_model->getObjects(OBJ_VIEW, schema);
 		tables.insert(tables.end(), views.begin(), views.end());
@@ -3051,19 +3066,23 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 			tab_view=dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());			
 			tab_view->setPos(QPointF(x,y));
 
+			//Defining the maximum y position to avoid table boxes colliding vertically
 			cy=tab_view->pos().y()  + tab_view->boundingRect().bottomRight().y();
 			if(max_y < cy)
 				max_y=cy;
 
+			//It the current table is the last of it's row
 			tab_id++;
 			if(tab_id >= tabs_per_row)
 			{
+				//Incrementing the row position
 				tab_id=0;
 				y=max_y + obj_spacing;
 				x=origin.x();
 				max_y=-1;
 			}
 			else
+				//Configuring the x position for the next table on the current row
 				x=tab_view->pos().x() + tab_view->boundingRect().width() + obj_spacing;
 
 			itr++;

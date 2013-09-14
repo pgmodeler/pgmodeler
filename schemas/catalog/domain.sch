@@ -46,8 +46,8 @@
 	  END AS length,
 
 	  CASE
-	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale
-	    WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if %not @{pgsql92} %then [::varchar] %end
+	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale ] %if %not @{pgsql92} %then [::varchar] %end
+	[   WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if %not @{pgsql92} %then [::varchar] %end
 	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if %not @{pgsql92} %then [::varchar] %end
 	[   ELSE NULL
 	 END AS precision,

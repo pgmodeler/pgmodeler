@@ -45,6 +45,7 @@ class SchemaView: public BaseObjectView
 		QList<BaseObjectView *> children;
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 

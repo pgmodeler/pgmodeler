@@ -22,7 +22,6 @@ $br
 $br $br
 
 [SET check_function_bodies = false;] $br
-[SET search_path TO ] @{search-path}; $br
 [-- ddl-end --] $br $br
 
 %if @{export-to-file} %then
@@ -40,7 +39,12 @@ $br
    @{database} $br
 %end
 
-%if @{schema} %then @{schema} %end
+%if @{schema} %then
+ @{schema}
+ [SET search_path TO ] @{search-path}; $br
+ [-- ddl-end --] $br $br
+%end
+
 %if @{shell-types} %then @{shell-types} %end
 %if @{objects} %then @{objects} %end
 %if @{permission} %then @{permission} %end

@@ -173,6 +173,15 @@ class ModelWidget: public QWidget {
 		//! \brief Disables the model actions when some new object action is active
 		void enableModelActions(bool value);
 
+		/*! \brief Reorganizes the schemas over the scene. The parameters are: an origin point,
+		number of tables per row, schemas per row and a object spacing */
+		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing);
+
+		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
+		 the schema in which the tables will be rearranged, an origin point, number of tables per row
+		 a object spacing */
+		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
+
 	public:
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -203,10 +212,6 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
-
-		//! \brief Reorganizes the tables over the scene
-		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing);
-		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -323,6 +328,7 @@ class ModelWidget: public QWidget {
 		friend class ModelObjectsWidget;
 		friend class ModelOverviewWidget;
 		friend class ModelValidationWidget;
+		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
 };
 

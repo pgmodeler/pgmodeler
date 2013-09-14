@@ -420,6 +420,11 @@ void ModelValidationHelper::captureThreadError(Exception e)
 {
 	export_thread->quit();
 	warn_count++;
+
+	/* Indicates the model invalidation only when there are validation warnings (broken refs. or no unique name)
+	sql errors are ignored since validator cannot fix SQL related problems */
+	db_model->setInvalidated(error_count > 0);
+
 	emit s_validationInfoGenerated(ValidationInfo(e));
 }
 

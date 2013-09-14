@@ -63,6 +63,15 @@ void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
+void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+	if(event->modifiers()==Qt::ShiftModifier && all_selected)
+		event->ignore();
+	else
+		BaseObjectView::mouseReleaseEvent(event);
+}
+
+
 QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
 	//If the schema is unselected makes it not movable and selectable
