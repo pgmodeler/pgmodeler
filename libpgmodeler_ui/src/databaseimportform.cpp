@@ -462,11 +462,13 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	map<QString, Connection *> connections;
 	map<QString, Connection *>::iterator itr;
 
+	debug_mode_chk->setChecked(false);
 	ignore_errors_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(true);
 	import_sys_objs_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(false);
 	obj_spacing_sb->setValue(50);
+	origin_sb->setValue(50);
 	tabs_per_row_sb->setValue(5);
 	sch_per_row_sb->setValue(3);
 	database_cmb->clear();

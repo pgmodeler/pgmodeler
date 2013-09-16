@@ -174,6 +174,14 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 	else
 		str_aux=msg;
 
+	if(str_aux.contains("`") && str_aux.contains("'"))
+	{
+		str_aux.replace("`", "<strong>");
+		str_aux.replace("\'","</strong>");
+		str_aux.replace("(", "<em>(");
+		str_aux.replace(")", ")</em>");
+	}
+
 	this->show(title,str_aux,icon_type,OK_BUTTON);
 }
 
