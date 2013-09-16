@@ -188,7 +188,12 @@ int main(int argc, char **argv)
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
 		#endif
 
-		splash.showMaximized();
+    #ifdef Q_OS_WIN
+      splash.show();
+    #else
+      splash.showMaximized();
+    #endif
+
 		app.processEvents();
 
 		//Creates the main form

@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.6.0-alpha"
+#define MyAppVersion "0.6.0-beta"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -21,7 +21,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\pgmodeler
-DefaultGroupName={#MyAppName}
+DefaultGroupName={#MyAppMenuGroup}
 AllowNoIcons=yes
 LicenseFile=.\build\LICENSE
 OutputDir=.\

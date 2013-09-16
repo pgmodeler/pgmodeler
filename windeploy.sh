@@ -1,8 +1,8 @@
 #/bin/bash
 
-QT_ROOT=/c/Qt/Qt5.0.2/5.0.2/mingw47_32/
+QT_ROOT=/c/Qt/Qt5.1.1/5.1.1/mingw48_32/
 QMAKE_ROOT=$QT_ROOT/bin
-MINGW_ROOT=/c/Qt/Qt5.0.2/Tools/MinGW/bin
+MINGW_ROOT=/c/Qt/Qt5.1.1/Tools/mingw48_32/bin
 PGSQL_ROOT=/c/PostgreSQL/9.2/bin
 QMAKE_ARGS="-r -spec win32-g++"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
@@ -22,14 +22,33 @@ DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
 
 #Dependency dlls copied to build dir
-DEP_LIBS="$QMAKE_ROOT/D3DCompiler_43.dll \
-		  $QMAKE_ROOT/iconv.dll \
-		  $QMAKE_ROOT/icudt49.dll \
-		  $QMAKE_ROOT/icuin49.dll \
-		  $QMAKE_ROOT/icuuc49.dll \
-		  $QMAKE_ROOT/libEGL.dll \
-		  $QMAKE_ROOT/libgcc_s_sjlj-1.dll \
-		  $QMAKE_ROOT/libGLESv2.dll \
+#DEP_LIBS="$QMAKE_ROOT/D3DCompiler_43.dll \
+#		  $QMAKE_ROOT/iconv.dll \
+#		  $QMAKE_ROOT/icudt49.dll \
+#		  $QMAKE_ROOT/icuin49.dll \
+#		  $QMAKE_ROOT/icuuc49.dll \
+#		  $QMAKE_ROOT/libEGL.dll \
+#		  $QMAKE_ROOT/libgcc_s_sjlj-1.dll \
+#		  $QMAKE_ROOT/libGLESv2.dll \
+#		  $QMAKE_ROOT/libstdc++-6.dll \
+#		  $QMAKE_ROOT/libwinpthread-1.dll \
+#		  $QMAKE_ROOT/libxml2.dll \
+#		  $QMAKE_ROOT/iconv.dll \
+#		  $QMAKE_ROOT/Qt5Core.dll \
+#		  $QMAKE_ROOT/Qt5Gui.dll \
+#		  $QMAKE_ROOT/Qt5Widgets.dll \
+#		  $QMAKE_ROOT/Qt5PrintSupport.dll \
+#		  $PGSQL_ROOT/libpq.dll \
+#		  $PGSQL_ROOT/libintl.dll \
+#		  $PGSQL_ROOT/libeay32.dll \
+#		  $PGSQL_ROOT/ssleay32.dll \
+#		  $PGSQL_ROOT/zlib1.dll"
+		  
+DEP_LIBS="$QMAKE_ROOT/iconv.dll \
+		  $QMAKE_ROOT/icudt51.dll \
+		  $QMAKE_ROOT/icuin51.dll \
+		  $QMAKE_ROOT/icuuc51.dll \
+		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
 		  $QMAKE_ROOT/libxml2.dll \
