@@ -38,6 +38,8 @@ QString PgModelerCLI::INITIAL_DB="--initial-db";
 QString PgModelerCLI::SILENT="--silent";
 QString PgModelerCLI::LIST_CONNS="--list-conns";
 QString PgModelerCLI::SIMULATE="--simulate";
+QString PgModelerCLI::FIX_MODEL="--fix-model";
+QString PgModelerCLI::FIX_TRIES="--fix-tries";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -176,6 +178,9 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[INITIAL_DB]=true;
 	long_opts[LIST_CONNS]=false;
 	long_opts[SIMULATE]=false;
+	long_opts[FIX_MODEL]=false;
+	long_opts[FIX_TRIES]=true;
+
 
 	short_opts[INPUT]="-i";
 	short_opts[OUTPUT]="-o";
@@ -196,6 +201,8 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[SILENT]="-s";
 	short_opts[LIST_CONNS]="-L";
 	short_opts[SIMULATE]="-S";
+	short_opts[FIX_MODEL]="-F";
+	short_opts[FIX_TRIES]="-t";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -222,13 +229,15 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
 	out << trUtf8("Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>") << endl;
 	out << endl;
-	out << trUtf8("This tool provides a way to export pgModeler's database models without\n\
-the need to load them on graphical interface. All available exporting\n\
-modes are described below.") << endl;
+	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
+the need to load them on graphical interface as well to convert  older model files to the most recent\n\
+accepted structure. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm).").arg(short_opts[INPUT]).arg(INPUT) << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Available only on export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
+	out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable on pgModeler 0.6.x.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
+	out << trUtf8("   %1, %2\t\t Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
 	out << trUtf8("   %1, %2\t\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
@@ -287,15 +296,16 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	else
 	{
 		int mode_cnt=0;
+		bool convert_file=(opts.count(FIX_MODEL) > 0);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
 		mode_cnt+=opts.count(EXPORT_TO_PNG);
 		mode_cnt+=opts.count(EXPORT_TO_DBMS);
 
-		if(mode_cnt==0)
+		if(!convert_file && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(mode_cnt > 1)
+		else if(!convert_file && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(opts[INPUT].isEmpty())
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -327,45 +337,63 @@ int PgModelerCLI::exec(void)
 			if(!silent_mode)
 			{
 				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
-				out << trUtf8("Starting model export...") << endl;
+
+				if(parsed_opts.count(FIX_MODEL))
+					out << trUtf8("Starting model fixing...") << endl;
+				else
+					out << trUtf8("Starting model export...") << endl;
+
 				out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
 			}
 
-			//Create the systems objects on model before loading it
-			model->createSystemObjects(false);
-
-			//Load the model file
-			model->loadModel(parsed_opts[INPUT]);
-
-			//Export to PNG
-			if(parsed_opts.count(EXPORT_TO_PNG))
+			if(parsed_opts.count(FIX_MODEL))
 			{
-				if(!silent_mode)
-					out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
+				extractObjectXML();
+				recreateObjects();
+				model->updateTablesFKRelationships();
+				model->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
 
-				export_hlp.exportToPNG(scene, parsed_opts[OUTPUT],
-															 parsed_opts.count(SHOW_GRID) > 0,
-															 parsed_opts.count(SHOW_DELIMITERS) > 0);
-			}
-			//Export to SQL file
-			else if(parsed_opts.count(EXPORT_TO_FILE))
-			{
 				if(!silent_mode)
-					out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
-
-				export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
+					out << trUtf8("Model successfully fixed!") << endl << endl;
 			}
-			//Export to DBMS
 			else
 			{
+				//Create the systems objects on model before loading it
+				model->createSystemObjects(false);
+
+				//Load the model file
+				model->loadModel(parsed_opts[INPUT]);
+
+				//Export to PNG
+				if(parsed_opts.count(EXPORT_TO_PNG))
+				{
+					if(!silent_mode)
+						out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
+
+					export_hlp.exportToPNG(scene, parsed_opts[OUTPUT],
+																 parsed_opts.count(SHOW_GRID) > 0,
+																 parsed_opts.count(SHOW_DELIMITERS) > 0);
+				}
+				//Export to SQL file
+				else if(parsed_opts.count(EXPORT_TO_FILE))
+				{
+					if(!silent_mode)
+						out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
+
+					export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
+				}
+				//Export to DBMS
+				else
+				{
+					if(!silent_mode)
+						out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
+
+					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(SIMULATE) > 0);
+				}
+
 				if(!silent_mode)
-					out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
-
-				export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(SIMULATE) > 0);
+					out << trUtf8("Export successfully ended!") << endl << endl;
 			}
-
-			if(!silent_mode)
-				out << trUtf8("Export successfully ended!") << endl << endl;
 		}
 
 		return(0);
@@ -422,4 +450,330 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
+}
+
+void PgModelerCLI::extractObjectXML(void)
+{
+	QFile input;
+	QString buf, lin, def_xml, end_tag, short_end_tag="/>";
+	QTextStream ts;
+	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL));
+	int end1=-1, start=-1, start1=-1, end=-1, pos=0;
+	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false;
+
+	if(!silent_mode)
+		out << trUtf8("Extracting objects' XML...") << endl;
+
+	input.setFileName(parsed_opts[INPUT]);
+	input.open(QFile::ReadOnly);
+
+	if(!input.isOpen())
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(parsed_opts[INPUT]),
+										ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	buf.append(input.readAll());
+	input.close();
+
+	//Check if the file contains a valid header (for .dbm file)
+	start=regexp.indexIn(buf);
+
+	if(start < 0)
+		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else
+	{
+		//Remove the header entry from buffer
+		buf.remove(start, regexp.matchedLength()+1);
+		buf.remove(0, buf.indexOf("\n"));
+		buf.remove(QString("<\\%1>").arg(ParsersAttributes::DB_MODEL));
+		ts.setString(&buf);
+
+		//Extracts the objects xml line by line
+		while(!ts.atEnd())
+		{
+			lin=ts.readLine();
+
+			if(is_rel && (((short_tag && lin.contains("/>")) ||
+					 (lin.contains("[a-z]+") && !containsRelAttributes(lin)))))
+				open_tag=close_tag=true;
+			else
+			{
+				//If the line contains an objects open tag
+				if((lin.startsWith('<') || lin.startsWith("\n<")) && !open_tag)
+				{
+					//Check the flag indicating an open tag
+					open_tag=true;
+
+					start=lin.indexOf('<');
+					end=lin.indexOf(' ');
+					if(end < 0)	end=lin.indexOf('>');
+
+					//Configures the end tag with the same word extracted from open tag
+					end_tag=lin.mid(start, end-start+1).trimmed();
+					end_tag.replace("<","</");
+
+					if(!end_tag.endsWith('>'))
+						end_tag+=">";
+
+					/* Checking if the line start a relationship. Relationships are treated
+					a little different because they can be empty <relationship attribs /> or
+					contain open and close tags <relationship attribs></relationship> */
+					is_rel=lin.contains(ParsersAttributes::RELATIONSHIP);
+
+					if(is_rel)
+					{
+						//Searches the position of the start tag
+						start=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos);
+
+						//Searches the position of the start tag for the next relationship
+						start1=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos + ParsersAttributes::RELATIONSHIP.size());
+
+						//Searches the position of the end tag and the short end tag ('/>')
+						end=buf.indexOf(end_tag, pos);
+						end1=buf.indexOf(short_end_tag, pos);
+
+						/* The relationship is considered with short end tag when the normal end tag
+						isn't between the two start tags and the short tag position is before the second start tag */
+						short_tag=(!(end >= start && end <= start1) && end1 < start1);
+					}
+				}
+				else if(open_tag && lin.contains(end_tag))
+					close_tag=true;
+			}
+
+			if(!lin.isEmpty())
+				def_xml+=lin + "\n";
+
+			//Accumulates the current buffer position
+			pos+=lin.size() + 1;
+
+			//If the iteration reached the end of the object's definition
+			if(open_tag && close_tag)
+			{
+				//Pushes the extracted definition to the list (only if not empty)
+				if(def_xml!="\n")
+					objs_xml.push_back(def_xml);
+
+				def_xml.clear();
+				open_tag=close_tag=is_rel=short_tag=false;
+			}
+		}
+	}
+}
+
+void PgModelerCLI::recreateObjects(void)
+{
+	QStringList fail_objs, constr, list;
+	QString xml_def;
+	BaseObject *object=nullptr;
+	ObjectType obj_type;
+	attribs_map attribs;
+	bool use_fail_obj=false;
+	unsigned tries=0, max_tries=parsed_opts[FIX_TRIES].toUInt();
+
+	if(!silent_mode)
+		out << trUtf8("Recreating objects...") << endl;
+
+	if(max_tries==0)
+		max_tries=1;
+
+	model->createSystemObjects(false);
+
+	while(!objs_xml.isEmpty())
+	{
+		//If there are failed objects and the flag is set
+		if(use_fail_obj && !fail_objs.isEmpty())
+		{
+			xml_def=fail_objs.front();
+			fail_objs.pop_front();
+			use_fail_obj=false;
+		}
+		else
+		{
+			xml_def=objs_xml.front();
+			objs_xml.pop_front();
+			fixObjectAttributes(xml_def);
+		}
+
+		try
+		{
+			XMLParser::restartParser();
+			XMLParser::loadXMLBuffer(xml_def);
+			obj_type=model->getObjectType(XMLParser::getElementName());
+
+			XMLParser::getElementAttributes(attribs);
+
+			if(obj_type==OBJ_DATABASE)
+				model->configureDatabase(attribs);
+			else
+			{
+				if(obj_type==OBJ_TABLE)
+				{
+					//Before create a table extract it's foreign keys
+					list=extractForeignKeys(xml_def);
+
+					/* If fks were extracted insert them on the main constraints list
+					and restarts the XMLParser with the modified buffer */
+					if(!list.isEmpty())
+					{
+						constr.append(list);
+						XMLParser::restartParser();
+						XMLParser::loadXMLBuffer(xml_def);
+					}
+				}
+
+				//Discarding fk relationships
+				if(obj_type!=OBJ_RELATIONSHIP ||
+					 (obj_type==OBJ_RELATIONSHIP && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
+				{
+					object=model->createObject(obj_type);
+
+					if(object)
+					{
+						if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+							model->addObject(object);
+					}
+
+					//For each sucessful created object the method will try to create a failed one
+					use_fail_obj=(!fail_objs.isEmpty());
+				}
+			}
+		}
+		catch(Exception &e)
+		{
+			if(obj_type!=OBJ_DATABASE)
+				fail_objs.push_back(xml_def);
+			else
+				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+
+		if(objs_xml.isEmpty() && (!fail_objs.isEmpty() || !constr.isEmpty()))
+		{
+			tries++;
+
+			//If the maximum creation tries reaches the maximum value
+			if(tries > max_tries)
+			{
+				//Outputs the code of the objects that wasn't created
+				out << trUtf8("\n** Object(s) that couldn't fixed: ") << endl;
+				while(!fail_objs.isEmpty())
+				{
+					out << fail_objs.front() << endl;
+					fail_objs.pop_front();
+				}
+
+				break;
+			}
+			else
+			{
+				if(!silent_mode)
+					out << trUtf8("WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries) << endl;
+
+				model->validateRelationships();
+				objs_xml=fail_objs;
+				objs_xml.append(constr);
+				fail_objs.clear();
+				constr.clear();
+			}
+		}
+	}
+}
+
+void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
+{
+	QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(.)*(\")";
+
+	//Remove recheck attribute from <element> tags.
+	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
+		obj_xml.remove(QRegExp(att_regexp.arg("recheck")));
+
+	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
+	if(obj_xml.contains(tag.arg(ParsersAttributes::OPERATOR)))
+	{
+		obj_xml.remove("greater-op");
+		obj_xml.remove("less-op");
+		obj_xml.remove("sort-op");
+		obj_xml.remove("sort2-op");
+	}
+
+	//Remove sysid attribute from <role> tags.
+	if(obj_xml.contains(tag.arg(ParsersAttributes::ROLE)))
+		obj_xml.remove(QRegExp(att_regexp.arg("sysid")));
+
+	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
+	if(obj_xml.contains(tag.arg("usertype")))
+	{
+		obj_xml.replace(tag.arg(ParsersAttributes::PARAMETER), tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+	}
+
+	//Remove auto-sufix, src-sufix and dst-sufix from <relationship> tags.
+	if(obj_xml.contains(tag.arg(ParsersAttributes::RELATIONSHIP)))
+	{
+		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
+		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
+		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
+	}
+
+	//Renaming the tag <grant> to <permission>
+	if(obj_xml.contains(tag.arg("grant")))
+	{
+		obj_xml.replace(tag.arg("grant"), tag.arg(ParsersAttributes::PERMISSION));
+		obj_xml.replace(end_tag.arg("grant"), end_tag.arg(ParsersAttributes::PERMISSION));
+	}
+}
+
+QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)
+{
+	QStringList constr_lst;
+	int start=0, end=0, pos=0, count=0;
+	QString start_tag=QString("<%1").arg(ParsersAttributes::CONSTRAINT),
+					end_tag=QString("</%1").arg(ParsersAttributes::CONSTRAINT),
+					constr;
+
+	do
+	{
+		start=obj_xml.indexOf(start_tag, pos);
+		end=obj_xml.indexOf(end_tag, start);
+
+		if(start > 0 && end > 0)
+		{
+			count=(end - start) + end_tag.size() + 1;
+			constr=obj_xml.mid(start, count);
+
+			if(constr.contains(ParsersAttributes::FK_CONSTR))
+			{
+				obj_xml.remove(start, count);
+				constr_lst.push_back(constr);
+				pos=0;
+			}
+			else
+				pos=end;
+		}
+		else
+			break;
+	}
+	while(pos >= 0 && pos < obj_xml.size());
+
+	return(constr_lst);
+}
+
+bool PgModelerCLI::containsRelAttributes(const QString &str)
+{
+	bool found=false;
+	static vector<QString> attribs={ ParsersAttributes::RELATIONSHIP,
+	ParsersAttributes::TYPE, ParsersAttributes::SRC_REQUIRED, ParsersAttributes::DST_REQUIRED,
+	ParsersAttributes::SRC_TABLE, ParsersAttributes::DST_TABLE,	ParsersAttributes::POINTS,
+	ParsersAttributes::COLUMNS,	ParsersAttributes::COLUMN, ParsersAttributes::CONSTRAINT,
+	ParsersAttributes::LABEL, ParsersAttributes::LINE, ParsersAttributes::POSITION,
+	ParsersAttributes::IDENTIFIER, ParsersAttributes::DEFERRABLE, ParsersAttributes::DEFER_TYPE,
+	ParsersAttributes::TABLE_NAME, ParsersAttributes::SPECIAL_PK_COLS, ParsersAttributes::TABLE,
+	ParsersAttributes::ANCESTOR_TABLE, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
+	ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN, ParsersAttributes::PK_PATTERN,
+	ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
+	ParsersAttributes::COL_INDEXES, ParsersAttributes::CONSTR_INDEXES, ParsersAttributes::ATTRIB_INDEXES };
+
+	for(unsigned i=0; i < attribs.size() && !found; i++)
+		found=str.contains(attribs[i]);
+
+	return(found);
 }

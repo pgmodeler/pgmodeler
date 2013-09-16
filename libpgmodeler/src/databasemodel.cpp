@@ -1025,6 +1025,17 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 	}
 }
 
+void DatabaseModel::updateTablesFKRelationships(void)
+{
+	vector<BaseObject *>::iterator itr=tables.begin();
+
+	while(itr!=tables.end())
+	{
+		updateTableFKRelationships(dynamic_cast<Table *>(*itr));
+		itr++;
+	}
+}
+
 void DatabaseModel::updateViewRelationships(View *view)
 {
 	Table *tab=nullptr;
@@ -2611,7 +2622,6 @@ void DatabaseModel::loadModel(const QString &filename)
 		attribs_map attribs;
 		BaseObject *object=nullptr;
 		bool protected_model=false;
-		map<unsigned, QString>::iterator itr, itr_end;
 
 		//Configuring the path to the base path for objects DTD
 		dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
@@ -2648,10 +2658,10 @@ void DatabaseModel::loadModel(const QString &filename)
 					{
 						elem_name=XMLParser::getElementName();
 
-						if(elem_name==ParsersAttributes::PERMISSION)
+						/*if(elem_name==ParsersAttributes::PERMISSION)
 							addPermission(createPermission());
 						else
-						{
+						{*/
 							//Indentifies the object type to be load according to the current element on the parser
 							obj_type=getObjectType(elem_name);
 
@@ -2688,7 +2698,7 @@ void DatabaseModel::loadModel(const QString &filename)
 									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 								}
 							}
-						}
+						//}
 
 					}
 				}
@@ -2794,6 +2804,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createCollation();
 		else if(obj_type==OBJ_EXTENSION)
 			object=createExtension();
+		else if(obj_type==OBJ_PERMISSION)
+			object=createPermission();
 	}
 
 	return(object);

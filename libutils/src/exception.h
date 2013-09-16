@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=206;
+const int ERROR_COUNT=207;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -255,7 +255,8 @@ enum ErrorType {
 	ERR_INV_ID_SWAP_SAME_OBJECT,
 	ERR_INV_ID_SWAP_INV_OBJ_TYPE,
 	ERR_ASG_WGT_ALREADY_HAS_PARENT,
-	ERR_OBJECT_NOT_IMPORTED
+	ERR_OBJECT_NOT_IMPORTED,
+	ERR_MODEL_FILE_NOT_LOADED
 };
 
 class Exception {

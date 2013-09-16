@@ -1157,9 +1157,11 @@ void MainWindow::loadModel(void)
 
 void MainWindow::loadModels(const QStringList &list)
 {
+	int i=0;
+
 	try
 	{
-		for(int i=0; i < list.count(); i++)
+		for(i=0; i < list.count(); i++)
 		{
 			addModel(list[i]);
 			recent_models.push_front(list[i]);
@@ -1169,8 +1171,9 @@ void MainWindow::loadModels(const QStringList &list)
 	}
 	catch(Exception &e)
 	{
-		closeModel(models_tbw->currentIndex());
-		msg_box.show(e);
+		//closeModel(models_tbw->currentIndex());
+		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
+																 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 	}
 }
 

@@ -389,6 +389,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
 		void updateTableFKRelationships(Table *table);
 
+		//! \brief Updates the fk relationships for all table on the model
+		void updateTablesFKRelationships(void);
+
 		/*! \brief Validates the removal of the specified column raising errors when the passed object
 		 is still being referecend */
 		void validateColumnRemoval(Column *column);

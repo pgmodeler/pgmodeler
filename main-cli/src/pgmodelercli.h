@@ -39,45 +39,48 @@ class PgModelerCLI: public QApplication {
 	private:
 		Q_OBJECT
 
-    /* Stores the executable's absolute path. This is used to switch the working dir
+		/*! \brief Stores the executable's absolute path. This is used to switch the working dir
     to the executable path in order to avoid the cli to find it's dependency paths
     (./schemas, ./conf) */
     QString executable_dir;
 
-		//Export helper object
+		//! \brief Export helper object
 		ModelExportHelper export_hlp;
 
-		//Reference database model
+		//! \brief Reference database model
 		DatabaseModel *model;
 
-		//Graphical scene used to export the model to png
+		//! \brief Graphical scene used to export the model to png
 		ObjectsScene *scene;
 
-		//Stores the configured connection
+		//! \brief Stores the configured connection
 		Connection connection;
 
-		//Loaded connections
+		//! \brief Loaded connections
 		map<QString, Connection *> connections;
 
-		//Connection configuration widget used to load available connections from file
+		//! \brief Connection configuration widget used to load available connections from file
 		ConnectionsConfigWidget conn_conf;
 
-		//Creates an standard out to handles QStrings
+		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;
 
-		//Stores the long option names. The boolean indicates if the option accepts a value
+		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
 		map<QString, bool> long_opts;
 
-		//Stores the short option names.
+		//! \brief Stores the short option names.
 		attribs_map short_opts;
 
-		//Stores the parsed options names and values.
+		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
 
-		//Indicates if the cli must run in silent mode
+		//! \brief Indicates if the cli must run in silent mode
 		bool silent_mode;
 
-		//Option names constants
+		//! \brief Stores the xml code for the objects being fixed
+		QStringList objs_xml;
+
+		//! \brief Option names constants
 		static QString INPUT,
 		OUTPUT,
 		EXPORT_TO_FILE,
@@ -96,19 +99,38 @@ class PgModelerCLI: public QApplication {
 		INITIAL_DB,
 		SILENT,
 		LIST_CONNS,
-		SIMULATE;
+		SIMULATE,
+		FIX_MODEL,
+		FIX_TRIES;
 
-		//Parsers the options and executes the action specified by them
+		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
 
-		//Shows the options menu
+		//! \brief Shows the options menu
 		void showMenu(void);
 
-		//Returns if the specified options exists on short options map
+		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
 
-		//Initializes the options maps
+		//! \brief Initializes the options maps
 		void initializeOptions(void);
+
+		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
+		in order to be parsed by the recreateObjects() method */
+		void extractObjectXML(void);
+
+		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
+		void recreateObjects(void);
+
+		//! \brief Fix some xml attributes and remove unused tags
+		void fixObjectAttributes(QString &obj_xml);
+
+		/*! \brief Extracts the foreign key code for the specified table xml. The foreign keys
+		are recreated after all the other objects */
+		QStringList extractForeignKeys(QString &obj_xml);
+
+		//! \brief Returns if the specified string contains some of relationship attributes
+		bool containsRelAttributes(const QString &str);
 
 	public:
 		PgModelerCLI(int argc, char **argv);

@@ -224,7 +224,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
-	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object '%1' (%2) couldn't be imported due to one or more errors! Check the exception stack for more details.")}
+	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object '%1' (%2) couldn't be imported due to one or more errors! Check the exception stack for more details.")},
+	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Couldn't load the database model file '%1'. Check the error stack to see details. HINT: Try to run 'pgmodeler-cli --fix-model' in order to correct the structure of the file if that's the case.")},
 };
 
 Exception::Exception(void)
