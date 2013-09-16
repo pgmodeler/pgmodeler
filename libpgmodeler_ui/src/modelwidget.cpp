@@ -470,7 +470,7 @@ void ModelWidget::applyZoom(float zoom)
 	}
 }
 
-float ModelWidget::currentZoom(void)
+float ModelWidget::getCurrentZoom(void)
 {
 	return(current_zoom);
 }

@@ -874,7 +874,7 @@ void MainWindow::applyZoom(void)
 {
 	if(current_model)
 	{
-		float zoom=current_model->currentZoom();
+		float zoom=current_model->getCurrentZoom();
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
@@ -1212,9 +1212,9 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_inc_zoom->setEnabled(current_model->currentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
-		action_normal_zoom->setEnabled(current_model->currentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->currentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
+		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
+		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
+		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
 	}
 }
 

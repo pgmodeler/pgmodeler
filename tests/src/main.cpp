@@ -7,9 +7,6 @@ int main(int, char **)
 {
 	try
 	{
-		/*QTextStream ts(stdout);
-		vector<unsigned> v1,v2;
-		Permission::parsePermissionString("postgres=ar*wdD*xt/postgres",v1,v2);*/
 
 		return(0);
 	}

@@ -59,7 +59,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
 
 		this->resizeOverview();
-		this->resizeWindowFrame();
+		this->updateZoomFactor(this->model->getCurrentZoom());
 		this->updateOverview(true);
 
 		this->move(this->model->geometry().right() - this->width(),

@@ -687,7 +687,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove(QRegExp(att_regexp.arg("recheck")));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
-	if(obj_xml.contains(tag.arg(ParsersAttributes::OPERATOR)))
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_OPERATOR))))
 	{
 		obj_xml.remove("greater-op");
 		obj_xml.remove("less-op");
@@ -695,8 +695,12 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove("sort2-op");
 	}
 
+	//Replacing attribute owner by onwer-col for sequences
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_SEQUENCE))))
+		obj_xml.replace(ParsersAttributes::OWNER, ParsersAttributes::OWNER_COLUMN);
+
 	//Remove sysid attribute from <role> tags.
-	if(obj_xml.contains(tag.arg(ParsersAttributes::ROLE)))
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_ROLE))))
 		obj_xml.remove(QRegExp(att_regexp.arg("sysid")));
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
@@ -707,7 +711,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Remove auto-sufix, src-sufix and dst-sufix from <relationship> tags.
-	if(obj_xml.contains(tag.arg(ParsersAttributes::RELATIONSHIP)))
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
 		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
@@ -717,8 +721,8 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(tag.arg("grant")))
 	{
-		obj_xml.replace(tag.arg("grant"), tag.arg(ParsersAttributes::PERMISSION));
-		obj_xml.replace(end_tag.arg("grant"), end_tag.arg(ParsersAttributes::PERMISSION));
+		obj_xml.replace(tag.arg("grant"), tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+		obj_xml.replace(end_tag.arg("grant"), end_tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
 	}
 }
 

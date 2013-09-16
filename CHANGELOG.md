@@ -1,6 +1,39 @@
 Changelog
 ---------
 
+v0.6.0-beta
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: September 16, 2013</em>
+
+* [New] Added experimental reverse engineering support.
+* [New] Added an experimental option --fix-model to pgmodeler-cli to permit the user to fix the structure of an older model (generated in pgModeler < 0.6.0) or a corrupted file.
+* [New] Added an option to debug the import process printing any generated code to stdout.
+* [New] Added support for bidirectinal FK relationships.
+* [New] Added a statement "SET search_path [schemas]" on database model SQL code.
+* [New] Added missing PostgreSQL built-in types.
+* [New] Configured connections now can be duplicated in order to reuse it's attributes.
+* [Change] Minor change on main compilation script. The subproject "tests" are included only when compiling in debug mode.
+* [Change] Major change on validation widget. Fixes are now applied using a thread and can be aborted any time user want.
+* [Change] Change on model saving process. pgModeler will not deny to save invalidated anymore. Now it will ask the user to validate the model or save an invalidate one anyway.
+* [Change] Changed the behavior of the operation list. In the first exception the entire list are emptied.
+* [Change] Changed the way foreign keys are generated. They always will be generated at end of database definition to avoid reference breaking.
+* [Change] Minor improvements on model code generation and copy operations.
+* [Change] Removed deprecated "rtree" indexing type.
+* [Fix] Minor fixes on PgSQLType class. User types aren`t removed instead they are deactivated to avoid reference breaking.
+* [Fix] Minor fix on selecting the children objects of a schema.
+* [Fix] Minor fixes on scene and relationship avoiding crashes when destroying the whole graphical scene.
+* [Fix] Fixed bug on deleting self relationships.
+* [Fix] Minor fix on model export process. The last line of the SQL code now is correctly extracted and executed.
+* [Fix] Minor fix on sequence class to accept owner.
+* [Fix] Minor fixes on the splash screen control code.
+* [Fix] Fixed a bug that was crashing pgModeler at startup.
+* [Fix] Fixed a bug that was causing pgModeler to crash when loading operators which name contained '&' char.
+* [Fix] Fixed bug related to sequence values assignment.
+* [Fix] Fixed "Operation with not allocated object" error on applying validation fixes.
+* [Fix] Fixed relationship label position saving.
+* [Fix] Minor fix on main window. pgModeler now is not closed while the validation is running.
+
 v0.6.0-alpha1
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>

@@ -20,7 +20,6 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "taskprogresswidget.h"
-#include "mainwindow.h"
 
 extern ConfigurationForm *configuration_form;
 extern TaskProgressWidget *task_prog_wgt;

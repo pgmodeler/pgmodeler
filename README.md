@@ -33,22 +33,6 @@ Compiling/Installation
 
 For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
-Model File Changes
-------------------
-
-Several changes were introduced in pgModeler 0.5.1_r1 making some tags on model files created on 0.5.1 (and below) incompatible with the new version. If you having problems during loading of older model files you can open them on a text editor and try the fixes below:
-
-* Remove ```io-cast``` attribute from ```<cast>``` tags.
-* Remove ```recheck``` attribute from ```<element>``` tags.
-* Remove values ```greater-op```, ```less-op```, ```sort-op``` or ```sort2-op``` from ```ref-type``` attribute from ```<operator>``` tags.
-* Remove ```sysid```attribute from ```<role>``` tags.
-* Replace ```<parameter>``` tag by ```<typeattrib>``` on ```<usertype>``` tags.
-* Remove ```auto-sufix```, ```src-sufix``` and ```dst-sufix``` from ```<relationship>``` tags.
-
-After that you can try to reload your model. Probably a second problem can occurr: broken references between objects. As the model validation was introduced on pgModeler 0.5.0 the object references are not checked during loading time anymore. Instead the user needs to validate the model every time before saving it.
-
-As a collateral effect loading older models can generate several errors like "Object A is referencing the object B which was not found in the model!" (Code: ERR_REF_OBJ_INEXISTS_MODEL). The fix to this is a little tricky: you have to change the creation order of the object A in relation of B, that means, B must be created before A. So, again, open the model on a text editor and move the XML portion of the B object to a position right before the A XML portion.
-
 MacOSX Notes
 ------------
 
@@ -58,39 +42,38 @@ MacOSX Notes
 Change Log
 ----------
 
-v0.6.0-alpha1
+v0.6.0-beta
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
-<em>Release date: August 05, 2013</em>
+<em>Release date: September 16, 2013</em>
 
-* [New] Added catalog query for triggers.
-* [New] Added catalog query for rules.
-* [New] Added indexing method to exclude constraint.
-* [New] Added catalog query for constraints.
-* [New] Added catalog queries for tables and columns
-* [New] Added catalog queries for view, domain, sequence and user defined types.
-* [New] Added catalog query for collation.
-* [New] Added catalog query for operator family.
-* [New] Added catalog query for operator class.
-* [New] Object dependencies form now can list indirect dependencies.
-* [New] Added an environment variable to set a different location for crash handler executable.
-* [New] Objects that has SQL disabled now is shown with name striked out.
-* [Change] Minor change on MainWindow::closeEvent()
-* [Change] Moved app_style variable to GlobalAttributes::DEFAULT_QT_STYLE.
-* [Change] Minor improvement on Exception::getExceptionsText method.
-* [Change] Improvements on copy/paste operations.
-* [Change] Removed unused linker parameters.
-* [Change] Crash handler executable renamed to "pgmodeler-ch".
-* [Fix] Fixed possible leak when destroying a ModelWidget instance. Objects from  scene were not being deleted correclty. Fix tests in progress.
-* [Fix] Fixed the "Save current session" option on GeneralConfigWidget that wasn't doing it's job correctly.
-* [Fix] Fixed a bug that was crashing pgModeler at startup when restoring previous sessions or temporary models.
-* [Fix] Minor fix on trigger code generation.
-* [Fix] Fixed incorrect loading of multiple triggers/rules on views.
-* [Fix] Minor fix on model validation. Operator classes are now checked during the validation process.
-* [Fix] Fixed generation of constraints in form of ALTER command. In some cases the constraint code wasn't appended to table's definition.
-* [Fix] Minor fixes on cast object.
-* [Fix] Minor fixes on databasemodel on retrieving dependencies/references for objects.
-* [Fix] Fixed crash handler path variable on MacOSX.
+* [New] Added experimental reverse engineering support.
+* [New] Added an experimental option --fix-model to pgmodeler-cli to permit the user to fix the structure of an older model (generated in pgModeler < 0.6.0) or a corrupted file.
+* [New] Added an option to debug the import process printing any generated code to stdout.
+* [New] Added support for bidirectinal FK relationships.
+* [New] Added a statement "SET search_path [schemas]" on database model SQL code.
+* [New] Added missing PostgreSQL built-in types.
+* [New] Configured connections now can be duplicated in order to reuse it's attributes.
+* [Change] Minor change on main compilation script. The subproject "tests" are included only when compiling in debug mode.
+* [Change] Major change on validation widget. Fixes are now applied using a thread and can be aborted any time user want.
+* [Change] Change on model saving process. pgModeler will not deny to save invalidated anymore. Now it will ask the user to validate the model or save an invalidate one anyway.
+* [Change] Changed the behavior of the operation list. In the first exception the entire list are emptied.
+* [Change] Changed the way foreign keys are generated. They always will be generated at end of database definition to avoid reference breaking.
+* [Change] Minor improvements on model code generation and copy operations.
+* [Change] Removed deprecated "rtree" indexing type.
+* [Fix] Minor fixes on PgSQLType class. User types aren`t removed instead they are deactivated to avoid reference breaking.
+* [Fix] Minor fix on selecting the children objects of a schema.
+* [Fix] Minor fixes on scene and relationship avoiding crashes when destroying the whole graphical scene.
+* [Fix] Fixed bug on deleting self relationships.
+* [Fix] Minor fix on model export process. The last line of the SQL code now is correctly extracted and executed.
+* [Fix] Minor fix on sequence class to accept owner.
+* [Fix] Minor fixes on the splash screen control code.
+* [Fix] Fixed a bug that was crashing pgModeler at startup.
+* [Fix] Fixed a bug that was causing pgModeler to crash when loading operators which name contained '&' char.
+* [Fix] Fixed bug related to sequence values assignment.
+* [Fix] Fixed "Operation with not allocated object" error on applying validation fixes.
+* [Fix] Fixed relationship label position saving.
+* [Fix] Minor fix on main window. pgModeler now is not closed while the validation is running.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

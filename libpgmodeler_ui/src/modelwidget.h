@@ -202,7 +202,7 @@ class ModelWidget: public QWidget {
 		void applyZoom(float zoom);
 
 		//! \brief Returns the current zoom factor applied to the model
-		float currentZoom(void);
+		float getCurrentZoom(void);
 
 		//! \brief Returns if the model is modified or not
 		bool isModified(void);
