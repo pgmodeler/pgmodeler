@@ -107,6 +107,7 @@ class DatabaseImportHelper: public QObject {
 
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
+		void createTablespace(attribs_map &attribs);
 		void createSchema(attribs_map &attribs);
 		void createRole(attribs_map &attribs);
 		void createDomain(attribs_map &attribs);

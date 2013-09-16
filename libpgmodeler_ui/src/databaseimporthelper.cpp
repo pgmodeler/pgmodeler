@@ -512,6 +512,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			switch(obj_type)
 			{
 				case OBJ_DATABASE: configureDatabase(attribs); break;
+				case OBJ_TABLESPACE: createTablespace(attribs); break;
 				case OBJ_SCHEMA: createSchema(attribs); break;
 				case OBJ_ROLE: createRole(attribs); break;
 				case OBJ_DOMAIN: createDomain(attribs); break;
@@ -694,6 +695,24 @@ void DatabaseImportHelper::resetImportParameters(void)
 	created_objs.clear();
 	errors.clear();
 	constr_creation_order.clear();
+}
+
+
+void DatabaseImportHelper::createTablespace(attribs_map &attribs)
+{
+	Tablespace *tabspc=nullptr;
+
+	try
+	{
+		loadObjectXML(OBJ_TABLESPACE, attribs);
+		tabspc=dbmodel->createTablespace();
+		dbmodel->addObject(tabspc);
+	}
+	catch(Exception &e)
+	{
+		if(tabspc) delete(tabspc);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
