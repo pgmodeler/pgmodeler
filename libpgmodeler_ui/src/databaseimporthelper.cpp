@@ -93,7 +93,7 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 
 	if(!import_sys_objs && import_ext_objs)
 		import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES | Catalog::EXCL_SYSTEM_OBJS;
-	else if(!import_ext_objs && import_sys_objs)
+	else if(import_sys_objs && !import_ext_objs)
 		import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES | Catalog::EXCL_EXTENSION_OBJS;
 	else if(import_sys_objs && import_ext_objs)
 		import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES;
