@@ -306,6 +306,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_objs_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
@@ -467,6 +468,20 @@ void MainWindow::showBottomWidgetsBar(void)
 	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
 }
 
+void MainWindow::stopTimers(bool value)
+{
+	if(value)
+	{
+		tmpmodel_save_timer.stop();
+		model_save_timer.stop();
+	}
+	else
+	{
+		tmpmodel_save_timer.start();
+		model_save_timer.start();
+	}
+}
+
 MainWindow::~MainWindow(void)
 {
 	delete(overview_wgt);
@@ -574,6 +589,19 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				conf_wgt->saveConfiguration();
 
 			restoration_form->removeTemporaryModels();
+
+			//Remove import log files
+			QDir dir(GlobalAttributes::TEMPORARY_DIR);
+			QStringList log_files;
+
+			dir.setNameFilters({"*.log"});
+			log_files=dir.entryList(QDir::Files);
+
+			while(!log_files.isEmpty())
+			{
+				dir.remove(log_files.front());
+				log_files.pop_front();
+			}
 		}
 	}
 }
@@ -1269,10 +1297,4 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
-}
-
-void MainWindow::rearrangeTables()
-{
-	if(current_model)
-		current_model->rearrangeSchemas(QPointF(100,100), 4, 4, 50);
 }

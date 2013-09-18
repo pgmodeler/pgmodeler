@@ -89,7 +89,7 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 				priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
 				priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
 
-		 (obj_type==OBJ_TABLE && priv_id==PRIV_TRUNCATE) ||
+		 ((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)&& priv_id==PRIV_TRUNCATE) ||
 
 		 (obj_type==OBJ_COLUMN &&
 			(priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||

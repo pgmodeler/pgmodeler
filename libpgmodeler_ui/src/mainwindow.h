@@ -190,8 +190,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu(void);
 
+		//! \brief Updates the connections list of the validator widget
 		void updateConnections(void);
 
+		//! \brief Save the temp files for all opened models
 		void saveTemporaryModels(bool force=false);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
@@ -200,7 +202,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void showRightWidgetsBar(void);
 		void showBottomWidgetsBar(void);
 
-		void rearrangeTables(void);
+		/*! \brief Stop the saving timers. This is used when validating the model
+		in order to avoid the saving while the validation is working */
+		void stopTimers(bool value);
 };
 
 #endif

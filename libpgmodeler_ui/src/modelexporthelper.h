@@ -95,6 +95,11 @@ class ModelExportHelper: public QObject {
 		make the helper to ignore object duplicity errors */
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false, bool simulate=false);
 
+		/*! \brief When the execution of the instance of this class is in another thread instead of main app
+		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
+		finished before completely quit the thread itself otherwise the method don't do anything. */
+		void sleepThread(unsigned msecs);
+
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);

@@ -121,6 +121,9 @@ class Catalog {
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID(void);
 
+		//! \brief Returns if the specified oid is amongst the extension created objects' oids
+		bool isExtensionObject(unsigned oid);
+
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());

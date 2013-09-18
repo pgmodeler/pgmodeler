@@ -90,6 +90,12 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
+void ModelExportHelper::sleepThread(unsigned msecs)
+{
+	if(this->thread()!=qApp->thread())
+		QThread::msleep(msecs);
+}
+
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
 {
 	int type_id;
@@ -356,13 +362,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						sql_cmd.clear();
 						errors.push_back(e);
-
-						/* Since the export with "ignore duplicates" is faster than normal export some times the thread
-					cannot be aborted externally (cancel the export) so puts the thread to sleep for 10 ms to give
-					time the user to activate the cancel export operation, if desired. Note: this is done only if the
-					exporter is running in a different thread other than the main application thread*/
-						if(this->thread()!=qApp->thread())
-							QThread::msleep(10);
+						sleepThread(10);
 					}
 				}
 			}
@@ -389,10 +389,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		else
 			emit s_exportCanceled();
 
-		/* Puts the thread to sleep by 20ms at end of process export to give time to external operations
-		to be correctly finished before completely quit the thread itself */
-		if(this->thread() && qApp->thread()!=this->thread())
-			QThread::msleep(20);
+		sleepThread(20);
 	}
 	catch(Exception &e)
 	{

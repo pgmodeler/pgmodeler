@@ -37,6 +37,10 @@ class DatabaseImportHelper: public QObject {
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		static const QString ARRAY_PATTERN;
 
+		/*! \brief File handle to log the import process. This file is opened for writing only when
+		the 'ignore_errors' is true */
+		QFile import_log;
+
 		//! \brief Stores the errors generated during the import
 		vector<Exception> errors;
 
@@ -94,6 +98,12 @@ class DatabaseImportHelper: public QObject {
 
 		//! \brief Stores all selected columns attributes
 		map<unsigned, map<unsigned, attribs_map>> columns;
+
+		//! \brief Stores the oids of all objects that has permissions to be created
+		vector<unsigned> obj_perms;
+
+		//! \brief Stores the oids of all columns that has permissions to be created
+		map<unsigned, vector<unsigned>> col_perms;
 
 		/*! \brief This special map is used to swap the id of a table and the sequence that
 				is referenced by it in order to avoid reference breaking */
@@ -208,6 +218,11 @@ class DatabaseImportHelper: public QObject {
 		void createPermissions(void);
 		void swapSequencesTablesIds(void);
 		void updateFKRelationships(void);
+
+		/*! \brief When the execution of the instance of this class is in another thread instead of main app
+		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
+		finished before completely quit the thread itself otherwise the method don't do anything. */
+		void sleepThread(unsigned msecs);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

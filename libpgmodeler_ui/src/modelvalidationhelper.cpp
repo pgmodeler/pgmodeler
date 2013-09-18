@@ -33,6 +33,12 @@ ModelValidationHelper::ModelValidationHelper(void)
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 }
 
+void ModelValidationHelper::sleepThread(unsigned msecs)
+{
+	if(qApp->thread()!=this->thread())
+		QThread::msleep(msecs);
+}
+
 void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 {
 	try
@@ -46,7 +52,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			unsigned obj_id=info.getObject()->getObjectId();
 
 			//Search for the object with the minor id
-			while(!refs.empty())
+			while(!refs.empty() && !valid_canceled)
 			{
 				if(obj_id > refs.back()->getObjectId())
 				{
@@ -58,7 +64,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			}
 
 			//Swap the id of the validation object and the found object (minor id)
-			BaseObject::swapObjectsIds(info.getObject(), obj, true);
+			if(obj)
+				BaseObject::swapObjectsIds(info.getObject(), obj, true);
+
+			sleepThread(5);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
@@ -94,7 +103,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			}
 
 			//Renaming the referrer objects
-			while(!refs.empty())
+			while(!refs.empty() && !valid_canceled)
 			{
 				obj_type=refs.back()->getObjectType();
 				tab_obj=dynamic_cast<TableObject *>(refs.back());
@@ -118,13 +127,9 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				}
 
 				refs.pop_back();
+				sleepThread(5);
 			}
 		}
-
-		//Revalidates all relationshps of model
-		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-			 info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
-			db_model->validateRelationships();
 	}
 	catch(Exception &e)
 	{
@@ -192,7 +197,7 @@ void ModelValidationHelper::validateModel(void)
 		Constraint *constr=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
-		QString name;
+		QString name, signal_msg="`%1' (%2)";
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -205,7 +210,7 @@ void ModelValidationHelper::validateModel(void)
 			obj_list=db_model->getObjectList(types[i]);
 			itr=obj_list->begin();
 
-			while(itr!=obj_list->end())
+			while(itr!=obj_list->end()&& !valid_canceled)
 			{
 				object=(*itr);
 				itr++;
@@ -213,9 +218,12 @@ void ModelValidationHelper::validateModel(void)
 				//Excluding the validation of system objects (created automatically)
 				if(!object->isSystemObject())
 				{
+					emit s_objectProcessed(signal_msg.arg(object->getName()).arg(object->getTypeName()), object->getObjectType());
+
 					db_model->getObjectReferences(object, refs);
 					refs_aux.clear();
-					while(!refs.empty())
+
+					while(!refs.empty() && !valid_canceled)
 					{
 						//Checking if the referrer object is a table object. In this case its parent table is considered
 						tab_obj=dynamic_cast<TableObject *>(refs.back());
@@ -263,7 +271,7 @@ void ModelValidationHelper::validateModel(void)
 			progress=((i+1)/static_cast<float>(count))*20;
 			emit s_progressUpdated(progress, "");
 
-			QThread::msleep(5);
+			sleepThread(5);
 		}
 
 
@@ -276,13 +284,16 @@ void ModelValidationHelper::validateModel(void)
 		while(itr!=obj_list->end() && !valid_canceled)
 		{
 			table=dynamic_cast<Table *>(*itr);
+
+			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(object->getTypeName()), table->getObjectType());
+
 			itr++;
 
-			for(i=0; i < count1; i++)
+			for(i=0; i < count1 && !valid_canceled; i++)
 			{
 				cnt=table->getObjectCount(tab_obj_types[i]);
 
-				for(i1=0; i1 < cnt; i1++)
+				for(i1=0; i1 < cnt && !valid_canceled; i1++)
 				{
 					//Get the table object (constraint or index)
 					tab_obj=dynamic_cast<TableObject *>(table->getObject(i1, tab_obj_types[i]));
@@ -304,7 +315,7 @@ void ModelValidationHelper::validateModel(void)
 				}
 			}
 
-			QThread::msleep(5);
+			sleepThread(5);
 		}
 
 		/* Inserting the tables and views to the map in order to check if there is table objects
@@ -313,13 +324,13 @@ void ModelValidationHelper::validateModel(void)
 		{
 			obj_list=db_model->getObjectList(aux_types[i]);
 			itr=obj_list->begin();
-			while(itr!=obj_list->end())
+			while(itr!=obj_list->end() && !valid_canceled)
 			{
 				dup_objects[(*itr)->getName(true).remove("\"")].push_back(*itr);
 				itr++;
 			}
 
-			QThread::msleep(5);
+			sleepThread(5);
 		}
 
 		//Checking the map of duplicated objects
@@ -349,10 +360,10 @@ void ModelValidationHelper::validateModel(void)
 			emit s_progressUpdated(progress, "");
 
 			i++; mitr++;
-			QThread::msleep(5);
+			sleepThread(5);
 		}
 
-		if(!valid_canceled)
+		if(!valid_canceled && !fix_mode)
 		{
 			//Step 3 (optional): Validating the SQL code onto a local DBMS.
 			//Case the connection isn't specified indicates that the SQL validation will not be executed
@@ -389,19 +400,29 @@ void ModelValidationHelper::applyFixes(void)
 {
 	if(fix_mode)
 	{
+		bool validate_rels=false;
+
 		while(!val_infos.empty() && !valid_canceled)
 		{
-			resolveConflict(val_infos[0]);
+			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
+			{
+				validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
+											 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
+				resolveConflict(val_infos[i]);
+			}
+
 			emit s_fixApplied();
 
 			validateModel();
-			QThread::msleep(5);
+			sleepThread(5);
 		}
 
 		if(!valid_canceled && val_infos.empty())
 		{
+			if(validate_rels)
+				db_model->validateRelationships();
+
 			fix_mode=false;
-			emitValidationFinished();
 		}
 	}
 }

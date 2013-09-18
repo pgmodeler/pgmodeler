@@ -736,7 +736,8 @@ PgSQLType PgSQLType::parseString(const QString &str)
 {
 	QString type_str=str.toLower().simplified(), sptype, interv;
 	bool with_tz=false;
-	unsigned len=0, prec=-1, dim=0, srid=0;
+	unsigned len=0, dim=0, srid=0;
+	int prec=-1;
 	int start=-1, end=-1;
 	QStringList value, intervals;
 	PgSQLType type;
@@ -805,12 +806,25 @@ PgSQLType PgSQLType::parseString(const QString &str)
 
 	try
 	{
-		//Creates the type based on the extracted values
-		type=PgSQLType(type_str);
+		try
+		{
+			//Creates the type based on the extracted values
+			type=PgSQLType(type_str);
+		}
+		catch(Exception &)
+		{
+			/* In case of error (specially with PostGiS types) split the string to remove
+				the schema name and try to create the type once more */
+			QStringList typname=type_str.split(".");
+
+			if(typname.size()==2)
+				type=PgSQLType(typname[1]);
+		}
+
 		type.setWithTimezone(with_tz);
 		type.setDimension(dim);
 
-		if(type.isNumericType())
+		if(type.isNumericType() && len > 0 && prec >=0)
 		{
 			type.setLength(len);
 			type.setPrecision(prec);

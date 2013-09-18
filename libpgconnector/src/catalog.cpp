@@ -90,6 +90,11 @@ unsigned Catalog::getLastSysObjectOID(void)
 	return(last_sys_oid);
 }
 
+bool Catalog::isExtensionObject(unsigned oid)
+{
+	return(ext_obj_oids.contains(QString::number(oid)));
+}
+
 void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, bool single_result, attribs_map attribs)
 {
 	try

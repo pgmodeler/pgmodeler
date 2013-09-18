@@ -65,6 +65,11 @@ class ModelValidationHelper: public QObject {
 		This vector is read when applying fixes */
 		vector<ValidationInfo> val_infos;
 
+		/*! \brief When the execution of the instance of this class is in another thread instead of main app
+		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
+		finished before completely quit the thread itself otherwise the method don't do anything. */
+		void sleepThread(unsigned msecs);
+
 	public:
 		ModelValidationHelper(void);
 
@@ -104,6 +109,9 @@ class ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the validation progress changes
 		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT);
+
+		//! \brief This signal is emitted when the object is processed by the validator
+		void s_objectProcessed(QString obj_name, ObjectType obj_type);
 
 		//! \brief This signal is emitted when the validation was sucessfully finished
 		void s_validationFinished(void);

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>700</height>
+    <height>716</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -482,7 +482,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operatoin will be not aborted but an incomplete model will be constructed.</string>
+                  <string>pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operatoin will be not aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.</string>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::PlainText</enum>
@@ -1329,7 +1329,7 @@
            </size>
           </property>
           <property name="text">
-           <string>ico</string>
+           <string/>
           </property>
           <property name="scaledContents">
            <bool>true</bool>

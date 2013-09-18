@@ -47,6 +47,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -65,6 +66,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
+		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
@@ -93,6 +95,9 @@ void ModelValidationWidget::reenableValidation(void)
 		clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
 		options_btn->setEnabled(true);
 		options_frm->setEnabled(true);
+		ico_lbl->setVisible(false);
+		object_lbl->setVisible(false);
+
 		emit s_validationInProgress(false);
 	}
 }
@@ -102,6 +107,8 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	clearOutput();
 	emit s_validationInProgress(true);
 
+	ico_lbl->setVisible(true);
+	object_lbl->setVisible(true);
 	prog_info_wgt->setVisible(true);
 	validate_btn->setEnabled(false);
 	swap_ids_btn->setEnabled(false);
@@ -296,7 +303,9 @@ void ModelValidationWidget::applyFixes(void)
 {
 	emitValidationInProgress();
 	validation_helper.switchToFixMode(true);
+	disconnect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 	validation_thread->start();
+	connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type)
@@ -348,6 +357,17 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
+	this->repaint();
+}
+
+void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
+{
+	obj_name.replace("`","<strong>");
+	obj_name.replace("'","</strong>");
+	obj_name.replace(" ("," <em>(");
+	obj_name.replace(")",")</em>");
+	object_lbl->setText(trUtf8("Processing object: %1").arg(obj_name));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 	this->repaint();
 }
 
