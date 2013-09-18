@@ -33,9 +33,15 @@ const QString XMLParser::CHAR_GT="&gt;";
 const QString XMLParser::CHAR_QUOT="&quot;";
 const QString XMLParser::CHAR_APOS="&apos;";
 
+XMLParser::XMLParser(void)
+{
+  xmlInitParser();
+}
+
 XMLParser::~XMLParser(void)
 {
 	restartParser();
+  xmlCleanupParser();
 }
 
 void XMLParser::removeDTD(void)
@@ -196,9 +202,6 @@ void XMLParser::readBuffer(void)
 
 		//Gets the referênce to the root element on the document
 		root_elem=curr_elem=xmlDocGetRootElement(xml_doc);
-
-		//Cleanup the allocated parser variables
-		if(xml_doc) xmlCleanupParser();
 	}
 }
 
@@ -249,7 +252,8 @@ void XMLParser::restartNavigation(void)
 void XMLParser::restartParser(void)
 {
 	root_elem=curr_elem=nullptr;
-	if(xml_doc)
+
+  if(xml_doc)
 	{
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
@@ -259,8 +263,8 @@ void XMLParser::restartParser(void)
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-	xmlResetLastError();
 	xml_doc_filename="";
+  xmlResetLastError();
 }
 
 bool XMLParser::accessElement(unsigned elem_type)
