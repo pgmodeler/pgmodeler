@@ -516,6 +516,7 @@
     <addaction name="separator"/>
     <addaction name="action_print"/>
     <addaction name="separator"/>
+    <addaction name="action_import"/>
     <addaction name="action_export"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
@@ -1111,6 +1112,9 @@
    </property>
    <property name="toolTip">
     <string>Import existing database to new model (reverse engineering)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
    </property>
   </action>
  </widget>

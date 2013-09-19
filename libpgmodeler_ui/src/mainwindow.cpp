@@ -685,7 +685,7 @@ void MainWindow::addModel(const QString &filename)
 	obj_name+=str_aux;
 	tab_name=obj_name;
 
-	model_tab=new ModelWidget;//(models_tbw);
+	model_tab=new ModelWidget;
 	model_tab->setObjectName(Utf8String::create(obj_name));
 
 	//Add the tab to the tab widget
