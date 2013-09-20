@@ -20,8 +20,6 @@
 
 DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DATABASE)
 {
-	map<QString, vector<QWidget *> > fields_map;
-	QLocale loc;
 	QStringList loc_list, encodings;
 
 	Ui_DatabaseWidget::setupUi(this);
