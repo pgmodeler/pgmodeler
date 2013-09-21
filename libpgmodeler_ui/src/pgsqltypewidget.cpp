@@ -44,6 +44,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		interval_cmb->addItems(interval_lst);
 
 		SpatialType::getTypes(spatial_lst);
+		spatial_cmb->addItem(trUtf8("NONE"));
 		spatial_cmb->addItems(spatial_lst);
 
 		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
@@ -100,7 +101,7 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 			SpatialType spatial_tp;
 
 			//For the geography type the SRID is always 4326
-			if(type=="geography") srid_spb->setValue(4326);
+			//if(type=="geography") srid_spb->setValue(4326);
 
 			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
 

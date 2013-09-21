@@ -587,6 +587,7 @@ unsigned IntervalType::operator = (const QString &type_name)
 SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_id)
 {
 	QString name=type_name;
+	this->srid=-1;
 
 	if(name.endsWith("ZM"))
 	{
@@ -612,6 +613,7 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 
 SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 {
+	this->srid=-1;
 	BaseType::setType(type_id,offset,types_count);
 	setVariation(var_id);
 	setSRID(srid);
@@ -619,8 +621,9 @@ SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 
 SpatialType::SpatialType(void)
 {
-	type_idx=point;
+	type_idx=BaseType::null;
 	variation=no_var;
+	srid=0;
 }
 
 void SpatialType::setVariation(unsigned var)
@@ -654,17 +657,25 @@ int SpatialType::getSRID(void)
 
 QString SpatialType::operator * (void)
 {
-	QString var_str;
-
-	switch(variation)
+	if(this->type_idx!=BaseType::null)
 	{
-		case var_z: var_str+="Z"; break;
-		case var_m: var_str+="M"; break;
-		case var_zm: var_str+="ZM"; break;
-		default: var_str=""; break;
-	}
+		QString var_str;
 
-	return(QString("(%1%2, %3)").arg(type_list[type_idx]).arg(var_str)).arg(srid);
+		switch(variation)
+		{
+			case var_z: var_str+="Z"; break;
+			case var_m: var_str+="M"; break;
+			case var_zm: var_str+="ZM"; break;
+			default: var_str=""; break;
+		}
+
+		if(srid > 0)
+			return(QString("(%1%2, %3)").arg(type_list[type_idx]).arg(var_str)).arg(srid);
+		else
+			return(QString("(%1%2)").arg(type_list[type_idx]).arg(var_str));
+	}
+	else
+		return("");
 }
 
 /********************
