@@ -141,8 +141,8 @@ void Type::addEnumeration(const QString &enum_name)
 	//Raises an error if the enumaration name is empty
 	if(enum_name=="")
 		throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error if the enumeration name is invalid
-	else if(!BaseObject::isValidName(enum_name))
+	//Raises an error if the enumeration name is invalid (exceeds the maximum length)
+	else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration already exists
 	else if(isEnumerationExists(enum_name))

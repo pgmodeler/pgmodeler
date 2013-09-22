@@ -587,7 +587,6 @@ unsigned IntervalType::operator = (const QString &type_name)
 SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_id)
 {
 	QString name=type_name;
-	this->srid=-1;
 
 	if(name.endsWith("ZM"))
 	{
@@ -613,7 +612,6 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 
 SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 {
-	this->srid=-1;
 	BaseType::setType(type_id,offset,types_count);
 	setVariation(var_id);
 	setSRID(srid);
