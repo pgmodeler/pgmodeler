@@ -87,8 +87,9 @@ class ModelExportHelper: public QObject {
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
-		as well the page delimiters on the output image */
-		void exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
+		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
+		before draw it on the pixmap */
+		void exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim);
 
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter

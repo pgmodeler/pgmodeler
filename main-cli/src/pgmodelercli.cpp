@@ -40,6 +40,7 @@ QString PgModelerCLI::LIST_CONNS="--list-conns";
 QString PgModelerCLI::SIMULATE="--simulate";
 QString PgModelerCLI::FIX_MODEL="--fix-model";
 QString PgModelerCLI::FIX_TRIES="--fix-tries";
+QString PgModelerCLI::ZOOM_FACTOR="--zoom";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -52,6 +53,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 
 		model=nullptr;
 		scene=nullptr;
+		zoom=1;
     executable_dir=QFileInfo(argv[0]).absolutePath();
 
 		initializeOptions();
@@ -180,6 +182,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[SIMULATE]=false;
 	long_opts[FIX_MODEL]=false;
 	long_opts[FIX_TRIES]=true;
+	long_opts[ZOOM_FACTOR]=true;
 
 
 	short_opts[INPUT]="-i";
@@ -203,6 +206,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[SIMULATE]="-S";
 	short_opts[FIX_MODEL]="-F";
 	short_opts[FIX_TRIES]="-t";
+	short_opts[ZOOM_FACTOR]="-z";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -249,6 +253,7 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("PNG export options: ") << endl;
 	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("   %1, %2\t Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
+	out << trUtf8("   %1, %2\t\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
@@ -303,6 +308,9 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		mode_cnt+=opts.count(EXPORT_TO_PNG);
 		mode_cnt+=opts.count(EXPORT_TO_DBMS);
 
+		if(opts.count(ZOOM_FACTOR))
+			zoom=opts[ZOOM_FACTOR].toFloat()/static_cast<float>(100);
+
 		if(!convert_file && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!convert_file && mode_cnt > 1)
@@ -316,6 +324,8 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
 			throw Exception(trUtf8("Incomplete connection information!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MINIMUM_ZOOM || zoom > ModelWidget::MAXIMUM_ZOOM))
+			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
     opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
@@ -370,7 +380,7 @@ int PgModelerCLI::exec(void)
 					if(!silent_mode)
 						out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
 
-					export_hlp.exportToPNG(scene, parsed_opts[OUTPUT],
+					export_hlp.exportToPNG(scene, parsed_opts[OUTPUT], zoom,
 																 parsed_opts.count(SHOW_GRID) > 0,
 																 parsed_opts.count(SHOW_DELIMITERS) > 0);
 				}

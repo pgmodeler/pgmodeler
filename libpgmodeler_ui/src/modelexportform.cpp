@@ -57,6 +57,15 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	#ifdef Q_OS_WIN
 		this->frame->setFrameShape(QFrame::WinPanel);
 	#endif
+
+	float values[]={ ModelWidget::MINIMUM_ZOOM, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
+									 2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MAXIMUM_ZOOM };
+	unsigned cnt=sizeof(values)/sizeof(float);
+
+	for(unsigned i=0; i < cnt; i++)
+		zoom_cmb->addItem(QString("%1%").arg(values[i] * 100), QVariant(values[i]));
+
+	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
 }
 
 void ModelExportForm::show(ModelWidget *model)
@@ -116,6 +125,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	show_delim_chk->setChecked(false);
 	show_grid_chk->setChecked(false);
 	connections_cmb->setCurrentIndex(0);
+	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
 }
 
 void ModelExportForm::exportModel(void)
@@ -129,7 +139,8 @@ void ModelExportForm::exportModel(void)
 
 		//Export to png
 		if(export_to_img_rb->isChecked())
-			export_hlp.exportToPNG(model->scene, image_edt->text(), show_grid_chk->isChecked(), show_delim_chk->isChecked());
+			export_hlp.exportToPNG(model->scene, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toFloat(),
+														 show_grid_chk->isChecked(), show_delim_chk->isChecked());
 		else
 		{
 			progress_lbl->setText(trUtf8("Initializing model export..."));
@@ -199,6 +210,8 @@ void ModelExportForm::enableExportMode(void)
 	show_grid_chk->setEnabled(exp_png);
 	show_delim_chk->setEnabled(exp_png);
 	options_lbl->setEnabled(exp_png);
+	zoom_cmb->setEnabled(exp_png);
+	zoom_lbl->setEnabled(exp_png);
 
 	modelo_sgbd->setEnabled(!exp_file && !exp_png);
 	connections_lbl->setEnabled(!exp_file && !exp_png);

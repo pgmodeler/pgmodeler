@@ -80,6 +80,9 @@ class PgModelerCLI: public QApplication {
 		//! \brief Stores the xml code for the objects being fixed
 		QStringList objs_xml;
 
+		//! \brief Zoom to be applied onto the png export
+		float zoom;
+
 		//! \brief Option names constants
 		static QString INPUT,
 		OUTPUT,
@@ -101,7 +104,8 @@ class PgModelerCLI: public QApplication {
 		LIST_CONNS,
 		SIMULATE,
 		FIX_MODEL,
-		FIX_TRIES;
+		FIX_TRIES,
+		ZOOM_FACTOR;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);

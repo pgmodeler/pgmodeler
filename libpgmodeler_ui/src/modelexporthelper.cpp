@@ -38,7 +38,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -48,6 +48,12 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		QPixmap pix;
 		QRectF ret=scene->itemsBoundingRect();
 		bool shw_grd, shw_dlm, align_objs;
+		QGraphicsView viewp(scene);
+		QRect retv;
+		QPolygon pol;
+
+		//Clear the object scene selection to avoid drawing the selectoin rectangle of the objects
+		scene->clearSelection();
 
 		//Make a backup of the current scene options
 		ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);
@@ -55,12 +61,29 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		//Sets the options passed by the user
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
 
-		//Ceils the width and height of scene rectangle in order to not draw dirty areas on pixmap
-		ret.setWidth(ceilf(ret.width()));
-		ret.setHeight(ceilf(ret.height()));
+		//Updates the scene to apply the change on grid and delimiter
+		scene->update();
+
+		//Configures the viewport alignment to top-left coordinates.
+		viewp.setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+		//Apply the zoom factor on the viewport
+		viewp.resetTransform();
+		viewp.centerOn(0,0);
+		viewp.scale(zoom, zoom);
+
+		//Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
+		pol=viewp.mapFromScene(ret);
+
+		//Configure the viewport area to be copied
+		retv.setTopLeft(pol.at(0));
+		retv.setTopRight(pol.at(1));
+		retv.setBottomRight(pol.at(2));
+		retv.setBottomLeft(pol.at(3));
 
 		//Creates the output pixmap
-		pix=QPixmap(ret.size().toSize());
+		pix=QPixmap(retv.size());
+		pix.fill();
 		QPainter p(&pix);
 
 		//Setting optimizations on the painter
@@ -68,13 +91,15 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		p.setRenderHint(QPainter::TextAntialiasing, true);
 		p.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-		//Render the entire scene onto the pixmap
-		scene->clearSelection();
-		scene->update();
-		scene->render(&p, QRectF(QPointF(0,0), pix.size()), ret);
+		emit s_progressUpdated(50, trUtf8("Rendering objects onto the output pixmap..."), BASE_OBJECT);
+
+		//Render the entire viewport onto the pixmap
+		viewp.render(&p, QRectF(QPointF(0,0), pix.size()), retv);
 
 		//Restore the scene options
 		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+
+		//Updates the scene to apply the restoration of grid and delimiter statuses
 		scene->update();
 
 		//If the pixmap is not saved raises an error

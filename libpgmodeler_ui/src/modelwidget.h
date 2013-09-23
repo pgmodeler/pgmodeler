@@ -142,10 +142,6 @@ class ModelWidget: public QWidget {
 						tmp_filename;
 
 	protected:
-		static constexpr float MINIMUM_ZOOM=0.35f,
-													 MAXIMUM_ZOOM=4.0f,
-													 ZOOM_INCREMENT=0.05f;
-
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
 													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
@@ -183,6 +179,10 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	public:
+		static constexpr float MINIMUM_ZOOM=0.35f,
+													 MAXIMUM_ZOOM=4.0f,
+													 ZOOM_INCREMENT=0.05f;
+
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
 
