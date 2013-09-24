@@ -34,6 +34,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
+	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]="";
@@ -41,6 +42,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
@@ -49,11 +51,13 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]="";
+
+	selectPaperSize();
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
 {
-	QStringList margin;
+	QStringList margin, custom_size;
 	vector<QString> key_attribs;
 	unsigned interv;
 
@@ -78,11 +82,15 @@ void GeneralConfigWidget::loadConfiguration(void)
 	landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
 
 	margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
+	custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(",");
 
-	left_marg->setValue((margin.count() >= 1 ? margin[0].toFloat() : 10));
-	top_marg->setValue((margin.count()>= 2 ? margin[1].toFloat() : 10));
-	right_marg->setValue((margin.count() >= 3 ? margin[2].toFloat() : 10));
-	bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 10));
+	left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
+	top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
+	right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
+	bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
+
+	width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
+	height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
 
 	hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 	hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
@@ -112,11 +120,16 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
 
-		unity_cmb->setCurrentIndex(0);
+		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
 																																										 .arg(top_marg->value())
 																																										 .arg(right_marg->value())
 																																										 .arg(bottom_marg->value());
+
+		if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
+			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
+		else
+			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(save_session_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
@@ -160,10 +173,14 @@ void GeneralConfigWidget::saveConfiguration()
 
 void GeneralConfigWidget::applyConfiguration(void)
 {
-	ObjectsScene::setPageConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
+	int unit=unity_cmb->currentIndex();
+
+	unity_cmb->setCurrentIndex(UNIT_PIXELS);
+	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
 																		 (portrait_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
-																		 QRectF(left_marg->value(), top_marg->value(),
-																						right_marg->value(), bottom_marg->value()));
+																		 QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
+																		 QSizeF(width_spb->value(), height_spb->value()));
+	unity_cmb->setCurrentIndex(unit);
 
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	OperationList::setMaximumSize(oplist_size_spb->value());
@@ -186,19 +203,23 @@ void GeneralConfigWidget::restoreDefaults(void)
 
 void GeneralConfigWidget::convertMarginUnity(void)
 {
-	static int prev_unity=0;
+	static int prev_unity=UNIT_MILIMETERS;
 	float conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
-			left, right, top, bottom;
+			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];
 	right=right_marg->value() / conv_factor[prev_unity];
 	bottom=bottom_marg->value() / conv_factor[prev_unity];
 	top=top_marg->value() / conv_factor[prev_unity];
+	width=width_spb->value() / conv_factor[prev_unity];
+	height=height_spb->value() / conv_factor[prev_unity];
 
 	left_marg->setValue(left * conv_factor[unity_cmb->currentIndex()]);
 	right_marg->setValue(right * conv_factor[unity_cmb->currentIndex()]);
 	bottom_marg->setValue(bottom * conv_factor[unity_cmb->currentIndex()]);
 	top_marg->setValue(top * conv_factor[unity_cmb->currentIndex()]);
+	width_spb->setValue(width * conv_factor[unity_cmb->currentIndex()]);
+	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
 	prev_unity=unity_cmb->currentIndex();
 }
@@ -364,5 +385,16 @@ void GeneralConfigWidget::updateFileAssociation(void)
         }
      }
 		#endif
- #endif
+#endif
+}
+
+void GeneralConfigWidget::selectPaperSize()
+{
+	bool visible=paper_cmb->currentIndex()==paper_cmb->count()-1;
+
+	custom_lbl->setVisible(visible);
+	width_lbl->setVisible(visible);
+	height_lbl->setVisible(visible);
+	width_spb->setVisible(visible);
+	height_spb->setVisible(visible);
 }

@@ -24,7 +24,8 @@ bool ObjectsScene::show_page_delim=true;
 unsigned ObjectsScene::grid_size=20;
 QPrinter::PageSize ObjectsScene::paper_size=QPrinter::A4;
 QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
-QRectF ObjectsScene::page_margins=QRectF(10,10,10,10);
+QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
+QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
 
 ObjectsScene::ObjectsScene(void)
@@ -110,32 +111,36 @@ void ObjectsScene::setGridSize(unsigned size)
 	{
 		QImage grid_img;
 		float width, height, x, y;
+		int img_w, img_h;
 		QSizeF aux_size;
 		QPrinter printer;
 		QPainter painter;
 		QPen pen;
 
 		if(paper_size!=QPrinter::Custom)
-		{
-			printer.setPageSize(paper_size);
-			printer.setOrientation(page_orientation);
-			printer.setPageMargins(page_margins.left(), page_margins.top(),
-														 page_margins.right(), page_margins.bottom(), QPrinter::Millimeter);
-			aux_size=printer.pageRect(QPrinter::DevicePixel).size();
-		}
-		//Case the paper size is custom use the margins as the paper size
+			printer.setPaperSize(paper_size);
 		else
-			aux_size=page_margins.size();
+			printer.setPaperSize(custom_paper_size, QPrinter::DevicePixel);
 
+		printer.setOrientation(page_orientation);
+		printer.setPageMargins(page_margins.left(), page_margins.top(),
+													 page_margins.right(), page_margins.bottom(), QPrinter::DevicePixel);
 
-		width=fabs(roundf(aux_size.width()/static_cast<float>(size)) * size);
-		height=fabs(roundf(aux_size.height()/static_cast<float>(size)) * size);
+		aux_size=printer.paperSize(QPrinter::DevicePixel);
+		aux_size-=page_margins.size();
+
+		//Calculates where the extreme width and height where delimiter lines will be drawn
+		width=aux_size.width()/static_cast<float>(size) * size;
+		height=aux_size.height()/static_cast<float>(size) * size;
+
+		//Calculates the grid pixmpa size
+		img_w=ceil(width/size)*size;
+		img_h=ceil(height/size)*size;
 
 		grid_size=size;
-		grid_img=QImage(width, height, QImage::Format_ARGB32);
-
+		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
+		grid_img.fill(Qt::white);
 		painter.begin(&grid_img);
-		painter.fillRect(QRect(0,0,width,height), QColor(255,255,255));
 
 		if(show_grid)
 		{
@@ -155,8 +160,8 @@ void ObjectsScene::setGridSize(unsigned size)
 			pen.setStyle(Qt::DashLine);
 			pen.setWidthF(1.0f);
 			painter.setPen(pen);
-			painter.drawLine(width-1, 0,width-1,height-1);
-			painter.drawLine(0, height-1,width-1,height-1);
+			painter.drawLine(width-1, 0,width-1,img_h-1);
+			painter.drawLine(0, height-1,img_w-1,height-1);
 		}
 
 		painter.end();
@@ -208,8 +213,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
 	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-																						ObjectsScene::show_page_delim!=show_pag_dlm ||
-																																					 grid.style()==Qt::NoBrush);
+									 ObjectsScene::show_page_delim!=show_pag_dlm ||
+									 grid.style()==Qt::NoBrush);
 
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;
@@ -229,18 +234,20 @@ void ObjectsScene::getGridOptions(bool &show_grd, bool &align_objs_grd, bool &sh
 	show_pag_dlm=ObjectsScene::show_page_delim;
 }
 
-void ObjectsScene::setPageConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins)
+void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
 {
 	ObjectsScene::paper_size=paper_sz;
 	ObjectsScene::page_orientation=orient;
 	ObjectsScene::page_margins=margins;
+	ObjectsScene::custom_paper_size=custom_size;
 }
 
-void ObjectsScene::getPageConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins)
+void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
 {
 	paper_sz=ObjectsScene::paper_size;
 	orient=ObjectsScene::page_orientation;
 	margins=ObjectsScene::page_margins;
+	custom_size=ObjectsScene::custom_paper_size;
 }
 
 void ObjectsScene::emitObjectModification(BaseGraphicObject *object)

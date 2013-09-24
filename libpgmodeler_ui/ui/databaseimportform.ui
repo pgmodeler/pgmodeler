@@ -284,6 +284,22 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
+             <item row="2" column="1">
+              <widget class="QDoubleSpinBox" name="origin_sb">
+               <property name="toolTip">
+                <string>Starting point where objects will be put.</string>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>50.000000000000000</double>
+               </property>
+              </widget>
+             </item>
              <item row="7" column="0" colspan="6">
               <widget class="QFrame" name="div_ln_2">
                <property name="minimumSize">
@@ -303,6 +319,19 @@
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Sunken</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="tab_spacing_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Spacing:</string>
                </property>
               </widget>
              </item>
@@ -684,77 +713,6 @@
                </item>
               </layout>
              </item>
-             <item row="3" column="1">
-              <widget class="QDoubleSpinBox" name="obj_spacing_sb">
-               <property name="toolTip">
-                <string>Spacing between objects</string>
-               </property>
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <double>1000.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>50.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QDoubleSpinBox" name="origin_sb">
-               <property name="toolTip">
-                <string>Starting point where objects will be put.</string>
-               </property>
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <double>1000.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>50.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="sch_per_row_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Schemas per row:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="tabs_per_row_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Tables per row:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="tab_spacing_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Spacing:</string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QLabel" name="oring_lbl">
                <property name="sizePolicy">
@@ -783,7 +741,7 @@
                <item>
                 <widget class="QToolButton" name="connect_tb">
                  <property name="toolTip">
-                  <string/>
+                  <string>Connect and list available databases</string>
                  </property>
                  <property name="text">
                   <string>...</string>
@@ -801,44 +759,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item row="3" column="3" colspan="2">
-              <widget class="QSpinBox" name="sch_per_row_sb">
-               <property name="toolTip">
-                <string>Schemas  per row</string>
-               </property>
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-               <property name="value">
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="3" colspan="2">
-              <widget class="QSpinBox" name="tabs_per_row_sb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Tables per row</string>
-               </property>
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-               <property name="value">
-                <number>5</number>
-               </property>
-              </widget>
              </item>
              <item row="16" column="0" colspan="6">
               <layout class="QGridLayout" name="gridLayout_10">
@@ -928,6 +848,86 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item row="3" column="1">
+              <widget class="QDoubleSpinBox" name="obj_spacing_sb">
+               <property name="toolTip">
+                <string>Spacing between objects</string>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>50.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QSpinBox" name="sch_per_row_sb">
+               <property name="toolTip">
+                <string>Schemas  per row</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="value">
+                <number>3</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="tabs_per_row_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Tables per row:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="sch_per_row_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Schemas per row:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QSpinBox" name="tabs_per_row_sb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Tables per row</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

@@ -440,12 +440,6 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void ModelWidget::focusInEvent(QFocusEvent *event)
-{
-	scene->update();
-	QWidget::focusInEvent(event);
-}
-
 void ModelWidget::wheelEvent(QWheelEvent * event)
 {
 	if(event->modifiers()==Qt::ControlModifier)
@@ -995,7 +989,10 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QSizeF page_size;
+		QRectF margins, src_ret;
+		QPrinter::PaperSize paper_size;
+		QPrinter::Orientation orient;
+		QSizeF page_size, custom_p_size;
 		QPen pen;
 		QFont font;
 		QPointF top_left, top_right, bottom_left, bottom_right,
@@ -1011,7 +1008,15 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		scene->clearSelection();
 
 		//Get the page size based on the printer settings
-		page_size=printer->pageRect(QPrinter::DevicePixel).size();
+		ObjectsScene::getPaperConfiguration(paper_size, orient, margins, custom_p_size);
+
+		page_size=printer->paperSize(QPrinter::DevicePixel);
+
+		if(paper_size!=QPrinter::Custom)
+			page_size-=margins.size();
+		else
+			#warning "Custom page size bug (QTBUG-33645) workaround."
+			printer->setPaperSize(QSizeF(page_size.height(), page_size.width()), QPrinter::DevicePixel);
 
 		//Get the pages rect for printing
 		pages=this->getPagesForPrinting(page_size, h_page_cnt, v_page_cnt);
@@ -1024,7 +1029,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		pen.setWidthF(1.0f);
 
 		//Calculates the auxiliary points to draw the page delimiter lines
-		top_left.setX(01); top_left.setY(0);
+		top_left.setX(0); top_left.setY(0);
 		top_right.setX(page_size.width()); top_right.setY(0);
 		bottom_left.setX(0); bottom_left.setY(page_size.height());
 		bottom_right.setX(top_right.x()); bottom_right.setY(bottom_left.y());
@@ -1039,13 +1044,13 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		for(page=0, h_pg_id=0, v_pg_id=0; page < page_cnt; page++)
 		{
 			//Render the current page on the printer
-			scene->render(&painter, QRectF(), pages[page]);
+			scene->render(&painter, QRect(), pages[page]);
 
 			//Print the current page number is this option is marked
 			if(print_page_nums)
 			{
 				painter.setPen(QColor(120,120,120));
-				painter.drawText(10, 20, QString("%1").arg(page+1));
+				painter.drawText(-margins.left(), -margins.top(), QString("%1").arg(page+1));
 			}
 
 			//Print the guide lines at corners of the page
@@ -1114,6 +1119,12 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
 		scene->update();
 	}
+}
+
+void ModelWidget::update(void)
+{
+	scene->update();
+	QWidget::update();
 }
 
 void ModelWidget::saveModel(void)

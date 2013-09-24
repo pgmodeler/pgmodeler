@@ -11,6 +11,7 @@
 <!ATTLIST configuration paper-type CDATA #IMPLIED>
 <!ATTLIST configuration paper-orientation (portrait|landscape) "landscape">
 <!ATTLIST configuration paper-margin CDATA #IMPLIED>
+<!ATTLIST configuration paper-custom-size CDATA #IMPLIED>
 <!ATTLIST configuration save-session (false|true) "true">
 <!ATTLIST configuration save-widgets (false|true) "true">
 <!ATTLIST configuration print-grid (false|true) "true">

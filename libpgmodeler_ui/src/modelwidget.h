@@ -157,7 +157,6 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
-		void focusInEvent(QFocusEvent *event);
 		void wheelEvent(QWheelEvent * event);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
@@ -179,7 +178,7 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	public:
-		static constexpr float MINIMUM_ZOOM=0.35f,
+		static constexpr float MINIMUM_ZOOM=0.05f,
 													 MAXIMUM_ZOOM=4.0f,
 													 ZOOM_INCREMENT=0.05f;
 
@@ -313,6 +312,7 @@ class ModelWidget: public QWidget {
 		void saveModel(const QString &filename);
 		void saveModel(void);
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
+		void update(void);
 
 	signals:
 		void s_objectModified(void);

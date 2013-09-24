@@ -51,8 +51,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
-		//object_selection_wgt=new ModelObjectsWidget(true);
-
 		parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
 		parent_form->generalwidget_wgt->insertWidget(0, this);
@@ -387,7 +385,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=OBJ_PERMISSION)
+		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);

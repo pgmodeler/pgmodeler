@@ -34,6 +34,11 @@
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
+		static const unsigned UNIT_MILIMETERS=0,
+													UNIT_PIXELS=1,
+													UNIT_INCHS=2,
+													UNIT_CENTIMETERS=3;
+
 
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
@@ -45,6 +50,7 @@ class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, publi
 		void applyConfiguration(void);
 		void restoreDefaults(void);
 		void updateFileAssociation(void);
+		void selectPaperSize(void);
 
 	private slots:
 		void convertMarginUnity(void);

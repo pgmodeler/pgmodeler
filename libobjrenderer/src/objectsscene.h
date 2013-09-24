@@ -45,6 +45,9 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Paper size, used to segmentate the view (via page delimiters) and printing the model
 		static QPrinter::PaperSize paper_size;
 
+		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
+		static QSizeF custom_paper_size;
+
 		//! \brief Page orientation (landscape / portrait)
 		static QPrinter::Orientation page_orientation;
 
@@ -86,8 +89,8 @@ class ObjectsScene: public QGraphicsScene {
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
 		static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
 
-		static void setPageConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins);
-		static void getPageConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins);
+		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
+		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
