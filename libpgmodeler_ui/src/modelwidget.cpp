@@ -941,7 +941,8 @@ vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsign
 	vector<QRectF> pages;
 	QRectF page_rect, max_rect;
 	float width, height;
-	unsigned h_page, v_page;
+	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+	QList<QGraphicsItem *> list;
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size
 	h_page_cnt=roundf(scene->sceneRect().width()/paper_size.width()) + 1;
@@ -956,8 +957,12 @@ vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsign
 			page_rect=QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size);
 
 			//Case there is selected items recalculates the maximum page size
-			if(!scene->items(page_rect).isEmpty())
+			list=scene->items(page_rect, Qt::IntersectsItemShape);
+			if(!list.isEmpty())
 			{
+				if(start_h > h_page) start_h=h_page;
+				if(start_v > v_page) start_v=v_page;
+
 				width=page_rect.left() + page_rect.width();
 				height=page_rect.top() + page_rect.height();
 
@@ -975,8 +980,8 @@ vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsign
 	v_page_cnt=roundf(max_rect.height()/paper_size.height());
 
 	//Inserts the page rectangles on the list
-	for(v_page=0; v_page < v_page_cnt; v_page++)
-		for(h_page=0; h_page < h_page_cnt; h_page++)
+	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
+		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
 			pages.push_back(QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size));
 
 	return(pages);
@@ -989,14 +994,14 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QRectF margins, src_ret;
+		QRectF margins;
 		QPrinter::PaperSize paper_size;
 		QPrinter::Orientation orient;
 		QSizeF page_size, custom_p_size;
 		QPen pen;
 		QFont font;
 		QPointF top_left, top_right, bottom_left, bottom_right,
-				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy;
+				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy, dx1, dy1;
 
 		//Make a backup of the current grid options
 		ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
@@ -1037,8 +1042,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		h_bottom_mid.setX(h_top_mid.x()); h_bottom_mid.setY(bottom_right.y());
 		v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
 		v_right_mid.setX(top_right.x()); v_right_mid.setY(v_left_mid.y());
-		dx.setX(10);
-		dy.setY(10);
+
+		dx.setX(margins.left());
+		dx1.setX(margins.width());
+		dy.setY(margins.top());
+		dy1.setY(margins.height());
 
 		page_cnt=pages.size();
 		for(page=0, h_pg_id=0, v_pg_id=0; page < page_cnt; page++)
@@ -1063,43 +1071,43 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 
 			if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
 			{
-				painter.drawLine(top_right, top_right - dx);
+				painter.drawLine(top_right, top_right - dx1);
 				painter.drawLine(top_right, top_right + dy);
 			}
 
 			if(h_pg_id==0 && v_pg_id==v_page_cnt-1)
 			{
 				painter.drawLine(bottom_left, bottom_left + dx);
-				painter.drawLine(bottom_left, bottom_left - dy);
+				painter.drawLine(bottom_left, bottom_left - dy1);
 			}
 
 			if(h_pg_id==h_page_cnt-1 && v_pg_id==v_page_cnt-1)
 			{
-				painter.drawLine(bottom_right, bottom_right - dx);
-				painter.drawLine(bottom_right, bottom_right - dy);
+				painter.drawLine(bottom_right, bottom_right - dx1);
+				painter.drawLine(bottom_right, bottom_right - dy1);
 			}
 
 			if(h_pg_id >=1 && h_pg_id < h_page_cnt-1 && v_pg_id==0)
 			{
-				painter.drawLine(h_top_mid, h_top_mid - dx);
+				painter.drawLine(h_top_mid, h_top_mid - dx1);
 				painter.drawLine(h_top_mid, h_top_mid + dx);
 			}
 
 			if(h_pg_id >=1 && h_pg_id < h_page_cnt-1 && v_pg_id==v_page_cnt-1)
 			{
-				painter.drawLine(h_bottom_mid, h_bottom_mid - dx);
+				painter.drawLine(h_bottom_mid, h_bottom_mid - dx1);
 				painter.drawLine(h_bottom_mid, h_bottom_mid + dx);
 			}
 
 			if(v_pg_id >=1 && v_pg_id < v_page_cnt-1 && h_pg_id==0)
 			{
-				painter.drawLine(v_left_mid, v_left_mid - dy);
+				painter.drawLine(v_left_mid, v_left_mid - dy1);
 				painter.drawLine(v_left_mid, v_left_mid + dy);
 			}
 
 			if(v_pg_id >=1 && v_pg_id < v_page_cnt-1 && h_pg_id==h_page_cnt-1)
 			{
-				painter.drawLine(v_right_mid, v_right_mid - dy);
+				painter.drawLine(v_right_mid, v_right_mid - dy1);
 				painter.drawLine(v_right_mid, v_right_mid + dy);
 			}
 
