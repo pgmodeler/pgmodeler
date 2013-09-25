@@ -47,10 +47,11 @@ class SchemaView: public BaseObjectView
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
 		//! \brief Fills the children vector
 		void fetchChildren(void);
+
+		//! \brief Returns if all children are selected
+		bool isChildrenSelected(void);
 
 	public:
 		SchemaView(Schema *schema);
@@ -58,7 +59,6 @@ class SchemaView: public BaseObjectView
 
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
-
 		unsigned getChildrenCount(void);
 
 	public slots:

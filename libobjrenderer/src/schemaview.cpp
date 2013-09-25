@@ -47,20 +47,18 @@ SchemaView::~SchemaView()
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+	if(event->buttons()==Qt::LeftButton)
+	{
+		all_selected=this->isChildrenSelected();
+		this->setFlag(QGraphicsItem::ItemIsMovable, all_selected);
+	}
+
 	//If the user press SHIFT + left-click select all the schema children
 	if(event->modifiers()==Qt::ShiftModifier &&
 		 event->buttons()==Qt::LeftButton && !all_selected)
-	{
 		this->selectChildren();
-	}
-	//Selects the schema
-	else if(event->modifiers()==Qt::NoModifier && !all_selected)
-	{
-		this->setFlag(QGraphicsItem::ItemIsMovable);
-		this->setFlag(QGraphicsItem::ItemIsSelectable);
+	else
 		BaseObjectView::mousePressEvent(event);
-		this->setFlag(QGraphicsItem::ItemIsMovable, false);
-	}
 }
 
 void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -69,20 +67,6 @@ void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		event->ignore();
 	else
 		BaseObjectView::mouseReleaseEvent(event);
-}
-
-
-QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
-{
-	//If the schema is unselected makes it not movable and selectable
-	if(change==QGraphicsItem::ItemSelectedChange && value.toBool()==false)
-	{
-		all_selected=false;
-		this->setFlag(QGraphicsItem::ItemIsMovable, false);
-		this->setFlag(QGraphicsItem::ItemIsSelectable, false);
-	}
-
-	return(BaseObjectView::itemChange(change, value));
 }
 
 void SchemaView::fetchChildren(void)
@@ -110,6 +94,7 @@ void SchemaView::selectChildren(void)
 
 	//Clears the current scene selection because only one schema and its children can be selected at once
 	this->scene()->clearSelection();
+	all_selected=true;
 
 	while(itr!=children.end())
 	{
@@ -117,11 +102,21 @@ void SchemaView::selectChildren(void)
 		itr++;
 	}
 
-	//Mark the schema as selectable/movable
-	this->setFlag(QGraphicsItem::ItemIsMovable, true);
-	this->setFlag(QGraphicsItem::ItemIsSelectable, true);
 	this->setSelected(true);
-	all_selected=true;
+}
+
+bool SchemaView::isChildrenSelected(void)
+{
+	QList<BaseObjectView *>::Iterator itr=children.begin();
+	bool selected=true;
+
+	while(itr!=children.end() && selected)
+	{
+		selected=(*itr)->isSelected();
+		itr++;
+	}
+
+	return(selected);
 }
 
 unsigned SchemaView::getChildrenCount()
