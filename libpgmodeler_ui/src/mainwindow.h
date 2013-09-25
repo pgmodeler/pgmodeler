@@ -93,8 +93,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the defaul window title
 		QString window_title;
 
-		//! \brief Stores the recent models filenames
-		QStringList recent_models;
+		//! \brief Stores the recent models file names
+		QStringList recent_models,
+
+		//! \brief Stores the last session file names
+		prev_session_files;
 
 		//! \brief Stores the actions related to recent models
 		QMenu recent_mdls_menu;
@@ -201,6 +204,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void showRightWidgetsBar(void);
 		void showBottomWidgetsBar(void);
+
+		void restoreLastSession(void);
 
 		/*! \brief Stop the saving timers. This is used when validating the model
 		in order to avoid the saving while the validation is working */

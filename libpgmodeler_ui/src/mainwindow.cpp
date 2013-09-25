@@ -95,7 +95,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
-	QStringList prev_session_files;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	ObjectType obj_types[]={
@@ -180,6 +179,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																			BaseObject::getSchemaName(obj_types[i]) +
 																			QString(".png")));
 
+	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
@@ -365,6 +365,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 			itr++;
 		}
+
+		//Enables the action to restore session when there are registered session files
+		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 	}
 	catch(Exception &e)
 	{
@@ -410,6 +413,28 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 	}
 
+	//If a previous session was restored save the temp models
+	saveTemporaryModels(true);
+	updateConnections();
+	updateRecentModelsMenu();
+	applyConfigurations();
+
+	//Temporary models are saved every two minutes
+	tmpmodel_save_timer.setInterval(120000);
+}
+
+void MainWindow::showRightWidgetsBar(void)
+{
+	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
+}
+
+void MainWindow::showBottomWidgetsBar(void)
+{
+	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
+}
+
+void MainWindow::restoreLastSession(void)
+{
 	/* Loading the files from the previous session. The session will be restored only
 	if pgModeler is not on model restore mode or pgModeler is not opening a model clicked by user
 	o the file manager */
@@ -423,49 +448,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				this->addModel(prev_session_files.front());
 				prev_session_files.pop_front();
 			}
+
+			saveTemporaryModels(true);
+			action_restore_session->setEnabled(false);
 		}
 		catch(Exception &e)
 		{
 			msg_box.show(e);
 		}
 	}
-
-	/* Since the temp. model thread is disabled is necessary to save the temp.
-	models for the loaded/restored models */
-	ModelWidget *model=nullptr;
-	for(i=0; i < models_tbw->count(); i++)
-	{
-		model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-		try
-		{
-			model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
-		}
-		catch(Exception &e)
-		{
-			msg_box.show(e);
-		}
-	}
-
-	//If a previous session was restored save the temp models
-	if(models_tbw->count() > 0)
-		saveTemporaryModels(true);
-
-	updateConnections();
-	updateRecentModelsMenu();
-	applyConfigurations();
-
-	//Temporary models are saved every one minute
-	tmpmodel_save_timer.setInterval(60000);
-}
-
-void MainWindow::showRightWidgetsBar(void)
-{
-	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
-}
-
-void MainWindow::showBottomWidgetsBar(void)
-{
-	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
 }
 
 void MainWindow::stopTimers(bool value)
@@ -622,12 +613,15 @@ void MainWindow::saveTemporaryModels(bool force)
 	{
 		ModelWidget *model=nullptr;
 
-		for(int i=0; i < models_tbw->count() && this->isActiveWindow(); i++)
+		if(force || this->isActiveWindow())
 		{
-			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+			for(int i=0; i < models_tbw->count(); i++)
+			{
+				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 
-			if(model->isModified() || force)
-				model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+				if(model->isModified() || force)
+					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+			}
 		}
 
 		tmpmodel_thread.quit();
@@ -663,7 +657,10 @@ void MainWindow::loadRecentModel(void)
 	QAction *act=dynamic_cast<QAction *>(sender());
 
 	if(act)
+	{
 		addModel(act->text());
+		saveTemporaryModels(true);
+	}
 }
 
 void MainWindow::clearRecentModelsMenu(void)
@@ -1211,10 +1208,10 @@ void MainWindow::loadModels(const QStringList &list)
 		}
 
 		updateRecentModelsMenu();
+		saveTemporaryModels(true);
 	}
 	catch(Exception &e)
 	{
-		//closeModel(models_tbw->currentIndex());
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
 																 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 	}

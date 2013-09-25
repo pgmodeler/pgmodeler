@@ -519,6 +519,8 @@
     <addaction name="action_import"/>
     <addaction name="action_export"/>
     <addaction name="separator"/>
+    <addaction name="action_restore_session"/>
+    <addaction name="separator"/>
     <addaction name="action_exit"/>
    </widget>
    <widget class="QMenu" name="edit_menu">
@@ -1115,6 +1117,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+I</string>
+   </property>
+  </action>
+  <action name="action_restore_session">
+   <property name="text">
+    <string>Restore Session</string>
    </property>
   </action>
  </widget>

@@ -140,16 +140,15 @@ int main(int argc, char **argv)
 									 GlobalAttributes::UI_STYLE_CONF +
 									 GlobalAttributes::CONFIGURATION_EXT);
 		QString stylesheet;
-		QFileInfo fi(argv[0]);
 
 		//Apply the style to application
 		QApplication::setStyle(QStyleFactory::create(app_style));
 
 		//Changing the current working dir to the executable's directory in
-		QDir::setCurrent(fi.absolutePath());
+		QDir::setCurrent(app.applicationDirPath());
 
 		//Adding paths which executable will find plugins and it's dependecies
-		app.addLibraryPath(fi.absolutePath());
+		app.addLibraryPath(app.applicationDirPath());
 		app.addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
 		//Tries to load the ui translation according to the system's locale

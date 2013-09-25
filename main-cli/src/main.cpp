@@ -25,8 +25,11 @@ int main(int argc, char **argv)
 
 	try
   {
-		PgModelerCLI pgmodeler_cli(argc, argv);
 		QTranslator translator;
+		PgModelerCLI pgmodeler_cli(argc, argv);
+
+		//Changing the current working dir to the executable's directory in
+		QDir::setCurrent(pgmodeler_cli.applicationDirPath());
 
 		//Tries to load the ui translation according to the system's locale
 		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
