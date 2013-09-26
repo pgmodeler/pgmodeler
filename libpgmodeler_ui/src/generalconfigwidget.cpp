@@ -26,10 +26,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 																	 QPrinter::B7, QPrinter::B8, QPrinter::B9, QPrinter::C5E, QPrinter::Comm10E, QPrinter::DLE,
 																	 QPrinter::Executive, QPrinter::Folio, QPrinter::Ledger, QPrinter::Legal, QPrinter::Letter,
 																	 QPrinter::Tabloid, QPrinter::Custom };
+	int count=sizeof(paper_ids)/sizeof(QPrinter::PaperSize);
 
 	Ui_GeneralConfigWidget::setupUi(this);
 
-	for(int i=0; i < 31; i++)
+	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
@@ -43,7 +44,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
@@ -71,8 +71,6 @@ void GeneralConfigWidget::loadConfiguration(void)
 	autosave_interv_chk->setChecked(interv > 0);
 	autosave_interv_spb->setValue(interv);
 	autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
-
-	save_session_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]==ParsersAttributes::_TRUE_);
 
 	print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 	print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -131,7 +129,6 @@ void GeneralConfigWidget::saveConfiguration()
 		else
 			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(save_session_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
 
@@ -147,8 +144,7 @@ void GeneralConfigWidget::saveConfiguration()
 		while(itr!=itr_end)
 		{
 			//Checking if the current attribute is a file to be stored in a <session> tag
-			if(save_session_chk->isChecked() &&
-				 (itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
+			if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
 			{
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
 						SchemaParser::getCodeDefinition(file_sch, itr->second);

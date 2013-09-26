@@ -38,7 +38,16 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		ModelWidget *model;
 
 		//! \brief Zoom factor applied to the visualization
-		float zoom_factor;
+		float zoom_factor,
+
+		//! \brief Store the current calculated resize factor
+		curr_resize_factor;
+
+		//! \brief Current overview window size
+		QSizeF curr_size;
+
+		//! \brief Current scene rectangle
+		QRectF scene_rect;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
 		static constexpr float RESIZE_FACTOR=0.20f;

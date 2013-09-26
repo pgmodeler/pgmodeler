@@ -24,6 +24,7 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	setupUi(this);
 	this->model=nullptr;
 	zoom_factor=1;
+	curr_resize_factor=RESIZE_FACTOR;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
@@ -91,24 +92,19 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 {
 	if(this->model && (this->isVisible() || force_update))
 	{
-		QSize size;
 		QPixmap pix;
+		QSize size=scene_rect.size().toSize();
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(this->model->scene->sceneRect().size().toSize());
-
-		//Configures a QSize instance with 20% of the scene size
-		size=this->model->scene->sceneRect().size().toSize();
-		size.setWidth(size.width() * RESIZE_FACTOR);
-		size.setHeight(size.height() * RESIZE_FACTOR);
+		pix=QPixmap(size);
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
-		this->model->scene->render(&p, pix.rect(), this->model->scene->sceneRect().toRect());
+		this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
 
 		//Resizes the pixmap to the previous configured QSize
-		label->setPixmap(pix.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-		label->resize(size);
+		label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		label->resize(curr_size.toSize());
 	}
 }
 
@@ -117,7 +113,7 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	if(this->model)
 	{
 		QSizeF size;
-		float factor=RESIZE_FACTOR/zoom_factor;
+		float factor=curr_resize_factor/zoom_factor;
 
 		//Resizes the window frame based upon the model's viewport dimensions
 		size=this->model->viewport->geometry().size();
@@ -136,14 +132,31 @@ void ModelOverviewWidget::resizeOverview(void)
 {
 	if(this->model)
 	{
-		QSizeF size;
+		QDesktopWidget desktop;
+		QRect screen_rect=desktop.screenGeometry(desktop.primaryScreen());
 
-		size=this->model->scene->sceneRect().size();
-		size.setWidth(size.width() * RESIZE_FACTOR);
-		size.setHeight(size.height() * RESIZE_FACTOR);
-		this->resize(size.toSize());
-		this->setMaximumSize(size.toSize());
-		this->setMinimumSize(size.toSize());
+		//Make an initial calculation of the overview window size
+		scene_rect=this->model->scene->sceneRect();
+		curr_size=scene_rect.size();
+		curr_size.setWidth(curr_size.width() * RESIZE_FACTOR);
+		curr_size.setHeight(curr_size.height() * RESIZE_FACTOR);
+
+		//If the size exceeds the screen half width or height
+		if(curr_size.width() > screen_rect.width()/2 ||
+			 curr_size.height() > screen_rect.height()/2)
+		{
+		 //Reduce the resize factor and recalculates the new size
+		 curr_resize_factor=RESIZE_FACTOR/2;
+		 curr_size=scene_rect.size();
+		 curr_size.setWidth(curr_size.width() * curr_resize_factor);
+		 curr_size.setHeight(curr_size.height() * curr_resize_factor);
+		}
+		else
+			curr_resize_factor=RESIZE_FACTOR;
+
+		this->resize(curr_size.toSize());
+		this->setMaximumSize(curr_size.toSize());
+		this->setMinimumSize(curr_size.toSize());
 	}
 }
 

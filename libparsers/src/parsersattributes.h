@@ -323,7 +323,6 @@ namespace ParsersAttributes {
 	PAPER_ORIENTATION="paper-orientation",
 	PAPER_MARGIN="paper-margin",
 	PAPER_CUSTOM_SIZE="paper-custom-size",
-	SAVE_SESSION="save-session",
 	PORTRAIT="portrait",
 	LANDSCAPE="landscape",
 	GRID_SIZE="grid-size",

@@ -587,6 +587,7 @@
     <addaction name="action_export"/>
     <addaction name="separator"/>
     <addaction name="action_restore_session"/>
+    <addaction name="separator"/>
     <addaction name="action_exit"/>
     <addaction name="separator"/>
    </widget>

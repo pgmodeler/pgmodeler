@@ -497,7 +497,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
 		map<QString, attribs_map > confs;
-		bool save_conf=false, modified=false;
+		bool modified=false;
 		int i=0;
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
@@ -527,36 +527,31 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		if(event->isAccepted())
 		{
+			int i, count;
+			ModelWidget *model=nullptr;
+			QString param_id;
+			attribs_map attribs;
+
 			this->overview_wgt->close();
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 			confs=conf_wgt->getConfigurationParams();
 			conf_wgt->removeConfigurationParams();
 
-			//Case is needed to save the session
-			if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
+			//Saving the session
+			count=models_tbw->count();
+			for(i=0; i < count; i++)
 			{
-				int i, count;
-				ModelWidget *model=nullptr;
-				QString param_id;
-				attribs_map attribs;
+				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 
-				count=models_tbw->count();
-				for(i=0; i < count; i++)
+				if(!model->getFilename().isEmpty())
 				{
-					model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-
-					if(!model->getFilename().isEmpty())
-					{
-						param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
-						attribs[ParsersAttributes::ID]=param_id;
-						attribs[ParsersAttributes::PATH]=model->getFilename();
-						conf_wgt->addConfigurationParam(param_id, attribs);
-						attribs.clear();
-					}
+					param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+					attribs[ParsersAttributes::ID]=param_id;
+					attribs[ParsersAttributes::PATH]=model->getFilename();
+					conf_wgt->addConfigurationParam(param_id, attribs);
+					attribs.clear();
 				}
-				save_conf=true;
 			}
-
 
 			//Saving recent models list
 			if(!recent_models.isEmpty())
@@ -574,12 +569,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					attribs.clear();
 					recent_models.pop_front();
 				}
-				save_conf=true;
 			}
 
-			if(save_conf)
-				conf_wgt->saveConfiguration();
-
+			conf_wgt->saveConfiguration();
 			restoration_form->removeTemporaryModels();
 
 			//Remove import log files
