@@ -1144,16 +1144,13 @@ void ModelWidget::saveModel(const QString &filename)
 {
 	try
 	{
-		//Configura o widget de progresso de tarefa para exibir o progresso do salvamento do arquivo
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
 		task_prog_wgt->show();
 
-		//Salva o modelo em arquivo
 		db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
 		this->filename=filename;
 
-		//Fecha o widget de progresso de tarefa
 		task_prog_wgt->close();
 		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
 		this->modified=false;

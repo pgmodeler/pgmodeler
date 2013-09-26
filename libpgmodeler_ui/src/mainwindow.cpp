@@ -253,6 +253,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
+	bg_saving_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -612,16 +613,28 @@ void MainWindow::saveTemporaryModels(bool force)
 	try
 	{
 		ModelWidget *model=nullptr;
+		int count=models_tbw->count();
 
-		if(force || this->isActiveWindow())
+		if(count > 0 && (force || this->isActiveWindow()))
 		{
-			for(int i=0; i < models_tbw->count(); i++)
+			bg_saving_wgt->setVisible(true);
+			bg_saving_pb->setValue(0);
+			bg_saving_lbl->setText(trUtf8("Saving temp. models"));
+			bg_saving_wgt->repaint();
+
+			for(int i=0; i < count; i++)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-				if(model->isModified() || force)
+				if(model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+
+				QThread::msleep(200);
 			}
+
+			bg_saving_pb->setValue(100);
+			bg_saving_wgt->setVisible(false);
 		}
 
 		tmpmodel_thread.quit();
