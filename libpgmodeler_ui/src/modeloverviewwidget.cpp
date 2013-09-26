@@ -114,16 +114,17 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	{
 		QSizeF size;
 		float factor=curr_resize_factor/zoom_factor;
+		QScrollBar *h_scroll=this->model->viewport->horizontalScrollBar(),
+				*v_scroll=this->model->viewport->verticalScrollBar();
 
 		//Resizes the window frame based upon the model's viewport dimensions
 		size=this->model->viewport->geometry().size();
-		size.setWidth(size.width() * factor);
-		size.setHeight(size.height() * factor);
+		size.setWidth((size.width() * factor));
+		size.setHeight((size.height() * factor));
 		window_frm->resize(size.toSize());
 
 		//Set the frame position based upon the viewport scroll bar values
-		window_frm->move(QPoint(this->model->viewport->horizontalScrollBar()->value() * factor,
-														this->model->viewport->verticalScrollBar()->value() * factor));
+		window_frm->move(QPoint(h_scroll->value() * factor,	v_scroll->value() * factor));
 
 	}
 }
@@ -202,8 +203,8 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 			rect.translate(0,(rect1.bottom() - rect.bottom())-rect1.top());
 
 		window_frm->setGeometry(rect);
-		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * this->model->scene->sceneRect().width() * (rect.x()/static_cast<float>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * this->model->scene->sceneRect().height() * (rect.y()/static_cast<float>(rect1.height()))));
+		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<float>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<float>(rect1.height()))));
 	}
 }
 

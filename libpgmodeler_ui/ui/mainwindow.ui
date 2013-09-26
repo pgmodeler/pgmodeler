@@ -619,6 +619,7 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
+    <addaction name="action_overview"/>
    </widget>
    <widget class="QMenu" name="plugins_menu">
     <property name="enabled">
