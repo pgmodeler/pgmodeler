@@ -198,10 +198,13 @@ int main(int argc, char **argv)
 		//Creates the main form
 		MainWindow fmain;
 
-		//If the user specifies a list of files to be loaded
-		params.pop_front();
-		if(!params.isEmpty())
+		//Loading models via command line on MacOSX are disabled until the file association work correclty on that system
+		#ifndef Q_OS_MAC
+		 //If the user specifies a list of files to be loaded
+		 params.pop_front();
+		 if(!params.isEmpty())
 			fmain.loadModels(params);
+		#endif
 
 		splash.finish(&fmain);
 		fmain.showMaximized();
