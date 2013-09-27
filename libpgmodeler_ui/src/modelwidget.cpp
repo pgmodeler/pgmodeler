@@ -2201,6 +2201,12 @@ void ModelWidget::removeObjects(void)
 						//If the object is as FK relationship remove the foreign keys that generates it
 						if(object->getObjectType()==BASE_RELATIONSHIP)
 						{
+							if(object->isProtected())
+								throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
+																.arg(object->getName(true))
+																.arg(object->getTypeName()),
+																ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 							rel=dynamic_cast<BaseRelationship *>(object);
 							if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 							{
@@ -2218,7 +2224,6 @@ void ModelWidget::removeObjects(void)
 								{
 									tab_obj=constrs.back();
 									objs_map[tab_obj->getObjectId()]=tab_obj;
-									//obj_ids.push_back(tab_obj->getObjectId());
 									constrs.pop_back();
 								}
 							}

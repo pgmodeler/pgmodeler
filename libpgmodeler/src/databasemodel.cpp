@@ -938,94 +938,72 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		vector<Constraint *>::iterator itr, itr_end;
 		vector<BaseObject *>::iterator itr1, itr1_end;
 
-		/*table->getForeignKeys(fks);
+		table->getForeignKeys(fks);
 		itr=fks.begin();
 		itr_end=fks.end();
 
-		//Case the table is removed the fk relationship must be removed too
-		if(!fks.empty() && getObjectIndex(table) < 0)
-		{
-			while(itr!=itr_end)
-			{
-				fk=(*itr);
-				ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
-				itr++;
-
-				rel=getRelationship(table, ref_tab);
-
-				if(rel && !rel->isBidirectional())
-					removeRelationship(rel);
-			}
-		}*/
-		//Update the relationships
-		//else
-		//{
-			table->getForeignKeys(fks);
-			itr=fks.begin();
-			itr_end=fks.end();
-
-			/* First remove the invalid relationships (the foreign key that generates the
+		/* First remove the invalid relationships (the foreign key that generates the
 			relationship no longer exists) */
-			itr1=base_relationships.begin();
-			itr1_end=base_relationships.end();
+		itr1=base_relationships.begin();
+		itr1_end=base_relationships.end();
 
-			idx=0;
-			while(itr1!=itr1_end)
+		idx=0;
+		while(itr1!=itr1_end)
+		{
+			rel=dynamic_cast<BaseRelationship *>(*itr1);
+
+			if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
+				 (rel->getTable(BaseRelationship::SRC_TABLE)==table ||
+					rel->getTable(BaseRelationship::DST_TABLE)==table))
 			{
-				rel=dynamic_cast<BaseRelationship *>(*itr1);
+				if(rel->getTable(BaseRelationship::SRC_TABLE)==table)
+					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+				else
+					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
 
-				if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
-					 (rel->getTable(BaseRelationship::SRC_TABLE)==table ||
-						rel->getTable(BaseRelationship::DST_TABLE)==table))
+				//Removes the relationship if the table does'nt references the 'ref_tab'
+				if(!table->isReferTableOnForeignKey(ref_tab) &&
+					 (rel->isSelfRelationship() ||
+						(!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table))))
 				{
-					if(rel->getTable(BaseRelationship::SRC_TABLE)==table)
-						ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
-					else
-						ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
-
-					//Removes the relationship if the table does'nt references the 'ref_tab'
-					if(!table->isReferTableOnForeignKey(ref_tab) &&
-							(rel->isSelfRelationship() ||
-							 (!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table))))
-					{
-						removeRelationship(rel);
-						itr1=base_relationships.begin() + idx;
-						itr1_end=base_relationships.end();
-					}
-					else
-					{
-						if(!rel->isSelfRelationship() && ref_tab->isReferTableOnForeignKey(table))
-							rel->setModified(true);
-
-						itr1++; idx++;
-					}
+					removeRelationship(rel);
+					itr1=base_relationships.begin() + idx;
+					itr1_end=base_relationships.end();
 				}
 				else
 				{
+					if(!rel->isSelfRelationship() && ref_tab->isReferTableOnForeignKey(table))
+						rel->setModified(true);
+
 					itr1++; idx++;
 				}
 			}
-
-			//Creating the relationships from the foreign keys
-			while(itr!=itr_end)
+			else
 			{
-				fk=(*itr);
-				ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
-				itr++;
-
-				//Only creates the relationship if does'nt exist one between the tables
-				rel=getRelationship(table, ref_tab);
-
-				if(!rel)
-				{
-					rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-																	 table, ref_tab, false, false);
-					addRelationship(rel);
-				}
-				else if(rel->isBidirectional())
-					rel->setModified(true);
+				itr1++; idx++;
 			}
-		//}
+		}
+
+		//Creating the relationships from the foreign keys
+		while(itr!=itr_end)
+		{
+			fk=(*itr);
+			ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
+			itr++;
+
+			//Only creates the relationship if does'nt exist one between the tables
+			rel=getRelationship(table, ref_tab);
+
+			if(!rel)
+			{
+				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
+																 table, ref_tab, false, false);
+				addRelationship(rel);
+			}
+			else if(rel->isBidirectional())
+				rel->setModified(true);
+		}
+
 	}
 }
 
