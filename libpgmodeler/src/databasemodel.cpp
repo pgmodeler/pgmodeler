@@ -938,7 +938,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		vector<Constraint *>::iterator itr, itr_end;
 		vector<BaseObject *>::iterator itr1, itr1_end;
 
-		table->getForeignKeys(fks);
+		/*table->getForeignKeys(fks);
 		itr=fks.begin();
 		itr_end=fks.end();
 
@@ -956,10 +956,14 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				if(rel && !rel->isBidirectional())
 					removeRelationship(rel);
 			}
-		}
+		}*/
 		//Update the relationships
-		else
-		{
+		//else
+		//{
+			table->getForeignKeys(fks);
+			itr=fks.begin();
+			itr_end=fks.end();
+
 			/* First remove the invalid relationships (the foreign key that generates the
 			relationship no longer exists) */
 			itr1=base_relationships.begin();
@@ -1021,7 +1025,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				else if(rel->isBidirectional())
 					rel->setModified(true);
 			}
-		}
+		//}
 	}
 }
 
@@ -6675,6 +6679,22 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
 				if(base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
 					 base_rel->getTable(BaseRelationship::DST_TABLE)==table)
+				{
+					refer=true;
+					refs.push_back(base_rel);
+				}
+				itr++;
+			}
+
+			itr=base_relationships.begin();
+			itr_end=base_relationships.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				base_rel=dynamic_cast<BaseRelationship *>(*itr);
+				if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
+					 (base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
+						base_rel->getTable(BaseRelationship::DST_TABLE)==table))
 				{
 					refer=true;
 					refs.push_back(base_rel);

@@ -2152,10 +2152,6 @@ void ModelWidget::removeObjects(void)
 	ObjectType obj_type;
 	BaseObject *object=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	//vector<BaseObject *>::reverse_iterator ritr, ritr_end;
-	//vector<BaseObject *> aux_vect;
-	//vector<unsigned> obj_ids;
-	//vector<unsigned>::reverse_iterator itr1, itr1_end;
 	vector<Constraint *> constrs;
 	map<unsigned, BaseObject *> objs_map;
 	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
@@ -2230,24 +2226,10 @@ void ModelWidget::removeObjects(void)
 						else
 						{
 							objs_map[object->getObjectId()]=object;
-							//obj_ids.push_back(object->getObjectId());
 						}
 						itr++;
 					}
 
-					//Sort the object id vector in order to remove object from the last to the first avoiding reference break
-					//sort(obj_ids.begin(), obj_ids.end());
-
-					//itr1=obj_ids.rbegin();
-					//itr1_end=obj_ids.rend();
-					//while(itr1!=itr1_end)
-					//{
-					//	aux_vect.push_back(objs_map[(*itr1)]);
-					//	itr1++;
-					//}
-
-					//ritr=aux_vect.rbegin();
-					//ritr_end=aux_vect.rend();
 					ritr=objs_map.rbegin();
 					ritr_end=objs_map.rend();
 					object=nullptr;

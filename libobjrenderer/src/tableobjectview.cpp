@@ -472,34 +472,31 @@ QString TableObjectView::getConstraintString(Column *column)
 		Table *table=dynamic_cast<Table *>(column->getParentTable());
 		QString str_constr;
 		Constraint *constr=nullptr;
-		vector<Constraint *>::iterator itr,itr_end;
-		vector<Constraint *> constraints;
+		vector<TableObject *>::iterator itr,itr_end;
 		ConstraintType constr_type;
-		unsigned i, count;
 
-		count=table->getConstraintCount();
-		for(i=0; i < count; i++)
-			constraints.push_back(table->getConstraint(i));
-
-		itr=constraints.begin();
-		itr_end=constraints.end();
+		itr=table->getObjectList(OBJ_CONSTRAINT)->begin();
+		itr_end=table->getObjectList(OBJ_CONSTRAINT)->end();
 
 		while(itr!=itr_end)
 		{
-			constr=(*itr);
+			constr=dynamic_cast<Constraint *>(*itr);
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->isColumnReferenced(column, constr_type==ConstraintType::foreign_key))
+			if(constr->isColumnExists(column, Constraint::SOURCE_COLS))
 			{
 				constr_type=constr->getConstraintType();
 
 				if(constr_type==ConstraintType::primary_key)
 					str_constr=TXT_PRIMARY_KEY + CONSTR_SEPARATOR + str_constr;
+
 				if(constr_type==ConstraintType::foreign_key && str_constr.indexOf(TXT_FOREIGN_KEY) < 0)
 					str_constr+=TXT_FOREIGN_KEY + CONSTR_SEPARATOR;
+
 				if(constr_type==ConstraintType::unique && str_constr.indexOf(TXT_UNIQUE) < 0)
 					str_constr+=TXT_UNIQUE + CONSTR_SEPARATOR;
+
 				if(constr_type==ConstraintType::exclude && str_constr.indexOf(TXT_EXCLUDE) < 0)
 					str_constr+=TXT_EXCLUDE + CONSTR_SEPARATOR;
 			}
