@@ -1,6 +1,32 @@
 Changelog
 ---------
 
+v0.6.0
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: October 30, 2013</em>
+
+* [New] Added a validation when removing protected FK relationships.
+* [New] Added a progress info (at bottom widgets bar) for temporary model saving.
+* [New] User can now restore the last session via File > Restore Session. Sessions will not be restored at startup anymore.
+* [New] Added a "zoom" option when exporting to PNG image.
+* [Change] Disabled the model loading via command line on MacOSX due to bundle particularities.
+* [Change] Remove option "Save session" from general config widget.
+* [Change] Improved the way schema's children objects are selected/unselected.
+* [Change] Improved the printing operation. Now custom paper size has a separated field to assign it's coordinates.
+* [Change] The import errors now are written on a log file when "ignore import errors" is checked.
+* [Fix] Fixed an inconsistence when removing a table before the fk relationship linked to it. From now on (to avoid crashes) user must remove the relationship first and then remove the table.
+* [Fix] Fixed a minor bug on column's graphical representation that was incorrectly configuring the column descriptor for self-relationship fk's.
+* [Fix] Minor fix on model overview widget when showing large models.
+* [Fix] Fixed bug on pgmodeler-cli that was generating errors when running it outside the executable's directory.
+* [Fix] Fixed the calculation of pages to be printed.
+* [Fix] Fixed the type enumeration validation to accept space on the names.
+* [Fix] Minor fix for GiS types. Spatial auxiliary type name can null.
+* [Fix] Minor pgmodeler-cli typos corrections.
+* [Fix] Fixed a bug related to XMLParser and threads that was crashing pgModeler on Windows.
+* [Fix] Fixes on DatabaseImportHelper to correctly handle extension created types.
+* [Fix] Minor fix on PgSQLType::parseString() when creating datatypes from strings.
+
 v0.6.0-beta
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
@@ -101,6 +127,7 @@ v0.6.0-alpha
 * [Fix] Fixed library build order now libpgmodeler is built before libpgconnector.
 * [Fix] Minor fix on UI stylesheet related tooltips when using Fusion theme.
 * [Fix] Fixed the assignment of LC_COLLATE, LC_CTYPE and template db to database instance on DatabaseWidget.
+
 
 v0.5.2
 ------
