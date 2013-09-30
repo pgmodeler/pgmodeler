@@ -4,7 +4,7 @@ Changelog
 v0.6.0
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
-<em>Release date: October 30, 2013</em>
+<em>Release date: September 30, 2013</em>
 
 * [New] Added a validation when removing protected FK relationships.
 * [New] Added a progress info (at bottom widgets bar) for temporary model saving.
