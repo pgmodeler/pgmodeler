@@ -388,7 +388,7 @@ void Trigger::validateTrigger(void)
 				throw Exception(ERR_TRIGGER_INV_INSTEADOF_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
-			else if(firing_type==FiringType::instead_of && events[EventType::on_update])
+			else if(firing_type==FiringType::instead_of && events[EventType::on_update] && !upd_columns.empty())
 				throw Exception(ERR_TRIGGER_INV_INSTEADOF_UPDATE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
