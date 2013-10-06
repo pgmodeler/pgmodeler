@@ -78,15 +78,16 @@ void SequenceWidget::applyConfiguration(void)
 	try
 	{
 		Sequence *sequence=nullptr;
-		startConfiguration<Sequence>();
 
+		startConfiguration<Sequence>();
 		sequence=dynamic_cast<Sequence *>(this->object);
+
+		BaseObjectWidget::applyConfiguration();
+
 		sequence->setCycle(cyclic_chk->isChecked());
 		sequence->setValues(minimum_edt->text(), maximum_edt->text(), increment_edt->text(),
 												start_edt->text(), cache_edt->text());
 		sequence->setOwnerColumn(dynamic_cast<Column *>(column_sel->getSelectedObject()));
-
-		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}
 	catch(Exception &e)
