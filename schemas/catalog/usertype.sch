@@ -76,7 +76,7 @@
        END AS typeattrib, ]
 
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
-    %if @{pgsql92} %then
+    %if %not @{pgsql90} %and %not @{pgsql91} %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
 					   rngcanonical::oid||':'||rngsubdiff::oid, ':')
                                     FROM pg_range WHERE rngtypid=tp.oid)

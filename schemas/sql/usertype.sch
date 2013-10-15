@@ -22,7 +22,7 @@
      %if @{enumerations} %then [ ENUM ] (@{enumerations}); %end
    %end
 
-   %if @{pgsql92} %and @{range} %then
+   %if @{pgsql92} %or @{pgsql93} %and @{range} %then
     [SUBTYPE = ] @{subtype}
     %if @{collation} %then  $br [, COLLATE = ] @{collation} %end
     %if @{opclass} %then  $br [, SUBTYPE_OPCLASS = ] @{opclass} %end

@@ -3,7 +3,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{pgsql91} %or @{pgsql92} %then
+%if %not @{pgsql90} %then
 
  [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
  [CREATE COLLATION ] @{name}

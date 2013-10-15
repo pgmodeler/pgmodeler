@@ -139,7 +139,8 @@ class SchemaParser {
 		//! \brief Constants used to refernce PostgreSQL versions.
 		static const QString PGSQL_VERSION_90,
 												 PGSQL_VERSION_91,
-												 PGSQL_VERSION_92;
+												 PGSQL_VERSION_92,
+												 PGSQL_VERSION_93;
 
 		//! \brief Constants used to get a specific object definition
 		static constexpr unsigned SQL_DEFINITION=0,

@@ -46,7 +46,7 @@
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
        string_to_array(pg_get_expr(id.indexprs, id.indexrelid),',') AS expressions, ]
 
-     %if %not @{pgsql92} %then
+     %if %not @{pgsql92} %and %not @{pgsql93} %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]

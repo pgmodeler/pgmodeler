@@ -34,7 +34,7 @@
 	     dm.typbasetype AS type, ]
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
-	%if %not @{pgsql92} %then
+	%if %not @{pgsql92} %and %not @{pgsql93} %then
 	 [ NULL AS permission, NULL AS collation, ]
 	%else
 	 [ dm.typacl AS permission, dm.typcollation AS collation, ]
@@ -46,9 +46,9 @@
 	  END AS length,
 
 	  CASE
-	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale ] %if %not @{pgsql92} %then [::varchar] %end
-	[   WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if %not @{pgsql92} %then [::varchar] %end
-	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if %not @{pgsql92} %then [::varchar] %end
+	    WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale ] %if %not @{pgsql92} %and %not @{pgsql93} %then [::varchar] %end
+	[   WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if %not @{pgsql92} %and %not @{pgsql93} %then [::varchar] %end
+	[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if %not @{pgsql92} %and %not @{pgsql93} %then [::varchar] %end
 	[   ELSE NULL
 	 END AS precision,
 

@@ -177,7 +177,7 @@
          <bool>false</bool>
         </property>
         <property name="currentRow">
-         <number>0</number>
+         <number>-1</number>
         </property>
         <item>
          <property name="text">
@@ -211,7 +211,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Connetions</string>
+          <string>Connections</string>
          </property>
          <property name="textAlignment">
           <set>AlignLeft|AlignVCenter</set>
