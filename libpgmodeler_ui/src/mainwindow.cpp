@@ -1052,7 +1052,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			if(model->getDatabaseModel()->isInvalidated())
 			{
 				msg_box.show(trUtf8("Confirmation"),
-												trUtf8("WARNING: The model is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to	cancel the saving and validate the model?"),
+												trUtf8("WARNING: The model is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?"),
 												Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 
