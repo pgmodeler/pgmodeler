@@ -36,6 +36,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		QSpacerItem *spacer=nullptr;
 
 		setupUi(this);
+    new_object=false;
 		model=nullptr;
 		table=nullptr;
 		relationship=nullptr;
