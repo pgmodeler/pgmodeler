@@ -1673,7 +1673,10 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 		constr=dbmodel->createConstraint(nullptr);
 
 		if(table &&  constr->getConstraintType()==ConstraintType::primary_key)
+		{
 			table->addConstraint(constr);
+			table->setModified(true);
+		}
 	}
 	catch(Exception &e)
 	{
