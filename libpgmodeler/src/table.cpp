@@ -543,7 +543,7 @@ void Table::removeObject(BaseObject *obj)
 			if(tab_obj)
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
 			else
-				removeObject(obj->getName(), OBJ_TABLE);
+				removeObject(obj->getName(true), OBJ_TABLE);
 		}
 	}
 	catch(Exception &e)
@@ -846,8 +846,9 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	else if(obj_type==OBJ_TABLE)
 	{
 		vector<Table *>::iterator itr_tab, itr_end_tab;
-		QString aux_name=BaseObject::formatName(name);
+		QString tab_name, aux_name=name;
 
+		aux_name.remove("\"");
 		itr_tab=ancestor_tables.begin();
 		itr_end_tab=ancestor_tables.end();
 
@@ -856,7 +857,8 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 			/* Unlike other object types, tables are always compared with the FORMATTED NAME
 			because they must be 'schema-qualified' preventing a table of the same name
 			but different schemas are confused */
-			found=((*itr_tab)->getName(true)==aux_name);
+			tab_name=(*itr_tab)->getName(true).remove("\"");
+			found=(tab_name==aux_name);
 			if(!found) itr_tab++;
 			else break;
 		}

@@ -1893,11 +1893,11 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				removeColumnsFromTablePK(table);
 
 				//Removes the special primary key
-				if(pk_special)
+				if(table->getObjectIndex(pk_special) >= 0)
 					table->removeObject(pk_special);
 
 				if(rel_type==RELATIONSHIP_GEN)
-					table->removeObject(getReferenceTable()->getName(true), OBJ_TABLE);
+					table->removeObject(getReferenceTable());
 				else
 					table->setCopyTable(nullptr);
 			}
