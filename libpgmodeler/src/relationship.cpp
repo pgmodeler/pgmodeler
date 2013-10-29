@@ -321,6 +321,9 @@ void Relationship::createSpecialPrimaryKey(void)
 		pk_special->setProtected(true);
 		pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
 
+		//For generalization relationships generates the primary key in form of ALTER command
+		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
+
 		//Adds the columns to the primary key
 		count=column_ids_pk_rel.size();
 		for(i=0; i < count; i++)
@@ -840,6 +843,7 @@ void Relationship::addColumnsRelGen(void)
 			dst_flags[2]={false,false};
 	QString str_aux, msg;
 	PgSQLType src_type, dst_type;
+	//Constraint *pk=nullptr;
 
 	try
 	{
@@ -972,14 +976,22 @@ void Relationship::addColumnsRelGen(void)
 			{
 				//In case there is no column duplicity
 				if(!duplic)
-				{
+				{		
 					//Creates a new column making the initial configurations
 					column=new Column;
 
 					(*column)=(*dst_col);
 
 					if(rel_type==RELATIONSHIP_GEN)
-						column->setAddedByGeneralization(true);
+					{
+						column->setAddedByGeneralization(true);					
+
+						//Mark the column as not-null if the 'dst_col' is part of the parent's table pk
+						//pk=dynamic_cast<Table *>(dst_col->getParentTable())->getPrimaryKey();
+
+						//if(pk && !column->isNotNull() && pk->isColumnReferenced(dst_col))
+						//	column->setNotNull(true);
+					}
 					else
 						column->setAddedByCopy(true);
 
@@ -2320,7 +2332,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
 			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-			attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
+			//attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
 		}
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));

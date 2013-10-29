@@ -30,6 +30,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
+	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
 	copy_table=nullptr;
@@ -132,6 +133,17 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	}
 }
 
+void Table::setAncestorTableAttribute(void)
+{
+	unsigned i, count=ancestor_tables.size();
+	QStringList list;
+
+	for(i=0; i < count; i++)
+		list.push_back(ancestor_tables[i]->getName(true));
+
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+}
+
 void Table::setColumnsAttribute(unsigned def_type)
 {
 	QString str_cols;
@@ -142,7 +154,7 @@ void Table::setColumnsAttribute(unsigned def_type)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy())||
+		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization())||
 			 (def_type==SchemaParser::XML_DEFINITION &&	!columns[i]->isAddedByRelationship()))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
@@ -1148,6 +1160,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
+	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1159,6 +1172,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	setTriggersAttribute(def_type);
 	setIndexesAttribute(def_type);
 	setRulesAttribute(def_type);
+	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
 		setPositionAttribute();
