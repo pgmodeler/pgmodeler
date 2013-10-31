@@ -375,7 +375,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		column=dynamic_cast<Column *>(object);
 
 		//Column 1: Column data type
-		tab->setCellText(Utf8String::create(~column->getType()),row,1);
+		tab->setCellText(Utf8String::create(*column->getType()),row,1);
 
 		//Column 2: Column defaul value
 		str_aux=column->getDefaultValue();
