@@ -7,6 +7,8 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)     #
 # XML_INC   -> Root path where XML2 includes can be found  #
 ############################################################
+cache()
+
 unix {
  !macx:CONFIG += link_pkgconfig
  !macx:PKGCONFIG = libpq libxml-2.0
@@ -15,10 +17,10 @@ unix {
 }
 
 macx {
- PGSQL_LIB = /Library/PostgreSQL/9.2/lib/libpq.dylib
- PGSQL_INC = /Library/PostgreSQL/9.2/include
- XML_INC = /usr/include/libxml2
- XML_LIB = /usr/lib/libxml2.dylib
+ PGSQL_LIB = /Library/PostgreSQL/9.3/lib/libpq.dylib
+ PGSQL_INC = /Library/PostgreSQL/9.3/include
+ XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2
+ XML_LIB = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libxml2.dylib
 }
 
 windows {
@@ -94,10 +96,12 @@ SUBDIRS = libutils \
           libpgmodeler_ui \
 	  crashhandler \
 	  main-cli \
-	  main \
-	  plugins/dummy \
-	  plugins/xml2object
+          main
 
+!macx {
+ SUBDIRS += plugins/dummy \
+            plugins/xml2object
+}
 
 #Include the tests subproject only on debug mode
 CONFIG(debug, debug|release):SUBDIRS+=tests
