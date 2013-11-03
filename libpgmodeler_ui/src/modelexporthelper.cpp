@@ -305,8 +305,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Regexp used to extract the object being created
 						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
-
-						sql_cmd.simplified();
+                        sql_cmd = sql_cmd.simplified();
 
 						//Check if the regex matches the sql command
 						if(reg.exactMatch(sql_cmd))

@@ -30,6 +30,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
+	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
 	copy_table=nullptr;
@@ -132,6 +133,17 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	}
 }
 
+void Table::setAncestorTableAttribute(void)
+{
+	unsigned i, count=ancestor_tables.size();
+	QStringList list;
+
+	for(i=0; i < count; i++)
+		list.push_back(ancestor_tables[i]->getName(true));
+
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+}
+
 void Table::setColumnsAttribute(unsigned def_type)
 {
 	QString str_cols;
@@ -142,7 +154,7 @@ void Table::setColumnsAttribute(unsigned def_type)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy())||
+		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization())||
 			 (def_type==SchemaParser::XML_DEFINITION &&	!columns[i]->isAddedByRelationship()))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
@@ -531,7 +543,7 @@ void Table::removeObject(BaseObject *obj)
 			if(tab_obj)
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
 			else
-				removeObject(obj->getName(), OBJ_TABLE);
+				removeObject(obj->getName(true), OBJ_TABLE);
 		}
 	}
 	catch(Exception &e)
@@ -834,8 +846,9 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	else if(obj_type==OBJ_TABLE)
 	{
 		vector<Table *>::iterator itr_tab, itr_end_tab;
-		QString aux_name=BaseObject::formatName(name);
+		QString tab_name, aux_name=name;
 
+		aux_name.remove("\"");
 		itr_tab=ancestor_tables.begin();
 		itr_end_tab=ancestor_tables.end();
 
@@ -844,7 +857,8 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 			/* Unlike other object types, tables are always compared with the FORMATTED NAME
 			because they must be 'schema-qualified' preventing a table of the same name
 			but different schemas are confused */
-			found=((*itr_tab)->getName(true)==aux_name);
+			tab_name=(*itr_tab)->getName(true).remove("\"");
+			found=(tab_name==aux_name);
 			if(!found) itr_tab++;
 			else break;
 		}
@@ -1148,6 +1162,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
+	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1159,6 +1174,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	setTriggersAttribute(def_type);
 	setIndexesAttribute(def_type);
 	setRulesAttribute(def_type);
+	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
 		setPositionAttribute();

@@ -1,6 +1,28 @@
 Changelog
 ---------
 
+v0.6.1
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: November 3, 2013</em>
+
+* [New] PostgreSQL version 9.3 activated on code base. Now import and export operations works with this new version.
+* [Change] Changed the way inheritance is created. Now the INHERIT command is appended in the table's definition.
+* [Change] Update on model validation. Generalization and copy relationships have the participant tables' id's validated in order to check reference breaking.
+* [Change] Version info upgraded on MacOSX app bundle configuration file (Info.plist).
+* [Change] Minor change on "pgmodeler.vars". Included environment variables for custom Qt installation.
+* [Fix] Fixed a bug related to INSTEAD OF/ON UPDATE triggers on views.
+* [Fix] Fixed a bug related to incorrectly error raised when setting a owner table in the same schema as the sequece.
+* [Fix] Fixed a bug related to importing sequences which name has uppercase characters.
+* [Fix] Fixed misspelled "Connetion" word on configuration form.
+* [Fix] Typos correction on model validation message box.
+* [Fix] Fixed incorrect objects removal after cancel the edition.
+* [Fix] Minor fix on disconnection of generalization relationships.
+* [Fix] Minor fix on updating table's graphical representation when importing primary keys.
+* [Fix] Minor change when displaying the columns' types on table/relationship editing form.
+* [Fix] Fixed the compilation process on MacOSX 10.9 (Mavericks).
+* [Fix] Minor change on macdeploy.sh to use Qt5.2-beta by default.
+
 v0.6.0
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>

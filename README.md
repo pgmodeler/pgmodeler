@@ -42,31 +42,27 @@ MacOSX Notes
 Change Log
 ----------
 
-v0.6.0
+v0.6.1
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
-<em>Release date: September 30, 2013</em>
+<em>Release date: November 3, 2013</em>
 
-* [New] Added a validation when removing protected FK relationships.
-* [New] Added a progress info (at bottom widgets bar) for temporary model saving.
-* [New] User can now restore the last session via File > Restore Session. Sessions will not be restored at startup anymore.
-* [New] Added a "zoom" option when exporting to PNG image.
-* [Change] Disabled the model loading via command line on MacOSX due to bundle particularities.
-* [Change] Remove option "Save session" from general config widget.
-* [Change] Improved the way schema's children objects are selected/unselected.
-* [Change] Improved the printing operation. Now custom paper size has a separated field to assign it's coordinates.
-* [Change] The import errors now are written on a log file when "ignore import errors" is checked.
-* [Fix] Fixed an inconsistence when removing a table before the fk relationship linked to it. From now on (to avoid crashes) user must remove the relationship first and then remove the table.
-* [Fix] Fixed a minor bug on column's graphical representation that was incorrectly configuring the column descriptor for self-relationship fk's.
-* [Fix] Minor fix on model overview widget when showing large models.
-* [Fix] Fixed bug on pgmodeler-cli that was generating errors when running it outside the executable's directory.
-* [Fix] Fixed the calculation of pages to be printed.
-* [Fix] Fixed the type enumeration validation to accept space on the names.
-* [Fix] Minor fix for GiS types. Spatial auxiliary type name can null.
-* [Fix] Minor pgmodeler-cli typos corrections.
-* [Fix] Fixed a bug related to XMLParser and threads that was crashing pgModeler on Windows.
-* [Fix] Fixes on DatabaseImportHelper to correctly handle extension created types.
-* [Fix] Minor fix on PgSQLType::parseString() when creating datatypes from strings.
+* [New] PostgreSQL version 9.3 activated on code base. Now import and export operations works with this new version.
+* [Change] Changed the way inheritance is created. Now the INHERIT command is appended in the table's definition.
+* [Change] Update on model validation. Generalization and copy relationships have the participant tables' id's validated in order to check reference breaking.
+* [Change] Version info upgraded on MacOSX app bundle configuration file (Info.plist).
+* [Change] Minor change on "pgmodeler.vars". Included environment variables for custom Qt installation.
+* [Fix] Fixed a bug related to INSTEAD OF/ON UPDATE triggers on views.
+* [Fix] Fixed a bug related to incorrectly error raised when setting a owner table in the same schema as the sequece.
+* [Fix] Fixed a bug related to importing sequences which name has uppercase characters.
+* [Fix] Fixed misspelled "Connetion" word on configuration form.
+* [Fix] Typos correction on model validation message box.
+* [Fix] Fixed incorrect objects removal after cancel the edition.
+* [Fix] Minor fix on disconnection of generalization relationships.
+* [Fix] Minor fix on updating table's graphical representation when importing primary keys.
+* [Fix] Minor change when displaying the columns' types on table/relationship editing form.
+* [Fix] Fixed the compilation process on MacOSX 10.9 (Mavericks).
+* [Fix] Minor change on macdeploy.sh to use Qt5.2-beta by default.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

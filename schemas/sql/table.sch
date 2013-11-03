@@ -23,6 +23,7 @@
 
 $br )
 
+%if @{ancestor-table} %then [ INHERITS(] @{ancestor-table} [)] $br %end
 %if @{oids} %then [WITH ( OIDS = TRUE )] %end
 %if @{tablespace} %then
  $br [TABLESPACE ] @{tablespace}

@@ -656,7 +656,7 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 	if(object->getObjectType()==OBJ_COLUMN)
 	{
 		tab=attributes_tab;
-		attributes_tab->setCellText(Utf8String::create(~dynamic_cast<Column *>(object)->getType()),row,1);
+		attributes_tab->setCellText(Utf8String::create(*dynamic_cast<Column *>(object)->getType()),row,1);
 	}
 	else
 	{

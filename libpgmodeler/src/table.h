@@ -35,6 +35,7 @@
 #include "function.h"
 #include "role.h"
 #include "copyoptions.h"
+#include <QStringList>
 
 class Table: public BaseTable {
 	private:
@@ -73,6 +74,7 @@ class Table: public BaseTable {
 		void setIndexesAttribute(unsigned def_type);
 		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
+		void setAncestorTableAttribute(void);
 
 	protected:
 		//! \brief Adds an ancestor table

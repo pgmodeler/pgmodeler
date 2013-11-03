@@ -7,9 +7,9 @@
  @{constraints}
 %end
 
-%if @{relgen} %then
- [ALTER TABLE ] @{table} [ INHERIT ] @{ancestor-table}; $br $br
-%end
+#%if @{relgen} %then
+# [ALTER TABLE ] @{table} [ INHERIT ] @{ancestor-table}; $br $br
+#%end
 
 %if @{relnn} %then
  @{table}

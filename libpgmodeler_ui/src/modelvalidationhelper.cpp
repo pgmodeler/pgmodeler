@@ -183,7 +183,7 @@ void ModelValidationHelper::validateModel(void)
 	{
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-												 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW },
+												 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW, OBJ_RELATIONSHIP },
 								aux_types[]={ OBJ_TABLE, OBJ_VIEW },
 							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
@@ -193,8 +193,9 @@ void ModelValidationHelper::validateModel(void)
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
 		ValidationInfo info;
-		Table *table=nullptr;
+		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
 		Constraint *constr=nullptr;
+		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg="`%1' (%2)";
@@ -220,36 +221,57 @@ void ModelValidationHelper::validateModel(void)
 				{
 					emit s_objectProcessed(signal_msg.arg(object->getName()).arg(object->getTypeName()), object->getObjectType());
 
-					db_model->getObjectReferences(object, refs);
-					refs_aux.clear();
-
-					while(!refs.empty() && !valid_canceled)
+					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
+					 * Reference table cannot own an id greater thant receiver table */
+					if(object->getObjectType()==OBJ_RELATIONSHIP)
 					{
-						//Checking if the referrer object is a table object. In this case its parent table is considered
-						tab_obj=dynamic_cast<TableObject *>(refs.back());
-						constr=dynamic_cast<Constraint *>(tab_obj);
+						rel=dynamic_cast<Relationship *>(object);
+						if(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN ||
+							 rel->getRelationshipType()==Relationship::RELATIONSHIP_DEP)
+						{
+							recv_tab=rel->getReceiverTable();
+							ref_tab=rel->getReferenceTable();
 
-						/* If the current referrer object has an id less than reference object's id
+							if(ref_tab->getObjectId() > recv_tab->getObjectId())
+							{
+								object=ref_tab;
+								refs_aux.push_back(recv_tab);
+							}
+						}
+					}
+					else
+					{
+						db_model->getObjectReferences(object, refs);
+						refs_aux.clear();
+
+						while(!refs.empty() && !valid_canceled)
+						{
+							//Checking if the referrer object is a table object. In this case its parent table is considered
+							tab_obj=dynamic_cast<TableObject *>(refs.back());
+							constr=dynamic_cast<Constraint *>(tab_obj);
+
+							/* If the current referrer object has an id less than reference object's id
 						then it will be pushed into the list of invalid references. The only exception is
 						for foreign keys that are discarded from any validation since they are always created
 						at end of code defintion being free of any reference breaking. */
-						if(object != refs.back() &&
-							 (!constr || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
-							 ((!tab_obj && refs.back()->getObjectId() <= object->getObjectId()) ||
-								(tab_obj && !tab_obj->isAddedByRelationship() &&
-								 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))
-						{
-							if(tab_obj)
-								refer_obj=tab_obj->getParentTable();
-							else
-								refer_obj=refs.back();
+							if(object != refs.back() &&
+								 (!constr || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+								 ((!tab_obj && refs.back()->getObjectId() <= object->getObjectId()) ||
+									(tab_obj && !tab_obj->isAddedByRelationship() &&
+									 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))
+							{
+								if(tab_obj)
+									refer_obj=tab_obj->getParentTable();
+								else
+									refer_obj=refs.back();
 
-							//Push the referrer object only if not exists on the list
-							if(std::find(refs_aux.begin(), refs_aux.end(), refer_obj)==refs_aux.end())
-								refs_aux.push_back(refer_obj);
+								//Push the referrer object only if not exists on the list
+								if(std::find(refs_aux.begin(), refs_aux.end(), refer_obj)==refs_aux.end())
+									refs_aux.push_back(refer_obj);
+							}
+
+							refs.pop_back();
 						}
-
-						refs.pop_back();
 					}
 
 					//Case there is broken refereces to the object
