@@ -191,6 +191,7 @@ if [ $? -ne 0 ]; then
   echo
   echo "** Failed to create package!"
   echo
+  exit 1
 fi
 
 mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
