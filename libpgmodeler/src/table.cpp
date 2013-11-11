@@ -367,8 +367,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 				case OBJ_RULE:
 					TableObject *tab_obj;
 					vector<TableObject *> *obj_list;
+					Column *col;
 
 					tab_obj=dynamic_cast<TableObject *>(obj);
+					col=dynamic_cast<Column *>(tab_obj);
 
 					//Sets the object parent table if there isn't one
 					if(!tab_obj->getParentTable())
@@ -380,7 +382,14 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					//Validates the object SQL code befor insert on table
 					obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
-					if(obj_type==OBJ_CONSTRAINT)
+					if(col && col->getType()==this)
+					{
+						throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_TABLE_TYPE)
+														.arg(Utf8String::create(col->getName()))
+														.arg(Utf8String::create(this->getName())),
+														ERR_INV_COLUMN_TABLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+					else if(obj_type==OBJ_CONSTRAINT)
 					{
 						//Raises a error if the user try to add a second primary key on the table
 						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::primary_key &&

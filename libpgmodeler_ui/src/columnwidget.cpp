@@ -76,7 +76,8 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 		def_value_txt->setPlainText(Utf8String::create(column->getDefaultValue()));
 	}
 
-	data_type->setAttributes(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE | UserTypeConfig::EXTENSION_TYPE,true,false);
+	data_type->setAttributes(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::TABLE_TYPE | UserTypeConfig::VIEW_TYPE |
+																				UserTypeConfig::DOMAIN_TYPE | UserTypeConfig::EXTENSION_TYPE, true,false);
 }
 
 void ColumnWidget::applyConfiguration(void)
