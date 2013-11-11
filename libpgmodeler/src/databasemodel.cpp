@@ -6999,7 +6999,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=rel->getAttribute(i1);
 
-							if(col->getType()==object)
+							if(col->getType()==ptr_pgsqltype)
 							{
 								added=refer=true;
 								refs.push_back(rel);
@@ -7019,7 +7019,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=tab->getColumn(i1);
 
-							if(!col->isAddedByRelationship() && col->getType()==object)
+							if(!col->isAddedByRelationship() && col->getType()==ptr_pgsqltype)
 							{
 								refer=true;
 								refs.push_back(col);
@@ -7513,7 +7513,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
 			ObjectType  obj_types[]={ OBJ_SEQUENCE, OBJ_VIEW, OBJ_TABLE, OBJ_RELATIONSHIP };
-			unsigned i, count=4;
+			unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
