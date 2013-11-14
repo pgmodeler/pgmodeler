@@ -996,8 +996,14 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 			if(!rel)
 			{
-				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-																 table, ref_tab, false, false);
+				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
+
+				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
+					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
+					 the name of the new one */
+				if(getObjectIndex(rel->getName(), BASE_RELATIONSHIP) >= 0)
+					rel->setName(generateUniqueName(rel));
+
 				addRelationship(rel);
 			}
 			else if(rel->isBidirectional())
@@ -1005,6 +1011,23 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		}
 
 	}
+}
+
+QString DatabaseModel::generateUniqueName(BaseObject *obj)
+{
+	if(!obj)
+		return("");
+
+	QString obj_name=obj->getName(), id=QString::number(obj->getObjectId());
+	int len = obj_name.size() + id.size();
+
+	if(len > BaseObject::OBJECT_NAME_MAX_LENGTH)
+	{
+		obj_name.chop(id.size() + 1);
+		obj_name+="_" + id;
+	}
+
+	return(obj_name);
 }
 
 void DatabaseModel::updateTablesFKRelationships(void)
@@ -5326,8 +5349,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				}
 
 				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
+				base_rel->setName(attribs[ParsersAttributes::NAME]);
 				addRelationship(base_rel);
 			}
+			else if(base_rel)
+				base_rel->setName(attribs[ParsersAttributes::NAME]);
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
@@ -5338,7 +5364,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			base_rel->disconnectRelationship();
-			base_rel->setName(attribs[ParsersAttributes::NAME]);
 		}
 		else
 		{
