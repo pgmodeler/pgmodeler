@@ -1663,7 +1663,13 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 		}
 		else
+		{
+			//Clears the tablespace attribute when the constraint is fk avoiding errors
+			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
+				attribs[ParsersAttributes::TABLESPACE]="";
+
 			attribs[ParsersAttributes::SRC_COLUMNS]=getColumnNames(attribs[ParsersAttributes::TABLE], attribs[ParsersAttributes::SRC_COLUMNS]).join(",");
+		}
 
 		attribs[ParsersAttributes::DST_COLUMNS]=getColumnNames(attribs[ParsersAttributes::REF_TABLE], attribs[ParsersAttributes::DST_COLUMNS]).join(",");
 		attribs[ParsersAttributes::TABLE]=tab_name;

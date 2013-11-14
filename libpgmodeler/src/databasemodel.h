@@ -135,6 +135,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
+		//! \brief Creates a desambiguation name composed by the object name as well it`s id
+		QString generateUniqueName(BaseObject *obj);
+
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
