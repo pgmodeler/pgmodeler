@@ -663,7 +663,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			if(obj_type!=OBJ_CAST)
 			{
 				prev_name=object->getName();
-				object->setName(name_edt->text().toUtf8());
+				object->setName(name_edt->text().trimmed().toUtf8());
 			}
 
 			//Sets the object's comment
