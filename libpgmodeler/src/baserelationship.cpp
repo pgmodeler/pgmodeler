@@ -222,7 +222,7 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 			if(!isBidirectional())
 			{
 				if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
-					 (table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
+					 (!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
 					aux="n";
 				else
 					aux="1";
