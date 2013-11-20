@@ -54,7 +54,9 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		model=nullptr;
 		scene=nullptr;
 		zoom=1;
-    executable_dir=QFileInfo(argv[0]).absolutePath();
+
+    //Changing the current working dir to the executable's directory in
+    QDir::setCurrent(this->applicationDirPath());
 
 		initializeOptions();
 
@@ -341,9 +343,6 @@ int PgModelerCLI::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-      //Switch the app working dir in order to make it find the dependencies paths (./schemas, ./conf, etc)
-      QDir::setCurrent(executable_dir);
-
 			if(!silent_mode)
 			{
 				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;

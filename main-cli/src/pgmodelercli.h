@@ -39,11 +39,6 @@ class PgModelerCLI: public QApplication {
 	private:
 		Q_OBJECT
 
-		/*! \brief Stores the executable's absolute path. This is used to switch the working dir
-    to the executable path in order to avoid the cli to find it's dependency paths
-    (./schemas, ./conf) */
-    QString executable_dir;
-
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;
 
