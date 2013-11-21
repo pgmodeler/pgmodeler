@@ -510,8 +510,11 @@ void RelationshipWidget::listAdvancedObjects(void)
 			tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
 			dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tab);
 
-			tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
-			dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false,tab);
+			if(!base_rel->isSelfRelationship())
+			{
+				tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
+				dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false,tab);
+			}
 
 			count=constrs.size();
 
