@@ -84,6 +84,7 @@ class PgModelerCLI: public QApplication {
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,
 		EXPORT_TO_DBMS,
+		DROP_DATABASE,
 		PGSQL_VER,
 		HELP,
 		SHOW_GRID,

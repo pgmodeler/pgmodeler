@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>690</height>
+    <width>600</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,14 +21,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>580</width>
-    <height>600</height>
+    <width>600</width>
+    <height>620</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>580</width>
-    <height>690</height>
+    <width>600</width>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -345,7 +345,7 @@
         <item row="1" column="0" rowspan="4">
          <widget class="QRadioButton" name="export_to_img_rb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -529,7 +529,7 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -629,7 +629,7 @@
         <item row="1" column="0" rowspan="3">
          <widget class="QRadioButton" name="export_to_file_rb">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -886,40 +886,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" rowspan="4">
-         <widget class="QLabel" name="modelo_sgbd">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/imagens/imagens/model2sgdb.png</pixmap>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="2" colspan="2">
          <widget class="QCheckBox" name="pgsqlvers_chk">
           <property name="enabled">
@@ -985,25 +951,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="1" column="0" rowspan="4">
-         <widget class="QRadioButton" name="export_to_dbms_rb">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
         </item>
         <item row="3" column="2" colspan="4">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1090,7 +1037,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QCheckBox" name="ignorar_dup_chk">
+             <widget class="QCheckBox" name="ignore_dup_chk">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -1129,6 +1076,12 @@
              <widget class="QLabel" name="hint3_lbl">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="palette">
                <palette>
@@ -1175,7 +1128,7 @@
                </font>
               </property>
               <property name="text">
-               <string>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</string>
+               <string>pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</string>
               </property>
               <property name="textFormat">
                <enum>Qt::PlainText</enum>
@@ -1200,6 +1153,169 @@
           </property>
           <property name="text">
            <string>Database server:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2" colspan="4">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QCheckBox" name="drop_db_chk">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Drop the database if exists</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="hint4_lbl">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="palette">
+               <palette>
+                <active>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </active>
+                <inactive>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </inactive>
+                <disabled>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>117</red>
+                    <green>114</green>
+                    <blue>112</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </disabled>
+               </palette>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans</family>
+                <pointsize>8</pointsize>
+                <italic>true</italic>
+               </font>
+              </property>
+              <property name="text">
+               <string>pgModeler will destroy the database if already exists on the server. Make sure to have a backup before use this option because all data will be lost.</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1" rowspan="5">
+         <widget class="QLabel" name="modelo_sgbd">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../res/resources.qrc">:/imagens/imagens/model2sgdb.png</pixmap>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="5">
+         <widget class="QRadioButton" name="export_to_dbms_rb">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -1337,7 +1453,7 @@
   <tabstop>connections_cmb</tabstop>
   <tabstop>pgsqlvers_chk</tabstop>
   <tabstop>pgsqlvers1_cmb</tabstop>
-  <tabstop>ignorar_dup_chk</tabstop>
+  <tabstop>ignore_dup_chk</tabstop>
   <tabstop>export_btn</tabstop>
   <tabstop>close_btn</tabstop>
  </tabstops>

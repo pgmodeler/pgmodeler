@@ -116,7 +116,8 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	file_edt->clear();
 	image_edt->clear();
 	pgsqlvers_chk->setChecked(false);
-	ignorar_dup_chk->setChecked(false);
+	ignore_dup_chk->setChecked(false);
+	drop_db_chk->setChecked(false);
 	export_to_file_rb->setChecked(true);
 	export_btn->setEnabled(false);
 	export_to_dbms_rb->setChecked(true);
@@ -161,7 +162,7 @@ void ModelExportForm::exportModel(void)
 				if(pgsqlvers1_cmb->isEnabled())
 					version=pgsqlvers1_cmb->currentText();
 
-				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignorar_dup_chk->isChecked());
+				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(), drop_db_chk->isChecked());
 				export_thread->start();
 				enableExportModes(false);
 				cancel_btn->setEnabled(true);
@@ -220,7 +221,9 @@ void ModelExportForm::enableExportMode(void)
 	pgsqlvers1_cmb->setEnabled(!exp_file && !exp_png && pgsqlvers_chk->isChecked());
 	hint2_lbl->setEnabled(!exp_file && !exp_png);
 	hint3_lbl->setEnabled(!exp_file && !exp_png);
-	ignorar_dup_chk->setEnabled(!exp_file && !exp_png);
+	hint4_lbl->setEnabled(!exp_file && !exp_png);
+	ignore_dup_chk->setEnabled(!exp_file && !exp_png);
+	drop_db_chk->setEnabled(!exp_file && !exp_png);
 
 	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->count() > 0) ||
 													 (export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||

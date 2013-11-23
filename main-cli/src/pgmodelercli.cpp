@@ -24,6 +24,7 @@ QString PgModelerCLI::OUTPUT="--output";
 QString PgModelerCLI::EXPORT_TO_FILE="--export-to-file";
 QString PgModelerCLI::EXPORT_TO_PNG="--export-to-png";
 QString PgModelerCLI::EXPORT_TO_DBMS="--export-to-dbms";
+QString PgModelerCLI::DROP_DATABASE="--drop-database";
 QString PgModelerCLI::PGSQL_VER="--pgsql-ver";
 QString PgModelerCLI::HELP="--help";
 QString PgModelerCLI::SHOW_GRID="--show-grid";
@@ -169,6 +170,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[EXPORT_TO_FILE]=false;
 	long_opts[EXPORT_TO_PNG]=false;
 	long_opts[EXPORT_TO_DBMS]=false;
+	long_opts[DROP_DATABASE]=false;
 	long_opts[PGSQL_VER]=true;
 	long_opts[HELP]=false;
 	long_opts[SHOW_GRID]=false;
@@ -192,6 +194,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[EXPORT_TO_FILE]="-f";
 	short_opts[EXPORT_TO_PNG]="-p";
 	short_opts[EXPORT_TO_DBMS]="-d";
+	short_opts[DROP_DATABASE]="-T";
 	short_opts[PGSQL_VER]="-v";
 	short_opts[HELP]="-h";
 	short_opts[SHOW_GRID]="-g";
@@ -259,6 +262,7 @@ accepted structure. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
+	out << trUtf8("   %1, %2\t\t Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
 	out << trUtf8("   %1, %2\t\t Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
 	out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
 	out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
@@ -397,7 +401,7 @@ int PgModelerCLI::exec(void)
 					if(!silent_mode)
 						out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
 
-					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(SIMULATE) > 0);
+					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(DROP_DATABASE) > 0, parsed_opts.count(SIMULATE) > 0);
 				}
 
 				if(!silent_mode)
