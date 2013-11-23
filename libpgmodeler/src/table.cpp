@@ -576,9 +576,7 @@ void Table::removeObject(const QString &name, ObjectType obj_type)
 void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
 	//Raises an error if the user try to remove a object with invalid type
-	if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
-		 obj_type!=OBJ_TRIGGER && obj_type!=OBJ_INDEX &&
-		 obj_type!=OBJ_RULE && obj_type!=OBJ_TABLE)
+	if(!TableObject::isTableObject(obj_type) && obj_type!=OBJ_TABLE)
 		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
@@ -602,7 +600,11 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		if(obj_type!=OBJ_COLUMN)
 		{
 			itr=obj_list->begin() + obj_idx;
-			(*itr)->setParentTable(nullptr);
+			TableObject *tab_obj=(*itr);
+
+			if(tab_obj)
+			 tab_obj->setParentTable(nullptr);
+
 			obj_list->erase(itr);
 		}
 		else
