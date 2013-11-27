@@ -128,6 +128,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
 	 void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
+	 void disableReferencesSQL(BaseObject *object);
+
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
 		static constexpr unsigned UNTIL_VERSION=0,
