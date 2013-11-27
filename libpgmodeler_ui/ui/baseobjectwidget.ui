@@ -366,7 +366,8 @@
     </sizepolicy>
    </property>
    <property name="toolTip">
-    <string>Disables the generated SQL code using comment tokens (--)</string>
+    <string>Disables the generated SQL code using comment tokens (--).
+This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="text">
     <string>Disable SQL code</string>
