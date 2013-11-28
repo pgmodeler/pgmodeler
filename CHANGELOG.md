@@ -1,6 +1,25 @@
 Changelog
 ---------
 
+v0.6.2-beta
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: November 29, 2013</em>
+
+* [New] Added an option to drop database before a export process.
+* [New] Disabling SQL code now disables the code of all referrer and child objects (experimental!).
+* [New] Added support for columns to reference "table types".
+* [Change] Object names are trimmed on editing forms to avoid unnecessary error triggering.
+* [Change] Minor improvement on crash handler form.
+* [Change] Minor change on SQL validation message.
+* [Change] Minor improvement on operation list.
+* [Fix] Fixed the import of foreign key constraints from PostgreSQL 9.3.
+* [Fix] Fixed the creation of fk relationships when the involved tables has too long names. pgModeler no more complains about "already existent object".
+* [Fix] Minor fix when showing self fk relationships.
+* [Fix] Minor fix on pgmodeler-cli: working directory is now set correctly.
+* [Fix] Minor fix when retrieving advanced (generated) objects from relationships.
+* [Fix] Fixed a bug that was not properly removing table objects when the user was canceling the table's editing.
+
 v0.6.1
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>

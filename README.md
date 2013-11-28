@@ -42,27 +42,24 @@ MacOSX Notes
 Change Log
 ----------
 
-v0.6.1
+v0.6.2-beta
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
-<em>Release date: November 3, 2013</em>
+<em>Release date: November 29, 2013</em>
 
-* [New] PostgreSQL version 9.3 activated on code base. Now import and export operations works with this new version.
-* [Change] Changed the way inheritance is created. Now the INHERIT command is appended in the table's definition.
-* [Change] Update on model validation. Generalization and copy relationships have the participant tables' id's validated in order to check reference breaking.
-* [Change] Version info upgraded on MacOSX app bundle configuration file (Info.plist).
-* [Change] Minor change on "pgmodeler.vars". Included environment variables for custom Qt installation.
-* [Fix] Fixed a bug related to INSTEAD OF/ON UPDATE triggers on views.
-* [Fix] Fixed a bug related to incorrectly error raised when setting a owner table in the same schema as the sequece.
-* [Fix] Fixed a bug related to importing sequences which name has uppercase characters.
-* [Fix] Fixed misspelled "Connetion" word on configuration form.
-* [Fix] Typos correction on model validation message box.
-* [Fix] Fixed incorrect objects removal after cancel the edition.
-* [Fix] Minor fix on disconnection of generalization relationships.
-* [Fix] Minor fix on updating table's graphical representation when importing primary keys.
-* [Fix] Minor change when displaying the columns' types on table/relationship editing form.
-* [Fix] Fixed the compilation process on MacOSX 10.9 (Mavericks).
-* [Fix] Minor change on macdeploy.sh to use Qt5.2-beta by default.
+* [New] Added an option to drop database before a export process.
+* [New] Disabling SQL code now disables the code of all referrer and child objects (experimental!).
+* [New] Added support for columns to reference "table types".
+* [Change] Object names are trimmed on editing forms to avoid unnecessary error triggering.
+* [Change] Minor improvement on crash handler form.
+* [Change] Minor change on SQL validation message.
+* [Change] Minor improvement on operation list.
+* [Fix] Fixed the import of foreign key constraints from PostgreSQL 9.3.
+* [Fix] Fixed the creation of fk relationships when the involved tables has too long names. pgModeler no more complains about "already existent object".
+* [Fix] Minor fix when showing self fk relationships.
+* [Fix] Minor fix on pgmodeler-cli: working directory is now set correctly.
+* [Fix] Minor fix when retrieving advanced (generated) objects from relationships.
+* [Fix] Fixed a bug that was not properly removing table objects when the user was canceling the table's editing.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
