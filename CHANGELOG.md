@@ -13,6 +13,7 @@ v0.6.2-beta
 * [Change] Minor improvement on crash handler form.
 * [Change] Minor change on SQL validation message.
 * [Change] Minor improvement on operation list.
+* [Fix] Fixed a crash when adding foreign keys to a new table.
 * [Fix] Fixed the import of foreign key constraints from PostgreSQL 9.3.
 * [Fix] Fixed the creation of fk relationships when the involved tables has too long names. pgModeler no more complains about "already existent object".
 * [Fix] Minor fix when showing self fk relationships.
