@@ -928,7 +928,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 {
 	if(!table)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
+	else if(table->getDatabase()==this)
 	{
 		Table *ref_tab=nullptr;
 		BaseRelationship *rel=nullptr;
@@ -994,7 +994,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 			//Only creates the relationship if does'nt exist one between the tables
 			rel=getRelationship(table, ref_tab);
 
-			if(!rel)
+			if(!rel && ref_tab->getDatabase()==this)
 			{
 				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
 
@@ -1006,7 +1006,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 				addRelationship(rel);
 			}
-			else if(rel->isBidirectional())
+			else if(rel && rel->isBidirectional())
 				rel->setModified(true);
 		}
 
