@@ -31,7 +31,9 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
 	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
 	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled(void)));
+	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
+	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
 
 	this->conf_exclusion=conf_exclusion;
 
