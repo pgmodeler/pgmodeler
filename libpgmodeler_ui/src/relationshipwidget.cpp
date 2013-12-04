@@ -103,7 +103,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		rel_attribs_tbw->widget(2)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(3)->layout());
-		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table."));
+		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
 
 		grid->addWidget(frame, 1, 0, 1, 1);
 		frame->setParent(rel_attribs_tbw->widget(3));
@@ -306,15 +306,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
-			/* If the new relationship is generalization or copy it is necessary to connect it in order
-				 to create the columns permiting the user to configure the special primary key later */
-			if(this->new_object)
-			{
-				aux_rel->connectRelationship();
-				cols=aux_rel->getGeneratedColumns();
-			}
-			else
-				cols=aux_rel->getGeneratedColumns();
+			cols=aux_rel->getGeneratedColumns();
 
 			//Get the special primary key columns ids
 			col_ids=aux_rel->getSpecialPrimaryKeyCols();
@@ -334,9 +326,6 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				if(col_ids[i] < static_cast<unsigned>(rel_columns_lst->count()))
 					rel_columns_lst->item(col_ids[i])->setCheckState(Qt::Checked);
 			}
-
-			if(this->new_object)
-				aux_rel->disconnectRelationship();
 
 			if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 			{
