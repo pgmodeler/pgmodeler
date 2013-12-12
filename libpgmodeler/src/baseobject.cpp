@@ -696,6 +696,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[ParsersAttributes::COMMENT]=comment;
 
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				attributes[ParsersAttributes::COMMENT].replace("'","''");
+
 			if((def_type==SchemaParser::SQL_DEFINITION &&
 					obj_type!=OBJ_TABLESPACE &&
 					obj_type!=OBJ_DATABASE) ||
