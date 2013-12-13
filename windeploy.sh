@@ -1,9 +1,11 @@
 #/bin/bash
 
-QT_ROOT=/c/Qt/Qt5.1.1/5.1.1/mingw48_32/
+QT_VERSION='5.2.0'
+PGSQL_VERSION='9.2'
+QT_ROOT="/c/Qt/Qt${QT_VERSION}/${QT_VERSION}/mingw48_32/"
 QMAKE_ROOT=$QT_ROOT/bin
-MINGW_ROOT=/c/Qt/Qt5.1.1/Tools/mingw48_32/bin
-PGSQL_ROOT=/c/PostgreSQL/9.2/bin
+MINGW_ROOT="/c/Qt/Qt${QT_VERSION}/Tools/mingw48_32/bin"
+PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
 QMAKE_ARGS="-r -spec win32-g++"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log

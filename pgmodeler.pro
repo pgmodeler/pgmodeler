@@ -26,8 +26,8 @@ macx {
 windows {
  PGSQL_LIB = C:/PostgreSQL/9.2/bin/libpq.dll
  PGSQL_INC = C:/PostgreSQL/9.2/include
- XML_INC = C:/Qt/Qt5.1.1/5.1.1/mingw48_32/include
- XML_LIB = C:/Qt/Qt5.1.1/5.1.1/mingw48_32/bin/libxml2.dll
+ XML_INC = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/include
+ XML_LIB = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/bin/libxml2.dll
 }
 
 macx | windows {
