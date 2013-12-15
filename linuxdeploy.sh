@@ -1,7 +1,7 @@
 #/bin/bash
 
 QMAKE_ROOT=/usr/bin
-FALLBACK_QMAKE_ROOT=/usr/local/qt-5.1.1/5.1.1/gcc_64/bin
+FALLBACK_QMAKE_ROOT=/usr/local/qt-5.2.0/5.2.0/gcc_64/bin
 LOG=linuxdeploy.log
 
 # Detecting current pgModeler version
@@ -21,7 +21,39 @@ case `uname -m` in
 esac
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
-PKGFILE=$PKGNAME.tar.gz
+BUNDLE_QT_LIBS=0
+BUNDLE_QT_LIBS_OPT='-bundle-qt-libs'
+
+if [ "$1" = "$BUNDLE_QT_LIBS_OPT" ]; then
+  BUNDLE_QT_LIBS=1
+  PKGFILE=$PKGNAME-qtlibs.tar.gz
+  QT_CONF=build/qt.conf
+  DEP_PLUGINS_DIR=build/qtplugins
+  
+  #Dependency qt plugins copied to build dir
+  DEP_PLUGINS="imageformats/libqgif.so \
+               imageformats/libqico.so \
+               imageformats/libqjpeg.so \
+               imageformats/libqmng.so \
+               imageformats/libqsvg.so \
+               imageformats/libqtga.so \
+               imageformats/libqtiff.so \
+               imageformats/libqwbmp.so \
+               printsupport/libcupsprintersupport.so \
+               platforms/libqxcb.so"
+               
+  #Needed Qt libs
+  QT_LIBS="libQt5DBus.so.5 \
+           libQt5PrintSupport.so.5 \
+           libQt5Widgets.so.5 \
+           libQt5Gui.so.5 \
+           libQt5Core.so.5 \
+           libicui18n.so.51 \
+           libicuuc.so.51 \
+           libicudata.so.51"
+else
+  PKGFILE=$PKGNAME.tar.gz
+fi
 
 clear
 echo 
@@ -73,6 +105,13 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $BUNDLE_QT_LIBS = 0 ]; then
+  echo "Qt libs will not be included on the package. (Missing $BUNDLE_QT_LIBS_OPT)"
+else
+  echo "Qt libs will be included on the package. (Found $BUNDLE_QT_LIBS_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
@@ -106,6 +145,48 @@ if [ $? -ne 0 ]; then
   echo
   exit 1
 fi
+
+if [ $BUNDLE_QT_LIBS = 1 ]; then
+ echo "Copying Qt core libraries..."
+ 
+ QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
+ 
+ for lib in $QT_LIBS; do
+  cp $QT_ROOT/lib/$lib build/ >> $LOG 2>&1
+ done
+ 
+ if [ $? -ne 0 ]; then
+  echo
+  echo "** Library copy failed!"
+  echo
+  exit 1
+ fi
+ 
+ echo "Copying Qt plugins..."
+ 
+ #Creates the file build/qt.conf to bind qt plugins
+ mkdir $DEP_PLUGINS_DIR
+ echo "[Paths]" > $QT_CONF
+ echo "Prefix=." >> $QT_CONF
+ echo "Plugins=qtplugins" >> $QT_CONF
+ echo "Libraries=." >> $QT_CONF
+
+ #Copies the qt plugins to build/qtplugins
+ for plug in $DEP_PLUGINS; do
+   pdir=`dirname $plug`
+   mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+   cp $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+
+   if [ $? -ne 0 ]; then
+    echo
+    echo "** Plugins copy failed!"
+    echo
+    exit 1
+  fi
+ done
+
+fi
+
 
 echo "Packaging installation..."
 rm -r $PKGNAME  >> $LOG 2>&1
