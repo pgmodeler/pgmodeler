@@ -25,16 +25,16 @@
 #ifndef ABOUT_FORM_H
 #define ABOUT_FORM_H
 
-#include <QWidget>
+#include <QDialog>
 #include "ui_aboutform.h"
 #include "globalattributes.h"
 
-class AboutForm: public QWidget, public Ui::AboutForm {
+class AboutForm: public QDialog, public Ui::AboutForm {
 	private:
 		Q_OBJECT
 
 	public:
-		AboutForm(QWidget *parent = 0);
+		AboutForm(QWidget *parent = 0,  Qt::WindowFlags f = 0);
 };
 
 #endif
