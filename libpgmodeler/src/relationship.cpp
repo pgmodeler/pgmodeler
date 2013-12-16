@@ -2332,7 +2332,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
-				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key)
+				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key &&
+					 table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::check)
 					attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
 			}
 		}
@@ -2340,7 +2341,6 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
 			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-			//attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
 		}
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));
