@@ -21,12 +21,12 @@ case `uname -m` in
 esac
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
+PKGFILE=$PKGNAME.tar.gz
 BUNDLE_QT_LIBS=0
 BUNDLE_QT_LIBS_OPT='-bundle-qt-libs'
 
 if [ "$1" = "$BUNDLE_QT_LIBS_OPT" ]; then
   BUNDLE_QT_LIBS=1
-  PKGFILE=$PKGNAME-qtlibs.tar.gz
   QT_CONF=build/qt.conf
   DEP_PLUGINS_DIR=build/qtplugins
   
