@@ -1027,7 +1027,6 @@ void MainWindow::applyConfigurations(void)
 
 void MainWindow::saveAllModels(void)
 {
-
 	if(models_tbw->count() > 0 &&
 		 ((sender()==action_save_all) ||
 			(sender()==&model_save_timer &&	this->isActiveWindow())))
