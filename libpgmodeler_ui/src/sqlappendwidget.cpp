@@ -9,7 +9,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_SQLAppendWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
-		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, true);
+		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
 		sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																	GlobalAttributes::DIR_SEPARATOR +
 																	GlobalAttributes::SQL_HIGHLIGHT_CONF +
