@@ -161,7 +161,7 @@ void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection
 	this->db_model=model;
 	this->conn=conn;
 	this->pgsql_ver=pgsql_ver;
-	export_helper.setExportToDBMSParams(model, conn, pgsql_ver, false, true);
+	export_helper.setExportToDBMSParams(model, conn, pgsql_ver, false, false, true);
 }
 
 void ModelValidationHelper::switchToFixMode(bool value)

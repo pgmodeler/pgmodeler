@@ -38,17 +38,21 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 										GlobalAttributes::DIR_SEPARATOR +
 										GlobalAttributes::STACKTRACE_FILE);
 	input.open(QFile::ReadOnly);
-	buf=input.readAll();
-	input.close();
 
-	//Removes the stack trace file
-	QDir stack_file;
-	stack_file.remove(GlobalAttributes::TEMPORARY_DIR +
-										GlobalAttributes::DIR_SEPARATOR +
-										GlobalAttributes::STACKTRACE_FILE);
+	if(input.isOpen())
+	{
+		buf=input.readAll();
+		input.close();
 
-	//Shows the stacktrace loaded on the widget
-	stack_txt->setPlainText(buf);
+		//Removes the stack trace file
+		QDir stack_file;
+		stack_file.remove(GlobalAttributes::TEMPORARY_DIR +
+											GlobalAttributes::DIR_SEPARATOR +
+											GlobalAttributes::STACKTRACE_FILE);
+
+		//Shows the stacktrace loaded on the widget
+		stack_txt->setPlainText(buf);
+	}
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt, false);

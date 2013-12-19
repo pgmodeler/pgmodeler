@@ -1,6 +1,44 @@
 Changelog
 ---------
 
+v0.6.2
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: December 20, 2013</em>
+
+* [Change] Update Qt version to 5.2.0 on build scripts (Windows only).
+* [Change] Linux binaries are now bundled with all needed Qt libs.
+* [Change] Important change on the way that special primary keys are created for generalization/copy relationships. Now there is the need to create the relationship first, close the dialog and open it again in order to generate the columns that will be used on the primary key.
+* [Fix] Workaround done on the sql append widget when handle a lot of code avoiding slowdowns on the syntax highlighting.
+* [Fix] Fixed the incorrect creation of foreign keys on many-to-many relationships.
+* [Fix] Fixed the conversion of self many-to-many relationships.
+* [Fix] Fixed a bug that was causing some constraints to be destroyed when the relationship was connected to the table that owned the constraint.
+* [Fix] Comments that contains apostrophes now are correctly escaped in order to avoid SQL related errors.
+* [Fix] Fixed the incorrect generation of SQL code of check constraint associated to many-to-many relationshps.
+* [Fix] Minor fix on crash handler when trying to read an stack trace file that doesn't exists.
+* [Fix] Minor typos fixes on CLI menu.
+* [Fix] Minor fix on the about form positioning.
+
+v0.6.2-beta
+------
+<em>Codename: <strong>Daring Mammoth</strong></em><br/>
+<em>Release date: November 29, 2013</em>
+
+* [New] Added an option to drop database before a export process.
+* [New] Disabling SQL code now disables the code of all referrer and child objects (experimental!).
+* [New] Added support for columns to reference "table types".
+* [Change] Object names are trimmed on editing forms to avoid unnecessary error triggering.
+* [Change] Minor improvement on crash handler form.
+* [Change] Minor change on SQL validation message.
+* [Change] Minor improvement on operation list.
+* [Fix] Fixed a crash when adding foreign keys to a new table.
+* [Fix] Fixed the import of foreign key constraints from PostgreSQL 9.3.
+* [Fix] Fixed the creation of fk relationships when the involved tables has too long names. pgModeler no more complains about "already existent object".
+* [Fix] Minor fix when showing self fk relationships.
+* [Fix] Minor fix on pgmodeler-cli: working directory is now set correctly.
+* [Fix] Minor fix when retrieving advanced (generated) objects from relationships.
+* [Fix] Fixed a bug that was not properly removing table objects when the user was canceling the table's editing.
+
 v0.6.1
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>

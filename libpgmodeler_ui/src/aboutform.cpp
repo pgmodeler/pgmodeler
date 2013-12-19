@@ -18,7 +18,7 @@
 
 #include "aboutform.h"
 
-AboutForm::AboutForm(QWidget *parent) : QWidget(parent)
+AboutForm::AboutForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));

@@ -93,7 +93,7 @@ class Table: public BaseTable {
 		indicating if ALTER commands must be generated or not */
 		void updateAlterCmdsStatus(void);
 
-	public:
+	public:	
 		Table(void);
 		~Table(void);
 

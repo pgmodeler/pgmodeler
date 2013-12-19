@@ -197,7 +197,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	}
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
-		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model.</em>"));
+		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model thus you can save it without any problem.</em>"));
 	else
 		label->setText(val_info.getErrors().at(0));
 

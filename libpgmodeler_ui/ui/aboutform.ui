@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AboutForm</class>
- <widget class="QWidget" name="AboutForm">
+ <widget class="QDialog" name="AboutForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -413,7 +413,7 @@
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</string>
+The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses&gt;</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>

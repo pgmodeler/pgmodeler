@@ -108,10 +108,10 @@ int main(int argc, char **argv)
 			params.push_back(argv[param]);
 
 		//Checking if the user want to disable stylesheets using param: -no-stylesheet
-		idx1=params.indexOf(QRegExp("-no-stylesheet", Qt::CaseSensitive, QRegExp::FixedString));
+		idx1=params.indexOf(QRegExp(GlobalAttributes::NO_STYLESHEET_OPT, Qt::CaseSensitive, QRegExp::FixedString));
 
 		//Cheking if the user want to use a different theme from default Fusion
-		idx=params.indexOf(QRegExp("-style", Qt::CaseSensitive, QRegExp::FixedString));
+		idx=params.indexOf(QRegExp(GlobalAttributes::UI_STYLE_OPT, Qt::CaseSensitive, QRegExp::FixedString));
 
 		//Getting the theme name
 		if(idx>=0 && idx < params.size() - 1)

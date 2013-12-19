@@ -928,7 +928,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 {
 	if(!table)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
+	else if(table->getDatabase()==this)
 	{
 		Table *ref_tab=nullptr;
 		BaseRelationship *rel=nullptr;
@@ -994,17 +994,40 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 			//Only creates the relationship if does'nt exist one between the tables
 			rel=getRelationship(table, ref_tab);
 
-			if(!rel)
+			if(!rel && ref_tab->getDatabase()==this)
 			{
-				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-																 table, ref_tab, false, false);
+				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
+
+				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
+					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
+					 the name of the new one */
+				if(getObjectIndex(rel->getName(), BASE_RELATIONSHIP) >= 0)
+					rel->setName(generateUniqueName(rel));
+
 				addRelationship(rel);
 			}
-			else if(rel->isBidirectional())
+			else if(rel && rel->isBidirectional())
 				rel->setModified(true);
 		}
 
 	}
+}
+
+QString DatabaseModel::generateUniqueName(BaseObject *obj)
+{
+	if(!obj)
+		return("");
+
+	QString obj_name=obj->getName(), id=QString::number(obj->getObjectId());
+	int len = obj_name.size() + id.size();
+
+	if(len > BaseObject::OBJECT_NAME_MAX_LENGTH)
+	{
+		obj_name.chop(id.size() + 1);
+		obj_name+="_" + id;
+	}
+
+	return(obj_name);
 }
 
 void DatabaseModel::updateTablesFKRelationships(void)
@@ -5326,8 +5349,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				}
 
 				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
+				base_rel->setName(attribs[ParsersAttributes::NAME]);
 				addRelationship(base_rel);
 			}
+			else if(base_rel)
+				base_rel->setName(attribs[ParsersAttributes::NAME]);
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
@@ -5338,7 +5364,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			base_rel->disconnectRelationship();
-			base_rel->setName(attribs[ParsersAttributes::NAME]);
 		}
 		else
 		{
@@ -6999,7 +7024,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=rel->getAttribute(i1);
 
-							if(col->getType()==object)
+							if(col->getType()==ptr_pgsqltype)
 							{
 								added=refer=true;
 								refs.push_back(rel);
@@ -7019,7 +7044,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=tab->getColumn(i1);
 
-							if(!col->isAddedByRelationship() && col->getType()==object)
+							if(!col->isAddedByRelationship() && col->getType()==ptr_pgsqltype)
 							{
 								refer=true;
 								refs.push_back(col);
@@ -7513,7 +7538,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
 			ObjectType  obj_types[]={ OBJ_SEQUENCE, OBJ_VIEW, OBJ_TABLE, OBJ_RELATIONSHIP };
-			unsigned i, count=4;
+			unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{

@@ -86,9 +86,11 @@
 
 	CASE cs.confmatchtype
 	  WHEN 'f' THEN 'MATCH FULL'
-	  WHEN 'p' THEN 'MATCH PARTIAL'
-	  WHEN 'u' THEN 'MATCH SIMPLE'
-	  ELSE NULL
+	  WHEN 'p' THEN 'MATCH PARTIAL' ]
+
+	  [ WHEN ] %if @{pgsql93} %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
+
+	[ ELSE NULL
 	END AS comparison_type
 
      FROM pg_constraint AS cs

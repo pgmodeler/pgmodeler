@@ -72,7 +72,7 @@ namespace GlobalAttributes {
 	#endif
 
 	static const QString
-	PGMODELER_VERSION="0.6.1",
+	PGMODELER_VERSION="0.6.2",
 	PGMODELER_VER_CODENAME="Daring Mammoth",
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
@@ -106,7 +106,9 @@ namespace GlobalAttributes {
 
 	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 	the executable using -style option. This same style is applied to crash handler. */
-	DEFAULT_QT_STYLE="Fusion";
+	DEFAULT_QT_STYLE="Fusion",
+	NO_STYLESHEET_OPT="-no-stylesheet",
+	UI_STYLE_OPT="-style";
 }
 
 #endif

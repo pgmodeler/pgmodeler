@@ -3,11 +3,10 @@
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
 	sql_gen_progress=progress=0;
-	db_created=ignore_dup=simulate=false;
+	db_created=ignore_dup=drop_db=export_canceled=simulate=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 	db_model=nullptr;
 	connection=nullptr;
-	export_canceled=false;
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
@@ -121,7 +120,7 @@ void ModelExportHelper::sleepThread(unsigned msecs)
 		QThread::msleep(msecs);
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate)
 {
 	int type_id;
 	QString  version, sql_buf, sql_cmd, lin;
@@ -152,10 +151,10 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(!db_model)
 			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		/* If the export is called using ignore duplications and simulation mode at same time
+		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
-		if(simulate && ignore_dup)
+		if(simulate && (ignore_dup || drop_db))
 			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
@@ -187,6 +186,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 			//Save the current status for ALTER command generation for table columns/constraints
 			saveGenAtlerCmdsStatus(db_model);
+		}
+
+		if(drop_db)
+		{
+			emit s_progressUpdated(progress, trUtf8("Trying to drop database `%1'...").arg(db_model->getName()));
+			conn.executeDDLCommand(QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true)));
 		}
 
 		if(simulate)
@@ -305,7 +310,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Regexp used to extract the object being created
 						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
-                        sql_cmd = sql_cmd.simplified();
+												//sql_cmd = sql_cmd.simplified();
 
 						//Check if the regex matches the sql command
 						if(reg.exactMatch(sql_cmd))
@@ -550,19 +555,20 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool simulate)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate)
 {
 	this->db_model=db_model;
 	this->connection=conn;
 	this->pgsql_ver=pgsql_ver;
 	this->ignore_dup=ignore_dup;
 	this->simulate=simulate;
+	this->drop_db=drop_db;
 }
 
 void ModelExportHelper::exportToDBMS(void)
 {
 	if(connection)
-		exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, simulate);
+		exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate);
 }
 
 void ModelExportHelper::cancelExport(void)

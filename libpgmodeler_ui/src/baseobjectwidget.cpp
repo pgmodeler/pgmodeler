@@ -218,6 +218,34 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, B
 	setAttributes(model, nullptr, object, parent_obj, NAN, NAN, false);
 }
 
+void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
+{
+	vector<BaseObject *> refs;
+	TableObject *tab_obj=nullptr;
+
+	model->getObjectReferences(object, refs);
+
+	while(!refs.empty())
+	{
+		tab_obj=dynamic_cast<TableObject *>(refs.back());
+
+		//If the object is a relationship added does not do anything since the relationship itself will be disabled
+		if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+		{
+			refs.back()->setSQLDisabled(disable_sql_chk->isChecked());
+
+			//Update the parent table graphical representation to show the disabled child object
+			if(tab_obj)
+				tab_obj->getParentTable()->setModified(true);
+
+			//Disable the references of the current object too
+			disableReferencesSQL(refs.back());
+		}
+
+		refs.pop_back();
+	}
+}
+
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py, bool uses_op_list)
 {
 	ObjectType obj_type, parent_type=BASE_OBJECT;
@@ -595,6 +623,9 @@ void BaseObjectWidget::applyConfiguration(void)
 			ObjectType obj_type;
 			QString obj_name;
 
+			if(disable_sql_chk->isChecked()!=object->isSQLDisabled())
+				disableReferencesSQL(object);
+
 			obj_type=object->getObjectType();
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
@@ -663,7 +694,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			if(obj_type!=OBJ_CAST)
 			{
 				prev_name=object->getName();
-				object->setName(name_edt->text().toUtf8());
+				object->setName(name_edt->text().trimmed().toUtf8());
 			}
 
 			//Sets the object's comment

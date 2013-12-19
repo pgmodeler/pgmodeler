@@ -1338,9 +1338,17 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 							source table because they is always inserted after this position. */
 		if(rel_type==RELATIONSHIP_NN)
 		{
+			vector<Constraint *> fks;
+
+			/* Get the created foreign keys created on the self relationship in order to
+				 create them properly */
+			if(isSelfRelationship())
+				table_relnn->getForeignKeys(fks, true, ref_tab);
+
 			//Case 1: decrementing the quantity of columns to be scanned
 			if((!isSelfRelationship() && ref_tab==src_table) ||
-				 (isSelfRelationship() && table_relnn->getConstraintCount()==0))
+				 //Condition to create the first fk on the self relationship
+				 (isSelfRelationship() && fks.size()==0))
 				qty-=dynamic_cast<Table *>(dst_table)->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS);
 			//Case 2: shifiting the scan index
 			else if(ref_tab==dst_table)
@@ -2324,7 +2332,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
-				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key)
+				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key &&
+					 table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::check)
 					attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
 			}
 		}
@@ -2332,7 +2341,6 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
 			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-			//attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
 		}
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));

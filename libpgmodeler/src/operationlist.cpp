@@ -767,24 +767,25 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			indicates that the operation was performed on a child object of these objects */
 		if(parent_tab || parent_rel)
 		{
-			//Marks the parent object as modified to for its redraw
 			if(parent_tab)
-				parent_tab->setModified(true);
-			else
-				parent_rel->forceInvalidate();
-
-			if(parent_tab &&
-				 (object->getObjectType()==OBJ_COLUMN ||
-					object->getObjectType()==OBJ_CONSTRAINT))
 			{
-				model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
+				parent_tab->setModified(true);
 
-				if(object->getObjectType()==OBJ_CONSTRAINT &&
-					 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-					model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
+				if(object->getObjectType()==OBJ_COLUMN ||
+					 object->getObjectType()==OBJ_CONSTRAINT)
+				{
+					model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
+
+					if(object->getObjectType()==OBJ_CONSTRAINT &&
+						 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+						model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
+				}
 			}
 			else if(parent_rel)
+			{
+				parent_rel->forceInvalidate();
 				model->validateRelationships();
+			}
 		}
 
 		/* If the object in question is graphical it has the modified flag

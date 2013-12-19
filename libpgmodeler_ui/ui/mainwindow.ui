@@ -22,6 +22,9 @@
   <property name="mouseTracking">
    <bool>true</bool>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>pgModeler - PostgreSQL Database Modeler</string>
   </property>
@@ -48,6 +51,9 @@
    <bool>false</bool>
   </property>
   <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">

@@ -51,6 +51,9 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates to the exporter to run as a simulator[model validation] (only in thread mode)
 		simulate,
 
+		//! \brief Indicates to the exporter to drop database before export
+		drop_db,
+
 		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
 		export_canceled;
 
@@ -78,7 +81,7 @@ class ModelExportHelper: public QObject {
 
 	protected:
 		//! \brief Configures the DBMS export params before start the export thread (only in thread mode)
-		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false, bool simulate=false);
+		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false, bool drop_db=false, bool simulate=false);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
@@ -94,7 +97,7 @@ class ModelExportHelper: public QObject {
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors */
-		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false, bool simulate=false);
+		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false, bool drop_db=false, bool simulate=false);
 
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
 		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
