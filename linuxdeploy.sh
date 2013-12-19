@@ -22,10 +22,12 @@ esac
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 PKGFILE=$PKGNAME.tar.gz
-BUNDLE_QT_LIBS=0
-BUNDLE_QT_LIBS_OPT='-bundle-qt-libs'
+NO_QT_LIBS_OPT='-no-qt-libs'
 
-if [ "$1" = "$BUNDLE_QT_LIBS_OPT" ]; then
+if [ "$1" = "$NO_QT_LIBS_OPT" ]; then
+  PKGFILE=$PKGNAME.tar.gz
+  BUNDLE_QT_LIBS=0
+else
   BUNDLE_QT_LIBS=1
   QT_CONF=build/qt.conf
   DEP_PLUGINS_DIR=build/qtplugins
@@ -51,8 +53,6 @@ if [ "$1" = "$BUNDLE_QT_LIBS_OPT" ]; then
            libicui18n.so.51 \
            libicuuc.so.51 \
            libicudata.so.51"
-else
-  PKGFILE=$PKGNAME.tar.gz
 fi
 
 clear
@@ -107,9 +107,7 @@ echo
 echo "Deploying version: $DEPLOY_VER"
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
-  echo "Qt libs will not be included on the package. (Missing $BUNDLE_QT_LIBS_OPT)"
-else
-  echo "Qt libs will be included on the package. (Found $BUNDLE_QT_LIBS_OPT)"
+  echo "Qt libs will not be included on the package. (Found $NO_QT_LIBS_OPT)"
 fi
 
 echo "Cleaning previous compilation..."
