@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.6.2-beta"
+#define MyAppVersion "0.6.2"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"

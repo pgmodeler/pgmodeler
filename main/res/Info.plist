@@ -33,7 +33,7 @@
        <key>CFBundleSignature</key>
        <string>????</string>
        <key>CFBundleVersion</key>
-       <string>0.6.2-beta</string>
+       <string>0.6.2</string>
        <key>CSResourcesFileMapped</key>
        <true/>
     </dict>
