@@ -1457,6 +1457,8 @@ void DatabaseModel::validateRelationships(void)
 		rel->restoreObjectsIndexes();
 		itr++;
 	}
+
+	xml_special_objs.clear();
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -2663,10 +2665,6 @@ void DatabaseModel::loadModel(const QString &filename)
 					{
 						elem_name=XMLParser::getElementName();
 
-						/*if(elem_name==ParsersAttributes::PERMISSION)
-							addPermission(createPermission());
-						else
-						{*/
 							//Indentifies the object type to be load according to the current element on the parser
 							obj_type=getObjectType(elem_name);
 
@@ -2703,8 +2701,6 @@ void DatabaseModel::loadModel(const QString &filename)
 									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 								}
 							}
-						//}
-
 					}
 				}
 				while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
