@@ -5274,13 +5274,13 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
-	bool src_mand, dst_mand, identifier, protect, deferrable;
+    bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled;
 	DeferralType defer_type;
 	unsigned rel_type=0, i;
 	ObjectType table_types[2]={OBJ_VIEW, OBJ_TABLE}, obj_rel_type;
 	QString str_aux, elem,
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
-											 ParsersAttributes::DST_TABLE };
+                             ParsersAttributes::DST_TABLE };
 
 	try
 	{
@@ -5383,7 +5383,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					count=sizeof(idx_type)/sizeof(unsigned),
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
-			src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
+            sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
+            src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
 			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
 			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
 			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
@@ -5407,6 +5408,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					identifier, deferrable, defer_type,
 					CopyOptions(attribs[ParsersAttributes::COPY_MODE].toUInt(),
 					attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
+
+            rel->setSQLDisabled(sql_disabled);
 
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
