@@ -1007,8 +1007,7 @@ void MainWindow::applyConfigurations(void)
 		}
 		else
 		{
-      //model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
-      model_save_timer.setInterval(500);
+      model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
 			model_save_timer.start();
 		}
 
