@@ -587,7 +587,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 		}
-	}
+  }
 }
 
 void MainWindow::updateConnections(void)
@@ -605,9 +605,9 @@ void MainWindow::saveTemporaryModels(bool force)
 	try
 	{
 		ModelWidget *model=nullptr;
-		int count=models_tbw->count();
+    int count=models_tbw->count();
 
-		if(count > 0 && (force || this->isActiveWindow()))
+    if(count > 0 && (force || this->isActiveWindow()))
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -1007,7 +1007,8 @@ void MainWindow::applyConfigurations(void)
 		}
 		else
 		{
-			model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
+      //model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
+      model_save_timer.setInterval(500);
 			model_save_timer.start();
 		}
 
@@ -1027,9 +1028,9 @@ void MainWindow::applyConfigurations(void)
 
 void MainWindow::saveAllModels(void)
 {
-	if(models_tbw->count() > 0 &&
-		 ((sender()==action_save_all) ||
-			(sender()==&model_save_timer &&	this->isActiveWindow())))
+  if(models_tbw->count() > 0 &&
+     ((sender()==action_save_all) ||
+      (sender()==&model_save_timer &&	this->isActiveWindow())))
 
 	{
 		int i, count;
@@ -1048,12 +1049,21 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
-			if(model->getDatabaseModel()->isInvalidated())
-			{
-				msg_box.show(trUtf8("Confirmation"),
-												trUtf8("WARNING: The model is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?"),
-												Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
-			}
+      if(model->getDatabaseModel()->isInvalidated())
+      {
+        msg_box.show(trUtf8("Confirmation"),
+                        trUtf8("WARNING: The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?").arg(model->getDatabaseModel()->getName()),
+                        Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+        //If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
+        if(msg_box.result()==QDialog::Accepted)
+        {
+          model_save_timer.stop();
+
+          //The autosave timer will be reactivated in 5 minutes
+          QTimer::singleShot(300000, &model_save_timer, SLOT(start()));
+        }
+      }
 
 			if((!model->getDatabaseModel()->isInvalidated() ||
 					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Rejected))
