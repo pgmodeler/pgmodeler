@@ -72,8 +72,8 @@ namespace GlobalAttributes {
 	#endif
 
 	static const QString
-	PGMODELER_VERSION="0.6.2",
-	PGMODELER_VER_CODENAME="Daring Mammoth",
+  PGMODELER_VERSION="0.7.0-pre",
+  PGMODELER_VER_CODENAME="Brave Mastodon",
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
