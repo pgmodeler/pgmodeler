@@ -1,6 +1,19 @@
 Changelog
 ---------
 
+v0.7.0-pre
+------
+<em><strong>NOTE:</strong> This is a snapshot of the development brach and until an alpha release all changes will be listed in this entry.</em>
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: January 03, 2014</em>
+
+[New] Added a configuration parameter to control font style for any source code highlight field.
+[New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+[Change] Minor update sql syntax highlighting configuration file.
+[Fix] Fixed a bug that was not loading "sql disabled" state for relationships.
+[Fix] Fixed incorrect behavior of "Zoom In" action on MacOSX.
+[Fix] Trying to fix the infinite loop of the Validation confirm dialog on Windows (more tests needed).
+
 v0.6.2
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>
