@@ -111,6 +111,59 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
 
+  try
+  {
+    configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    configuration_form->loadConfiguration();
+
+    plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
+    plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
+    plugins_menu->setEnabled(!plugins_menu->isEmpty());
+    action_plugins->setEnabled(!plugins_menu->isEmpty());
+    action_plugins->setMenu(plugins_menu);
+    dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
+    conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
+    confs=conf_wgt->getConfigurationParams();
+
+    itr=confs.begin();
+    itr_end=confs.end();
+
+    //Configuring the widget visibility according to the configurations
+    while(itr!=itr_end)
+    {
+      attribs=itr->second;
+      if(attribs.count(ParsersAttributes::PATH)!=0)
+      {
+        try
+        {
+          //Storing the file of a previous session
+          if(itr->first.contains(ParsersAttributes::_FILE_) &&
+             !attribs[ParsersAttributes::PATH].isEmpty())
+            prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
+
+          //Creating the recent models menu
+          else if(itr->first.contains(ParsersAttributes::RECENT) &&
+                  !attribs[ParsersAttributes::PATH].isEmpty())
+            recent_models.push_back(attribs[ParsersAttributes::PATH]);
+        }
+        catch(Exception &e)
+        {
+          msg_box.show(e);
+        }
+      }
+
+      itr++;
+    }
+
+    //Enables the action to restore session when there are registered session files
+    action_restore_session->setEnabled(!prev_session_files.isEmpty());
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
+  }
+
 	try
 	{
 		QDir dir;
@@ -122,7 +175,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
 		about_form=new AboutForm;
-		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		model_export_form=new ModelExportForm(this);
 		db_import_form=new DatabaseImportForm(this);
 
@@ -323,57 +375,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	try
-	{
-		configuration_form->loadConfiguration();
-
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
-		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
-		plugins_menu->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
-
-		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
-		confs=conf_wgt->getConfigurationParams();
-
-		itr=confs.begin();
-		itr_end=confs.end();
-
-		//Configuring the widget visibility according to the configurations
-		while(itr!=itr_end)
-		{
-			attribs=itr->second;
-			if(attribs.count(ParsersAttributes::PATH)!=0)
-			{
-				try
-				{
-					//Storing the file of a previous session
-					if(itr->first.contains(ParsersAttributes::_FILE_) &&
-						 !attribs[ParsersAttributes::PATH].isEmpty())
-						prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
-
-					//Creating the recent models menu
-					else if(itr->first.contains(ParsersAttributes::RECENT) &&
-									!attribs[ParsersAttributes::PATH].isEmpty())
-						recent_models.push_back(attribs[ParsersAttributes::PATH]);
-				}
-				catch(Exception &e)
-				{
-					msg_box.show(e);
-				}
-			}
-
-			itr++;
-		}
-
-		//Enables the action to restore session when there are registered session files
-		action_restore_session->setEnabled(!prev_session_files.isEmpty());
-	}
-	catch(Exception &e)
-	{
-		msg_box.show(e);
-	}
 
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())

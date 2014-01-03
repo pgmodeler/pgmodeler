@@ -16,7 +16,10 @@
 <!ATTLIST configuration print-pg-num (false|true) "true">
 <!ATTLIST configuration hide-rel-name (false|true) "true">
 <!ATTLIST configuration hide-ext-attribs (false|true) "true">
- 
+
+<!ATTLIST configuration code-font CDATA #IMPLIED>
+<!ATTLIST configuration code-font-size CDATA #IMPLIED>
+
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
 

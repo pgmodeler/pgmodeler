@@ -167,7 +167,7 @@
         <property name="font">
          <font>
           <weight>50</weight>
-          <italic>true</italic>
+          <italic>false</italic>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>
