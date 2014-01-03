@@ -23,6 +23,8 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [		print-pg-num="] %if @{print-pg-num} %then true %else false %end ["] $br
 [		hide-rel-name="] %if @{hide-rel-name} %then true %else false %end ["] $br
 [		hide-ext-attribs="] %if @{hide-ext-attribs} %then true %else false %end ["]
+[		code-font="] @{code-font} ["] $br
+[		code-font-size="] @{code-font-size} ["]
 [/>] $br
 
 %if @{file} %then

@@ -17,11 +17,27 @@
 */
 
 #include "syntaxhighlighter.h"
+#include "configurationform.h"
+
+extern ConfigurationForm *configuration_form;
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
+  GeneralConfigWidget *general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+  map<QString, attribs_map> confs=general_conf->getConfigurationParams();
+
 	parent->setAcceptRichText(true);
-	this->auto_rehighlight=auto_rehighlight;
+
+  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
+  {
+    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+    if(size < 5.0f) size=5.0f;
+
+    parent->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+    parent->setFontPointSize(size);
+  }
+
+  this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
 

@@ -51,6 +51,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]="";
 
 	selectPaperSize();
 }
@@ -59,7 +61,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 {
 	QStringList margin, custom_size;
 	vector<QString> key_attribs;
-	unsigned interv;
+  unsigned interv=0;
 
 	key_attribs.push_back(ParsersAttributes::ID);
 	BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, key_attribs);
@@ -92,6 +94,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 	hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 	hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
+
+  font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
+  font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
 
 	this->applyConfiguration();
 }
@@ -134,6 +139,9 @@ void GeneralConfigWidget::saveConfiguration()
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? "1" : "");
+
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";

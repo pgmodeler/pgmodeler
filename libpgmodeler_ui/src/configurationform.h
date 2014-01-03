@@ -44,9 +44,9 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 
 	public:
 		static const int	GENERAL_CONF_WGT=0,
-											APPEARANCE_CONF_WGT=1,
-											CONNECTIONS_CONF_WGT=2,
-											PLUGINS_CONF_WGT=3;
+                      APPEARANCE_CONF_WGT=1,
+                      CONNECTIONS_CONF_WGT=2,
+                      PLUGINS_CONF_WGT=3;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
