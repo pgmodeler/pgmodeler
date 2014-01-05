@@ -402,7 +402,8 @@ namespace ParsersAttributes {
 	ARG_NAMES="arg-names",
 	ARG_DEFAULTS="arg-defaults",
 	RANGE_ATTRIBS="range-attribs",
-	SEARCH_PATH="search-path";
+  SEARCH_PATH="search-path",
+  CANVAS_CORNER_MOVE="canvas-corner-move";
 }
 
 #endif

@@ -448,7 +448,7 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
 			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
 		else
 			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
-	}
+  }
 }
 
 void ModelWidget::applyZoom(float zoom)

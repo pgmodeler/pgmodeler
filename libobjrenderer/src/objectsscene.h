@@ -36,6 +36,18 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+    static bool corner_move;
+
+    static const int SCENE_MOVE_STEP=20,
+                     SCENE_MOVE_TIMEOUT=50,
+                     SCENE_MOVE_THRESHOLD=30;
+
+    //! \brief Toggles the scene movement when user puts cursor at corners
+    QTimer scene_move_timer;
+
+    //! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
+    int scene_move_dx, scene_move_dy;
+
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
 		static bool align_objs_grid, show_grid, show_page_delim;
 
@@ -69,6 +81,10 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Aligns the specified point in relation to the grid
 		static QPointF alignPointToGrid(const QPointF &pnt);
 
+    /*! \brief Indicates if the mouse cursor is under a move spot portion of scene.
+    Additionally this method configures the direction of movement when returning true */
+    bool mouseIsAtCorner(void);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
@@ -81,9 +97,13 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
 
+
 	public:
 		ObjectsScene(void);
 		~ObjectsScene(void);
+
+    static void enableCornerMove(bool enable);
+    static bool isCornerMoveEnabled(void);
 
 		static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
@@ -101,6 +121,10 @@ class ObjectsScene: public QGraphicsScene {
 		void update(void);
 
 	private slots:
+
+    //! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
+    void moveObjectScene(void);
+
 		//! \brief Handles and redirects the signal emitted by the modified object
 		void emitObjectModification(BaseGraphicObject *object);
 

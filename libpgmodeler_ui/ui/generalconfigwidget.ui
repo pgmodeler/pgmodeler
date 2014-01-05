@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>544</height>
+    <width>568</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -53,14 +53,14 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QCheckBox" name="hide_rel_name_chk">
         <property name="text">
          <string>Hide relationship name</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="oplist_size_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -79,7 +79,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QSpinBox" name="autosave_interv_spb">
@@ -130,7 +130,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QSpinBox" name="oplist_size_spb">
@@ -181,7 +181,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QCheckBox" name="autosave_interv_chk">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -200,14 +200,14 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QCheckBox" name="hide_ext_attribs_chk">
         <property name="text">
          <string>Hide table extended attributes</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QSpinBox" name="grid_size_spb">
@@ -264,7 +264,7 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="grid_size_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -280,6 +280,16 @@
         </property>
         <property name="text">
          <string>Grid size:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QCheckBox" name="corner_move_chk">
+        <property name="text">
+         <string>Move canvas by positioning mouse on corners</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
