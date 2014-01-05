@@ -27,6 +27,7 @@ QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
+bool ObjectsScene::corner_move=true;
 
 ObjectsScene::ObjectsScene(void)
 {
@@ -47,6 +48,10 @@ ObjectsScene::ObjectsScene(void)
 
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
+
+  scene_move_dx=scene_move_dy=0;
+  connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
+  scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
 }
 
 ObjectsScene::~ObjectsScene(void)
@@ -87,6 +92,16 @@ ObjectsScene::~ObjectsScene(void)
 			items.pop_front();
 		}
 	}
+}
+
+void ObjectsScene::enableCornerMove(bool enable)
+{
+  ObjectsScene::corner_move=enable;
+}
+
+bool ObjectsScene::isCornerMoveEnabled(void)
+{
+  return(ObjectsScene::corner_move);
 }
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
@@ -379,10 +394,66 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
+bool ObjectsScene::mouseIsAtCorner(void)
+{
+  QList<QGraphicsView *> views=this->views();
+
+  if(!views.isEmpty())
+  {
+    QGraphicsView *view=views[0];
+    QPoint pos=view->mapFromGlobal(QCursor::pos());
+    QRect rect=view->rect();
+
+    if(rect.contains(pos))
+    {
+      if(pos.x() <= SCENE_MOVE_THRESHOLD)
+        scene_move_dx=-SCENE_MOVE_STEP;
+      else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SCENE_MOVE_THRESHOLD))
+        scene_move_dx=SCENE_MOVE_STEP;
+      else
+        scene_move_dx=0;
+
+      if(pos.y() <= SCENE_MOVE_THRESHOLD)
+        scene_move_dy=-SCENE_MOVE_STEP;
+      else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SCENE_MOVE_THRESHOLD))
+        scene_move_dy=SCENE_MOVE_STEP;
+      else
+        scene_move_dy=0;
+
+      return(scene_move_dx!=0 || scene_move_dy!=0);
+    }
+    else
+      return(false);
+  }
+  else
+    return(false);
+}
+
+void ObjectsScene::moveObjectScene(void)
+{
+  if(scene_move_dx!=0 || scene_move_dy!=0)
+  {
+    QList<QGraphicsView *> views=this->views();
+
+    if(!views.isEmpty())
+    {
+      QGraphicsView *view=views[0];
+      view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
+      view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
+
+      if(!mouseIsAtCorner())
+        scene_move_timer.stop();
+    }
+  }
+}
+
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(event->buttons()==Qt::LeftButton)
-	{
+  if(corner_move && mouseIsAtCorner())
+   scene_move_timer.start();
+
+  if(event->buttons()==Qt::LeftButton)
+  {
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
