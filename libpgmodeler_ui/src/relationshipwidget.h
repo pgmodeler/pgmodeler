@@ -72,6 +72,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 	private slots:
 		void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
 
 		void addObject(void);
 		void editObject(int row);
