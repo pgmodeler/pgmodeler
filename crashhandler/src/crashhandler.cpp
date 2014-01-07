@@ -142,9 +142,9 @@ void CrashHandler::generateReport(void)
 	QFile output;
 
 	//Configures the path to the .crash file generated
-	QString crash_file=(GlobalAttributes::TEMPORARY_DIR +
-											GlobalAttributes::DIR_SEPARATOR +
-											GlobalAttributes::CRASH_REPORT_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
+  QString crash_file=QFileInfo((GlobalAttributes::TEMPORARY_DIR +
+                                GlobalAttributes::DIR_SEPARATOR +
+                                GlobalAttributes::CRASH_REPORT_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"))).absoluteFilePath();
 
 	//Opens the file for writting
 	output.setFileName(crash_file);
@@ -171,7 +171,7 @@ void CrashHandler::generateReport(void)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), Messagebox::INFO_ICON);
+    msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file <strong>%1</strong> to <em>%2</em> in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), Messagebox::INFO_ICON);
 		this->close();
 	}
 }

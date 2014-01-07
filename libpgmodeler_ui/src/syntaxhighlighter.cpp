@@ -23,8 +23,14 @@ extern ConfigurationForm *configuration_form;
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
-  GeneralConfigWidget *general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-  map<QString, attribs_map> confs=general_conf->getConfigurationParams();
+  GeneralConfigWidget *general_conf=nullptr;
+  map<QString, attribs_map> confs;
+
+  if(configuration_form)
+  {
+    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+    confs=general_conf->getConfigurationParams();
+  }
 
 	parent->setAcceptRichText(true);
 
