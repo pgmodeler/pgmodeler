@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
-    <height>588</height>
+    <width>676</width>
+    <height>614</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>480</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -1032,19 +1032,6 @@
          </layout>
         </widget>
        </item>
-       <item row="15" column="0" colspan="3">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="7" column="1" colspan="2">
         <widget class="QLabel" name="recv_tab_hint_lbl">
          <property name="enabled">
@@ -1133,6 +1120,13 @@
          </property>
          <property name="text">
           <string>Cardinality:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="2">
+        <widget class="QLineEdit" name="relnn_tab_name_edt">
+         <property name="toolTip">
+          <string>Name of the table generated from many to many relationship</string>
          </property>
         </widget>
        </item>
@@ -1260,12 +1254,21 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QLineEdit" name="relnn_tab_name_edt">
-         <property name="toolTip">
-          <string>Name of the table generated from many to many relationship</string>
+       <item row="15" column="0" colspan="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

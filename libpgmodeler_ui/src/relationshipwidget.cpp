@@ -118,8 +118,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		rel_attribs_tbw->widget(4)->setLayout(grid);
 
-		configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
-		parent_form->setMinimumSize(600, 560);
+    configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
+    parent_form->setMinimumSize(this->minimumSize());
 
 		DeferralType::getTypes(list);
 		deferral_cmb->addItems(list);
@@ -195,9 +195,23 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	rel_columns_lst->clear();
 
 	if(rel && !rel->isModified())
-		this->cancelConfiguration();
+    this->cancelConfiguration();
 
-	BaseObjectWidget::hideEvent(event);
+  BaseObjectWidget::hideEvent(event);
+}
+
+void RelationshipWidget::showEvent(QShowEvent *)
+{
+  if(rel_fk_rb->isChecked() ||
+     (rel_dep_rb->isChecked() &&
+      this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+    parent_form->setMinimumSize(620, 450);
+  else if(rel_gen_rb->isChecked() || rel_nn_rb->isChecked())
+    parent_form->setMinimumSize(620, 550);
+  else
+    parent_form->setMinimumSize(620, 650);
+
+  parent_form->resize(parent_form->minimumSize());
 }
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
@@ -254,22 +268,21 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		case BaseRelationship::RELATIONSHIP_DEP: rel_dep_rb->setChecked(true); break;
 	}
 
-	aux_rel=dynamic_cast<Relationship *>(base_rel);
-
+  aux_rel=dynamic_cast<Relationship *>(base_rel);
 
   if(base_rel->getObjectType()==BASE_RELATIONSHIP)
   {
     if(base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK)
     {
       ref_table_lbl->setText(trUtf8("Referer View:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer view is the one which is referencing one or more columns of a table to construct it's own columns."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table is the one which columns are being referenced by a view in order to construct the columns of this latter."));
+      ref_tab_hint_lbl->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
+      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
     }
     else
     {
       ref_table_lbl->setText(trUtf8("Referer Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer table is the one which is referencing one or more columns of a table through foreign keys. This is the (n) side of relationship."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table is the one which columns are being referenced by a table's foreign key. This is the (1) side of relationship."));
+      ref_tab_hint_lbl->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
+      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
     }
 
     recv_table_lbl->setText(trUtf8("Referenced Table:"));
@@ -282,10 +295,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
     if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
     {
       ref_table_lbl->setText(trUtf8("Reference Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Reference table is the one which columns from primary key will be copied to receiver table in order to represent the linking between them. This is the (1) side of relationship."));
+      ref_tab_hint_lbl->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
 
       recv_table_lbl->setText(trUtf8("Receiver Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("Receiver (or referer) table is the one which will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
+      recv_tab_hint_lbl->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
 
       ref_table_txt->setPlainText(Utf8String::create(aux_rel->getReferenceTable()->getName(true)));
       recv_table_txt->setPlainText(Utf8String::create(aux_rel->getReceiverTable()->getName(true)));
@@ -295,7 +308,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
       ref_table_lbl->setText(trUtf8("Reference Table:"));
       ref_tab_hint_lbl->setVisible(false);
       recv_table_lbl->setText(trUtf8("Reference Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each table."));
+      recv_tab_hint_lbl->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
 
       ref_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
       recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
@@ -409,7 +422,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
 
-	for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
+  for(i=ATTRIBUTES_TAB; i <= ADVANCED_TAB; i++)
 		rel_attribs_tbw->removeTab(1);
 
 	if(!relgen_dep)
