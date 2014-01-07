@@ -185,24 +185,43 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 	this->show(title,str_aux,icon_type,OK_BUTTON);
 }
 
-void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl)
+void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,
+                      const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name;
 
   if(!yes_lbl.isEmpty())
+  {
     yes_ok_btn->setText(yes_lbl);
+    yes_ok_btn->setIcon(QIcon(yes_ico));
+  }
   else
+  {
     yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
+    yes_ok_btn->setIcon(QPixmap(":/icones/icones/confirmar.png"));
+  }
 
   if(!no_lbl.isEmpty())
+  {
     no_btn->setText(no_lbl);
+    no_btn->setIcon(QIcon(no_ico));
+  }
   else
+  {
     no_btn->setText(trUtf8("&No"));
+    no_btn->setIcon(QPixmap(":/icones/icones/fechar1.png"));
+  }
 
-  if(!cancel_lbl.isEmpty())
+  if(!cancel_lbl.isEmpty())    
+  {
     cancel_btn->setText(cancel_lbl);
+    cancel_btn->setIcon(QIcon(cancel_ico));
+  }
   else
+  {
     cancel_btn->setText(trUtf8("&Cancel"));
+    cancel_btn->setIcon(QPixmap(":/icones/icones/cancelar.png"));
+  }
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
@@ -232,8 +251,8 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	}
 
 	cancelled=false;
-
 	icon_lbl->setVisible(!icon_name.isEmpty());
+
 	if(icon_name!="")
 		icon_lbl->setPixmap(QPixmap((":/icones/icones/" + icon_name)));
 

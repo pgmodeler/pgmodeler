@@ -1052,11 +1052,13 @@ void MainWindow::saveModel(ModelWidget *model)
       if(model->getDatabaseModel()->isInvalidated())
       {
         msg_box.show(trUtf8("Confirmation"),
-                        trUtf8("WARNING: The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
-                        Messagebox::ALERT_ICON, Messagebox::OK_CANCEL_BUTTONS, trUtf8("Save anyway"));
+                     trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
+                     Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                     trUtf8("Save anyway"), trUtf8("Validate"), "",
+                     ":/icones/icones/salvar.png", ":/icones/icones/validation.png");
 
         //If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
-        if(msg_box.result()==QDialog::Rejected)
+        if(msg_box.isCancelled())
         {
           model_save_timer.stop();
 
@@ -1097,6 +1099,13 @@ void MainWindow::saveModel(ModelWidget *model)
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
 			}
+      //When the user click "Validate" on the message box the validation will be executed
+      else if(model->getDatabaseModel()->isInvalidated() &&
+              msg_box.result()==QDialog::Rejected && !msg_box.isCancelled())
+      {
+        validation_btn->click();
+        model_valid_wgt->validate_btn->click();
+      }
 		}
 	}
 	catch(Exception &e)
