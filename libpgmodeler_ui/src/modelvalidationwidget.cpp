@@ -332,6 +332,9 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	}
 	else if(!msg.isEmpty())
 	{
+    ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
+    object_lbl->setText(trUtf8("Running SQL validation..."));
+
 		int idx=msg.indexOf('`');
 		item=new QTreeWidgetItem;
 		label=new QLabel;

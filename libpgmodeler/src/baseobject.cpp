@@ -113,31 +113,10 @@ QString BaseObject::getSQLName(ObjectType obj_type)
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
 {
-	//int i;
 	bool is_formated=false;
 	QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
-
-	/*QRegExp regexp_vect[]={
-		QRegExp("(\")(.)+(\")"),
-		QRegExp("(\")(.)+(\")(\\.)(\")(.)+(\")"),
-		QRegExp("(\")(.)+(\")(\\.)(.)+"),
-		QRegExp("(.)+(\\.)(\")(.)+(\")"),
-		QRegExp("(.)+(\\.)(.)+")
-	};*/
-
-	/* Checks through regular expressions
-		if the name passed to be formatted is yet
-		formatted. The forms likely to be formatted are:
-
-		1) "OBJECT_NAME"
-		2) "SCHEMA_NAME"."OBJECT_NAME"
-		3) "SCHEMA_NAME".OBJECT_NAME
-		4) SCHEMA_NAME."OBJECT_NAME"
-		5) SCHEMA_NAME.OBJECT_NAME */
-		/* for(i=0; i < 5 && !is_formated; i++)
-				is_formated=regexp_vect[i].exactMatch(name); */
 
 	//Checking if the name is already formated enclosed by quotes
 	is_formated=QRegExp("(\")(.)+(\")").exactMatch(name);
@@ -148,7 +127,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		 with PostgreSQL rules for other types of objects */
 	if(!is_formated && (is_operator || isValidName(name)))
 	{
-		bool is_upper=false;
+    bool needs_fmt=false;
 		unsigned i, qtd;
 
 		raw_name.append(name);
@@ -156,12 +135,13 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
-		is_upper=(name.indexOf('-')>=0 && !is_operator) ||
-						 (name.indexOf('.')>=0 && !is_operator) ||
-						 (name.indexOf('@')>=0 && !is_operator);
+    needs_fmt=(name.indexOf('-')>=0 && !is_operator) ||
+              (name.indexOf('.')>=0 && !is_operator) ||
+              (name.indexOf('@')>=0 && !is_operator) ||
+              (name.indexOf(' ')>=0 && !is_operator);
 
 		i=0;
-		while(i < qtd && !is_upper)
+    while(i < qtd && !needs_fmt)
 		{
 			chr=raw_name[i];
 
@@ -196,12 +176,12 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 				 QChar(chr).isUpper())
 			{
-				is_upper=true;
+        needs_fmt=true;
 			}
 
 		}
 
-		if(is_upper)
+    if(needs_fmt)
 			frmt_name="\"" + name + "\"";
 		else
 			frmt_name=name;
@@ -248,12 +228,12 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @] */
+      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ ] */
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
-					chr == '.' || chr == '@')
+          chr == '.' || chr == '@' || chr ==' ')
 			{
 				valid=true;
 				i++;

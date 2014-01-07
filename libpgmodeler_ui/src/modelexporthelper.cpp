@@ -310,7 +310,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Regexp used to extract the object being created
 						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
-												//sql_cmd = sql_cmd.simplified();
+
 
 						//Check if the regex matches the sql command
 						if(reg.exactMatch(sql_cmd))
@@ -348,9 +348,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 									if(obj_types[obj_id]!=OBJ_CAST)
 									{
-										//The object name is the first element when splitting the string with space separator
-										obj_name=lin.split(' ').at(0);
-										obj_name.remove('(');
+                    int last_quote_idx=lin.lastIndexOf('"'),
+                        first_quote_idx=lin.indexOf('"'),
+                        spc_idx=lin.indexOf(' ');
+
+                    if(spc_idx >=0 && spc_idx < first_quote_idx)
+                      obj_name=lin.split(' ').at(0);
+                    else
+                      obj_name=lin.mid(0, last_quote_idx +1);
+
+                    obj_name.remove('(');
 									}
 									else
 									{
