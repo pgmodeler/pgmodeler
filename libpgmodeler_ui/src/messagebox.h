@@ -49,7 +49,7 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 
 		Messagebox(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-		void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
+    void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON, const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="");
 		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);
 		bool isCancelled(void);
 

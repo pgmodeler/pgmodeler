@@ -185,36 +185,28 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 	this->show(title,str_aux,icon_type,OK_BUTTON);
 }
 
-void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons)
+void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl)
 {
 	QString icon_name;
 
-	switch(buttons)
-	{
-		case YES_NO_BUTTONS:
-			no_btn->setText(trUtf8("&No"));
-			yes_ok_btn->setText(trUtf8("&Yes"));
-		break;
+  if(!yes_lbl.isEmpty())
+    yes_ok_btn->setText(yes_lbl);
+  else
+    yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
 
-		case OK_CANCEL_BUTTONS:
-			cancel_btn->setText(trUtf8("&Cancel"));
-			yes_ok_btn->setText(trUtf8("&Ok"));
-		break;
+  if(!no_lbl.isEmpty())
+    no_btn->setText(no_lbl);
+  else
+    no_btn->setText(trUtf8("&No"));
 
-		case ALL_BUTTONS:
-			cancel_btn->setText(trUtf8("&Cancel"));
-			no_btn->setText(trUtf8("&No"));
-			yes_ok_btn->setText(trUtf8("&Yes"));
-		break;
-
-		default:
-		case OK_BUTTON:
-			yes_ok_btn->setText(trUtf8("&Ok"));
-		break;
-	}
+  if(!cancel_lbl.isEmpty())
+    cancel_btn->setText(cancel_lbl);
+  else
+    cancel_btn->setText(trUtf8("&Cancel"));
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
+  this->adjustSize();
 
 	switch(icon_type)
 	{

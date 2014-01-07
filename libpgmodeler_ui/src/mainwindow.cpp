@@ -1052,11 +1052,11 @@ void MainWindow::saveModel(ModelWidget *model)
       if(model->getDatabaseModel()->isInvalidated())
       {
         msg_box.show(trUtf8("Confirmation"),
-                        trUtf8("WARNING: The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?").arg(model->getDatabaseModel()->getName()),
-                        Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+                        trUtf8("WARNING: The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
+                        Messagebox::ALERT_ICON, Messagebox::OK_CANCEL_BUTTONS, trUtf8("Save anyway"));
 
         //If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
-        if(msg_box.result()==QDialog::Accepted)
+        if(msg_box.result()==QDialog::Rejected)
         {
           model_save_timer.stop();
 
@@ -1066,7 +1066,7 @@ void MainWindow::saveModel(ModelWidget *model)
       }
 
 			if((!model->getDatabaseModel()->isInvalidated() ||
-					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Rejected))
+          (model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Accepted))
 					 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
