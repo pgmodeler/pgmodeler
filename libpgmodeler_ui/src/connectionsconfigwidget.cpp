@@ -123,7 +123,7 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 											!passwd_edt->text().isEmpty() &&
 											!conn_db_edt->text().isEmpty());
 	add_tb->setEnabled(test_tb->isEnabled());
-	update_tb->setEnabled(test_tb->isEnabled());
+  update_tb->setEnabled(test_tb->isEnabled());
 }
 
 void ConnectionsConfigWidget::newConnection(void)
@@ -379,6 +379,20 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		int i, count;
 		Connection *conn=nullptr;
 		attribs_map attribs;
+
+    /* If add or update buttons are enabled when saving the configs indicates
+       that user forgot to click on these buttons and register the connection,
+       so in order to do not lost the data pgModeler will ask to save the connection. */
+    if(add_tb->isEnabled() || update_tb->isEnabled())
+    {
+      Messagebox msg_box;
+
+      msg_box.show(trUtf8("Alert"), trUtf8("There is an unsaved connection! Want to save it?"),
+               Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+      if(msg_box.result()==QDialog::Accepted)
+       handleConnection();
+    }
 
 		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
 		count=connections_cmb->count();
