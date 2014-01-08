@@ -21,6 +21,7 @@
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+  this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	cancelled=false;
 	connect(yes_ok_btn,SIGNAL(clicked()),this,SLOT(handleYesOkClick()));
 	connect(no_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));

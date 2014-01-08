@@ -52,8 +52,8 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
 
-		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
+    connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+    connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
 
 		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
 		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));

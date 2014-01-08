@@ -174,11 +174,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		about_form=new AboutForm;
-		model_export_form=new ModelExportForm(this);
-		db_import_form=new DatabaseImportForm(this);
+    about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    restoration_form=new ModelRestorationForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-		restoration_form=new ModelRestorationForm(this);
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
@@ -936,7 +936,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model was modified! Do you really want to close without save it?"),
-											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+                      Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 		}
 
 		if(!model->isModified() ||
