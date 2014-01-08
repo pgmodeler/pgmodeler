@@ -174,11 +174,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		about_form=new AboutForm;
-		model_export_form=new ModelExportForm(this);
-		db_import_form=new DatabaseImportForm(this);
+    about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    restoration_form=new ModelRestorationForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-		restoration_form=new ModelRestorationForm(this);
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
@@ -936,7 +936,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model was modified! Do you really want to close without save it?"),
-											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+                      Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 		}
 
 		if(!model->isModified() ||
@@ -1052,11 +1052,13 @@ void MainWindow::saveModel(ModelWidget *model)
       if(model->getDatabaseModel()->isInvalidated())
       {
         msg_box.show(trUtf8("Confirmation"),
-                        trUtf8("WARNING: The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?").arg(model->getDatabaseModel()->getName()),
-                        Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+                     trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
+                     Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                     trUtf8("Save anyway"), trUtf8("Validate"), "",
+                     ":/icones/icones/salvar.png", ":/icones/icones/validation.png");
 
         //If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
-        if(msg_box.result()==QDialog::Accepted)
+        if(msg_box.isCancelled())
         {
           model_save_timer.stop();
 
@@ -1066,7 +1068,7 @@ void MainWindow::saveModel(ModelWidget *model)
       }
 
 			if((!model->getDatabaseModel()->isInvalidated() ||
-					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Rejected))
+          (model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Accepted))
 					 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
@@ -1097,6 +1099,13 @@ void MainWindow::saveModel(ModelWidget *model)
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
 			}
+      //When the user click "Validate" on the message box the validation will be executed
+      else if(model->getDatabaseModel()->isInvalidated() &&
+              msg_box.result()==QDialog::Rejected && !msg_box.isCancelled())
+      {
+        validation_btn->click();
+        model_valid_wgt->validate_btn->click();
+      }
 		}
 	}
 	catch(Exception &e)
