@@ -6139,19 +6139,17 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			attribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(*itr)->getCodeDefinition(def_type);
 
 			gen_defs_count++;
-			//if(!signalsBlocked())
-			//{
-				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
-														msg.arg(def_type_str)
-														.arg(Utf8String::create((*itr)->getName()))
-														.arg((*itr)->getTypeName()),
-														(*itr)->getObjectType());
-			//}
+      emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+                          msg.arg(def_type_str)
+                          .arg(Utf8String::create((*itr)->getName()))
+                          .arg((*itr)->getTypeName()),
+                          (*itr)->getObjectType());
 
 			itr++;
 		}
 
 		attribs_aux[ParsersAttributes::MODEL_AUTHOR]=author;
+    attribs_aux[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
 
 		if(def_type==SchemaParser::XML_DEFINITION)
 		{

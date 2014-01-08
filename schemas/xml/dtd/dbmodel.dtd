@@ -54,4 +54,5 @@
 <!ELEMENT dbmodel ANY>
 
 <!ATTLIST dbmodel author CDATA #IMPLIED>
+<!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST dbmodel protected (false|true) "false">

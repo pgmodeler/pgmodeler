@@ -403,7 +403,8 @@ namespace ParsersAttributes {
 	ARG_DEFAULTS="arg-defaults",
 	RANGE_ATTRIBS="range-attribs",
   SEARCH_PATH="search-path",
-  CANVAS_CORNER_MOVE="canvas-corner-move";
+  CANVAS_CORNER_MOVE="canvas-corner-move",
+  PGMODELER_VERSION="pgmodeler-ver";
 }
 
 #endif
