@@ -36,14 +36,22 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+    //! brief Indicates if the corner move is enabled for the scene
     static bool corner_move;
+
+    //! brief Indicates if the scene need to be moved
+    bool move_scene;
 
     static const int SCENE_MOVE_STEP=20,
                      SCENE_MOVE_TIMEOUT=50,
                      SCENE_MOVE_THRESHOLD=30;
 
-    //! \brief Toggles the scene movement when user puts cursor at corners
-    QTimer scene_move_timer;
+    //! \brief Timer responsible to move the scene
+    QTimer scene_move_timer,
+
+    /*! \brief Timer responsible to check if the user puts cursor at corners for a certain amount of time.
+    When this timeout the scene_move_timer will be triggered and the scene will be moved */
+    corner_hover_timer;
 
     //! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
     int scene_move_dx, scene_move_dy;
@@ -121,6 +129,9 @@ class ObjectsScene: public QGraphicsScene {
 		void update(void);
 
 	private slots:
+    /*! brief Start the timer resposible to move the scene. This method is called whener the user
+    stay with the cursor at corner in a certain amount of time */
+    void startMoveTimer(void);
 
     //! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
     void moveObjectScene(void);

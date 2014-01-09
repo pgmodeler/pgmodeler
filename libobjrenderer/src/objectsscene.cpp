@@ -31,7 +31,7 @@ bool ObjectsScene::corner_move=true;
 
 ObjectsScene::ObjectsScene(void)
 {
-	moving_objs=false;
+  moving_objs=move_scene=false;
 	this->setBackgroundBrush(grid);
 
 	sel_ini_pnt.setX(NAN);
@@ -50,8 +50,12 @@ ObjectsScene::ObjectsScene(void)
 	this->addItem(rel_line);
 
   scene_move_dx=scene_move_dy=0;
+
   connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
+  connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(startMoveTimer()));
+
   scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
+  corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
@@ -435,22 +439,41 @@ void ObjectsScene::moveObjectScene(void)
   {
     QList<QGraphicsView *> views=this->views();
 
-    if(!views.isEmpty())
+    if(!views.isEmpty() && mouseIsAtCorner())
     {
       QGraphicsView *view=views[0];
       view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
       view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
-
-      if(!mouseIsAtCorner())
-        scene_move_timer.stop();
+      move_scene=true;
+    }
+    else
+    {
+      move_scene=false;
+      scene_move_timer.stop();
+      corner_hover_timer.stop();
     }
   }
 }
 
+void ObjectsScene::startMoveTimer(void)
+{
+  move_scene=true;
+  scene_move_timer.start();
+  corner_hover_timer.stop();
+}
+
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(corner_move && mouseIsAtCorner())
-   scene_move_timer.start();
+  if(corner_move)
+  {
+    if(mouseIsAtCorner())
+    {
+     if(move_scene)
+       scene_move_timer.start();
+     else
+       corner_hover_timer.start();
+    }
+  }
 
   if(event->buttons()==Qt::LeftButton)
   {
@@ -662,5 +685,5 @@ void ObjectsScene::alignObjectsToGrid(void)
 void ObjectsScene::update(void)
 {
 	this->setBackgroundBrush(grid);
-	QGraphicsScene::update(this->sceneRect());
+  QGraphicsScene::update(this->sceneRect());
 }
