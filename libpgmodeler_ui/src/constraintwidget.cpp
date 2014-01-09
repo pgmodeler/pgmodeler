@@ -426,8 +426,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
 		fill_factor_sb->setValue(constr->getFillFactor());
-		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(false)));
-		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(true)));
+    on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
+    on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
 
 		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
 		if(ref_table)
@@ -475,8 +475,8 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));
-		constr->setActionType(ActionType(on_delete_cmb->currentText()),false);
-		constr->setActionType(ActionType(on_update_cmb->currentText()),true);
+    constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DELETE_ACTION);
+    constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UPDATE_ACTION);
 		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(indexing_chk->isChecked())

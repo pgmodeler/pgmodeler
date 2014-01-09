@@ -185,6 +185,10 @@ class Relationship: public BaseRelationship {
 		//! \brief Indicates if the foreign key (for 1-1, 1-n relationships) is deferrable
 		bool deferrable;
 
+    ActionType del_action,
+
+    upd_action;
+
 		//! \brief Deferral type used by the foreign key when this is deferrable
 		DeferralType deferral_type;
 
@@ -301,6 +305,8 @@ class Relationship: public BaseRelationship {
 								 bool src_mdtry=false, bool dst_mdtry=false,
 								 bool identifier=false, bool deferrable=false,
 								 DeferralType deferral_type=DeferralType::immediate,
+                 ActionType fk_del_act=ActionType::null,
+                 ActionType fk_upd_act=ActionType::null,
 								 CopyOptions copy_op = CopyOptions(0,0));
 
 		//! \brief  Connects the relationship making the configuration according to its type
@@ -346,6 +352,10 @@ class Relationship: public BaseRelationship {
 		//! \brief Defines the deferral type for the created foreign key (only for 1-1, 1-n relationships)
 		void setDeferralType(DeferralType defer_type);
 
+    /*! \brief Defines the type of action for generated foreign keys (ON DELETE and ON UPDATE)
+    User must use Constraint::[DELETE_ACTION|UPDATE_ACTION] (only for 1-1, 1-n relationships) */
+    void setActionType(ActionType act_type, unsigned act_id);
+
 		//! \brief Returns the deferral tyep for the created foreign key (only for 1-1, 1-n relationships)
 		DeferralType getDeferralType(void);
 
@@ -366,6 +376,9 @@ class Relationship: public BaseRelationship {
 
 		//! \brief Returns the current copy options
 		CopyOptions getCopyOptions(void);
+
+    //! \brief Retuns the action type (ON DELETE or ON UPDATE) of the generated foreign keys
+    ActionType getActionType(unsigned act_id);
 
 		/*! \brief Returns if the relationship is invalidated in relation to propagation of columns.
 			This method makes a series of verifications for each type of relationship,

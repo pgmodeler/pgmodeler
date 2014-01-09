@@ -136,6 +136,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		grid=dynamic_cast<QGridLayout *>(name_patterns_grp->layout());
 		grid->addWidget(frame, grid->count()+1, 0, 1, 4);
 
+    ActionType::getTypes(list);
+    list.push_front(trUtf8("Default"));
+    del_action_cmb->addItems(list);
+    upd_action_cmb->addItems(list);
+
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -182,6 +187,8 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	deferrable_chk->setChecked(false);
 	deferral_cmb->setCurrentIndex(0);
 	rel_attribs_tbw->setCurrentIndex(0);
+  del_action_cmb->setCurrentIndex(0);
+  upd_action_cmb->setCurrentIndex(0);
 
 	attributes_tab->blockSignals(true);
 	constraints_tab->blockSignals(true);
@@ -191,7 +198,6 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	constraints_tab->blockSignals(false);
 
   ref_tab_hint_lbl->setVisible(true);
-
 	rel_columns_lst->clear();
 
 	if(rel && !rel->isModified())
@@ -206,10 +212,12 @@ void RelationshipWidget::showEvent(QShowEvent *)
      (rel_dep_rb->isChecked() &&
       this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
     parent_form->setMinimumSize(620, 450);
-  else if(rel_gen_rb->isChecked() || rel_nn_rb->isChecked())
+  else if(rel_gen_rb->isChecked())
     parent_form->setMinimumSize(620, 550);
+  else if(rel_nn_rb->isChecked())
+    parent_form->setMinimumSize(620, 610);
   else
-    parent_form->setMinimumSize(620, 650);
+    parent_form->setMinimumSize(620, 660);
 
   parent_form->resize(parent_form->minimumSize());
 }
@@ -323,7 +331,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		vector<Column *> cols;
 		vector<unsigned> col_ids;
-		int count, i;
+    int count, idx;
 		QListWidgetItem *item=nullptr;
 
 		pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
@@ -339,7 +347,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
-		attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+    idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
+    del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+    idx=upd_action_cmb->findText(~aux_rel->getActionType(Constraint::UPDATE_ACTION));
+    upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+    attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 		constraints_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
@@ -356,19 +370,19 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			col_ids=aux_rel->getSpecialPrimaryKeyCols();
 
 			count=cols.size();
-			for(i=0; i < count; i++)
+      for(idx=0; idx < count; idx++)
 			{
-				rel_columns_lst->addItem(cols[i]->getName().toUtf8() +
-																" (" + Utf8String::create(*cols[i]->getType()) + ")");
-				item=rel_columns_lst->item(i);
+        rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
+                                " (" + Utf8String::create(*cols[idx]->getType()) + ")");
+        item=rel_columns_lst->item(idx);
 				item->setCheckState(Qt::Unchecked);
 			}
 
 			count=col_ids.size();
-			for(i=0; i < count; i++)
+      for(idx=0; idx < count; idx++)
 			{
-				if(col_ids[i] < static_cast<unsigned>(rel_columns_lst->count()))
-					rel_columns_lst->item(col_ids[i])->setCheckState(Qt::Checked);
+        if(col_ids[idx] < static_cast<unsigned>(rel_columns_lst->count()))
+          rel_columns_lst->item(col_ids[idx])->setCheckState(Qt::Checked);
 			}
 
 			if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
@@ -417,7 +431,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	table2_mand_chk->setVisible(rel1n);
 
 	identifier_chk->setVisible(rel1n && !base_rel->isSelfRelationship());
-	foreign_key_gb->setVisible(rel1n);
+  foreign_key_gb->setVisible(rel1n || relnn);
 
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
@@ -878,14 +892,21 @@ void RelationshipWidget::applyConfiguration(void)
 				rel->setMandatoryTable(BaseRelationship::DST_TABLE, table2_mand_chk->isChecked());
 
 			if(rel_type==BaseRelationship::RELATIONSHIP_1N ||
-							rel_type==BaseRelationship::RELATIONSHIP_11)
-			{
+         rel_type==BaseRelationship::RELATIONSHIP_11)
 				rel->setIdentifier(identifier_chk->isChecked());
-				rel->setDeferrable(deferrable_chk->isChecked());
-				rel->setDeferralType(DeferralType(deferral_cmb->currentText()));
-			}
 			else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
 				rel->setTableNameRelNN(relnn_tab_name_edt->text());
+
+      if(rel_type==BaseRelationship::RELATIONSHIP_1N ||
+         rel_type==BaseRelationship::RELATIONSHIP_11 ||
+         rel_type==BaseRelationship::RELATIONSHIP_NN)
+      {
+        rel->setDeferrable(deferrable_chk->isChecked());
+        rel->setDeferralType(DeferralType(deferral_cmb->currentText()));
+        rel->setActionType((del_action_cmb->currentIndex()!=0 ? ActionType(del_action_cmb->currentText()) : ActionType::null), Constraint::DELETE_ACTION);
+        rel->setActionType((upd_action_cmb->currentIndex()!=0 ? ActionType(upd_action_cmb->currentText()) : ActionType::null), Constraint::UPDATE_ACTION);
+      }
+
 
 			if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 			{

@@ -41,8 +41,9 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 }
 
 Relationship::Relationship(unsigned rel_type, Table *src_tab,
-													 Table *dst_tab, bool src_mdtry, bool dst_mdtry,
-													 bool identifier,  bool deferrable, DeferralType deferral_type, CopyOptions copy_op) :
+                           Table *dst_tab, bool src_mdtry, bool dst_mdtry,
+                           bool identifier,  bool deferrable, DeferralType deferral_type,
+                           ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
 	try
@@ -72,7 +73,10 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		fk_rel1n=pk_relident=pk_special=uq_rel11=nullptr;
 		this->deferrable=deferrable;
 		this->deferral_type=deferral_type;
-		this->invalidated=true;
+    this->del_action=fk_del_act;
+    this->upd_action=fk_upd_act;
+
+    this->invalidated=true;
 
 		if(rel_type==RELATIONSHIP_11)
 			str_aux=QApplication::translate("Relationship","%1_has_one_%2","");
@@ -372,12 +376,30 @@ bool Relationship::isDeferrable(void)
 void Relationship::setDeferralType(DeferralType defer_type)
 {
 	deferral_type=defer_type;
-	this->invalidated=true;
+  this->invalidated=true;
 }
 
 DeferralType Relationship::getDeferralType(void)
 {
 	return(deferral_type);
+}
+
+void Relationship::setActionType(ActionType act_type, unsigned act_id)
+{
+  if(act_id==Constraint::DELETE_ACTION)
+    this->del_action=act_type;
+  else
+    this->upd_action=act_type;
+
+  this->invalidated=true;
+}
+
+ActionType Relationship::getActionType(unsigned act_id)
+{
+  if(act_id==Constraint::DELETE_ACTION)
+    return(del_action);
+  else
+    return(upd_action);
 }
 
 int Relationship::getObjectIndex(TableObject *object)
@@ -1310,8 +1332,8 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 		}
 
 		//Sets the ON DELETE and ON UPDATE actions for the foreign key
-		fk->setActionType(del_act, false);
-		fk->setActionType(upd_act, true);
+    fk->setActionType(del_act, Constraint::DELETE_ACTION);
+    fk->setActionType(upd_act, Constraint::UPDATE_ACTION);
 
 		/* Gets the primary key from the reference table in order to reference its columns
 		 on the primary key */
@@ -1568,24 +1590,39 @@ void Relationship::addColumnsRel11(void)
 
 	try
 	{
-		ActionType del_action;
+    ActionType del_action, upd_action;
 
 		ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
 		recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
 
-		//Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
-		if((ref_tab==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
-			 (ref_tab==this->dst_table && this->isTableMandatory(DST_TABLE)))
-			del_action=ActionType::restrict;
-		else
-			del_action=ActionType::set_null;
+    if(this->upd_action!=ActionType::null)
+      upd_action=this->upd_action;
+    else
+      upd_action=ActionType::cascade;
+
+    if(this->del_action!=ActionType::null)
+      del_action=this->del_action;
+    else
+    {
+      if(identifier)
+        del_action=ActionType::cascade;
+      else
+      {
+        //Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
+        if((ref_tab==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
+           (ref_tab==this->dst_table && this->isTableMandatory(DST_TABLE)))
+          del_action=ActionType::restrict;
+        else
+          del_action=ActionType::set_null;
+      }
+    }
 
 		if(isSelfRelationship())
 		{
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
 			copyColumns(ref_tab, recv_tab, false);
-			addForeignKey(ref_tab, recv_tab, del_action, ActionType::cascade);
+      addForeignKey(ref_tab, recv_tab, del_action, upd_action);
 			addUniqueKey(recv_tab);
 		}
 		else
@@ -1611,14 +1648,10 @@ void Relationship::addColumnsRel11(void)
 
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
+      addForeignKey(ref_tab, recv_tab, del_action, upd_action);
 
-			if(identifier)
-				addForeignKey(ref_tab, recv_tab, ActionType::cascade, ActionType::cascade);
-			else
-			{
-				addForeignKey(ref_tab, recv_tab, del_action,  ActionType::cascade);
-				addUniqueKey(recv_tab);
-			}
+      if(!identifier)
+        addUniqueKey(recv_tab);
 		}
 	}
 	catch(Exception &e)
@@ -1635,38 +1668,48 @@ void Relationship::addColumnsRel1n(void)
 {
 	Table *ref_tab=nullptr, *recv_tab=nullptr;
 	bool not_null=false;
-	ActionType del_action=ActionType::set_null, upd_action=ActionType::cascade;
+  ActionType del_action=ActionType::set_null, upd_action;
 
 	try
 	{
 		recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
 		ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
 
-		/* Case the relationship isn't identifier and the source table is mandatory participation
-		 the columns of the foreign key must not accept null values and the ON DELETE and ON UPDATE
-		 action will be RESTRICT */
-		if(!identifier && src_mandatory)
-		{
-			if(!deferrable)
-				del_action=ActionType::restrict;
-			else
-				del_action=ActionType::no_action;
+    if(this->upd_action!=ActionType::null)
+      upd_action=this->upd_action;
+    else
+      upd_action=ActionType::cascade;
 
-			not_null=true;
-		}
+    if(this->del_action!=ActionType::null)
+      del_action=this->del_action;
+    else
+    {
+     /* Case the relationship isn't identifier and the source table is mandatory participation
+     the columns of the foreign key must not accept null values and the ON DELETE and ON UPDATE
+     action will be RESTRICT */
+      if(!identifier && src_mandatory)
+      {
+        if(!deferrable)
+          del_action=ActionType::restrict;
+        else
+          del_action=ActionType::no_action;
 
-		/* Case the relationship is identifier configures the ON DELETE anda ON UPDATE action
-		 on the foreign key as CASCADE because the weak entity exists only if the strong
-		 entity also exists, this means if the strong entity tuple is removed the weak entity
-		 tuple is also removed */
-		else if(identifier)
-			del_action=ActionType::cascade;
+        not_null=true;
+      }
+
+      /* Case the relationship is identifier configures the ON DELETE anda ON UPDATE action
+      on the foreign key as CASCADE because the weak entity exists only if the strong
+      entity also exists, this means if the strong entity tuple is removed the weak entity
+      tuple is also removed */
+      else if(identifier)
+        del_action=ActionType::cascade;
+    }
 
 		if(isSelfRelationship())
 		{
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
-		copyColumns(ref_tab, recv_tab, not_null);
+      copyColumns(ref_tab, recv_tab, not_null);
 			addForeignKey(ref_tab, recv_tab, del_action, upd_action);
 		}
 		else
@@ -1702,14 +1745,24 @@ void Relationship::addColumnsRelNn(void)
 	Table *tab=nullptr, *tab1=nullptr;
 	Constraint *pk_tabnn=nullptr;
 	bool src_not_null=false, dst_not_null=false;
-	ActionType acao_del_orig=ActionType::restrict, acao_del_dest=ActionType::restrict,
-			acao_upd_orig=ActionType::cascade, acao_upd_dest=ActionType::cascade;
+  ActionType src_del_act=ActionType::restrict, dst_del_act=ActionType::restrict,
+      src_upd_act=ActionType::cascade, dst_upd_act=ActionType::cascade;
 	unsigned i, count;
 
 	try
 	{
 		tab=dynamic_cast<Table *>(src_table);
 		tab1=dynamic_cast<Table *>(dst_table);
+
+    if(this->upd_action!=ActionType::null)
+      src_upd_act=dst_upd_act=this->upd_action;
+    else
+      src_upd_act=dst_upd_act=ActionType::cascade;
+
+    if(this->del_action!=ActionType::null)
+      src_del_act=dst_del_act=this->del_action;
+    else
+      src_del_act=dst_del_act=ActionType::restrict;
 
 		/* Copy the columns from the primary keys of the source and destination tables
 		 to the table that represents the n-n relationship */
@@ -1731,8 +1784,8 @@ void Relationship::addColumnsRelNn(void)
 		addAttributes(table_relnn);
 		addConstraints(table_relnn);
 
-		addForeignKey(tab, table_relnn, acao_del_orig, acao_upd_orig);
-		addForeignKey(tab1, table_relnn, acao_del_dest, acao_upd_dest);
+    addForeignKey(tab, table_relnn, src_del_act, src_upd_act);
+    addForeignKey(tab1, table_relnn, dst_del_act, dst_upd_act);
 	}
 	catch(Exception &e)
 	{
@@ -2354,6 +2407,9 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
 		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
+    attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
+    attributes[ParsersAttributes::DEL_ACTION]=~del_action;
+
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
 		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
 		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
@@ -2452,5 +2508,7 @@ void Relationship::operator = (Relationship &rel)
 	this->col_indexes=rel.col_indexes;
 	this->constr_indexes=rel.constr_indexes;
 	this->attrib_indexes=rel.attrib_indexes;
+  this->upd_action=rel.upd_action;
+  this->del_action=rel.del_action;
 }
 
