@@ -461,7 +461,13 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Foreign key</string>
+          <string>Custom FK Settings</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
@@ -479,6 +485,34 @@
           <property name="spacing">
            <number>6</number>
           </property>
+          <item row="0" column="2">
+           <widget class="QLabel" name="deferral_lbl">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Deferral:</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="deferrable_lbl">
             <property name="sizePolicy">
@@ -529,35 +563,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="deferral_lbl">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Deferral:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
+          <item row="0" column="3">
            <widget class="QComboBox" name="deferral_cmb">
             <property name="enabled">
              <bool>false</bool>
@@ -584,6 +590,26 @@
              <enum>QComboBox::AdjustToContents</enum>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="on_delete_lbl">
+            <property name="text">
+             <string>ON DELETE:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="on_update_lbl">
+            <property name="text">
+             <string>ON UPDATE:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="del_action_cmb"/>
+          </item>
+          <item row="1" column="3">
+           <widget class="QComboBox" name="upd_action_cmb"/>
           </item>
          </layout>
         </widget>
@@ -1357,7 +1383,6 @@
   <tabstop>storage_chk</tabstop>
   <tabstop>comments_chk</tabstop>
   <tabstop>deferrable_chk</tabstop>
-  <tabstop>deferral_cmb</tabstop>
   <tabstop>src_col_pattern_txt</tabstop>
   <tabstop>dst_col_pattern_txt</tabstop>
   <tabstop>src_fk_pattern_txt</tabstop>

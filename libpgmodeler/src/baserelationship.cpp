@@ -105,6 +105,8 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::COL_INDEXES]="";
 	attributes[ParsersAttributes::CONSTR_INDEXES]="";
 	attributes[ParsersAttributes::ATTRIB_INDEXES]="";
+  attributes[ParsersAttributes::UPD_ACTION]="";
+  attributes[ParsersAttributes::DEL_ACTION]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)

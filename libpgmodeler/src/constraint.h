@@ -90,6 +90,9 @@ class Constraint: public TableObject{
 														 referenced table primary key (only for foreign keys) */
 														 REFERENCED_COLS=1;
 
+    static constexpr unsigned DELETE_ACTION=0,
+                             UPDATE_ACTION=1;
+
 		Constraint(void);
 		~Constraint(void);
 
@@ -103,10 +106,8 @@ class Constraint: public TableObject{
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
 
-		/*! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE).
-		 If the parameter 'upd' is set, it will be configured the action on update
-		 otherwise the action on delete is configured. (only for foreign key) */
-		void setActionType(ActionType action_type, bool upd);
+    //! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
+    void setActionType(ActionType action_type, unsigned act_id);
 
 		//! \brief Defines the deferral type for the constraint (only for foreign key)
 		void setDeferralType(DeferralType deferral_type);
@@ -138,9 +139,8 @@ class Constraint: public TableObject{
 		//! \brief Returns the constraint fill factor
 		unsigned getFillFactor(void);
 
-		/*! \brief Retuns the action type. Using upd = true is returned the ON UPDATE
-		 action otherwise the ON DELETE action is returned */
-		ActionType getActionType(bool upd);
+    //! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
+    ActionType getActionType(unsigned act_id);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */

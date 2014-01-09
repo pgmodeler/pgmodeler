@@ -450,7 +450,6 @@ void ObjectsScene::moveObjectScene(void)
     {
       move_scene=false;
       scene_move_timer.stop();
-      corner_hover_timer.stop();
     }
   }
 }
@@ -472,6 +471,12 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
        scene_move_timer.start();
      else
        corner_hover_timer.start();
+    }
+    else
+    {
+      corner_hover_timer.stop();
+      scene_move_timer.stop();
+      move_scene=false;
     }
   }
 

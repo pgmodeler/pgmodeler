@@ -4353,10 +4353,10 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
 
 			if(!attribs[ParsersAttributes::DEL_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], false);
+        constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], Constraint::DELETE_ACTION);
 
 			if(!attribs[ParsersAttributes::UPD_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], true);
+        constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], Constraint::UPDATE_ACTION);
 
 			ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
 
@@ -5281,6 +5281,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseTable *tables[2]={nullptr, nullptr};
     bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled;
 	DeferralType defer_type;
+  ActionType del_action, upd_action;
 	unsigned rel_type=0, i;
 	ObjectType table_types[2]={OBJ_VIEW, OBJ_TABLE}, obj_rel_type;
 	QString str_aux, elem,
@@ -5388,12 +5389,14 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					count=sizeof(idx_type)/sizeof(unsigned),
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
-            sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
-            src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
+      sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
+      src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
 			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
 			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
 			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
-			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
+			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);      
+      del_action=ActionType(attribs[ParsersAttributes::DEL_ACTION]);
+      upd_action=ActionType(attribs[ParsersAttributes::UPD_ACTION]);
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
 				rel_type=BaseRelationship::RELATIONSHIP_11;
@@ -5410,11 +5413,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					dynamic_cast<Table *>(tables[0]),
 					dynamic_cast<Table *>(tables[1]),
 					src_mand, dst_mand,
-					identifier, deferrable, defer_type,
+          identifier, deferrable, defer_type, del_action, upd_action,
 					CopyOptions(attribs[ParsersAttributes::COPY_MODE].toUInt(),
 					attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
 
-            rel->setSQLDisabled(sql_disabled);
+      rel->setSQLDisabled(sql_disabled);
 
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);

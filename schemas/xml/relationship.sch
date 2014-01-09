@@ -58,6 +58,15 @@ $br $tb [ dst-table=] "@{dst-table}"
    $tb $sp deferrable="true"
    $sp defer-type="@{defer-type}"
   %end
+
+  %if @{upd-action} %then
+   $br $tb upd-action= "@{upd-action}"
+  %end
+
+  %if @{del-action} %then
+   $br $tb del-action= "@{del-action}"
+  %end
+
 %else
   %if @{copy-mode} %then
    $tb copy-mode="@{copy-mode}" $sp copy-options="@{copy-options}"
