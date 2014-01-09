@@ -33,6 +33,7 @@ View::View(void) : BaseTable()
   attributes[ParsersAttributes::MATERIALIZED]="";
   attributes[ParsersAttributes::RECURSIVE]="";
   attributes[ParsersAttributes::WITH_NO_DATA]="";
+  attributes[ParsersAttributes::COLUMNS]="";
 }
 
 View::~View(void)
@@ -176,7 +177,35 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 	else if(sql_type==Reference::SQL_REFER_WHERE)
 		return(&exp_where);
 	else
-		return(nullptr);
+    return(nullptr);
+}
+
+QStringList View::getColumnsList(void)
+{
+  QStringList col_list;
+  unsigned i=0, count=exp_select.size(), col_id=0, col_count=0;
+  Table *tab=nullptr;
+
+  for(i=0; i < count; i++)
+  {
+    if(!references[i].getColumn())
+    {
+      tab=references[i].getTable();
+      col_count=tab->getColumnCount();
+
+      for(col_id=0; col_id < col_count; col_id++)
+        col_list.push_back(tab->getColumn(col_id)->getName(true));
+    }
+    else
+    {
+      if(!references[i].getColumnAlias().isEmpty())
+        col_list.push_back(references[i].getColumnAlias());
+      else
+        col_list.push_back(references[i].getColumn()->getName(true));
+    }
+  }
+
+  return(col_list);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
@@ -509,6 +538,10 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
   attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
   attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
+
+  attributes[ParsersAttributes::COLUMNS]="";
+  if(recursive)
+    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		setDeclarationAttribute();

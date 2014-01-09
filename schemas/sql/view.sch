@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-[CREATE OR REPLACE ]
+[CREATE ]
 
 %if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
   %if @{recursive} %then
@@ -17,10 +17,18 @@
   %end
 %end
 
-VIEW $sp @{name} $br
+VIEW $sp @{name}
 
-%if @{materialized} %and @{tablespace} %then
- TABLESPACE $sp @{tablespace} $br
+%if @{columns} %then
+[ (] @{columns} [)]
+%end
+
+$br
+
+%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+  %if @{materialized} %and @{tablespace} %then
+    TABLESPACE $sp @{tablespace} $br
+  %end
 %end
 
 [AS ]

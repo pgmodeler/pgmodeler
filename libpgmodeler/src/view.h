@@ -69,6 +69,11 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
+    /*! \brief Returns a list of deduced names for view's colums for recursive views.
+    The names are retrieved, first, from columns aliases and lastly from table's columns
+    when TABLE.* syntax is used */
+    QStringList getColumnsList(void);
+
 	public:
 		View(void);
 		~View(void);

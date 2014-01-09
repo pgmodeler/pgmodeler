@@ -6,13 +6,20 @@
   [SELECT vw.oid, vw.relname AS name FROM pg_class AS vw ]
 
   %if @{schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace
-      WHERE vw.relkind='v' AND ns.nspname= ] '@{schema}'
-  %else
+    [ LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace ]
+  %end
+      
+  %if @{pgsql90} %or @{pgsql91} %or @{pgsql92} %then
     [ WHERE vw.relkind='v']
+  %else
+    [ WHERE vw.relkind IN ('v','m') ]
+  %end
+  
+  %if @{schema} %then
+    [ AND ns.nspname= ] '@{schema}'
   %end
 
-   %if @{last-sys-oid} %then
+  %if @{last-sys-oid} %then
     [ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
@@ -22,14 +29,25 @@
 
 %else
     %if @{attribs} %then
-      [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
-	      vw.relacl AS permission, _vw1.definition, ]
+      [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner, vw.reltablespace AS tablespace,
+	      vw.relacl AS permission, pg_get_viewdef(vw.oid) AS definition, ]  
+	      
+      [ CASE
+	  WHEN vw.relkind='m' THEN TRUE
+	  ELSE FALSE
+        END AS materialized_bool, ]   
+        
 
       (@{comment}) [ AS comment ]
 
       [ FROM pg_class AS vw
-	LEFT JOIN pg_views AS _vw1 ON _vw1.viewname=vw.relname
-	WHERE vw.relkind='v' ]
+	LEFT JOIN pg_namespace AS ns ON ns.oid = vw.relnamespace ]
+	
+      %if @{pgsql90} %or @{pgsql91} %or @{pgsql92} %then
+       [ WHERE vw.relkind='v']
+      %else
+       [ WHERE vw.relkind IN ('v','m') ]
+      %end
 
        %if @{last-sys-oid} %then
 	[ AND vw.oid ] @{oid-filter-op} $sp @{last-sys-oid}
@@ -50,7 +68,7 @@
 	  %end
 
 	  %if @{schema} %then
-	   [ _vw1.schemaname= ] '@{schema}'
+	   [ ns.nspname= ] '@{schema}'
 	  %end
        %end
     %end
