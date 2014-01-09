@@ -31,6 +31,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 		QGridLayout *grid=nullptr;
 
+    map<QString, vector<QWidget *> > fields_map;
+    QFrame *frame=nullptr;
+
 		Ui_ViewWidget::setupUi(this);
 
 		operation_count=0;
@@ -107,7 +110,16 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
+    tablespace_sel->setEnabled(false);
+    tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, OBJ_VIEW);
+
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(recursive_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(materialized_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+    frame=generateVersionWarningFrame(fields_map);
+    view_grid->addWidget(frame, view_grid->count()+1, 0, 1, 4);
+    frame->setParent(this);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
@@ -124,9 +136,19 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
 		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_edt, SLOT(setDisabled(bool)));
 		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_lbl, SLOT(setDisabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_sel, SLOT(setEnabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_lbl, SLOT(setEnabled(bool)));
 
+    connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
+    connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview(void)));
+    connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
+    connect(tablespace_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
+    connect(tablespace_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
+    connect(schema_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
+    connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
 
-		parent_form->setMinimumSize(650, 630);
+    parent_form->setMinimumSize(650, 700);
 		selectReferenceType();
 	}
 	catch(Exception &e)
@@ -587,7 +609,12 @@ void ViewWidget::updateCodePreview(void)
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
+      aux_view.setTablespace(tablespace_sel->getSelectedObject());
+
 			aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
+      aux_view.setMaterialized(materialized_rb->isChecked());
+      aux_view.setRecursive(recursive_rb->isChecked());
+      aux_view.setWithNoData(with_no_data_chk->isChecked());
 
 			count=references_tab->getRowCount();
 			for(i=0; i < count; i++)
@@ -665,6 +692,10 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
 
+  materialized_rb->setChecked(view->isMaterialized());
+  recursive_rb->setChecked(view->isRecursive());
+  with_no_data_chk->setChecked(view->isWithNoData());
+
 	expression_cp->configureCompletion(model, expression_hl);
 	cte_expression_cp->configureCompletion(model, cte_expression_hl);
 
@@ -726,6 +757,9 @@ void ViewWidget::applyConfiguration(void)
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
 		view->removeReferences();
+    view->setMaterialized(materialized_rb->isChecked());
+    view->setRecursive(recursive_rb->isChecked());
+    view->setWithNoData(with_no_data_chk->isChecked());
 		view->setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 
 		for(unsigned i=0; i < references_tab->getRowCount(); i++)

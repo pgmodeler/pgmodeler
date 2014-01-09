@@ -404,7 +404,10 @@ namespace ParsersAttributes {
 	RANGE_ATTRIBS="range-attribs",
   SEARCH_PATH="search-path",
   CANVAS_CORNER_MOVE="canvas-corner-move",
-  PGMODELER_VERSION="pgmodeler-ver";
+  PGMODELER_VERSION="pgmodeler-ver",
+  MATERIALIZED="materialized",
+  RECURSIVE="recursive",
+  WITH_NO_DATA="with-no-data";
 }
 
 #endif

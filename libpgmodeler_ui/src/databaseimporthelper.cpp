@@ -1450,7 +1450,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
 																																				 pos_attrib, SchemaParser::XML_DEFINITION);
 
-		ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
+    ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
 		ref.setDefinitionExpression(true);
 		attribs[ParsersAttributes::REFERENCES]=ref.getXMLDefinition();
 

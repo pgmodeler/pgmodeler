@@ -35,6 +35,50 @@
    <property name="spacing">
     <number>6</number>
    </property>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="options_gb">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="with_oids_chk">
+        <property name="text">
+         <string>With OID</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="gen_alter_cmds_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Generate ALTER for columns/constraints</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
@@ -70,29 +114,6 @@
        <string>Tables</string>
       </attribute>
      </widget>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QCheckBox" name="with_oids_chk">
-     <property name="text">
-      <string>With OID</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="gen_alter_cmds_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Generate ALTER for columns/constraints</string>
-     </property>
     </widget>
    </item>
   </layout>
