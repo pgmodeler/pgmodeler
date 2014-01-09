@@ -21,6 +21,7 @@
 View::View(void) : BaseTable()
 {
 	obj_type=OBJ_VIEW;
+  materialized=recursive=with_no_data=false;
 	attributes[ParsersAttributes::DECLARATION]="";
 	attributes[ParsersAttributes::REFERENCES]="";
 	attributes[ParsersAttributes::SELECT_EXP]="";
@@ -29,6 +30,9 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::CTE_EXPRESSION]="";
 	attributes[ParsersAttributes::TRIGGERS]="";
 	attributes[ParsersAttributes::RULES]="";
+  attributes[ParsersAttributes::MATERIALIZED]="";
+  attributes[ParsersAttributes::RECURSIVE]="";
+  attributes[ParsersAttributes::WITH_NO_DATA]="";
 }
 
 View::~View(void)
@@ -83,7 +87,39 @@ void View::setProtected(bool value)
 	}
 
 	//Protects the view itself
-	BaseGraphicObject::setProtected(value);
+  BaseGraphicObject::setProtected(value);
+}
+
+void View::setMaterialized(bool value)
+{
+  materialized=value;
+  if(materialized) recursive=false;
+}
+
+void View::setRecursive(bool value)
+{
+  recursive=value;
+  if(recursive) materialized=false;
+}
+
+void View::setWithNoData(bool value)
+{
+ with_no_data=(materialized ? value : false);
+}
+
+bool View::isMaterialized(void)
+{
+  return(materialized);
+}
+
+bool View::isRecursive(void)
+{
+  return(recursive);
+}
+
+bool View::isWithNoData(void)
+{
+  return(with_no_data);
 }
 
 void View::setCommomTableExpression(const QString &expr)
@@ -470,6 +506,9 @@ QString View::getCodeDefinition(unsigned def_type)
 	unsigned count, i;
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
+  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
+  attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
+  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		setDeclarationAttribute();
@@ -789,6 +828,9 @@ void View::operator = (View &view)
 	this->exp_from=view.exp_from;
 	this->exp_where=view.exp_where;
 	this->cte_expression=view.cte_expression;
+  this->materialized=view.materialized;
+  this->recursive=view.recursive;
+  this->with_no_data=view.with_no_data;
 }
 
 vector<BaseObject *> View::getObjects(void)

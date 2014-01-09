@@ -5002,6 +5002,11 @@ View *DatabaseModel::createView(void)
 		view=new View;
 		setBasicAttributes(view);
 
+    XMLParser::getElementAttributes(attribs);
+    view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::_TRUE_);
+    view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
+    view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
+
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
@@ -5124,8 +5129,8 @@ View *DatabaseModel::createView(void)
 		/** Special case for refereces used as view definition **
 
 			If the flag 'refs_in_expr' isn't set indicates that the user defined a reference
-			but no used to define the view declaration, this way pgModeler will consider these
-			references as View definition expressions and will force the insertion them as
+      but has no used to define the view declaration, this way pgModeler will consider these
+      references as View definition expressions and will force the insertion of them as
 			Reference::SQL_VIEW_DEFINITION.
 
 		This process can raise errors because if the user defined more than one reference the view

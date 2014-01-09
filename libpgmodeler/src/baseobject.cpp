@@ -371,6 +371,7 @@ bool BaseObject::acceptsTablespace(ObjectType obj_type)
 {
 	return(obj_type==OBJ_INDEX ||
 				 obj_type==OBJ_TABLE ||
+         obj_type==OBJ_VIEW ||
 				 obj_type==OBJ_CONSTRAINT ||
 				 obj_type==OBJ_DATABASE);
 }
