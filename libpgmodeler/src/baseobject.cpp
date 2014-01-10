@@ -194,22 +194,20 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 bool BaseObject::isValidName(const QString &name)
 {
-	int len;
-	QByteArray raw_name;
-
-	raw_name.append(name);
-	len=raw_name.size();
-
 	/* If the name is greater than the maximum size accepted
 		by PostgreSQL (currently 63 bytes) or it is empty
 		the name is invalid */
-	if(raw_name.isEmpty() || len > OBJECT_NAME_MAX_LENGTH)
+  if(name.isEmpty() || name.size() > OBJECT_NAME_MAX_LENGTH)
 		return(false);
 	else
 	{
-		int i=0;
+    int i=0, len;
 		bool valid=true;
 		unsigned char chr='\0', chr1='\0', chr2='\0';
+    QByteArray raw_name;
+
+    raw_name.append(name);
+    len=raw_name.size();
 
 		chr=raw_name[0];
 		if(len > 1)
