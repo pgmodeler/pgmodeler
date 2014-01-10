@@ -45,13 +45,27 @@ Change Log
 
 v0.7.0-pre
 ------
-<em><strong>NOTE:</strong> This is a snapshot of the development brach and until an alpha release all changes will be listed in this entry.</em><br/>
+<em><strong>NOTE:</strong> This is a snapshot of the development branch and until an alpha release all changes will be listed in this entry.</em><br/>
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: January 03, 2014</em>
+<em>Release date: January 10, 2014</em>
 
+* [New] Added support for materialized and recursive views (PostgreSQL 9.3 feature).
+* [New] Added pgModeler version information on generated sql scripts as well .dbm files for debugging purpose.
+* [New] Added support to custom delete/update actions for relationship generated foreign keys.
+* [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Relationship dialog enhanced. Now participant tables are described in what role they make part.
+* [Change] Minor improvement on model export process.
+* [Change] Minor improvement on model validation widget.
+* [Change] Minor improvement on crash handler report generation message. Full path to crash file is now shown.
+* [Change] Improved the message displayed when user try to save an invalidated model.
+* [Change] Minor adjustment on model export dialog size.
+* [Change] Minor improvement on model overview widget.
+* [Change] Minor adjustments on window title buttons for model export and database import forms.
+* [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
 * [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Fixed the object name validation. pgModeler now accepts spaces within names.
 * [Fix] Fixed the function editing form resizing.
 * [Fix] Fixed a bug that was not loading "sql disabled" state for relationships.
 * [Fix] Fixed incorrect behavior of "Zoom In" action on MacOSX.
