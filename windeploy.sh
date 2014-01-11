@@ -14,38 +14,22 @@ LOG=windeploy.log
 DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep '[0-9].[0-9].[0-9]\(.\)*'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
+BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-windows"
+WITH_BUILD_NUM='-with-build-num'
+
+if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
+  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+fi
+
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
 ISSFILE=pgmodeler.iss
 QT_CONF=build/qt.conf
 DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
-
-#Dependency dlls copied to build dir
-#DEP_LIBS="$QMAKE_ROOT/D3DCompiler_43.dll \
-#		  $QMAKE_ROOT/iconv.dll \
-#		  $QMAKE_ROOT/icudt49.dll \
-#		  $QMAKE_ROOT/icuin49.dll \
-#		  $QMAKE_ROOT/icuuc49.dll \
-#		  $QMAKE_ROOT/libEGL.dll \
-#		  $QMAKE_ROOT/libgcc_s_sjlj-1.dll \
-#		  $QMAKE_ROOT/libGLESv2.dll \
-#		  $QMAKE_ROOT/libstdc++-6.dll \
-#		  $QMAKE_ROOT/libwinpthread-1.dll \
-#		  $QMAKE_ROOT/libxml2.dll \
-#		  $QMAKE_ROOT/iconv.dll \
-#		  $QMAKE_ROOT/Qt5Core.dll \
-#		  $QMAKE_ROOT/Qt5Gui.dll \
-#		  $QMAKE_ROOT/Qt5Widgets.dll \
-#		  $QMAKE_ROOT/Qt5PrintSupport.dll \
-#		  $PGSQL_ROOT/libpq.dll \
-#		  $PGSQL_ROOT/libintl.dll \
-#		  $PGSQL_ROOT/libeay32.dll \
-#		  $PGSQL_ROOT/ssleay32.dll \
-#		  $PGSQL_ROOT/zlib1.dll"
-		  
+  
 DEP_LIBS="$QMAKE_ROOT/iconv.dll \
 		  $QMAKE_ROOT/icudt51.dll \
 		  $QMAKE_ROOT/icuin51.dll \
