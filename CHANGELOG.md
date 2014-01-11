@@ -5,14 +5,16 @@ v0.7.0-pre
 ------
 <em><strong>NOTE:</strong> This is a snapshot of the development branch and until an alpha release all changes will be listed in this entry.</em><br/>
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: January 10, 2014</em>
+<em>Release date: January 11, 2014</em>
 
+* [New] Added a build number on about dialog. This number is the compilation date in format yyyymmdd.
 * [New] Added support for materialized and recursive views (PostgreSQL 9.3 feature).
 * [New] Added pgModeler version information on generated sql scripts as well .dbm files for debugging purpose.
 * [New] Added support to custom delete/update actions for relationship generated foreign keys.
 * [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Minor changes on deploy scripts on all platforms. The parameter '-with-build-num' was introduced in order to generate a package with build number.
 * [Change] Relationship dialog enhanced. Now participant tables are described in what role they make part.
 * [Change] Minor improvement on model export process.
 * [Change] Minor improvement on model validation widget.
