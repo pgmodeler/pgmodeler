@@ -7,6 +7,8 @@ int main(int, char **)
 {
 	try
 	{
+    QString dt=__DATE__;
+    QString fmt=QDate::fromString(__DATE__, "MMM dd yyyy").toString("yyyyMMdd");
 
 		return(0);
 	}

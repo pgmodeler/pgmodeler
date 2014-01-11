@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <QString>
 #include <QDir>
+#include <QDate>
 
 namespace GlobalAttributes {
 
@@ -67,13 +68,14 @@ namespace GlobalAttributes {
 			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("pgmodeler-ch.exe"));
 		#endif
 	#else
-		//For MacOSX the crash handler path is fixed (inside bundle)
+        //For MacOSX the crash handler path is fixed (inside bundle)
         CRASH_HANDLER_PATH=QString("startapp pgmodeler-ch");
 	#endif
 
 	static const QString
   PGMODELER_VERSION="0.7.0-pre",
   PGMODELER_VER_CODENAME="Brave Mastodon",
+  PGMODELER_BUILD_NUMBER=QDate::fromString(__DATE__, "MMM dd yyyy").toString("yyyyMMdd"),
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",

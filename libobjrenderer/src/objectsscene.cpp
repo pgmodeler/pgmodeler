@@ -52,7 +52,7 @@ ObjectsScene::ObjectsScene(void)
   scene_move_dx=scene_move_dy=0;
 
   connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
-  connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(startMoveTimer()));
+  connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
 
   scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
   corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
@@ -61,7 +61,7 @@ ObjectsScene::ObjectsScene(void)
 ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
-	QList<QGraphicsItem *> items;//, rem_items;
+  QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
 													 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
@@ -454,34 +454,39 @@ void ObjectsScene::moveObjectScene(void)
   }
 }
 
-void ObjectsScene::startMoveTimer(void)
+void ObjectsScene::enableSceneMove(bool value)
 {
-  move_scene=true;
+  if(value)
+  {
   scene_move_timer.start();
   corner_hover_timer.stop();
+  }
+  else
+  {
+    corner_hover_timer.stop();
+    scene_move_timer.stop();
+  }
+
+  move_scene=value;
 }
 
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(corner_move)
+  if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
   {
-    if(mouseIsAtCorner())
+    if(corner_move)
     {
-     if(move_scene)
-       scene_move_timer.start();
-     else
-       corner_hover_timer.start();
+      if(mouseIsAtCorner())
+      {
+       if(move_scene)
+         scene_move_timer.start();
+       else
+         corner_hover_timer.start();
+      }
+      else
+        enableSceneMove(false);
     }
-    else
-    {
-      corner_hover_timer.stop();
-      scene_move_timer.stop();
-      move_scene=false;
-    }
-  }
 
-  if(event->buttons()==Qt::LeftButton)
-  {
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
@@ -517,6 +522,10 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseReleaseEvent(event);
+
+  if(corner_move && event->button()==Qt::LeftButton)
+    enableSceneMove(false);
+
 
 	//If there is selected object and the user ends the object moviment
 	if(!this->selectedItems().isEmpty() && moving_objs &&

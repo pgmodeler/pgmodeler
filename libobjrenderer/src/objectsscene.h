@@ -129,9 +129,9 @@ class ObjectsScene: public QGraphicsScene {
 		void update(void);
 
 	private slots:
-    /*! brief Start the timer resposible to move the scene. This method is called whener the user
-    stay with the cursor at corner in a certain amount of time */
-    void startMoveTimer(void);
+    /*! brief Start/stop the timer resposible to move the scene. This method is called with true param
+    whenever the user stay with the cursor at corner in a certain amount of time */
+    void enableSceneMove(bool value=true);
 
     //! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
     void moveObjectScene(void);

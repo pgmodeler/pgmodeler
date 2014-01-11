@@ -416,8 +416,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 reference is found */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
 
-		//! \brief Marks all the graphical objects as modified forcing their redraw
-		void setObjectsModified(void);
+    /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
+     graphical objects to be marked */
+    void setObjectsModified(vector<ObjectType> types={});
 
 		/*! \brief Updates the user type names which belongs to the passed schema. This method must be executed whenever
 		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally

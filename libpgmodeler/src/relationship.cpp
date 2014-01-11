@@ -1693,8 +1693,6 @@ void Relationship::addColumnsRel1n(void)
           del_action=ActionType::restrict;
         else
           del_action=ActionType::no_action;
-
-        not_null=true;
       }
 
       /* Case the relationship is identifier configures the ON DELETE anda ON UPDATE action
@@ -1704,6 +1702,9 @@ void Relationship::addColumnsRel1n(void)
       else if(identifier)
         del_action=ActionType::cascade;
     }
+
+    if(!identifier && src_mandatory)
+      not_null=true;
 
 		if(isSelfRelationship())
 		{

@@ -2710,6 +2710,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			loading_model=false;
 			this->validateRelationships();
 			this->setInvalidated(false);
+      this->setObjectsModified({OBJ_RELATIONSHIP, BASE_RELATIONSHIP});
 		}
 		catch(Exception &e)
 		{
@@ -7615,7 +7616,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 	}
 }
 
-void DatabaseModel::setObjectsModified(void)
+void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 {
 	ObjectType obj_types[]={OBJ_TABLE, OBJ_VIEW,
 													OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
@@ -7624,31 +7625,34 @@ void DatabaseModel::setObjectsModified(void)
 	vector<BaseObject *> *obj_list=nullptr;
 	Textbox *label=nullptr;
 	BaseRelationship *rel=nullptr;
-	unsigned i, i1;
+  unsigned i, i1, count=sizeof(obj_types)/sizeof(ObjectType);
 
-	for(i=0; i < 6; i++)
+  for(i=0; i < count; i++)
 	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
+    if(types.empty() || find(types.begin(), types.end(), obj_types[i])!=types.end())
+    {
+      obj_list=getObjectList(obj_types[i]);
+      itr=obj_list->begin();
+      itr_end=obj_list->end();
 
-		while(itr!=itr_end)
-		{
-			dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
+      while(itr!=itr_end)
+      {
+        dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
 
-			//For relationships is needed to set the labels as modified too
-			if(obj_types[i]==OBJ_RELATIONSHIP || obj_types[i]==BASE_RELATIONSHIP)
-			{
-				rel=dynamic_cast<BaseRelationship *>(*itr);
-				for(i1=0; i1 < 3; i1++)
-				{
-					label=rel->getLabel(i1);
-					if(label) label->setModified(true);
-				}
-			}
+        //For relationships is needed to set the labels as modified too
+        if(obj_types[i]==OBJ_RELATIONSHIP || obj_types[i]==BASE_RELATIONSHIP)
+        {
+          rel=dynamic_cast<BaseRelationship *>(*itr);
+          for(i1=0; i1 < 3; i1++)
+          {
+            label=rel->getLabel(i1);
+            if(label) label->setModified(true);
+          }
+        }
 
-			itr++;
-		}
+        itr++;
+      }
+    }
 	}
 }
 
