@@ -13,7 +13,7 @@
     %if @{attribs} %then
 	[ SELECT  rl1.oid, rolname AS name, rolsuper AS superuser_bool, rolinherit AS inherit_bool,
 		  rolcreaterole AS createrole_bool, rolcreatedb AS createdb_bool, rolcanlogin AS login_bool,
-		  rolconnlimit AS connlimit, TRUE AS encrypted_bool,
+      rolconnlimit AS connlimit, TRUE AS encrypted_bool, rolpassword AS password,
 
 	  CASE
 	   WHEN rolvaliduntil = 'infinity' THEN NULL
@@ -26,9 +26,7 @@
 	  [ NULL AS replication_bool, ]
 	%end
 
-	[   (SELECT passwd FROM pg_shadow WHERE usesysid=oid) AS password,
-
-	    (SELECT array_agg(rl.oid) AS member_roles FROM pg_auth_members AS am
+  [   (SELECT array_agg(rl.oid) AS member_roles FROM pg_auth_members AS am
 	     LEFT JOIN pg_roles AS rl ON rl.oid=am.member
 	     WHERE am.roleid=rl1.oid AND am.admin_option IS FALSE),
 
