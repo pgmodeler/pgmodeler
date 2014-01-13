@@ -91,17 +91,14 @@ macx:LIB_EXT = dylib
 SUBDIRS = libutils \
           libparsers \
           libpgmodeler \
-	  libpgconnector \
+          libpgconnector \
           libobjrenderer \
           libpgmodeler_ui \
-	  crashhandler \
-	  main-cli \
-          main
-
-!macx {
- SUBDIRS += plugins/dummy \
-            plugins/xml2object
-}
+          crashhandler \
+          main-cli \
+          main \
+          plugins/dummy \
+          plugins/xml2object
 
 #Include the tests subproject only on debug mode
 CONFIG(debug, debug|release):SUBDIRS+=tests
@@ -133,16 +130,14 @@ LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
-	       $$PWD/libutils/src \
-	       $$PWD/libpgconnector/src \
+               $$PWD/libutils/src \
+               $$PWD/libpgconnector/src \
                $$PWD/libparsers/src \
                $$PWD/libpgmodeler/src \
                $$PWD/libobjrenderer/src \
-	       $$PWD/libpgmodeler_ui/src \
-	       $$PWD/main/src
+               $$PWD/libpgmodeler_ui/src \
+               $$PWD/main/src
 
-#Adding xml and PostgreSQL libs
-#LIBS = $$XML_LIB $$PGSQL_LIB
 
 #Deployment configurations
 pgmodeler.path = $$DESTDIR
@@ -153,6 +148,3 @@ unix {
 }
 
 INSTALLS += pgmodeler
-
-OTHER_FILES += \
-    schemas/catalog/notextobject.sch

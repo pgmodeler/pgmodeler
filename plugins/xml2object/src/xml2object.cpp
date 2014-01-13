@@ -22,17 +22,6 @@
 
 Xml2Object::Xml2Object(void)
 {
-	QTranslator *translator=new QTranslator;
-
-	translator->load(QString("xml2object.") + QLocale::system().name(),
-									 GlobalAttributes::PLUGINS_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("xml2object") +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("lang"));
-
-	QCoreApplication::installTranslator(translator);
-
 	configurePluginInfo(getPluginTitle(),
 											getPluginVersion(),
 											getPluginAuthor(),

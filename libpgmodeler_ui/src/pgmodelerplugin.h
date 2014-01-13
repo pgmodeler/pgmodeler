@@ -41,8 +41,10 @@
 
 		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
 		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
+    > Plugins can have a optional lang subdir in which are stored the translation for them. The translation files must be named
+      as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
 
-		Note: Plugins can have subdirectories but any reference to them must be made programatically by the plugin author. */
+    Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
 class PgModelerPlugin {
 	protected:
@@ -80,6 +82,10 @@ class PgModelerPlugin {
 
 		//! \brief Returns the plugin's action shortcut
 		virtual QKeySequence getPluginShortcut(void) = 0;
+
+    /*! \brief Returns the plugin's translator for the current system lang. This method will return
+    nullptr if there is no qm file for the current lang/plugin */
+    virtual QTranslator *getPluginTranslator(const QString &plugin_name);
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,

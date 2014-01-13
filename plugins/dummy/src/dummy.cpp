@@ -22,17 +22,6 @@
 
 Dummy::Dummy(void)
 {
-	QTranslator *translator=new QTranslator;
-
-	translator->load(QString("dummy.") + QLocale::system().name(),
-									 GlobalAttributes::PLUGINS_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("dummy") +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("lang"));
-
-	QCoreApplication::installTranslator(translator);
-
 	configurePluginInfo(getPluginTitle(),
 											getPluginVersion(),
 											getPluginAuthor(),
