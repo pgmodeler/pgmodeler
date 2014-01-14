@@ -105,7 +105,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 BaseObjectWidget::~BaseObjectWidget(void)
 {
 	parent_form->generalwidget_wgt->removeWidget(this);
-	//if(object_selection_wgt) delete(object_selection_wgt);
 	if(parent_form)	delete(parent_form);
 }
 
@@ -139,9 +138,12 @@ void BaseObjectWidget::showEvent(QShowEvent *)
 
 	if(protected_obj_frm->isVisible())
 	{
-		parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);
-		parent_form->setMaximumHeight(pf_max_height + protected_obj_frm->height() + 10);
-		parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
+    int max_h=(pf_max_height + protected_obj_frm->height() + 10);
+    if(max_h > MAX_OBJECT_SIZE) max_h=MAX_OBJECT_SIZE;
+
+		parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);       
+    parent_form->setMaximumHeight(max_h);
+    parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
 	}
 	else if(pf_min_height > 0)
 	{
