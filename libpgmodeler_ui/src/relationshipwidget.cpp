@@ -615,9 +615,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 		break;
 
 		default:
-			//Not working with dynamic_cast ???
-			tab=reinterpret_cast<Table *>(object);
-
+      tab=static_cast<Table *>(object);
 			tab->setProtected(true);
 			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
 																tab,	tab->getPosition().x(), tab->getPosition().y());

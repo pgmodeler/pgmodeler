@@ -562,7 +562,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_CONSTRAINT: createConstraint(attribs); break;
 
 				default:
-					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
+          qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
 				break;
 			}
 
