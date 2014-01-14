@@ -125,8 +125,6 @@ void PluginsConfigWidget::loadPlugins(void)
 								plugin_name + QString(".png"));
 			plugin_action->setIcon(icon);
 
-      qApp->installTranslator(plugin->getPluginTranslator(plugin_name));
-
 			plugins_actions.push_back(plugin_action);
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
