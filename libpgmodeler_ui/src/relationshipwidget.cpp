@@ -588,7 +588,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
 	bool prot=true;
-	Table *tab=nullptr;
+  Table *tab=nullptr;
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
 
@@ -615,12 +615,12 @@ void RelationshipWidget::showAdvancedObject(int row)
 		break;
 
 		default:
-      tab=static_cast<Table *>(object);
-			tab->setProtected(true);
-			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-																tab,	tab->getPosition().x(), tab->getPosition().y());
+      tab=reinterpret_cast<Table *>(object);
+      tab->setProtected(true);
+      table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+                                tab,	tab->getPosition().x(), tab->getPosition().y());
 			table_wgt->show();
-			tab->setProtected(false);
+      tab->setProtected(false);
 		break;
 	}
 }
