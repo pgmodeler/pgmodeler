@@ -77,9 +77,6 @@ void PluginsConfigWidget::loadPlugins(void)
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
 
-	if(GlobalAttributes::PLUGINS_DIR.isEmpty())
-		dir_plugins="." + GlobalAttributes::DIR_SEPARATOR;
-
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
 	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
@@ -127,8 +124,6 @@ void PluginsConfigWidget::loadPlugins(void)
 								GlobalAttributes::DIR_SEPARATOR  +
 								plugin_name + QString(".png"));
 			plugin_action->setIcon(icon);
-
-      qApp->installTranslator(plugin->getPluginTranslator(plugin_name));
 
 			plugins_actions.push_back(plugin_action);
 			plugins_tab->addRow();

@@ -18,6 +18,7 @@ LIBS += $$LIBDESTDIR/$$LIBUTILS \
 	$$LIBDESTDIR/$$LIBPGMODELERUI
 
 HEADERS += src/application.h
-SOURCES += src/main.cpp
+SOURCES += src/main.cpp \
+    src/application.cpp
 
 

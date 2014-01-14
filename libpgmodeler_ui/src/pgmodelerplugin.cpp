@@ -83,22 +83,6 @@ PgModelerPlugin::~PgModelerPlugin(void)
   delete(plugin_info_frm);
 }
 
-QTranslator *PgModelerPlugin::getPluginTranslator(const QString &plugin_name)
-{
-  QTranslator *translator=nullptr;
-  QString file=plugin_name + "." + QLocale::system().name(),
-      path=GlobalAttributes::PLUGINS_DIR + GlobalAttributes::DIR_SEPARATOR +
-               plugin_name + GlobalAttributes::DIR_SEPARATOR + QString("lang");
-
-  if(QFileInfo(path + GlobalAttributes::DIR_SEPARATOR + file + ".qm").exists())
-  {
-    translator=new QTranslator;
-    translator->load(file, path);
-  }
-
-  return(translator);
-}
-
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,
 																					const QString &description, const QString &ico_filename)
 {

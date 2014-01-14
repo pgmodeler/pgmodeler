@@ -18,7 +18,6 @@
 
 #include "mainwindow.h"
 #include "application.h"
-#include <QTranslator>
 
 #ifndef Q_OS_WIN
 #include "execinfo.h"
@@ -92,88 +91,17 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		QString app_style=GlobalAttributes::DEFAULT_QT_STYLE;
-
-		/* Registering the below classes as metatypes in order to make
+    /* Registering the below classes as metatypes in order to make
 		them liable to be sent through signal parameters. */
 		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
 
-		QStringList params;
-		int idx=0, idx1;
-		bool enable_stylesheet=true;
-
-		for(int param=0; param < argc; param++)
-			params.push_back(argv[param]);
-
-		//Checking if the user want to disable stylesheets using param: -no-stylesheet
-		idx1=params.indexOf(QRegExp(GlobalAttributes::NO_STYLESHEET_OPT, Qt::CaseSensitive, QRegExp::FixedString));
-
-		//Cheking if the user want to use a different theme from default Fusion
-		idx=params.indexOf(QRegExp(GlobalAttributes::UI_STYLE_OPT, Qt::CaseSensitive, QRegExp::FixedString));
-
-		//Getting the theme name
-		if(idx>=0 && idx < params.size() - 1)
-		{
-			app_style=params[idx+1];
-			params.erase(params.begin() + idx);
-			params.erase(params.begin() + idx);
-		}
-
-		//Disabling the stylesheet
-		if(idx1>=0)
-		{
-			params.erase(params.begin() + idx1);
-			enable_stylesheet=false;
-		}
-
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		argc=1;
 		Application app(argc,argv);
-		QTranslator translator;
-		QFile ui_style(GlobalAttributes::CONFIGURATIONS_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 GlobalAttributes::UI_STYLE_CONF +
-									 GlobalAttributes::CONFIGURATION_EXT);
-		QString stylesheet;
-
-		//Apply the style to application
-		QApplication::setStyle(QStyleFactory::create(app_style));
-
-		//Changing the current working dir to the executable's directory in
-		QDir::setCurrent(app.applicationDirPath());
-
-		//Adding paths which executable will find plugins and it's dependecies
-		app.addLibraryPath(app.applicationDirPath());
-		app.addLibraryPath(GlobalAttributes::PLUGINS_DIR);
-
-		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
-
-		//Installs the translator on the application
-		app.installTranslator(&translator);
-
-		if(enable_stylesheet)
-		{
-			//Loading app style sheet
-			ui_style.open(QFile::ReadOnly);
-
-			//Raises an error if ui style is not found
-			if(!ui_style.isOpen())
-			{
-				Messagebox msg;
-				msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
-													 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-			}
-			else
-				stylesheet=ui_style.readAll();
-
-			app.setStyleSheet(stylesheet);
-		}
 
 		//Loading the application splash screen
 		QSplashScreen splash;
@@ -200,10 +128,12 @@ int main(int argc, char **argv)
 
 		//Loading models via command line on MacOSX are disabled until the file association work correclty on that system
 		#ifndef Q_OS_MAC
+     QStringList params=app.arguments();
+     params.pop_front();
+
 		 //If the user specifies a list of files to be loaded
-		 params.pop_front();
-		 if(!params.isEmpty())
-			fmain.loadModels(params);
+     if(!params.isEmpty())
+      fmain.loadModels(params);
 		#endif
 
 		splash.finish(&fmain);
