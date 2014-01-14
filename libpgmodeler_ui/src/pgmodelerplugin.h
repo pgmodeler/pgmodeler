@@ -83,10 +83,6 @@ class PgModelerPlugin {
 		//! \brief Returns the plugin's action shortcut
 		virtual QKeySequence getPluginShortcut(void) = 0;
 
-    /*! \brief Returns the plugin's translator for the current system lang. This method will return
-    nullptr if there is no qm file for the current lang/plugin */
-    virtual QTranslator *getPluginTranslator(const QString &plugin_name);
-
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
 														 const QString &description, const QString &ico_filename);
