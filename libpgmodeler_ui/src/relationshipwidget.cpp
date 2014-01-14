@@ -526,7 +526,7 @@ void RelationshipWidget::listAdvancedObjects(void)
 					advanced_objs_tab->addRow();
 					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getName()),i,0);
 					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getTypeName()),i,1);
-					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(cols[i]), i);
+          advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(cols[i])), i);
 				}
 
 				constrs=rel->getGeneratedConstraints();
@@ -537,7 +537,7 @@ void RelationshipWidget::listAdvancedObjects(void)
 					advanced_objs_tab->addRow();
 					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getName()),i1,0);
 					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getTypeName()),i1,1);
-					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
+          advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constrs[i])), i1);
 				}
 			}
 			else
@@ -548,7 +548,7 @@ void RelationshipWidget::listAdvancedObjects(void)
 					advanced_objs_tab->addRow();
 					advanced_objs_tab->setCellText(Utf8String::create(tab->getName()),0,0);
 					advanced_objs_tab->setCellText(Utf8String::create(tab->getTypeName()),0,1);
-					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(tab), 0);
+          advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(tab)), 0);
 				}
 			}
 		}
@@ -615,7 +615,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 		break;
 
 		default:
-      tab=reinterpret_cast<Table *>(object);
+      tab=dynamic_cast<Table *>(object);
       tab->setProtected(true);
       table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
                                 tab,	tab->getPosition().x(), tab->getPosition().y());
