@@ -32,7 +32,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		{
 			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
 			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(1);
+      labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 0 : 1);
 			this->addToGroup(labels[i]);
 		}
 		else

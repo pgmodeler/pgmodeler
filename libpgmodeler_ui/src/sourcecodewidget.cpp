@@ -79,7 +79,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 	QString code_icon;
 	bool enabled=false;
 	QPixmap icone;
-	ObjectType tipo_obj=object->getObjectType();
+  ObjectType obj_type=object->getObjectType();
 
 	if(sourcecode_twg->currentIndex()==0)
 		code_icon="codigosql.png";
@@ -87,7 +87,9 @@ void SourceCodeWidget::setSourceCodeTab(int)
 		code_icon="codigoxml.png";
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
-					 (tipo_obj!=BASE_RELATIONSHIP && tipo_obj!=OBJ_TEXTBOX));
+           ((obj_type==BASE_RELATIONSHIP &&
+             dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+             || (obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX)));
 
 	icone=QPixmap(QString(":/icones/icones/") + code_icon);
 	icon_lbl->setPixmap(icone);
@@ -106,7 +108,9 @@ void SourceCodeWidget::generateSourceCode(int)
 		xmlcode_txt->clear();
 
 		obj_type=object->getObjectType();
-		if(obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX)
+    if(obj_type!=OBJ_TEXTBOX ||
+       (obj_type==BASE_RELATIONSHIP &&
+        dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
 		{
 			if(obj_type==OBJ_DATABASE)
 			{
