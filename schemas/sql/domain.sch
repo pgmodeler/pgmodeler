@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE DOMAIN ] @{name} [ AS ] @{type}
 
 %if %not @{pgsql90} %and @{collation} %then

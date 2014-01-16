@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 %if @{comment} %then
  -- @{comment} -- $br
 %end

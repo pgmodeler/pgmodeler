@@ -6,8 +6,10 @@
  $tb 
 %else
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
- %if @{table} %then
-  [ALTER TABLE ] @{table} [ ADD ]
+
+  %if @{table} %then
+   @{drop}
+   [ALTER TABLE ] @{table} [ ADD ]
   %end
 %end
 

@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}

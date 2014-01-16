@@ -407,7 +407,9 @@ namespace ParsersAttributes {
   PGMODELER_VERSION="pgmodeler-ver",
   MATERIALIZED="materialized",
   RECURSIVE="recursive",
-  WITH_NO_DATA="with-no-data";
+  WITH_NO_DATA="with-no-data",
+  DROP="drop",
+  TABLE_OBJECT="table-obj";
 }
 
 #endif

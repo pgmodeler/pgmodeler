@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE TYPE ] @{name}
 
 %if @{reduced-form} %then

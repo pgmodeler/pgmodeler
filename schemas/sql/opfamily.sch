@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE OPERATOR FAMILY ] @{name} [ USING ] @{index-type}; $br
 
 %if @{owner} %then @{owner} %end

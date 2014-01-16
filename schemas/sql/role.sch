@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE ROLE ] @{name} [ WITH ]
 
 %if @{superuser} %then
