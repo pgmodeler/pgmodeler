@@ -14,6 +14,7 @@
 %if @{dif-sql} %then
   %if @{cast} %then [(] @{source-type} [ AS ] @{destiny-type} [)] %end
   %if @{extension} %then @{name} $sp CASCADE %end
+  %if @{index} %then @{schema}.@{name} %end
   %if @{operator} %or @{function} %then @{signature} %end
   %if @{rule} %or @{trigger} %then @{name} [ ON ] @{table} %end
 
@@ -25,7 +26,7 @@
     %end
   %end
 %else
-    @{name}
+  @{name}
 %end
 
 ; $br

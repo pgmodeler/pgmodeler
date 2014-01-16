@@ -593,7 +593,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 						(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
 						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP));
 
-		/* Marking the flag that indicates that the comment form to be generated
+    /* Marking the flag that indicates that the comment/drop form to be generated
 		 for the object is specific to it, ignoring the default rule.
 		 (See SQL schema file for comments) */
 		switch(obj_type)
@@ -608,6 +608,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			case OBJ_OPERATOR:
 			case OBJ_OPCLASS:
 			case OBJ_OPFAMILY:
+      case OBJ_INDEX:
+      case OBJ_EXTENSION:
 				attributes[ParsersAttributes::DIF_SQL]="1";
 				attributes[objs_schemas[obj_type]]="1";
 			break;
