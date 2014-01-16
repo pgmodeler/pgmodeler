@@ -774,6 +774,7 @@ void RelationshipWidget::removeObject(int row)
 	Relationship *rel=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
 	TableObject *object=nullptr;
+  int op_id=-1;
 
 	try
 	{
@@ -785,11 +786,19 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=OBJ_CONSTRAINT;
 
 		object=rel->getObject(row, obj_type);
-		op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
+    op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
 		rel->removeObject(object);
 	}
 	catch(Exception &e)
 	{
+    //If operation was registered
+    if(op_id >= 0)
+    {
+      op_list->ignoreOperationChain(true);
+      op_list->removeLastOperation();
+      op_list->ignoreOperationChain(false);
+    }
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

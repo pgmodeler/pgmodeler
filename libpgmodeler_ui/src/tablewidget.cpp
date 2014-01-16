@@ -529,6 +529,7 @@ void TableWidget::removeObject(int row)
 	Table *table=nullptr;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
+  int op_id=-1;
 
 	try
 	{
@@ -540,7 +541,7 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 			 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+      op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 			table->removeObject(object);
 		}
 		else
@@ -551,6 +552,14 @@ void TableWidget::removeObject(int row)
 	}
 	catch(Exception &e)
 	{
+    //If operation was registered
+    if(op_id >= 0)
+    {
+      op_list->ignoreOperationChain(true);
+      op_list->removeLastOperation();
+      op_list->ignoreOperationChain(false);
+    }
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

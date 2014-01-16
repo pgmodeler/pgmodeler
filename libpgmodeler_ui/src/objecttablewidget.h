@@ -132,6 +132,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Enables the handle buttons according to the selected row
 		void setButtonsEnabled(void);
 
+    void emitRowSelected(void);
+
 	public slots:
 		//! \brief Adds a new row at the end of the table
 		void addRow(void);
