@@ -7,6 +7,8 @@
 
 %if @{comment} %then [-- ] @{comment} [ --] $br %end
 
+@{drop}
+
 [CREATE DATABASE ] @{name} $br
 
 %if @{template} %then

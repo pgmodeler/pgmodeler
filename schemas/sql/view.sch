@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE ]
 
 %if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then

@@ -140,8 +140,10 @@ class OperationList: public QObject {
 		 This method should ALWAYS be called before the object in question
 		 suffers any operation in the model. If this method is called after an operation on the
 		 object the order of restoration / re-execution of operations can be broken and cause
-		 segmentations fault. */
-		void registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
+     segmentations fault.
+
+     In case of success this method returns an integer indicating the last registered operation ID */
+    int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
 
 		//! \brief Gets the maximum size for the operation list
 		unsigned getMaximumSize(void);

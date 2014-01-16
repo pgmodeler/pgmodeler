@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE OPERATOR CLASS ] @{name} 
 %if @{default} %then [ DEFAULT ] %end
 

@@ -7,6 +7,8 @@
   
   [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+  @{drop}
+
   [CREATE EXTENSION ] @{name} $br
   [      WITH SCHEMA ] @{schema}
     

@@ -341,7 +341,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 								if(pos >= 0)
 								{
 									//Extracts from the line the string starting with the object's name
-									lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+                  lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 
 									//Stores the object type name
 									obj_type=BaseObject::getTypeName(obj_types[obj_id]);
@@ -353,9 +353,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
                         spc_idx=lin.indexOf(' ');
 
                     if(spc_idx >=0 && spc_idx < first_quote_idx)
+                      //Getting the name at the first space before the first quote
                       obj_name=lin.split(' ').at(0);
-                    else
+                    else if(last_quote_idx >=0)
+                      //Getting the name until the last quote
                       obj_name=lin.mid(0, last_quote_idx +1);
+                    else
+                      //Gettring the name until the first space or end of string
+                      obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
 
                     obj_name.remove('(');
 									}

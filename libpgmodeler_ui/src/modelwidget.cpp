@@ -183,11 +183,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	this->setLayout(grid);
 
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
-	action_source_code->setShortcut(QKeySequence("Alt+S"));
+  action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
 	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
-	action_edit->setShortcut(QKeySequence("Space"));
+  action_edit->setShortcut(QKeySequence(trUtf8("Space")));
 	action_edit->setToolTip(trUtf8("Edit the object properties"));
 
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
@@ -195,22 +195,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
-	action_remove->setShortcut(QKeySequence("Del"));
+  action_remove->setShortcut(QKeySequence(trUtf8("Del")));
 
 	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
-	action_select_all->setShortcut(QKeySequence("Ctrl+A"));
+  action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
 	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert"), this);
 
 	action_copy=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
-	action_copy->setShortcut(QKeySequence("Ctrl+C"));
+  action_copy->setShortcut(QKeySequence(trUtf8("Ctrl+C")));
 
 	action_paste=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
-	action_paste->setShortcut(QKeySequence("Ctrl+V"));
+  action_paste->setShortcut(QKeySequence(trUtf8("Ctrl+V")));
 
 	action_cut=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
-	action_cut->setShortcut(QKeySequence("Ctrl+X"));
+  action_cut->setShortcut(QKeySequence(trUtf8("Ctrl+X")));
 
 	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Deps && Referrers"), this);
 
@@ -222,14 +222,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_quick_actions->setMenu(&quick_actions_menu);
 
 	action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
-	action_rename->setShortcut(QKeySequence("F2"));
+  action_rename->setShortcut(QKeySequence(trUtf8("F2")));
 	action_rename->setToolTip(trUtf8("Quick rename the object"));
 
 	action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
 	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
-	action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
+  action_edit_perms->setShortcut(QKeySequence(trUtf8("Ctrl+E")));
 
 	action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
 	action_change_owner->setMenu(&owners_menu);
@@ -239,7 +239,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 
 	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
-	action_append_sql->setShortcut(QKeySequence("Alt+Q"));
+  action_append_sql->setShortcut(QKeySequence(trUtf8("Alt+Q")));
 
 	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
 	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);

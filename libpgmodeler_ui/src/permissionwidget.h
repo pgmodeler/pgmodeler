@@ -34,6 +34,8 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
 		Q_OBJECT
 
+    SyntaxHighlighter *code_hl;
+
 		//! \brief Stores the permission to be edited
 		Permission *permission;
 
@@ -75,7 +77,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		void editPermission(void);
 
 		//! \brief Removes the selected permission
-		void removePermission(void);
+    void removePermission(int perm_id);
 
 		//! \brief Removes all permissions from the permissions table
 		void removePermissions(void);
@@ -91,6 +93,9 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 
 		//! \brief Shows the selected role data on the role tables
 		void showSelectedRoleData(void);
+
+    //! \brief Updates the sql code for object's permissions
+    void updateCodePreview(void);
 
 		void enableEditButtons(void);
 

@@ -6,6 +6,9 @@
 %if %not @{pgsql90} %then
 
  [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
+
+ @{drop}
+
  [CREATE COLLATION ] @{name}
 
   %if @{collation} %then

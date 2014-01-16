@@ -34,6 +34,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
+  connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
 
 	this->conf_exclusion=conf_exclusion;
 
@@ -370,11 +371,10 @@ void ObjectTableWidget::removeRow(void)
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
-				table_tbw->removeRow(row_idx);
-				table_tbw->setCurrentItem(nullptr);
-				setButtonsEnabled();
-
-				emit s_rowRemoved(row_idx);
+        emit s_rowRemoved(row_idx);
+        table_tbw->removeRow(row_idx);
+        table_tbw->setCurrentItem(nullptr);
+        setButtonsEnabled();
 			}
 		}
 	}
@@ -553,11 +553,18 @@ void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 void ObjectTableWidget::setButtonsEnabled(void)
 {
-	QTableWidgetItem *item=table_tbw->currentItem();
-
+  //QTableWidgetItem *item=table_tbw->currentItem();
 	setButtonsEnabled(ALL_BUTTONS, true);
 
-	if(item && item->row() >= 0)
-		emit s_rowSelected(item->row());
+  //if(item && item->row() >= 0)
+  //emit s_rowSelected(item->row());
+}
+
+void ObjectTableWidget::emitRowSelected(void)
+{
+  QTableWidgetItem *item=table_tbw->currentItem();
+
+  if(item && item->row() >= 0)
+   emit s_rowSelected(item->row());
 }
 

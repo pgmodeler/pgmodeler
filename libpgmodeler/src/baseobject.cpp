@@ -82,6 +82,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
 	attributes[ParsersAttributes::APPENDED_SQL]="";
+  attributes[ParsersAttributes::DROP]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -690,7 +691,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 
-		if(!appended_sql.isEmpty())
+    if(!appended_sql.isEmpty())
 		{
 			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
 
@@ -705,6 +706,14 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[ParsersAttributes::APPENDED_SQL]="-- Appended SQL commands --\n" +	appended_sql + "\n";
 			}
 		}
+
+    if(def_type==SchemaParser::SQL_DEFINITION)
+    {
+      SchemaParser::setIgnoreUnkownAttributes(true);
+      SchemaParser::setIgnoreEmptyAttributes(true);
+      attributes[ParsersAttributes::DROP]=
+          SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
+    }
 
 		if(reduced_form)
 			attributes[ParsersAttributes::REDUCED_FORM]="1";

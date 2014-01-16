@@ -96,7 +96,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Controls the form which are show the table and column names of the reference
 		void showObjectName(void);
 
-		//! \brief Updates the sql code filed of the view form
+    //! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
 
 		void showTableObjectForm(ObjectType obj_type);
