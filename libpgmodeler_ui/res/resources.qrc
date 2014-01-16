@@ -164,6 +164,8 @@
         <file>icones/swapobjs.png</file>
         <file>icones/clearobjsel.png</file>
         <file>icones/cancelar.png</file>
+        <file>icones/run.png</file>
+        <file>icones/result.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

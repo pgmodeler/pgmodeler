@@ -183,6 +183,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
+    sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
 
 		permission_wgt=new PermissionWidget(this);
@@ -305,6 +306,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
+  sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
@@ -326,6 +328,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
+
+  vlayout=new QVBoxLayout;
+  vlayout->setContentsMargins(0,0,0,0);
+  vlayout->addWidget(sql_tool_wgt);
+  sql_tool_parent->setLayout(vlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -350,6 +357,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(find_obj_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar(void)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_parent, SLOT(setVisible(bool)));
 
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
