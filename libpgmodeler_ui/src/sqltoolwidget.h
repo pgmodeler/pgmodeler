@@ -33,6 +33,12 @@ private:
 
   public:
     SQLToolWidget(QWidget * parent = 0);
+
+  public slots:
+    void hide();
+
+  signals:
+    void s_visibilityChanged(bool);
 };
 
 #endif

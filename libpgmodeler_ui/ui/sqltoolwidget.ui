@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>514</height>
+    <width>896</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="sqltool_grid">
    <property name="leftMargin">
     <number>4</number>
    </property>
@@ -29,68 +29,6 @@
    <property name="bottomMargin">
     <number>4</number>
    </property>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="connection_lbl">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Connection:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="connections_cmb">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="connect_tb">
-       <property name="toolTip">
-        <string>Connect and list available databases</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/conexaobd.png</normaloff>:/icones/icones/conexaobd.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" colspan="8">
-    <widget class="QSplitter" name="h_splitter">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QTreeWidget" name="treeWidget"/>
-     <widget class="QSplitter" name="v_splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QTextEdit" name="textEdit"/>
-      <widget class="QTableWidget" name="tableWidget"/>
-     </widget>
-    </widget>
-   </item>
    <item row="0" column="7">
     <widget class="QToolButton" name="hide_tb">
      <property name="minimumSize">
@@ -121,7 +59,7 @@
     </widget>
    </item>
    <item row="0" column="4">
-    <widget class="QToolButton" name="cancel_btn_2">
+    <widget class="QToolButton" name="objects_btn">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -157,36 +95,8 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="validate_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Run SQL</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/run.png</normaloff>:/icones/icones/run.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="5">
-    <widget class="QToolButton" name="cancel_btn_3">
+    <widget class="QToolButton" name="results_btn">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -227,13 +137,137 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>183</width>
-       <height>20</height>
+       <width>434</width>
+       <height>24</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="0" colspan="8">
+    <widget class="QSplitter" name="h_splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="handleWidth">
+      <number>5</number>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="QGroupBox" name="database_gb">
+      <property name="title">
+       <string>Database</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QComboBox" name="database_cmb"/>
+         </item>
+         <item row="0" column="1">
+          <widget class="QToolButton" name="refresh_tb">
+           <property name="toolTip">
+            <string>Connect and list available databases</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QTreeWidget" name="objects_trw">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="rootIsDecorated">
+            <bool>false</bool>
+           </property>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QSplitter" name="v_splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>5</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QTextEdit" name="sql_cmd_txt"/>
+      <widget class="QTableWidget" name="result_trw"/>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="run_sql_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Run SQL</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/run.png</normaloff>:/icones/icones/run.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="0" column="3">
     <widget class="QToolButton" name="cancel_btn">
@@ -266,21 +300,26 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="0" column="0" colspan="2">
+    <widget class="QComboBox" name="connections_cmb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
+     <property name="minimumSize">
       <size>
-       <width>25</width>
-       <height>20</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
-    </spacer>
+     <item>
+      <property name="text">
+       <string>Connection (127.0.0.1:5432)</string>
+      </property>
+     </item>
+    </widget>
    </item>
   </layout>
  </widget>

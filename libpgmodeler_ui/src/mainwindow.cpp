@@ -359,6 +359,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
   connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_parent, SLOT(setVisible(bool)));
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_wgt, SLOT(setVisible(bool)));
+  connect(sql_tool_wgt, SIGNAL(s_visibilityChanged(bool)), sql_tool_btn, SLOT(setChecked(bool)));
 
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
@@ -376,10 +378,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
-	QList<int> sizes;
-	sizes.push_back(10);
-	sizes.push_back(0);
-	v_splitter1->setSizes(sizes);
+  v_splitter1->setSizes({500, 250, 500});
 
 	showRightWidgetsBar();
 	showBottomWidgetsBar();

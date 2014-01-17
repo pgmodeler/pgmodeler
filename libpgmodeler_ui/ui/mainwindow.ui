@@ -352,7 +352,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QSplitter" name="h_splitter">
+     <widget class="QSplitter" name="h_splitter_opr_objs">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -495,12 +495,15 @@
              <number>0</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QSplitter" name="splitter">
+             <widget class="QSplitter" name="h_splitter2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="handleWidth">
+               <number>5</number>
               </property>
               <property name="childrenCollapsible">
                <bool>false</bool>
@@ -550,7 +553,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QSplitter" name="v_splitter">
+         <widget class="QSplitter" name="v_splitter_oprs_objs">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>

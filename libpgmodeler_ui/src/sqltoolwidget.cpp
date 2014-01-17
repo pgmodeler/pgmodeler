@@ -21,4 +21,14 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
   setupUi(this);
+  h_splitter->setSizes({0, 10000});
+  connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
+  connect(objects_btn, SIGNAL(toggled(bool)), database_gb, SLOT(setVisible(bool)));
+  connect(results_btn, SIGNAL(toggled(bool)), result_trw, SLOT(setVisible(bool)));
+}
+
+void SQLToolWidget::hide(void)
+{
+  QWidget::hide();
+  emit s_visibilityChanged(false);
 }

@@ -179,8 +179,6 @@
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>
-        <file>styles/h_splitter.png</file>
-        <file>styles/v_splitter.png</file>
         <file>styles/h_separator.png</file>
         <file>styles/h_menu_indicator.png</file>
         <file>styles/close_tab_hover.png</file>
