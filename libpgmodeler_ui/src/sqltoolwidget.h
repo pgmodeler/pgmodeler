@@ -26,16 +26,23 @@
 #define SQL_TOOL_WIDGET_H
 
 #include "ui_sqltoolwidget.h"
+#include "syntaxhighlighter.h"
+#include "connection.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
-private:
-  Q_OBJECT
+  private:
+    Q_OBJECT
+
+    SyntaxHighlighter *sql_cmd_hl;
 
   public:
     SQLToolWidget(QWidget * parent = 0);
 
+    //! \brief Updates the connections combo
+    void updateConnections(map<QString, Connection *> &conns);
+
   public slots:
-    void hide();
+    void hide(void);
 
   signals:
     void s_visibilityChanged(bool);

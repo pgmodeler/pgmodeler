@@ -607,6 +607,7 @@ void MainWindow::updateConnections(void)
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 	conn_cfg_wgt->getConnections(connections);
 	model_valid_wgt->updateConnections(connections);
+  sql_tool_wgt->updateConnections(connections);
 }
 
 void MainWindow::saveTemporaryModels(bool force)

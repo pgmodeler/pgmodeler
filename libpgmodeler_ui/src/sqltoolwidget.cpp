@@ -21,10 +21,29 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
   setupUi(this);
+
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
+  sql_cmd_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                GlobalAttributes::DIR_SEPARATOR +
+                                GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                GlobalAttributes::CONFIGURATION_EXT);
+
   h_splitter->setSizes({0, 10000});
   connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-  connect(objects_btn, SIGNAL(toggled(bool)), database_gb, SLOT(setVisible(bool)));
-  connect(results_btn, SIGNAL(toggled(bool)), result_trw, SLOT(setVisible(bool)));
+  connect(results_tb, SIGNAL(toggled(bool)), result_trw, SLOT(setVisible(bool)));
+}
+
+void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
+{
+  map<QString, Connection *>::iterator itr=conns.begin();
+  connections_cmb->clear();
+
+  //Add the connections to the combo
+  while(itr!=conns.end())
+  {
+    connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
+    itr++;
+  }
 }
 
 void SQLToolWidget::hide(void)
