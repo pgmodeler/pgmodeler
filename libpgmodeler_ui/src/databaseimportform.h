@@ -45,15 +45,12 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
 
-		//! \brief This attribute controls the general import progress
-		int progress;
-
 		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
 		The "root" parameter is used to associate the group of objects as child of it.
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
 		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
-		vector<QTreeWidgetItem *> updateObjectsTree(vector<ObjectType> types, QTreeWidgetItem *root=nullptr,
-																								const QString &schema="", const QString &table="");
+    static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
+                                                        bool checkable_items=false, QTreeWidgetItem *root=nullptr, const QString &schema="", const QString &table="");
 
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */
@@ -80,18 +77,22 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
 
+    //! brief Fills a combo box with all available databases according to the configurations of the specified import helper
+    static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
+
+    //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
+    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt);
+
 	private slots:
 		void importDatabase(void);
 		void listObjects(void);
 		void listDatabases(void);
 		void hideProgress(bool value=true);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
-
 		void cancelImport(void);
 		void handleImportCanceled(void);
 		void handleImportFinished(Exception e);
 		void captureThreadError(Exception e);
-
 		void filterObjects(void);
 
 		//! \brief Toggles the check state for the specified item
@@ -102,7 +103,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	signals:
 		//! \brief This signal is emitted when a object is retrieved from database
-		void s_objectsRetrieved(int prog,QString msg,unsigned obj_id);
+    void s_objectsRetrieved(int prog,QString msg,unsigned obj_id);
 };
 
 #endif
