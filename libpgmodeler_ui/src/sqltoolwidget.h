@@ -28,12 +28,15 @@
 #include "ui_sqltoolwidget.h"
 #include "syntaxhighlighter.h"
 #include "connection.h"
+#include "databaseimportform.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
   private:
     Q_OBJECT
 
     SyntaxHighlighter *sql_cmd_hl;
+
+    DatabaseImportHelper import_helper;
 
   public:
     SQLToolWidget(QWidget * parent = 0);
@@ -43,6 +46,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
   public slots:
     void hide(void);
+
+  private slots:
+    void connectToDatabase(void);
+    void listObjects(void);
 
   signals:
     void s_visibilityChanged(bool);
