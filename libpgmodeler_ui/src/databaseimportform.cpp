@@ -339,34 +339,39 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 void DatabaseImportForm::filterObjects(void)
 {
-	QList<QTreeWidgetItem*> items=db_objects_tw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive, by_oid_chk->isChecked());
-	QTreeWidgetItemIterator itr(db_objects_tw);
-	QTreeWidgetItem *parent=nullptr;
+  DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), by_oid_chk->isChecked());
+}
 
-	db_objects_tw->blockSignals(true);
-	db_objects_tw->collapseAll();
-	while(*itr)
-	{
-		(*itr)->setHidden(true);
-		++itr;
-	}
+void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, bool filter_by_oid)
+{
+  QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, filter_by_oid);
+  QTreeWidgetItemIterator itr(tree_wgt);
+  QTreeWidgetItem *parent=nullptr;
 
-	while(!items.isEmpty())
-	{
-		items.front()->setExpanded(true);
-		items.front()->setHidden(false);
-		parent=items.front()->parent();
+  tree_wgt->blockSignals(true);
+  tree_wgt->collapseAll();
+  while(*itr)
+  {
+    (*itr)->setHidden(true);
+    ++itr;
+  }
 
-		while(parent)
-		{
-			parent->setHidden(false);
-			parent->setExpanded(true);
-			parent=parent->parent();
-		}
+  while(!items.isEmpty())
+  {
+    items.front()->setExpanded(true);
+    items.front()->setHidden(false);
+    parent=items.front()->parent();
 
-		items.pop_front();
-	}
-	db_objects_tw->blockSignals(false);
+    while(parent)
+    {
+      parent->setHidden(false);
+      parent->setExpanded(true);
+      parent=parent->parent();
+    }
+
+    items.pop_front();
+  }
+  tree_wgt->blockSignals(false);
 }
 
 void DatabaseImportForm::cancelImport(void)

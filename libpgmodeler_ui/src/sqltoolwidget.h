@@ -38,6 +38,12 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     DatabaseImportHelper import_helper;
 
+    Connection sql_cmd_conn;
+
+    QFileDialog sql_file_dlg;
+
+    void enableSQLExecution(bool enable);
+
   public:
     SQLToolWidget(QWidget * parent = 0);
 
@@ -50,6 +56,12 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
   private slots:
     void connectToDatabase(void);
     void listObjects(void);
+    void filterObjects(void);
+    void enableCommandButtons(void);
+    void runSQLCommand(void);
+    void saveCommands(void);
+    void loadCommands(void);
+    void exportResults(void);
 
   signals:
     void s_visibilityChanged(bool);

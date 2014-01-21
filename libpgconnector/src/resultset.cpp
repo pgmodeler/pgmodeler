@@ -297,7 +297,12 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		}
 
 		return(accessed);
-	}
+  }
+}
+
+bool ResultSet::isEmpty(void)
+{
+  return(empty_result);
 }
 
 void ResultSet::operator = (ResultSet &res)

@@ -338,7 +338,7 @@
           </size>
          </property>
          <property name="shortcut">
-          <string>Ctrl+Q</string>
+          <string>Alt+Q</string>
          </property>
          <property name="checkable">
           <bool>true</bool>

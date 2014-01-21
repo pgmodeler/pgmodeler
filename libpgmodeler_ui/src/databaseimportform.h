@@ -83,6 +83,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
     static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items);
 
+    static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, bool filter_by_oid);
+
 	private slots:
 		void importDatabase(void);
 		void listObjects(void);
