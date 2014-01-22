@@ -40,9 +40,15 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     Connection sql_cmd_conn;
 
-    QFileDialog sql_file_dlg;
+    QFileDialog sql_file_dlg,
+    csv_file_dlg;
+
+    QMenu copy_menu;
+
+    QAction *copy_action;
 
     void enableSQLExecution(bool enable);
+    QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
 
   public:
     SQLToolWidget(QWidget * parent = 0);
@@ -62,6 +68,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void saveCommands(void);
     void loadCommands(void);
     void exportResults(void);
+    void clearAll(void);
+    void copySelection(void);
 
   signals:
     void s_visibilityChanged(bool);

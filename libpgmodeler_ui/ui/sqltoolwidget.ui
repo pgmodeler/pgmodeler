@@ -371,15 +371,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QToolButton" name="run_sql_tb">
+           <widget class="QToolButton" name="load_tb">
             <property name="enabled">
              <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
@@ -393,14 +387,14 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Run the specified SQL command.</string>
+             <string>Load SQL script (Alt+L)</string>
             </property>
             <property name="text">
-             <string>Run SQL</string>
+             <string>&amp;Load</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/run.png</normaloff>:/icones/icones/run.png</iconset>
+              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -409,44 +403,13 @@
              </size>
             </property>
             <property name="shortcut">
-             <string>F5</string>
+             <string notr="true">Alt+L</string>
             </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="clear_btn">
-            <property name="enabled">
+            <property name="checkable">
              <bool>false</bool>
             </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>27</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Clear sql input field.</string>
-            </property>
-            <property name="text">
-             <string>Clear</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
+            <property name="checked">
+             <bool>false</bool>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -470,10 +433,10 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Save SQL commands.</string>
+             <string>Save SQL commands (Alt+S)</string>
             </property>
             <property name="text">
-             <string>Save</string>
+             <string>&amp;Save</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -484,6 +447,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string notr="true">Alt+S</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -500,7 +466,53 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="load_tb">
+           <widget class="QToolButton" name="run_sql_tb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>27</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Run the specified SQL command (F5).</string>
+            </property>
+            <property name="text">
+             <string>Run SQL</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/run.png</normaloff>:/icones/icones/run.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string notr="true">F5</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="clear_btn">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -516,26 +528,20 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Load SQL script.</string>
+             <string>Clear sql input field and results.</string>
             </property>
             <property name="text">
-             <string>Load</string>
+             <string>Clear All</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+              <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
             </property>
             <property name="iconSize">
              <size>
               <width>20</width>
               <height>20</height>
              </size>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -559,7 +565,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Export results to a CSV file.</string>
+             <string>Export results to a CSV file (Alt+X).</string>
             </property>
             <property name="text">
              <string>E&amp;xport</string>
@@ -573,6 +579,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string notr="true">Alt+X</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -638,7 +647,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="spacing">
          <number>0</number>
@@ -790,8 +799,6 @@
   <tabstop>collapse_all_tb</tabstop>
   <tabstop>run_sql_tb</tabstop>
   <tabstop>clear_btn</tabstop>
-  <tabstop>save_tb</tabstop>
-  <tabstop>load_tb</tabstop>
   <tabstop>export_tb</tabstop>
   <tabstop>sql_cmd_txt</tabstop>
   <tabstop>results_trw</tabstop>
