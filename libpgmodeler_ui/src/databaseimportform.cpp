@@ -584,6 +584,10 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
         {
           item=new QTreeWidgetItem(group);
 
+          item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
+          item->setText(0, itr->second);
+          item->setText(1, itr->first);
+
           if(checkable_items)
           {
             if((itr->first.toUInt() > import_helper.getLastSystemOID()) ||
@@ -595,29 +599,25 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
             }
             else
               item->setCheckState(0, Qt::Unchecked);
-          }
 
-          item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
-          item->setText(0, itr->second);
-          item->setText(1, itr->first);
-
-          //Disabling items that refers to PostgreSQL's built-in data types
-          if(types[i]==OBJ_TYPE && itr->first.toUInt() <= import_helper.getLastSystemOID())
-          {
-            item->setDisabled(true);
-            item->setToolTip(0, trUtf8("This is a PostgreSQL built-in data type and cannot be imported."));
-          }
-          //Disabling items that refers to pgModeler's built-in system objects
-          else if((types[i]==OBJ_TABLESPACE && (itr->second=="pg_default" || itr->second=="pg_global")) ||
-                  (types[i]==OBJ_ROLE && (itr->second=="postgres")) ||
-                  (types[i]==OBJ_SCHEMA && (itr->second=="pg_catalog" || itr->second=="public")) ||
-                  (types[i]==OBJ_LANGUAGE && (itr->second==~LanguageType(LanguageType::c) ||
-                                              itr->second==~LanguageType(LanguageType::sql) ||
-                                              itr->second==~LanguageType(LanguageType::plpgsql))))
-          {
-            item->setFont(0, grp_fnt);
-            item->setForeground(0, BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
-            item->setToolTip(0, trUtf8("This is a pgModeler's built-in object. It will be ignored if checked by user."));
+            //Disabling items that refers to PostgreSQL's built-in data types
+            if(types[i]==OBJ_TYPE && itr->first.toUInt() <= import_helper.getLastSystemOID())
+            {
+              item->setDisabled(true);
+              item->setToolTip(0, trUtf8("This is a PostgreSQL built-in data type and cannot be imported."));
+            }
+            //Disabling items that refers to pgModeler's built-in system objects
+            else if((types[i]==OBJ_TABLESPACE && (itr->second=="pg_default" || itr->second=="pg_global")) ||
+                    (types[i]==OBJ_ROLE && (itr->second=="postgres")) ||
+                    (types[i]==OBJ_SCHEMA && (itr->second=="pg_catalog" || itr->second=="public")) ||
+                    (types[i]==OBJ_LANGUAGE && (itr->second==~LanguageType(LanguageType::c) ||
+                                                itr->second==~LanguageType(LanguageType::sql) ||
+                                                itr->second==~LanguageType(LanguageType::plpgsql))))
+            {
+              item->setFont(0, grp_fnt);
+              item->setForeground(0, BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+              item->setToolTip(0, trUtf8("This is a pgModeler's built-in object. It will be ignored if checked by user."));
+            }
           }
 
           //Stores the object's OID as the first data of the item

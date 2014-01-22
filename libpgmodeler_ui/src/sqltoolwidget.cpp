@@ -49,6 +49,12 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   copy_action=new QAction(trUtf8("Copy"), &copy_menu);
   copy_menu.addAction(copy_action);
 
+  drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
+  show_data_action=new QAction(QIcon(":icones/icones/result.png"), trUtf8("Show data"), &handle_menu);
+  handle_menu.addAction(drop_action);
+  handle_menu.addAction(show_data_action);
+
+
   connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
   connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
   connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
@@ -62,7 +68,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveCommands(void)));
   connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadCommands(void)));
   connect(export_tb, SIGNAL(clicked(void)), this, SLOT(exportResults(void)));
-  connect(results_trw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(copySelection(void)));
+  connect(results_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(copySelection(void)));
+  connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(void)));
 }
 
 void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
@@ -160,31 +167,31 @@ void SQLToolWidget::runSQLCommand(void)
     export_tb->setEnabled(!res.isEmpty());
     msgoutput_lst->setVisible(res.isEmpty());
 
-    if(results_trw->isVisible())
+    if(results_tbw->isVisible())
     {
       int col=0, row=0, row_cnt=res.getTupleCount(), col_cnt=res.getColumnCount();
 
       row_cnt_lbl->setText(QString::number(row_cnt));
       export_tb->setEnabled(row_cnt > 0);
 
-      while(results_trw->rowCount() > 1)
-        results_trw->setRowCount(0);
+      while(results_tbw->rowCount() > 1)
+        results_tbw->setRowCount(0);
 
-      results_trw->setColumnCount(col_cnt);
+      results_tbw->setColumnCount(col_cnt);
 
       for(col=0; col < col_cnt; col++)
-        results_trw->setHorizontalHeaderItem(col, new QTableWidgetItem(res.getColumnName(col)));
+        results_tbw->setHorizontalHeaderItem(col, new QTableWidgetItem(res.getColumnName(col)));
 
       if(res.accessTuple(ResultSet::FIRST_TUPLE))
       {
-        results_trw->setRowCount(row_cnt);
+        results_tbw->setRowCount(row_cnt);
 
         do
         {
           for(col=0; col < col_cnt; col++)
-            results_trw->setItem(row, col, new QTableWidgetItem(res.getColumnValue(col)));
+            results_tbw->setItem(row, col, new QTableWidgetItem(res.getColumnValue(col)));
 
-          results_trw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
+          results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
           row++;
         }
         while(res.accessTuple(ResultSet::NEXT_TUPLE));
@@ -262,8 +269,6 @@ void SQLToolWidget::exportResults(void)
   if(csv_file_dlg.result()==QDialog::Accepted)
   {
     QFile file;
-    //QByteArray buf;
-    //int col=0, row=0, col_cnt=0, row_cnt=0;
 
     file.setFileName(csv_file_dlg.selectedFiles().at(0));
 
@@ -272,30 +277,7 @@ void SQLToolWidget::exportResults(void)
                       .arg(csv_file_dlg.selectedFiles().at(0))
                       , ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-
-    /*col_cnt=results_trw->columnCount();
-    row_cnt=results_trw->rowCount();
-
-    for(col=0; col < col_cnt; col++)
-    {
-      buf.append(QString("\"%1\"").arg(results_trw->horizontalHeaderItem(col)->text()));
-      buf.append(';');
-    }
-
-    buf.append('\n');
-
-    for(row=0; row < row_cnt; row++)
-    {
-      for(col=0; col < col_cnt; col++)
-      {
-        buf.append(QString("\"%1\"").arg(results_trw->item(row, col)->text()));
-        buf.append(';');
-      }
-
-      buf.append('\n');
-    }*/
-
-    file.write(generateCSVBuffer(0, 0, results_trw->rowCount(), results_trw->columnCount()));
+    file.write(generateCSVBuffer(0, 0, results_tbw->rowCount(), results_tbw->columnCount()));
     file.close();
   }
 }
@@ -305,8 +287,8 @@ QByteArray SQLToolWidget::generateCSVBuffer(int start_row, int start_col, int ro
   QByteArray buf;
 
   if(start_row >=0 && start_col >=0 &&
-     start_row + row_cnt <= results_trw->rowCount() &&
-     start_col + col_cnt <= results_trw->columnCount())
+     start_row + row_cnt <= results_tbw->rowCount() &&
+     start_col + col_cnt <= results_tbw->columnCount())
   {
     int col=0, row=0,
         max_col=start_col + col_cnt,
@@ -314,7 +296,7 @@ QByteArray SQLToolWidget::generateCSVBuffer(int start_row, int start_col, int ro
 
     for(col=start_col; col < max_col; col++)
     {
-      buf.append(QString("\"%1\"").arg(results_trw->horizontalHeaderItem(col)->text()));
+      buf.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
       buf.append(';');
     }
 
@@ -324,7 +306,7 @@ QByteArray SQLToolWidget::generateCSVBuffer(int start_row, int start_col, int ro
     {
       for(col=start_col; col < max_col; col++)
       {
-        buf.append(QString("\"%1\"").arg(results_trw->item(row, col)->text()));
+        buf.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
         buf.append(';');
       }
 
@@ -357,7 +339,7 @@ void SQLToolWidget::copySelection(void)
   {
     if(copy_menu.exec(QCursor::pos()))
     {
-      QList<QTableWidgetSelectionRange> sel_range=results_trw->selectedRanges();
+      QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
 
       if(!sel_range.isEmpty())
       {
@@ -366,6 +348,17 @@ void SQLToolWidget::copySelection(void)
                                          selection.rowCount(), selection.columnCount());
         qApp->clipboard()->setText(buf);
       }
+    }
+  }
+}
+
+void SQLToolWidget::handleObject(void)
+{
+  if(QApplication::mouseButtons()==Qt::RightButton)
+  {
+    if(handle_menu.exec(QCursor::pos()))
+    {
+
     }
   }
 }

@@ -43,11 +43,13 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     QFileDialog sql_file_dlg,
     csv_file_dlg;
 
-    QMenu copy_menu;
+    QMenu copy_menu,
+          handle_menu;
 
-    QAction *copy_action;
+    QAction *copy_action, *drop_action, *show_data_action;
 
     void enableSQLExecution(bool enable);
+
     QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
 
   public:
@@ -70,6 +72,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void exportResults(void);
     void clearAll(void);
     void copySelection(void);
+    void handleObject(void);
 
   signals:
     void s_visibilityChanged(bool);

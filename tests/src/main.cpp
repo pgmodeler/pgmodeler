@@ -7,8 +7,12 @@ int main(int, char **)
 {
 	try
 	{
-    QString dt=__DATE__;
-    QString fmt=QDate::fromString(__DATE__, "MMM dd yyyy").toString("yyyyMMdd");
+    PgSQLType tp;
+
+    tp=PgSQLType::parseString("varchar(250)");
+    cout << tp.getTypeId() << endl;
+    cout << tp.getTypeName().toStdString() << endl;
+    cout << tp.getSQLTypeName().toStdString() << endl;
 
 		return(0);
 	}

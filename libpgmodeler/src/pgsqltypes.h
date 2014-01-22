@@ -68,6 +68,12 @@ class BaseType{
 		//! \brief Returns the code (id) of the type
 		unsigned operator ! (void);
 
+    //! \brief Returns the code (id) of the type
+    unsigned getTypeId(void);
+
+    //! \brief Returns the name of the type
+    QString getTypeName(void);
+
 		bool operator == (BaseType &type);
 		bool operator == (unsigned type_id);
 		bool operator != (BaseType &type);
@@ -458,6 +464,15 @@ class PgSQLType: public BaseType{
 
 		//! \brief Returns the configuration id for the user defined type
 		unsigned getUserTypeConfig(void);
+
+    //! \brief Returns the code (id) of the type. This is equivalent to call !type
+    unsigned getTypeId(void);
+
+    //! \brief Returns the name of the type. This is equivalent to call ~type
+    QString getTypeName(void);
+
+    //! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
+    QString getSQLTypeName(void);
 
 		friend class Type;
 		friend class Domain;

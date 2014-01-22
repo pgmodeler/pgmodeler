@@ -294,7 +294,17 @@ QString BaseType::operator ~ (void)
 
 unsigned BaseType::operator ! (void)
 {
-	return(type_idx);
+  return(type_idx);
+}
+
+unsigned BaseType::getTypeId(void)
+{
+  return(type_idx);
+}
+
+QString BaseType::getTypeName(void)
+{
+  return(type_list[type_idx]);
 }
 
 bool BaseType::operator == (BaseType &type)
@@ -930,7 +940,22 @@ unsigned PgSQLType::getUserTypeConfig(void)
 	if(this->isUserType())
 		return(user_types[this->type_idx - (pseudo_end + 1)].type_conf);
 	else
-		return(0);
+    return(0);
+}
+
+unsigned PgSQLType::getTypeId(void)
+{
+  return(!(*this));
+}
+
+QString PgSQLType::getTypeName(void)
+{
+  return(~(*this));
+}
+
+QString PgSQLType::getSQLTypeName(void)
+{
+  return(*(*this));
 }
 
 bool PgSQLType::operator == (unsigned type_id)
