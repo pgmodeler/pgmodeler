@@ -97,6 +97,9 @@ class SchemaParser {
 		*/
 		static bool evaluateExpression(void);
 
+    //! brief Increments the column counter while blank chars (space and tabs) are found on the line
+    static void ignoreBlankChars(const QString &line);
+
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
 		static QString getWord(void);

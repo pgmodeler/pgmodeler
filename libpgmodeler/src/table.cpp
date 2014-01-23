@@ -114,7 +114,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-		attribs[ParsersAttributes::DIF_SQL]="1";
+    attribs[ParsersAttributes::DIF_SQL]="1";
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
 		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
 		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");

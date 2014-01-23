@@ -576,7 +576,11 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
         group->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString("_grp.png")));
         group->setText(0, BaseObject::getTypeName(types[i]) + QString(" (%1)").arg(objects.size()));
         group->setFont(0, grp_fnt);
-        group->setData(0, Qt::UserRole, 0);
+
+        //Group items does contains a zero valued id to indicate that is not a valide object
+        group->setData(OBJECT_ID, Qt::UserRole, 0);
+        group->setData(OBJECT_TYPE, Qt::UserRole, types[i]);
+        group->setData(OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(objects.size()));
 
         //Creates individual items for each object of the current type
         itr=objects.begin();
@@ -621,7 +625,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           }
 
           //Stores the object's OID as the first data of the item
-          item->setData(0, Qt::UserRole, itr->first.toUInt());
+          item->setData(OBJECT_ID, Qt::UserRole, itr->first.toUInt());
 
           if(!item->toolTip(0).isEmpty())
             item->setToolTip(0,item->toolTip(0) + "\n" + tooltip.arg(itr->first));
@@ -629,7 +633,11 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
             item->setToolTip(0,tooltip.arg(itr->first));
 
           //Stores the object's type as the second data of the item
-          item->setData(1, Qt::UserRole, types[i]);
+          item->setData(OBJECT_TYPE, Qt::UserRole, types[i]);
+
+          //Stores the schema and the table's name of the object
+          item->setData(OBJECT_SCHEMA, Qt::UserRole, schema);
+          item->setData(OBJECT_TABLE, Qt::UserRole, table);
 
           if(types[i]==OBJ_SCHEMA || types[i]==OBJ_TABLE)
             items_vect.push_back(item);

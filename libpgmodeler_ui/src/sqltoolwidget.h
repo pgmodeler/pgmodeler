@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class SQLToolWidget
-\brief Implements the operations that permit user to performe basic SQL commands directly on a server
+\brief Implements the operations that permit user to perform basic SQL commands directly on a server
 */
 
 #ifndef SQL_TOOL_WIDGET_H
@@ -34,23 +34,50 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
   private:
     Q_OBJECT
 
+    //! brief Syntax highlighter for sql input field
     SyntaxHighlighter *sql_cmd_hl;
 
+    //! brief Database import helper used to list objects from current connection
     DatabaseImportHelper import_helper;
 
+    //! brief Connection used to run commands specified on sql input field
     Connection sql_cmd_conn;
 
+    //! brief Dialog for SQL save/load
     QFileDialog sql_file_dlg,
+
+    //! brief Dialog for CSV save/load
     csv_file_dlg;
 
+    //! brief Stores the results selection copy action
     QMenu copy_menu,
+
+          //! brief Stores the actions to drop and show object's data
           handle_menu;
 
     QAction *copy_action, *drop_action, *show_data_action;
 
+
+    //! brief Generates a CSV buffer based upon the selection on the results grid
+    QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
+
+    /*! brief Enables/Disables the fields for sql input and execution.
+        When enabling a new connection to server will be opened. */
     void enableSQLExecution(bool enable);
 
-    QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
+    //! brief Drops the object represented by the specified item
+    void dropObject(QTreeWidgetItem *item);
+
+    //! brief Shows the data of the object represented by the specified item
+    void showObjectData(QTreeWidgetItem *item);
+
+    //! brief Fills up the results grid based upon the specified result set
+    void fillResultsTable(ResultSet &res);
+
+    //! brief Stores the command on the sql command history
+    void registerSQLCommand(const QString &cmd);
+
+    void showError(Exception &e);
 
   public:
     SQLToolWidget(QWidget * parent = 0);
@@ -62,17 +89,35 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void hide(void);
 
   private slots:
+    //! brief Opens a connection to the selected database
     void connectToDatabase(void);
+
+    //! brief Lists all objects for the current selected database
     void listObjects(void);
-    void filterObjects(void);
+
+    //! brief Enables the command buttons when user fills the sql field
     void enableCommandButtons(void);
+
+    //! brief Runs the current typed sql command
     void runSQLCommand(void);
+
+    //! brief Save the current typed sql command on a file
     void saveCommands(void);
+
+    //! brief Load a sql command from a file
     void loadCommands(void);
+
+    //! brief Exports the results to csv file
     void exportResults(void);
+
+    //! brief Clears the input field as well the results grid
     void clearAll(void);
+
+    //! brief Copy to clipboard (in csv format) the current selected items on results grid
     void copySelection(void);
-    void handleObject(void);
+
+    //! brief Shows the menu to drop/show data
+    void handleObject(QTreeWidgetItem *item, int);
 
   signals:
     void s_visibilityChanged(bool);

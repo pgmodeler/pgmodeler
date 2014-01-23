@@ -9,10 +9,14 @@ int main(int, char **)
 	{
     PgSQLType tp;
 
-    tp=PgSQLType::parseString("varchar(250)");
+    tp=PgSQLType::parseString("geometry(GEOMETRYZM)");
     cout << tp.getTypeId() << endl;
     cout << tp.getTypeName().toStdString() << endl;
     cout << tp.getSQLTypeName().toStdString() << endl;
+    /*attribs_map attribs;
+    SchemaParser::setIgnoreEmptyAttributes(true);
+    SchemaParser::setIgnoreUnkownAttributes(true);
+    SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);*/
 
 		return(0);
 	}

@@ -651,7 +651,7 @@
    </widget>
    <widget class="QMenu" name="about_menu">
     <property name="title">
-     <string>&amp;Help</string>
+     <string>Help</string>
     </property>
     <addaction name="action_wiki"/>
     <addaction name="action_about"/>

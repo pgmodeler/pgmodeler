@@ -3,7 +3,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{constraint} %and %not @{trigger} %then
+%if @{constraint} %or @{column} %and %not @{trigger} %then
  %if %not @{decl-in-table} %then
   [-- ALTER TABLE ] @{table} $sp DROP $sp @{sql-object} $sp
  %end
@@ -11,7 +11,10 @@
  [-- DROP] $sp @{sql-object} $sp
 %end
 
-%if @{dif-sql} %then
+%if @{cast} %or @{extension} %or @{index} %or @{operator} %or
+    @{rule} %or @{trigger} %or @{aggregate} %or @{opclass} %or
+    @{opfamily} %or @{constraint} %or @{function} %then
+
   %if @{cast} %then [(] @{source-type} [ AS ] @{destiny-type} [)] %end
   %if @{extension} %then @{name} $sp CASCADE %end
   %if @{index} %then @{schema}.@{name} %end
