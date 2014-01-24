@@ -164,6 +164,8 @@
         <file>icones/swapobjs.png</file>
         <file>icones/clearobjsel.png</file>
         <file>icones/cancelar.png</file>
+        <file>icones/run.png</file>
+        <file>icones/result.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -177,8 +179,6 @@
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>
-        <file>styles/h_splitter.png</file>
-        <file>styles/v_splitter.png</file>
         <file>styles/h_separator.png</file>
         <file>styles/h_menu_indicator.png</file>
         <file>styles/close_tab_hover.png</file>

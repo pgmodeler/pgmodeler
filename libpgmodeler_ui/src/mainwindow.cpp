@@ -183,6 +183,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
+    sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
 
 		permission_wgt=new PermissionWidget(this);
@@ -305,6 +306,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
+  sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
@@ -326,6 +328,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
+
+  vlayout=new QVBoxLayout;
+  vlayout->setContentsMargins(0,0,0,0);
+  vlayout->addWidget(sql_tool_wgt);
+  sql_tool_parent->setLayout(vlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -351,6 +358,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_parent, SLOT(setVisible(bool)));
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_wgt, SLOT(setVisible(bool)));
+  connect(sql_tool_wgt, SIGNAL(s_visibilityChanged(bool)), sql_tool_btn, SLOT(setChecked(bool)));
+
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), general_tb, SLOT(setDisabled(bool)));
@@ -367,10 +378,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
-	QList<int> sizes;
-	sizes.push_back(10);
-	sizes.push_back(0);
-	v_splitter1->setSizes(sizes);
+  v_splitter1->setSizes({500, 250, 500});
 
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
@@ -599,6 +607,7 @@ void MainWindow::updateConnections(void)
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 	conn_cfg_wgt->getConnections(connections);
 	model_valid_wgt->updateConnections(connections);
+  sql_tool_wgt->updateConnections(connections);
 }
 
 void MainWindow::saveTemporaryModels(bool force)
@@ -725,6 +734,9 @@ void MainWindow::addModel(const QString &filename)
 			restoration_form->removeTemporaryModel(model_tab->getTempFilename());
 
 			delete(model_tab);
+
+      updateToolsState(true);
+
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}

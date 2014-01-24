@@ -104,6 +104,9 @@ class ResultSet {
   //! \brief Access on tuple on result set via navigation constants
   bool accessTuple(unsigned tuple_type);
 
+  //! \brief Returns if the result set is empty due a DML command that does not returned any data
+  bool isEmpty(void);
+
   //! \brief Make a copy between two resultsets
   void operator = (ResultSet &res);
 

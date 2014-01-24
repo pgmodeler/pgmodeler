@@ -53,10 +53,11 @@ void startCrashHandler(int signal)
 
 	if(output.isOpen())
 	{
-		lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n")
-				.arg(GlobalAttributes::PGMODELER_VERSION)
-				.arg(signal)
-				.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
+        .arg(signal)
+        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+        .arg(GlobalAttributes::PGMODELER_VERSION)
+        .arg(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
 		lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
 				 .arg(QT_VERSION_STR)

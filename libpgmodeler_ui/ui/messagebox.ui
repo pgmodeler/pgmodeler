@@ -184,7 +184,7 @@
                <string>msg</string>
               </property>
               <property name="textFormat">
-               <enum>Qt::AutoText</enum>
+               <enum>Qt::RichText</enum>
               </property>
               <property name="scaledContents">
                <bool>true</bool>

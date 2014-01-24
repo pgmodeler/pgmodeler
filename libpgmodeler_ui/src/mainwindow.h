@@ -41,6 +41,7 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
+#include "sqltoolwidget.h"
 
 using namespace std;
 
@@ -65,6 +66,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
+
+    //! \brief SQL tool widget widget
+    SQLToolWidget *sql_tool_wgt;
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;

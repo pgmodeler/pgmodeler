@@ -36,7 +36,7 @@ using namespace std;
 
 class BaseType{
 	private:
-    static constexpr unsigned types_count=231;
+    static constexpr unsigned types_count=232;
 
 	protected:
 		static QString type_list[types_count];
@@ -67,6 +67,12 @@ class BaseType{
 
 		//! \brief Returns the code (id) of the type
 		unsigned operator ! (void);
+
+    //! \brief Returns the code (id) of the type
+    unsigned getTypeId(void);
+
+    //! \brief Returns the name of the type
+    QString getTypeName(void);
 
 		bool operator == (BaseType &type);
 		bool operator == (unsigned type_id);
@@ -239,11 +245,10 @@ class SpatialType: public BaseType{
 	private:
 		unsigned variation;
     static constexpr unsigned offset=224;
-		static constexpr unsigned types_count=7;
+    static constexpr unsigned types_count=8;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
-		 for the spatial type. For geometry type this value goes from -1 to n
-		 and for geography only the value 4326 is accepted. */
+     for the spatial type. This value goes from -1 to n. */
 		int srid;
 
 	public:
@@ -258,7 +263,8 @@ class SpatialType: public BaseType{
 		static constexpr unsigned multipoint=offset+3;
 		static constexpr unsigned multilinestring=offset+4;
 		static constexpr unsigned multipolygon=offset+5;
-		static constexpr unsigned geometrycollection=offset+6;
+    static constexpr unsigned geometry=offset+6;
+    static constexpr unsigned geometrycollection=offset+7;
 
 		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::no_var);
 		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::no_var);
@@ -458,6 +464,15 @@ class PgSQLType: public BaseType{
 
 		//! \brief Returns the configuration id for the user defined type
 		unsigned getUserTypeConfig(void);
+
+    //! \brief Returns the code (id) of the type. This is equivalent to call !type
+    unsigned getTypeId(void);
+
+    //! \brief Returns the name of the type. This is equivalent to call ~type
+    QString getTypeName(void);
+
+    //! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
+    QString getSQLTypeName(void);
 
 		friend class Type;
 		friend class Domain;

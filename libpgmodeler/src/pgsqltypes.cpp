@@ -201,13 +201,14 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-  //offsets 224 to 230
+  //offsets 224 to 231
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
 	"MULTIPOINT",
 	"MULTILINESTRING",
 	"MULTIPOLYGON",
+  "GEOMETRY",
 	"GEOMETRYCOLLECTION"
 };
 
@@ -294,7 +295,17 @@ QString BaseType::operator ~ (void)
 
 unsigned BaseType::operator ! (void)
 {
-	return(type_idx);
+  return(type_idx);
+}
+
+unsigned BaseType::getTypeId(void)
+{
+  return(type_idx);
+}
+
+QString BaseType::getTypeName(void)
+{
+  return(type_list[type_idx]);
 }
 
 bool BaseType::operator == (BaseType &type)
@@ -807,13 +818,15 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-	else if(QRegExp("(.)+\\(( )*[a-z]+( )*(,)( )*[0-9]+( )*\\)").indexIn(type_str) >=0)
+  else if(QRegExp("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)",Qt::CaseInsensitive).indexIn(type_str) >=0)
 	{
 		start=type_str.indexOf("(");
 		end=type_str.indexOf(")", start);
 		value=type_str.mid(start+1, end-start-1).split(",");
 		sptype=value[0].toUpper();
-		srid=value[1].toUInt();
+
+    if(value.size() > 1)
+     srid=value[1].toUInt();
 	}
 
 	//If the string matches one of the regexp above remove the analyzed parts
@@ -930,7 +943,22 @@ unsigned PgSQLType::getUserTypeConfig(void)
 	if(this->isUserType())
 		return(user_types[this->type_idx - (pseudo_end + 1)].type_conf);
 	else
-		return(0);
+    return(0);
+}
+
+unsigned PgSQLType::getTypeId(void)
+{
+  return(!(*this));
+}
+
+QString PgSQLType::getTypeName(void)
+{
+  return(~(*this));
+}
+
+QString PgSQLType::getSQLTypeName(void)
+{
+  return(*(*this));
 }
 
 bool PgSQLType::operator == (unsigned type_id)
