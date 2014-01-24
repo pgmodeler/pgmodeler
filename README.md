@@ -38,17 +38,20 @@ MacOSX Notes
 
 * Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
 * To use pgmodeler-cli command you must call it by executing the following command inside the "pgmodeler.app/Contents/MacOS" path: ```./startapp pgmodeler-cli [PARAMS]```
-* The sample plugins were deactivated on this system due to some unexpected failures. This will be solved on the next major version 0.7.0.
 
 Change Log
 ----------
 
-v0.7.0-pre
+v0.7.0-alpha
 ------
-<em><strong>NOTE:</strong> This is a snapshot of the development branch and until an alpha release all changes will be listed in this entry.</em><br/>
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: January 11, 2014</em>
+<em>Release date: January 24, 2014</em><br/>
 
+* [New] Introduced the SQL tool that permits the execution of arbitrary SQL commands direclty on a server.
+* [New] Added methods getType, getTypeId to BaseType and getSQLTypeName to PgSQLType as an alternative to call operators ~, ! and *.
+* [New] Added a commented DROP command at start of each object definition (CREATE or ALTER TABLE ADD)
+* [New] Added a "Code Preview" tab on permissions dialog.
+* [New] Enabled SQL code visualization for FK relationships.
 * [New] Added a build number on about dialog. This number is the compilation date in format yyyymmdd.
 * [New] Added support for materialized and recursive views (PostgreSQL 9.3 feature).
 * [New] Added pgModeler version information on generated sql scripts as well .dbm files for debugging purpose.
@@ -56,6 +59,13 @@ v0.7.0-pre
 * [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Minor change when generate .stacktrace file for crash handler to include pgModeler build number.
+* [Change] Minor adjustments on DatabaseImportForm's import execution progress.
+* [Change] Minor enhancements on operation list when removing last operations.
+* [Change] Minor enhancements on table and relationship dialogs on error control flow.
+* [Change] Changed Z-value for relationship labels in order to avoid that name labels don't overlaps the cardinality labels.
+* [Change] Removed the translation installing from within plugin loading method at PluginsConfigWidget.
+* [Change] The Application class constructor now loads at once all translation files available for the current language including language file for plugins.
 * [Change] Minor changes on deploy scripts on all platforms. The parameter '-with-build-num' was introduced in order to generate a package with build number.
 * [Change] Relationship dialog enhanced. Now participant tables are described in what role they make part.
 * [Change] Minor improvement on model export process.
@@ -67,6 +77,15 @@ v0.7.0-pre
 * [Change] Minor adjustments on window title buttons for model export and database import forms.
 * [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
 * [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Fix bug related to geometry type.
+* [Fix] Minor fix on logical expressions evaluation on SchemaParser.
+* [Fix] Minor fix on model export when showing the name of objects being exported.
+* [Fix] Minor fix on list/view advanced objects of a relationship.
+* [Fix] Minor fix on form resizing when showing the protected object alert.
+* [Fix] Fixed a minor bug that was crashing pgModeler when visualizing many-to-many relationships.
+* [Fix] Fixed some warnings triggered by clang compiler.
+* [Fix] Fixed a crash when loading plugins on MacOSX.
+* [Fix] Fixed the issue related to import roles from database. pgModeler will not query pg_shadow anymore since this view is a very restricted object. Now role passwords will be imported as ***** (according to docs).
 * [Fix] Fixed the object name validation. pgModeler now accepts spaces within names.
 * [Fix] Fixed the function editing form resizing.
 * [Fix] Fixed a bug that was not loading "sql disabled" state for relationships.

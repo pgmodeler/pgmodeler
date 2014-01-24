@@ -5,8 +5,8 @@
 
 int main(int, char **)
 {
-	try
-	{
+  try
+  {
     PgSQLType tp;
 
     tp=PgSQLType::parseString("geometry(GEOMETRYZM)");
@@ -18,11 +18,11 @@ int main(int, char **)
     SchemaParser::setIgnoreUnkownAttributes(true);
     SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);*/
 
-		return(0);
-	}
-	catch(Exception &e)
-	{
-		cout << e.getExceptionsText().toStdString() << endl;
-		return(e.getErrorType());
-	}
+    return(0);
+  }
+  catch(Exception &e)
+  {
+    cout << e.getExceptionsText().toStdString() << endl;
+    return(e.getErrorType());
+  }
 }
