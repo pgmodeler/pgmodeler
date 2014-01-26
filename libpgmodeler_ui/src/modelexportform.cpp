@@ -125,6 +125,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	pgsqlvers_cmb->setCurrentIndex(0);
 	show_delim_chk->setChecked(false);
 	show_grid_chk->setChecked(false);
+  page_by_page_chk->setChecked(false);
 	connections_cmb->setCurrentIndex(0);
 	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
 }
@@ -141,7 +142,7 @@ void ModelExportForm::exportModel(void)
 		//Export to png
 		if(export_to_img_rb->isChecked())
 			export_hlp.exportToPNG(model->scene, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toFloat(),
-														 show_grid_chk->isChecked(), show_delim_chk->isChecked());
+                             show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
 		else
 		{
 			progress_lbl->setText(trUtf8("Initializing model export..."));
@@ -210,6 +211,7 @@ void ModelExportForm::enableExportMode(void)
 	hint1_lbl->setEnabled(exp_png);
 	show_grid_chk->setEnabled(exp_png);
 	show_delim_chk->setEnabled(exp_png);
+  page_by_page_chk->setEnabled(exp_png);
 	options_lbl->setEnabled(exp_png);
 	zoom_cmb->setEnabled(exp_png);
 	zoom_lbl->setEnabled(exp_png);

@@ -89,6 +89,7 @@ class PgModelerCLI: public QApplication {
 		HELP,
 		SHOW_GRID,
 		SHOW_DELIMITERS,
+    PAGE_BY_PAGE,
 		IGNORE_DUPLICATES,
 		CONN_ALIAS,
 		HOST,

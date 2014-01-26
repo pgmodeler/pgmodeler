@@ -298,6 +298,11 @@ class Table: public BaseTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
+    #warning "TODO methods"
+    bool isColumnPrimaryKey(Column *col);
+    bool isColumnForeignKey(Column *col);
+    bool isColumnUniqueKey(Column *col);
+
 		friend class Relationship;
 		friend class OperationList;
 };

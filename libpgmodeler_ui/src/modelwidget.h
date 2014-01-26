@@ -212,7 +212,7 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
-	private slots:
+  private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 
@@ -301,10 +301,7 @@ class ModelWidget: public QWidget {
 		//! \brief Removes any user added point from relationship
 		void removeRelationshipPoints(void);
 
-		//! \brief Returns a vector containing all the page rects.
-		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt);
-
-		//! \brief Highlights the object stored on the action that triggers the slot
+    //! \brief Highlights the object stored on the action that triggers the slot
 		void highlightObject(void);
 
 	public slots:

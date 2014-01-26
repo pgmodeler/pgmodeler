@@ -980,57 +980,6 @@ void ModelWidget::adjustSceneSize(void)
 		scene->alignObjectsToGrid();
 }
 
-vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt)
-{
-	vector<QRectF> pages;
-	QRectF page_rect, max_rect;
-	float width, height;
-	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
-	QList<QGraphicsItem *> list;
-
-	//Calculates the horizontal and vertical page count based upon the passed paper size
-	h_page_cnt=roundf(scene->sceneRect().width()/paper_size.width()) + 1;
-	v_page_cnt=roundf(scene->sceneRect().height()/paper_size.height()) + 1;
-
-	//Calculates the maximum count of horizontal and vertical pages
-	for(v_page=0; v_page < v_page_cnt; v_page++)
-	{
-		for(h_page=0; h_page < h_page_cnt; h_page++)
-		{
-			//Calculates the current page rectangle
-			page_rect=QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size);
-
-			//Case there is selected items recalculates the maximum page size
-			list=scene->items(page_rect, Qt::IntersectsItemShape);
-			if(!list.isEmpty())
-			{
-				if(start_h > h_page) start_h=h_page;
-				if(start_v > v_page) start_v=v_page;
-
-				width=page_rect.left() + page_rect.width();
-				height=page_rect.top() + page_rect.height();
-
-				if(width > max_rect.width())
-					max_rect.setWidth(width);
-
-				if(height > max_rect.height())
-					max_rect.setHeight(height);
-			}
-		}
-	}
-
-	//Re calculates the maximum page count based upon the maximum page size
-	h_page_cnt=roundf(max_rect.width()/paper_size.width());
-	v_page_cnt=roundf(max_rect.height()/paper_size.height());
-
-	//Inserts the page rectangles on the list
-	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
-		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
-			pages.push_back(QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size));
-
-	return(pages);
-}
-
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
 {
 	if(printer)
@@ -1068,7 +1017,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			printer->setPaperSize(QSizeF(page_size.height(), page_size.width()), QPrinter::DevicePixel);
 
 		//Get the pages rect for printing
-		pages=this->getPagesForPrinting(page_size, h_page_cnt, v_page_cnt);
+    pages=scene->getPagesForPrinting(page_size, margins.size(), h_page_cnt, v_page_cnt);
 
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
