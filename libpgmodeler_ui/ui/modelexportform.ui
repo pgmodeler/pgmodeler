@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>640</width>
     <height>735</height>
    </rect>
   </property>
@@ -21,13 +21,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>630</height>
+    <width>640</width>
+    <height>640</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
+    <width>640</width>
     <height>735</height>
    </size>
   </property>
@@ -330,13 +330,29 @@
              <bool>false</bool>
             </property>
             <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Show delimiters</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="page_by_page_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Show the page delimiters</string>
+             <string>Page by page</string>
             </property>
            </widget>
           </item>
@@ -432,7 +448,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Check if the system user has write permission on image target folder.</string>
+             <string>Exporting the model page by page will generate files with a &quot;_p[n]&quot; suffix where n is the page id. Check if the current user has write permission on output folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -710,7 +726,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Check if the system user has write permission on target folder.</string>
+             <string>Check if the current user has write permission on output folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>

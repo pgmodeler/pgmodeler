@@ -124,6 +124,9 @@ class ObjectsScene: public QGraphicsScene {
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
 
+    //! \brief Returns a vector containing all the page rects.
+    vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+
 	public slots:
 		void alignObjectsToGrid(void);
 		void update(void);

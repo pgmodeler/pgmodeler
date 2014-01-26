@@ -37,7 +37,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim, bool page_by_page)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -45,11 +45,14 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-		QRectF ret=scene->itemsBoundingRect();
+    //QRectF ret=scene->itemsBoundingRect();
 		bool shw_grd, shw_dlm, align_objs;
 		QGraphicsView viewp(scene);
 		QRect retv;
 		QPolygon pol;
+    vector<QRectF> pages;
+    unsigned v_cnt=0, h_cnt=0, page_idx=1;
+    QString tmpl_filename, file;
 
 		//Clear the object scene selection to avoid drawing the selectoin rectangle of the objects
 		scene->clearSelection();
@@ -59,6 +62,38 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		//Sets the options passed by the user
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
+
+    if(page_by_page)
+    {
+      QPrinter::Orientation orient;
+      QRectF margins;
+      QSizeF custom_sz, page_sz;
+      QPrinter::PaperSize paper_sz;
+      QPrinter prt;
+      QFileInfo fi(filename);
+
+      ObjectsScene::getPaperConfiguration(paper_sz, orient, margins, custom_sz);
+
+      if(paper_sz==QPrinter::Custom)
+        page_sz=custom_sz;
+      else
+      {
+        prt.setPaperSize(paper_sz);
+        prt.setOrientation(orient);
+        page_sz=prt.paperSize(QPrinter::DevicePixel);
+      }
+
+      //Calculates the page count to be exported
+      pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
+
+      //Configures the template filename for pages pixmaps
+      tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_p%1." + fi.completeSuffix();
+    }
+    else
+    {
+      pages.push_back(scene->itemsBoundingRect());
+      file=filename;
+    }
 
 		//Updates the scene to apply the change on grid and delimiter
 		scene->update();
@@ -71,40 +106,56 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		viewp.centerOn(0,0);
 		viewp.scale(zoom, zoom);
 
-		//Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
-		pol=viewp.mapFromScene(ret);
+    QPainter painter;
+    vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
 
-		//Configure the viewport area to be copied
-		retv.setTopLeft(pol.at(0));
-		retv.setTopRight(pol.at(1));
-		retv.setBottomRight(pol.at(2));
-		retv.setBottomLeft(pol.at(3));
+    while(itr!=itr_end)
+    {
+      //Convert the objects bounding rect to viewport coordinates to correctly draw them onto pixmap
+      pol=viewp.mapFromScene(*itr);
+      itr++;
 
-		//Creates the output pixmap
-		pix=QPixmap(retv.size());
-		pix.fill();
-		QPainter p(&pix);
+      //Configure the viewport area to be copied
+      retv.setTopLeft(pol.at(0));
+      retv.setTopRight(pol.at(1));
+      retv.setBottomRight(pol.at(2));
+      retv.setBottomLeft(pol.at(3));
 
-		//Setting optimizations on the painter
-		p.setRenderHint(QPainter::Antialiasing, true);
-		p.setRenderHint(QPainter::TextAntialiasing, true);
-		p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+      //Creates the output pixmap
+      pix=QPixmap(retv.size());
+      pix.fill();
 
-		emit s_progressUpdated(50, trUtf8("Rendering objects onto the output pixmap..."), BASE_OBJECT);
+      //Setting optimizations on the painter
+      painter.begin(&pix);
+      painter.setRenderHint(QPainter::Antialiasing, true);
+      painter.setRenderHint(QPainter::TextAntialiasing, true);
+      painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-		//Render the entire viewport onto the pixmap
-		viewp.render(&p, QRectF(QPointF(0,0), pix.size()), retv);
+      emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 100,
+                             trUtf8("Rendering objects onto the output pixmap..."), BASE_OBJECT);
 
-		//Restore the scene options
-		ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+      //Render the entire viewport onto the pixmap
+      viewp.render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
+      painter.end();
 
-		//Updates the scene to apply the restoration of grid and delimiter statuses
-		scene->update();
+      if(page_by_page)
+        file=tmpl_filename.arg(page_idx++);
 
-		//If the pixmap is not saved raises an error
-		if(!pix.save(filename))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(filename)),
-											ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      //If the pixmap is not saved raises an error
+      if(!pix.save(file))
+      {
+        //Restoring the scene settings before throw error
+        ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+        scene->update();
+
+        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(file)),
+                        ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      }
+    }
+
+    //Restoring the scene settings
+    ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
+    scene->update();
 
 		emit s_exportFinished();
 	}
