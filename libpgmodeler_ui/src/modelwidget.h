@@ -46,12 +46,6 @@ class ModelWidget: public QWidget {
 		//! \brief Indicates if the model was modified by some operation
 		bool modified;
 
-		//! \brief Stores the objects that can be navigate through Alt+<left|right> keys
-		vector<BaseGraphicObject *> obj_nav_list;
-
-		//! \brief Stores the current selected object by the navigation
-		unsigned obj_nav_idx;
-
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *obj);
 

@@ -115,7 +115,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 												BaseRelationship::RELATIONSHIP_GEN };
 
 	current_zoom=1;
-	obj_nav_idx=0;
 	modified=false;
 	new_obj_type=BASE_OBJECT;
 
@@ -391,39 +390,28 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 		this->cancelObjectAddition();
 		scene->clearSelection();
 	}
-	//If the user is navigation through the objects using keyboard
-	else if(event->modifiers()==Qt::AltModifier &&
-					(event->key()==Qt::Key_Left || event->key()==Qt::Key_Right) &&
-					!obj_nav_list.empty())
-	{
-		BaseObjectView *obj=nullptr;
+  else if((event->modifiers()==Qt::ControlModifier ||
+          (event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))) &&
+          (event->key()==Qt::Key_Left || event->key()==Qt::Key_Right ||
+           event->key()==Qt::Key_Down || event->key()==Qt::Key_Up))
+  {
+    int dx=0, dy=0, factor=1;
 
-		if(obj_nav_idx < obj_nav_list.size())
-		{
-			//Get the graphical representation of the current object
-			obj=dynamic_cast<BaseObjectView *>(obj_nav_list.at(obj_nav_idx)->getReceiverObject());
+    if(event->key()==Qt::Key_Left)
+      dx=-ObjectsScene::SCENE_MOVE_STEP;
+    else if(event->key()==Qt::Key_Right)
+      dx=ObjectsScene::SCENE_MOVE_STEP;
+    else if(event->key()==Qt::Key_Up)
+      dy=-ObjectsScene::SCENE_MOVE_STEP;
+    else
+      dy=ObjectsScene::SCENE_MOVE_STEP;
 
-				scene->clearSelection();
-				obj->setSelected(true);
-				viewport->centerOn(obj);
+    if((event->modifiers() & Qt::ShiftModifier)==Qt::ShiftModifier)
+      factor=4;
 
-
-			//Navigate forward if the right key is pressed
-			if(event->key()==Qt::Key_Right)
-			{
-				obj_nav_idx++;
-				if(obj_nav_idx >= obj_nav_list.size())
-					obj_nav_idx=0;
-			}
-			//Navigate backward if the left key is pressed
-			else
-			{
-				obj_nav_idx--;
-				if(obj_nav_idx >= obj_nav_list.size())
-					obj_nav_idx=obj_nav_list.size()-1;
-			}
-		}
-	}
+    viewport->horizontalScrollBar()->setValue(viewport->horizontalScrollBar()->value() + (dx * factor));
+    viewport->verticalScrollBar()->setValue(viewport->verticalScrollBar()->value() + (dy * factor));
+  }
 }
 
 void ModelWidget::mousePressEvent(QMouseEvent *event)
@@ -506,11 +494,6 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
-
-		if(item->isVisible())
-			obj_nav_list.push_back(graph_obj);
-
-		obj_nav_idx=0;
 	}
 
 	this->modified=true;
@@ -570,26 +553,15 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 
 	if(graph_obj)
 	{
-		vector<BaseGraphicObject *>::iterator itr;
-
 		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
 
 		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
 			 (graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
-
-		//Remove the object from tab navigation list
-		itr=std::find(obj_nav_list.begin(), obj_nav_list.end(), graph_obj);
-		if(itr!=obj_nav_list.end())
-			obj_nav_list.erase(itr);
-
-		//Reset the tab navigation
-		obj_nav_idx=0;
-	}
+  }
 
 	this->modified=true;
-	//this->invalidated=true;
 }
 
 void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
@@ -1211,33 +1183,6 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
 				schema_wgt->show();
 				res=(schema_wgt->result()==QDialog::Accepted);
-
-				if(res==QDialog::Accepted)
-				{
-					/* If the object is unallocated at this point indicates that user just added a new schema
-					this way, the last schema added is retrieved from the model and inserted on navigation list
-					if it is visible */
-					if(!object)
-						object=db_model->getSchema(db_model->getObjectCount(OBJ_SCHEMA)-1);
-
-					BaseGraphicObject *obj=dynamic_cast<BaseGraphicObject *>(object);
-					BaseObjectView *graph_obj=dynamic_cast<BaseObjectView *>(obj->getReceiverObject());
-					vector<BaseGraphicObject *>::iterator itr=std::find(obj_nav_list.begin(), obj_nav_list.end(), obj);
-
-					//Adding the schema on the navigation list if its visible
-					if(graph_obj->isVisible() && itr==obj_nav_list.end())
-					{
-						obj_nav_list.push_back(obj);
-						obj_nav_idx=0;
-					}
-					//Removing the schema from the navigation list if its no more visible
-					else if(!graph_obj->isVisible() && itr!=obj_nav_list.end())
-					{
-						obj_nav_list.erase(itr);
-						obj_nav_idx=0;
-					}
-				}
-
 			break;
 
 			case OBJ_ROLE:

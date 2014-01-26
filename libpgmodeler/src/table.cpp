@@ -1119,7 +1119,7 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 					 constr->getReferencedTable() == ref_tab);
 	}
 
-	return(found);
+  return(found);
 }
 
 bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
