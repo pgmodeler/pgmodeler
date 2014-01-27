@@ -39,19 +39,13 @@ Table::Table(void) : BaseTable()
 
 Table::~Table(void)
 {
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
-											 OBJ_CONSTRAINT, OBJ_COLUMN };
-	vector<TableObject *> *list=nullptr;
+  vector<BaseObject *> list=getObjects();
 
-	for(unsigned i=0; i < 5; i++)
-	{
-		list=getObjectList(types[i]);
-		while(!list->empty())
-		{
-			delete(list->back());
-			list->pop_back();
-		}
-	}
+  while(!list.empty())
+  {
+    delete(list.back());
+    list.pop_back();
+  }
 
 	ancestor_tables.clear();
 }
@@ -327,7 +321,7 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 	else if(obj_type==OBJ_INDEX)
 		return(&indexes);
 	else
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Table::addObject(BaseObject *obj, int obj_idx)
@@ -1370,13 +1364,13 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 
 vector<BaseObject *> Table::getObjects(void)
 {
-	vector<BaseObject *> list;
+  vector<BaseObject *> list;
+  ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+                       OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+  unsigned cnt=sizeof(types)/sizeof(ObjectType);
 
-	list.assign(columns.begin(), columns.end());
-	list.insert(list.end(), constraints.begin(), constraints.end());
-	list.insert(list.end(), triggers.begin(), triggers.end());
-	list.insert(list.end(), rules.begin(), rules.end());
-	list.insert(list.end(), indexes.begin(), indexes.end());
+  for(unsigned i=0; i < cnt; i++)
+    list.insert(list.end(), getObjectList(types[i])->begin(), getObjectList(types[i])->end()) ;
 
-	return(list);
+  return(list);
 }

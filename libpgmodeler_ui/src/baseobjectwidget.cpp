@@ -827,16 +827,22 @@ void BaseObjectWidget::cancelConfiguration(void)
 			relationship->removeObject(tab_obj);
 
 		//Deallocate the object if it isn't a table or relationship
-		if(obj_type!=OBJ_TABLE &&
+    /* if(obj_type!=OBJ_TABLE &&
 			 obj_type!=OBJ_VIEW &&
 			 obj_type!=OBJ_RELATIONSHIP)
 		{
-			delete(this->object);
+      delete(this->object);
 			this->object=nullptr;
-		}
+    } */
+
+    this->object=nullptr;
 
 		if(op_list)
+    {
+      op_list->ignoreOperationChain(true);
 			op_list->removeLastOperation();
+      op_list->ignoreOperationChain(false);
+    }
 	}
 
 	//If the object is not a new one, restore its previous state

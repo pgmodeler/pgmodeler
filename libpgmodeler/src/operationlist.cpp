@@ -198,7 +198,18 @@ void OperationList::removeOperations(void)
 		//Deletes the object if its not unallocated already or referenced on the model
 		if(unallocated_objs.count(object)==0 &&
 			 (!tab_obj && model->getObjectIndex(object) < 0))
-		{
+		{    
+      if(object->getObjectType()==OBJ_TABLE)
+      {
+        vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
+
+        while(!list.empty())
+        {
+          unallocated_objs[list.back()]=true;
+          list.pop_back();
+        }
+      }
+
 			unallocated_objs[object]=true;
 			delete(object);
 		}
