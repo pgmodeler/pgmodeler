@@ -2176,6 +2176,7 @@ void ModelWidget::removeObjects(void)
 					ritr=objs_map.rbegin();
 					ritr_end=objs_map.rend();
 					object=nullptr;
+          rel=nullptr;
 				}
 
 				op_count=op_list->getCurrentSize();
@@ -2221,7 +2222,7 @@ void ModelWidget::removeObjects(void)
 
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
-								table->removeObject(obj_idx, obj_type);
+                table->removeObject(obj_idx, obj_type);
 
 								db_model->removePermissions(tab_obj);
 

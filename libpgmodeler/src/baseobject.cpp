@@ -30,7 +30,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "relationship","textbox",	"permission",
-	"parameter", "typeattribute","relationship"
+  "parameter", "typeattribute","tag","relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -43,7 +43,8 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Basic Relationship")
+  QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -58,10 +59,10 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
+   starts at 40k because the id ranges 0, 10k, 20k, 30k
 	 are respectively assigned to objects of classes Role, Tablespace
-	 DBModel, Schema, Collation, Function and Type */
-unsigned BaseObject::global_id=30000;
+   DatabaseModel, Tag */
+unsigned BaseObject::global_id=40000;
 
 BaseObject::BaseObject(void)
 {
