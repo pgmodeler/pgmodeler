@@ -1,0 +1,12 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT tag (style,comment)>
+<!ATTLIST tag name CDATA #REQUIRED>
+
+<!ELEMENT style EMPTY>
+<!ATTLIST style fill-color CDATA #REQUIRED>
+<!ATTLIST style border-color CDATA #IMPLIED>
+<!ATTLIST style id (table-title | table-body | table-ext-body | table-schema-name | table-name |
+                    view-title  | view-body  | view-ext-body  | view-schema-name  | view-name) "table-title">

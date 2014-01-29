@@ -409,7 +409,9 @@ namespace ParsersAttributes {
   RECURSIVE="recursive",
   WITH_NO_DATA="with-no-data",
   DROP="drop",
-  TABLE_OBJECT="table-obj";
+  TABLE_OBJECT="table-obj",
+  STYLE="style",
+  STYLES="styles";
 }
 
 #endif

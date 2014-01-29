@@ -50,6 +50,8 @@
 %collation;
 <!ENTITY % extension SYSTEM "extension.dtd">
 %extension;
+<!ENTITY % tag SYSTEM "tag.dtd">
+%tag;
 
 <!ELEMENT dbmodel ANY>
 

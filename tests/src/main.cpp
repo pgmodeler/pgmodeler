@@ -1,22 +1,17 @@
 #include <iostream>
 #include "exception.h"
 #include "mainwindow.h"
-#include "catalog.h"
+#include "tag.h"
 
 int main(int, char **)
 {
   try
   {
-    PgSQLType tp;
+    Tag *tag=new Tag;
 
-    tp=PgSQLType::parseString("geometry(GEOMETRYZM)");
-    cout << tp.getTypeId() << endl;
-    cout << tp.getTypeName().toStdString() << endl;
-    cout << tp.getSQLTypeName().toStdString() << endl;
-    /*attribs_map attribs;
-    SchemaParser::setIgnoreEmptyAttributes(true);
-    SchemaParser::setIgnoreUnkownAttributes(true);
-    SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);*/
+    tag->setName("<teste_&tag>");
+    tag->setComment("this tag is a test");
+    cout << tag->getCodeDefinition(SchemaParser::XML_DEFINITION).toStdString() << endl;
 
     return(0);
   }

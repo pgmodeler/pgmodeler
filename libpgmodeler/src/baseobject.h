@@ -253,7 +253,7 @@ class BaseObject {
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
-		QString getName(bool format=false, bool prepend_schema=true);
+    virtual QString getName(bool format=false, bool prepend_schema=true);
 
 		//! \brief Retorns the object's comment
 		QString getComment(void);
@@ -309,7 +309,7 @@ class BaseObject {
 		/*! \brief Returns the object's SQL or XML code definition. The attribute 'reduced_form'
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+    virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

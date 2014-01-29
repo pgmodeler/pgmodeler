@@ -84,13 +84,13 @@ class Constraint: public TableObject{
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
-		static constexpr unsigned SOURCE_COLS=0,
+		static const unsigned SOURCE_COLS=0,
 
 														 /*! \brief Access the referenced columns that means the columns from the
 														 referenced table primary key (only for foreign keys) */
 														 REFERENCED_COLS=1;
 
-    static constexpr unsigned DELETE_ACTION=0,
+    static const unsigned DELETE_ACTION=0,
                              UPDATE_ACTION=1;
 
 		Constraint(void);

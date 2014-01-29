@@ -45,7 +45,7 @@ class Operator: public BaseObject {
 					merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
-		static constexpr unsigned FUNC_OPERATOR=0,
+		static const unsigned FUNC_OPERATOR=0,
 															FUNC_JOIN=1,
 															FUNC_RESTRICT=2,
 															LEFT_ARG=0,

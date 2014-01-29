@@ -28,13 +28,47 @@ that replaces the original colors of tables/views that owns them.
 #define TAG_H
 
 #include "baseobject.h"
+#include <QColor>
+#include <QLinearGradient>
 
 class Tag: public BaseObject {
   private:
     static unsigned tag_id;
 
-  public:
+    //! \brief Stores the object colors configuration
+    map<QString, QColor*> color_config;
+
+    /*! brief Validates the element id and the color id. This method will
+    raise an error if some of parameters are invalid */
+    void validateElementId(const QString &elem_id, unsigned color_id);
+
+   public:
+    static const unsigned FILL_COLOR1=0,
+    FILL_COLOR2=1,
+    BORDER_COLOR=2,
+    COLOR_COUNT=3;
+
     Tag(void);
+
+    /*! brief Set the tag name. Different from regular database model object there is no rule
+    when setting the name. The only exception is that the name cannot be greater than
+    BaseObject::OBJECT_NAME_MAX_LENGTH */
+    void setName(const QString &name) final;
+
+    QString getName(bool=false, bool=false) final;
+
+    //! brief Set the specified element id color
+    void setElementColor(const QString &elem_id, const QColor &color, unsigned color_id);
+
+    //! brief Returns a sigle color (at specified index) of the element.
+    QColor getElementColor(const QString &elem_id, unsigned color_id);
+
+    /*! brief Returns a gradient configured for the current element id. This method will return
+    an error if the current element does not have at least 2 colors configured */
+    QLinearGradient getFillStyle(const QString &elem_id);
+
+    QString getCodeDefinition(unsigned def_type);
+    QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 };
 
 #endif

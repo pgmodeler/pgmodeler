@@ -45,7 +45,7 @@ class ValidationInfo {
 		QStringList errors;
 
 	public:
-		static constexpr unsigned NO_UNIQUE_NAME=0,
+		static const unsigned NO_UNIQUE_NAME=0,
 															BROKEN_REFERENCE=1,
 															SQL_VALIDATION_ERR=2,
 															VALIDATION_ABORTED=3;

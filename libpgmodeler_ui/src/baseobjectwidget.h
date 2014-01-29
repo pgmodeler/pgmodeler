@@ -130,7 +130,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static constexpr unsigned UNTIL_VERSION=0,
+		static const unsigned UNTIL_VERSION=0,
 															VERSIONS_INTERVAL=1,
 															AFTER_VERSION=2;
 
