@@ -49,7 +49,11 @@ class BaseTableView: public BaseObjectView {
 		QGraphicsPolygonItem *body,
 
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
-		*ext_attribs_body;
+    *ext_attribs_body,
+
+    *tag_body;
+
+    QGraphicsSimpleTextItem *tag_name;
 
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
@@ -64,6 +68,9 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Updates the current connected relationship count
 		void updateConnectedRelsCount(int inc);
+
+    //! brief Configures the tag object when the source object has one.
+    void configureTag(void);
 
 	public:
 		BaseTableView(BaseTable *base_tab);

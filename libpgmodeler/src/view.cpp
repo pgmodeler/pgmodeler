@@ -538,10 +538,14 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
   attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
   attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
-
   attributes[ParsersAttributes::COLUMNS]="";
+  attributes[ParsersAttributes::TAG]="";
+
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
+
+  if(tag && def_type==SchemaParser::XML_DEFINITION)
+   attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		setDeclarationAttribute();

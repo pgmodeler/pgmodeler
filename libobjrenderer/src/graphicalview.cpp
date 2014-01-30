@@ -50,6 +50,7 @@ void GraphicalView::configureObject(void)
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
+  Tag *tag=view->getTag();
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -204,9 +205,18 @@ void GraphicalView::configureObject(void)
 	{
 		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
 		bodies[idx]->setPolygon(pol);
-		bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
-		pen=this->getBorderStyle(attribs[idx]);
-		pen.setStyle(Qt::DashLine);
+
+    pen=this->getBorderStyle(attribs[idx]);
+    pen.setStyle(Qt::DashLine);
+
+    if(!tag)
+      bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
+    else
+    {
+      bodies[idx]->setBrush(tag->getFillStyle(attribs[idx]));
+      pen.setColor(tag->getElementColor(attribs[idx], Tag::BORDER_COLOR));
+    }
+
 		bodies[idx]->setPen(pen);
 
 		if(idx==0)
@@ -253,5 +263,6 @@ void GraphicalView::configureObject(void)
 											TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
+  configureTag();
 }
 

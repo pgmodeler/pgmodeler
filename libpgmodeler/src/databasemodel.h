@@ -51,6 +51,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "domain.h"
 #include "collation.h"
 #include "extension.h"
+#include "tag.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -96,6 +97,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> permissions;
 		vector<BaseObject *> collations;
 		vector<BaseObject *> extensions;
+    vector<BaseObject *> tags;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -335,6 +337,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removeExtension(Extension *extension, int obj_idx=-1);
 		Extension *getExtension(unsigned obj_idx);
 
+    void addTag(Tag *tag, int obj_idx=-1);
+    void removeTag(Tag *tag, int obj_idx=-1);
+    Tag *getTag(unsigned obj_idx);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
@@ -379,6 +385,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		View *createView(void);
 		Collation *createCollation(void);
 		Extension *createExtension(void);
+    Tag *createTag(void);
 		Permission *createPermission(void);
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);

@@ -274,6 +274,16 @@
        <string>Relationship: Attribute descriptor</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Tag: Name</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tag: Body</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="1" column="0">

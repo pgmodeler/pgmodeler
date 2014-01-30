@@ -44,6 +44,7 @@ void TableView::configureObject(void)
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
+  Tag *tag=table->getTag();
 
 	//Configures the table title
 	title->configureObject(table);
@@ -168,12 +169,19 @@ void TableView::configureObject(void)
 	for(idx=0; idx < 2; idx++)
 	{
 		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
-		bodies[idx]->setPolygon(pol);
 
-		bodies[idx]->setBrush(this->getFillStyle(atribs[idx]));
+    bodies[idx]->setPolygon(pol);
+    pen=this->getBorderStyle(atribs[idx]);
 
-		pen=this->getBorderStyle(atribs[idx]);
-		bodies[idx]->setPen(pen);
+    if(!tag)
+      bodies[idx]->setBrush(this->getFillStyle(atribs[idx]));
+    else
+    {
+      pen.setColor(tag->getElementColor(atribs[idx], Tag::BORDER_COLOR));
+      bodies[idx]->setBrush(tag->getFillStyle(atribs[idx]));
+    }
+
+    bodies[idx]->setPen(pen);
 
 		if(idx==0)
 			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
@@ -219,4 +227,6 @@ void TableView::configureObject(void)
 											TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
+
+  configureTag();
 }

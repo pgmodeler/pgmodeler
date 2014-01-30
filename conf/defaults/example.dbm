@@ -11,6 +11,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public">
 </schema>
 
+<tag name="sample tag">
+	<style id="table-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="table-ext-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="table-name" colors="#ffffff"/>
+	<style id="table-schema-name" colors="#ffffff"/>
+	<style id="table-title" colors="#ff0000,#800000,#000000"/>
+	<style id="view-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="view-ext-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="view-name" colors="#ffffff"/>
+	<style id="view-schema-name" colors="#ffffff"/>
+	<style id="view-title" colors="#ff0000,#800000,#000000"/>
+	<comment><![CDATA[this tag is a test]]></comment>
+</tag>
+
 <language name="testlang" protected="true"/>
 
 <function name="trigger_func"
@@ -32,6 +46,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table" oids="false">
 	<schema name="public"/>
+	<tag name="sample tag" />
 	<position x="20" y="20"/>
 	<column name="column" not-null="true">
 		<type name="serial"/>

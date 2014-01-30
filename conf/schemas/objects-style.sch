@@ -30,6 +30,7 @@
 [  <font id="label" color="] @{label-fcolor} [" italic="] @{label-italic} [" bold="] @{label-bold} [" underline="] @{label-underline} ["/>] $br
 [  <font id="constraints" color="] @{constraints-fcolor} [" italic="] @{constraints-italic} [" bold="] @{constraints-bold} [" underline="] @{constraints-underline} ["/>] $br
 [  <font id="pos-info" color="] @{pos-info-fcolor} [" italic="] @{pos-info-italic} [" bold="] @{pos-info-bold} [" underline="] @{pos-info-underline} ["/>] $br
+[  <font id="tag" color="] @{tag-fcolor} [" italic="] @{tag-italic} [" bold="] @{tag-bold} [" underline="] @{tag-underline} ["/>] $br
 $br 
 [  <object id="table-title" fill-color="] @{table-title-color} [" border-color="] @{table-title-bcolor} ["/>] $br
 [  <object id="table-body" fill-color="] @{table-body-color} [" border-color="] @{table-body-bcolor} ["/>] $br
@@ -54,4 +55,5 @@ $br
 [  <object id="locker-arc" fill-color="] @{locker-arc-color} [" border-color="] @{locker-arc-bcolor} ["/>] $br
 [  <object id="obj-selection" fill-color="] @{obj-selection-color} [" border-color="] @{obj-selection-bcolor} ["/>] $br
 [  <object id="pos-info" fill-color="] @{pos-info-color} [" border-color="] @{pos-info-bcolor} ["/>] $br
+[  <object id="tag" fill-color="] @{tag-color} [" border-color="] @{tag-bcolor} ["/>] $br
 </objects-style> $br

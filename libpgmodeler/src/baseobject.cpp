@@ -400,7 +400,8 @@ bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
 				 obj_type!=OBJ_INDEX && obj_type!=OBJ_RELATIONSHIP &&
 				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
-				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION);
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
+         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
 }
 
 bool BaseObject::acceptsAppendedSQL(void)
@@ -815,7 +816,7 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
 	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-											 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION,
+                       OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
 											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
 											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,

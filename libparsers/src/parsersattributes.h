@@ -411,7 +411,9 @@ namespace ParsersAttributes {
   DROP="drop",
   TABLE_OBJECT="table-obj",
   STYLE="style",
-  STYLES="styles";
+  STYLES="styles",
+  TAG="tag",
+  COLORS="colors";
 }
 
 #endif

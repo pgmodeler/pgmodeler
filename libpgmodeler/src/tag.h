@@ -60,6 +60,11 @@ class Tag: public BaseObject {
     //! brief Set the specified element id color
     void setElementColor(const QString &elem_id, const QColor &color, unsigned color_id);
 
+    /*! brief Set the specified element colors using a string that contains a color set
+    on the format: [#RRGGBB],[#RRGGBB],[#RRGGBB]. Color on the string beyond position 3
+    will be ignored */
+    void setElementColors(const QString &elem_id, const QString &colors);
+
     //! brief Returns a sigle color (at specified index) of the element.
     QColor getElementColor(const QString &elem_id, unsigned color_id);
 
@@ -69,6 +74,9 @@ class Tag: public BaseObject {
 
     QString getCodeDefinition(unsigned def_type);
     QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+
+    //! \brief Copy the attributes between two tags
+    void operator = (Tag &tag);
 };
 
 #endif

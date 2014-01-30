@@ -71,6 +71,26 @@ void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned 
   }
 }
 
+void Tag::setElementColors(const QString &elem_id, const QString &colors)
+{
+  try
+  {
+    QStringList color_lst=colors.split(',');
+    unsigned color_id=FILL_COLOR1;
+
+    for(auto color : color_lst)
+    {
+      validateElementId(elem_id, color_id);
+      color_config[elem_id][color_id]=QColor(color);
+      color_id++;
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}
+
 QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
 {
   try
@@ -134,17 +154,14 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
       for(auto itr : color_config)
       {
         attribs[ParsersAttributes::ID]=itr.first;
-        attribs[ParsersAttributes::BORDER_COLOR]="";
-        attribs[ParsersAttributes::FILL_COLOR]="";
+        attribs[ParsersAttributes::COLORS]="";
 
         if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME ||
            itr.first==ParsersAttributes::VIEW_NAME || itr.first==ParsersAttributes::VIEW_SCHEMA_NAME)
-          attribs[ParsersAttributes::FILL_COLOR]=itr.second[FILL_COLOR1].name();
+          attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name();
         else
-        {
-          attribs[ParsersAttributes::FILL_COLOR]=itr.second[FILL_COLOR1].name() + "," + itr.second[FILL_COLOR2].name();
-          attribs[ParsersAttributes::BORDER_COLOR]=itr.second[BORDER_COLOR].name();
-        }
+          attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + "," +
+              itr.second[FILL_COLOR2].name() + "," + itr.second[BORDER_COLOR].name();
 
         attributes[ParsersAttributes::STYLES]+=SchemaParser::getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
       }
@@ -155,5 +172,22 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
     }
 
    return(BaseObject::getCodeDefinition(def_type, reduced_form));
+  }
+}
+
+void Tag::operator = (Tag &tag)
+{
+  (*dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tag);
+
+  for(auto attr : tag.color_config)
+  {
+    if(attr.first!=ParsersAttributes::TABLE_NAME && attr.first!=ParsersAttributes::TABLE_SCHEMA_NAME &&
+       attr.first!=ParsersAttributes::VIEW_NAME && attr.first!=ParsersAttributes::VIEW_SCHEMA_NAME)
+    {
+      for(unsigned i=FILL_COLOR1; i < COLOR_COUNT; i++)
+        this->color_config[attr.first][i]=attr.second[i];
+    }
+    else
+      (*this->color_config[attr.first])=(*attr.second);
   }
 }

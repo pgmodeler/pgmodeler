@@ -20,6 +20,21 @@
 
 BaseTable::BaseTable(void)
 {
+ tag=nullptr;
  obj_type=BASE_TABLE;
+ attributes[ParsersAttributes::TAG]="";
+}
+
+void BaseTable::setTag(Tag *tag)
+{
+  if(!tag)
+    throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  this->tag=tag;
+}
+
+Tag *BaseTable::getTag(void)
+{
+  return(tag);
 }
 

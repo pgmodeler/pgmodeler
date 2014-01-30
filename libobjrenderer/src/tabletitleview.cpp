@@ -51,6 +51,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	QPen pen;
 	Schema *schema=dynamic_cast<Schema *>(object->getSchema());
 	QFont font;
+  Tag *tag=dynamic_cast<BaseTable *>(object)->getTag();
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
@@ -79,7 +80,11 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font.setStrikeOut(object->isSQLDisabled());
 
 	schema_name->setFont(font);
-	schema_name->setBrush(fmt.foreground());
+
+  if(!tag)
+    schema_name->setBrush(fmt.foreground());
+  else
+    schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
 
 	if(schema->isRectVisible())
 		schema_name->setText(" ");
@@ -91,11 +96,23 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font.setStrikeOut(object->isSQLDisabled());
 
 	obj_name->setFont(font);
-	obj_name->setBrush(fmt.foreground());
 	obj_name->setText(Utf8String::create(object->getName()));
 
-	box->setBrush(this->getFillStyle(title_color_attrib));
+  if(!tag)
+  {
+    obj_name->setBrush(fmt.foreground());
+    box->setBrush(this->getFillStyle(title_color_attrib));
+  }
+  else
+  {
+    obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FILL_COLOR1));
+    box->setBrush(tag->getFillStyle(title_color_attrib));
+  }
+
 	pen=this->getBorderStyle(title_color_attrib);
+
+  if(tag)
+    pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
 
 	if(object->getObjectType()==OBJ_VIEW)
 		pen.setStyle(Qt::DashLine);

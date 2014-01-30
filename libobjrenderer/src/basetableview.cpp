@@ -27,16 +27,28 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	body=new QGraphicsPolygonItem;
 	title=new TableTitleView;
-	ext_attribs_body=new QGraphicsPolygonItem;
+
+  ext_attribs_body=new QGraphicsPolygonItem;
 	ext_attribs=new QGraphicsItemGroup;
-	columns=new QGraphicsItemGroup;
-	columns->setZValue(1);
-	this->addToGroup(columns);
+  ext_attribs->setZValue(1);
+
+  columns=new QGraphicsItemGroup;
+  columns->setZValue(1);
+
+  tag_name=new QGraphicsSimpleTextItem;
+  tag_name->setZValue(3);
+
+  tag_body=new QGraphicsPolygonItem;
+  tag_body->setZValue(2);
+
+  this->addToGroup(columns);
 	this->addToGroup(body);
 	this->addToGroup(title);
+  this->addToGroup(tag_name);
+  this->addToGroup(tag_body);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
-	ext_attribs->setZValue(1);
+
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
 	connected_rels=0;
@@ -49,11 +61,15 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(ext_attribs_body);
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
+  this->removeFromGroup(tag_name);
+  this->removeFromGroup(tag_body);
 	delete(ext_attribs_body);
 	delete(ext_attribs);
 	delete(body);
 	delete(title);
 	delete(columns);
+  delete(tag_name);
+  delete(tag_body);
 }
 
 void BaseTableView::hideExtAttributes(bool value)
@@ -171,7 +187,48 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 void BaseTableView::updateConnectedRelsCount(int inc)
 {
 	connected_rels+=inc;
-	if(connected_rels < 0) connected_rels=0;
+  if(connected_rels < 0) connected_rels=0;
+}
+
+void BaseTableView::configureTag(void)
+{
+  BaseTable *tab=dynamic_cast<BaseTable *>(this->getSourceObject());
+  Tag *tag=tab->getTag();
+
+  tag_body->setVisible(tag!=nullptr);
+  tag_name->setVisible(tag!=nullptr);
+
+  if(tag)
+  {
+    QPolygonF pol;
+    QPointF p1, p2;
+    float bottom;
+    QFont fnt=BaseObjectView::getFontStyle(ParsersAttributes::TAG).font();
+
+    fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
+    tag_name->setFont(fnt);
+    tag_name->setText(tag->getName());
+    tag_name->setBrush(BaseObjectView::getFontStyle(ParsersAttributes::TAG).foreground());
+
+    p1=tag_name->boundingRect().topLeft(),
+    p2=tag_name->boundingRect().bottomRight();
+    bottom=this->boundingRect().bottom();
+
+    pol.append(QPointF(p1.x()-10, p1.y() - BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p2.x() + BaseObjectView::HORIZ_SPACING + 5, p2.y()/2));
+    pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p1.x()-10, p2.y() + BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p1.x()-3, p2.y()/2));
+
+    tag_body->setPolygon(pol);
+    tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
+    tag_body->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::TAG));
+
+    tag_name->setPos(-5, bottom - 2.5f);
+    tag_body->setPos(-5, bottom - 2.5f);
+  }
 }
 
 int BaseTableView::getConnectRelsCount(void)

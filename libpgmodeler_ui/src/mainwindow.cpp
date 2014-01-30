@@ -91,22 +91,12 @@ SQLAppendWidget *sqlappend_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
-	int i, count;
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	ObjectType obj_types[]={
-		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
-		OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
-		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE,
-		OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX,
-		OBJ_CONSTRAINT, OBJ_COLLATION, OBJ_EXTENSION, OBJ_PERMISSION };
+  vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
@@ -225,11 +215,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	count=sizeof(obj_types)/sizeof(ObjectType);
-	for(i=0; i < count; i++)
-		task_prog_wgt->addIcon(obj_types[i],
+  for(auto obj_tp : obj_types)
+    task_prog_wgt->addIcon(obj_tp,
 																QIcon(QString(":/icones/icones/") +
-																			BaseObject::getSchemaName(obj_types[i]) +
+                                      BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
