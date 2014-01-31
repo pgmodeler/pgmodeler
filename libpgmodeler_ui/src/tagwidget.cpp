@@ -130,6 +130,7 @@ void TagWidget::applyConfiguration(void)
                           .arg(extbody_fcolor2_tb->palette().color(QPalette::Button).name())
                           .arg(extbody_bcolor_tb->palette().color(QPalette::Button).name()));
 
+    model->getObjectReferences(tag, tagged_tabs);
     while(!tagged_tabs.empty())
     {
       dynamic_cast<BaseTable *>(tagged_tabs.back())->setModified(true);
