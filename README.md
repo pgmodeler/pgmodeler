@@ -45,8 +45,11 @@ Change Log
 v0.7.0-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: January 24, 2014</em><br/>
+<em>Release date: January 31, 2014</em><br/>
 
+* [New] Added support to custom colors on tables and views through tag objects.
+* [New] Added support to export models to png image page by page.
+* [New] Canvas can now be moved using Control + Arrow keys. If the shift is pressed the movement factor is increased.
 * [New] Introduced the SQL tool that permits the execution of arbitrary SQL commands direclty on a server.
 * [New] Added methods getType, getTypeId to BaseType and getSQLTypeName to PgSQLType as an alternative to call operators ~, ! and *.
 * [New] Added a commented DROP command at start of each object definition (CREATE or ALTER TABLE ADD)
@@ -59,6 +62,7 @@ v0.7.0-alpha
 * [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Dropped the navigation through object using Alt + <left|right> due to the difficulty to understand the order in which objects are highlighted.
 * [Change] Minor change when generate .stacktrace file for crash handler to include pgModeler build number.
 * [Change] Minor adjustments on DatabaseImportForm's import execution progress.
 * [Change] Minor enhancements on operation list when removing last operations.
@@ -77,6 +81,9 @@ v0.7.0-alpha
 * [Change] Minor adjustments on window title buttons for model export and database import forms.
 * [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
 * [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Minor fix on CLI menu to add new export modes.
+* [Fix] Fixed a crash dealing with duplicated columns on a table.
+* [Fix]  Fixed bug when deleting tables and fk relationships together.
 * [Fix] Fix bug related to geometry type.
 * [Fix] Minor fix on logical expressions evaluation on SchemaParser.
 * [Fix] Minor fix on model export when showing the name of objects being exported.
