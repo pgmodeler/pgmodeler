@@ -858,7 +858,7 @@ void View::removeObjects(void)
 
 void View::operator = (View &view)
 {
-	(*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(view);
+  (*dynamic_cast<BaseTable *>(this))=reinterpret_cast<BaseTable &>(view);
 
 	this->references=view.references;
 	this->exp_select=view.exp_select;

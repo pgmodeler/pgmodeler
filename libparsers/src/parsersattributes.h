@@ -369,6 +369,7 @@ namespace ParsersAttributes {
 	RECENT="recent",
 	HIDE_REL_NAME="hide-rel-name",
 	HIDE_EXT_ATTRIBS="hide-ext-attribs",
+  HIDE_TABLE_TAGS="hide-table-tags",
 	SRC_COL_PATTERN="src-col-pattern",
 	DST_COL_PATTERN="dst-col-pattern",
 	PK_PATTERN="pk-pattern",

@@ -24,10 +24,7 @@ Tag::Tag(void)
 {
   QStringList attribs={ ParsersAttributes::TABLE_NAME,  ParsersAttributes::TABLE_SCHEMA_NAME,
                         ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-                        ParsersAttributes::TABLE_EXT_BODY,
-                        ParsersAttributes::VIEW_NAME,  ParsersAttributes::VIEW_SCHEMA_NAME,
-                        ParsersAttributes::VIEW_TITLE, ParsersAttributes::VIEW_BODY,
-                        ParsersAttributes::VIEW_EXT_BODY };
+                        ParsersAttributes::TABLE_EXT_BODY };
 
   obj_type=OBJ_TAG;
   object_id=Tag::tag_id++;
@@ -35,8 +32,7 @@ Tag::Tag(void)
 
   for(auto attr : attribs)
   {
-    if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME &&
-       attr!=ParsersAttributes::VIEW_NAME && attr!=ParsersAttributes::VIEW_SCHEMA_NAME)
+    if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
       color_config[attr]=new QColor[COLOR_COUNT];
     else
       color_config[attr]=new QColor;
@@ -46,7 +42,7 @@ Tag::Tag(void)
 void Tag::setName(const QString &name)
 {
   if(name.isEmpty())
-    throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
     throw Exception(ERR_ASG_LONG_NAME_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -111,8 +107,7 @@ void Tag::validateElementId(const QString &id, unsigned color_id)
                     ERR_OPR_INV_ELEMENT_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else if((color_id > COLOR_COUNT) ||
           (color_id > 0 &&
-           (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME ||
-            id==ParsersAttributes::VIEW_NAME || id==ParsersAttributes::VIEW_SCHEMA_NAME)))
+           (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
     throw Exception(Exception::getErrorMessage(ERR_REF_ELEMENT_COLOR_ID).arg(id).arg(color_id),
                     ERR_REF_ELEMENT_COLOR_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -156,8 +151,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
         attribs[ParsersAttributes::ID]=itr.first;
         attribs[ParsersAttributes::COLORS]="";
 
-        if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME ||
-           itr.first==ParsersAttributes::VIEW_NAME || itr.first==ParsersAttributes::VIEW_SCHEMA_NAME)
+        if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME)
           attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name();
         else
           attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + "," +
@@ -181,8 +175,7 @@ void Tag::operator = (Tag &tag)
 
   for(auto attr : tag.color_config)
   {
-    if(attr.first!=ParsersAttributes::TABLE_NAME && attr.first!=ParsersAttributes::TABLE_SCHEMA_NAME &&
-       attr.first!=ParsersAttributes::VIEW_NAME && attr.first!=ParsersAttributes::VIEW_SCHEMA_NAME)
+    if(attr.first!=ParsersAttributes::TABLE_NAME && attr.first!=ParsersAttributes::TABLE_SCHEMA_NAME)
     {
       for(unsigned i=FILL_COLOR1; i < COLOR_COUNT; i++)
         this->color_config[attr.first][i]=attr.second[i];

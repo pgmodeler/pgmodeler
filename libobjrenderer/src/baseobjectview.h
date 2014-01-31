@@ -130,6 +130,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Sets the color for the specified element id (used to set color for objects and font)
 		static void setElementColor(const QString &id, QColor color, unsigned color_id);
 
+    //! \brief Returns the color for the specified element id (used to get color for objects and font)
+    static QColor getElementColor(const QString &id, unsigned color_id);
+
 		//! \brief Defines the object that the view represents
 		void setSourceObject(BaseObject *object);
 

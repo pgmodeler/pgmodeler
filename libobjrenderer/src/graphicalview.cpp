@@ -45,7 +45,8 @@ void GraphicalView::configureObject(void)
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
-	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY };
+  QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
+          tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	float width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
@@ -213,8 +214,8 @@ void GraphicalView::configureObject(void)
       bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
     else
     {
-      bodies[idx]->setBrush(tag->getFillStyle(attribs[idx]));
-      pen.setColor(tag->getElementColor(attribs[idx], Tag::BORDER_COLOR));
+      bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
+      pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
     }
 
 		bodies[idx]->setPen(pen);

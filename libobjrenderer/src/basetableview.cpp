@@ -19,6 +19,7 @@
 #include "basetableview.h"
 
 bool BaseTableView::hide_ext_attribs=false;
+bool BaseTableView::hide_tags=false;
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
@@ -74,12 +75,22 @@ BaseTableView::~BaseTableView(void)
 
 void BaseTableView::hideExtAttributes(bool value)
 {
-	hide_ext_attribs=value;
+  hide_ext_attribs=value;
+}
+
+void BaseTableView::hideTags(bool value)
+{
+  hide_tags=value;
 }
 
 bool BaseTableView::isExtAttributesHidden(void)
 {
-	return(hide_ext_attribs);
+  return(hide_ext_attribs);
+}
+
+bool BaseTableView::isTagsHidden(void)
+{
+  return(hide_tags);
 }
 
 QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -195,10 +206,10 @@ void BaseTableView::configureTag(void)
   BaseTable *tab=dynamic_cast<BaseTable *>(this->getSourceObject());
   Tag *tag=tab->getTag();
 
-  tag_body->setVisible(tag!=nullptr);
-  tag_name->setVisible(tag!=nullptr);
+  tag_body->setVisible(tag!=nullptr && !hide_tags);
+  tag_name->setVisible(tag!=nullptr && !hide_tags);
 
-  if(tag)
+  if(!hide_tags && tag)
   {
     QPolygonF pol;
     QPointF p1, p2;
@@ -214,13 +225,12 @@ void BaseTableView::configureTag(void)
     p2=tag_name->boundingRect().bottomRight();
     bottom=this->boundingRect().bottom();
 
-    pol.append(QPointF(p1.x()-10, p1.y() - BaseObjectView::VERT_SPACING));
+    pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p1.y() - BaseObjectView::VERT_SPACING));
     pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VERT_SPACING));
     pol.append(QPointF(p2.x() + BaseObjectView::HORIZ_SPACING + 5, p2.y()/2));
     pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VERT_SPACING));
     pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p1.x()-10, p2.y() + BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p1.x()-3, p2.y()/2));
+    pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p2.y() + BaseObjectView::VERT_SPACING));
 
     tag_body->setPolygon(pol);
     tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));

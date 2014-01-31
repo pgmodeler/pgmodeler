@@ -43,7 +43,7 @@ class BaseTableView: public BaseObjectView {
 		QGraphicsItemGroup *columns,
 		*ext_attribs;
 
-		static bool hide_ext_attribs;
+    static bool hide_ext_attribs, hide_tags;
 
 		//! \brief Polygonal object that defines the table body
 		QGraphicsPolygonItem *body,
@@ -83,8 +83,14 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void hideExtAttributes(bool value);
 
+    //! \brief Hides the table tags. This applies to all table instances
+    static void hideTags(bool value);
+
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);
+
+    //! \brief Returns the current visibility state of tags
+    static bool isTagsHidden(void);
 
 		//! \brief Returns the current count of connected relationships
 		int getConnectRelsCount(void);

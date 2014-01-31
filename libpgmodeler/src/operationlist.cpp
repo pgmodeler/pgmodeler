@@ -833,10 +833,24 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(oper->op_type==Operation::OBJECT_MODIFIED);
 			}
 		}
-		else if(obj_type==OBJ_SCHEMA && oper->op_type==Operation::OBJECT_MODIFIED)
+    else if(oper->op_type==Operation::OBJECT_MODIFIED)
 		{
-			model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
-			dynamic_cast<Schema *>(object)->setModified(true);
+      if(obj_type==OBJ_SCHEMA)
+      {
+        model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
+        dynamic_cast<Schema *>(object)->setModified(true);
+      }
+      else if(obj_type==OBJ_TAG)
+      {
+        vector<BaseObject *> refs;
+        model->getObjectReferences(object, refs);
+
+        while(!refs.empty())
+        {
+          dynamic_cast<BaseTable *>(refs.back())->setModified(true);
+          refs.pop_back();
+        }
+      }
 		}
 	}
 }

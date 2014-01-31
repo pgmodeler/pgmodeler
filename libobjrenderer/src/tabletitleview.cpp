@@ -61,7 +61,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 					object->getObjectType()!=OBJ_VIEW)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(object->getObjectType()==OBJ_VIEW)
+  if(object->getObjectType()==OBJ_VIEW && !tag)
 	{
 		name_attrib=ParsersAttributes::VIEW_NAME;
 		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;

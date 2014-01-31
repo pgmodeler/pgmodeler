@@ -1195,7 +1195,7 @@ void Table::operator = (Table &tab)
 {
 	QString prev_name = this->getName(true);
 
-	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+  (*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
 	this->with_oid=tab.with_oid;
 
 	setGenerateAlterCmds(tab.gen_alter_cmds);

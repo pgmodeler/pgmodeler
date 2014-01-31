@@ -17,11 +17,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#ffffff"/>
 	<style id="table-title" colors="#ff0000,#800000,#000000"/>
-	<style id="view-body" colors="#ffffff,#ffffff,#000000"/>
-	<style id="view-ext-body" colors="#ffffff,#ffffff,#000000"/>
-	<style id="view-name" colors="#ffffff"/>
-	<style id="view-schema-name" colors="#ffffff"/>
-	<style id="view-title" colors="#ff0000,#800000,#000000"/>
 	<comment><![CDATA[this tag is a test]]></comment>
 </tag>
 

@@ -46,6 +46,7 @@
 #include "tablewidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
+#include "tagwidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
@@ -83,6 +84,7 @@ RelationshipWidget *relationship_wgt=nullptr;
 TableWidget *table_wgt=nullptr;
 CollationWidget *collation_wgt=nullptr;
 ExtensionWidget *extension_wgt=nullptr;
+TagWidget *tag_wgt=nullptr;
 TaskProgressWidget *task_prog_wgt=nullptr;
 ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
@@ -205,6 +207,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		table_wgt=new TableWidget(this);
 		collation_wgt=new CollationWidget(this);
 		extension_wgt=new ExtensionWidget(this);
+    tag_wgt=new TagWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
@@ -277,6 +280,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+  connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));

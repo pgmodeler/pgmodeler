@@ -87,6 +87,9 @@ class ModelWidget: public QWidget {
 					//! \brief Stores the role names used by the "change owner" operation
 					owners_menu,
 
+          //! \brief Stores the tags used by the "set tag" operation
+          tags_menu,
+
 					break_rel_menu;
 
 		QAction *action_source_code,
@@ -112,7 +115,8 @@ class ModelWidget: public QWidget {
 						*action_append_sql,
 						*action_create_seq_col,
 						*action_break_rel_line,
-						*action_remove_rel_points;
+            *action_remove_rel_points,
+            *action_set_tag;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -248,6 +252,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
+
+    //! \brief Quickly sets the table's tag via popup menu
+    void setTag(void);
 
 		//! \brief Triggers the permission editing form
 		void editPermissions(void);

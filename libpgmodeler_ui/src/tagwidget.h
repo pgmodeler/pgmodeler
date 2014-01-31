@@ -16,27 +16,31 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "basetable.h"
+/**
+\ingroup libpgmodeler_ui
+\class TagWidget
+\brief Implements the operations to create/edit tags via form.
+*/
 
-BaseTable::BaseTable(void)
-{
- tag=nullptr;
- obj_type=BASE_TABLE;
- attributes[ParsersAttributes::TAG]="";
-}
+#ifndef TAG_WIDGET_H
+#define TAG_WIDGET_H
 
-void BaseTable::setTag(Tag *tag)
-{
-  this->tag=tag;
-}
+#include "baseobjectwidget.h"
+#include "ui_tagwidget.h"
 
-Tag *BaseTable::getTag(void)
-{
-  return(tag);
-}
+class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
+	private:
+		Q_OBJECT
 
-void BaseTable::operator = (BaseTable &tab)
-{
-  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
-  this->tag=tab.tag;
-}
+	public:
+    TagWidget(QWidget * parent = 0);
+    void setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag);
+
+	public slots:
+		void applyConfiguration(void);
+
+	private slots:
+    void selectColor(void);
+};
+
+#endif

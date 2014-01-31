@@ -8,5 +8,4 @@
 
 <!ELEMENT style EMPTY>
 <!ATTLIST style colors CDATA #REQUIRED>
-<!ATTLIST style id (table-title | table-body | table-ext-body | table-schema-name | table-name |
-                    view-title  | view-body  | view-ext-body  | view-schema-name  | view-name) "table-title">
+<!ATTLIST style id (table-title | table-body | table-ext-body | table-schema-name | table-name) "table-title">
