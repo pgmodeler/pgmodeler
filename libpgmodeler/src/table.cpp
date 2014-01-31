@@ -1168,9 +1168,13 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
+  attributes[ParsersAttributes::TAG]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
+
+  if(tag && def_type==SchemaParser::XML_DEFINITION)
+   attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	(copy_table ? copy_table->getName(true) : "");
 
@@ -1191,7 +1195,7 @@ void Table::operator = (Table &tab)
 {
 	QString prev_name = this->getName(true);
 
-	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+  (*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
 	this->with_oid=tab.with_oid;
 
 	setGenerateAlterCmds(tab.gen_alter_cmds);

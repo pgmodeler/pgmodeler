@@ -390,7 +390,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX);
+  disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsAppendedSQL(obj_type));
@@ -763,10 +763,10 @@ void BaseObjectWidget::finishConfiguration(void)
 		else
 		{
 			//If the object is being updated, validates its SQL definition
-			if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX)
-				this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+      if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+        this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 			else
-				this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+        this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 		}
 
 		this->accept();

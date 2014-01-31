@@ -16,6 +16,7 @@
 <!ATTLIST configuration print-pg-num (false|true) "true">
 <!ATTLIST configuration hide-rel-name (false|true) "false">
 <!ATTLIST configuration hide-ext-attribs (false|true) "false">
+<!ATTLIST configuration hide-table-tags (false|true) "false">
 <!ATTLIST configuration canvas-corner-move (false|true) "true">
 
 <!ATTLIST configuration code-font CDATA #IMPLIED>

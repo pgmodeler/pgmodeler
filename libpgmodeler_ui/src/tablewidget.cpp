@@ -48,6 +48,9 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),2);
 
+  tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+  dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 2);
+
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(4,4,4,4);
@@ -277,6 +280,9 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		parent_tables->clearSelection();
 		with_oids_chk->setChecked(table->isWithOIDs());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
+
+    tag_sel->setModel(this->model);
+    tag_sel->setSelectedObject(table->getTag());
 	}
 	catch(Exception &e)
 	{
@@ -610,6 +616,7 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
+    table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
 

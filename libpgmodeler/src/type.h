@@ -106,12 +106,12 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static constexpr unsigned BASE_TYPE=10,
+		static const unsigned BASE_TYPE=10,
 															ENUMERATION_TYPE=11,
 															COMPOSITE_TYPE=12,
 															RANGE_TYPE=13;
 
-		static constexpr unsigned INPUT_FUNC=0,
+		static const unsigned INPUT_FUNC=0,
 															OUTPUT_FUNC=1,
 															RECV_FUNC=2,
 															SEND_FUNC=3,

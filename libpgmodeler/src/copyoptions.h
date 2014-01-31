@@ -33,7 +33,7 @@ class CopyOptions {
 		unsigned copy_mode, copy_op_ids;
 
 	public:
-		static constexpr unsigned DEFAULTS=1,
+		static const unsigned DEFAULTS=1,
 															CONSTRAINTS=2,
 															INDEXES=4,
 															STORAGE=8,

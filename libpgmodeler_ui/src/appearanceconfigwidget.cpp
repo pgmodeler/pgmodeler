@@ -38,11 +38,12 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 		ParsersAttributes::PK_COLUMN, ParsersAttributes::FK_COLUMN, ParsersAttributes::FK_COLUMN,
 		ParsersAttributes::UQ_COLUMN, ParsersAttributes::UQ_COLUMN, ParsersAttributes::NN_COLUMN,
 		ParsersAttributes::NN_COLUMN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
-		ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE };
+    ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE,
+    ParsersAttributes::TAG, ParsersAttributes::TAG };
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
 			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22, 23,
-														27, 28, 30, 34, 36, 38, 40, 41, 43, 45 };
+                            27, 28, 30, 34, 36, 38, 40, 41, 43, 45, 47 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);

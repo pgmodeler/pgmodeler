@@ -166,6 +166,8 @@
         <file>icones/cancelar.png</file>
         <file>icones/run.png</file>
         <file>icones/result.png</file>
+        <file>icones/tag.png</file>
+        <file>icones/tag_grp.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

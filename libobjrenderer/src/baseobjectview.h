@@ -88,7 +88,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void setSelectionOrder(bool selected);
 
 	public:
-		static constexpr float VERT_SPACING=2.0f,
+    static constexpr float VERT_SPACING=2.0f,
 													 HORIZ_SPACING=2.0f,
 													 DEFAULT_FONT_SIZE=9.0f,
 													 OBJ_BORDER_WIDTH=0.80f;
@@ -129,6 +129,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Sets the color for the specified element id (used to set color for objects and font)
 		static void setElementColor(const QString &id, QColor color, unsigned color_id);
+
+    //! \brief Returns the color for the specified element id (used to get color for objects and font)
+    static QColor getElementColor(const QString &id, unsigned color_id);
 
 		//! \brief Defines the object that the view represents
 		void setSourceObject(BaseObject *object);

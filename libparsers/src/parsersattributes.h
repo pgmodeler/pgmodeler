@@ -369,6 +369,7 @@ namespace ParsersAttributes {
 	RECENT="recent",
 	HIDE_REL_NAME="hide-rel-name",
 	HIDE_EXT_ATTRIBS="hide-ext-attribs",
+  HIDE_TABLE_TAGS="hide-table-tags",
 	SRC_COL_PATTERN="src-col-pattern",
 	DST_COL_PATTERN="dst-col-pattern",
 	PK_PATTERN="pk-pattern",
@@ -409,7 +410,11 @@ namespace ParsersAttributes {
   RECURSIVE="recursive",
   WITH_NO_DATA="with-no-data",
   DROP="drop",
-  TABLE_OBJECT="table-obj";
+  TABLE_OBJECT="table-obj",
+  STYLE="style",
+  STYLES="styles",
+  TAG="tag",
+  COLORS="colors";
 }
 
 #endif

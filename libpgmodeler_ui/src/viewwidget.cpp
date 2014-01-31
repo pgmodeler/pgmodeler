@@ -59,6 +59,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
 		expression_cp=new CodeCompletionWidget(expression_txt);
 
+    tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+    dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
+
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
@@ -708,32 +711,33 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	column_sel->setModel(model);
 	table_sel->setModel(model);
 
-	if(view)
-	{
-		cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
+  tag_sel->setModel(this->model);
+  tag_sel->setSelectedObject(view->getTag());
 
-		count=view->getReferenceCount();
-		references_tab->blockSignals(true);
+  cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
 
-		for(i=0; i < count; i++)
-		{
-			references_tab->addRow();
+  count=view->getReferenceCount();
+  references_tab->blockSignals(true);
 
-			refer=view->getReference(i);
-			sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
-			from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
-			after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
-			view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
+  for(i=0; i < count; i++)
+  {
+    references_tab->addRow();
 
-			showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
-		}
+    refer=view->getReference(i);
+    sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
+    from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
+    after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
+    view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
 
-		references_tab->blockSignals(false);
-		references_tab->clearSelection();
+    showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
+  }
 
-		listObjects(OBJ_TRIGGER);
-		listObjects(OBJ_RULE);
-	}
+  references_tab->blockSignals(false);
+  references_tab->clearSelection();
+
+  listObjects(OBJ_TRIGGER);
+  listObjects(OBJ_RULE);
+
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -761,6 +765,7 @@ void ViewWidget::applyConfiguration(void)
     view->setRecursive(recursive_rb->isChecked());
     view->setWithNoData(with_no_data_chk->isChecked());
 		view->setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
+    view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		for(unsigned i=0; i < references_tab->getRowCount(); i++)
 		{

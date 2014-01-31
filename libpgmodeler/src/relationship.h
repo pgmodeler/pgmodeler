@@ -260,7 +260,7 @@ class Relationship: public BaseRelationship {
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
 
 	protected:
-		static constexpr unsigned COL_INDEXES=0,
+		static const unsigned COL_INDEXES=0,
 															ATTRIB_INDEXES=1,
 															CONSTR_INDEXES=2;
 

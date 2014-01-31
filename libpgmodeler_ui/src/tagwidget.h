@@ -17,38 +17,30 @@
 */
 
 /**
-\ingroup libobjrenderer
-\class TableTitleView
-\brief Implements the graphical representation for table title
+\ingroup libpgmodeler_ui
+\class TagWidget
+\brief Implements the operations to create/edit tags via form.
 */
 
-#ifndef TABLE_TITLE_VIEW_H
-#define TABLE_TITLE_VIEW_H
+#ifndef TAG_WIDGET_H
+#define TAG_WIDGET_H
 
-#include "view.h"
-#include "table.h"
-#include "baseobjectview.h"
+#include "baseobjectwidget.h"
+#include "ui_tagwidget.h"
 
-class TableTitleView: public BaseObjectView
-{
+class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 	private:
 		Q_OBJECT
 
-    //! \brief Polygonal object that defines the title border
-    QGraphicsPolygonItem *box;
-
-    //! \brief Graphical texts that is used to store the object name and schema name
-		QGraphicsSimpleTextItem *obj_name,
-    *schema_name;
-
-		void configureObject(void){}
-
 	public:
-		TableTitleView(void);
-		~TableTitleView(void);
+    TagWidget(QWidget * parent = 0);
+    void setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag);
 
-		void configureObject(BaseGraphicObject *object);
-		void resizeTitle(float width, float height);
+	public slots:
+		void applyConfiguration(void);
+
+	private slots:
+    void selectColor(void);
 };
 
 #endif

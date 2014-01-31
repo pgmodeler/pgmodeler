@@ -20,6 +20,23 @@
 
 BaseTable::BaseTable(void)
 {
+ tag=nullptr;
  obj_type=BASE_TABLE;
+ attributes[ParsersAttributes::TAG]="";
 }
 
+void BaseTable::setTag(Tag *tag)
+{
+  this->tag=tag;
+}
+
+Tag *BaseTable::getTag(void)
+{
+  return(tag);
+}
+
+void BaseTable::operator = (BaseTable &tab)
+{
+  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+  this->tag=tab.tag;
+}

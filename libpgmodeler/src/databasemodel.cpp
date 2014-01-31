@@ -130,6 +130,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&collations);
 	else if(obj_type==OBJ_EXTENSION)
 		return(&extensions);
+  else if(obj_type==OBJ_TAG)
+    return(&tags);
 	else
 		return(nullptr);
 }
@@ -185,6 +187,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 				addCollation(dynamic_cast<Collation *>(object), obj_idx);
 			else if(obj_type==OBJ_EXTENSION)
 				addExtension(dynamic_cast<Extension *>(object), obj_idx);
+      else if(obj_type==OBJ_TAG)
+        addTag(dynamic_cast<Tag *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				addPermission(dynamic_cast<Permission *>(object));
 		}
@@ -247,6 +251,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removeCollation(dynamic_cast<Collation *>(object), obj_idx);
 			else if(obj_type==OBJ_EXTENSION)
 				removeExtension(dynamic_cast<Extension *>(object), obj_idx);
+      else if(obj_type==OBJ_TAG)
+        removeTag(dynamic_cast<Tag *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				removePermission(dynamic_cast<Permission *>(object));
 		}
@@ -870,7 +876,36 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 
 Extension *DatabaseModel::getExtension(unsigned obj_idx)
 {
-	return(dynamic_cast<Extension *>(getObject(obj_idx, OBJ_COLLATION)));
+  return(dynamic_cast<Extension *>(getObject(obj_idx, OBJ_COLLATION)));
+}
+
+void DatabaseModel::addTag(Tag *tag, int obj_idx)
+{
+  try
+  {
+    __addObject(tag, obj_idx);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}
+
+void DatabaseModel::removeTag(Tag *tag, int obj_idx)
+{
+  try
+  {
+      __removeObject(tag, obj_idx);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+Tag *DatabaseModel::getTag(unsigned obj_idx)
+{
+  return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -2806,6 +2841,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createCollation();
 		else if(obj_type==OBJ_EXTENSION)
 			object=createExtension();
+    else if(obj_type==OBJ_TAG)
+      object=createTag();
 		else if(obj_type==OBJ_PERMISSION)
 			object=createPermission();
 	}
@@ -4160,10 +4197,11 @@ Aggregate *DatabaseModel::createAggregate(void)
 
 Table *DatabaseModel::createTable(void)
 {
-	attribs_map attribs;
+  attribs_map attribs, aux_attribs;
 	QString elem;
 	Table *table=nullptr;
 	TableObject *object=nullptr;
+  BaseObject *tag=nullptr;
 
 	try
 	{
@@ -4194,6 +4232,23 @@ Table *DatabaseModel::createTable(void)
 						object=createRule();
 					else if(elem==BaseObject::objs_schemas[OBJ_TRIGGER])
 						object=createTrigger(table);
+          else if(elem==BaseObject::objs_schemas[OBJ_TAG])
+          {
+            XMLParser::getElementAttributes(aux_attribs);
+            tag=getObject(aux_attribs[ParsersAttributes::NAME] ,OBJ_TAG);
+
+            if(!tag)
+            {
+              throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+                              .arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+                              .arg(BaseObject::getTypeName(OBJ_TABLE))
+                              .arg(Utf8String::create(aux_attribs[ParsersAttributes::TABLE]))
+                              .arg(BaseObject::getTypeName(OBJ_TAG))
+                              , ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+
+            table->setTag(dynamic_cast<Tag *>(tag));
+          }
 
 					if(object)
 						table->addObject(object);
@@ -4987,13 +5042,14 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 View *DatabaseModel::createView(void)
 {
-	attribs_map attribs;
+  attribs_map attribs, aux_attribs;
 	View *view=nullptr;
 	Column *column=nullptr;
 	Table *table=nullptr;
 	QString elem, str_aux;
 	QStringList list_aux;
 	vector<Reference> refs;
+  BaseObject *tag=nullptr;
 	unsigned type;
 	int ref_idx, i, count;
 	bool refs_in_expr=false;
@@ -5122,6 +5178,23 @@ View *DatabaseModel::createView(void)
 						view->addTrigger(createTrigger(view));
 						XMLParser::restorePosition();
 					}
+          else if(elem==BaseObject::getSchemaName(OBJ_TAG))
+          {
+            XMLParser::getElementAttributes(aux_attribs);
+            tag=getObject(aux_attribs[ParsersAttributes::NAME] ,OBJ_TAG);
+
+            if(!tag)
+            {
+              throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+                              .arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+                              .arg(BaseObject::getTypeName(OBJ_TABLE))
+                              .arg(Utf8String::create(aux_attribs[ParsersAttributes::TABLE]))
+                              .arg(BaseObject::getTypeName(OBJ_TAG))
+                              , ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+
+            view->setTag(dynamic_cast<Tag *>(tag));
+          }
 				}
 			}
 			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
@@ -5233,7 +5306,45 @@ Extension *DatabaseModel::createExtension(void)
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(extension);
+  return(extension);
+}
+
+Tag *DatabaseModel::createTag(void)
+{
+  Tag *tag=nullptr;
+  attribs_map attribs;
+  QString elem;
+
+  try
+  {
+    tag=new Tag;
+    setBasicAttributes(tag);
+
+    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+    {
+      do
+      {
+        if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+        {
+          elem=XMLParser::getElementName();
+
+          if(elem==ParsersAttributes::STYLE)
+          {
+            XMLParser::getElementAttributes(attribs);
+            tag->setElementColors(attribs[ParsersAttributes::ID],attribs[ParsersAttributes::COLORS]);
+          }
+        }
+      }
+      while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+    }
+
+    return(tag);
+  }
+  catch(Exception &e)
+  {
+    if(tag) delete(tag);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+  }
 }
 
 Textbox *DatabaseModel::createTextbox(void)
@@ -5841,12 +5952,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	Constraint *constr=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType obj_type,
-			aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
+      aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
 			obj_types[]={ OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
 										OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
 										OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
 										OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
 										OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
+  unsigned aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
+
 	try
 	{
 		general_obj_cnt=this->getObjectCount();
@@ -5855,7 +5968,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		/* Treating the objects which have fixed ids, they are: role, tablespace,
 		 and Schema. They need to be treated separately in the loop down because they do not
 		 enter in the id sorting performed for other types of objects. */
-		for(i=0; i < 3; i++)
+    for(i=0; i < aux_obj_cnt; i++)
 		{
 			obj_list=getObjectList(aux_obj_types[i]);
 
@@ -5875,7 +5988,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				//The "public" schema does not have the SQL code definition generated
 				if(object->getObjectType()!=OBJ_SCHEMA ||
 					 (object->getObjectType()==OBJ_SCHEMA && (object->getName()!="public" && object->getName()!="pg_catalog")) ||
-					 (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
+           (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
 					/* The Tablespace has the SQL code definition disabled when generating the
 						code of the entire model because this object cannot be created from a multiline sql command */
@@ -7613,6 +7726,30 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				}
 			}
 		}
+
+
+    if(obj_type==OBJ_TAG && (!exclusion_mode || (exclusion_mode && !refer)))
+    {
+      vector<BaseObject *>::iterator itr, itr_end;
+      vector<BaseObject *> list;
+      Tag *tag=dynamic_cast<Tag *>(object);
+
+      list.assign(tables.begin(), tables.end());
+      list.insert(list.end(), views.begin(), views.end());
+
+      itr=list.begin();
+      itr_end=list.end();
+
+      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+      {
+        if(dynamic_cast<BaseTable *>(*itr)->getTag()==tag)
+        {
+          refer=true;
+          refs.push_back(*itr);
+        }
+        itr++;
+      }
+    }
 	}
 }
 

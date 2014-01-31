@@ -50,7 +50,8 @@ HEADERS += src/textbox.h \
 	   src/copyoptions.h \
 	   src/typeattribute.h \
 	   src/extension.h \
-	   src/pgmodelerns.h
+	   src/pgmodelerns.h \
+    src/tag.h
 
 
 SOURCES +=  src/textbox.cpp \
@@ -95,4 +96,5 @@ SOURCES +=  src/textbox.cpp \
 	    src/copyoptions.cpp \
 	    src/typeattribute.cpp \
 	    src/extension.cpp \
-	    src/pgmodelerns.cpp
+	    src/pgmodelerns.cpp \
+    src/tag.cpp

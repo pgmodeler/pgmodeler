@@ -292,7 +292,15 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned color_id)
 {
 	if(color_id < 3 && color_config.count(id))
-		color_config[id][color_id]=color;
+    color_config[id][color_id]=color;
+}
+
+QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
+{
+  if(color_config.count(id) > 0 && color_id < 3)
+   return(color_config[id][color_id]);
+  else
+   return(QColor(0,0,0));
 }
 
 void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &color2)

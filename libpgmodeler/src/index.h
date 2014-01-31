@@ -50,7 +50,7 @@ class Index: public TableObject{
 		void setIndexElementsAttribute(unsigned def_type);
 
 	public:
-		static constexpr  unsigned UNIQUE=0,
+		static const  unsigned UNIQUE=0,
 															 CONCURRENT=1,
 															 FAST_UPDATE=2;
 

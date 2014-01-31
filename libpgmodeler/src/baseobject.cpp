@@ -30,7 +30,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "relationship","textbox",	"permission",
-	"parameter", "typeattribute","relationship"
+  "parameter", "typeattribute","tag","relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -43,7 +43,8 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Basic Relationship")
+  QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -58,10 +59,10 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
+   starts at 40k because the id ranges 0, 10k, 20k, 30k
 	 are respectively assigned to objects of classes Role, Tablespace
-	 DBModel, Schema, Collation, Function and Type */
-unsigned BaseObject::global_id=30000;
+   DatabaseModel, Tag */
+unsigned BaseObject::global_id=40000;
 
 BaseObject::BaseObject(void)
 {
@@ -399,7 +400,8 @@ bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
 				 obj_type!=OBJ_INDEX && obj_type!=OBJ_RELATIONSHIP &&
 				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
-				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION);
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
+         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
 }
 
 bool BaseObject::acceptsAppendedSQL(void)
@@ -814,7 +816,7 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
 	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-											 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION,
+                       OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
 											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
 											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,

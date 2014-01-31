@@ -42,6 +42,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		QFrame *frame_info;
 
+    ObjectSelectorWidget *tag_sel;
+
 		/*! \brief Operation list element count before editing the view. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to
 		be removed. See: cancelConfiguration() */

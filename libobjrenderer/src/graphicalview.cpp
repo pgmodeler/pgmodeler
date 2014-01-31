@@ -45,11 +45,13 @@ void GraphicalView::configureObject(void)
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
-	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY };
+  QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
+          tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	float width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
+  Tag *tag=view->getTag();
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -204,9 +206,18 @@ void GraphicalView::configureObject(void)
 	{
 		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
 		bodies[idx]->setPolygon(pol);
-		bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
-		pen=this->getBorderStyle(attribs[idx]);
-		pen.setStyle(Qt::DashLine);
+
+    pen=this->getBorderStyle(attribs[idx]);
+    pen.setStyle(Qt::DashLine);
+
+    if(!tag)
+      bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
+    else
+    {
+      bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
+      pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
+    }
+
 		bodies[idx]->setPen(pen);
 
 		if(idx==0)
@@ -253,5 +264,6 @@ void GraphicalView::configureObject(void)
 											TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
+  configureTag();
 }
 

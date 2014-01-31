@@ -49,6 +49,7 @@
 #include "collationwidget.h"
 #include "extensionwidget.h"
 #include "sqlappendwidget.h"
+#include "tagwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -77,6 +78,7 @@ extern RelationshipWidget *relationship_wgt;
 extern TableWidget *table_wgt;
 extern CollationWidget *collation_wgt;
 extern ExtensionWidget *extension_wgt;
+extern TagWidget *tag_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
@@ -108,7 +110,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 											 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-											 OBJ_COLLATION, OBJ_EXTENSION };
+                       OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -226,6 +228,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
+
+  action_set_tag=new QAction(QIcon(QString(":/icones/icones/tag.png")), trUtf8("Set tag"), this);
+  action_set_tag->setMenu(&tags_menu);
 
 	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
   action_edit_perms->setShortcut(QKeySequence(trUtf8("Ctrl+E")));
@@ -1363,8 +1368,14 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			case OBJ_EXTENSION:
 				extension_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
 				extension_wgt->show();
-				res=(collation_wgt->result()==QDialog::Accepted);
+        res=(extension_wgt->result()==QDialog::Accepted);
 			break;
+
+      case OBJ_TAG:
+        tag_wgt->setAttributes(db_model, op_list, dynamic_cast<Tag *>(object));
+        tag_wgt->show();
+        res=(tag_wgt->result()==QDialog::Accepted);
+      break;
 
 			default:
 			case OBJ_DATABASE:
@@ -1515,7 +1526,31 @@ void ModelWidget::changeOwner(void)
 			op_list->removeLastOperation();
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void ModelWidget::setTag(void)
+{
+  QAction *act=dynamic_cast<QAction *>(sender());
+  BaseObject *tag=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
+      *obj=(!selected_objects.empty() ? selected_objects[0] : this->db_model);
+  BaseTable *tab=dynamic_cast<BaseTable *>(obj);
+
+
+  try
+  {
+    op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+
+    tab->setTag(dynamic_cast<Tag *>(tag));
+    tab->setModified(true);
+
+    emit s_objectModified();
+  }
+  catch(Exception &e)
+  {
+    op_list->removeLastOperation();
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }
 
 void ModelWidget::editPermissions(void)
@@ -2176,6 +2211,7 @@ void ModelWidget::removeObjects(void)
 					ritr=objs_map.rbegin();
 					ritr_end=objs_map.rend();
 					object=nullptr;
+          rel=nullptr;
 				}
 
 				op_count=op_list->getCurrentSize();
@@ -2221,7 +2257,7 @@ void ModelWidget::removeObjects(void)
 
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
-								table->removeObject(obj_idx, obj_type);
+                table->removeObject(obj_idx, obj_type);
 
 								db_model->removePermissions(tab_obj);
 
@@ -2382,15 +2418,17 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			vector<BaseObject *> obj_list;
 			map<QString, QAction *> act_map;
 			QStringList name_list;
-			QMenu *menus[]={ &schemas_menu, &owners_menu };
-			ObjectType types[]={ OBJ_SCHEMA, OBJ_ROLE };
+      QMenu *menus[]={ &schemas_menu, &owners_menu, &tags_menu };
+      ObjectType types[]={ OBJ_SCHEMA, OBJ_ROLE, OBJ_TAG };
 
-			for(unsigned i=0; i < 2; i++)
+      for(unsigned i=0; i < 3; i++)
 			{
 				menus[i]->clear();
 
 				if((i==0 && obj->acceptsSchema()) ||
-					 (i==1 && obj->acceptsOwner()))
+           (i==1 && obj->acceptsOwner()) ||
+           (i==2 && (obj->getObjectType()==OBJ_TABLE ||
+                     obj->getObjectType()==OBJ_VIEW)))
 				{
 					obj_list=db_model->getObjects(types[i]);
 
@@ -2408,15 +2446,20 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 							act->setCheckable(true);
 
 							act->setChecked(obj->getSchema()==obj_list.back() ||
-															obj->getOwner()==obj_list.back());
+                              obj->getOwner()==obj_list.back()  ||
+                              ((obj->getObjectType()==OBJ_TABLE ||
+                                obj->getObjectType()==OBJ_VIEW) &&
+                               dynamic_cast<BaseTable *>(obj)->getTag()==obj_list.back()));
 
 							act->setEnabled(!act->isChecked());
 							act->setData(QVariant::fromValue<void *>(obj_list.back()));
 
 							if(i==0)
 								connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToSchema(void)));
-							else
+              else if(i==1)
 								connect(act, SIGNAL(triggered(bool)), this, SLOT(changeOwner(void)));
+              else
+                connect(act, SIGNAL(triggered(bool)), this, SLOT(setTag(void)));
 
 							act_map[obj_list.back()->getName()]=act;
 							name_list.push_back(obj_list.back()->getName());
@@ -2447,6 +2490,9 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 
 		if(obj->acceptsOwner())
 			quick_actions_menu.addAction(action_change_owner);
+
+    if(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW)
+      quick_actions_menu.addAction(action_set_tag);
 
 		if(Permission::objectAcceptsPermission(obj->getObjectType()))
 		{
@@ -2493,7 +2539,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
-													 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW };
+                           OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
 
 			unsigned cnt = sizeof(types)/sizeof(ObjectType);
 

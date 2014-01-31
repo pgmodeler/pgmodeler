@@ -46,6 +46,7 @@
 #include "tablewidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
+#include "tagwidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
@@ -83,6 +84,7 @@ RelationshipWidget *relationship_wgt=nullptr;
 TableWidget *table_wgt=nullptr;
 CollationWidget *collation_wgt=nullptr;
 ExtensionWidget *extension_wgt=nullptr;
+TagWidget *tag_wgt=nullptr;
 TaskProgressWidget *task_prog_wgt=nullptr;
 ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
@@ -91,22 +93,12 @@ SQLAppendWidget *sqlappend_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
-	int i, count;
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	ObjectType obj_types[]={
-		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
-		OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
-		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE,
-		OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX,
-		OBJ_CONSTRAINT, OBJ_COLLATION, OBJ_EXTENSION, OBJ_PERMISSION };
+  vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
@@ -215,6 +207,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		table_wgt=new TableWidget(this);
 		collation_wgt=new CollationWidget(this);
 		extension_wgt=new ExtensionWidget(this);
+    tag_wgt=new TagWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
@@ -225,11 +218,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	count=sizeof(obj_types)/sizeof(ObjectType);
-	for(i=0; i < count; i++)
-		task_prog_wgt->addIcon(obj_types[i],
+  for(auto obj_tp : obj_types)
+    task_prog_wgt->addIcon(obj_tp,
 																QIcon(QString(":/icones/icones/") +
-																			BaseObject::getSchemaName(obj_types[i]) +
+                                      BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
@@ -288,6 +280,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+  connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));

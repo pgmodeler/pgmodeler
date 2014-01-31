@@ -84,7 +84,7 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static constexpr unsigned PRIV_SELECT=0,
+		static const unsigned PRIV_SELECT=0,
 															PRIV_INSERT=1,
 															PRIV_UPDATE=2,
 															PRIV_DELETE=3,

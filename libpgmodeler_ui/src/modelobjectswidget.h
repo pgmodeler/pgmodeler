@@ -84,6 +84,8 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
 
+    QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
+
 		void mouseMoveEvent(QMouseEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
