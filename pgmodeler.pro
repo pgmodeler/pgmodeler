@@ -113,11 +113,32 @@ macx {
  BASEDIR = $$PWD/build/pgmodeler.app/Contents
  DESTDIR = $$BASEDIR/MacOS #Where the compiled executables are stored
  LIBDESTDIR = $$BASEDIR/Frameworks #Where the compiled libs are stored
+ RESDESTDIR = $$DESTDIR
 }
 
+
+# User can pass additional config params to specify custom output directory as follow:
+#
+# BINDIR = where any generated binary (excutable and libraries) will be put.
+# LIBDIR = where any generated library will be put. This variable overrides the BINDIR.
+# RESDIR = where resource files like conf, lang, samples and schema directories will be put.
+#
+#
+# By default, when not specifying any of above options, the compilation will generate files
+# under ./build. If the user only specify the BINDIR the compilation will generate all files
+# under this directory.
+#
 linux|windows {
  DESTDIR = $$PWD/build
- LIBDESTDIR = $$DESTDIR #On Linux and Windows the compiled libs resides on the same executable's dir
+ defined(BINDIR, var): DESTDIR=$$BINDIR
+
+ #On Linux and Windows the compiled libs resides on the same executable's dir (by default)
+ LIBDESTDIR = $$DESTDIR
+ defined(LIBDIR, var): LIBDESTDIR=$$LIBDIR
+
+ #On Linux and Windows the resource files (conf, schemas, etc) resides on the same executable's dir (by default)
+ RESDESTDIR = $$DESTDIR
+ defined(RESDIR, var): RESDESTDIR=$$RESDIR
 }
 
 #Creating the project's libraries names based upon the running OS
@@ -140,7 +161,7 @@ INCLUDEPATH += $$XML_INC \
 
 
 #Deployment configurations
-pgmodeler.path = $$DESTDIR
+pgmodeler.path = $$RESDESTDIR
 pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE
 
 unix {
