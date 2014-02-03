@@ -71,6 +71,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(results_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(copySelection(void)));
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
   connect(clear_history_btn, SIGNAL(clicked(void)), cmd_history_lst, SLOT(clear(void)));
+  connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+  connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
 
   //Signal handling with C++11 lambdas Slots
   connect(clear_history_btn, &QPushButton::clicked,
@@ -112,10 +115,6 @@ void SQLToolWidget::connectToDatabase(void)
     Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
     import_helper.setConnection(*conn);
-
-    //Configures the import helper to list only system objects and extension objects
-    import_helper.setImportOptions(true, true, false, false, false);
-
     DatabaseImportForm::listDatabases(import_helper, database_cmb);
     database_cmb->setEnabled(database_cmb->count() > 1);
 
@@ -137,6 +136,8 @@ void SQLToolWidget::listObjects(void)
       task_prog_wgt->show();
 
       import_helper.setCurrentDatabase(database_cmb->currentText());
+      import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);
+
       DatabaseImportForm::listObjects(import_helper, objects_trw, false);
 
       task_prog_wgt->close();
@@ -147,6 +148,12 @@ void SQLToolWidget::listObjects(void)
     refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
     filter_parent->setEnabled(refresh_tb->isEnabled());
     filter_edt->clear();
+    filter_lbl->setEnabled(refresh_tb->isEnabled());
+    filter_edt->setEnabled(refresh_tb->isEnabled());
+    expand_all_tb->setEnabled(refresh_tb->isEnabled());
+    collapse_all_tb->setEnabled(refresh_tb->isEnabled());
+    hide_ext_objs_chk->setEnabled(refresh_tb->isEnabled());
+    hide_sys_objs_chk->setEnabled(refresh_tb->isEnabled());
 
     enableSQLExecution(refresh_tb->isEnabled());
   }
