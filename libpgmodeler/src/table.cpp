@@ -257,12 +257,11 @@ void Table::setTriggersAttribute(unsigned def_type)
 		/* Triggers that references columns added by relationship (special object)
 		 do not have their code definition generated here. They are treated
 		 in the database model code generation method */
-		if((!trig->isReferRelationshipAddedColumn() &&
+    /*if((!trig->isReferRelationshipAddedColumn() &&
 				def_type==SchemaParser::XML_DEFINITION) ||
-			 def_type==SchemaParser::SQL_DEFINITION)
-		{
+       def_type==SchemaParser::SQL_DEFINITION)*/
+    if(!trig->isReferRelationshipAddedColumn())
 			str_trig+=trig->getCodeDefinition(def_type);
-		}
 	}
 
 	attributes[ParsersAttributes::TRIGGERS]=str_trig;
@@ -282,10 +281,11 @@ void Table::setIndexesAttribute(unsigned def_type)
 		/* Indexes that references columns added by relationship (special object)
 		 do not have their code definition generated here. They are treated
 		 in the database model code generation method */
-		if((!ind->isAddedByRelationship() &&
-				!ind->isReferRelationshipAddedColumn() &&
+    /*if((!ind->isAddedByRelationship() &&
+        !ind->isReferRelationshipAddedColumn() &&
 				def_type==SchemaParser::XML_DEFINITION) ||
-			 def_type==SchemaParser::SQL_DEFINITION)
+       def_type==SchemaParser::SQL_DEFINITION) */
+    if(!ind->isReferRelationshipAddedColumn())
 			str_ind+=ind->getCodeDefinition(def_type);
 	}
 
