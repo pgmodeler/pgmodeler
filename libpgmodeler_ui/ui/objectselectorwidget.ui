@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::NoFocus</enum>
+   <enum>Qt::TabFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -76,7 +76,7 @@
       </font>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
+      <enum>Qt::WheelFocus</enum>
      </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -119,7 +119,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
+      <enum>Qt::WheelFocus</enum>
      </property>
      <property name="toolTip">
       <string>Clear field</string>
@@ -154,7 +154,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
+      <enum>Qt::WheelFocus</enum>
      </property>
      <property name="toolTip">
       <string>Select Object</string>

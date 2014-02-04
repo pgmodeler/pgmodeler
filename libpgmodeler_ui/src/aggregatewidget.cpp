@@ -33,9 +33,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
-		final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+    final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+    transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+    sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
@@ -44,9 +44,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 																						ObjectTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
-		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
-		funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
-		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
+    funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
+    funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
+    funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(2,2,2,2);
@@ -76,8 +76,12 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(state_type);
 		setRequiredField(input_type);
 		setRequiredField(transition_func_sel);
-		setRequiredField(transition_func_lbl);
-	}
+    setRequiredField(transition_func_lbl);
+
+    configureTabOrder({ final_func_sel, transition_func_sel,
+                        sort_op_sel, initial_cond_txt, state_input_types_twg,
+                        input_types_tab, input_type, state_type });
+  }
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

@@ -64,10 +64,10 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
 		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
-		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
-		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
-		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
-		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+    schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
+    owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
+    tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
+    collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
@@ -111,12 +111,22 @@ BaseObjectWidget::~BaseObjectWidget(void)
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 {
 	//Filters the ENTER/RETURN pressing forcing the parent form activate the "Apply" button
-	if(event->type() == QEvent::KeyPress &&
-		 (dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Return ||
-			dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Enter))
+  if(event->type() == QEvent::KeyPress)
 	{
-		parent_form->apply_ok_btn->click();
-		return(true);
+    QKeyEvent *kevent=dynamic_cast<QKeyEvent *>(event);
+
+    if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
+    {
+      parent_form->apply_ok_btn->click();
+      return(true);
+    }
+    //else if(kevent->key()==Qt::Key_Tab)
+    //  focusNextWidget();
+    else
+      return(QWidget::eventFilter(object, event));
+
+
+
 	}
 	else
 		return(QWidget::eventFilter(object, event));
@@ -246,6 +256,45 @@ void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 
 		refs.pop_back();
   }
+}
+
+void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
+{
+  ObjectSelectorWidget *obj_sel=nullptr;
+  PgSQLTypeWidget *type_wgt=nullptr;
+  vector<QWidget *> tab_order, children;
+  int idx=0, cnt=0;
+
+  widgets.insert(widgets.begin(),
+                { name_edt, schema_sel, tablespace_sel,
+                  owner_sel, collation_sel, comment_edt,
+                  append_sql_tb, edt_perms_tb, disable_sql_chk });
+
+  for(auto wgt : widgets)
+  {
+    obj_sel=dynamic_cast<ObjectSelectorWidget *>(wgt);
+    type_wgt=dynamic_cast<PgSQLTypeWidget *>(wgt);
+
+    if(obj_sel)
+      children={ obj_sel->rem_object_tb, obj_sel->sel_object_tb };
+    else if(type_wgt)
+    {
+      children={ type_wgt->type_cmb, type_wgt->length_sb, type_wgt->precision_sb,
+                 type_wgt->dimension_sb, type_wgt->interval_cmb, type_wgt->spatial_cmb,
+                 type_wgt->srid_spb, type_wgt->var_z_chk, type_wgt->var_m_chk,
+                 type_wgt->timezone_chk };
+    }
+
+    tab_order.push_back(wgt);
+
+    for(auto child : children)
+      tab_order.push_back(child);
+  }
+
+  cnt=tab_order.size()-1;
+
+  for(idx=0; idx < cnt; idx++)
+    QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py, bool uses_op_list)
