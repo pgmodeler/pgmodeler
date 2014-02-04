@@ -67,7 +67,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		frame->setParent(this);
 
 		configureFormLayout(funcaoagregacao_grid, OBJ_AGGREGATE);
-
 		parent_form->setMinimumSize(645, 750);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

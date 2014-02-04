@@ -245,7 +245,7 @@ void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 		}
 
 		refs.pop_back();
-	}
+  }
 }
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py, bool uses_op_list)

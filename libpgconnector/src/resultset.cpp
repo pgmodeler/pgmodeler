@@ -254,8 +254,10 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 
 	/* Returns the column format in the current tuple.
 		According to libpq documentation, value = 0, indicates column text format,
-		value = 1 the column has binary format, the other values are reserved */
-	return(PQfformat(sql_result, column_idx)==1);
+    value = 1 the column has binary format, the other values are reserved.
+
+    One additional check is made, if the type of the column is bytea. */
+  return(PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
 }
 
 bool ResultSet::accessTuple(unsigned tuple_type)

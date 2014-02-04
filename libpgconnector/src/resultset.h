@@ -31,6 +31,10 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #include "attribsmap.h"
 #include <libpq-fe.h>
 #include <cstdlib>
+#include <iostream>
+
+//This constant is defined on PostgreSQL source code src/catalog/pg_type.h
+#define BYTEAOID 17
 
 class ResultSet {
  private:

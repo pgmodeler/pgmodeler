@@ -175,6 +175,7 @@ void SQLToolWidget::fillResultsTable(ResultSet &res)
   try
   {
     int col=0, row=0, row_cnt=res.getTupleCount(), col_cnt=res.getColumnCount();
+    QTableWidgetItem *item=nullptr;
 
     row_cnt_lbl->setText(QString::number(row_cnt));
     export_tb->setEnabled(row_cnt > 0);
@@ -193,7 +194,16 @@ void SQLToolWidget::fillResultsTable(ResultSet &res)
       {
         //Fills the current row with the values of current tuple
         for(col=0; col < col_cnt; col++)
-          results_tbw->setItem(row, col, new QTableWidgetItem(res.getColumnValue(col)));
+        {
+          item=new QTableWidgetItem;
+
+          if(res.isColumnBinaryFormat(col))
+            item->setText(trUtf8("[binary data]"));
+          else
+            item->setText(res.getColumnValue(col));
+
+          results_tbw->setItem(row, col, item);
+        }
 
         //Configure the vertical header to show the current tuple id
         results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));

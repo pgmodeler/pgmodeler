@@ -887,7 +887,7 @@
               <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
+              <bool>true</bool>
              </attribute>
              <attribute name="verticalHeaderMinimumSectionSize">
               <number>20</number>
@@ -895,6 +895,16 @@
              <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
              </attribute>
+             <row>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </column>
             </widget>
            </item>
            <item row="1" column="0">
