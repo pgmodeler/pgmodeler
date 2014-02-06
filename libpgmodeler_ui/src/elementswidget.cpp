@@ -25,20 +25,19 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		map<QString, vector<QWidget *> > fields_map;
 		QFrame *frame=nullptr;
 
-		setupUi(this);
+    setupUi(this);
+    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
+    elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                         GlobalAttributes::DIR_SEPARATOR +
+                                         GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                         GlobalAttributes::CONFIGURATION_EXT);
 
-		parent_obj=nullptr;
-
-		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
-		elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				 GlobalAttributes::DIR_SEPARATOR +
-																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																				 GlobalAttributes::CONFIGURATION_EXT);
-
+    parent_obj=nullptr;
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
@@ -77,6 +76,22 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		BaseObjectWidget::setRequiredField(operator_sel);
 		BaseObjectWidget::setRequiredField(operator_lbl);
+
+    setTabOrder(column_rb, column_cmb);
+    setTabOrder(column_cmb, expression_rb);
+    setTabOrder(expression_rb, elem_expr_txt);
+    setTabOrder(elem_expr_txt, collation_sel);
+    setTabOrder(collation_sel, collation_sel->rem_object_tb);
+    setTabOrder(collation_sel->rem_object_tb, collation_sel->sel_object_tb);
+    setTabOrder(collation_sel->sel_object_tb, op_class_sel);
+
+    setTabOrder(op_class_sel, op_class_sel->rem_object_tb);
+    setTabOrder(op_class_sel->rem_object_tb, op_class_sel->sel_object_tb);
+    setTabOrder(op_class_sel->sel_object_tb, sorting_chk);
+
+    setTabOrder(sorting_chk, ascending_rb);
+    setTabOrder(ascending_rb, descending_rb);
+    setTabOrder(descending_rb, nulls_first_chk);
 	}
 	catch(Exception &e)
 	{

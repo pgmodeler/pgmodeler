@@ -61,6 +61,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="title">
       <string>Data Type</string>
      </property>

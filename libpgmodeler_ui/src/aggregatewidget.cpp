@@ -78,9 +78,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(transition_func_sel);
     setRequiredField(transition_func_lbl);
 
-    configureTabOrder({ final_func_sel, transition_func_sel,
-                        sort_op_sel, initial_cond_txt, state_input_types_twg,
-                        input_types_tab, input_type, state_type });
+    configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
   }
 	catch(Exception &e)
 	{

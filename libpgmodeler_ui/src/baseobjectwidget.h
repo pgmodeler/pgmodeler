@@ -128,7 +128,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 	 void disableReferencesSQL(BaseObject *object);
 
-   void configureTabOrder(vector<QWidget *> widgets);
+   void configureTabOrder(vector<QWidget *> widgets={});
 
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame

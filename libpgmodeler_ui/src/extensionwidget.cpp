@@ -8,6 +8,8 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	parent_form->setMinimumSize(480, 250);
 	parent_form->setMaximumHeight(250);
+
+  configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)

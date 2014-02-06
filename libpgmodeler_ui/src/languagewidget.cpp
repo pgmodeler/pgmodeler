@@ -50,6 +50,8 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 		parent_form->setMinimumSize(540, 440);
 		parent_form->setMaximumHeight(440);
+
+    configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 	}
 	catch(Exception &e)
 	{

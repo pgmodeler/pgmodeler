@@ -789,6 +789,7 @@
   <tabstop>connections_cmb</tabstop>
   <tabstop>new_tb</tabstop>
   <tabstop>cancel_tb</tabstop>
+  <tabstop>duplicate_tb</tabstop>
   <tabstop>edit_tb</tabstop>
   <tabstop>remove_tb</tabstop>
   <tabstop>alias_edt</tabstop>

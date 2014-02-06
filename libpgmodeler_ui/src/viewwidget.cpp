@@ -56,9 +56,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
-		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
-		expression_cp=new CodeCompletionWidget(expression_txt);
-
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
@@ -71,6 +68,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		references_tab->setHeaderLabel(trUtf8("Alias"),1);
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
 		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
+
+    cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
+    expression_cp=new CodeCompletionWidget(expression_txt);
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
@@ -153,6 +153,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
     parent_form->setMinimumSize(650, 700);
 		selectReferenceType();
+
+    configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget,
+                        ref_type_cmb, select_from_chk, from_where_chk, after_where_chk,
+                        table_sel, tab_alias_edt, column_sel, col_alias_edt });
 	}
 	catch(Exception &e)
 	{

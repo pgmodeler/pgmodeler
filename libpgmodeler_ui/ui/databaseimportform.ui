@@ -1405,6 +1405,30 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>connect_tb</tabstop>
+  <tabstop>origin_sb</tabstop>
+  <tabstop>tabs_per_row_sb</tabstop>
+  <tabstop>obj_spacing_sb</tabstop>
+  <tabstop>sch_per_row_sb</tabstop>
+  <tabstop>resolve_deps_chk</tabstop>
+  <tabstop>import_sys_objs_chk</tabstop>
+  <tabstop>import_ext_objs_chk</tabstop>
+  <tabstop>ignore_errors_chk</tabstop>
+  <tabstop>debug_mode_chk</tabstop>
+  <tabstop>database_cmb</tabstop>
+  <tabstop>db_objects_tw</tabstop>
+  <tabstop>filter_edt</tabstop>
+  <tabstop>by_oid_chk</tabstop>
+  <tabstop>select_all_tb</tabstop>
+  <tabstop>clear_all_tb</tabstop>
+  <tabstop>expand_all_tb</tabstop>
+  <tabstop>collapse_all_tb</tabstop>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>import_btn</tabstop>
+  <tabstop>close_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>
