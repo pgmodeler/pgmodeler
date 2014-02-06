@@ -1196,6 +1196,8 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 				pk=new Constraint;
 				pk->setConstraintType(ConstraintType::primary_key);
 				pk->setAddedByLinking(true);
+        pk->setDeferrable(this->deferrable);
+        pk->setDeferralType(this->deferral_type);
 				this->pk_relident=pk;
 			}
 			else
@@ -1263,6 +1265,8 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 		if(!uq_rel11)
 		{
 			uq=new Constraint;
+      uq->setDeferrable(this->deferrable);
+      uq->setDeferralType(this->deferral_type);
 			uq->setConstraintType(ConstraintType::unique);
 			uq->setAddedByLinking(true);
 			uq_rel11=uq;

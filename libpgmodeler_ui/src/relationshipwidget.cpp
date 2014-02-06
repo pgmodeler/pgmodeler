@@ -347,6 +347,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
+    deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
+
     idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
     del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 

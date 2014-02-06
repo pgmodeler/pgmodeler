@@ -6,12 +6,6 @@
 [<constraint name=] "@{name}" [ type=] "@{type}"
 
  %if @{fk-constr} %then
-   $tb
-   %if @{deferrable} %then
-    [deferrable=] "true"
-    [ defer-type=] "@{defer-type}"
-   %end
-
     [ comparison-type=] "@{comparison-type}"
    $br
 
@@ -19,6 +13,13 @@
     [ upd-action=] "@{upd-action}"
     [ del-action=] "@{del-action}"
     [ ref-table=] "@{ref-table}"
+ %end
+
+
+ %if @{deferrable} %then
+  $br $tb
+    [deferrable=] "true"
+    [ defer-type=] "@{defer-type}" $br
  %end
 
  %if @{ck-constr} %and @{no-inherit} %then

@@ -341,10 +341,11 @@ void ConstraintWidget::selectConstraintType(void)
 
 	info_frm->setVisible(constr_type==ConstraintType::primary_key);
 
-	deferrable_lbl->setVisible(constr_type==ConstraintType::foreign_key);
-	deferrable_chk->setVisible(constr_type==ConstraintType::foreign_key);
-	deferral_cmb->setVisible(constr_type==ConstraintType::foreign_key);
-	deferral_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+  deferrable_lbl->setVisible(constr_type!=ConstraintType::check);
+  deferrable_chk->setVisible(constr_type!=ConstraintType::check);
+  deferral_cmb->setVisible(constr_type!=ConstraintType::check);
+  deferral_lbl->setVisible(constr_type!=ConstraintType::check);
+
 	match_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 	match_cmb->setVisible(constr_type==ConstraintType::foreign_key);
 	on_delete_cmb->setVisible(constr_type==ConstraintType::foreign_key);

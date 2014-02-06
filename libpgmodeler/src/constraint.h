@@ -36,13 +36,13 @@ class Constraint: public TableObject{
 		//! \brief Type of the constraint (primary key, foreign key, unique or check)
 		ConstraintType constr_type;
 
-		//! \brief Indicates if the constraint is deferrable (only for foreign key)
+    //! \brief Indicates if the constraint is deferrable (except for check contraints)
 		bool deferrable,
 
 				 //! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
 				 no_inherit;
 
-		//! \brief Deferral type for the constraint (only for foreign key)
+    //! \brief Deferral type for the constraint (except for check contraints)
 		DeferralType deferral_type;
 
 		//! \brief Matching method used by the constraint (only for foreign key)
@@ -109,10 +109,10 @@ class Constraint: public TableObject{
     //! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
     void setActionType(ActionType action_type, unsigned act_id);
 
-		//! \brief Defines the deferral type for the constraint (only for foreign key)
+    //! \brief Defines the deferral type for the constraint (except for check contraints)
 		void setDeferralType(DeferralType deferral_type);
 
-		//! \brief Defines whether the constraint is deferrable (only for foreign key)
+    //! \brief Defines whether the constraint is deferrable (except for check contraints)
 		void setDeferrable(bool value);
 
 		//! \brief Defines the matching type used by the constraint (only for foreign key)
