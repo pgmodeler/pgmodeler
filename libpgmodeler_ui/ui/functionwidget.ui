@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
+    <width>611</width>
     <height>383</height>
    </rect>
   </property>
@@ -658,6 +658,8 @@
   <tabstop>security_cmb</tabstop>
   <tabstop>exec_cost_spb</tabstop>
   <tabstop>behavior_cmb</tabstop>
+  <tabstop>window_func_chk</tabstop>
+  <tabstop>leakproof_chk</tabstop>
   <tabstop>simple_rb</tabstop>
   <tabstop>set_rb</tabstop>
   <tabstop>table_rb</tabstop>

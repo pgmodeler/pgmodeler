@@ -25,14 +25,14 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		QStringList tipos;
 		QGridLayout *grid=nullptr;
 
-		Ui_OperatorClassWidget::setupUi(this);
+    Ui_OperatorClassWidget::setupUi(this);
 
 		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, false, this);
-		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
-		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		data_type=new PgSQLTypeWidget(this);
-		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
+    operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+    elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
+    function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+    storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
 		elements_tab->setColumnCount(4);
@@ -78,6 +78,9 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		indexing_cmb->addItems(tipos);
 
 		setRequiredField(elements_grp);
+
+    configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
+                        operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
 	}
 	catch(Exception &e)
 	{

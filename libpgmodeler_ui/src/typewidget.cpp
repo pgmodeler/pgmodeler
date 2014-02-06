@@ -124,6 +124,11 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		setRequiredField(functions_sel[Type::OUTPUT_FUNC]);
 		setRequiredField(enumerations_gb);
 		setRequiredField(attributes_gb);
+
+    configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
+                       enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
+                       opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
+                       base_attribs_twg});
 	}
 	catch(Exception &e)
 	{

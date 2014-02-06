@@ -26,7 +26,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="sequence_grid">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <property name="spacing">
@@ -189,7 +198,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="owner_col_lbl">
      <property name="text">
-      <string>Owner:</string>
+      <string>Owner Col.:</string>
      </property>
     </widget>
    </item>

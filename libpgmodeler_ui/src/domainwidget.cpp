@@ -42,6 +42,8 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		parent_form->setMaximumHeight(570);
 
 		setRequiredField(data_type);
+    configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
+                        check_expr_txt, data_type });
 	}
 	catch(Exception &e)
 	{

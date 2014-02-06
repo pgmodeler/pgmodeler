@@ -32,6 +32,8 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 
 	parent_form->setMinimumSize(500, 220);
 	parent_form->setMaximumHeight(220);
+
+  configureTabOrder({ fill_color_tb, show_rect_chk });
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)

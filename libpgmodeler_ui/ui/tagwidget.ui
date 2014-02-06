@@ -411,6 +411,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tab_name_color_tb</tabstop>
+  <tabstop>sch_name_color_tb</tabstop>
+  <tabstop>title_fcolor1_tb</tabstop>
+  <tabstop>title_fcolor2_tb</tabstop>
+  <tabstop>title_bcolor_tb</tabstop>
+  <tabstop>body_fcolor1_tb</tabstop>
+  <tabstop>body_fcolor2_tb</tabstop>
+  <tabstop>body_bcolor_tb</tabstop>
+  <tabstop>extbody_fcolor1_tb</tabstop>
+  <tabstop>extbody_fcolor2_tb</tabstop>
+  <tabstop>extbody_bcolor_tb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

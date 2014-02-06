@@ -33,6 +33,8 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 
 		parent_form->setMinimumSize(500, 360);
 		parent_form->setMaximumHeight(360);
+
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{

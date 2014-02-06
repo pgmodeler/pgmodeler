@@ -178,30 +178,11 @@
     <string>Tablespace:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="owner_lbl">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>236</y>
-     <width>41</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Owner:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="schema_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>268</y>
+     <y>270</y>
      <width>61</width>
      <height>16</height>
     </rect>
@@ -242,6 +223,9 @@
      <width>16777215</width>
      <height>30</height>
     </size>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
    </property>
    <property name="toolTip">
     <string>Edit object's permissions</string>
@@ -365,6 +349,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
    <property name="toolTip">
     <string>Disables the generated SQL code using comment tokens (--).
 This will disable the code of all child and referrer objects.</string>
@@ -419,6 +406,9 @@ This will disable the code of all child and referrer objects.</string>
      <height>30</height>
     </size>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
    <property name="toolTip">
     <string>Append a set of SQL commands to the object's definition.</string>
    </property>
@@ -437,6 +427,25 @@ This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="owner_lbl">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>41</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Owner:</string>
    </property>
   </widget>
  </widget>

@@ -61,6 +61,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="title">
       <string>Data Type</string>
      </property>
@@ -668,19 +671,6 @@
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>type_cmb</tabstop>
-  <tabstop>length_sb</tabstop>
-  <tabstop>precision_sb</tabstop>
-  <tabstop>dimension_sb</tabstop>
-  <tabstop>interval_cmb</tabstop>
-  <tabstop>spatial_cmb</tabstop>
-  <tabstop>srid_spb</tabstop>
-  <tabstop>var_z_chk</tabstop>
-  <tabstop>var_m_chk</tabstop>
-  <tabstop>timezone_chk</tabstop>
-  <tabstop>format_txt</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

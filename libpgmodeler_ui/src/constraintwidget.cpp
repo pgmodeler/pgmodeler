@@ -108,9 +108,11 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 
-		selectConstraintType();
-
 		parent_form->setMinimumSize(600, 640);
+
+    selectConstraintType();
+
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{

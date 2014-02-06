@@ -72,6 +72,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);
+    configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
 	}
 	catch(Exception &e)
 	{

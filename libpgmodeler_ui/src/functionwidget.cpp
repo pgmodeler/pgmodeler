@@ -112,6 +112,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		setRequiredField(symbol_lbl);
 		setRequiredField(library_lbl);
 		setRequiredField(sourc_code_lbl);
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{

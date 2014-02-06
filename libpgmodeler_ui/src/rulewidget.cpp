@@ -64,6 +64,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
 
 		setRequiredField(event_lbl);
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{
