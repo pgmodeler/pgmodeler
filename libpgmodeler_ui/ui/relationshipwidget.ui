@@ -461,7 +461,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Custom FK Settings</string>
+          <string>Constraints Settings</string>
          </property>
          <property name="checkable">
           <bool>false</bool>

@@ -4397,14 +4397,14 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 											.arg(Utf8String::create(constr->getName())),
 											ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+    deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+    constr->setDeferrable(deferrable);
+
+    if(deferrable && !attribs[ParsersAttributes::DEFER_TYPE].isEmpty())
+      constr->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
+
 		if(constr_type==ConstraintType::foreign_key)
 		{
-			deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
-			constr->setDeferrable(deferrable);
-
-			if(deferrable && !attribs[ParsersAttributes::DEFER_TYPE].isEmpty())
-				constr->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
-
 			if(!attribs[ParsersAttributes::COMPARISON_TYPE].isEmpty())
 				constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
 
