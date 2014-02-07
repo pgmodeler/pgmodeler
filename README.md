@@ -45,8 +45,18 @@ Change Log
 v0.7.0-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: January 31, 2014</em><br/>
+<em>Release date: February 07, 2014</em><br/>
 
+<em><strong>Build 20140207</strong></em><br/>
+* [New] Added options to hide system/extension objects on SQL tool improving the object listing performance.
+* [New] Added support to custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
+* [New] Added support to deferrable unique, exclude and primary key constraints.
+* [Change] Improved the tab navigation experience on editing forms.
+* [Change] Minor change on SQL tool to ommit binary data values.
+* [Fix] Fixed bug that was causing indexes/triggers that references columns added by relationship have the sql code generated twice.
+* [Fix] Minor fix on ResultSet class to identify bytea columns.
+
+<br/><strong><em>Previous builds</em></strong><br/>
 * [New] Added support to custom colors on tables and views through tag objects.
 * [New] Added support to export models to png image page by page.
 * [New] Canvas can now be moved using Control + Arrow keys. If the shift is pressed the movement factor is increased.
