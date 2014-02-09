@@ -797,9 +797,9 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		op_list->ignoreOperationChain(true);
+    //op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
-		op_list->ignoreOperationChain(false);
+    //op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
