@@ -571,6 +571,8 @@ void Relationship::destroyObjects(void)
 void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list=nullptr;
+  TableObject *tab_obj=nullptr;
+  Table *recv_table=nullptr;
 
 	if(obj_type==OBJ_COLUMN)
 		obj_list=&rel_attributes;
@@ -583,6 +585,9 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	if(obj_id >= obj_list->size())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+  tab_obj=obj_list->at(obj_id);
+  recv_table=this->getReceiverTable();
+
 	if(obj_type==OBJ_COLUMN)
 	{
 		Column *col=nullptr;
@@ -592,7 +597,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 
 		itr=rel_constraints.begin();
 		itr_end=rel_constraints.end();
-		col=dynamic_cast<Column *>(obj_list->at(obj_id));
+    col=dynamic_cast<Column *>(tab_obj);
 
 		while(itr!=itr_end && !refer)
 		{
@@ -615,14 +620,22 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
+  //Removing the object from the receiver table
+  if(recv_table)
+  {
+    recv_table->removeObject(tab_obj);
+    tab_obj->setParentTable(nullptr);
+  }
+
 	//Before the column removal is necessary disconnect the relationship
-	disconnectRelationship(false);
+  //disconnectRelationship(false);
 
 	//Removes the column
 	obj_list->erase(obj_list->begin() + obj_id);
+  this->invalidated=true;
 
 	//Reconnects the relationship
-	connectRelationship();
+  //connectRelationship();
 }
 
 void Relationship::removeObject(TableObject *object)

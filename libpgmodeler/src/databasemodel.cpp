@@ -8021,8 +8021,8 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		//Quotes are removed from the name by default
 		if(format_obj_names)
 		{
-			if(TableObject::isTableObject(objs.back()->getObjectType()))
-				obj_name=dynamic_cast<TableObject *>(objs.back())->getParentTable()->getName(true);
+      if(TableObject::isTableObject(objs.back()->getObjectType()))
+        obj_name=dynamic_cast<TableObject *>(objs.back())->getParentTable()->getName(true);
 
 			obj_name+=objs.back()->getName(true, true);
 			obj_name.remove('"');

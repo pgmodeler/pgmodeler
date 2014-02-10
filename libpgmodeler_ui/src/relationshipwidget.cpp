@@ -789,7 +789,7 @@ void RelationshipWidget::removeObject(int row)
 
 		object=rel->getObject(row, obj_type);
     op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
-		rel->removeObject(object);
+    rel->removeObject(object);
 	}
 	catch(Exception &e)
 	{
