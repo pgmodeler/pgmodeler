@@ -32,6 +32,7 @@ bool ObjectsScene::corner_move=true;
 ObjectsScene::ObjectsScene(void)
 {
   moving_objs=move_scene=false;
+  enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
 	sel_ini_pnt.setX(NAN);
@@ -378,10 +379,9 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Selects the object (without press control) if the user is creating a relationship
 		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 			item->setSelected(true);
-		else if(this->selectedItems().isEmpty())
+    else if(enable_range_sel && this->selectedItems().isEmpty())
 		{
-			//sel_ini_pnt=event->scenePos();
-			selection_rect->setVisible(true);
+      selection_rect->setVisible(true);
 			emit s_objectSelected(nullptr,false);
 		}
 	}
@@ -468,6 +468,14 @@ void ObjectsScene::enableSceneMove(bool value)
   }
 
   move_scene=value;
+}
+
+void ObjectsScene::enableRangeSelection(bool value)
+{
+  enable_range_sel=value;
+
+  if(!value && selection_rect->isVisible())
+    selection_rect->setVisible(value);
 }
 
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -754,4 +762,9 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
       pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
   return(pages);
+}
+
+bool ObjectsScene::isRangeSelectionEnabled(void)
+{
+  return(enable_range_sel);
 }

@@ -75,7 +75,10 @@ class ObjectsScene: public QGraphicsScene {
 		static QRectF page_margins;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
-		bool moving_objs;
+    bool moving_objs,
+
+    //! brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
+    enable_range_sel;
 
 		//! \brief Initial point of selection rectangle
 		QPointF sel_ini_pnt;
@@ -105,7 +108,6 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
 
-
 	public:
 		ObjectsScene(void);
 		~ObjectsScene(void);
@@ -113,7 +115,7 @@ class ObjectsScene: public QGraphicsScene {
     static void enableCornerMove(bool enable);
     static bool isCornerMoveEnabled(void);
 
-		static void setGridSize(unsigned size);
+    static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
 		static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
 
@@ -127,12 +129,17 @@ class ObjectsScene: public QGraphicsScene {
     //! \brief Returns a vector containing all the page rects.
     vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
+    bool isRangeSelectionEnabled(void);
+
 	public slots:
 		void alignObjectsToGrid(void);
 		void update(void);
 
+    //! brief Toggles the object range selection
+    void enableRangeSelection(bool value);
+
 	private slots:
-    /*! brief Start/stop the timer resposible to move the scene. This method is called with true param
+    /*! brief Start/stop the timer responsible to move the scene. This method is called with true param
     whenever the user stay with the cursor at corner in a certain amount of time */
     void enableSceneMove(bool value=true);
 

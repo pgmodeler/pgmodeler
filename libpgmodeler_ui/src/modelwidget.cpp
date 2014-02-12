@@ -427,8 +427,10 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 		show the editing form related to the object type */
 		if(new_obj_type==OBJ_TABLE || new_obj_type==OBJ_TEXTBOX || new_obj_type==OBJ_VIEW)
 		{
+      this->scene->enableRangeSelection(false);
 			this->showObjectForm(new_obj_type, nullptr, nullptr, viewport->mapToScene(event->pos()));
 			this->cancelObjectAddition();
+      this->scene->enableRangeSelection(true);
 		}
 	}
 }
