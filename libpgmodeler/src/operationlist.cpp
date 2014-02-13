@@ -852,6 +852,22 @@ void OperationList::executeOperation(Operation *oper, bool redo)
         }
       }
 		}
+
+    //Case the object is a type update the tables that are referencing it
+    if(oper->op_type==Operation::OBJECT_MODIFIED &&
+       (object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
+        object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
+        object->getObjectType()==OBJ_EXTENSION))
+    {
+      vector<BaseObject *> ref_objs;
+      model->getObjectReferences(object, ref_objs);
+
+      for(auto obj : ref_objs)
+      {
+        if(obj->getObjectType()==OBJ_COLUMN)
+          dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+      }
+    }
 	}
 }
 

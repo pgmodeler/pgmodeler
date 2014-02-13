@@ -87,6 +87,7 @@ void ObjectRenameWidget::applyRenaming(void)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 			BaseObject *aux_obj=nullptr, *parent_obj=nullptr;
 			QString fmt_name;
+      vector<BaseObject *> ref_objs;
 
 			obj_type=object->getObjectType();
 
@@ -157,6 +158,19 @@ void ObjectRenameWidget::applyRenaming(void)
 				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
 				dynamic_cast<Schema *>(object)->setModified(true);
 			}
+
+      if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
+         object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
+         object->getObjectType()==OBJ_EXTENSION)
+      {
+        model->getObjectReferences(object, ref_objs);
+
+        for(auto obj : ref_objs)
+        {
+          if(obj->getObjectType()==OBJ_COLUMN)
+            dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+        }
+      }
 
 			accept();
 		}

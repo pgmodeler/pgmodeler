@@ -7091,7 +7091,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		}
 
 		if((obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN || obj_type==OBJ_SEQUENCE ||
-				obj_type==OBJ_TABLE || obj_type==OBJ_EXTENSION)
+        obj_type==OBJ_TABLE || obj_type==OBJ_EXTENSION || obj_type==OBJ_VIEW)
 			 && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=nullptr;
@@ -7119,6 +7119,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				case OBJ_DOMAIN: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
 				case OBJ_SEQUENCE: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
 				case OBJ_EXTENSION: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
+        case OBJ_VIEW: ptr_pgsqltype=dynamic_cast<View*>(object); break;
 				default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
 			}
 

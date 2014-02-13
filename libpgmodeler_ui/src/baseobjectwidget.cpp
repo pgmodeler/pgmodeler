@@ -670,6 +670,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			bool new_obj;
 			ObjectType obj_type;
 			QString obj_name;
+      vector<BaseObject *> ref_objs;
 
 			if(disable_sql_chk->isChecked()!=object->isSQLDisabled())
 				disableReferencesSQL(object);
@@ -768,6 +769,19 @@ void BaseObjectWidget::applyConfiguration(void)
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
 				object->setSchema(esquema);
 			}
+
+      if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
+         object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
+         object->getObjectType()==OBJ_EXTENSION)
+      {
+        model->getObjectReferences(object, ref_objs);
+
+        for(auto obj : ref_objs)
+        {
+          if(obj->getObjectType()==OBJ_COLUMN)
+            dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+        }
+      }
 		}
 		catch(Exception &e)
 		{

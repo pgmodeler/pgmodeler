@@ -858,6 +858,8 @@ void View::removeObjects(void)
 
 void View::operator = (View &view)
 {
+  QString prev_name = this->getName(true);
+
   (*dynamic_cast<BaseTable *>(this))=reinterpret_cast<BaseTable &>(view);
 
 	this->references=view.references;
@@ -868,6 +870,8 @@ void View::operator = (View &view)
   this->materialized=view.materialized;
   this->recursive=view.recursive;
   this->with_no_data=view.with_no_data;
+
+  PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 vector<BaseObject *> View::getObjects(void)
