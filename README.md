@@ -45,18 +45,21 @@ Change Log
 v0.7.0-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: February 07, 2014</em><br/>
+<em>Release date: February 14, 2014</em><br/>
 
-<em><strong>Build 20140207</strong></em><br/>
+<em><strong>Build 20140214</strong></em><br/>
+
+* [Fix] Fixed bug that was crashing pgModeler when a error was raised on view edit form.
+* [Fix] Fixed a bug that was crashing the application when deleting relationship attributes or constraints.
+* [Fix] Fixed bug related to the range selection weird behavior when finishing creating a object.
+* [Fix] Minor fix on OperationList undo/redo methods to update types names on tables that references a modified type.
+* [Fix] Minor fix on View assignment operator to correctly rename the type associated with "this" object.
+* [Fix] Minor fix on DatabaseModel to correctly return the references to a view type.
+
+<br/><strong><em>Previous builds</em></strong><br/>
 * [New] Added options to hide system/extension objects on SQL tool improving the object listing performance.
 * [New] Added support to custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
 * [New] Added support to deferrable unique, exclude and primary key constraints.
-* [Change] Improved the tab navigation experience on editing forms.
-* [Change] Minor change on SQL tool to ommit binary data values.
-* [Fix] Fixed bug that was causing indexes/triggers that references columns added by relationship have the sql code generated twice.
-* [Fix] Minor fix on ResultSet class to identify bytea columns.
-
-<br/><strong><em>Previous builds</em></strong><br/>
 * [New] Added support to custom colors on tables and views through tag objects.
 * [New] Added support to export models to png image page by page.
 * [New] Canvas can now be moved using Control + Arrow keys. If the shift is pressed the movement factor is increased.
@@ -72,6 +75,8 @@ v0.7.0-alpha
 * [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Improved the tab navigation experience on editing forms.
+* [Change] Minor change on SQL tool to ommit binary data values.
 * [Change] Dropped the navigation through object using Alt + <left|right> due to the difficulty to understand the order in which objects are highlighted.
 * [Change] Minor change when generate .stacktrace file for crash handler to include pgModeler build number.
 * [Change] Minor adjustments on DatabaseImportForm's import execution progress.
@@ -91,6 +96,8 @@ v0.7.0-alpha
 * [Change] Minor adjustments on window title buttons for model export and database import forms.
 * [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
 * [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Fixed bug that was causing indexes/triggers that references columns added by relationship have the sql code generated twice.
+* [Fix] Minor fix on ResultSet class to identify bytea columns.
 * [Fix] Minor fix on CLI menu to add new export modes.
 * [Fix] Fixed a crash dealing with duplicated columns on a table.
 * [Fix]  Fixed bug when deleting tables and fk relationships together.
