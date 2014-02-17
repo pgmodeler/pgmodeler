@@ -252,6 +252,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
+    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type);
+
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
 		BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);

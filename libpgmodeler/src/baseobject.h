@@ -170,6 +170,9 @@ class BaseObject {
 		cluster level objects (database, tablespace and roles). */
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
 
+    //! \brief Clears all the attributes used by the SchemaParser
+    void clearAttributes(void);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
@@ -291,16 +294,16 @@ class BaseObject {
 		bool isProtected(void);
 
 		//! \brief Checks if the objects name is the same as the passed name
-		bool operator == (const QString &obj_name);
+    //bool operator == (const QString &obj_name);
 
 		//! \brief Checks if the objects name differs from the passed name
-		bool operator != (const QString &obj_name);
+    //bool operator != (const QString &obj_name);
 
 		//! \brief Assigns an object to other copiyng all the attributes correctly
-		void operator = (BaseObject &obj);
+    virtual void operator = (BaseObject &obj);
 
-		//! \brief Clears all the attributes used by the SchemaParser
-		void clearAttributes(void);
+    //! \brief Assigns an object to other copiyng all the attributes correctly
+    virtual bool differsFromObject(BaseObject *obj);
 
 		/*! \brief Forcing the class to be virtual. This means that derivated classes may
 		 override this method in order to be possible its instatiation. */

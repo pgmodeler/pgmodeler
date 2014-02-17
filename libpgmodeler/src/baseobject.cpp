@@ -540,15 +540,15 @@ unsigned BaseObject::getObjectId(void)
 	return(object_id);
 }
 
-bool BaseObject::operator == (const QString &name)
+/*bool BaseObject::operator == (const QString &name)
 {
 	return(this->obj_name==name);
-}
+}*/
 
-bool BaseObject::operator != (const QString &name)
+/*bool BaseObject::operator != (const QString &name)
 {
 	return(this->obj_name!=name);
-}
+}*/
 
 void BaseObject::setSQLDisabled(bool value)
 {
@@ -846,6 +846,22 @@ void BaseObject::operator = (BaseObject &obj)
 	this->obj_type=obj.obj_type;
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
-	this->system_obj=obj.system_obj;
+  this->system_obj=obj.system_obj;
+}
+
+bool BaseObject::differsFromObject(BaseObject *obj)
+{
+  if(!obj)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  try
+  {
+    return(this->getCodeDefinition(SchemaParser::XML_DEFINITION) !=
+            obj->getCodeDefinition(SchemaParser::XML_DEFINITION));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }
 

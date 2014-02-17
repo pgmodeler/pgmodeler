@@ -5928,7 +5928,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 	return(this->getCodeDefinition(def_type, true));
 }
 
-QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
+/* QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
 	attribs_map attribs_aux;
 	unsigned count1, i, count;
@@ -5965,9 +5965,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		general_obj_cnt=this->getObjectCount();
 		gen_defs_count=0;
 
-		/* Treating the objects which have fixed ids, they are: role, tablespace,
-		 and Schema. They need to be treated separately in the loop down because they do not
-		 enter in the id sorting performed for other types of objects. */
+    // Treating the objects which have fixed ids, they are: role, tablespace,
+    // and Schema. They need to be treated separately in the loop down because they do not
+    // enter in the id sorting performed for other types of objects.
     for(i=0; i < aux_obj_cnt; i++)
 		{
 			obj_list=getObjectList(aux_obj_types[i]);
@@ -5990,8 +5990,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					 (object->getObjectType()==OBJ_SCHEMA && (object->getName()!="public" && object->getName()!="pg_catalog")) ||
            (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
 				{
-					/* The Tablespace has the SQL code definition disabled when generating the
-						code of the entire model because this object cannot be created from a multiline sql command */
+          // The Tablespace has the SQL code definition disabled when generating the
+          //	code of the entire model because this object cannot be created from a multiline sql command
 					if(object->getObjectType()==OBJ_TABLESPACE && !object->isSystemObject() && def_type==SchemaParser::SQL_DEFINITION)
 					{
 						//Saving the sql disabled state
@@ -6054,8 +6054,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				{
 					object=(*itr);
 
-					/* If the object is a FK relationship it's stored in a separeted list in order to have the
-						 code generated at end of whole definition (after foreign keys defintion) */
+          // If the object is a FK relationship it's stored in a separeted list in order to have the
+          //	 code generated at end of whole definition (after foreign keys defintion)
 					if(object->getObjectType()==BASE_RELATIONSHIP &&
 						 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 					{
@@ -6069,11 +6069,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		/* Getting and storing the special objects (which reference columns of tables added for relationships)
-			on the map of objects and their ids in an array of auxiliary ids 'ids_tab_objs'.
-			For this list of tables is scanned again and its constraints and indexes are validated as special or not.
-			The vector of ids is concatenated to the main vector of ids before his ordination when the definition is XML
-			or concatenated after ordination to SQL definition, so the special objects are created correctly in both languages */
+    // Getting and storing the special objects (which reference columns of tables added for relationships)
+    // on the map of objects and their ids in an array of auxiliary ids 'ids_tab_objs'.
+    //	For this list of tables is scanned again and its constraints and indexes are validated as special or not.
+    //	The vector of ids is concatenated to the main vector of ids before his ordination when the definition is XML
+    //	or concatenated after ordination to SQL definition, so the special objects are created correctly in both languages
 		itr=tables.begin();
 		itr_end=tables.end();
 
@@ -6087,9 +6087,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			{
 				constr=table->getConstraint(i);
 
-				/* Case the constraint is a special object stores it on the objects map. Independently to the
-				configuration, foreign keys are discarded in this iteration because on the end of the method
-				they have the definition generated */
+        // Case the constraint is a special object stores it on the objects map. Independently to the
+        // configuration, foreign keys are discarded in this iteration because on the end of the method
+        // they have the definition generated
 				if(constr->getConstraintType()!=ConstraintType::foreign_key &&  !constr->isAddedByLinking() &&
 						((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())))
 					objects_map[constr->getObjectId()]=constr;
@@ -6116,14 +6116,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		/* SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
-
-		 This generations is made in the following way:
-		 1) Based on the relationship list, generates the SQL for the participant tables and after this the
-				SQL for the relationship itself.
-		 2) Generates the SQL for the other tables (that does not participates in relationships)
-		 3) The sequences must have its code generated after the tables
-		 4) View are the last objects that has the code generated avoiding table/column reference breaking */
+    // SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
+    // This generations is made in the following way:
+    // 1) Based on the relationship list, generates the SQL for the participant tables and after this the
+    //		SQL for the relationship itself.
+    // 2) Generates the SQL for the other tables (that does not participates in relationships)
+    // 3) The sequences must have its code generated after the tables
+    // 4) View are the last objects that has the code generated avoiding table/column reference breaking
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
 			BaseObject *objs[3]={nullptr, nullptr, nullptr};
@@ -6214,8 +6213,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			{
 				if(def_type==SchemaParser::SQL_DEFINITION)
 				{
-					/* The Database has the SQL code definition disabled when generating the
-					code of the entire model because this object cannot be created from a multiline sql command */
+          // The Database has the SQL code definition disabled when generating the
+          // code of the entire model because this object cannot be created from a multiline sql command
 
 					//Saving the sql disabled state
 					sql_disabled=this->isSQLDisabled();
@@ -6313,6 +6312,364 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		def+="-- Appended SQL commands --\n" +	this->appended_sql + "\n";
 
 	return(def);
+} */
+
+QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
+{
+  attribs_map attribs_aux;
+  float general_obj_cnt, gen_defs_count;
+  bool sql_disabled=false;
+  BaseObject *object=nullptr;
+  QString def, search_path="pg_catalog,public",
+      msg=trUtf8("Generating %1 of the object `%2' `(%3)'"),
+      attrib=ParsersAttributes::OBJECTS, attrib_aux,
+      def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
+  Type *usr_type=nullptr;
+  map<unsigned, BaseObject *> objects_map;
+  ObjectType obj_type;
+
+  try
+  {
+    objects_map=getCreationOrder(def_type);
+    general_obj_cnt=this->getObjectCount();
+    gen_defs_count=0;
+
+    attribs_aux[ParsersAttributes::SHELL_TYPES]="";
+    attribs_aux[ParsersAttributes::PERMISSION]="";
+    attribs_aux[ParsersAttributes::SCHEMA]="";
+    attribs_aux[ParsersAttributes::TABLESPACE]="";
+    attribs_aux[ParsersAttributes::ROLE]="";
+
+    if(def_type==SchemaParser::SQL_DEFINITION)
+    {
+      for(auto type : types)
+      {
+        usr_type=dynamic_cast<Type *>(type);
+
+        if(usr_type->getConfiguration()==Type::BASE_TYPE)
+          usr_type->convertFunctionParameters();
+      }
+    }
+
+    for(auto obj_itr : objects_map)
+    {
+      object=obj_itr.second;
+      obj_type=object->getObjectType();
+
+      if(obj_type==OBJ_TYPE && def_type==SchemaParser::SQL_DEFINITION)
+      {
+        usr_type=dynamic_cast<Type *>(object);
+
+        //Generating the shell type declaration (only for base types)
+        if(usr_type->getConfiguration()==Type::BASE_TYPE)
+          attribs_aux[ParsersAttributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
+        else
+          attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+      }
+      else if(obj_type==OBJ_DATABASE)
+      {
+        if(def_type==SchemaParser::SQL_DEFINITION)
+        {
+          /* The Database has the SQL code definition disabled when generating the
+          code of the entire model because this object cannot be created from a multiline sql command */
+
+          //Saving the sql disabled state
+          sql_disabled=this->isSQLDisabled();
+
+          //Disables the sql to generate a commented code
+          this->setSQLDisabled(true);
+          attribs_aux[this->getSchemaName()]+=this->__getCodeDefinition(def_type);
+
+          //Restore the original sql disabled state
+          this->setSQLDisabled(sql_disabled);
+        }
+        else
+          attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
+      }
+      else if(obj_type==OBJ_PERMISSION)
+      {
+        attribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
+      }
+      else if(obj_type==OBJ_CONSTRAINT)
+      {
+        attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getCodeDefinition(def_type, true);
+      }
+      else if(obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE ||  obj_type==OBJ_SCHEMA)
+      {
+        //The "public" schema does not have the SQL code definition generated
+        if(def_type==SchemaParser::SQL_DEFINITION)
+        {
+          attrib_aux=BaseObject::getSchemaName(obj_type);
+          attribs_aux[attrib_aux]="";
+        }
+        else
+          attrib_aux=attrib;
+
+        /* The Tablespace has the SQL code definition disabled when generating the
+          code of the entire model because this object cannot be created from a multiline sql command */
+        if(obj_type==OBJ_TABLESPACE && !object->isSystemObject() && def_type==SchemaParser::SQL_DEFINITION)
+        {
+          //Saving the sql disabled state
+          sql_disabled=object->isSQLDisabled();
+
+          //Disables the sql to generate a commented code
+          object->setSQLDisabled(true);
+          attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+
+          //Restore the original sql disabled state
+          object->setSQLDisabled(sql_disabled);
+        }
+        //System object doesn't has the XML generated (the only exception is for public schema)
+        else if((obj_type!=OBJ_SCHEMA && !object->isSystemObject()) ||
+                (obj_type==OBJ_SCHEMA &&
+                 ((object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION) ||
+                  (object->getName()!="public" && object->getName()!="pg_catalog"))))
+        {
+          if(object->getObjectType()==OBJ_SCHEMA)
+            search_path+="," + object->getName(true);
+
+          //Generates the code definition and concatenates to the others
+          attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
+        }
+      }
+      else
+      {
+        if(object->isSystemObject())
+          attribs_aux[attrib]+="";
+        else
+          attribs_aux[attrib]+=object->getCodeDefinition(def_type);
+      }
+
+      gen_defs_count++;
+
+      emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+                            msg.arg(def_type_str)
+                            .arg(Utf8String::create(object->getName()))
+                            .arg(object->getTypeName()),
+                            object->getObjectType());
+    }
+
+    attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;
+    attribs_aux[ParsersAttributes::MODEL_AUTHOR]=author;
+    attribs_aux[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
+
+    if(def_type==SchemaParser::XML_DEFINITION)
+    {
+      attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
+    }
+    else
+    {
+      for(auto type : types)
+      {
+        usr_type=dynamic_cast<Type *>(type);
+        if(usr_type->getConfiguration()==Type::BASE_TYPE)
+        {
+          attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+          usr_type->convertFunctionParameters(true);
+        }
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    if(def_type==SchemaParser::SQL_DEFINITION)
+    {
+      for(auto type : types)
+      {
+        usr_type=dynamic_cast<Type *>(type);
+        if(usr_type->getConfiguration()==Type::BASE_TYPE)
+        {
+          attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+          usr_type->convertFunctionParameters(true);
+        }
+      }
+    }
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+
+  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? "1" : "");
+  def=SchemaParser::getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
+
+  if(append_at_eod && def_type==SchemaParser::SQL_DEFINITION)
+    def+="-- Appended SQL commands --\n" +	this->appended_sql + "\n";
+
+  return(def);
+}
+
+map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
+{
+  unsigned i, count;
+  BaseObject *object=nullptr;
+  vector<BaseObject *> fkeys;
+  vector<BaseObject *> fk_rels;
+  vector<BaseObject *> *obj_list=nullptr;
+  vector<BaseObject *>::iterator itr, itr_end;
+  map<unsigned, BaseObject *> objects_map;
+  Table *table=nullptr;
+  Index *index=nullptr;
+  Trigger *trigger=nullptr;
+  Constraint *constr=nullptr;
+  Relationship *rel=nullptr;
+  ObjectType aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
+      obj_types[]={ OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
+                    OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
+                    OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
+                    OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
+                    OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
+  unsigned aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
+
+  //The first objects on the map will be roles, tablespaces, schemas and tags
+  for(i=0; i < aux_obj_cnt; i++)
+  {
+    if(aux_obj_types[i]!=OBJ_TAG || def_type==SchemaParser::XML_DEFINITION)
+    {
+      obj_list=getObjectList(aux_obj_types[i]);
+
+      for(auto object : (*obj_list))
+         objects_map[object->getObjectId()]=object;
+    }
+  }
+
+  //Includes the database model on the objects map permitting to create the code in a correct order
+  objects_map[this->getObjectId()]=this;
+
+  if(def_type==SchemaParser::XML_DEFINITION)
+    count=18;
+  else
+    count=14;
+
+  for(i=0; i < count; i++)
+  {
+    //For SQL definition, only the textbox and base relationship does not enters to the code generation list
+    if(def_type==SchemaParser::SQL_DEFINITION &&
+       (obj_types[i]==OBJ_TEXTBOX || obj_types[i]==BASE_RELATIONSHIP))
+      obj_list=nullptr;
+    else
+      obj_list=getObjectList(obj_types[i]);
+
+    if(obj_list)
+    {
+      for(auto object : (*obj_list))
+      {
+        /* If the object is a FK relationship it's stored in a separeted list in order to have the
+             code generated at end of whole definition (after foreign keys definition) */
+        if(object->getObjectType()==BASE_RELATIONSHIP &&
+           dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+        {
+          fk_rels.push_back(object);
+        }
+        else
+          objects_map[object->getObjectId()]=object;
+      }
+    }
+  }
+
+  /* Getting and storing the special objects (which reference columns of tables added for relationships)
+      on the map of objects. */
+  for(auto obj : tables)
+  {
+    table=dynamic_cast<Table *>(obj);
+    itr++;
+
+    count=table->getConstraintCount();
+    for(i=0; i < count; i++)
+    {
+      constr=table->getConstraint(i);
+
+      /* Case the constraint is a special object stores it on the objects map. Independently to the
+        configuration, foreign keys are discarded in this iteration because on the end of the method
+        they have the definition generated */
+      if(constr->getConstraintType()!=ConstraintType::foreign_key &&  !constr->isAddedByLinking() &&
+         ((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())))
+        objects_map[constr->getObjectId()]=constr;
+      else if(constr->getConstraintType()==ConstraintType::foreign_key && !constr->isAddedByLinking())
+        fkeys.push_back(constr);
+    }
+
+    count=table->getTriggerCount();
+    for(i=0; i < count; i++)
+    {
+      trigger=table->getTrigger(i);
+
+      if(trigger->isReferRelationshipAddedColumn())
+        objects_map[trigger->getObjectId()]=trigger;
+    }
+
+    count=table->getIndexCount();
+    for(i=0; i < count; i++)
+    {
+      index=table->getIndex(i);
+
+      if(index->isReferRelationshipAddedColumn())
+        objects_map[index->getObjectId()]=index;
+    }
+  }
+
+  /* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
+
+     This generations is made in the following way:
+     1) Based on the relationship list, participant tables comes before the relationship itself.
+     2) Other tables came after the objects on the step 1.
+     3) The sequences must have its code generated after the tables
+     4) View are the last objects in the list avoiding table/column reference breaking */
+  if(def_type==SchemaParser::SQL_DEFINITION)
+  {
+    BaseObject *objs[3]={nullptr, nullptr, nullptr};
+    vector<BaseObject *> vet_aux;
+
+    vet_aux=relationships;
+    vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
+    vet_aux.insert(vet_aux.end(), sequences.begin(),sequences.end());
+    vet_aux.insert(vet_aux.end(), views.begin(),views.end());;
+    itr=vet_aux.begin();
+    itr_end=vet_aux.end();
+
+    while(itr!=itr_end)
+    {
+      object=(*itr);
+      itr++;
+
+      if(object->getObjectType()==OBJ_RELATIONSHIP)
+      {
+        rel=dynamic_cast<Relationship *>(object);
+        objs[0]=rel->getTable(Relationship::SRC_TABLE);
+        objs[1]=rel->getTable(Relationship::DST_TABLE);
+        objs[2]=rel;
+
+        for(i=0; i < 3; i++)
+        {
+          if(objects_map.count(objs[i]->getObjectId())==0)
+            objects_map[objs[i]->getObjectId()]=objs[i];
+        }
+      }
+      else
+      {
+        if(objects_map.count(object->getObjectId())==0)
+          objects_map[object->getObjectId()]=object;
+      }
+    }
+  }
+
+  //Adding fk relationships and foreign keys at end of objects map
+  i=BaseObject::getGlobalId() + 1;
+  fkeys.insert(fkeys.end(), fk_rels.begin(), fk_rels.end());
+
+  for(auto obj : fkeys)
+  {
+    objects_map[i]=obj;
+    i++;
+  }
+
+  //Adding permissions at the very end of object map
+  i=BaseObject::getGlobalId() + fkeys.size() + 1;
+
+  for(auto obj : permissions)
+  {
+    objects_map[i]=obj;
+    i++;
+  }
+
+  return(objects_map);
 }
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
