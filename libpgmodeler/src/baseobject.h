@@ -293,17 +293,8 @@ class BaseObject {
 		//! \brief Returns if the object is protected or not
 		bool isProtected(void);
 
-		//! \brief Checks if the objects name is the same as the passed name
-    //bool operator == (const QString &obj_name);
-
-		//! \brief Checks if the objects name differs from the passed name
-    //bool operator != (const QString &obj_name);
-
 		//! \brief Assigns an object to other copiyng all the attributes correctly
     virtual void operator = (BaseObject &obj);
-
-    //! \brief Assigns an object to other copiyng all the attributes correctly
-    virtual bool differsFromObject(BaseObject *obj);
 
 		/*! \brief Forcing the class to be virtual. This means that derivated classes may
 		 override this method in order to be possible its instatiation. */

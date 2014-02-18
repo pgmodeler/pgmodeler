@@ -540,16 +540,6 @@ unsigned BaseObject::getObjectId(void)
 	return(object_id);
 }
 
-/*bool BaseObject::operator == (const QString &name)
-{
-	return(this->obj_name==name);
-}*/
-
-/*bool BaseObject::operator != (const QString &name)
-{
-	return(this->obj_name!=name);
-}*/
-
 void BaseObject::setSQLDisabled(bool value)
 {
 	sql_disabled=value;
@@ -689,6 +679,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
 				SchemaParser::setIgnoreUnkownAttributes(true);
+        //! \brief Checks if the objects name is the same as the passed name
+        //bool operator == (const QString &obj_name);
+
+        //! \brief Checks if the objects name differs from the passed name
+        //bool operator != (const QString &obj_name);
 				attributes[ParsersAttributes::COMMENT]=
 						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
@@ -848,20 +843,3 @@ void BaseObject::operator = (BaseObject &obj)
 	this->sql_disabled=obj.sql_disabled;
   this->system_obj=obj.system_obj;
 }
-
-bool BaseObject::differsFromObject(BaseObject *obj)
-{
-  if(!obj)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-  try
-  {
-    return(this->getCodeDefinition(SchemaParser::XML_DEFINITION) !=
-            obj->getCodeDefinition(SchemaParser::XML_DEFINITION));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
-}
-
