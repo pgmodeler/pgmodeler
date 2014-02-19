@@ -1108,7 +1108,7 @@ void MainWindow::saveModel(ModelWidget *model)
       else if(model->getDatabaseModel()->isInvalidated() &&
               msg_box.result()==QDialog::Rejected && !msg_box.isCancelled())
       {
-        validation_btn->click();
+        validation_btn->setChecked(true);
         model_valid_wgt->validate_btn->click();
       }
 		}

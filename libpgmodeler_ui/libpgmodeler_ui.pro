@@ -79,8 +79,7 @@ SOURCES += src/mainwindow.cpp \
     src/swapobjectsidswidget.cpp \
     src/temporarymodelthread.cpp \
     src/sqltoolwidget.cpp \
-    src/tagwidget.cpp \
-    src/modeldiffhelper.cpp
+    src/tagwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -149,8 +148,7 @@ HEADERS += src/mainwindow.h \
     src/swapobjectsidswidget.h \
     src/temporarymodelthread.h \
     src/sqltoolwidget.h \
-    src/tagwidget.h \
-    src/modeldiffhelper.h
+    src/tagwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \

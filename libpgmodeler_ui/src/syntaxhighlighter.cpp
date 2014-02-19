@@ -47,8 +47,8 @@ SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, b
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
 
-	if(single_line_mode)
-		parent->installEventFilter(this);
+  parent->installEventFilter(this);
+  parent_txt=parent;
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -62,8 +62,22 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 		event->ignore();
 		return(true);
 	}
-	else
-		return(QSyntaxHighlighter::eventFilter(object, event));
+
+  /* If the user is about press Control to paste contents or Right mouse button in
+     order to call the context menu to paste text */
+  if(event->type()==QEvent::MouseButtonPress || event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
+    QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+    //Remove the formatting from the clipboard buffer to paste only pure text
+    if(qApp->clipboard() && qApp->clipboard()->mimeData()->hasHtml() &&
+       ((m_event && m_event->button()==Qt::RightButton) ||
+        (k_event && k_event->modifiers()==Qt::ControlModifier)))
+      qApp->clipboard()->setText(qApp->clipboard()->mimeData()->text());
+  }
+
+  return(QSyntaxHighlighter::eventFilter(object, event));
 }
 
 
