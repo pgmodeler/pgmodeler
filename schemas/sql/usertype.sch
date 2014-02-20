@@ -13,7 +13,9 @@
 ; $br
 %else
    %if @{base} %then 
-     [ (] $br %else [ AS] $br
+     [ (] $br 
+   %else 
+     [ AS] $br
    %end
 
    %if @{composite} %then 
@@ -25,11 +27,15 @@
    %end
 
    %if @{pgsql92} %or @{pgsql93} %and @{range} %then
+    [RANGE (] $br
     [SUBTYPE = ] @{subtype}
-    %if @{collation} %then  $br [, COLLATE = ] @{collation} %end
-    %if @{opclass} %then  $br [, SUBTYPE_OPCLASS = ] @{opclass} %end
-    %if @{canonical} %then  $br [, CANONICAL = ] @{canonical} %end
-    %if @{subtypediff} %then  $br [, SUBTYPE_DIFF = ] @{subtypediff} %end
+    
+      %if @{collation} %then  $br [, COLLATE = ] @{collation} %end
+      %if @{opclass} %then  $br [, SUBTYPE_OPCLASS = ] @{opclass} %end
+      %if @{canonical} %then  $br [, CANONICAL = ] @{canonical} %end
+      %if @{subtypediff} %then  $br [, SUBTYPE_DIFF = ] @{subtypediff} %end
+    
+    );
    %end
    
    %if @{base} %then
