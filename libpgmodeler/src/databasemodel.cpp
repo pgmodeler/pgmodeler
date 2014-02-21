@@ -5669,7 +5669,7 @@ Permission *DatabaseModel::createPermission(void)
 	bool priv_value, grant_op, revoke, cascade;
 
 	try
-	{
+	{  
 		XMLParser::getElementAttributes(priv_attribs);
 		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::_TRUE_;
 		cascade=priv_attribs[ParsersAttributes::CASCADE]==ParsersAttributes::_TRUE_;
@@ -5751,7 +5751,7 @@ Permission *DatabaseModel::createPermission(void)
 						priv_value=(itr->second==ParsersAttributes::_TRUE_);
 						grant_op=(itr->second==ParsersAttributes::GRANT_OP);
 
-						if(itr->first==ParsersAttributes::CONNECT_PRIV)
+            if(itr->first==ParsersAttributes::CONNECT_PRIV)
 							priv_type=Permission::PRIV_CONNECT;
 						else if(itr->first==ParsersAttributes::CREATE_PRIV)
 							priv_type=Permission::PRIV_CREATE;
@@ -5774,7 +5774,7 @@ Permission *DatabaseModel::createPermission(void)
 						else if(itr->first==ParsersAttributes::UPDATE_PRIV)
 							priv_type=Permission::PRIV_UPDATE;
 						else if(itr->first==ParsersAttributes::USAGE_PRIV)
-							priv_type=Permission::PRIV_USAGE;
+              priv_type=Permission::PRIV_USAGE;
 
 						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
 					}

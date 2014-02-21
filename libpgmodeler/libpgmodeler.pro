@@ -17,6 +17,7 @@ HEADERS += src/textbox.h \
 	   src/column.h \
 	   src/domain.h \
 	   src/aggregate.h \
+     src/permission.h \
 	   src/databasemodel.h \
 	   src/role.h \
 	   src/constraint.h \
@@ -41,7 +42,6 @@ HEADERS += src/textbox.h \
 	   src/operationlist.h \
 	   src/tableobject.h \
 	   src/reference.h \
-	   src/permission.h \
 	   src/collation.h \
 	   src/excludeelement.h \
 	   src/element.h \
@@ -74,6 +74,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/view.cpp \
 	    src/conversion.cpp \
 	    src/function.cpp \
+      src/permission.cpp \
 	    src/databasemodel.cpp \
 	    src/rule.cpp \
 	    src/table.cpp \
@@ -88,7 +89,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/operationlist.cpp \
 	    src/tableobject.cpp \
 	    src/reference.cpp \
-	    src/permission.cpp \
 	    src/collation.cpp \
 	    src/excludeelement.cpp \
 	    src/element.cpp \

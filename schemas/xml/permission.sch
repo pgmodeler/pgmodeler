@@ -31,6 +31,7 @@
  $tb [<privileges]
 
  %if @{select} %then [ select=] "@{select}" %end
+ %if @{delete} %then [ delete=] "@{delete}" %end
  %if @{insert} %then [ insert=] "@{insert}" %end
  %if @{update} %then [ update=] "@{update}" %end
  %if @{truncate} %then [ truncate=] "@{truncate}" %end
