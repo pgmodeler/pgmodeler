@@ -552,6 +552,12 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
         attribs[ParsersAttributes::SOURCE_TYPE]=types[0];
         attribs[ParsersAttributes::DEST_TYPE]=types[1];
       }
+      else
+      {
+        if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
+           attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + ".") < 0)
+          attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME];
+      }
 
       //Generate the drop command
       SchemaParser::setIgnoreEmptyAttributes(true);
@@ -561,8 +567,6 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
 
       //Executes the drop cmd
       sql_cmd_conn.executeDDLCommand(drop_cmd);
-      //objects_trw->setItemHidden(item, true);
-      objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
       //Updates the object count on the parent item
       parent=item->parent();
@@ -574,8 +578,12 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
         cnt--;
         parent->setText(0, BaseObject::getTypeName(parent_type) + QString(" (%1)").arg(cnt));
         parent->setData(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(cnt));
-        parent->setDisabled(cnt==0);
       }
+
+      if(item->parent())
+        item->parent()->takeChild(item->parent()->indexOfChild(item));
+      else
+        objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
     }
   }
   catch(Exception &e)
