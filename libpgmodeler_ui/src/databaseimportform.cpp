@@ -220,10 +220,10 @@ void DatabaseImportForm::listObjects(void)
 																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(), debug_mode_chk->isChecked());
 
       //List the objects using the static helper method
-      DatabaseImportForm::listObjects(import_helper, db_objects_tw, true);
+      DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true);
 
       task_prog_wgt->close();
-      disconnect(this, nullptr, task_prog_wgt, nullptr);
+      //disconnect(this, nullptr, task_prog_wgt, nullptr);
 		}
 
 		//Enable the control buttons only when objects were retrieved
@@ -240,7 +240,7 @@ void DatabaseImportForm::listObjects(void)
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(this, nullptr, task_prog_wgt, nullptr);
+    //disconnect(this, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
@@ -481,7 +481,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
   }
 }
 
-void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items)
+void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps)
 {
   try
   {
@@ -495,7 +495,8 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       //Retrieving and listing the cluster scoped objects
       sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                                    {OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA}, checkable_items);
+                                    /*{OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA}*/
+                                    BaseObject::getChildObjectTypes(OBJ_DATABASE), checkable_items, disable_empty_grps);
 
       inc=40/static_cast<float>(sch_items.size());
 
@@ -503,9 +504,10 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
       {
         //Retrieving and listing the schema scoped objects
         tab_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                                    {OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
-                                     OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW},
-                                    checkable_items, sch_items.back(), sch_items.back()->text(0));
+                                     BaseObject::getChildObjectTypes(OBJ_SCHEMA)
+                                    /*{OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
+                                     OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW}*/,
+                                    checkable_items, disable_empty_grps, sch_items.back(), sch_items.back()->text(0));
 
 
         inc1=(60/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
@@ -513,7 +515,8 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
         while(!tab_items.empty())
         {
           DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                            { OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX }, checkable_items,
+                            /*{ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX }*/
+                              BaseObject::getChildObjectTypes(OBJ_TABLE), checkable_items, disable_empty_grps,
                             tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
           tab_items.pop_back();
 
@@ -541,7 +544,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 }
 
 vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types, bool checkable_items,
-                                                                QTreeWidgetItem *root, const QString &schema, const QString &table)
+                                                                bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table)
 {
   vector<QTreeWidgetItem *> items_vect;
 
@@ -557,6 +560,9 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
     grp_fnt.setItalic(true);
     tree_wgt->blockSignals(true);
+
+   // if(root)
+   //  root->takeChildren();
 
     try
     {
@@ -581,6 +587,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
         group->setData(OBJECT_ID, Qt::UserRole, 0);
         group->setData(OBJECT_TYPE, Qt::UserRole, types[i]);
         group->setData(OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(objects.size()));
+        group->setData(OBJECT_SCHEMA, Qt::UserRole, schema);
+        group->setData(OBJECT_TABLE, Qt::UserRole, table);
 
         //Creates individual items for each object of the current type
         itr=objects.begin();
@@ -645,8 +653,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           itr++;
         }
 
-        //Disables the item if no object were retrieved from database
-        group->setDisabled(objects.empty());
+        group->setDisabled(disable_empty_grps && objects.empty());
 
         if(checkable_items)
         {

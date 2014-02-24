@@ -55,7 +55,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
           //! brief Stores the actions to drop and show object's data
           handle_menu;
 
-    QAction *copy_action, *drop_action, *show_data_action;
+    QAction *copy_action, *drop_action, *show_data_action, *refresh_action;
 
 
     //! brief Generates a CSV buffer based upon the selection on the results grid
@@ -94,6 +94,9 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     //! brief Lists all objects for the current selected database
     void listObjects(void);
+
+    //! brief Updates on the tree under the current selected object
+    void updateCurrentItem(void);
 
     //! brief Enables the command buttons when user fills the sql field
     void enableCommandButtons(void);

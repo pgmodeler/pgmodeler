@@ -335,11 +335,17 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsAppendedSQL(void);
 
-		/*! \brief Returns the valid object types in a vector. The types
+    /*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
-		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+    static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+
+    /*! \brief Returns the valid object types that are child or grouped under the specified type.
+    This method works a litte different from getObjectTypes() since this latter returns all valid types
+    and this one returns only the valid types for the current specified type. For now the only accepted
+    types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
+    static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

@@ -810,13 +810,12 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
-	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-                       OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
-											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
-											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
-											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
-											 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
-	vector<ObjectType> vet_types(types, types + sizeof(types) / sizeof(ObjectType));
+  vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
+                         OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
+                         OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+                         OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
+                         OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
+                         OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
 
 	if(inc_table_objs)
 	{
@@ -828,6 +827,19 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 	}
 
 	return(vet_types);
+}
+
+vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
+{
+  if(obj_type==OBJ_DATABASE)
+    return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA});
+  else if(obj_type==OBJ_SCHEMA)
+    return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
+                                  OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
+  else if(obj_type==OBJ_TABLE)
+    return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+  else
+    return(vector<ObjectType>()={});
 }
 
 void BaseObject::operator = (BaseObject &obj)

@@ -133,6 +133,9 @@
              <height>22</height>
             </size>
            </property>
+           <property name="shortcut">
+            <string>Ctrl+F5</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -887,7 +890,7 @@
               <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderMinimumSectionSize">
               <number>20</number>
