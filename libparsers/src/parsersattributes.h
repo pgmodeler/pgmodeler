@@ -414,7 +414,8 @@ namespace ParsersAttributes {
   STYLE="style",
   STYLES="styles",
   TAG="tag",
-  COLORS="colors";
+  COLORS="colors",
+  HIDE_POSTGRES_DB="hide-postgres-db";
 }
 
 #endif

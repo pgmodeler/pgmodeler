@@ -79,6 +79,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     void showError(Exception &e);
 
+    bool eventFilter(QObject *object, QEvent *event);
+
   public:
     SQLToolWidget(QWidget * parent = 0);
 

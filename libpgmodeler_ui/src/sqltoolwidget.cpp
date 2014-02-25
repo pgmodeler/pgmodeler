@@ -52,8 +52,12 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   copy_menu.addAction(copy_action);
 
   drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
+  drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
+
   show_data_action=new QAction(QIcon(":icones/icones/result.png"), trUtf8("Show data"), &handle_menu);
+
   refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
+  refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
 
   connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
   connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
@@ -84,6 +88,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(), false); });
+
+  objects_trw->installEventFilter(this);
 }
 
 void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
@@ -115,7 +121,7 @@ void SQLToolWidget::connectToDatabase(void)
     Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
     import_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(import_helper, database_cmb);
+    DatabaseImportForm::listDatabases(import_helper, false, database_cmb);
     database_cmb->setEnabled(database_cmb->count() > 1);
 
     sql_cmd_conn=(*conn);
@@ -274,7 +280,6 @@ void SQLToolWidget::updateCurrentItem(void)
 
 
     objects_trw->sortItems(0, Qt::AscendingOrder);
-    objects_trw->clearSelection();
   }
 }
 
@@ -343,6 +348,28 @@ void SQLToolWidget::showError(Exception &e)
   msgoutput_lst->setVisible(true);
   results_parent->setVisible(false);
   export_tb->setEnabled(false);
+}
+
+bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
+{
+  if(object==objects_trw && event->type()==QEvent::KeyPress)
+  {
+    QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
+
+    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
+    {
+      if(k_event->key()==Qt::Key_F5)
+        updateCurrentItem();
+      else
+        dropObject(objects_trw->currentItem());
+
+      return(true);
+    }
+    else
+      return(false);
+  }
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void SQLToolWidget::registerSQLCommand(const QString &cmd)
@@ -507,83 +534,87 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
 
   try
   {
-    ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-
-    msg_box.show(trUtf8("Confirmation"),
-                 trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-                 .arg(item->text(0)).arg(BaseObject::getTypeName(obj_type)),
-                 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-    if(msg_box.result()==QDialog::Accepted)
+    if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
     {
-      QTreeWidgetItem *parent=nullptr;
-      attribs_map attribs;
-      QStringList types;
-      QString drop_cmd, obj_name=item->text(0);
-      int idx=0, idx1=0;
+      ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
-      attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-      attribs[ParsersAttributes::DECL_IN_TABLE]="";
-      attribs[BaseObject::getSchemaName(obj_type)]="1";
+      msg_box.show(trUtf8("Confirmation"),
+                   trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
+                   .arg(item->text(0)).arg(BaseObject::getTypeName(obj_type)),
+                   Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-      //For cast, operator and function is needed to extract the name and the params types
-      if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)
+      if(msg_box.result()==QDialog::Accepted)
       {
-        idx=obj_name.indexOf('(');
-        idx1=obj_name.indexOf(')');
-        types=obj_name.mid(idx+1, idx1-idx-1).split(',');
-        types.removeAll("-");
-        obj_name.remove(idx, obj_name.size());
+        QTreeWidgetItem *parent=nullptr;
+        attribs_map attribs;
+        QStringList types;
+        QString drop_cmd, obj_name=item->text(0);
+        int idx=0, idx1=0;
+
+        attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+        attribs[ParsersAttributes::DECL_IN_TABLE]="";
+        attribs[BaseObject::getSchemaName(obj_type)]="1";
+
+        //For cast, operator and function is needed to extract the name and the params types
+        if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)
+        {
+          idx=obj_name.indexOf('(');
+          idx1=obj_name.indexOf(')');
+          types=obj_name.mid(idx+1, idx1-idx-1).split(',');
+          types.removeAll("-");
+          obj_name.remove(idx, obj_name.size());
+        }
+
+        //Formatting the names
+        attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
+        attribs[ParsersAttributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString());
+        attribs[ParsersAttributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
+
+        //For table objects the "table" attribute must be schema qualified
+        if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
+          attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::TABLE];
+        //For operators and functions there must exist the signature attribute
+        else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
+          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(','));
+        else if(obj_type==OBJ_CAST)
+        {
+          attribs[ParsersAttributes::SOURCE_TYPE]=types[0];
+          attribs[ParsersAttributes::DEST_TYPE]=types[1];
+        }
+        else
+        {
+          if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
+             attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + ".") < 0)
+            attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME];
+        }
+
+        //Generate the drop command
+        SchemaParser::setIgnoreEmptyAttributes(true);
+        SchemaParser::setIgnoreUnkownAttributes(true);
+        drop_cmd=SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
+        drop_cmd.remove(QRegExp("^(--)"));
+
+        //Executes the drop cmd
+        sql_cmd_conn.executeDDLCommand(drop_cmd);
+
+        //Updates the object count on the parent item
+        parent=item->parent();
+        if(parent && parent->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()==0)
+        {
+          unsigned cnt=parent->data(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole).toUInt();
+          ObjectType parent_type=static_cast<ObjectType>(parent->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+          cnt--;
+          parent->setText(0, BaseObject::getTypeName(parent_type) + QString(" (%1)").arg(cnt));
+          parent->setData(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(cnt));
+        }
+
+        if(item->parent())
+          item->parent()->takeChild(item->parent()->indexOfChild(item));
+        else
+          objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
+
       }
-
-      //Formatting the names
-      attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
-      attribs[ParsersAttributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString());
-      attribs[ParsersAttributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
-
-      //For table objects the "table" attribute must be schema qualified
-      if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-        attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::TABLE];
-      //For operators and functions there must exist the signature attribute
-      else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
-        attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(','));
-      else if(obj_type==OBJ_CAST)
-      {
-        attribs[ParsersAttributes::SOURCE_TYPE]=types[0];
-        attribs[ParsersAttributes::DEST_TYPE]=types[1];
-      }
-      else
-      {
-        if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-           attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + ".") < 0)
-          attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME];
-      }
-
-      //Generate the drop command
-      SchemaParser::setIgnoreEmptyAttributes(true);
-      SchemaParser::setIgnoreUnkownAttributes(true);
-      drop_cmd=SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
-      drop_cmd.remove(QRegExp("^(--)"));
-
-      //Executes the drop cmd
-      sql_cmd_conn.executeDDLCommand(drop_cmd);
-
-      //Updates the object count on the parent item
-      parent=item->parent();
-      if(parent && parent->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()==0)
-      {
-        unsigned cnt=parent->data(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole).toUInt();
-        ObjectType parent_type=static_cast<ObjectType>(parent->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-
-        cnt--;
-        parent->setText(0, BaseObject::getTypeName(parent_type) + QString(" (%1)").arg(cnt));
-        parent->setData(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(cnt));
-      }
-
-      if(item->parent())
-        item->parent()->takeChild(item->parent()->indexOfChild(item));
-      else
-        objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
     }
   }
   catch(Exception &e)

@@ -79,7 +79,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ModelWidget *getModelWidget(void);
 
     //! brief Fills a combo box with all available databases according to the configurations of the specified import helper
-    static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
+    static void listDatabases(DatabaseImportHelper &import_helper, bool hide_postgres_db, QComboBox *dbcombo);
 
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
     static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps);

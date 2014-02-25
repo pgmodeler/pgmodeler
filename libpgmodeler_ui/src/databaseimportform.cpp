@@ -253,7 +253,7 @@ void DatabaseImportForm::listDatabases(void)
 
     //List the available databases using the selected connection
     import_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(import_helper, database_cmb);
+    DatabaseImportForm::listDatabases(import_helper, true, database_cmb);
 
     db_objects_tw->clear();
     database_gb->setEnabled(database_cmb->count() > 1);
@@ -432,18 +432,19 @@ ModelWidget *DatabaseImportForm::getModelWidget(void)
   return(model_wgt);
 }
 
-void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)
+void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, bool hide_postgres_db, QComboBox *dbcombo)
 {
   if(dbcombo)
   {
     try
     {
-      attribs_map db_attribs;
+      attribs_map db_attribs, extra_attr;
       attribs_map::iterator itr;
       QStringList list;
       map<QString, unsigned> oids;
 
-      db_attribs=import_helper.getObjects(OBJ_DATABASE);
+      extra_attr[ParsersAttributes::HIDE_POSTGRES_DB]=(hide_postgres_db ? "1" : "");
+      db_attribs=import_helper.getObjects(OBJ_DATABASE, "", "", extra_attr);
       dbcombo->clear();
 
       if(db_attribs.empty())

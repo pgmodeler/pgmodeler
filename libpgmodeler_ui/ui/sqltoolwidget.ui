@@ -740,6 +740,9 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="tabChangesFocus">
+            <bool>true</bool>
+           </property>
           </widget>
           <widget class="QGroupBox" name="cmd_history_gb">
            <property name="title">
@@ -990,16 +993,24 @@
  </widget>
  <tabstops>
   <tabstop>connections_cmb</tabstop>
+  <tabstop>connect_tb</tabstop>
   <tabstop>database_cmb</tabstop>
   <tabstop>refresh_tb</tabstop>
+  <tabstop>hide_sys_objs_chk</tabstop>
+  <tabstop>hide_ext_objs_chk</tabstop>
   <tabstop>objects_trw</tabstop>
   <tabstop>filter_edt</tabstop>
   <tabstop>expand_all_tb</tabstop>
   <tabstop>collapse_all_tb</tabstop>
+  <tabstop>load_tb</tabstop>
+  <tabstop>save_tb</tabstop>
   <tabstop>run_sql_tb</tabstop>
   <tabstop>clear_btn</tabstop>
   <tabstop>export_tb</tabstop>
+  <tabstop>history_tb</tabstop>
   <tabstop>sql_cmd_txt</tabstop>
+  <tabstop>cmd_history_lst</tabstop>
+  <tabstop>clear_history_btn</tabstop>
   <tabstop>results_tbw</tabstop>
   <tabstop>msgoutput_lst</tabstop>
   <tabstop>hide_tb</tabstop>
