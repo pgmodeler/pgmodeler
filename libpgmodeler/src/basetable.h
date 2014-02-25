@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,11 +27,17 @@
 #define BASE_TABLE_H
 
 #include "basegraphicobject.h"
+#include "tag.h"
 
 class BaseTable: public BaseGraphicObject {
+  protected:
+    Tag *tag;
+
 	public:
 		BaseTable(void);
-		virtual QString getCodeDefinition(unsigned tipo_def)=0;
+
+    virtual void setTag(Tag *tag);
+    virtual Tag *getTag(void);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		virtual void addObject(BaseObject *obj, int obj_idx=-1)=0;
@@ -63,6 +69,11 @@ class BaseTable: public BaseGraphicObject {
 
 		//! \brief Returns all child objects of the table
 		virtual vector<BaseObject *> getObjects(void)=0;
+
+    virtual QString getCodeDefinition(unsigned tipo_def)=0;
+
+    //! \brief Copy the attributes between two tables
+    void operator = (BaseTable &tab);
 
 		friend class DatabaseModel;
 };

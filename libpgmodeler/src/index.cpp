@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -282,8 +282,13 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	attributes[ParsersAttributes::CONDITION]=conditional_expr;
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 
-	if(getParentTable())
+  if(getParentTable())
+  {
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+
+    if(tipo_def==SchemaParser::SQL_DEFINITION && getParentTable()->getSchema())
+     attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
+  }
 
 	if(this->indexing_type==IndexingType::gin)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");

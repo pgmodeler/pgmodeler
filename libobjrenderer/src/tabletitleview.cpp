@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	QPen pen;
 	Schema *schema=dynamic_cast<Schema *>(object->getSchema());
 	QFont font;
+  Tag *tag=dynamic_cast<BaseTable *>(object)->getTag();
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
@@ -60,7 +61,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 					object->getObjectType()!=OBJ_VIEW)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(object->getObjectType()==OBJ_VIEW)
+  if(object->getObjectType()==OBJ_VIEW && !tag)
 	{
 		name_attrib=ParsersAttributes::VIEW_NAME;
 		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;
@@ -79,7 +80,11 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font.setStrikeOut(object->isSQLDisabled());
 
 	schema_name->setFont(font);
-	schema_name->setBrush(fmt.foreground());
+
+  if(!tag)
+    schema_name->setBrush(fmt.foreground());
+  else
+    schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
 
 	if(schema->isRectVisible())
 		schema_name->setText(" ");
@@ -91,11 +96,23 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font.setStrikeOut(object->isSQLDisabled());
 
 	obj_name->setFont(font);
-	obj_name->setBrush(fmt.foreground());
 	obj_name->setText(Utf8String::create(object->getName()));
 
-	box->setBrush(this->getFillStyle(title_color_attrib));
+  if(!tag)
+  {
+    obj_name->setBrush(fmt.foreground());
+    box->setBrush(this->getFillStyle(title_color_attrib));
+  }
+  else
+  {
+    obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FILL_COLOR1));
+    box->setBrush(tag->getFillStyle(title_color_attrib));
+  }
+
 	pen=this->getBorderStyle(title_color_attrib);
+
+  if(tag)
+    pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
 
 	if(object->getObjectType()==OBJ_VIEW)
 		pen.setStyle(Qt::DashLine);

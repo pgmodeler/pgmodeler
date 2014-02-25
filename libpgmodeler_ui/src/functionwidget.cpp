@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 	{
 		QStringList types;
 		QGridLayout *grid=nullptr, *grid1=nullptr;
+    QVBoxLayout *vlayout=nullptr;
+    QSpacerItem *spacer=nullptr;
+
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > value_map;
 		QFrame *frame=nullptr;
@@ -40,6 +43,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		source_code_cp=new CodeCompletionWidget(source_code_txt);
 
 		ret_type=new PgSQLTypeWidget(this);
+    vlayout=new QVBoxLayout;
+    spacer=new QSpacerItem(5,5,QSizePolicy::Preferred,QSizePolicy::Expanding);
+    vlayout->addWidget(ret_type);
+    vlayout->addSpacerItem(spacer);
 
 		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																			 ObjectTableWidget::UPDATE_BUTTON, true, this);
@@ -65,7 +72,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		func_config_twg->widget(1)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());
-		grid->addWidget(ret_type, grid->count(), 0, 1, 5);
+    grid->addLayout(vlayout, grid->count(), 0, 1, 5);
 		grid->addWidget(ret_table_gb, grid->count()-1, 0, 1, 5);
 
 		grid1=new QGridLayout;
@@ -105,6 +112,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		setRequiredField(symbol_lbl);
 		setRequiredField(library_lbl);
 		setRequiredField(sourc_code_lbl);
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{

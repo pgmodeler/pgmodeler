@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 		QGridLayout *grid=nullptr;
 
+    map<QString, vector<QWidget *> > fields_map;
+    QFrame *frame=nullptr;
+
 		Ui_ViewWidget::setupUi(this);
 
 		operation_count=0;
@@ -53,8 +56,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
-		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
-		expression_cp=new CodeCompletionWidget(expression_txt);
+    tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+    dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
@@ -65,6 +68,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		references_tab->setHeaderLabel(trUtf8("Alias"),1);
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
 		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
+
+    cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
+    expression_cp=new CodeCompletionWidget(expression_txt);
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
@@ -107,7 +113,16 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
+    tablespace_sel->setEnabled(false);
+    tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, OBJ_VIEW);
+
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(recursive_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(materialized_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+    frame=generateVersionWarningFrame(fields_map);
+    view_grid->addWidget(frame, view_grid->count()+1, 0, 1, 4);
+    frame->setParent(this);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
@@ -124,10 +139,24 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
 		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_edt, SLOT(setDisabled(bool)));
 		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_lbl, SLOT(setDisabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_sel, SLOT(setEnabled(bool)));
+    connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_lbl, SLOT(setEnabled(bool)));
 
+    connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
+    connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview(void)));
+    connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
+    connect(tablespace_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
+    connect(tablespace_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
+    connect(schema_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
+    connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
 
-		parent_form->setMinimumSize(650, 630);
+    parent_form->setMinimumSize(650, 700);
 		selectReferenceType();
+
+    configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget,
+                        ref_type_cmb, select_from_chk, from_where_chk, after_where_chk,
+                        table_sel, tab_alias_edt, column_sel, col_alias_edt });
 	}
 	catch(Exception &e)
 	{
@@ -587,7 +616,12 @@ void ViewWidget::updateCodePreview(void)
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
+      aux_view.setTablespace(tablespace_sel->getSelectedObject());
+
 			aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
+      aux_view.setMaterialized(materialized_rb->isChecked());
+      aux_view.setRecursive(recursive_rb->isChecked());
+      aux_view.setWithNoData(with_no_data_chk->isChecked());
 
 			count=references_tab->getRowCount();
 			for(i=0; i < count; i++)
@@ -665,6 +699,10 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
 
+  materialized_rb->setChecked(view->isMaterialized());
+  recursive_rb->setChecked(view->isRecursive());
+  with_no_data_chk->setChecked(view->isWithNoData());
+
 	expression_cp->configureCompletion(model, expression_hl);
 	cte_expression_cp->configureCompletion(model, cte_expression_hl);
 
@@ -677,32 +715,33 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	column_sel->setModel(model);
 	table_sel->setModel(model);
 
-	if(view)
-	{
-		cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
+  tag_sel->setModel(this->model);
+  tag_sel->setSelectedObject(view->getTag());
 
-		count=view->getReferenceCount();
-		references_tab->blockSignals(true);
+  cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
 
-		for(i=0; i < count; i++)
-		{
-			references_tab->addRow();
+  count=view->getReferenceCount();
+  references_tab->blockSignals(true);
 
-			refer=view->getReference(i);
-			sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
-			from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
-			after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
-			view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
+  for(i=0; i < count; i++)
+  {
+    references_tab->addRow();
 
-			showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
-		}
+    refer=view->getReference(i);
+    sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
+    from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
+    after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
+    view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
 
-		references_tab->blockSignals(false);
-		references_tab->clearSelection();
+    showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
+  }
 
-		listObjects(OBJ_TRIGGER);
-		listObjects(OBJ_RULE);
-	}
+  references_tab->blockSignals(false);
+  references_tab->clearSelection();
+
+  listObjects(OBJ_TRIGGER);
+  listObjects(OBJ_RULE);
+
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -726,7 +765,11 @@ void ViewWidget::applyConfiguration(void)
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
 		view->removeReferences();
+    view->setMaterialized(materialized_rb->isChecked());
+    view->setRecursive(recursive_rb->isChecked());
+    view->setWithNoData(with_no_data_chk->isChecked());
 		view->setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
+    view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		for(unsigned i=0; i < references_tab->getRowCount(); i++)
 		{
@@ -754,9 +797,9 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		op_list->ignoreOperationChain(true);
+    //op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
-		op_list->ignoreOperationChain(false);
+    //op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

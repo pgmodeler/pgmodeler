@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,21 +24,23 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 	{
 		QSpacerItem *spacer=new QSpacerItem(10,10,QSizePolicy::Fixed,QSizePolicy::Expanding);
 
-		Ui_ColumnWidget::setupUi(this);
-
-		hl_default_value=nullptr;
-		hl_default_value=new SyntaxHighlighter(def_value_txt, false);
-		hl_default_value->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				GlobalAttributes::DIR_SEPARATOR +
-																				GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																				GlobalAttributes::CONFIGURATION_EXT);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
-		column_grid->addWidget(data_type,0,0,1,0);
-		column_grid->addWidget(def_value_lbl,1,0,1,1);
-		column_grid->addWidget(def_value_txt,1,1,1,1);
-		column_grid->addWidget(notnull_chk,1,2,1,1);
+
+    Ui_ColumnWidget::setupUi(this);
+
+    hl_default_value=nullptr;
+    hl_default_value=new SyntaxHighlighter(def_value_txt, false);
+    hl_default_value->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                        GlobalAttributes::DIR_SEPARATOR +
+                                        GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                        GlobalAttributes::CONFIGURATION_EXT);
+
+    column_grid->addWidget(data_type,0,0,1,0);
+    column_grid->addWidget(def_value_lbl,1,0,1,1);
+    column_grid->addWidget(def_value_txt,1,1,1,1);
+    column_grid->addWidget(notnull_chk,1,2,1,1);
 		column_grid->addItem(spacer,column_grid->count(),0);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
@@ -46,6 +48,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 
 		parent_form->setMinimumSize(530, 430);
 		parent_form->setMaximumHeight(430);
+
+    configureTabOrder({ data_type });
 	}
 	catch(Exception &e)
 	{

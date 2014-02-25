@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -198,7 +198,18 @@ void OperationList::removeOperations(void)
 		//Deletes the object if its not unallocated already or referenced on the model
 		if(unallocated_objs.count(object)==0 &&
 			 (!tab_obj && model->getObjectIndex(object) < 0))
-		{
+		{    
+      if(object->getObjectType()==OBJ_TABLE)
+      {
+        vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
+
+        while(!list.empty())
+        {
+          unallocated_objs[list.back()]=true;
+          list.pop_back();
+        }
+      }
+
 			unallocated_objs[object]=true;
 			delete(object);
 		}
@@ -290,7 +301,7 @@ void OperationList::removeFromPool(unsigned obj_idx)
 }
 
 
-void OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx,  BaseObject *parent_obj)
+int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx,  BaseObject *parent_obj)
 {
 	ObjectType obj_type;
 	Operation *operation=nullptr;
@@ -298,7 +309,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 	Relationship *parent_rel=nullptr;
 	TableObject *tab_obj=nullptr;
 	tab_obj=dynamic_cast<TableObject *>(object);
-	int obj_idx=-1;
+  int obj_idx=-1;
 
 	try
 	{
@@ -432,6 +443,9 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 		operation->object_idx=obj_idx;
 		operations.push_back(operation);
 		current_index=operations.size();
+
+    //Returns the last operation position as operation's ID
+    return(operations.size()-1);
 	}
 	catch(Exception &e)
 	{
@@ -819,11 +833,41 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(oper->op_type==Operation::OBJECT_MODIFIED);
 			}
 		}
-		else if(obj_type==OBJ_SCHEMA && oper->op_type==Operation::OBJECT_MODIFIED)
+    else if(oper->op_type==Operation::OBJECT_MODIFIED)
 		{
-			model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
-			dynamic_cast<Schema *>(object)->setModified(true);
+      if(obj_type==OBJ_SCHEMA)
+      {
+        model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
+        dynamic_cast<Schema *>(object)->setModified(true);
+      }
+      else if(obj_type==OBJ_TAG)
+      {
+        vector<BaseObject *> refs;
+        model->getObjectReferences(object, refs);
+
+        while(!refs.empty())
+        {
+          dynamic_cast<BaseTable *>(refs.back())->setModified(true);
+          refs.pop_back();
+        }
+      }
 		}
+
+    //Case the object is a type update the tables that are referencing it
+    if(oper->op_type==Operation::OBJECT_MODIFIED &&
+       (object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
+        object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
+        object->getObjectType()==OBJ_EXTENSION))
+    {
+      vector<BaseObject *> ref_objs;
+      model->getObjectReferences(object, ref_objs);
+
+      for(auto obj : ref_objs)
+      {
+        if(obj->getObjectType()==OBJ_COLUMN)
+          dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+      }
+    }
 	}
 }
 
@@ -834,7 +878,7 @@ void OperationList::removeLastOperation(void)
 		Operation *oper=nullptr;
 		bool end=false;
 		vector<Operation *>::reverse_iterator itr;
-		unsigned obj_idx=operations.size()-1;
+    int oper_idx=operations.size()-1;
 
 		//Gets the last operation on the list using reverse iterator
 		itr=operations.rbegin();
@@ -844,7 +888,7 @@ void OperationList::removeLastOperation(void)
 			oper=(*itr);
 
 			//Removes the object related to the operation from the pool
-			removeFromPool(obj_idx);
+      removeFromPool(oper_idx);
 
 			/* Stop condition for removing the operation:
 			 1) The operation is not chained with others, or
@@ -857,7 +901,7 @@ void OperationList::removeLastOperation(void)
 						(oper->chain_type==Operation::NO_CHAIN ||
 						 oper->chain_type==Operation::CHAIN_START)));
 
-			itr++; obj_idx--;
+      itr++; oper_idx--;
 		}
 
 		/* If the head of chaining is removed (CHAIN_START)
@@ -865,6 +909,10 @@ void OperationList::removeLastOperation(void)
 		 start of chain */
 		if(oper && oper->chain_type==Operation::CHAIN_START)
 			next_op_chain=Operation::CHAIN_START;
+
+    //Erasing the excluded operations
+    for(int i=operations.size()-1; i > oper_idx ; i--)
+      operations.erase(operations.begin() + i);
 
 		//Validates the remaining operations
 		validateOperations();

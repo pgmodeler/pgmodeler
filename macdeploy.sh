@@ -8,8 +8,15 @@ LOG=macdeploy.log
 # Detecting current pgModeler version
 DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
 DEPLOY_VER=${DEPLOY_VER/\",/}
+BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
+WITH_BUILD_NUM='-with-build-num'
+
+if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
+  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+fi
+
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
 BUNDLE=$APPNAME.app

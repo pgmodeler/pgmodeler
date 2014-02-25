@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static constexpr unsigned ADD_BUTTON=1,
+		static const unsigned ADD_BUTTON=1,
 															REMOVE_BUTTON=2,
 															UPDATE_BUTTON=4,
 															MOVE_BUTTONS=8,
@@ -131,6 +131,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 		//! \brief Enables the handle buttons according to the selected row
 		void setButtonsEnabled(void);
+
+    void emitRowSelected(void);
 
 	public slots:
 		//! \brief Adds a new row at the end of the table

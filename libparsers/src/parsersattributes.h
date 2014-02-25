@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -328,13 +328,8 @@ namespace ParsersAttributes {
 	GRID_SIZE="grid-size",
 	PATH="path",
 	_FILE_="file",
-	FILE_TOOLBAR="fileToolbar",
-	EDIT_TOOLBAR="editToolbar",
-	VIEW_TOOLBAR="viewToolbar",
-	MODEL_TOOLBAR="modelToolbar",
-	PLUGINS_TOOLBAR="pluginsToolbar",
-	OPERATIONS_DOCK="operationsDock",
-	OBJECTS_DOCK="objectsDock",
+  CODE_FONT="code-font",
+  CODE_FONT_SIZE="code-font-size",
 	LEFT="left",
 	RIGHT="right",
 	BOTTOM="bottom",
@@ -374,6 +369,7 @@ namespace ParsersAttributes {
 	RECENT="recent",
 	HIDE_REL_NAME="hide-rel-name",
 	HIDE_EXT_ATTRIBS="hide-ext-attribs",
+  HIDE_TABLE_TAGS="hide-table-tags",
 	SRC_COL_PATTERN="src-col-pattern",
 	DST_COL_PATTERN="dst-col-pattern",
 	PK_PATTERN="pk-pattern",
@@ -407,7 +403,19 @@ namespace ParsersAttributes {
 	ARG_NAMES="arg-names",
 	ARG_DEFAULTS="arg-defaults",
 	RANGE_ATTRIBS="range-attribs",
-	SEARCH_PATH="search-path";
+  SEARCH_PATH="search-path",
+  CANVAS_CORNER_MOVE="canvas-corner-move",
+  PGMODELER_VERSION="pgmodeler-ver",
+  MATERIALIZED="materialized",
+  RECURSIVE="recursive",
+  WITH_NO_DATA="with-no-data",
+  DROP="drop",
+  TABLE_OBJECT="table-obj",
+  STYLE="style",
+  STYLES="styles",
+  TAG="tag",
+  COLORS="colors",
+  HIDE_POSTGRES_DB="hide-postgres-db";
 }
 
 #endif

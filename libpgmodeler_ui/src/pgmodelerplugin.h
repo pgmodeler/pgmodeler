@@ -1,7 +1,7 @@
 /*
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@
 
 		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
 		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
+    > Plugins can have a optional lang subdir in which are stored the translation for them. The translation files must be named
+      as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
 
-		Note: Plugins can have subdirectories but any reference to them must be made programatically by the plugin author. */
+    Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
 class PgModelerPlugin {
 	protected:

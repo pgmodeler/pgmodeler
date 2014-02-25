@@ -6,6 +6,7 @@
 <!ATTLIST privileges select (false|true|grant-op) "false">
 <!ATTLIST privileges insert (false|true|grant-op) "false">
 <!ATTLIST privileges update (false|true|grant-op) "false">
+<!ATTLIST privileges delete (false|true|grant-op) "false">
 <!ATTLIST privileges truncate (false|true|grant-op) "false">
 <!ATTLIST privileges references (false|true|grant-op) "false">
 <!ATTLIST privileges trigger (false|true|grant-op) "false">

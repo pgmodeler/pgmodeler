@@ -4,7 +4,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [-- Database generated with pgModeler (PostgreSQL Database Modeler).] $br
-
+[-- pgModeler  version: ] @{pgmodeler-ver} $br
 [-- PostgreSQL version: ]
 %if @{pgsql90} %then @{pgsql90} %end
 %if @{pgsql91} %then @{pgsql91} %end

@@ -9,26 +9,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>700</height>
+    <width>640</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>620</height>
+    <width>640</width>
+    <height>640</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
-    <height>700</height>
+    <width>640</width>
+    <height>735</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -136,6 +136,12 @@
         </property>
         <item row="0" column="1" colspan="3">
          <widget class="QLabel" name="export_to_img_lbl">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string> PNG image:</string>
           </property>
@@ -330,13 +336,29 @@
              <bool>false</bool>
             </property>
             <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Show delimiters</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="page_by_page_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Show the page delimiters</string>
+             <string>Page by page</string>
             </property>
            </widget>
           </item>
@@ -432,7 +454,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Check if the system user has write permission on image target folder.</string>
+             <string>Exporting the model page by page will generate files with a &quot;_p[n]&quot; suffix where n is the page id. Check if the current user has write permission on output folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -453,6 +475,12 @@
         </property>
         <item row="0" column="1" colspan="3">
          <widget class="QLabel" name="export_to_file_lbl">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>SQL file:</string>
           </property>
@@ -710,7 +738,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Check if the system user has write permission on target folder.</string>
+             <string>Check if the current user has write permission on output folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -1078,7 +1106,7 @@
                <bool>true</bool>
               </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1146,9 +1174,9 @@
          <widget class="QLabel" name="export_dbms_lbl">
           <property name="font">
            <font>
-            <weight>50</weight>
+            <weight>75</weight>
             <italic>false</italic>
-            <bold>false</bold>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -1440,6 +1468,12 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>export_to_dbms_rb</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>pgsqlvers_chk</tabstop>
+  <tabstop>pgsqlvers1_cmb</tabstop>
+  <tabstop>ignore_dup_chk</tabstop>
+  <tabstop>drop_db_chk</tabstop>
   <tabstop>export_to_file_rb</tabstop>
   <tabstop>file_edt</tabstop>
   <tabstop>select_file_tb</tabstop>
@@ -1447,13 +1481,11 @@
   <tabstop>export_to_img_rb</tabstop>
   <tabstop>image_edt</tabstop>
   <tabstop>select_img_tb</tabstop>
+  <tabstop>zoom_cmb</tabstop>
   <tabstop>show_grid_chk</tabstop>
   <tabstop>show_delim_chk</tabstop>
-  <tabstop>export_to_dbms_rb</tabstop>
-  <tabstop>connections_cmb</tabstop>
-  <tabstop>pgsqlvers_chk</tabstop>
-  <tabstop>pgsqlvers1_cmb</tabstop>
-  <tabstop>ignore_dup_chk</tabstop>
+  <tabstop>page_by_page_chk</tabstop>
+  <tabstop>cancel_btn</tabstop>
   <tabstop>export_btn</tabstop>
   <tabstop>close_btn</tabstop>
  </tabstops>

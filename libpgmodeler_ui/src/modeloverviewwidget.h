@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QRectF scene_rect;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-		static constexpr float RESIZE_FACTOR=0.20f;
+    static constexpr float RESIZE_FACTOR=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);

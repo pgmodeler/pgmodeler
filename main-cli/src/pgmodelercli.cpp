@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ QString PgModelerCLI::PGSQL_VER="--pgsql-ver";
 QString PgModelerCLI::HELP="--help";
 QString PgModelerCLI::SHOW_GRID="--show-grid";
 QString PgModelerCLI::SHOW_DELIMITERS="--show-delimiters";
+QString PgModelerCLI::PAGE_BY_PAGE="--page-by-page";
 QString PgModelerCLI::IGNORE_DUPLICATES="--ignore-duplicates";
 QString PgModelerCLI::CONN_ALIAS="--conn-alias";
 QString PgModelerCLI::HOST="--host";
@@ -175,6 +176,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[HELP]=false;
 	long_opts[SHOW_GRID]=false;
 	long_opts[SHOW_DELIMITERS]=false;
+  long_opts[PAGE_BY_PAGE]=false;
 	long_opts[IGNORE_DUPLICATES]=false;
 	long_opts[CONN_ALIAS]=true;
 	long_opts[HOST]=true;
@@ -199,6 +201,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[HELP]="-h";
 	short_opts[SHOW_GRID]="-g";
 	short_opts[SHOW_DELIMITERS]="-l";
+  short_opts[PAGE_BY_PAGE]="-b";
 	short_opts[IGNORE_DUPLICATES]="-I";
 	short_opts[CONN_ALIAS]="-c";
 	short_opts[HOST]="-H";
@@ -236,7 +239,7 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl;
 	out << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-	out << trUtf8("Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>") << endl;
+  out << trUtf8("Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>") << endl;
 	out << endl;
 	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
 the need to load them on graphical interface as well to fix model files to the most recent\n\
@@ -258,7 +261,8 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("PNG export options: ") << endl;
 	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("   %1, %2\t Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
-	out << trUtf8("   %1, %2=[FACTOR]\t\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+  out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image.").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
+  out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
@@ -385,7 +389,8 @@ int PgModelerCLI::exec(void)
 
 					export_hlp.exportToPNG(scene, parsed_opts[OUTPUT], zoom,
 																 parsed_opts.count(SHOW_GRID) > 0,
-																 parsed_opts.count(SHOW_DELIMITERS) > 0);
+                                 parsed_opts.count(SHOW_DELIMITERS) > 0,
+                                 parsed_opts.count(PAGE_BY_PAGE) > 0);
 				}
 				//Export to SQL file
 				else if(parsed_opts.count(EXPORT_TO_FILE))

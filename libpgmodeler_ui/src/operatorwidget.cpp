@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);
+    configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
 	}
 	catch(Exception &e)
 	{

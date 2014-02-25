@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -332,6 +332,9 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	}
 	else if(!msg.isEmpty())
 	{
+    ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
+    object_lbl->setText(trUtf8("Running SQL validation..."));
+
 		int idx=msg.indexOf('`');
 		item=new QTreeWidgetItem;
 		label=new QLabel;

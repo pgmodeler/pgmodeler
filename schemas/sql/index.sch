@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE ] %if @{unique} %then [UNIQUE ] %end [INDEX ]
 
 %if @{concurrent} %then

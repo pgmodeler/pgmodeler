@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,10 +30,11 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	IndexingType::getTypes(tipos);
 	indexing_cmb->addItems(tipos);
 
-	parent_form->setMinimumSize(520, 240);
-	parent_form->setMaximumHeight(240);
+  parent_form->setMinimumSize(520, 260);
+  parent_form->setMaximumHeight(260);
 
 	setRequiredField(indexing_lbl);
+  configureTabOrder();
 }
 
 void OperatorFamilyWidget::hideEvent(QHideEvent *event)

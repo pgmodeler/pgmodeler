@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,26 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+    //! brief Indicates if the corner move is enabled for the scene
+    static bool corner_move;
+
+    //! brief Indicates if the scene need to be moved
+    bool move_scene;
+
+    static const int SCENE_MOVE_STEP=20,
+                     SCENE_MOVE_TIMEOUT=50,
+                     SCENE_MOVE_THRESHOLD=30;
+
+    //! \brief Timer responsible to move the scene
+    QTimer scene_move_timer,
+
+    /*! \brief Timer responsible to check if the user puts cursor at corners for a certain amount of time.
+    When this timeout the scene_move_timer will be triggered and the scene will be moved */
+    corner_hover_timer;
+
+    //! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
+    int scene_move_dx, scene_move_dy;
+
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
 		static bool align_objs_grid, show_grid, show_page_delim;
 
@@ -55,7 +75,10 @@ class ObjectsScene: public QGraphicsScene {
 		static QRectF page_margins;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
-		bool moving_objs;
+    bool moving_objs,
+
+    //! brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
+    enable_range_sel;
 
 		//! \brief Initial point of selection rectangle
 		QPointF sel_ini_pnt;
@@ -68,6 +91,10 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Aligns the specified point in relation to the grid
 		static QPointF alignPointToGrid(const QPointF &pnt);
+
+    /*! \brief Indicates if the mouse cursor is under a move spot portion of scene.
+    Additionally this method configures the direction of movement when returning true */
+    bool mouseIsAtCorner(void);
 
 	protected:
 		//! \brief Brush used to draw the grid over the scene
@@ -85,7 +112,10 @@ class ObjectsScene: public QGraphicsScene {
 		ObjectsScene(void);
 		~ObjectsScene(void);
 
-		static void setGridSize(unsigned size);
+    static void enableCornerMove(bool enable);
+    static bool isCornerMoveEnabled(void);
+
+    static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
 		static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
 
@@ -96,11 +126,26 @@ class ObjectsScene: public QGraphicsScene {
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
 
+    //! \brief Returns a vector containing all the page rects.
+    vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
+
+    bool isRangeSelectionEnabled(void);
+
 	public slots:
 		void alignObjectsToGrid(void);
 		void update(void);
 
+    //! brief Toggles the object range selection
+    void enableRangeSelection(bool value);
+
 	private slots:
+    /*! brief Start/stop the timer responsible to move the scene. This method is called with true param
+    whenever the user stay with the cursor at corner in a certain amount of time */
+    void enableSceneMove(bool value=true);
+
+    //! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
+    void moveObjectScene(void);
+
 		//! \brief Handles and redirects the signal emitted by the modified object
 		void emitObjectModification(BaseGraphicObject *object);
 

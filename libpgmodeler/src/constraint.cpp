@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,12 +60,12 @@ void Constraint::setConstraintType(ConstraintType constr_type)
 	this->constr_type=constr_type;
 }
 
-void Constraint::setActionType(ActionType action_type, bool upd)
+void Constraint::setActionType(ActionType action_type, unsigned act_id)
 {
-	if(upd)
-		this->upd_action=action_type;
+  if(act_id==DELETE_ACTION)
+    this->del_action=action_type;
 	else
-		this->del_action=action_type;
+    this->upd_action=action_type;
 }
 
 void Constraint::setCheckExpression(const QString &expr)
@@ -258,12 +258,12 @@ ConstraintType Constraint::getConstraintType(void)
 	return(constr_type);
 }
 
-ActionType Constraint::getActionType(bool upd)
+ActionType Constraint::getActionType(unsigned act_id)
 {
-	if(upd)
-		return(upd_action);
+  if(act_id==DELETE_ACTION)
+    return(del_action);
 	else
-		return(del_action);
+    return(upd_action);
 }
 
 QString Constraint::getCheckExpression(void)

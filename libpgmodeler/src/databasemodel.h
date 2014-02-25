@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "domain.h"
 #include "collation.h"
 #include "extension.h"
+#include "tag.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -96,6 +97,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> permissions;
 		vector<BaseObject *> collations;
 		vector<BaseObject *> extensions;
+    vector<BaseObject *> tags;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -250,6 +252,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
+    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type);
+
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
 		BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
@@ -335,6 +339,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removeExtension(Extension *extension, int obj_idx=-1);
 		Extension *getExtension(unsigned obj_idx);
 
+    void addTag(Tag *tag, int obj_idx=-1);
+    void removeTag(Tag *tag, int obj_idx=-1);
+    Tag *getTag(unsigned obj_idx);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
@@ -379,6 +387,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		View *createView(void);
 		Collation *createCollation(void);
 		Extension *createExtension(void);
+    Tag *createTag(void);
 		Permission *createPermission(void);
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);
@@ -416,8 +425,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 reference is found */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
 
-		//! \brief Marks all the graphical objects as modified forcing their redraw
-		void setObjectsModified(void);
+    /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
+     graphical objects to be marked */
+    void setObjectsModified(vector<ObjectType> types={});
 
 		/*! \brief Updates the user type names which belongs to the passed schema. This method must be executed whenever
 		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally

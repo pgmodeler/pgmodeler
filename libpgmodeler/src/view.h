@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,15 @@ class View: public BaseTable {
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
 		QString cte_expression;
 
+    //! brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
+    bool materialized,
+
+    //! brief Indicates that the materialized view should not be initialized at creation time (default=false)
+    with_no_data,
+
+    //! brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
+    recursive;
+
 		//! \brief Sets the declaration attribute used by the SchemaParser
 		void setDeclarationAttribute(void);
 
@@ -60,6 +69,11 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
+    /*! \brief Returns a list of deduced names for view's colums for recursive views.
+    The names are retrieved, first, from columns aliases and lastly from table's columns
+    when TABLE.* syntax is used */
+    QStringList getColumnsList(void);
+
 	public:
 		View(void);
 		~View(void);
@@ -67,6 +81,14 @@ class View: public BaseTable {
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
 		void setProtected(bool value);
+
+    void setMaterialized(bool value);
+    void setRecursive(bool value);
+    void setWithNoData(bool value);
+
+    bool isMaterialized(void);
+    bool isRecursive(void);
+    bool isWithNoData(void);
 
 		/*! \brief Adds a reference to the view specifying the SQL expression type for it
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the

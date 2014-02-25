@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class Cast: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
-		static constexpr unsigned SRC_TYPE=0,
+		static const unsigned SRC_TYPE=0,
 															DST_TYPE=1,
 															//! \brief Constants used to define the cast type
 															ASSIGNMENT=10,

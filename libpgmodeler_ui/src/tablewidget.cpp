@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,9 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/schema.png"),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),2);
+
+  tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+  dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 2);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
@@ -114,6 +117,8 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
+
+  configureTabOrder({ tag_sel });
 }
 
 void TableWidget::hideEvent(QHideEvent *event)
@@ -277,6 +282,9 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		parent_tables->clearSelection();
 		with_oids_chk->setChecked(table->isWithOIDs());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
+
+    tag_sel->setModel(this->model);
+    tag_sel->setSelectedObject(table->getTag());
 	}
 	catch(Exception &e)
 	{
@@ -529,6 +537,7 @@ void TableWidget::removeObject(int row)
 	Table *table=nullptr;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
+  int op_id=-1;
 
 	try
 	{
@@ -540,7 +549,7 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 			 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+      op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 			table->removeObject(object);
 		}
 		else
@@ -551,6 +560,14 @@ void TableWidget::removeObject(int row)
 	}
 	catch(Exception &e)
 	{
+    //If operation was registered
+    if(op_id >= 0)
+    {
+      op_list->ignoreOperationChain(true);
+      op_list->removeLastOperation();
+      op_list->ignoreOperationChain(false);
+    }
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -601,6 +618,7 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
+    table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
 

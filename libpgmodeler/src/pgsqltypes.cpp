@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,48 +90,53 @@ QString BaseType::type_list[types_count]=
 	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 86 to 90
+  //offsets 86 to 99
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
+  "geomval", "addbandarg", "rastbandarg",
+  "raster", "reclassarg",  "unionarg",
+  "\"TopoGeometry\"",
+  "getfaceedges_returntype",
+  "validatetopology_returntype",
 
 	//Range-types
-	//offsets 91 to 96
+  //offsets 100 to 105
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 97 to 109
+  //offsets 106 to 118
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",  "oidvector",
 
 	//Pseudo-types
-	//offsets 110 to 123
+  //offsets 119 to 132
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler",
 
 	//Interval types
-	//offsets 124 to 136
+  //offsets 133 to 145
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 137 to 139
+  //offsets 146 to 148
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 140 to 141
+  //offsets 149 to 150
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 142 to 147
+  //offsets 151 to 156
 	"sql",
 	"c",
 	"plpgsql",
@@ -140,7 +145,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 148 to 188
+  //offsets 157 to 197
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -152,25 +157,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 189 to 192
+  //offsets 198 to 201
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 193 to 195
+  //offsets 202 to 204
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 196 to 197
+  //offsets 205 to 206
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 198 to 211 - See table 44-43 on PostgreSQL 8.4 documentation
+  //offsets 207 to 220 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -187,7 +192,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 212 to 214
+  //offsets 221 to 223
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -196,13 +201,14 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 215 to 221
+  //offsets 224 to 231
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
 	"MULTIPOINT",
 	"MULTILINESTRING",
 	"MULTIPOLYGON",
+  "GEOMETRY",
 	"GEOMETRYCOLLECTION"
 };
 
@@ -263,10 +269,17 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 		return(BaseType::null);
 	else
 	{
+    QString aux_name, tp_name=type_name;
+
+    tp_name.remove("\"");
 		total=offset + count;
 
 		for(idx=offset; idx<total && !found; idx++)
-			found=(type_name==BaseType::type_list[idx]);
+    {
+      aux_name=BaseType::type_list[idx];
+      aux_name.remove("\"");
+      found=(tp_name==aux_name);
+    }
 
 		if(found)
 		{ idx--; return(idx); }
@@ -282,7 +295,17 @@ QString BaseType::operator ~ (void)
 
 unsigned BaseType::operator ! (void)
 {
-	return(type_idx);
+  return(type_idx);
+}
+
+unsigned BaseType::getTypeId(void)
+{
+  return(type_idx);
+}
+
+QString BaseType::getTypeName(void)
+{
+  return(type_list[type_idx]);
 }
 
 bool BaseType::operator == (BaseType &type)
@@ -795,13 +818,15 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-	else if(QRegExp("(.)+\\(( )*[a-z]+( )*(,)( )*[0-9]+( )*\\)").indexIn(type_str) >=0)
+  else if(QRegExp("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)",Qt::CaseInsensitive).indexIn(type_str) >=0)
 	{
 		start=type_str.indexOf("(");
 		end=type_str.indexOf(")", start);
 		value=type_str.mid(start+1, end-start-1).split(",");
 		sptype=value[0].toUpper();
-		srid=value[1].toUInt();
+
+    if(value.size() > 1)
+     srid=value[1].toUInt();
 	}
 
 	//If the string matches one of the regexp above remove the analyzed parts
@@ -918,7 +943,22 @@ unsigned PgSQLType::getUserTypeConfig(void)
 	if(this->isUserType())
 		return(user_types[this->type_idx - (pseudo_end + 1)].type_conf);
 	else
-		return(0);
+    return(0);
+}
+
+unsigned PgSQLType::getTypeId(void)
+{
+  return(!(*this));
+}
+
+QString PgSQLType::getTypeName(void)
+{
+  return(~(*this));
+}
+
+QString PgSQLType::getSQLTypeName(void)
+{
+  return(*(*this));
 }
 
 bool PgSQLType::operator == (unsigned type_id)
@@ -1137,7 +1177,7 @@ unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 	QString aux_name=type_name;
 
 	aux_name.remove("[]");
-	aux_name.remove("\"");
+  //aux_name.remove("\"");
 	aux_name.remove(QRegExp("( )(with)(out)?(.)*"));
 	aux_name=aux_name.trimmed();
 	return(getType(aux_name,offset,types_count));

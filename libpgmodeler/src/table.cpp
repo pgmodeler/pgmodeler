@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,19 +39,13 @@ Table::Table(void) : BaseTable()
 
 Table::~Table(void)
 {
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
-											 OBJ_CONSTRAINT, OBJ_COLUMN };
-	vector<TableObject *> *list=nullptr;
+  vector<BaseObject *> list=getObjects();
 
-	for(unsigned i=0; i < 5; i++)
-	{
-		list=getObjectList(types[i]);
-		while(!list->empty())
-		{
-			delete(list->back());
-			list->pop_back();
-		}
-	}
+  while(!list.empty())
+  {
+    delete(list.back());
+    list.pop_back();
+  }
 
 	ancestor_tables.clear();
 }
@@ -114,7 +108,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-		attribs[ParsersAttributes::DIF_SQL]="1";
+    attribs[ParsersAttributes::DIF_SQL]="1";
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
 		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
 		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
@@ -263,12 +257,11 @@ void Table::setTriggersAttribute(unsigned def_type)
 		/* Triggers that references columns added by relationship (special object)
 		 do not have their code definition generated here. They are treated
 		 in the database model code generation method */
-		if((!trig->isReferRelationshipAddedColumn() &&
+    /*if((!trig->isReferRelationshipAddedColumn() &&
 				def_type==SchemaParser::XML_DEFINITION) ||
-			 def_type==SchemaParser::SQL_DEFINITION)
-		{
+       def_type==SchemaParser::SQL_DEFINITION)*/
+    if(!trig->isReferRelationshipAddedColumn())
 			str_trig+=trig->getCodeDefinition(def_type);
-		}
 	}
 
 	attributes[ParsersAttributes::TRIGGERS]=str_trig;
@@ -288,10 +281,11 @@ void Table::setIndexesAttribute(unsigned def_type)
 		/* Indexes that references columns added by relationship (special object)
 		 do not have their code definition generated here. They are treated
 		 in the database model code generation method */
-		if((!ind->isAddedByRelationship() &&
-				!ind->isReferRelationshipAddedColumn() &&
+    /*if((!ind->isAddedByRelationship() &&
+        !ind->isReferRelationshipAddedColumn() &&
 				def_type==SchemaParser::XML_DEFINITION) ||
-			 def_type==SchemaParser::SQL_DEFINITION)
+       def_type==SchemaParser::SQL_DEFINITION) */
+    if(!ind->isReferRelationshipAddedColumn())
 			str_ind+=ind->getCodeDefinition(def_type);
 	}
 
@@ -327,7 +321,7 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 	else if(obj_type==OBJ_INDEX)
 		return(&indexes);
 	else
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Table::addObject(BaseObject *obj, int obj_idx)
@@ -1119,7 +1113,7 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 					 constr->getReferencedTable() == ref_tab);
 	}
 
-	return(found);
+  return(found);
 }
 
 bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
@@ -1174,9 +1168,13 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
+  attributes[ParsersAttributes::TAG]="";
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
+
+  if(tag && def_type==SchemaParser::XML_DEFINITION)
+   attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	(copy_table ? copy_table->getName(true) : "");
 
@@ -1197,7 +1195,7 @@ void Table::operator = (Table &tab)
 {
 	QString prev_name = this->getName(true);
 
-	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+  (*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
 	this->with_oid=tab.with_oid;
 
 	setGenerateAlterCmds(tab.gen_alter_cmds);
@@ -1370,13 +1368,13 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 
 vector<BaseObject *> Table::getObjects(void)
 {
-	vector<BaseObject *> list;
+  vector<BaseObject *> list;
+  ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+                       OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+  unsigned cnt=sizeof(types)/sizeof(ObjectType);
 
-	list.assign(columns.begin(), columns.end());
-	list.insert(list.end(), constraints.begin(), constraints.end());
-	list.insert(list.end(), triggers.begin(), triggers.end());
-	list.insert(list.end(), rules.begin(), rules.end());
-	list.insert(list.end(), indexes.begin(), indexes.end());
+  for(unsigned i=0; i < cnt; i++)
+    list.insert(list.end(), getObjectList(types[i])->begin(), getObjectList(types[i])->end()) ;
 
-	return(list);
+  return(list);
 }

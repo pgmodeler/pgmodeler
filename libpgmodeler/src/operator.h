@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class Operator: public BaseObject {
 					merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
-		static constexpr unsigned FUNC_OPERATOR=0,
+		static const unsigned FUNC_OPERATOR=0,
 															FUNC_JOIN=1,
 															FUNC_RESTRICT=2,
 															LEFT_ARG=0,

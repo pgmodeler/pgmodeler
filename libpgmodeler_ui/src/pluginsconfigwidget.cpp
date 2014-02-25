@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,9 +76,6 @@ void PluginsConfigWidget::loadPlugins(void)
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
-
-	if(GlobalAttributes::PLUGINS_DIR.isEmpty())
-		dir_plugins="." + GlobalAttributes::DIR_SEPARATOR;
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */

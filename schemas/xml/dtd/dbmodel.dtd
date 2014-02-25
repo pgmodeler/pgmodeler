@@ -50,8 +50,11 @@
 %collation;
 <!ENTITY % extension SYSTEM "extension.dtd">
 %extension;
+<!ENTITY % tag SYSTEM "tag.dtd">
+%tag;
 
 <!ELEMENT dbmodel ANY>
 
 <!ATTLIST dbmodel author CDATA #IMPLIED>
+<!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST dbmodel protected (false|true) "false">

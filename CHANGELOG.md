@@ -1,6 +1,82 @@
 Changelog
 ---------
 
+v0.7.0
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: February 25, 2014</em><br/>
+
+* [New] Addded a  catalog attribute "hide-postgres-db" in order to avoid listing "postgres" maintainance DB on import operations.
+* [New] Added options to hide system/extension objects on SQL tool improving the object listing performance.
+* [New] Added support to custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
+* [New] Added support to deferrable unique, exclude and primary key constraints.
+* [New] Added support to custom colors on tables and views through tag objects.
+* [New] Added support to export models to png image page by page.
+* [New] Canvas can now be moved using Control + Arrow keys. If the shift is pressed the movement factor is increased.
+* [New] Introduced the SQL tool that permits the execution of arbitrary SQL commands direclty on a server.
+* [New] Added methods getType, getTypeId to BaseType and getSQLTypeName to PgSQLType as an alternative to call operators ~, ! and *.
+* [New] Added a commented DROP command at start of each object definition (CREATE or ALTER TABLE ADD)
+* [New] Added a "Code Preview" tab on permissions dialog.
+* [New] Enabled SQL code visualization for FK relationships.
+* [New] Added a build number on about dialog. This number is the compilation date in format yyyymmdd.
+* [New] Added support for materialized and recursive views (PostgreSQL 9.3 feature).
+* [New] Added pgModeler version information on generated sql scripts as well .dbm files for debugging purpose.
+* [New] Added support to custom delete/update actions for relationship generated foreign keys.
+* [New] Added support to move the canvas by positioning the mouse over corners.
+* [New] Added a configuration parameter to control font style for any source code highlight field.
+* [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Added support to on-demand updates on sql tool object's tree.
+* [Change] Improved the tab navigation experience on editing forms.
+* [Change] Minor change on SQL tool to ommit binary data values.
+* [Change] Dropped the navigation through object using Alt + <left|right> due to the difficulty to understand the order in which objects are highlighted.
+* [Change] Minor change when generate .stacktrace file for crash handler to include pgModeler build number.
+* [Change] Minor adjustments on DatabaseImportForm's import execution progress.
+* [Change] Minor enhancements on operation list when removing last operations.
+* [Change] Minor enhancements on table and relationship dialogs on error control flow.
+* [Change] Changed Z-value for relationship labels in order to avoid that name labels don't overlaps the cardinality labels.
+* [Change] Removed the translation installing from within plugin loading method at PluginsConfigWidget.
+* [Change] The Application class constructor now loads at once all translation files available for the current language including language file for plugins.
+* [Change] Minor changes on deploy scripts on all platforms. The parameter '-with-build-num' was introduced in order to generate a package with build number.
+* [Change] Relationship dialog enhanced. Now participant tables are described in what role they make part.
+* [Change] Minor improvement on model export process.
+* [Change] Minor improvement on model validation widget.
+* [Change] Minor improvement on crash handler report generation message. Full path to crash file is now shown.
+* [Change] Improved the message displayed when user try to save an invalidated model.
+* [Change] Minor adjustment on model export dialog size.
+* [Change] Minor improvement on model overview widget.
+* [Change] Minor adjustments on window title buttons for model export and database import forms.
+* [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
+* [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Fixed bug that was permitting paste already formatted text (html) on source code input fields.
+* [Fix] Fix broken range type generation.
+* [Fix] The DELETE privilege is now correclty saved on model.
+* [Fix] Fixed drop object command on SQL tool.
+* [Fix] Fixed bug that was crashing pgModeler when a error was raised on view edit form.
+* [Fix] Fixed a bug that was crashing the application when deleting relationship attributes or constraints.
+* [Fix] Fixed bug related to the range selection weird behavior when finishing creating a object.
+* [Fix] Minor fix on OperationList undo/redo methods to update types names on tables that references a modified type.
+* [Fix] Minor fix on View assignment operator to correctly rename the type associated with "this" object.
+* [Fix] Minor fix on DatabaseModel to correctly return the references to a view type.
+* [Fix] Fixed bug that was causing indexes/triggers that references columns added by relationship have the sql code generated twice.
+* [Fix] Minor fix on ResultSet class to identify bytea columns.
+* [Fix] Minor fix on CLI menu to add new export modes.
+* [Fix] Fixed a crash dealing with duplicated columns on a table.
+* [Fix]  Fixed bug when deleting tables and fk relationships together.
+* [Fix] Fix bug related to geometry type.
+* [Fix] Minor fix on logical expressions evaluation on SchemaParser.
+* [Fix] Minor fix on model export when showing the name of objects being exported.
+* [Fix] Minor fix on list/view advanced objects of a relationship.
+* [Fix] Minor fix on form resizing when showing the protected object alert.
+* [Fix] Fixed a minor bug that was crashing pgModeler when visualizing many-to-many relationships.
+* [Fix] Fixed some warnings triggered by clang compiler.
+* [Fix] Fixed a crash when loading plugins on MacOSX.
+* [Fix] Fixed the issue related to import roles from database. pgModeler will not query pg_shadow anymore since this view is a very restricted object. Now role passwords will be imported as ***** (according to docs).
+* [Fix] Fixed the object name validation. pgModeler now accepts spaces within names.
+* [Fix] Fixed the function editing form resizing.
+* [Fix] Fixed a bug that was not loading "sql disabled" state for relationships.
+* [Fix] Fixed incorrect behavior of "Zoom In" action on MacOSX.
+* [Fix] Trying to fix the infinite loop of the Validation confirm dialog on Windows (more tests needed).
+
 v0.6.2
 ------
 <em>Codename: <strong>Daring Mammoth</strong></em><br/>

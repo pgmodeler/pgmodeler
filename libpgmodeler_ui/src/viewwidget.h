@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		Q_OBJECT
 
 		QFrame *frame_info;
+
+    ObjectSelectorWidget *tag_sel;
 
 		/*! \brief Operation list element count before editing the view. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to
@@ -96,7 +98,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Controls the form which are show the table and column names of the reference
 		void showObjectName(void);
 
-		//! \brief Updates the sql code filed of the view form
+    //! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
 
 		void showTableObjectForm(ObjectType obj_type);

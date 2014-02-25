@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -286,7 +286,7 @@ class Table: public BaseTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-		vector<TableObject *> *getObjectList(ObjectType obj_type);
+    vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the

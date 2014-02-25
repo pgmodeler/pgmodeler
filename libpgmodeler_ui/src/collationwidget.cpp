@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,8 +53,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		lcctype_cmb->addItems(loc_list);
 		locale_cmb->addItems(loc_list);
 
-		parent_form->setMinimumSize(520, 415);
-		parent_form->setMaximumHeight(415);
+    parent_form->setMinimumSize(520, 425);
+    parent_form->setMaximumHeight(425);
 
 		connect(collation_sel, SIGNAL(s_objectSelected(void)), this, SLOT(resetFields(void)));
 		connect(collation_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(resetFields(void)));
@@ -62,6 +62,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+
+    configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 	}
 	catch(Exception &e)
 	{

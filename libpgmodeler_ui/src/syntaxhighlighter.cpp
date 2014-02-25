@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,16 +17,38 @@
 */
 
 #include "syntaxhighlighter.h"
+#include "configurationform.h"
+
+extern ConfigurationForm *configuration_form;
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
+  GeneralConfigWidget *general_conf=nullptr;
+  map<QString, attribs_map> confs;
+
+  if(configuration_form)
+  {
+    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+    confs=general_conf->getConfigurationParams();
+  }
+
 	parent->setAcceptRichText(true);
-	this->auto_rehighlight=auto_rehighlight;
+
+  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
+  {
+    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+    if(size < 5.0f) size=5.0f;
+
+    parent->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+    parent->setFontPointSize(size);
+  }
+
+  this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
 
-	if(single_line_mode)
-		parent->installEventFilter(this);
+  parent->installEventFilter(this);
+  parent_txt=parent;
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -40,8 +62,22 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 		event->ignore();
 		return(true);
 	}
-	else
-		return(QSyntaxHighlighter::eventFilter(object, event));
+
+  /* If the user is about press Control to paste contents or Right mouse button in
+     order to call the context menu to paste text */
+  if(event->type()==QEvent::MouseButtonPress || event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
+    QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+    //Remove the formatting from the clipboard buffer to paste only pure text
+    if(qApp->clipboard() && qApp->clipboard()->mimeData()->hasHtml() &&
+       ((m_event && m_event->button()==Qt::RightButton) ||
+        (k_event && k_event->modifiers()==Qt::ControlModifier)))
+      qApp->clipboard()->setText(qApp->clipboard()->mimeData()->text());
+  }
+
+  return(QSyntaxHighlighter::eventFilter(object, event));
 }
 
 

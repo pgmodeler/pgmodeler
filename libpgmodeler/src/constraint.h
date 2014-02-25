@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,13 +36,13 @@ class Constraint: public TableObject{
 		//! \brief Type of the constraint (primary key, foreign key, unique or check)
 		ConstraintType constr_type;
 
-		//! \brief Indicates if the constraint is deferrable (only for foreign key)
+    //! \brief Indicates if the constraint is deferrable (except for check contraints)
 		bool deferrable,
 
 				 //! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
 				 no_inherit;
 
-		//! \brief Deferral type for the constraint (only for foreign key)
+    //! \brief Deferral type for the constraint (except for check contraints)
 		DeferralType deferral_type;
 
 		//! \brief Matching method used by the constraint (only for foreign key)
@@ -84,11 +84,14 @@ class Constraint: public TableObject{
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
-		static constexpr unsigned SOURCE_COLS=0,
+		static const unsigned SOURCE_COLS=0,
 
 														 /*! \brief Access the referenced columns that means the columns from the
 														 referenced table primary key (only for foreign keys) */
 														 REFERENCED_COLS=1;
+
+    static const unsigned DELETE_ACTION=0,
+                             UPDATE_ACTION=1;
 
 		Constraint(void);
 		~Constraint(void);
@@ -103,15 +106,13 @@ class Constraint: public TableObject{
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
 
-		/*! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE).
-		 If the parameter 'upd' is set, it will be configured the action on update
-		 otherwise the action on delete is configured. (only for foreign key) */
-		void setActionType(ActionType action_type, bool upd);
+    //! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
+    void setActionType(ActionType action_type, unsigned act_id);
 
-		//! \brief Defines the deferral type for the constraint (only for foreign key)
+    //! \brief Defines the deferral type for the constraint (except for check contraints)
 		void setDeferralType(DeferralType deferral_type);
 
-		//! \brief Defines whether the constraint is deferrable (only for foreign key)
+    //! \brief Defines whether the constraint is deferrable (except for check contraints)
 		void setDeferrable(bool value);
 
 		//! \brief Defines the matching type used by the constraint (only for foreign key)
@@ -138,9 +139,8 @@ class Constraint: public TableObject{
 		//! \brief Returns the constraint fill factor
 		unsigned getFillFactor(void);
 
-		/*! \brief Retuns the action type. Using upd = true is returned the ON UPDATE
-		 action otherwise the ON DELETE action is returned */
-		ActionType getActionType(bool upd);
+    //! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
+    ActionType getActionType(unsigned act_id);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */

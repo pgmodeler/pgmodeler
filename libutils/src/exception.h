@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=208;
+const int ERROR_COUNT=210;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -117,7 +117,7 @@ enum ErrorType {
 	ERR_ASG_NOT_ALOC_LANGUAGE,
 	ERR_ASG_INV_LANGUAGE_OBJECT,
 	ERR_REF_TYPE_INV_INDEX,
-	ERR_ASG_nullptr_TYPE_OBJECT,
+  ERR_ASG_NULL_TYPE_OBJECT,
 	ERR_ASG_INV_TYPE_OBJECT,
 	ERR_ASG_EMPTY_DIR_NAME,
 	ERR_OBT_TYPES_INV_QUANTITY,
@@ -257,7 +257,9 @@ enum ErrorType {
 	ERR_ASG_WGT_ALREADY_HAS_PARENT,
 	ERR_OBJECT_NOT_IMPORTED,
 	ERR_MODEL_FILE_NOT_LOADED,
-	ERR_INV_COLUMN_TABLE_TYPE
+  ERR_INV_COLUMN_TABLE_TYPE,
+  ERR_OPR_INV_ELEMENT_ID,
+  ERR_REF_ELEMENT_COLOR_ID
 };
 
 class Exception {
@@ -271,7 +273,7 @@ class Exception {
 		static QString messages[ERROR_COUNT][2];
 
 		//! \brief Constants used to access the error details
-		static constexpr unsigned ERROR_CODE=0,
+    static const unsigned ERROR_CODE=0,
 															ERROR_MESSAGE=1;
 
 		//! \brief Error type related to the exception

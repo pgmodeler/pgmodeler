@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.6.2"
+#define MyAppVersion "0.7.0-alpha"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -25,8 +25,8 @@ DefaultGroupName={#MyAppMenuGroup}
 AllowNoIcons=yes
 LicenseFile=.\build\LICENSE
 OutputDir=.\
-OutputBaseFilename=pgmodeler-{#MyAppVersion}-windows
-;OutputBaseFilename=pgmodeler
+;OutputBaseFilename=pgmodeler-{#MyAppVersion}-windows
+OutputBaseFilename=pgmodeler
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=true

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		unsigned operation_count;
 
 		ObjectTableWidget *parent_tables;
+
+    ObjectSelectorWidget *tag_sel;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;

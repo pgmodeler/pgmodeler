@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@
 #include "tablewidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
+#include "tagwidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
@@ -83,6 +84,7 @@ RelationshipWidget *relationship_wgt=nullptr;
 TableWidget *table_wgt=nullptr;
 CollationWidget *collation_wgt=nullptr;
 ExtensionWidget *extension_wgt=nullptr;
+TagWidget *tag_wgt=nullptr;
 TaskProgressWidget *task_prog_wgt=nullptr;
 ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
@@ -91,25 +93,68 @@ SQLAppendWidget *sqlappend_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
-	int i, count;
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	ObjectType obj_types[]={
-		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
-		OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
-		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE,
-		OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX,
-		OBJ_CONSTRAINT, OBJ_COLLATION, OBJ_EXTENSION, OBJ_PERMISSION };
+  vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
+
+  try
+  {
+    configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    configuration_form->loadConfiguration();
+
+    plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
+    plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
+    plugins_menu->setEnabled(!plugins_menu->isEmpty());
+    action_plugins->setEnabled(!plugins_menu->isEmpty());
+    action_plugins->setMenu(plugins_menu);
+    dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
+    conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
+    confs=conf_wgt->getConfigurationParams();
+
+    itr=confs.begin();
+    itr_end=confs.end();
+
+    //Configuring the widget visibility according to the configurations
+    while(itr!=itr_end)
+    {
+      attribs=itr->second;
+      if(attribs.count(ParsersAttributes::PATH)!=0)
+      {
+        try
+        {
+          //Storing the file of a previous session
+          if(itr->first.contains(ParsersAttributes::_FILE_) &&
+             !attribs[ParsersAttributes::PATH].isEmpty())
+            prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
+
+          //Creating the recent models menu
+          else if(itr->first.contains(ParsersAttributes::RECENT) &&
+                  !attribs[ParsersAttributes::PATH].isEmpty())
+            recent_models.push_back(attribs[ParsersAttributes::PATH]);
+        }
+        catch(Exception &e)
+        {
+          msg_box.show(e);
+        }
+      }
+
+      itr++;
+    }
+
+    //Enables the action to restore session when there are registered session files
+    action_restore_session->setEnabled(!prev_session_files.isEmpty());
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
+  }
 
 	try
 	{
@@ -121,16 +166,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		about_form=new AboutForm;
-		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-		model_export_form=new ModelExportForm(this);
-		db_import_form=new DatabaseImportForm(this);
+    about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    restoration_form=new ModelRestorationForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-		restoration_form=new ModelRestorationForm(this);
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
+    sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
 
 		permission_wgt=new PermissionWidget(this);
@@ -162,6 +207,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		table_wgt=new TableWidget(this);
 		collation_wgt=new CollationWidget(this);
 		extension_wgt=new ExtensionWidget(this);
+    tag_wgt=new TagWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
@@ -172,11 +218,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	count=sizeof(obj_types)/sizeof(ObjectType);
-	for(i=0; i < count; i++)
-		task_prog_wgt->addIcon(obj_types[i],
+  for(auto obj_tp : obj_types)
+    task_prog_wgt->addIcon(obj_tp,
 																QIcon(QString(":/icones/icones/") +
-																			BaseObject::getSchemaName(obj_types[i]) +
+                                      BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
@@ -235,6 +280,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+  connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
@@ -253,6 +299,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
+  sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
@@ -274,6 +321,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
+
+  vlayout=new QVBoxLayout;
+  vlayout->setContentsMargins(0,0,0,0);
+  vlayout->addWidget(sql_tool_wgt);
+  sql_tool_parent->setLayout(vlayout);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -299,6 +351,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_parent, SLOT(setVisible(bool)));
+  connect(sql_tool_btn, SIGNAL(toggled(bool)), sql_tool_wgt, SLOT(setVisible(bool)));
+  connect(sql_tool_wgt, SIGNAL(s_visibilityChanged(bool)), sql_tool_btn, SLOT(setChecked(bool)));
+
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), general_tb, SLOT(setDisabled(bool)));
@@ -315,65 +371,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
-	QList<int> sizes;
-	sizes.push_back(10);
-	sizes.push_back(0);
-	v_splitter1->setSizes(sizes);
+  v_splitter1->setSizes({500, 250, 500});
 
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	try
-	{
-		configuration_form->loadConfiguration();
-
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
-		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
-		plugins_menu->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setEnabled(!plugins_menu->isEmpty());
-		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
-
-		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
-		confs=conf_wgt->getConfigurationParams();
-
-		itr=confs.begin();
-		itr_end=confs.end();
-
-		//Configuring the widget visibility according to the configurations
-		while(itr!=itr_end)
-		{
-			attribs=itr->second;
-			if(attribs.count(ParsersAttributes::PATH)!=0)
-			{
-				try
-				{
-					//Storing the file of a previous session
-					if(itr->first.contains(ParsersAttributes::_FILE_) &&
-						 !attribs[ParsersAttributes::PATH].isEmpty())
-						prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
-
-					//Creating the recent models menu
-					else if(itr->first.contains(ParsersAttributes::RECENT) &&
-									!attribs[ParsersAttributes::PATH].isEmpty())
-						recent_models.push_back(attribs[ParsersAttributes::PATH]);
-				}
-				catch(Exception &e)
-				{
-					msg_box.show(e);
-				}
-			}
-
-			itr++;
-		}
-
-		//Enables the action to restore session when there are registered session files
-		action_restore_session->setEnabled(!prev_session_files.isEmpty());
-	}
-	catch(Exception &e)
-	{
-		msg_box.show(e);
-	}
 
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())
@@ -587,7 +589,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 		}
-	}
+  }
 }
 
 void MainWindow::updateConnections(void)
@@ -598,6 +600,7 @@ void MainWindow::updateConnections(void)
 	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 	conn_cfg_wgt->getConnections(connections);
 	model_valid_wgt->updateConnections(connections);
+  sql_tool_wgt->updateConnections(connections);
 }
 
 void MainWindow::saveTemporaryModels(bool force)
@@ -605,9 +608,9 @@ void MainWindow::saveTemporaryModels(bool force)
 	try
 	{
 		ModelWidget *model=nullptr;
-		int count=models_tbw->count();
+    int count=models_tbw->count();
 
-		if(count > 0 && (force || this->isActiveWindow()))
+    if(count > 0 && (force || this->isActiveWindow()))
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -718,12 +721,15 @@ void MainWindow::addModel(const QString &filename)
 		catch(Exception &e)
 		{
 			model_tab->setParent(nullptr);
-			models_tbw->removeTab(models_tbw->currentIndex());
+      //models_tbw->removeTab(models_tbw->currentIndex());
 
 			//Destroy the temp file generated by allocating a new model widget
 			restoration_form->removeTemporaryModel(model_tab->getTempFilename());
 
 			delete(model_tab);
+
+      updateToolsState(true);
+
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -935,7 +941,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model was modified! Do you really want to close without save it?"),
-											Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+                      Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 		}
 
 		if(!model->isModified() ||
@@ -1007,7 +1013,7 @@ void MainWindow::applyConfigurations(void)
 		}
 		else
 		{
-			model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
+      model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
 			model_save_timer.start();
 		}
 
@@ -1027,9 +1033,9 @@ void MainWindow::applyConfigurations(void)
 
 void MainWindow::saveAllModels(void)
 {
-	if(models_tbw->count() > 0 &&
-		 ((sender()==action_save_all) ||
-			(sender()==&model_save_timer &&	this->isActiveWindow())))
+  if(models_tbw->count() > 0 &&
+     ((sender()==action_save_all) ||
+      (sender()==&model_save_timer &&	this->isActiveWindow())))
 
 	{
 		int i, count;
@@ -1048,15 +1054,26 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
-			if(model->getDatabaseModel()->isInvalidated())
-			{
-				msg_box.show(trUtf8("Confirmation"),
-												trUtf8("WARNING: The model is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again. Would like to cancel the saving and validate the model?"),
-												Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
-			}
+      if(model->getDatabaseModel()->isInvalidated())
+      {
+        msg_box.show(trUtf8("Confirmation"),
+                     trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
+                     Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                     trUtf8("Save anyway"), trUtf8("Validate"), "",
+                     ":/icones/icones/salvar.png", ":/icones/icones/validation.png");
+
+        //If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
+        if(msg_box.isCancelled())
+        {
+          model_save_timer.stop();
+
+          //The autosave timer will be reactivated in 5 minutes
+          QTimer::singleShot(300000, &model_save_timer, SLOT(start()));
+        }
+      }
 
 			if((!model->getDatabaseModel()->isInvalidated() ||
-					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Rejected))
+          (model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Accepted))
 					 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
@@ -1087,6 +1104,13 @@ void MainWindow::saveModel(ModelWidget *model)
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
 			}
+      //When the user click "Validate" on the message box the validation will be executed
+      else if(model->getDatabaseModel()->isInvalidated() &&
+              msg_box.result()==QDialog::Rejected && !msg_box.isCancelled())
+      {
+        validation_btn->setChecked(true);
+        model_valid_wgt->validate_btn->click();
+      }
 		}
 	}
 	catch(Exception &e)

@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE OR REPLACE RULE ] @{name} [ AS ] @{event-type} $br
 $tb [TO ] @{table} $br
 

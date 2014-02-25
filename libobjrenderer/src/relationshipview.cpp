@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		{
 			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
 			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(1);
+      labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 0 : 1);
 			this->addToGroup(labels[i]);
 		}
 		else

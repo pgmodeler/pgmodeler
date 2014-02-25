@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 
 	parent_form->setMinimumSize(500, 220);
 	parent_form->setMaximumHeight(220);
+
+  configureTabOrder({ fill_color_tb, show_rect_chk });
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)

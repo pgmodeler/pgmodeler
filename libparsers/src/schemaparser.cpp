@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -400,9 +400,20 @@ bool SchemaParser::evaluateExpression(void)
 
 		while(!end_eval && !error)
 		{
-			//Eliminates any black space
-			while(current_line[column]==CHR_SPACE ||
-						current_line[column]==CHR_TABULATION) column++;
+      ignoreBlankChars(current_line);
+
+      if(current_line[column]==CHR_LINE_END)
+      {
+        line++;
+        if(line < buffer.size())
+        {
+          current_line=buffer[line];
+          column=0;
+          ignoreBlankChars(current_line);
+         }
+        else if(!end_eval)
+          error=true;
+      }
 
 			switch(current_line[column].toLatin1())
 			{
@@ -496,6 +507,13 @@ bool SchemaParser::evaluateExpression(void)
 	}
 
 	return(expr_is_true);
+}
+
+void SchemaParser::ignoreBlankChars(const QString &line)
+{
+  while(column < static_cast<unsigned>(line.size()) &&
+        (line[column]==CHR_SPACE ||
+         line[column]==CHR_TABULATION)) column++;
 }
 
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)

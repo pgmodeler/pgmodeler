@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE OPERATOR ] @{name} [ (]
 $br $tb [PROCEDURE = ] @{operfunc}
 

@@ -5,6 +5,8 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
+@{drop}
+
 [CREATE SCHEMA ] @{name}; $br
 %if @{owner} %then @{owner} %end
 %if @{comment} %then @{comment} %end

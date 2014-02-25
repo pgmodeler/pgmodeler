@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,10 +38,10 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 	{
 		//Raises an error if the passed data type is null
 		if((*type)=="")
-			throw Exception(Exception::getErrorMessage(ERR_ASG_nullptr_TYPE_OBJECT)
+			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
-											ERR_ASG_nullptr_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Assign the passed type to the cast types vector on the specified index
 		this->types[type_idx]=type;

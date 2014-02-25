@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class Index: public TableObject{
 		void setIndexElementsAttribute(unsigned def_type);
 
 	public:
-		static constexpr  unsigned UNIQUE=0,
+		static const  unsigned UNIQUE=0,
 															 CONCURRENT=1,
 															 FAST_UPDATE=2;
 

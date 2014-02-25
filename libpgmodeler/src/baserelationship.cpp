@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,6 +105,8 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::COL_INDEXES]="";
 	attributes[ParsersAttributes::CONSTR_INDEXES]="";
 	attributes[ParsersAttributes::ATTRIB_INDEXES]="";
+  attributes[ParsersAttributes::UPD_ACTION]="";
+  attributes[ParsersAttributes::DEL_ACTION]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -384,7 +386,25 @@ void BaseRelationship::setRelationshipAttributes(void)
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SQL_DEFINITION)
-		return("");
+  {
+    if(rel_type!=RELATIONSHIP_FK)
+      return("");
+    else
+    {
+      QString sql_code;
+      vector<Constraint *> fks;
+
+      dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
+
+      while(!fks.empty())
+      {
+        sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+        fks.pop_back();
+      }
+
+      return(sql_code);
+    }
+  }
 	else
 	{
 		bool reduced_form;

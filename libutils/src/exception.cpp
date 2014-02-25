@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_NOT_ALOC_LANGUAGE", QT_TR_NOOP("Assignment of not allocated language!")},
 	{"ERR_ASG_INV_LANGUAGE_OBJECT", QT_TR_NOOP("Assignment of language object which type is invalid!")},
 	{"ERR_REF_TYPE_INV_INDEX", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
-	{"ERR_ASG_nullptr_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to to object `%1' (%2)!")},
+  {"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to to object `%1' (%2)!")},
 	{"ERR_ASG_INV_TYPE_OBJECT", QT_TR_NOOP("Assignment of invalid type to the object!")},
 	{"ERR_ASG_EMPTY_DIR_NAME", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
 	{"ERR_OBT_TYPES_INV_QUANTITY", QT_TR_NOOP("Obtaining types with invalid quantity!")},
@@ -184,15 +184,15 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_OPR_NOT_ALOC_CONN", QT_TR_NOOP("Operation on connection not established!")},
 	{"ERR_CONNECTION_NOT_CONFIGURED", QT_TR_NOOP("Attempt to connect without define configuration parameters!")},
 	{"ERR_CONNECTION_ALREADY_STABLISHED", QT_TR_NOOP("Attempt to start a connection already stablished!")},
-	{"ERR_CONNECTION_NOT_STABLISHED", QT_TR_NOOP("Could not connect to the database.\nMessage returned: %1")},
+  {"ERR_CONNECTION_NOT_STABLISHED", QT_TR_NOOP("Could not connect to the database.\nMessage returned: `%1'")},
 	{"ERR_ASG_SQL_RESULT_NOT_ALOC", QT_TR_NOOP("Assignment of not allocated SQL command result!")},
 	{"ERR_INCOMPREHENSIBLE_DBMS_RESP", QT_TR_NOOP("Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!")},
-	{"ERR_DBMS_FATAL_ERROR", QT_TR_NOOP("Unable to allocate command result for the SQL because the server has generated a fatal error!\nMessage returned by the DBMS: %1")},
+  {"ERR_DBMS_FATAL_ERROR", QT_TR_NOOP("Unable to allocate command result for the SQL because the server has generated a fatal error!\nMessage returned by the DBMS: `%1'")},
 	{"ERR_REF_TUPLE_COL_INV_INDEX", QT_TR_NOOP("Reference to a column of tuple with invalid index!")},
 	{"ERR_REF_TUPLE_COL_INV_NAME", QT_TR_NOOP("Reference to a column of tuple with invalid name!")},
 	{"ERR_REF_TUPLE_INEXISTENT", QT_TR_NOOP("Reference to a tuple with index invalid or the result is empty (no tuples)!")},
 	{"ERR_REF_INV_TUPLE_COLUMN", QT_TR_NOOP("Reference to a column of a tuple which was not yet initialized (tuple navigation not started)!")},
-	{"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: %1")},
+  {"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: `%1'")},
 	{"ERR_INV_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!")},
 	{"ERR_ASG_SEC_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Assignment of a second definition expression to the view!")},
 	{"ERR_MIX_VIEW_DEF_EXPR_REFS", QT_TR_NOOP("It is not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!")},
@@ -226,7 +226,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
 	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2) could not be imported due to one or more errors! Check the exception stack for more details.")},
 	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
-	{"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")}
+  {"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
+  {"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
+  {"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")}
 };
 
 Exception::Exception(void)

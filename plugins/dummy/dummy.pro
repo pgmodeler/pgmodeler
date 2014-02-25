@@ -1,14 +1,5 @@
 #Unix or Windows directory configuration
 PGMODELER_SRC_DIR=../../
-PGMODELER_LIB_DIR=../../build
-PGMODELER_PLUGIN_DIR=$$PGMODELER_LIB_DIR/plugins
-
-macx {
- PGMODELER_SRC_DIR=../../
- PGMODELER_BASE_DIR=../../build/pgmodeler.app/Contents
- PGMODELER_LIB_DIR=$$PGMODELER_BASE_DIR/Frameworks
- PGMODELER_PLUGIN_DIR=$$PGMODELER_BASE_DIR/MacOS/plugins
-}
 
 !exists($$PGMODELER_SRC_DIR) {
  warning("The pgModeler source code directory '$$PGMODELER_SRC_DIR' could not be found! Make sure the variable PGMODELER_SRC_DIR points to a valid location!")
@@ -16,6 +7,16 @@ macx {
 }
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
+
+PGMODELER_LIB_DIR=$$LIBDESTDIR
+PGMODELER_PLUGIN_DIR=$$RESDESTDIR/plugins
+
+macx {
+ PGMODELER_SRC_DIR=../../
+ PGMODELER_BASE_DIR=../../build/pgmodeler.app/Contents
+ PGMODELER_LIB_DIR=$$PGMODELER_BASE_DIR/Frameworks
+ PGMODELER_PLUGIN_DIR=$$PGMODELER_BASE_DIR/MacOS/plugins
+}
 
 CONFIG += plugin qt uic4
 QT += core gui uitools

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,6 +97,9 @@ class SchemaParser {
 		*/
 		static bool evaluateExpression(void);
 
+    //! brief Increments the column counter while blank chars (space and tabs) are found on the line
+    static void ignoreBlankChars(const QString &line);
+
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
 		static QString getWord(void);
@@ -143,7 +146,7 @@ class SchemaParser {
 												 PGSQL_VERSION_93;
 
 		//! \brief Constants used to get a specific object definition
-		static constexpr unsigned SQL_DEFINITION=0,
+    static const unsigned SQL_DEFINITION=0,
 															XML_DEFINITION=1;
 
 		/*! \brief Set the version of PostgreSQL to be adopted by the parser in obtaining

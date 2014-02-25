@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 
 PgModelerPlugin::~PgModelerPlugin(void)
 {
-	delete(plugin_info_frm);
+  delete(plugin_info_frm);
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,

@@ -6,6 +6,7 @@ LOG=linuxdeploy.log
 
 # Detecting current pgModeler version
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
+BUILD_NUM=$(date '+%Y%m%d')
 
 # Identify architecture
 case `uname -m` in
@@ -21,10 +22,16 @@ case `uname -m` in
 esac
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
+WITH_BUILD_NUM='-with-build-num'
+
+if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
+  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+fi
+
 PKGFILE=$PKGNAME.tar.gz
 NO_QT_LIBS_OPT='-no-qt-libs'
 
-if [ "$1" = "$NO_QT_LIBS_OPT" ]; then
+if [[ "$*" == "$NO_QT_LIBS_OPT" ]]; then
   PKGFILE=$PKGNAME.tar.gz
   BUNDLE_QT_LIBS=0
 else

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,21 +35,27 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 
 	public:
 		//! \brief Constants used to define the message icon
-		static constexpr unsigned NO_ICON=10,
+		static const unsigned NO_ICON=10,
 															ERROR_ICON=11,
 															INFO_ICON=12,
 															ALERT_ICON=13,
 															CONFIRM_ICON=14;
 
 		//! \brief Constants used to configure the visible buttons
-		static constexpr unsigned YES_NO_BUTTONS=0,
+		static const unsigned YES_NO_BUTTONS=0,
 															OK_CANCEL_BUTTONS=1,
 															OK_BUTTON=2,
 															ALL_BUTTONS=3;
 
 		Messagebox(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-		void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
+    /*! \brief Shows the message box defining the icons and available buttons.
+    User can specify custom button labels as well custom icons. The icons can be a path to a local file
+    or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
+    void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON,
+              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
+              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+
 		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);
 		bool isCancelled(void);
 

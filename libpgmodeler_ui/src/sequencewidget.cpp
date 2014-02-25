@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 
 		parent_form->setMinimumSize(500, 360);
 		parent_form->setMaximumHeight(360);
+
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{

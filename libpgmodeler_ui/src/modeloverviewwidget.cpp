@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,8 +52,8 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
 
-		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
+    connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+    connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
 
 		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
 		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));

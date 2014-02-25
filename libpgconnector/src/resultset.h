@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #include "attribsmap.h"
 #include <libpq-fe.h>
 #include <cstdlib>
+#include <iostream>
+
+//This constant is defined on PostgreSQL source code src/catalog/pg_type.h
+#define BYTEAOID 17
 
 class ResultSet {
  private:
@@ -61,7 +65,7 @@ class ResultSet {
 
  public:
    //! \brief Constants used to navigate through the resultset
-	 static constexpr unsigned FIRST_TUPLE=0,
+   static const unsigned FIRST_TUPLE=0,
 														 LAST_TUPLE=1,
 														 PREVIOUS_TUPLE=2,
 														 NEXT_TUPLE=3;
@@ -103,6 +107,9 @@ class ResultSet {
 
   //! \brief Access on tuple on result set via navigation constants
   bool accessTuple(unsigned tuple_type);
+
+  //! \brief Returns if the result set is empty due a DML command that does not returned any data
+  bool isEmpty(void);
 
   //! \brief Make a copy between two resultsets
   void operator = (ResultSet &res);

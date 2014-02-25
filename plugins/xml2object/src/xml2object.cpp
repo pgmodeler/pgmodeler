@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,17 +22,6 @@
 
 Xml2Object::Xml2Object(void)
 {
-	QTranslator *translator=new QTranslator;
-
-	translator->load(QString("xml2object.") + QLocale::system().name(),
-									 GlobalAttributes::PLUGINS_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("xml2object") +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 QString("lang"));
-
-	QCoreApplication::installTranslator(translator);
-
 	configurePluginInfo(getPluginTitle(),
 											getPluginVersion(),
 											getPluginAuthor(),

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,13 +43,17 @@ class BaseTableView: public BaseObjectView {
 		QGraphicsItemGroup *columns,
 		*ext_attribs;
 
-		static bool hide_ext_attribs;
+    static bool hide_ext_attribs, hide_tags;
 
 		//! \brief Polygonal object that defines the table body
 		QGraphicsPolygonItem *body,
 
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
-		*ext_attribs_body;
+    *ext_attribs_body,
+
+    *tag_body;
+
+    QGraphicsSimpleTextItem *tag_name;
 
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
@@ -65,6 +69,9 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Updates the current connected relationship count
 		void updateConnectedRelsCount(int inc);
 
+    //! brief Configures the tag object when the source object has one.
+    void configureTag(void);
+
 	public:
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);
@@ -76,8 +83,14 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void hideExtAttributes(bool value);
 
+    //! \brief Hides the table tags. This applies to all table instances
+    static void hideTags(bool value);
+
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);
+
+    //! \brief Returns the current visibility state of tags
+    static bool isTagsHidden(void);
 
 		//! \brief Returns the current count of connected relationships
 		int getConnectRelsCount(void);

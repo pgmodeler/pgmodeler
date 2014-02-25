@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
-		static constexpr unsigned GENERAL_TAB=0,
+		static const unsigned GENERAL_TAB=0,
 															ATTRIBUTES_TAB=1,
 															CONSTRAINTS_TAB=2,
 															SPECIAL_PK_TAB=3,
@@ -72,6 +72,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 	private slots:
 		void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
 
 		void addObject(void);
 		void editObject(int row);

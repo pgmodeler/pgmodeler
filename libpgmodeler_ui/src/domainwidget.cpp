@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		parent_form->setMaximumHeight(570);
 
 		setRequiredField(data_type);
+    configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
+                        check_expr_txt, data_type });
 	}
 	catch(Exception &e)
 	{

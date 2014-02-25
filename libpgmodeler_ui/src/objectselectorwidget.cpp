@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	try
 	{
 		this->sel_obj_types.push_back(sel_obj_type);
-		configureSelector(install_highlighter);
+    configureSelector(install_highlighter);
 	}
 	catch(Exception &e)
 	{
@@ -66,7 +66,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 																			GlobalAttributes::CONFIGURATION_EXT);
 		}
 
-		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
+    connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
 		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 	}

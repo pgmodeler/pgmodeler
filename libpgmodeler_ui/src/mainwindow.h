@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
+#include "sqltoolwidget.h"
 
 using namespace std;
 
@@ -65,6 +66,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
+
+    //! \brief SQL tool widget widget
+    SQLToolWidget *sql_tool_wgt;
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;

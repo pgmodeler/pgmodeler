@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -292,7 +292,15 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned color_id)
 {
 	if(color_id < 3 && color_config.count(id))
-		color_config[id][color_id]=color;
+    color_config[id][color_id]=color;
+}
+
+QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
+{
+  if(color_config.count(id) > 0 && color_id < 3)
+   return(color_config[id][color_id]);
+  else
+   return(QColor(0,0,0));
 }
 
 void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &color2)

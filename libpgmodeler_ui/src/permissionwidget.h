@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@
 class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
 		Q_OBJECT
+
+    SyntaxHighlighter *code_hl;
 
 		//! \brief Stores the permission to be edited
 		Permission *permission;
@@ -75,7 +77,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		void editPermission(void);
 
 		//! \brief Removes the selected permission
-		void removePermission(void);
+    void removePermission(int perm_id);
 
 		//! \brief Removes all permissions from the permissions table
 		void removePermissions(void);
@@ -91,6 +93,9 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 
 		//! \brief Shows the selected role data on the role tables
 		void showSelectedRoleData(void);
+
+    //! \brief Updates the sql code for object's permissions
+    void updateCodePreview(void);
 
 		void enableEditButtons(void);
 

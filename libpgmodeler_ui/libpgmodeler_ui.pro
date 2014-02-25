@@ -77,7 +77,9 @@ SOURCES += src/mainwindow.cpp \
 	   src/sqlappendwidget.cpp \
 	   src/codecompletionwidget.cpp \
     src/swapobjectsidswidget.cpp \
-    src/temporarymodelthread.cpp
+    src/temporarymodelthread.cpp \
+    src/sqltoolwidget.cpp \
+    src/tagwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -144,7 +146,9 @@ HEADERS += src/mainwindow.h \
 	   src/sqlappendwidget.h \
 	   src/codecompletionwidget.h \
     src/swapobjectsidswidget.h \
-    src/temporarymodelthread.h
+    src/temporarymodelthread.h \
+    src/sqltoolwidget.h \
+    src/tagwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -201,4 +205,6 @@ FORMS += ui/mainwindow.ui \
 	 ui/objectfinderwidget.ui \
 	 ui/databaseimportform.ui \
 	 ui/sqlappendwidget.ui \
-    ui/swapobjectsidswidget.ui
+    ui/swapobjectsidswidget.ui \
+    ui/sqltoolwidget.ui \
+    ui/tagwidget.ui

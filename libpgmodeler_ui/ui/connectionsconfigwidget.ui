@@ -43,6 +43,12 @@
      </property>
      <item>
       <widget class="QComboBox" name="connections_cmb">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="insertPolicy">
         <enum>QComboBox::InsertAlphabetically</enum>
        </property>
@@ -783,6 +789,7 @@
   <tabstop>connections_cmb</tabstop>
   <tabstop>new_tb</tabstop>
   <tabstop>cancel_tb</tabstop>
+  <tabstop>duplicate_tb</tabstop>
   <tabstop>edit_tb</tabstop>
   <tabstop>remove_tb</tabstop>
   <tabstop>alias_edt</tabstop>

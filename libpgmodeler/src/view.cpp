@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 View::View(void) : BaseTable()
 {
 	obj_type=OBJ_VIEW;
+  materialized=recursive=with_no_data=false;
 	attributes[ParsersAttributes::DECLARATION]="";
 	attributes[ParsersAttributes::REFERENCES]="";
 	attributes[ParsersAttributes::SELECT_EXP]="";
@@ -29,6 +30,10 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::CTE_EXPRESSION]="";
 	attributes[ParsersAttributes::TRIGGERS]="";
 	attributes[ParsersAttributes::RULES]="";
+  attributes[ParsersAttributes::MATERIALIZED]="";
+  attributes[ParsersAttributes::RECURSIVE]="";
+  attributes[ParsersAttributes::WITH_NO_DATA]="";
+  attributes[ParsersAttributes::COLUMNS]="";
 }
 
 View::~View(void)
@@ -83,7 +88,39 @@ void View::setProtected(bool value)
 	}
 
 	//Protects the view itself
-	BaseGraphicObject::setProtected(value);
+  BaseGraphicObject::setProtected(value);
+}
+
+void View::setMaterialized(bool value)
+{
+  materialized=value;
+  if(materialized) recursive=false;
+}
+
+void View::setRecursive(bool value)
+{
+  recursive=value;
+  if(recursive) materialized=false;
+}
+
+void View::setWithNoData(bool value)
+{
+ with_no_data=(materialized ? value : false);
+}
+
+bool View::isMaterialized(void)
+{
+  return(materialized);
+}
+
+bool View::isRecursive(void)
+{
+  return(recursive);
+}
+
+bool View::isWithNoData(void)
+{
+  return(with_no_data);
 }
 
 void View::setCommomTableExpression(const QString &expr)
@@ -140,7 +177,35 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 	else if(sql_type==Reference::SQL_REFER_WHERE)
 		return(&exp_where);
 	else
-		return(nullptr);
+    return(nullptr);
+}
+
+QStringList View::getColumnsList(void)
+{
+  QStringList col_list;
+  unsigned i=0, count=exp_select.size(), col_id=0, col_count=0;
+  Table *tab=nullptr;
+
+  for(i=0; i < count; i++)
+  {
+    if(!references[i].getColumn())
+    {
+      tab=references[i].getTable();
+      col_count=tab->getColumnCount();
+
+      for(col_id=0; col_id < col_count; col_id++)
+        col_list.push_back(tab->getColumn(col_id)->getName(true));
+    }
+    else
+    {
+      if(!references[i].getColumnAlias().isEmpty())
+        col_list.push_back(references[i].getColumnAlias());
+      else
+        col_list.push_back(references[i].getColumn()->getName(true));
+    }
+  }
+
+  return(col_list);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
@@ -470,6 +535,17 @@ QString View::getCodeDefinition(unsigned def_type)
 	unsigned count, i;
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
+  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
+  attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
+  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
+  attributes[ParsersAttributes::COLUMNS]="";
+  attributes[ParsersAttributes::TAG]="";
+
+  if(recursive)
+    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
+
+  if(tag && def_type==SchemaParser::XML_DEFINITION)
+   attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		setDeclarationAttribute();
@@ -782,13 +858,20 @@ void View::removeObjects(void)
 
 void View::operator = (View &view)
 {
-	(*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(view);
+  QString prev_name = this->getName(true);
+
+  (*dynamic_cast<BaseTable *>(this))=reinterpret_cast<BaseTable &>(view);
 
 	this->references=view.references;
 	this->exp_select=view.exp_select;
 	this->exp_from=view.exp_from;
 	this->exp_where=view.exp_where;
 	this->cte_expression=view.cte_expression;
+  this->materialized=view.materialized;
+  this->recursive=view.recursive;
+  this->with_no_data=view.with_no_data;
+
+  PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 vector<BaseObject *> View::getObjects(void)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -562,7 +562,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_CONSTRAINT: createConstraint(attribs); break;
 
 				default:
-					qDebug(QString("create method for %1 isn't implemented!").arg(BaseObject::getSchemaName(obj_type)).toStdString().c_str());
+          qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
 				break;
 			}
 
@@ -1450,7 +1450,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
 																																				 pos_attrib, SchemaParser::XML_DEFINITION);
 
-		ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
+    ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
 		ref.setDefinitionExpression(true);
 		attribs[ParsersAttributes::REFERENCES]=ref.getXMLDefinition();
 

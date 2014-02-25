@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,6 +83,8 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
+
+    QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 
 		void mouseMoveEvent(QMouseEvent *);
 		void closeEvent(QCloseEvent *);

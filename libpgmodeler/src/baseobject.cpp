@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "relationship","textbox",	"permission",
-	"parameter", "typeattribute","relationship"
+  "parameter", "typeattribute","tag","relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -43,7 +43,8 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Basic Relationship")
+  QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -58,10 +59,10 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
+   starts at 40k because the id ranges 0, 10k, 20k, 30k
 	 are respectively assigned to objects of classes Role, Tablespace
-	 DBModel, Schema, Collation, Function and Type */
-unsigned BaseObject::global_id=30000;
+   DatabaseModel, Tag */
+unsigned BaseObject::global_id=40000;
 
 BaseObject::BaseObject(void)
 {
@@ -82,6 +83,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
 	attributes[ParsersAttributes::APPENDED_SQL]="";
+  attributes[ParsersAttributes::DROP]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -113,31 +115,10 @@ QString BaseObject::getSQLName(ObjectType obj_type)
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
 {
-	//int i;
 	bool is_formated=false;
 	QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
-
-	/*QRegExp regexp_vect[]={
-		QRegExp("(\")(.)+(\")"),
-		QRegExp("(\")(.)+(\")(\\.)(\")(.)+(\")"),
-		QRegExp("(\")(.)+(\")(\\.)(.)+"),
-		QRegExp("(.)+(\\.)(\")(.)+(\")"),
-		QRegExp("(.)+(\\.)(.)+")
-	};*/
-
-	/* Checks through regular expressions
-		if the name passed to be formatted is yet
-		formatted. The forms likely to be formatted are:
-
-		1) "OBJECT_NAME"
-		2) "SCHEMA_NAME"."OBJECT_NAME"
-		3) "SCHEMA_NAME".OBJECT_NAME
-		4) SCHEMA_NAME."OBJECT_NAME"
-		5) SCHEMA_NAME.OBJECT_NAME */
-		/* for(i=0; i < 5 && !is_formated; i++)
-				is_formated=regexp_vect[i].exactMatch(name); */
 
 	//Checking if the name is already formated enclosed by quotes
 	is_formated=QRegExp("(\")(.)+(\")").exactMatch(name);
@@ -148,7 +129,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		 with PostgreSQL rules for other types of objects */
 	if(!is_formated && (is_operator || isValidName(name)))
 	{
-		bool is_upper=false;
+    bool needs_fmt=false;
 		unsigned i, qtd;
 
 		raw_name.append(name);
@@ -156,12 +137,13 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
-		is_upper=(name.indexOf('-')>=0 && !is_operator) ||
-						 (name.indexOf('.')>=0 && !is_operator) ||
-						 (name.indexOf('@')>=0 && !is_operator);
+    needs_fmt=(name.indexOf('-')>=0 && !is_operator) ||
+              (name.indexOf('.')>=0 && !is_operator) ||
+              (name.indexOf('@')>=0 && !is_operator) ||
+              (name.indexOf(' ')>=0 && !is_operator);
 
 		i=0;
-		while(i < qtd && !is_upper)
+    while(i < qtd && !needs_fmt)
 		{
 			chr=raw_name[i];
 
@@ -196,12 +178,12 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 				 QChar(chr).isUpper())
 			{
-				is_upper=true;
+        needs_fmt=true;
 			}
 
 		}
 
-		if(is_upper)
+    if(needs_fmt)
 			frmt_name="\"" + name + "\"";
 		else
 			frmt_name=name;
@@ -214,22 +196,20 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 bool BaseObject::isValidName(const QString &name)
 {
-	int len;
-	QByteArray raw_name;
-
-	raw_name.append(name);
-	len=raw_name.size();
-
 	/* If the name is greater than the maximum size accepted
 		by PostgreSQL (currently 63 bytes) or it is empty
 		the name is invalid */
-	if(raw_name.isEmpty() || len > OBJECT_NAME_MAX_LENGTH)
+  if(name.isEmpty() || name.size() > OBJECT_NAME_MAX_LENGTH)
 		return(false);
 	else
 	{
-		int i=0;
+    int i=0, len;
 		bool valid=true;
 		unsigned char chr='\0', chr1='\0', chr2='\0';
+    QByteArray raw_name;
+
+    raw_name.append(name);
+    len=raw_name.size();
 
 		chr=raw_name[0];
 		if(len > 1)
@@ -248,12 +228,12 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @] */
+      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ ] */
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
-					chr == '.' || chr == '@')
+          chr == '.' || chr == '@' || chr ==' ')
 			{
 				valid=true;
 				i++;
@@ -391,6 +371,7 @@ bool BaseObject::acceptsTablespace(ObjectType obj_type)
 {
 	return(obj_type==OBJ_INDEX ||
 				 obj_type==OBJ_TABLE ||
+         obj_type==OBJ_VIEW ||
 				 obj_type==OBJ_CONSTRAINT ||
 				 obj_type==OBJ_DATABASE);
 }
@@ -419,7 +400,8 @@ bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
 				 obj_type!=OBJ_INDEX && obj_type!=OBJ_RELATIONSHIP &&
 				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
-				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION);
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
+         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
 }
 
 bool BaseObject::acceptsAppendedSQL(void)
@@ -558,16 +540,6 @@ unsigned BaseObject::getObjectId(void)
 	return(object_id);
 }
 
-bool BaseObject::operator == (const QString &name)
-{
-	return(this->obj_name==name);
-}
-
-bool BaseObject::operator != (const QString &name)
-{
-	return(this->obj_name!=name);
-}
-
 void BaseObject::setSQLDisabled(bool value)
 {
 	sql_disabled=value;
@@ -613,7 +585,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 						(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
 						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP));
 
-		/* Marking the flag that indicates that the comment form to be generated
+    /* Marking the flag that indicates that the comment/drop form to be generated
 		 for the object is specific to it, ignoring the default rule.
 		 (See SQL schema file for comments) */
 		switch(obj_type)
@@ -628,6 +600,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			case OBJ_OPERATOR:
 			case OBJ_OPCLASS:
 			case OBJ_OPFAMILY:
+      case OBJ_INDEX:
+      case OBJ_EXTENSION:
 				attributes[ParsersAttributes::DIF_SQL]="1";
 				attributes[objs_schemas[obj_type]]="1";
 			break;
@@ -705,13 +679,18 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
 				SchemaParser::setIgnoreUnkownAttributes(true);
+        //! \brief Checks if the objects name is the same as the passed name
+        //bool operator == (const QString &obj_name);
+
+        //! \brief Checks if the objects name differs from the passed name
+        //bool operator != (const QString &obj_name);
 				attributes[ParsersAttributes::COMMENT]=
 						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
 		}
 
 
-		if(!appended_sql.isEmpty())
+    if(!appended_sql.isEmpty())
 		{
 			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
 
@@ -726,6 +705,14 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[ParsersAttributes::APPENDED_SQL]="-- Appended SQL commands --\n" +	appended_sql + "\n";
 			}
 		}
+
+    if(def_type==SchemaParser::SQL_DEFINITION)
+    {
+      SchemaParser::setIgnoreUnkownAttributes(true);
+      SchemaParser::setIgnoreEmptyAttributes(true);
+      attributes[ParsersAttributes::DROP]=
+          SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
+    }
 
 		if(reduced_form)
 			attributes[ParsersAttributes::REDUCED_FORM]="1";
@@ -823,13 +810,12 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
-	ObjectType types[]={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-											 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION,
-											 OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
-											 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
-											 OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
-											 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
-	vector<ObjectType> vet_types(types, types + sizeof(types) / sizeof(ObjectType));
+  vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
+                         OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
+                         OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+                         OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
+                         OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
+                         OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
 
 	if(inc_table_objs)
 	{
@@ -843,6 +829,19 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 	return(vet_types);
 }
 
+vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
+{
+  if(obj_type==OBJ_DATABASE)
+    return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA});
+  else if(obj_type==OBJ_SCHEMA)
+    return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
+                                  OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
+  else if(obj_type==OBJ_TABLE)
+    return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+  else
+    return(vector<ObjectType>()={});
+}
+
 void BaseObject::operator = (BaseObject &obj)
 {
 	this->owner=obj.owner;
@@ -854,6 +853,5 @@ void BaseObject::operator = (BaseObject &obj)
 	this->obj_type=obj.obj_type;
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
-	this->system_obj=obj.system_obj;
+  this->system_obj=obj.system_obj;
 }
-

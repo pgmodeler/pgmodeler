@@ -4,7 +4,11 @@
 
 %if @{list} %then
   [SELECT oid, datname AS name, datlastsysoid AS last_sys_oid FROM pg_database
-   WHERE datistemplate = FALSE  AND datname <> 'postgres' ]
+   WHERE datistemplate = FALSE  ]
+
+  %if @{hide-postgres-db} %then
+   [ AND datname <> 'postgres' ]
+  %end
 
   %if @{name} %then
    [ AND datname = ] '@{name}'
@@ -17,14 +21,18 @@
 	      datacl AS permission, dattablespace AS tablespace, datdba AS owner,
 	      NULL AS template, ]
 	      (@{comment}) [ AS comment ]
-      [ FROM pg_database WHERE datistemplate = FALSE AND datname <> 'postgres' ]
+      [ FROM pg_database WHERE datistemplate = FALSE ]
+
+      %if @{hide-postgres-db} %then
+        [ AND datname <> 'postgres' ]
+      %end
 
       %if @{last-sys-oid} %then
        [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{filter-oids} %then
-	[ AND oid IN (] @{filter-oids} )
+        [ AND oid IN (] @{filter-oids} )
       %end
 
     %end

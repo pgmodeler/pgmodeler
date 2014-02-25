@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>600</height>
+    <height>638</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -113,7 +113,7 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="0" column="4">
+       <item row="0" column="5">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -126,7 +126,7 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="6">
+       <item row="0" column="7">
         <widget class="QPushButton" name="objects_btn">
          <property name="font">
           <font>
@@ -188,7 +188,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="5">
+       <item row="0" column="6">
         <widget class="QPushButton" name="operations_btn">
          <property name="font">
           <font>
@@ -250,7 +250,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="0" column="4">
         <widget class="QWidget" name="bg_saving_wgt" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -304,7 +304,7 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -317,11 +317,42 @@
          </property>
         </spacer>
        </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="sql_tool_btn">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>SQL Tool</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/codigosql.png</normaloff>:/icones/icones/codigosql.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="shortcut">
+          <string>Alt+Q</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QSplitter" name="h_splitter">
+     <widget class="QSplitter" name="h_splitter_opr_objs">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -464,22 +495,33 @@
              <number>0</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QSplitter" name="splitter">
+             <widget class="QSplitter" name="h_splitter2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="handleWidth">
+               <number>5</number>
               </property>
               <property name="childrenCollapsible">
                <bool>false</bool>
               </property>
               <widget class="QWidget" name="model_valid_parent" native="true"/>
-              <widget class="QWidget" name="obj_finder_parent" native="true"/>
+              <widget class="QWidget" name="obj_finder_parent" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </widget>
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="sql_tool_parent" native="true"/>
          </widget>
         </item>
        </layout>
@@ -511,7 +553,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QSplitter" name="v_splitter">
+         <widget class="QSplitter" name="v_splitter_oprs_objs">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -566,7 +608,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -609,7 +651,7 @@
    </widget>
    <widget class="QMenu" name="about_menu">
     <property name="title">
-     <string>&amp;Help</string>
+     <string>Help</string>
     </property>
     <addaction name="action_wiki"/>
     <addaction name="action_about"/>
@@ -791,10 +833,10 @@
     <string>Ctrl+=</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
    <property name="priority">
-    <enum>QAction::HighPriority</enum>
+    <enum>QAction::NormalPriority</enum>
    </property>
   </action>
   <action name="action_dec_zoom">
@@ -903,6 +945,9 @@
    </property>
    <property name="shortcut">
     <string>F3</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="action_print">

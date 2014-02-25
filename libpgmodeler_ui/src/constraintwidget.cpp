@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,9 +108,11 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 
-		selectConstraintType();
-
 		parent_form->setMinimumSize(600, 640);
+
+    selectConstraintType();
+
+    configureTabOrder();
 	}
 	catch(Exception &e)
 	{
@@ -339,10 +341,11 @@ void ConstraintWidget::selectConstraintType(void)
 
 	info_frm->setVisible(constr_type==ConstraintType::primary_key);
 
-	deferrable_lbl->setVisible(constr_type==ConstraintType::foreign_key);
-	deferrable_chk->setVisible(constr_type==ConstraintType::foreign_key);
-	deferral_cmb->setVisible(constr_type==ConstraintType::foreign_key);
-	deferral_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+  deferrable_lbl->setVisible(constr_type!=ConstraintType::check);
+  deferrable_chk->setVisible(constr_type!=ConstraintType::check);
+  deferral_cmb->setVisible(constr_type!=ConstraintType::check);
+  deferral_lbl->setVisible(constr_type!=ConstraintType::check);
+
 	match_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 	match_cmb->setVisible(constr_type==ConstraintType::foreign_key);
 	on_delete_cmb->setVisible(constr_type==ConstraintType::foreign_key);
@@ -426,8 +429,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
 		fill_factor_sb->setValue(constr->getFillFactor());
-		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(false)));
-		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(true)));
+    on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
+    on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
 
 		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
 		if(ref_table)
@@ -475,8 +478,8 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));
-		constr->setActionType(ActionType(on_delete_cmb->currentText()),false);
-		constr->setActionType(ActionType(on_update_cmb->currentText()),true);
+    constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DELETE_ACTION);
+    constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UPDATE_ACTION);
 		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(indexing_chk->isChecked())

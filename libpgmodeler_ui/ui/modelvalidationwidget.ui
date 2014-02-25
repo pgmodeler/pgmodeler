@@ -490,6 +490,12 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>PostgreSQL version</string>
         </property>
@@ -529,6 +535,9 @@
        <width>20</width>
        <height>20</height>
       </size>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+S</string>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -648,6 +657,9 @@
        <height>20</height>
       </size>
      </property>
+     <property name="shortcut">
+      <string>Esc</string>
+     </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
@@ -685,6 +697,14 @@
  </widget>
  <tabstops>
   <tabstop>validate_btn</tabstop>
+  <tabstop>fix_btn</tabstop>
+  <tabstop>swap_ids_btn</tabstop>
+  <tabstop>clear_btn</tabstop>
+  <tabstop>options_btn</tabstop>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>sql_validation_chk</tabstop>
+  <tabstop>connections_cmb</tabstop>
+  <tabstop>version_cmb</tabstop>
   <tabstop>output_trw</tabstop>
   <tabstop>hide_tb</tabstop>
  </tabstops>

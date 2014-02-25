@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ enum ObjectType {
 	OBJ_PERMISSION,
 	OBJ_PARAMETER,
 	OBJ_TYPE_ATTRIBUTE,
+  OBJ_TAG,
 	BASE_RELATIONSHIP,
 	BASE_OBJECT,
 	BASE_TABLE
@@ -92,7 +93,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType (excluding BASE_OBJECT and BASE_TABLE).
-		static const int OBJECT_TYPE_COUNT=33;
+    static const int OBJECT_TYPE_COUNT=34;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -168,6 +169,9 @@ class BaseObject {
 		or some of them are system object. The boolean param enables the id swap between ordinary object and
 		cluster level objects (database, tablespace and roles). */
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
+
+    //! \brief Clears all the attributes used by the SchemaParser
+    void clearAttributes(void);
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
@@ -252,7 +256,7 @@ class BaseObject {
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
-		QString getName(bool format=false, bool prepend_schema=true);
+    virtual QString getName(bool format=false, bool prepend_schema=true);
 
 		//! \brief Retorns the object's comment
 		QString getComment(void);
@@ -289,17 +293,8 @@ class BaseObject {
 		//! \brief Returns if the object is protected or not
 		bool isProtected(void);
 
-		//! \brief Checks if the objects name is the same as the passed name
-		bool operator == (const QString &obj_name);
-
-		//! \brief Checks if the objects name differs from the passed name
-		bool operator != (const QString &obj_name);
-
 		//! \brief Assigns an object to other copiyng all the attributes correctly
-		void operator = (BaseObject &obj);
-
-		//! \brief Clears all the attributes used by the SchemaParser
-		void clearAttributes(void);
+    virtual void operator = (BaseObject &obj);
 
 		/*! \brief Forcing the class to be virtual. This means that derivated classes may
 		 override this method in order to be possible its instatiation. */
@@ -308,7 +303,7 @@ class BaseObject {
 		/*! \brief Returns the object's SQL or XML code definition. The attribute 'reduced_form'
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
-		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+    virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);
@@ -340,11 +335,17 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsAppendedSQL(void);
 
-		/*! \brief Returns the valid object types in a vector. The types
+    /*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
-		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+    static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+
+    /*! \brief Returns the valid object types that are child or grouped under the specified type.
+    This method works a litte different from getObjectTypes() since this latter returns all valid types
+    and this one returns only the valid types for the current specified type. For now the only accepted
+    types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
+    static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

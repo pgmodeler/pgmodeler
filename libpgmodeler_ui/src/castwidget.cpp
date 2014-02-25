@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 
 		setRequiredField(src_datatype);
 		setRequiredField(trg_datatype);
+
+    configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
+                        conv_func_sel, src_datatype, trg_datatype });
 	}
 	catch(Exception &e)
 	{

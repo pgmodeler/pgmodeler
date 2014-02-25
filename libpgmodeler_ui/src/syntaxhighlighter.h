@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,6 +67,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 					this->end_block=-1;
 				}
 		};
+
+    //! brief Stores the parent text edit in order to handle text pasting on eventFilter
+    QTextEdit *parent_txt;
 
 		/*! \brief Stores the multiline infos and is used to check if the text being typed
 		by the user is on a multiline block */

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -254,8 +254,10 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 
 	/* Returns the column format in the current tuple.
 		According to libpq documentation, value = 0, indicates column text format,
-		value = 1 the column has binary format, the other values are reserved */
-	return(PQfformat(sql_result, column_idx)==1);
+    value = 1 the column has binary format, the other values are reserved.
+
+    One additional check is made, if the type of the column is bytea. */
+  return(PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
 }
 
 bool ResultSet::accessTuple(unsigned tuple_type)
@@ -297,7 +299,12 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		}
 
 		return(accessed);
-	}
+  }
+}
+
+bool ResultSet::isEmpty(void)
+{
+  return(empty_result);
 }
 
 void ResultSet::operator = (ResultSet &res)

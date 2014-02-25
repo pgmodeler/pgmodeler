@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class Operation {
 
 	public:
 		//! \brief Constants used to reference the type of operations
-		static constexpr unsigned OBJECT_MODIFIED=0,
+		static const unsigned OBJECT_MODIFIED=0,
 															OBJECT_CREATED=1,
 															OBJECT_REMOVED=2,
 															/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
@@ -72,7 +72,7 @@ class Operation {
 															OBJECT_MOVED=3;
 
 		//! \brief Operation chain types
-		static constexpr unsigned NO_CHAIN=10, //! \brief The operation is not part of a chain
+		static const unsigned NO_CHAIN=10, //! \brief The operation is not part of a chain
 															CHAIN_START=11, //! \brief The operation is the head of the chain
 															CHAIN_MIDDLE=12, //! \brief The operation is in the middle of the chain
 															CHAIN_END=13; //! \brief The operation is the last on the chain

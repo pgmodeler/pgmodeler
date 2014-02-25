@@ -4,7 +4,9 @@
 #          Code generation can be broken if incorrect changes are made.
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-[CREATE OR REPLACE FUNCTION ] @{name} $sp ( %if @{parameters} %then @{parameters} %end ) $br
+@{drop}
+
+[CREATE FUNCTION ] @{name} $sp ( %if @{parameters} %then @{parameters} %end ) $br
 $tb [RETURNS ]
 
 %if @{return-table} %then

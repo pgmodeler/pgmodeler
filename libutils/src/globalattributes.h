@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <QString>
 #include <QDir>
+#include <QDate>
 
 namespace GlobalAttributes {
 
@@ -67,13 +68,14 @@ namespace GlobalAttributes {
 			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("pgmodeler-ch.exe"));
 		#endif
 	#else
-		//For MacOSX the crash handler path is fixed (inside bundle)
+        //For MacOSX the crash handler path is fixed (inside bundle)
         CRASH_HANDLER_PATH=QString("startapp pgmodeler-ch");
 	#endif
 
 	static const QString
-	PGMODELER_VERSION="0.6.2",
-	PGMODELER_VER_CODENAME="Daring Mammoth",
+  PGMODELER_VERSION="0.7.0",
+  PGMODELER_VER_CODENAME="Brave Mastodon",
+  PGMODELER_BUILD_NUMBER=QDate::fromString(__DATE__, "MMM dd yyyy").toString("yyyyMMdd"),
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",

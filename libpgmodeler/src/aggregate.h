@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class Aggregate: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
-		static constexpr unsigned FINAL_FUNC=0,
+    static const unsigned FINAL_FUNC=0,
 															TRANSITION_FUNC=1;
 
 		Aggregate(void);

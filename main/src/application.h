@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,36 +28,19 @@
 #define APPLICATION_H
 
 #include <QApplication>
-#include <QMessageBox>
-#include "messagebox.h"
 #include <QTextStream>
+#include <QTranslator>
+#include <QFile>
+#include "globalattributes.h"
+#include "messagebox.h"
 
 class Application: public QApplication {
 	private:
-		Messagebox msg_box;
+    Messagebox msg_box;
 
-	public:
-
-		Application(int & argc, char ** argv) : QApplication(argc,argv)
-		{}
-
-		bool notify(QObject * receiver, QEvent * event)
-		{
-			try
-			{
-				return(QApplication::notify(receiver,event));
-			}
-			catch(Exception &e)
-			{
-				msg_box.show(e);
-				return(false);
-			}
-			catch(...)
-			{
-				msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
-				return(false);
-			}
-		}
+  public:
+    Application(int & argc, char ** argv);
+    bool notify(QObject * receiver, QEvent * event);
 };
 
 #endif

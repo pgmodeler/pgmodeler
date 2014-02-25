@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,23 @@
 
 BaseTable::BaseTable(void)
 {
+ tag=nullptr;
  obj_type=BASE_TABLE;
+ attributes[ParsersAttributes::TAG]="";
 }
 
+void BaseTable::setTag(Tag *tag)
+{
+  this->tag=tag;
+}
+
+Tag *BaseTable::getTag(void)
+{
+  return(tag);
+}
+
+void BaseTable::operator = (BaseTable &tab)
+{
+  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+  this->tag=tab.tag;
+}

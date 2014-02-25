@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]="";
 
 	selectPaperSize();
 }
@@ -59,7 +63,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 {
 	QStringList margin, custom_size;
 	vector<QString> key_attribs;
-	unsigned interv;
+  unsigned interv=0;
 
 	key_attribs.push_back(ParsersAttributes::ID);
 	BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, key_attribs);
@@ -71,6 +75,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 	autosave_interv_chk->setChecked(interv > 0);
 	autosave_interv_spb->setValue(interv);
 	autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
+  corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
 
 	print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 	print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -92,6 +97,10 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 	hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 	hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
+  hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
+
+  font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
+  font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
 
 	this->applyConfiguration();
 }
@@ -117,6 +126,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? "1" : "");
 
 		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -134,6 +144,10 @@ void GeneralConfigWidget::saveConfiguration()
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? "1" : "");
+
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
@@ -178,9 +192,11 @@ void GeneralConfigWidget::applyConfiguration(void)
 																		 QSizeF(width_spb->value(), height_spb->value()));
 	unity_cmb->setCurrentIndex(unit);
 
+  ObjectsScene::enableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::hideExtAttributes(hide_ext_attribs_chk->isChecked());
+  BaseTableView::hideTags(hide_table_tags_chk->isChecked());
 	RelationshipView::hideNameLabel(hide_rel_name_chk->isChecked());
 }
 

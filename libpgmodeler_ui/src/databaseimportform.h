@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,15 +45,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
 
-		//! \brief This attribute controls the general import progress
-		int progress;
-
-		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
-		The "root" parameter is used to associate the group of objects as child of it.
-		The "schema" and "table" parameter are used to filter objects by schema and/or table.
-		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
-		vector<QTreeWidgetItem *> updateObjectsTree(vector<ObjectType> types, QTreeWidgetItem *root=nullptr,
-																								const QString &schema="", const QString &table="");
 
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */
@@ -75,10 +66,33 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void destroyModelWidget(void);
 
 	public:
+    //! brief Constants used to access the tree widget items data
+    static const unsigned OBJECT_ID=0,
+                          OBJECT_TYPE=1,
+                          OBJECT_SCHEMA=2,
+                          OBJECT_TABLE=3,
+                          OBJECT_COUNT=4; //Only for gropus
+
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
+
+    //! brief Fills a combo box with all available databases according to the configurations of the specified import helper
+    static void listDatabases(DatabaseImportHelper &import_helper, bool hide_postgres_db, QComboBox *dbcombo);
+
+    //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
+    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps);
+
+    static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, bool filter_by_oid);
+
+    /*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
+    The "root" parameter is used to associate the group of objects as child of it.
+    The "schema" and "table" parameter are used to filter objects by schema and/or table.
+    This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
+    static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
+                                                       bool checkable_items=false, bool disable_empty_grps=true,
+                                                       QTreeWidgetItem *root=nullptr, const QString &schema="", const QString &table="");
 
 	private slots:
 		void importDatabase(void);
@@ -86,12 +100,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void listDatabases(void);
 		void hideProgress(bool value=true);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
-
 		void cancelImport(void);
 		void handleImportCanceled(void);
 		void handleImportFinished(Exception e);
 		void captureThreadError(Exception e);
-
 		void filterObjects(void);
 
 		//! \brief Toggles the check state for the specified item
@@ -99,10 +111,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		//! \brief Toggles the check state for all items
 		void setItemsCheckState(void);
-
-	signals:
-		//! \brief This signal is emitted when a object is retrieved from database
-		void s_objectsRetrieved(int prog,QString msg,unsigned obj_id);
 };
 
 #endif

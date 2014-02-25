@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,12 +46,6 @@ class ModelWidget: public QWidget {
 		//! \brief Indicates if the model was modified by some operation
 		bool modified;
 
-		//! \brief Stores the objects that can be navigate through Alt+<left|right> keys
-		vector<BaseGraphicObject *> obj_nav_list;
-
-		//! \brief Stores the current selected object by the navigation
-		unsigned obj_nav_idx;
-
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *obj);
 
@@ -93,6 +87,9 @@ class ModelWidget: public QWidget {
 					//! \brief Stores the role names used by the "change owner" operation
 					owners_menu,
 
+          //! \brief Stores the tags used by the "set tag" operation
+          tags_menu,
+
 					break_rel_menu;
 
 		QAction *action_source_code,
@@ -118,7 +115,8 @@ class ModelWidget: public QWidget {
 						*action_append_sql,
 						*action_create_seq_col,
 						*action_break_rel_line,
-						*action_remove_rel_points;
+            *action_remove_rel_points,
+            *action_set_tag;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -178,7 +176,7 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	public:
-		static constexpr float MINIMUM_ZOOM=0.05f,
+    static constexpr float MINIMUM_ZOOM=0.05f,
 													 MAXIMUM_ZOOM=4.0f,
 													 ZOOM_INCREMENT=0.05f;
 
@@ -212,7 +210,7 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
-	private slots:
+  private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 
@@ -254,6 +252,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
+
+    //! \brief Quickly sets the table's tag via popup menu
+    void setTag(void);
 
 		//! \brief Triggers the permission editing form
 		void editPermissions(void);
@@ -301,10 +302,7 @@ class ModelWidget: public QWidget {
 		//! \brief Removes any user added point from relationship
 		void removeRelationshipPoints(void);
 
-		//! \brief Returns a vector containing all the page rects.
-		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt);
-
-		//! \brief Highlights the object stored on the action that triggers the slot
+    //! \brief Highlights the object stored on the action that triggers the slot
 		void highlightObject(void);
 
 	public slots:

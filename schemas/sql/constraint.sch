@@ -6,8 +6,10 @@
  $tb 
 %else
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
- %if @{table} %then
-  [ALTER TABLE ] @{table} [ ADD ]
+
+  %if @{table} %then
+   @{drop}
+   [ALTER TABLE ] @{table} [ ADD ]
   %end
 %end
 
@@ -54,13 +56,10 @@
   
   %if @{decl-in-table} %then $tb %end
   [ON DELETE ] @{del-action} [ ON UPDATE ] @{upd-action}
+%end
 
-  %if @{deferrable} %then
-   [ DEFERRABLE ] @{defer-type}
-  %else
-   [ NOT DEFERRABLE]
-  %end
-
+%if @{deferrable} %then
+  [ DEFERRABLE ] @{defer-type}
 %end
 
 %if @{decl-in-table} %then [,] 

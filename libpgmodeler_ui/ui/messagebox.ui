@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>520</width>
     <height>175</height>
    </rect>
   </property>
@@ -184,7 +184,7 @@
                <string>msg</string>
               </property>
               <property name="textFormat">
-               <enum>Qt::AutoText</enum>
+               <enum>Qt::RichText</enum>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -391,20 +391,23 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="1">
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>298</width>
-         <height>27</height>
-        </size>
+       <property name="text">
+        <string/>
        </property>
-      </spacer>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="2">
+     <item row="0" column="1">
       <widget class="QWidget" name="container_wgt" native="true">
        <layout class="QGridLayout" name="gridLayout">
         <property name="leftMargin">
@@ -421,6 +424,12 @@
         </property>
         <item row="0" column="0">
          <widget class="QPushButton" name="yes_ok_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -429,16 +438,12 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>90</width>
-            <height>16777215</height>
+            <width>16777215</width>
+            <height>32</height>
            </size>
           </property>
           <property name="text">
            <string>&amp;Yes</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../res/resources.qrc">
-            <normaloff>:/icones/icones/confirmar.png</normaloff>:/icones/icones/confirmar.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -456,6 +461,12 @@
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="no_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -464,16 +475,12 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>90</width>
-            <height>16777215</height>
+            <width>16777215</width>
+            <height>32</height>
            </size>
           </property>
           <property name="text">
            <string>&amp;No</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../res/resources.qrc">
-            <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -485,18 +492,26 @@
         </item>
         <item row="0" column="3">
          <widget class="QPushButton" name="cancel_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>90</width>
             <height>32</height>
            </size>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>32</height>
+           </size>
+          </property>
           <property name="text">
            <string>Cancel</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../res/resources.qrc">
-            <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -507,16 +522,6 @@
          </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
-       </property>
       </widget>
      </item>
     </layout>

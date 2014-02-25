@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,12 @@ QPrinter::Orientation ObjectsScene::page_orientation=QPrinter::Landscape;
 QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
+bool ObjectsScene::corner_move=true;
 
 ObjectsScene::ObjectsScene(void)
 {
-	moving_objs=false;
+  moving_objs=move_scene=false;
+  enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
 	sel_ini_pnt.setX(NAN);
@@ -47,12 +49,20 @@ ObjectsScene::ObjectsScene(void)
 
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
+
+  scene_move_dx=scene_move_dy=0;
+
+  connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
+  connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
+
+  scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
+  corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
-	QList<QGraphicsItem *> items;//, rem_items;
+  QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
 													 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
@@ -87,6 +97,16 @@ ObjectsScene::~ObjectsScene(void)
 			items.pop_front();
 		}
 	}
+}
+
+void ObjectsScene::enableCornerMove(bool enable)
+{
+  ObjectsScene::corner_move=enable;
+}
+
+bool ObjectsScene::isCornerMoveEnabled(void)
+{
+  return(ObjectsScene::corner_move);
 }
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
@@ -359,10 +379,9 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Selects the object (without press control) if the user is creating a relationship
 		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 			item->setSelected(true);
-		else if(this->selectedItems().isEmpty())
+    else if(enable_range_sel && this->selectedItems().isEmpty())
 		{
-			//sel_ini_pnt=event->scenePos();
-			selection_rect->setVisible(true);
+      selection_rect->setVisible(true);
 			emit s_objectSelected(nullptr,false);
 		}
 	}
@@ -379,10 +398,103 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
+bool ObjectsScene::mouseIsAtCorner(void)
+{
+  QList<QGraphicsView *> views=this->views();
+
+  if(!views.isEmpty())
+  {
+    QGraphicsView *view=views[0];
+    QPoint pos=view->mapFromGlobal(QCursor::pos());
+    QRect rect=view->rect();
+
+    if(rect.contains(pos))
+    {
+      if(pos.x() <= SCENE_MOVE_THRESHOLD)
+        scene_move_dx=-SCENE_MOVE_STEP;
+      else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SCENE_MOVE_THRESHOLD))
+        scene_move_dx=SCENE_MOVE_STEP;
+      else
+        scene_move_dx=0;
+
+      if(pos.y() <= SCENE_MOVE_THRESHOLD)
+        scene_move_dy=-SCENE_MOVE_STEP;
+      else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SCENE_MOVE_THRESHOLD))
+        scene_move_dy=SCENE_MOVE_STEP;
+      else
+        scene_move_dy=0;
+
+      return(scene_move_dx!=0 || scene_move_dy!=0);
+    }
+    else
+      return(false);
+  }
+  else
+    return(false);
+}
+
+void ObjectsScene::moveObjectScene(void)
+{
+  if(scene_move_dx!=0 || scene_move_dy!=0)
+  {
+    QList<QGraphicsView *> views=this->views();
+
+    if(!views.isEmpty() && mouseIsAtCorner())
+    {
+      QGraphicsView *view=views[0];
+      view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
+      view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
+      move_scene=true;
+    }
+    else
+    {
+      move_scene=false;
+      scene_move_timer.stop();
+    }
+  }
+}
+
+void ObjectsScene::enableSceneMove(bool value)
+{
+  if(value)
+  {
+  scene_move_timer.start();
+  corner_hover_timer.stop();
+  }
+  else
+  {
+    corner_hover_timer.stop();
+    scene_move_timer.stop();
+  }
+
+  move_scene=value;
+}
+
+void ObjectsScene::enableRangeSelection(bool value)
+{
+  enable_range_sel=value;
+
+  if(!value && selection_rect->isVisible())
+    selection_rect->setVisible(value);
+}
+
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(event->buttons()==Qt::LeftButton)
-	{
+  if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
+  {
+    if(corner_move)
+    {
+      if(mouseIsAtCorner())
+      {
+       if(move_scene)
+         scene_move_timer.start();
+       else
+         corner_hover_timer.start();
+      }
+      else
+        enableSceneMove(false);
+    }
+
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
@@ -418,6 +530,10 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseReleaseEvent(event);
+
+  if(corner_move && event->button()==Qt::LeftButton)
+    enableSceneMove(false);
+
 
 	//If there is selected object and the user ends the object moviment
 	if(!this->selectedItems().isEmpty() && moving_objs &&
@@ -591,5 +707,64 @@ void ObjectsScene::alignObjectsToGrid(void)
 void ObjectsScene::update(void)
 {
 	this->setBackgroundBrush(grid);
-	QGraphicsScene::update(this->sceneRect());
+  QGraphicsScene::update(this->sceneRect());
+}
+
+vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
+{
+  vector<QRectF> pages;
+  QRectF page_rect, max_rect;
+  float width, height, page_width, page_height;
+  unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+  QList<QGraphicsItem *> list;
+
+  page_width=ceilf(paper_size.width() - margin.width()-1);
+  page_height=ceilf(paper_size.height() - margin.height()-1);
+
+  //Calculates the horizontal and vertical page count based upon the passed paper size
+  h_page_cnt=roundf(this->sceneRect().width()/page_width) + 1;
+  v_page_cnt=roundf(this->sceneRect().height()/page_height) + 1;
+
+  //Calculates the maximum count of horizontal and vertical pages
+  for(v_page=0; v_page < v_page_cnt; v_page++)
+  {
+    for(h_page=0; h_page < h_page_cnt; h_page++)
+    {
+      //Calculates the current page rectangle
+      page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
+
+      //Case there is selected items recalculates the maximum page size
+      list=this->items(page_rect, Qt::IntersectsItemShape);
+      if(!list.isEmpty())
+      {
+        if(start_h > h_page) start_h=h_page;
+        if(start_v > v_page) start_v=v_page;
+
+        width=page_rect.left() + page_rect.width();
+        height=page_rect.top() + page_rect.height();
+
+        if(width > max_rect.width())
+          max_rect.setWidth(width);
+
+        if(height > max_rect.height())
+          max_rect.setHeight(height);
+      }
+    }
+  }
+
+  //Re calculates the maximum page count based upon the maximum page size
+  h_page_cnt=roundf(max_rect.width()/page_width);
+  v_page_cnt=roundf(max_rect.height()/page_height);
+
+  //Inserts the page rectangles on the list
+  for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
+    for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
+      pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+
+  return(pages);
+}
+
+bool ObjectsScene::isRangeSelectionEnabled(void)
+{
+  return(enable_range_sel);
 }

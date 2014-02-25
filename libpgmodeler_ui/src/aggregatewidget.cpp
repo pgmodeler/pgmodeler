@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
-		final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+    final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+    transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+    sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
@@ -44,9 +44,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 																						ObjectTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
-		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
-		funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
-		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
+    funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
+    funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
+    funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(2,2,2,2);
@@ -67,7 +67,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		frame->setParent(this);
 
 		configureFormLayout(funcaoagregacao_grid, OBJ_AGGREGATE);
-
 		parent_form->setMinimumSize(645, 750);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
@@ -77,8 +76,10 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(state_type);
 		setRequiredField(input_type);
 		setRequiredField(transition_func_sel);
-		setRequiredField(transition_func_lbl);
-	}
+    setRequiredField(transition_func_lbl);
+
+    configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
+  }
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
