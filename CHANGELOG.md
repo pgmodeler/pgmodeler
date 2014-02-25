@@ -1,21 +1,12 @@
 Changelog
 ---------
 
-v0.7.0-alpha
+v0.7.0
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: February 14, 2014</em><br/>
+<em>Release date: February 25, 2014</em><br/>
 
-<em><strong>Build 20140214</strong></em><br/>
-
-* [Fix] Fixed bug that was crashing pgModeler when a error was raised on view edit form.
-* [Fix] Fixed a bug that was crashing the application when deleting relationship attributes or constraints.
-* [Fix] Fixed bug related to the range selection weird behavior when finishing creating a object.
-* [Fix] Minor fix on OperationList undo/redo methods to update types names on tables that references a modified type.
-* [Fix] Minor fix on View assignment operator to correctly rename the type associated with "this" object.
-* [Fix] Minor fix on DatabaseModel to correctly return the references to a view type.
-
-<br/><strong><em>Previous builds</em></strong><br/>
+* [New] Addded a  catalog attribute "hide-postgres-db" in order to avoid listing "postgres" maintainance DB on import operations.
 * [New] Added options to hide system/extension objects on SQL tool improving the object listing performance.
 * [New] Added support to custom compilation output directory through qmake variables BINDIR, LIBDIR and RESDIR.
 * [New] Added support to deferrable unique, exclude and primary key constraints.
@@ -34,6 +25,7 @@ v0.7.0-alpha
 * [New] Added support to move the canvas by positioning the mouse over corners.
 * [New] Added a configuration parameter to control font style for any source code highlight field.
 * [New] Added additional PostGiS types: geomval, addbandarg, rastbandarg, raster, reclassarg, unionarg, TopoGeometry, getfaceedges_returntype, validatetopology_returntype.
+* [Change] Added support to on-demand updates on sql tool object's tree.
 * [Change] Improved the tab navigation experience on editing forms.
 * [Change] Minor change on SQL tool to ommit binary data values.
 * [Change] Dropped the navigation through object using Alt + <left|right> due to the difficulty to understand the order in which objects are highlighted.
@@ -55,6 +47,16 @@ v0.7.0-alpha
 * [Change] Minor adjustments on window title buttons for model export and database import forms.
 * [Change] Improvement on connection config form. pgModeler now ask to save/update unsaved connection if the user forgot to.
 * [Change] Minor update sql syntax highlighting configuration file.
+* [Fix] Fixed bug that was permitting paste already formatted text (html) on source code input fields.
+* [Fix] Fix broken range type generation.
+* [Fix] The DELETE privilege is now correclty saved on model.
+* [Fix] Fixed drop object command on SQL tool.
+* [Fix] Fixed bug that was crashing pgModeler when a error was raised on view edit form.
+* [Fix] Fixed a bug that was crashing the application when deleting relationship attributes or constraints.
+* [Fix] Fixed bug related to the range selection weird behavior when finishing creating a object.
+* [Fix] Minor fix on OperationList undo/redo methods to update types names on tables that references a modified type.
+* [Fix] Minor fix on View assignment operator to correctly rename the type associated with "this" object.
+* [Fix] Minor fix on DatabaseModel to correctly return the references to a view type.
 * [Fix] Fixed bug that was causing indexes/triggers that references columns added by relationship have the sql code generated twice.
 * [Fix] Minor fix on ResultSet class to identify bytea columns.
 * [Fix] Minor fix on CLI menu to add new export modes.
