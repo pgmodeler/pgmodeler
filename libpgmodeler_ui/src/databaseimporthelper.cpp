@@ -38,7 +38,15 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void DatabaseImportHelper::closeConnection(void)
+{
+  if(connection.isStablished())
+    connection.close();
+
+  catalog.closeConnection();
 }
 
 void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
@@ -478,8 +486,7 @@ void DatabaseImportHelper::importDatabase(void)
 		else
 			emit s_importCanceled();
 
-		resetImportParameters();
-
+		resetImportParameters();   
 		sleepThread(20);
 	}
 	catch(Exception &e)

@@ -78,7 +78,13 @@ void Catalog::setConnection(Connection &conn)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void Catalog::closeConnection(void)
+{
+  if(connection.isStablished())
+    connection.close();
 }
 
 void Catalog::setFilter(unsigned filter)

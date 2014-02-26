@@ -194,13 +194,17 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);
 
+    /*! brief Closes all connections opened by this object including the catalog connection.
+    Once this method is called the user must call setConnection() again or the import will fail */
+    void closeConnection(void);
+
 		//! \brief Set the current database to work on
 		void setCurrentDatabase(const QString &dbname);
 
 		//! \brief Defines the selected object to be imported
 		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
-		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode);
+    void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode);
 
 		unsigned getLastSystemOID(void);
 
