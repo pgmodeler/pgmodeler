@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgmodeler
 
@@ -98,3 +97,10 @@ SOURCES +=  src/textbox.cpp \
 	    src/extension.cpp \
 	    src/pgmodelerns.cpp \
     src/tag.cpp
+
+# Check if LIBDESTDIR points to another location other than DESTDIR
+# in this case the INSTALLS will be used
+!equals(LIBDESTDIR, $$DESTDIR) {
+ target.path = $$LIBDESTDIR
+ INSTALLS = target
+}
