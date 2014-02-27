@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
@@ -208,3 +207,6 @@ FORMS += ui/mainwindow.ui \
     ui/swapobjectsidswidget.ui \
     ui/sqltoolwidget.ui \
     ui/tagwidget.ui
+
+target.path = $$LIBDESTDIR
+INSTALLS = target

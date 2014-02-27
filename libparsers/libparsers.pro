@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = parsers
 
@@ -15,3 +14,5 @@ HEADERS += src/schemaparser.h \
 SOURCES += src/schemaparser.cpp \
 	   src/xmlparser.cpp
 
+target.path = $$LIBDESTDIR
+INSTALLS = target

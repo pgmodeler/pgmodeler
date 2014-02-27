@@ -8,8 +8,8 @@ PGMODELER_SRC_DIR=../../
 
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
-PGMODELER_LIB_DIR=$$LIBDESTDIR
-PGMODELER_PLUGIN_DIR=$$RESDESTDIR/plugins
+PGMODELER_LIB_DIR=$$DESTDIR
+PGMODELER_PLUGIN_DIR=$$LIBDESTDIR/plugins
 
 macx {
  PGMODELER_SRC_DIR=../../
@@ -28,7 +28,6 @@ DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
-DESTDIR = build
 
 LIBS += $$PGMODELER_LIB_DIR/$$LIBUTILS \
 	$$PGMODELER_LIB_DIR/$$LIBPARSERS \
@@ -48,7 +47,9 @@ FORMS += ui/xml2objectwidget.ui
 unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
 windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
 
-xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
+xml2object.files += res/xml2object.png lang xml2object.json
 windows:xml2object.files += $$DESTDIR/$$LIB_PREFIX$$TARGET.a
 xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
-INSTALLS += xml2object
+
+target.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
+INSTALLS += target xml2object

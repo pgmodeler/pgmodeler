@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = objrenderer
 
@@ -29,3 +28,6 @@ SOURCES +=  src/baseobjectview.cpp \
 	    src/basetableview.cpp \
 	    src/objectsscene.cpp \
 	    src/schemaview.cpp
+
+target.path = $$LIBDESTDIR
+INSTALLS = target

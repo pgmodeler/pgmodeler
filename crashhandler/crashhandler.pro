@@ -6,12 +6,12 @@ TARGET = pgmodeler-ch
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
-LIBS += $$LIBDESTDIR/$$LIBUTILS \
-	$$LIBDESTDIR/$$LIBPARSERS \
-	$$LIBDESTDIR/$$LIBPGCONNECTOR \
-	$$LIBDESTDIR/$$LIBOBJRENDERER \
-	$$LIBDESTDIR/$$LIBPGMODELER \
-	$$LIBDESTDIR/$$LIBPGMODELERUI
+LIBS += $$DESTDIR/$$LIBUTILS \
+	$$DESTDIR/$$LIBPARSERS \
+	$$DESTDIR/$$LIBPGCONNECTOR \
+	$$DESTDIR/$$LIBOBJRENDERER \
+	$$DESTDIR/$$LIBPGMODELER \
+	$$DESTDIR/$$LIBPGMODELERUI
 
 FORMS += ui/crashhandler.ui
 
@@ -19,3 +19,6 @@ SOURCES += src/main.cpp \
 	   src/crashhandler.cpp
 
 HEADERS += src/crashhandler.h
+
+target.path = $$BINDESTDIR
+INSTALLS = target
