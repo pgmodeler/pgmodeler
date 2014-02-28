@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = objrenderer
 
@@ -29,3 +28,11 @@ SOURCES +=  src/baseobjectview.cpp \
 	    src/basetableview.cpp \
 	    src/objectsscene.cpp \
 	    src/schemaview.cpp
+
+
+# Check if LIBDESTDIR points to another location other than DESTDIR
+# in this case the INSTALLS will be used
+!equals(LIBDESTDIR, $$DESTDIR) {
+ target.path = $$LIBDESTDIR
+ INSTALLS = target
+}

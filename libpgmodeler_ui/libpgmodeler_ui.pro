@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
@@ -208,3 +207,10 @@ FORMS += ui/mainwindow.ui \
     ui/swapobjectsidswidget.ui \
     ui/sqltoolwidget.ui \
     ui/tagwidget.ui
+
+# Check if LIBDESTDIR points to another location other than DESTDIR
+# in this case the INSTALLS will be used
+!equals(LIBDESTDIR, $$DESTDIR) {
+ target.path = $$LIBDESTDIR
+ INSTALLS = target
+}
