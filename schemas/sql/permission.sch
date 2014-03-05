@@ -28,12 +28,12 @@
   %if @{roles} %then
     @{roles}
 
-    %if @{cascade} %then [ CASCADE] %end ; $br
+    %if @{cascade} %then [ CASCADE] %end
   %else
     PUBLIC
   %end
-  ; $br
 
+  ; $br
 %end
 
 
