@@ -614,7 +614,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(attributes[ParsersAttributes::NAME].isEmpty())
 			attributes[ParsersAttributes::NAME]=this->getName(format);
 
-		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
+    if(attributes[ParsersAttributes::SQL_OBJECT].isEmpty())
+      attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
 		if(schema)
 		{
@@ -679,12 +680,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
 				SchemaParser::setIgnoreUnkownAttributes(true);
-        //! \brief Checks if the objects name is the same as the passed name
-        //bool operator == (const QString &obj_name);
 
-        //! \brief Checks if the objects name differs from the passed name
-        //bool operator != (const QString &obj_name);
-				attributes[ParsersAttributes::COMMENT]=
+        attributes[ParsersAttributes::COMMENT]=
 						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
 		}

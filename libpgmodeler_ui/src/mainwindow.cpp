@@ -468,6 +468,7 @@ void MainWindow::stopTimers(bool value)
 	{
 		tmpmodel_save_timer.stop();
 		model_save_timer.stop();
+    tmpmodel_thread.quit();
 	}
 	else
 	{

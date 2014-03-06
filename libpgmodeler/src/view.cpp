@@ -541,6 +541,9 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::COLUMNS]="";
   attributes[ParsersAttributes::TAG]="";
 
+  if(materialized)
+    attributes[ParsersAttributes::SQL_OBJECT]="MATERIALIZED " + BaseObject::getSQLName(OBJ_VIEW);
+
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
 
