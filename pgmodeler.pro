@@ -116,21 +116,19 @@ macx {
  RESDESTDIR = $$DESTDIR
 }
 
-
 # User can pass additional config params to specify custom output directory as follow:
 #
-# BINDIR = where any generated binary (excutable and libraries) will be put.
-# LIBDIR = where any generated library will be put. This variable overrides the BINDIR.
-# RESDIR = where resource files like conf, lang, samples and schema directories will be put.
-#
+# BINDIR = where any generated binary will be installed.
+# LIBDIR = where any generated library will be installed.
+# RESDIR = where resource files like conf, lang, samples and schema directories will be installed.
+# DOCDIR = where doc files will be installed.
 #
 # By default, when not specifying any of above options, the compilation will generate files
-# under ./build. If the user only specify the BINDIR the compilation will generate all files
-# under this directory.
+# under ./build.
 #
 linux|windows {
  DESTDIR = $$PWD/build
- defined(BINDIR, var): DESTDIR=$$BINDIR
+ defined(BINDIR, var): BINDESTDIR=$$BINDIR
 
  #On Linux and Windows the compiled libs resides on the same executable's dir (by default)
  LIBDESTDIR = $$DESTDIR
@@ -139,6 +137,9 @@ linux|windows {
  #On Linux and Windows the resource files (conf, schemas, etc) resides on the same executable's dir (by default)
  RESDESTDIR = $$DESTDIR
  defined(RESDIR, var): RESDESTDIR=$$RESDIR
+ 
+ DOCDESTDIR = $$DESTDIR
+ defined(DOCDIR, var): DOCDESTDIR=$$DOCDIR
 }
 
 #Creating the project's libraries names based upon the running OS
@@ -161,11 +162,17 @@ INCLUDEPATH += $$XML_INC \
 
 
 #Deployment configurations
-pgmodeler.path = $$RESDESTDIR
-pgmodeler.files = samples schemas lang conf README.md CHANGELOG.md LICENSE
+pgmodeler_data.files = samples schemas lang conf
+pgmodeler_data.path = $$RESDESTDIR
+
+pgmodeler_doc.files = README.md CHANGELOG.md LICENSE
+pgmodeler_doc.path = $$DOCDESTDIR
 
 unix {
-!macx:pgmodeler.files += pgmodeler.vars
+!macx:pgmodeler_data.files += pgmodeler.vars
 }
 
-INSTALLS += pgmodeler
+# deploy binaries
+pgmodeler.path = $$BINDESTDIR
+
+INSTALLS += pgmodeler_data pgmodeler_doc

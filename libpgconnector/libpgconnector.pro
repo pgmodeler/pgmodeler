@@ -1,6 +1,5 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = pgconnector
 OBJECTS_DIR = obj
@@ -17,3 +16,6 @@ HEADERS += src/resultset.h \
 SOURCES += src/resultset.cpp \
 	   src/connection.cpp \
 	   src/catalog.cpp
+
+target.path = $$LIBDESTDIR
+INSTALLS = target
