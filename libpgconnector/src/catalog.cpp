@@ -144,7 +144,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		SchemaParser::setIgnoreUnkownAttributes(true);
 		SchemaParser::setIgnoreEmptyAttributes(true);
 
-		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 																				CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
 																				BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
 																				attribs).simplified();
@@ -277,7 +277,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
 												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "")}};
 
-		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
 																					 "get" + ParsersAttributes::COMMENT + GlobalAttributes::SCHEMA_EXT,
 																					 attribs).simplified());
@@ -295,7 +295,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
 												 {ParsersAttributes::EXT_OBJ_OIDS, ext_obj_oids}};
 
-		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR +
+		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
 																					 "notextobject" + GlobalAttributes::SCHEMA_EXT,
 																					 attribs).simplified());
