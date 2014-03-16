@@ -6398,10 +6398,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       {
         //The "public" schema does not have the SQL code definition generated
         if(def_type==SchemaParser::SQL_DEFINITION)
-        {
           attrib_aux=BaseObject::getSchemaName(obj_type);
-          attribs_aux[attrib_aux]="";
-        }
         else
           attrib_aux=attrib;
 
