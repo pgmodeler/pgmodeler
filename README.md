@@ -26,21 +26,34 @@ If you like the project and think it deserves a contribution please donate any a
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grow bigger and reached a state that its lonely developer cannot handle all the modification and new features requests as well to create a user's manual. So if you know C++ and Qt framework programming and wants to contribute with coding or an user's manual let me know! I'll be grateful for any help to the project!
+pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new features requests as well to create a user's manual. So if you know C++ and Qt framework programming and wants to contribute with coding or an user's manual let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------
 
 For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
-MacOSX Notes
-------------
+Know Issues
+-----------
 
+* pgModeler sometimes can crash during the export, import or validation process because there are threaded operations that, depending on size and arrange of the model, causes race conditions.
 * Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
-* To use pgmodeler-cli command you must call it by executing the following command inside the "pgmodeler.app/Contents/MacOS" path: ```./startapp pgmodeler-cli [PARAMS]```
+* To use pgmodeler-cli command on MacOSX you must call it by executing the following command inside the "pgmodeler.app/Contents/MacOS" path: ```./startapp pgmodeler-cli [PARAMS]```
 
 Change Log
 ----------
+
+v0.7.1-alpha
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Build: 20140321</em>
+<em>Release date: March 21, 2014</em><br/>
+
+* [Fix] Fixed connection config. Empty passwords are now accepted.
+* [Fix] Fixed schema object code generation.
+* [Fix] Fixed the usage of PGMODELER_SCHEMAS_DIR environment variable on import process.
+* [Fix] Fixed "ALTER ... SET OWNER" DDL for materialized views.
+* [Fix] Fixed duplicated semicolon at end of permissions defintion.
 
 v0.7.0
 ------

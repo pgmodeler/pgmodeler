@@ -1,5 +1,17 @@
-Changelog
+Change Log
 ---------
+
+v0.7.1-alpha
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Build: 20140321</em>
+<em>Release date: March 21, 2014</em><br/>
+
+* [Fix] Fixed connection config. Empty passwords are now accepted.
+* [Fix] Fixed schema object code generation.
+* [Fix] Fixed the usage of PGMODELER_SCHEMAS_DIR environment variable on import process.
+* [Fix] Fixed "ALTER ... SET OWNER" DDL for materialized views.
+* [Fix] Fixed duplicated semicolon at end of permissions defintion.
 
 v0.7.0
 ------
