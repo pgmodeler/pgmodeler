@@ -120,7 +120,7 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 	test_tb->setEnabled(!alias_edt->text().isEmpty() &&
 											!host_edt->text().isEmpty() &&
 											!user_edt->text().isEmpty() &&
-											!passwd_edt->text().isEmpty() &&
+                      /*!passwd_edt->text().isEmpty() && */
 											!conn_db_edt->text().isEmpty());
 	add_tb->setEnabled(test_tb->isEnabled());
   update_tb->setEnabled(test_tb->isEnabled());

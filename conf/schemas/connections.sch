@@ -16,7 +16,12 @@
 %else
 
 $tb [<connection alias="] @{alias} [" host=] "@{host}" [ port=] "@{port}" [ dbname=] "@{dbname}" $br
-$tb $tb [user=] "@{user}" [ password=] "@{password}" [ connect_timeout=] "@{connect_timeout}" $br
+$tb $tb [user=] "@{user}"
+
+%if @{password} %then [ password=] "@{password}" %end
+
+[ connect_timeout=] "@{connect_timeout}" $br
+
 $tb $tb [sslmode=] "@{sslmode}" $br
 
 %if @{sslcert} %then $tb $tb [sslcert=] "@{sslcert}" $br %end
