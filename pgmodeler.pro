@@ -112,6 +112,8 @@ UI_DIR = src
 macx {
  BASEDIR = $$PWD/build/pgmodeler.app/Contents
  DESTDIR = $$BASEDIR/MacOS #Where the compiled executables are stored
+ BINDESTDIR = $$DESTDIR
+ DOCDESTDIR = $$DESTDIR
  LIBDESTDIR = $$BASEDIR/Frameworks #Where the compiled libs are stored
  RESDESTDIR = $$DESTDIR
 }

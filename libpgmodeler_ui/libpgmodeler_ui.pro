@@ -5,6 +5,17 @@ TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 
+!macx {
+ # Check if LIBDESTDIR points to another location other than DESTDIR
+ # in this case the INSTALLS will be used
+ !equals(LIBDESTDIR, $$DESTDIR) {
+  target.path = $$LIBDESTDIR
+  INSTALLS = target
+ }
+}
+
+macx:DESTDIR=$$LIBDESTDIR
+
 LIBS = $$DESTDIR/$$LIBUTILS \
        $$DESTDIR/$$LIBPARSERS \
        $$DESTDIR/$$LIBPGCONNECTOR \
@@ -208,9 +219,4 @@ FORMS += ui/mainwindow.ui \
     ui/sqltoolwidget.ui \
     ui/tagwidget.ui
 
-# Check if LIBDESTDIR points to another location other than DESTDIR
-# in this case the INSTALLS will be used
-!equals(LIBDESTDIR, $$DESTDIR) {
- target.path = $$LIBDESTDIR
- INSTALLS = target
-}
+
