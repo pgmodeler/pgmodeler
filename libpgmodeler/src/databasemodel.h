@@ -263,6 +263,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 participating */
 		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
+    //! \brief Searchs and returns all the relationships that the specified table participates
+    vector<BaseRelationship *> getRelationships(BaseTable *tab);
+
 		void addTextbox(Textbox *txtbox, int obj_idx=-1);
 		void removeTextbox(Textbox *txtbox, int obj_idx=-1);
 		Textbox *getTextbox(unsigned obj_idx);

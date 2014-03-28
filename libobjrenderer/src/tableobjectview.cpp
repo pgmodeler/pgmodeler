@@ -190,6 +190,7 @@ void TableObjectView::configureObject(void)
 		bool sql_disabled=false;
 
 		tooltip=Utf8String::create(tab_obj->getName()) + " (" + tab_obj->getTypeName() + ")";
+    tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
 		sql_disabled=tab_obj->isSQLDisabled();
 
 		if(column)

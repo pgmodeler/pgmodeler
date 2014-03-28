@@ -190,7 +190,13 @@ class Constraint: public TableObject{
 		 to control which constraints reference columns added by the
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
-		bool isReferRelationshipAddedColumn(void);
+    bool isReferRelationshipAddedColumn(void);
+
+    /*! brief Returns the list of all columns that is created by relationships.
+    This method is slower than isReferRelationshipAddedColumn() so it's not
+    recommended to use it only check if the object is referencing columns
+    added by relationship */
+    vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns the matching type adopted by the constraint
 		MatchType getMatchType(void);

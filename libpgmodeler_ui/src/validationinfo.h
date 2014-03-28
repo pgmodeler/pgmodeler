@@ -46,9 +46,10 @@ class ValidationInfo {
 
 	public:
 		static const unsigned NO_UNIQUE_NAME=0,
-															BROKEN_REFERENCE=1,
-															SQL_VALIDATION_ERR=2,
-															VALIDATION_ABORTED=3;
+                          BROKEN_REFERENCE=1,
+                          SP_OBJ_BROKEN_REFERENCE=2,
+                          SQL_VALIDATION_ERR=3,
+                          VALIDATION_ABORTED=4;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);

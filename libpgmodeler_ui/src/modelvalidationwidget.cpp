@@ -178,6 +178,23 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 									.arg(val_info.getObject()->getTypeName())
 									.arg(val_info.getObject()->getObjectId())
 									.arg(val_info.getReferences().size()));
+  else if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+  {
+    QString str_aux;
+
+    if(TableObject::isTableObject(val_info.getObject()->getObjectType()))
+    {
+      TableObject *tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
+      str_aux=QString(" owned by table <strong>%1</strong> ").arg(tab_obj->getParentTable()->getName(true).remove("\""));
+    }
+
+    label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3]%4 is referencing columns created by <strong>%5</strong> relationship(s) but is created before them.")
+                  .arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
+                  .arg(val_info.getObject()->getTypeName())
+                  .arg(val_info.getObject()->getObjectId())
+                  .arg(str_aux)
+                  .arg(val_info.getReferences().size()));
+  }
 	else if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 	{
 		tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
@@ -269,10 +286,17 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			}
 			else
 			{
-				label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
-												.arg(Utf8String::create(refs.back()->getName(true)))
-												.arg(Utf8String::create(refs.back()->getTypeName()))
-												.arg(refs.back()->getObjectId()));
+        if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+          label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
+                          .arg(Utf8String::create(refs.back()->getName(true)))
+                          .arg(refs.back()->getObjectId()));
+        else
+        {
+          label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
+                          .arg(Utf8String::create(refs.back()->getName(true)))
+                          .arg(Utf8String::create(refs.back()->getTypeName()))
+                          .arg(refs.back()->getObjectId()));
+        }
 			}
 
 			output_trw->setItemWidget(item1, 0, label1);

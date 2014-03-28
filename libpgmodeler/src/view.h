@@ -201,6 +201,12 @@ class View: public BaseTable {
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
+    /*! brief Returns the list of all columns that is created by relationships.
+    This method is slower than isReferRelationshipAddedColumn() so it's not
+    recommended to use it only check if the object is referencing columns
+    added by relationship */
+    vector<Column *> getRelationshipAddedColumns(void);
+
 		//! \brief Returns if the view is referencing the specified table
 		bool isReferencingTable(Table *tab);
 

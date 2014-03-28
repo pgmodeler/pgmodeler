@@ -408,7 +408,32 @@ bool Constraint::isReferRelationshipAddedColumn(void)
 		itr1++;
 	}
 
-	return(found);
+  return(found);
+}
+
+vector<Column *> Constraint::getRelationshipAddedColumns(void)
+{
+  Column *column=nullptr;
+  vector<Column *> cols;
+  vector<vector<Column *> *> lists = { &columns, &ref_columns };
+
+  for(auto p_lst : lists)
+  {
+    for(auto col : (*p_lst))
+    {
+      if(col->isAddedByRelationship())
+        cols.push_back(col);
+    }
+  }
+
+  for(auto excl_elem : excl_elements)
+  {
+    column=excl_elem.getColumn();
+    if(column && column->isAddedByRelationship())
+      cols.push_back(column);
+  }
+
+  return(cols);
 }
 
 MatchType Constraint::getMatchType(void)

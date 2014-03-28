@@ -496,7 +496,22 @@ bool View::isReferRelationshipAddedColumn(void)
 		found=(column && column->isAddedByRelationship());
 	}
 
-	return(found);
+  return(found);
+}
+
+vector<Column *> View::getRelationshipAddedColumns(void)
+{
+  vector<Column *> cols;
+  Column *col=nullptr;
+
+  for(auto ref : references)
+  {
+    col=ref.getColumn();
+    if(col && col->isAddedByRelationship())
+      cols.push_back(col);
+  }
+
+  return(cols);
 }
 
 bool View::isReferencingTable(Table *tab)

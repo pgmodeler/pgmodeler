@@ -591,6 +591,7 @@ void RelationshipView::configureLine(void)
 			tool_tip=Utf8String::create(base_rel->getName(true)) +
 							 " (" + base_rel->getTypeName() + ")";
 
+    tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)
