@@ -802,7 +802,20 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 		unsigned id_bkp=obj1->object_id;
 		obj1->object_id=obj2->object_id;
 		obj2->object_id=id_bkp;
-	}
+  }
+}
+
+void BaseObject::updateObjectId(BaseObject *obj)
+{
+  //Raises an error if some of the objects aren't allocated
+  if(!obj)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else  if(obj->isSystemObject())
+    throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+                    .arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
+                    ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else
+    obj->object_id=++global_id;
 }
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)

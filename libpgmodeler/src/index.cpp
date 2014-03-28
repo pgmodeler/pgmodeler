@@ -252,7 +252,23 @@ bool Index::isReferRelationshipAddedColumn(void)
 		itr++;
 	}
 
-	return(found);
+  return(found);
+}
+
+vector<Column *> Index::getRelationshipAddedColumns(void)
+{
+  vector<Column *> cols;
+  Column *col=nullptr;
+
+  for(auto elem : idx_elements)
+  {
+    col=elem.getColumn();
+
+    if(col && col->isAddedByRelationship())
+      cols.push_back(col);
+  }
+
+  return(cols);
 }
 
 bool Index::isReferCollation(Collation *collation)

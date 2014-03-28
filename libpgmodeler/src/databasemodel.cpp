@@ -733,6 +733,8 @@ void DatabaseModel::destroyObjects(void)
 	BaseObject *object=nullptr;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
+  //Removing the special objects first
+  storeSpecialObjectsXML();
 	disconnectRelationships();
 
 	for(i=0; i < cnt; i++)
@@ -1458,7 +1460,8 @@ void DatabaseModel::validateRelationships(void)
 	//If errors were caught on the above executions they will be redirected to the user
 	if(!errors.empty())
 	{
-		xml_special_objs.clear();
+    if(!loading_model)
+      xml_special_objs.clear();
 
 		/* Revalidates the fk relationships at this points because some fks must be removed due
 		 to special object invalidation */
@@ -1493,7 +1496,8 @@ void DatabaseModel::validateRelationships(void)
 		itr++;
 	}
 
-	xml_special_objs.clear();
+  if(!loading_model)
+    xml_special_objs.clear();
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -1924,7 +1928,28 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 		}
 	}
 
-	return(rel);
+  return(rel);
+}
+
+vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
+{
+  vector<BaseRelationship *> aux_rels;
+  vector<BaseObject *> rels;
+  BaseRelationship *base_rel=nullptr;
+
+  rels=base_relationships;
+  rels.insert(rels.end(), relationships.begin(), relationships.end());
+
+  for(auto obj : rels)
+  {
+    base_rel=dynamic_cast<BaseRelationship *>(obj);
+
+    if(base_rel->getTable(BaseRelationship::SRC_TABLE)==tab ||
+       base_rel->getTable(BaseRelationship::DST_TABLE)==tab)
+      aux_rels.push_back(base_rel);
+  }
+
+  return(aux_rels);
 }
 
 void DatabaseModel::addTextbox(Textbox *txtbox, int obj_idx)
@@ -2657,114 +2682,124 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 
 void DatabaseModel::loadModel(const QString &filename)
 {
-	if(filename!="")
-	{
-		QString dtd_file, str_aux, elem_name;
-		ObjectType obj_type;
-		attribs_map attribs;
-		BaseObject *object=nullptr;
-		bool protected_model=false;
+  if(filename!="")
+  {
+    QString dtd_file, str_aux, elem_name;
+    ObjectType obj_type;
+    attribs_map attribs;
+    BaseObject *object=nullptr;
+    bool protected_model=false;
 
-		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 GlobalAttributes::XML_SCHEMA_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 GlobalAttributes::OBJECT_DTD_DIR +
-						 GlobalAttributes::DIR_SEPARATOR;
+    //Configuring the path to the base path for objects DTD
+    dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
+        GlobalAttributes::DIR_SEPARATOR +
+        GlobalAttributes::XML_SCHEMA_DIR +
+        GlobalAttributes::DIR_SEPARATOR +
+        GlobalAttributes::OBJECT_DTD_DIR +
+        GlobalAttributes::DIR_SEPARATOR;
 
-		try
-		{
-			loading_model=true;
-			XMLParser::restartParser();
+    try
+    {
+      loading_model=true;
+      XMLParser::restartParser();
 
-			//Loads the root DTD
-			XMLParser::setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
-														GlobalAttributes::OBJECT_DTD_EXT,
-														GlobalAttributes::ROOT_DTD);
+      //Loads the root DTD
+      XMLParser::setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
+                            GlobalAttributes::OBJECT_DTD_EXT,
+                            GlobalAttributes::ROOT_DTD);
 
-			//Loads the file validating it against the root DTD
-			XMLParser::loadXMLFile(filename);
+      //Loads the file validating it against the root DTD
+      XMLParser::loadXMLFile(filename);
 
-			//Gets the basic model information
-			XMLParser::getElementAttributes(attribs);
+      //Gets the basic model information
+      XMLParser::getElementAttributes(attribs);
 
-			this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
-			protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+      this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
+      protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-			if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
-			{
-				do
-				{
-					if(XMLParser::getElementType()==XML_ELEMENT_NODE)
-					{
-						elem_name=XMLParser::getElementName();
+      if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+      {
+        do
+        {
+          if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+          {
+            elem_name=XMLParser::getElementName();
 
-							//Indentifies the object type to be load according to the current element on the parser
-							obj_type=getObjectType(elem_name);
+            //Indentifies the object type to be load according to the current element on the parser
+            obj_type=getObjectType(elem_name);
 
-							if(obj_type==OBJ_DATABASE)
-							{
-								XMLParser::getElementAttributes(attribs);
-								configureDatabase(attribs);
-							}
-							else
-							{
-								try
-								{
-									//Saves the current position of the parser before create any object
-									XMLParser::savePosition();
-									object=createObject(obj_type);
+            if(obj_type==OBJ_DATABASE)
+            {
+              XMLParser::getElementAttributes(attribs);
+              configureDatabase(attribs);
+            }
+            else
+            {
+              try
+              {
+                //Saves the current position of the parser before create any object
+                XMLParser::savePosition();
+                object=createObject(obj_type);
 
-									if(object)
-									{
-										if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
-											addObject(object);
+                if(object)
+                {
+                  if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+                    addObject(object);
 
-										emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
-																				trUtf8("Loading: `%1' `(%2)'")
-																				.arg(Utf8String::create(object->getName()))
-																				.arg(object->getTypeName()),
-																				obj_type);
-									}
+                  emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
+                                      trUtf8("Loading: `%1' `(%2)'")
+                                      .arg(Utf8String::create(object->getName()))
+                                      .arg(object->getTypeName()),
+                                      obj_type);
+                }
 
-									XMLParser::restorePosition();
-								}
-								catch(Exception &e)
-								{
-									QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
-									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
-								}
-							}
-					}
-				}
-				while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
-			}
+                XMLParser::restorePosition();
+              }
+              catch(Exception &e)
+              {
+                QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+                throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+              }
+            }
+          }
+        }
+        while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+      }
 
-			this->BaseObject::setProtected(protected_model);
-			loading_model=false;
-			this->validateRelationships();
-			this->setInvalidated(false);
+      this->BaseObject::setProtected(protected_model);
+
+      loading_model=false;
+
+      /* If there are relationship make an last relationship validation to
+      recreate any special object left behind */
+      if(!relationships.empty())
+      {
+        storeSpecialObjectsXML();
+        disconnectRelationships();
+        validateRelationships();
+      }
+
+      this->setInvalidated(false);
       this->setObjectsModified({OBJ_RELATIONSHIP, BASE_RELATIONSHIP});
-		}
-		catch(Exception &e)
-		{
-			QString extra_info;
-			loading_model=false;
-			destroyObjects();
+    }
+    catch(Exception &e)
+    {
+      QString extra_info;
+      loading_model=false;
+      destroyObjects();
 
-			if(XMLParser::getCurrentElement())
-				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+      if(XMLParser::getCurrentElement())
+        extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
 
-			if(e.getErrorType()>=ERR_INVALID_SYNTAX)
-			{
-				str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(filename);
-				throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
-			}
-			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
-		}
-	}
+      if(e.getErrorType()>=ERR_INVALID_SYNTAX)
+      {
+        str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(filename);
+        throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+      }
+      else
+        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+    }
+  }
 }
 
 ObjectType DatabaseModel::getObjectType(const QString &type_name)

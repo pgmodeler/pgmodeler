@@ -170,6 +170,9 @@ class BaseObject {
 		cluster level objects (database, tablespace and roles). */
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
 
+    //! brief Changes the current object id to the most recent global id value.
+    static void updateObjectId(BaseObject *obj);
+
     //! \brief Clears all the attributes used by the SchemaParser
     void clearAttributes(void);
 
