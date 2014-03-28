@@ -57,10 +57,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		scene=nullptr;
 		zoom=1;
 
-    //Changing the current working dir to the executable's directory in
-    QDir::setCurrent(this->applicationDirPath());
-
-		initializeOptions();
+    initializeOptions();
 
 		if(argc > 1)
 		{
@@ -279,6 +276,11 @@ accepted structure. All available options are described below.") << endl;
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
+  QString orig_work_dir=QDir::current().absolutePath();
+
+  //Changing the current working dir to the executable's directory in
+  QDir::setCurrent(this->applicationDirPath());
+
 	//Loading connections
 	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
 	{
@@ -338,8 +340,13 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
+
+    QDir::setCurrent(orig_work_dir);
     opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
     opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+
+    //Changing the current working dir to the executable's directory in
+    QDir::setCurrent(this->applicationDirPath());
 
 		parsed_opts=opts;
 	}
@@ -350,7 +357,7 @@ int PgModelerCLI::exec(void)
 	try
 	{
 		if(!parsed_opts.empty())
-		{
+    {
 			if(!silent_mode)
 			{
 				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
