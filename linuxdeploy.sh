@@ -1,25 +1,26 @@
 #/bin/bash
 
-QMAKE_ROOT=/usr/bin
-FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc_64/bin
-LOG=linuxdeploy.log
-
-# Detecting current pgModeler version
-DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
-BUILD_NUM=$(date '+%Y%m%d')
-
 # Identify architecture
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
     QMAKE_ARGS="-r -spec linux-g++-64"
+    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc_64/bin
     ;;
     
    *)
     ARCH="linux32"
     QMAKE_ARGS="-r -spec linux-g++"
+    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc/bin
     ;;
 esac
+
+QMAKE_ROOT=/usr/bin
+LOG=linuxdeploy.log
+
+# Detecting current pgModeler version
+DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
+BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
