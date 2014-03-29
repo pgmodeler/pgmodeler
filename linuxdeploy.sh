@@ -1,7 +1,7 @@
 #/bin/bash
 
 QMAKE_ROOT=/usr/bin
-FALLBACK_QMAKE_ROOT=/usr/local/qt-5.2.0/5.2.0/gcc_64/bin
+FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc_64/bin
 LOG=linuxdeploy.log
 
 # Detecting current pgModeler version
@@ -66,7 +66,7 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
