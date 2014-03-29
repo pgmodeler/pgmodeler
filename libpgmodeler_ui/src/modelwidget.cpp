@@ -1482,16 +1482,19 @@ void ModelWidget::moveToSchema(void)
 
 		if(obj_graph)
 		{
-			SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
-			QPointF p;
+      SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+      QPointF p;
 
-			p.setX(dst_schema->pos().x());
-			p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+      if(dst_schema->isVisible())
+      {
+        p.setX(dst_schema->pos().x());
+        p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+        dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
+      }
 
-			dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
-			obj_graph->setModified(true);
-			schema->setModified(true);
-			prev_schema->setModified(true);
+      obj_graph->setModified(true);
+      schema->setModified(true);
+      prev_schema->setModified(true);
 		}
 
 		emit s_objectModified();
