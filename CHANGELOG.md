@@ -1,10 +1,20 @@
 Change Log
 ---------
 
+v0.7.1-alpha1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: March 29, 2014</em><br/>
+
+* [Change] Major model validation improvement. Now special objects are correctly validated.
+* [Fix] Fixed a crash when closing a model that contains a view that references columns added by relationships.
+* [Fix] Fixed wrong working directory handling on CLI.
+* [Fix] Fixed a bug on file loading process that could left behind some objects depending on size and arrange of the loaded model.
+* [Fix] Fixed the undesired behavior when moving a table to another schema.
+
 v0.7.1-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Build: 20140321</em>
 <em>Release date: March 21, 2014</em><br/>
 
 * [Fix] Fixed connection config. Empty passwords are now accepted.

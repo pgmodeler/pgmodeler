@@ -45,7 +45,7 @@ SOURCES += src/xml2object.cpp \
 
 FORMS += ui/xml2objectwidget.ui
 
-unix:QMAKE_POST_LINK="sudo chmod 644  $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+unix:QMAKE_POST_LINK="chmod 644  $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
 windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
 
 xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
