@@ -161,13 +161,13 @@ void GeneralConfigWidget::saveConfiguration()
 			if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
 			{
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
-						SchemaParser::getCodeDefinition(file_sch, itr->second);
+            SchemaParser::convertCharsToXMLEntities(SchemaParser::getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::RECENT + QString(")([0-9]+)"))))
 			{
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
-						SchemaParser::getCodeDefinition(file_sch, itr->second);
+            SchemaParser::convertCharsToXMLEntities(SchemaParser::getCodeDefinition(file_sch, itr->second));
 			}
 
 			itr++;
