@@ -18,7 +18,7 @@
     %if @{columns} %then @{columns} %end
 
     %if @{constraints} %then
-	%if %not @{constr-sql-disabled} %then [,] %end
+        %if %not @{constr-sql-disabled} %and @{columns} %then [,] %end
 	$br @{constraints}
     %end
   %end
