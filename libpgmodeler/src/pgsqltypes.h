@@ -436,7 +436,8 @@ class PgSQLType: public BaseType{
 		bool isRangeType(void);
 		bool isSerialType(void);
 		bool isDateTimeType(void);
-		bool isNumericType(void);
+    bool isNumericType(void);
+    bool isIntegerType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
@@ -480,7 +481,7 @@ class PgSQLType: public BaseType{
 		friend class Sequence;
 		friend class View;
 		friend class Extension;
-		friend class DatabaseModel;
+    friend class DatabaseModel;
 };
 
 class BehaviorType: public BaseType{

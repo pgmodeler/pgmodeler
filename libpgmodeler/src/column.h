@@ -51,6 +51,10 @@ class Column: public TableObject{
 		//! \brief Stores a reference to the relationship that generates the column
 		BaseObject *parent_rel;
 
+    /*! \brief Stores a reference to the sequence used to generate the default value.
+    This attribute is used only the data type is integer, smallint or bigint */
+    BaseObject *sequence;
+
 	public:
 		Column(void);
 
@@ -91,6 +95,12 @@ class Column: public TableObject{
 		void setParentRelationship(BaseObject *parent_rel);
 
 		BaseObject *getParentRelationship(void);
+
+    //! brief Set the sequence that will generate the default value for the column
+    void setSequence(BaseObject *seq);
+
+    //! brief Returns the sequence generator of default value
+    BaseObject *getSequence(void);
 
 		//! \brief Copies on column to other
 		void operator = (Column &col);

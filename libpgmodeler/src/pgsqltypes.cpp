@@ -1314,6 +1314,16 @@ bool PgSQLType::isNumericType(void)
 				 type_list[this->type_idx]=="decimal");
 }
 
+bool PgSQLType::isIntegerType(void)
+{
+  return(type_list[this->type_idx]=="smallint" ||
+         type_list[this->type_idx]=="integer" ||
+         type_list[this->type_idx]=="bigint" ||
+         type_list[this->type_idx]=="int4" ||
+         type_list[this->type_idx]=="int8" ||
+         type_list[this->type_idx]=="int2");
+}
+
 bool PgSQLType::hasVariableLength(void)
 {
 	return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||

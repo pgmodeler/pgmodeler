@@ -26,8 +26,9 @@ Column::Column(void)
 	attributes[ParsersAttributes::DEFAULT_VALUE]="";
 	attributes[ParsersAttributes::NOT_NULL]="";
 	attributes[ParsersAttributes::TABLE]="";
+  attributes[ParsersAttributes::SEQUENCE]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	parent_rel=nullptr;
+  parent_rel=sequence=nullptr;
 }
 
 void Column::setName(const QString &name)
@@ -64,6 +65,7 @@ void Column::setType(PgSQLType type)
 void Column::setDefaultValue(const QString &value)
 {
 	default_value=value.trimmed();
+  sequence=nullptr;
 }
 
 void Column::setNotNull(bool value)
@@ -112,7 +114,34 @@ void Column::setParentRelationship(BaseObject *parent_rel)
 
 BaseObject *Column::getParentRelationship(void)
 {
-	return(parent_rel);
+  return(parent_rel);
+}
+
+void Column::setSequence(BaseObject *seq)
+{
+  if(seq)
+  {
+    if(seq->getObjectType()!=OBJ_SEQUENCE)
+      throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OBJECT_TYPE)
+                      .arg(Utf8String::create(this->obj_name))
+                      .arg(this->getTypeName())
+                      .arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
+                      ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else if(!type.isIntegerType())
+      throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
+                      .arg(Utf8String::create(seq->getName(true)))
+                      .arg(Utf8String::create(this->obj_name)),
+                      ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    default_value="";
+  }
+
+  sequence=seq;
+}
+
+BaseObject *Column::getSequence(void)
+{
+  return(sequence);
 }
 
 QString Column::getCodeDefinition(unsigned def_type)
@@ -121,7 +150,20 @@ QString Column::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
-	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+
+  attributes[ParsersAttributes::DEFAULT_VALUE]="";
+
+  if(!sequence)
+    attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+  else
+  {
+    //Configuring the default value of the column to get the next value of the sequence
+    if(def_type==SchemaParser::SQL_DEFINITION)
+      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getName(true).remove("\""));
+
+    attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+  }
+
 	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
 	attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
 
@@ -142,6 +184,7 @@ void Column::operator = (Column &col)
 
 	this->not_null=col.not_null;
 	this->parent_rel=col.parent_rel;
+  this->sequence=col.sequence;
 
 	this->setParentTable(col.getParentTable());
 	this->setAddedByCopy(false);
