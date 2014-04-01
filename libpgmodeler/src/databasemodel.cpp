@@ -4312,6 +4312,7 @@ Column *DatabaseModel::createColumn(void)
 {
 	attribs_map attribs;
 	Column *column=nullptr;
+  BaseObject *seq=nullptr;
 	QString elem;
 
 	try
@@ -4322,6 +4323,22 @@ Column *DatabaseModel::createColumn(void)
 		XMLParser::getElementAttributes(attribs);
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+
+    if(!attribs[ParsersAttributes::SEQUENCE].isEmpty())
+    {
+      seq=getObject(attribs[ParsersAttributes::SEQUENCE], OBJ_SEQUENCE);
+
+      if(!seq)
+        throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+                                .arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+                                .arg(BaseObject::getTypeName(OBJ_COLUMN))
+                                .arg(Utf8String::create(attribs[ParsersAttributes::SEQUENCE]))
+                                .arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
+                        ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+
+      column->setSequence(seq);
+    }
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -8138,6 +8155,32 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
           refs.push_back(*itr);
         }
         itr++;
+      }
+    }
+
+    if(obj_type==OBJ_SEQUENCE && (!exclusion_mode || (exclusion_mode && !refer)))
+    {
+      Table *table=nullptr;
+      vector<TableObject *> *cols=nullptr;
+      vector<TableObject *>::iterator itr, itr_end;
+      unsigned i, cnt=tables.size();
+
+      for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+      {
+        table=dynamic_cast<Table *>(tables[i]);
+        cols=table->getObjectList(OBJ_COLUMN);
+        itr=cols->begin();
+        itr_end=cols->end();
+
+        while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+        {
+          if(dynamic_cast<Column *>(*itr)->getSequence()==object)
+          {
+            refer=true;
+            refs.push_back(*itr);
+          }
+          itr++;
+        }
       }
     }
 	}

@@ -386,7 +386,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(Utf8String::create(*column->getType()),row,1);
 
 		//Column 2: Column defaul value
-		str_aux=column->getDefaultValue();
+    if(column->getSequence())
+      str_aux=QString("netval('%1'::regclass)").arg(column->getSequence()->getName(true).remove("\""));
+    else
+      str_aux=column->getDefaultValue();
+
 		if(str_aux.isEmpty()) str_aux="-";
 		tab->setCellText(str_aux,row,2);
 

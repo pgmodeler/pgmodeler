@@ -7,8 +7,12 @@ $tb [<column name=] "@{name}"
   [ not-null=] "true"
  %end
 
- %if @{default-value} %then
+ %if @{default-value} %and %not @{sequence} %then
   [ default-value=] "@{default-value}"
+ %end
+
+ %if @{sequence} %then
+  [ sequence=] "@{sequence}"
  %end
 
  %if @{protected} %then 

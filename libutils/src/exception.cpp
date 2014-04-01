@@ -228,7 +228,10 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
   {"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
   {"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
-  {"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")}
+  {"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
+  {"ERR_ASG_INV_OBJECT_TYPE", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'")},
+  {"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")}
+
 };
 
 Exception::Exception(void)
