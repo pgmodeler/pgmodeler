@@ -372,6 +372,9 @@ int PgModelerCLI::exec(void)
 
 			if(parsed_opts.count(FIX_MODEL))
 			{
+        if(!silent_mode)
+          out << trUtf8("Fixed model file: ") << parsed_opts[OUTPUT] << endl;
+
 				extractObjectXML();
 				recreateObjects();
 				model->updateTablesFKRelationships();
