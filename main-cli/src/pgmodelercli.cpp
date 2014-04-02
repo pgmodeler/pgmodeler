@@ -313,7 +313,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	else
 	{
 		int mode_cnt=0;
-		bool convert_file=(opts.count(FIX_MODEL) > 0);
+    bool fix_model=(opts.count(FIX_MODEL) > 0);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
@@ -323,9 +323,9 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		if(opts.count(ZOOM_FACTOR))
 			zoom=opts[ZOOM_FACTOR].toFloat()/static_cast<float>(100);
 
-		if(!convert_file && mode_cnt==0)
+    if(!fix_model && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!convert_file && mode_cnt > 1)
+    else if(!fix_model && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(opts[INPUT].isEmpty())
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -552,8 +552,8 @@ void PgModelerCLI::extractObjectXML(void)
 						//Searches the position of the start tag
 						start=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos);
 
-						//Searches the position of the start tag for the next relationship
-						start1=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos + ParsersAttributes::RELATIONSHIP.size());
+            //Searches the position of the start tag for the next object
+            start1=buf.indexOf("<", pos + ParsersAttributes::RELATIONSHIP.size());
 
 						//Searches the position of the end tag and the short end tag ('/>')
 						end=buf.indexOf(end_tag, pos);
@@ -564,7 +564,7 @@ void PgModelerCLI::extractObjectXML(void)
 						short_tag=(!(end >= start && end <= start1) && end1 < start1);
 					}
 				}
-				else if(open_tag && lin.contains(end_tag))
+        else if(open_tag && (lin.contains(end_tag) || (is_rel && lin.contains(short_end_tag))))
 					close_tag=true;
 			}
 
