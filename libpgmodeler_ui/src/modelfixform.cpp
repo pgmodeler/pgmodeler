@@ -17,13 +17,34 @@
 */
 
 #include "modelfixform.h"
+#include "configurationform.h"
 
+extern ConfigurationForm *configuration_form;
 const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
   setupUi(this);
   closeEvent(nullptr);
+
+  //Configuring font style for output widget
+  if(configuration_form)
+  {
+    GeneralConfigWidget *general_conf=nullptr;
+    map<QString, attribs_map> confs;
+
+    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+    confs=general_conf->getConfigurationParams();
+
+    if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
+    {
+      float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+      if(size < 5.0f) size=5.0f;
+
+      output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+      output_txt->setFontPointSize(size);
+    }
+  }
 
   connect(&pgmodeler_cli_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(updateOutput()));
   connect(&pgmodeler_cli_proc, SIGNAL(readyReadStandardError()), this, SLOT(updateOutput()));
