@@ -42,6 +42,7 @@
 #include "modelexportform.h"
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
+#include "modelfixform.h"
 
 using namespace std;
 
@@ -75,6 +76,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Model exportation form
 		ModelExportForm *model_export_form;
+
+    //! \brief Model fix form
+    ModelFixForm *model_fix_form;
 
 		//! \brief Database import form
 		DatabaseImportForm *db_import_form;
@@ -157,6 +161,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Loads a model from a file via file dialog
 		void loadModel(void);
+
+    //! \brief Loads a model from a specified filename
+    void loadModel(const QString &filename);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
 		void saveModel(ModelWidget *model=nullptr);
