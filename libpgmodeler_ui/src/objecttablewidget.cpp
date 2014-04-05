@@ -361,7 +361,7 @@ void ObjectTableWidget::removeRow(void)
 	{
 		Messagebox msg_box;
 		unsigned 	row_idx=table_tbw->currentRow();
-		QTableWidgetItem *item=table_tbw->currentItem();
+    QTableWidgetItem *item=table_tbw->currentItem();
 
 		if(item->isSelected())
 		{
@@ -371,6 +371,8 @@ void ObjectTableWidget::removeRow(void)
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
+        setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
+        item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
         emit s_rowRemoved(row_idx);
         table_tbw->removeRow(row_idx);
         table_tbw->setCurrentItem(nullptr);
