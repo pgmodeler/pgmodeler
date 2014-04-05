@@ -1093,15 +1093,13 @@ void MainWindow::saveModel(ModelWidget *model)
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
 
-					if(file_dlg.exec()==QFileDialog::Accepted)
+          if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 					{
-						if(!file_dlg.selectedFiles().isEmpty())
-							model->saveModel(file_dlg.selectedFiles().at(0));
-					}
-
-					recent_models.push_front(file_dlg.selectedFiles().at(0));
-					updateRecentModelsMenu();
-					models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+            model->saveModel(file_dlg.selectedFiles().at(0));
+            recent_models.push_front(file_dlg.selectedFiles().at(0));
+            updateRecentModelsMenu();
+            models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+          }
 				}
 				else
 					model->saveModel();
