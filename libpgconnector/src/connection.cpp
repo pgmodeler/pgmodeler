@@ -85,8 +85,8 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 		connection_params[Connection::PARAM_SERVER_IP]=value;
 		connection_params[Connection::PARAM_SERVER_FQDN]="";
 	}
-	else
-		connection_params[param]=value;
+  else
+    connection_params[param]=value;
 
 	//Updates the connection string
 	generateConnectionString();
@@ -95,6 +95,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 void Connection::generateConnectionString(void)
 {
 	attribs_map::iterator itr;
+  QString value;
 
 	itr=connection_params.begin();
 
@@ -102,8 +103,17 @@ void Connection::generateConnectionString(void)
 	connection_str="";
 	while(itr!=connection_params.end())
 	{
-		if(!itr->second.isEmpty())
-			connection_str+=itr->first + "=" + itr->second + " ";
+    value=itr->second;
+
+    value.replace("\\","\\\\");
+    value.replace("'","\\'");
+
+    if(itr->first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
+      value=QString("'%1'").arg(value);
+
+    if(!value.isEmpty())
+      connection_str+=itr->first + "=" + value + " ";
+
 		itr++;
 	}
 }

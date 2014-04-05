@@ -233,7 +233,7 @@ void ConnectionsConfigWidget::editConnection(void)
 {
 	if(connections_cmb->count() > 0)
 	{
-		Connection *conn=nullptr;
+    Connection *conn=nullptr;
 
 		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
@@ -247,7 +247,7 @@ void ConnectionsConfigWidget::editConnection(void)
 
 		conn_db_edt->setText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
 		user_edt->setText(conn->getConnectionParam(Connection::PARAM_USER));
-		passwd_edt->setText(conn->getConnectionParam(Connection::PARAM_PASSWORD));
+    passwd_edt->setText(conn->getConnectionParam(Connection::PARAM_PASSWORD));
 		port_sbp->setValue(conn->getConnectionParam(Connection::PARAM_PORT).toInt());
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::PARAM_CONN_TIMEOUT).toInt());
 
