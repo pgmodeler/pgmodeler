@@ -43,16 +43,21 @@ Know Issues
 Change Log
 ----------
 
-v0.7.1-alpha1
+v0.7.1-beta
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: March 29, 2014</em><br/>
+<em>Release date: April 6, 2014</em><br/>
 
-* [Change] Major model validation improvement. Now special objects are correctly validated.
-* [Fix] Fixed a crash when closing a model that contains a view that references columns added by relationships.
-* [Fix] Fixed wrong working directory handling on CLI.
-* [Fix] Fixed a bug on file loading process that could left behind some objects depending on size and arrange of the loaded model.
-* [Fix] Fixed the undesired behavior when moving a table to another schema.
+* [New] Created a small interface to pgmodeler-cli that enables the user to fix a broken model inside pgModeler GUI.
+* [New] Added support to assign a sequence as default value of a column. The sequence will be converted to "nextval('seqname'::regclass) and the validation process will check if the sequence is correctly referenced by the table that owns the column.
+* [Change] Changed the default behavior of left click on blank areas of canvas. Instead of create a range selection the user will move the viewport (panning mode). To enable range selection user must press SHIFT and click/move to draw the selection rectangle.
+* [Fix] Minor fix on connection class in order to accept empty passwords as well passwords that contains spaces.
+* [Fix] Fixed the column listing on constraint editing form after remove one or more columns.
+* [Fix] Fix a crash when canceling the model saving dialog on Windows.
+* [Fix] Minor patch on the model fix process.
+* [Fix] Fixed wrong default values for relationship added columns.
+* [Fix] Fixed a bug related to file paths with ampersand on config files.
+* [Fix] Fix the broken sql for inheritance when a child table don't have columns but only constraints.
 
 v0.7.0
 ------
