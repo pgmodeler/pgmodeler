@@ -355,47 +355,55 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 	}
 	else
 		//Emit a signal indicating that no object was selected
-		emit s_objectDoubleClicked(nullptr);
+    emit s_objectDoubleClicked(nullptr);
 }
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	//Gets the item at mouse position
-	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
+  //Gets the item at mouse position
+  QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
-	/* If the relationship line is visible, indicates that the user is in the middle of
-		 a relationship creation, thus is needed to inform to the scene to activate the
-		 the multiselection to be able to select two tables and link them. By default,
-		 the multiselection modifier is the Control key */
-	if(rel_line->isVisible())
-		event->setModifiers(Qt::ControlModifier);
+  /* If the relationship line is visible, indicates that the user is in the middle of
+     a relationship creation, thus is needed to inform to the scene to activate the
+     the multiselection to be able to select two tables and link them. By default,
+     the multiselection modifier is the Control key */
+  if(rel_line->isVisible())
+    event->setModifiers(Qt::ControlModifier);
 
-	QGraphicsScene::mousePressEvent(event);
+  QGraphicsScene::mousePressEvent(event);
 
-	if(event->buttons()==Qt::LeftButton)
-	{
-		sel_ini_pnt=event->scenePos();
+  if(event->buttons()==Qt::LeftButton)
+  {
+    if(event->modifiers()==Qt::ShiftModifier)
+    {
+      sel_ini_pnt=event->scenePos();
 
-		//Selects the object (without press control) if the user is creating a relationship
-		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
-			item->setSelected(true);
-    else if(enable_range_sel && this->selectedItems().isEmpty())
-		{
-      selection_rect->setVisible(true);
-			emit s_objectSelected(nullptr,false);
-		}
-	}
-	else if(event->buttons()==Qt::RightButton)
-	{
-		//Case there is no item at the mouse position clears the selection on the scene
-		if(!item)
-		{
-			this->clearSelection();
-			emit s_objectSelected(nullptr,false);
-		}
+      if(enable_range_sel && this->selectedItems().isEmpty())
+      {
+        selection_rect->setVisible(true);
+        emit s_objectSelected(nullptr,false);
+      }
+    }
+    else
+    {
+      //Selects the object (without press control) if the user is creating a relationship
+      if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
+        item->setSelected(true);
+      else
+        enablePannigMode(true);
+    }
+  }
+  else if(event->buttons()==Qt::RightButton)
+  {
+    //Case there is no item at the mouse position clears the selection on the scene
+    if(!item)
+    {
+      this->clearSelection();
+      emit s_objectSelected(nullptr,false);
+    }
 
-		emit s_popupMenuRequested();
-	}
+    emit s_popupMenuRequested();
+  }
 }
 
 bool ObjectsScene::mouseIsAtCorner(void)
@@ -454,6 +462,14 @@ void ObjectsScene::moveObjectScene(void)
   }
 }
 
+void ObjectsScene::enablePannigMode(bool value)
+{
+  QList<QGraphicsView *> views=this->views();
+
+  if(!views.isEmpty())
+   views[0]->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
+}
+
 void ObjectsScene::enableSceneMove(bool value)
 {
   if(value)
@@ -495,155 +511,159 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         enableSceneMove(false);
     }
 
-		if(!rel_line->isVisible())
-		{
-			//Case the user starts a object moviment
-			if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
-			{
-				emit s_objectsMoved(false);
-				moving_objs=true;
-			}
+    if(!rel_line->isVisible())
+    {
+      //Case the user starts a object moviment
+      if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
+      {
+        emit s_objectsMoved(false);
+        moving_objs=true;
+      }
 
-			//If the alignment to grid is active, adjust the event scene position
-			if(align_objs_grid && !selection_rect->isVisible())
-				event->setScenePos(this->alignPointToGrid(event->scenePos()));
-			else if(selection_rect->isVisible())
-			{
-				QPolygonF pol;
-				pol.append(sel_ini_pnt);
-				pol.append(QPointF(event->scenePos().x(), sel_ini_pnt.y()));
-				pol.append(QPointF(event->scenePos().x(), event->scenePos().y()));
-				pol.append(QPointF(sel_ini_pnt.x(), event->scenePos().y()));
-				selection_rect->setPolygon(pol);
-				selection_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
-				selection_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
-			}
-		}
-	}
+      //If the alignment to grid is active, adjust the event scene position
+      if(align_objs_grid && !selection_rect->isVisible())
+        event->setScenePos(this->alignPointToGrid(event->scenePos()));
+      else if(selection_rect->isVisible())
+      {
+        QPolygonF pol;
+        pol.append(sel_ini_pnt);
+        pol.append(QPointF(event->scenePos().x(), sel_ini_pnt.y()));
+        pol.append(QPointF(event->scenePos().x(), event->scenePos().y()));
+        pol.append(QPointF(sel_ini_pnt.x(), event->scenePos().y()));
+        selection_rect->setPolygon(pol);
+        selection_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+        selection_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+      }
+    }
+  }
 
-	if(rel_line->isVisible())
-		rel_line->setLine(QLineF(rel_line->line().p1(), event->scenePos()));
+  if(rel_line->isVisible())
+    rel_line->setLine(QLineF(rel_line->line().p1(), event->scenePos()));
 
-	QGraphicsScene::mouseMoveEvent(event);
+  QGraphicsScene::mouseMoveEvent(event);
 }
 
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-	QGraphicsScene::mouseReleaseEvent(event);
+  QGraphicsScene::mouseReleaseEvent(event);
 
-  if(corner_move && event->button()==Qt::LeftButton)
-    enableSceneMove(false);
+  if(event->button()==Qt::LeftButton)
+  {
+    enablePannigMode(false);
 
+    if(corner_move)
+      enableSceneMove(false);
+  }
 
-	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs &&
-		 event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
-	{
-		unsigned i, count;
-		QList<QGraphicsItem *> items=this->selectedItems();
-		float x1,y1,x2,y2, dx, dy;
-		QRectF rect;
-		RelationshipView *rel=nullptr;
-		vector<QPointF> points;
-		vector<QPointF>::iterator itr;
+  //If there is selected object and the user ends the object moviment
+  if(!this->selectedItems().isEmpty() && moving_objs &&
+     event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
+  {
+    unsigned i, count;
+    QList<QGraphicsItem *> items=this->selectedItems();
+    float x1,y1,x2,y2, dx, dy;
+    QRectF rect;
+    RelationshipView *rel=nullptr;
+    vector<QPointF> points;
+    vector<QPointF>::iterator itr;
 
-		/* Get the extreme points of the scene to check if some objects are out the area
-		 forcing the scene to be resized */
-		x1=this->sceneRect().left();
-		y1=this->sceneRect().top();
-		x2=this->sceneRect().right();
-		y2=this->sceneRect().bottom();
-		dx=event->scenePos().x() - sel_ini_pnt.x();
-		dy=event->scenePos().y() - sel_ini_pnt.y();
+    /* Get the extreme points of the scene to check if some objects are out the area
+     forcing the scene to be resized */
+    x1=this->sceneRect().left();
+    y1=this->sceneRect().top();
+    x2=this->sceneRect().right();
+    y2=this->sceneRect().bottom();
+    dx=event->scenePos().x() - sel_ini_pnt.x();
+    dy=event->scenePos().y() - sel_ini_pnt.y();
 
-		count=items.size();
-		for(i=0; i < count; i++)
-		{
-			rel=dynamic_cast<RelationshipView *>(items[i]);
+    count=items.size();
+    for(i=0; i < count; i++)
+    {
+      rel=dynamic_cast<RelationshipView *>(items[i]);
 
-			if(!rel)
-			{
-				if(align_objs_grid)
-					items[i]->setPos(alignPointToGrid(items[i]->pos()));
-				else
-				{
-					QPointF p=items[i]->pos();
-					if(p.x() < 0) p.setX(0);
-					if(p.y() < 0) p.setY(0);
-					items[i]->setPos(p);
-				}
+      if(!rel)
+      {
+        if(align_objs_grid)
+          items[i]->setPos(alignPointToGrid(items[i]->pos()));
+        else
+        {
+          QPointF p=items[i]->pos();
+          if(p.x() < 0) p.setX(0);
+          if(p.y() < 0) p.setY(0);
+          items[i]->setPos(p);
+        }
 
-				rect.setTopLeft(items[i]->pos());
-				rect.setSize(items[i]->boundingRect().size());
-			}
-			else
-			{
-				/* If the relationship has points added to the line is necessary to move the points
-				too. Since relationships cannot be moved naturally (by user) this will be done
-				by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-				points=rel->getSourceObject()->getPoints();
-				if(count > 1 && !points.empty())
-				{
-					itr=points.begin();
-					while(itr!=points.end())
-					{
-						//Translate the points
-						itr->setX(itr->x() + dx);
-						itr->setY(itr->y() + dy);
+        rect.setTopLeft(items[i]->pos());
+        rect.setSize(items[i]->boundingRect().size());
+      }
+      else
+      {
+        /* If the relationship has points added to the line is necessary to move the points
+        too. Since relationships cannot be moved naturally (by user) this will be done
+        by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
+        points=rel->getSourceObject()->getPoints();
+        if(count > 1 && !points.empty())
+        {
+          itr=points.begin();
+          while(itr!=points.end())
+          {
+            //Translate the points
+            itr->setX(itr->x() + dx);
+            itr->setY(itr->y() + dy);
 
-						//Align to grid if the flag is set
-						if(align_objs_grid)
-							(*itr)=alignPointToGrid(*itr);
+            //Align to grid if the flag is set
+            if(align_objs_grid)
+              (*itr)=alignPointToGrid(*itr);
 
-						itr++;
-					}
+            itr++;
+          }
 
-					//Assing the new points to relationship and reconfigure its line
-					rel->getSourceObject()->setPoints(points);
-					rel->configureLine();
-				}
+          //Assing the new points to relationship and reconfigure its line
+          rel->getSourceObject()->setPoints(points);
+          rel->configureLine();
+        }
 
-				rect=rel->__boundingRect();
-			}
+        rect=rel->__boundingRect();
+      }
 
-			//Made the comparisson between the scene extremity and the object's bounding rect
-			if(rect.left() < x1) x1=rect.left();
-			if(rect.top() < y1) y1=rect.top();
-			if(rect.right() > x2) x2=rect.right();
-			if(rect.bottom() > y2) y2=rect.bottom();
-		}
+      //Made the comparisson between the scene extremity and the object's bounding rect
+      if(rect.left() < x1) x1=rect.left();
+      if(rect.top() < y1) y1=rect.top();
+      if(rect.right() > x2) x2=rect.right();
+      if(rect.bottom() > y2) y2=rect.bottom();
+    }
 
-		//Reconfigures the rectangle with the most extreme points
-		rect.setCoords(x1, y1, x2, y2);
+    //Reconfigures the rectangle with the most extreme points
+    rect.setCoords(x1, y1, x2, y2);
 
-		//If the new rect is greater than the scene bounding rect, this latter is resized
-		if(rect!=this->sceneRect())
-		{
-			rect=this->itemsBoundingRect();
-			rect.setTopLeft(QPointF(0,0));
-			rect.setWidth(rect.width() * 1.05f);
-			rect.setHeight(rect.height() * 1.05f);
-			this->setSceneRect(rect);
-		}
+    //If the new rect is greater than the scene bounding rect, this latter is resized
+    if(rect!=this->sceneRect())
+    {
+      rect=this->itemsBoundingRect();
+      rect.setTopLeft(QPointF(0,0));
+      rect.setWidth(rect.width() * 1.05f);
+      rect.setHeight(rect.height() * 1.05f);
+      this->setSceneRect(rect);
+    }
 
-		emit s_objectsMoved(true);
-		moving_objs=false;
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
-	}
-	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
-	{
-		QPolygonF pol;
-		QPainterPath sel_area;
+    emit s_objectsMoved(true);
+    moving_objs=false;
+    sel_ini_pnt.setX(NAN);
+    sel_ini_pnt.setY(NAN);
+  }
+  else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
+  {
+    QPolygonF pol;
+    QPainterPath sel_area;
 
-		sel_area.addRect(selection_rect->polygon().boundingRect());
-		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+    sel_area.addRect(selection_rect->polygon().boundingRect());
+    this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
 
-		selection_rect->setVisible(false);
-		selection_rect->setPolygon(pol);
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
-	}
+    selection_rect->setVisible(false);
+    selection_rect->setPolygon(pol);
+    sel_ini_pnt.setX(NAN);
+    sel_ini_pnt.setY(NAN);
+  }
 }
 
 void ObjectsScene::alignObjectsToGrid(void)

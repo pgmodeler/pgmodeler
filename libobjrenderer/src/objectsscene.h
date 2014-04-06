@@ -146,6 +146,9 @@ class ObjectsScene: public QGraphicsScene {
     //! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
     void moveObjectScene(void);
 
+    //! brief Enable the panning mode for the viewport
+    void enablePannigMode(bool value);
+
 		//! \brief Handles and redirects the signal emitted by the modified object
 		void emitObjectModification(BaseGraphicObject *object);
 
