@@ -343,18 +343,19 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-	QGraphicsScene::mouseDoubleClickEvent(event);
+  QGraphicsScene::mouseDoubleClickEvent(event);
+  enablePannigMode(false);
 
-	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
-	{
-		//Gets the selected graphical object
-		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
+  if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
+  {
+    //Gets the selected graphical object
+    BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
 
-		if(obj)
-			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
-	}
-	else
-		//Emit a signal indicating that no object was selected
+    if(obj)
+      emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
+  }
+  else
+    //Emit a signal indicating that no object was selected
     emit s_objectDoubleClicked(nullptr);
 }
 
