@@ -1,6 +1,18 @@
 Change Log
 ---------
 
+v0.7.1-beta1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: April 8, 2014</em><br/>
+
+* [Change] Minor change on project's description text on about dialog.
+* [Fix] Workaround for the slow editing of function's definition. Disabled the automatic syntax highlighting.
+* [Fix] Minor fix on reverse engineering process. In some cases the process was aborted due to duplication of relationships caused by an incorreclty name generation for this kind of object.
+* [Fix] Minor fix on model objects widget when changing the visible object types.
+* [Fix] Fixed the conflict with panning mode and graphical object addition operation.
+* [Fix] Fixed a regression introduced by 0.7.1-beta on model fix process.
+
 v0.7.1-beta
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
