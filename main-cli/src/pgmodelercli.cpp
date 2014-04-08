@@ -331,7 +331,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(!opts.count(EXPORT_TO_DBMS) && opts[OUTPUT].isEmpty())
 			throw Exception(trUtf8("No output file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!opts.count(EXPORT_TO_DBMS) && opts[INPUT]==opts[OUTPUT])
+    else if(!opts.count(EXPORT_TO_DBMS) && QFileInfo(opts[INPUT])==QFileInfo(opts[OUTPUT]))
 			throw Exception(trUtf8("Input file must be different from output!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
@@ -483,11 +483,11 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 void PgModelerCLI::extractObjectXML(void)
 {
 	QFile input;
-	QString buf, lin, def_xml, end_tag, short_end_tag="/>";
+  QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL));
-	int end1=-1, start=-1, start1=-1, end=-1, pos=0;
-	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false;
+  int start=-1, end=-1;
+  bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
 
 	if(!silent_mode)
 		out << trUtf8("Extracting objects' XML...") << endl;
@@ -527,7 +527,7 @@ void PgModelerCLI::extractObjectXML(void)
 			{
 				//If the line contains an objects open tag
 				if((lin.startsWith('<') || lin.startsWith("\n<")) && !open_tag)
-				{
+        {
 					//Check the flag indicating an open tag
 					open_tag=true;
 
@@ -549,30 +549,32 @@ void PgModelerCLI::extractObjectXML(void)
 
 					if(is_rel)
 					{
-						//Searches the position of the start tag
-						start=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos);
+            end_extract_rel=short_tag=false;
 
-            //Searches the position of the start tag for the next object
-            start1=buf.indexOf("<", pos + ParsersAttributes::RELATIONSHIP.size());
+            while(!end_extract_rel && !ts.atEnd())
+            {
+              def_xml+=lin + "\n";
+              lin=lin.trimmed();
 
-						//Searches the position of the end tag and the short end tag ('/>')
-						end=buf.indexOf(end_tag, pos);
-						end1=buf.indexOf(short_end_tag, pos);
+              //Checking if the current line is the end of a short-tag relationship
+              if(!short_tag && !lin.startsWith("<") && lin.endsWith("/>"))
+                short_tag=true;
 
-						/* The relationship is considered with short end tag when the normal end tag
-						isn't between the two start tags and the short tag position is before the second start tag */
-						short_tag=(!(end >= start && end <= start1) && end1 < start1);
+              end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
+
+              if(!end_extract_rel)
+                lin=ts.readLine();
+            }
+
+            close_tag=true;
 					}
 				}
-        else if(open_tag && (lin.contains(end_tag) || (is_rel && lin.contains(short_end_tag))))
+        else if(open_tag && lin.contains(end_tag))
 					close_tag=true;
 			}
 
-			if(!lin.isEmpty())
-				def_xml+=lin + "\n";
-
-			//Accumulates the current buffer position
-			pos+=lin.size() + 1;
+      if(!is_rel && !lin.isEmpty())
+        def_xml+=lin + "\n";
 
 			//If the iteration reached the end of the object's definition
 			if(open_tag && close_tag)
@@ -582,7 +584,7 @@ void PgModelerCLI::extractObjectXML(void)
 					objs_xml.push_back(def_xml);
 
 				def_xml.clear();
-				open_tag=close_tag=is_rel=short_tag=false;
+        open_tag=close_tag=is_rel=false;
 			}
 		}
 	}

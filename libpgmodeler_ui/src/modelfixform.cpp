@@ -25,7 +25,7 @@ const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
   setupUi(this);
-  closeEvent(nullptr);
+  hideEvent(nullptr);
 
   //Configuring font style for output widget
   if(configuration_form)
@@ -59,7 +59,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
   connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
-void ModelFixForm::closeEvent(QCloseEvent *)
+void ModelFixForm::hideEvent(QHideEvent *)
 {
   message_frm->setVisible(false);
   pgmodeler_cli_lbl->setVisible(false);
@@ -69,6 +69,7 @@ void ModelFixForm::closeEvent(QCloseEvent *)
   input_file_edt->clear();
   output_file_edt->clear();
   output_txt->setPlainText(trUtf8("Waiting process to start..."));
+  load_model_chk->setChecked(true);
 }
 
 int ModelFixForm::exec(void)
