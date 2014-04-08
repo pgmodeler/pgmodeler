@@ -1041,7 +1041,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				if(getObjectIndex(rel->getName(), BASE_RELATIONSHIP) >= 0)
 					rel->setName(generateUniqueName(rel));
 
-				addRelationship(rel);
+        addRelationship(rel);
 			}
 			else if(rel && rel->isBidirectional())
 				rel->setModified(true);
@@ -1052,6 +1052,9 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 QString DatabaseModel::generateUniqueName(BaseObject *obj)
 {
+  unsigned counter=1;
+  QString aux_name;
+
 	if(!obj)
 		return("");
 
@@ -1063,6 +1066,16 @@ QString DatabaseModel::generateUniqueName(BaseObject *obj)
 		obj_name.chop(id.size() + 1);
 		obj_name+="_" + id;
 	}
+
+  if(!TableObject::isTableObject(obj->getObjectType()))
+  {
+    aux_name=obj_name;
+    while(getObjectIndex(aux_name, obj->getObjectType()) >= 0)
+      aux_name=QString("%1_%2").arg(obj_name).arg(counter++);
+
+    if(aux_name!=obj_name)
+      obj_name=aux_name;
+  }
 
 	return(obj_name);
 }

@@ -379,7 +379,15 @@ void ModelObjectsWidget::updateObjectsList(void)
 {
 	if(db_model)
 	{
-		vector<BaseObject *> objects=db_model->findObjects("", BaseObject::getObjectTypes(),true, false, false, false);
+    vector<ObjectType> visible_types;
+
+    for(auto tp : visible_objs_map)
+    {
+      if(tp.second)
+        visible_types.push_back(tp.first);
+    }
+
+    vector<BaseObject *> objects=db_model->findObjects("", visible_types,true, false, false, false);
 		ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 	}
 }
