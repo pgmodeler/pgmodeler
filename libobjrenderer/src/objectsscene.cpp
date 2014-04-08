@@ -361,6 +361,8 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+  QGraphicsView *view=getActiveViewport();
+
   //Gets the item at mouse position
   QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
@@ -389,8 +391,10 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
       //Selects the object (without press control) if the user is creating a relationship
       if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
-        item->setSelected(true);
-      else
+        item->setSelected(true);     
+      /* Workaround to avoid the panning mode to be activated when user is only adding a
+         graphical object (table / textbox / relationship / view) */
+      else if(view && view->cursor().shape()==Qt::ArrowCursor)
         enablePannigMode(true);
     }
   }
@@ -409,11 +413,11 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 bool ObjectsScene::mouseIsAtCorner(void)
 {
-  QList<QGraphicsView *> views=this->views();
+  QGraphicsView *view=getActiveViewport();
 
-  if(!views.isEmpty())
+  if(view)
   {
-    QGraphicsView *view=views[0];
+
     QPoint pos=view->mapFromGlobal(QCursor::pos());
     QRect rect=view->rect();
 
@@ -442,15 +446,30 @@ bool ObjectsScene::mouseIsAtCorner(void)
     return(false);
 }
 
+QGraphicsView *ObjectsScene::getActiveViewport(void)
+{
+  QGraphicsView *view_p=nullptr;
+
+  for(auto view : this->views())
+  {
+    if(view && view->isActiveWindow())
+    {
+      view_p=view;
+      break;
+    }
+  }
+
+  return(view_p);
+}
+
 void ObjectsScene::moveObjectScene(void)
 {
   if(scene_move_dx!=0 || scene_move_dy!=0)
   {
-    QList<QGraphicsView *> views=this->views();
+    QGraphicsView *view=getActiveViewport();
 
-    if(!views.isEmpty() && mouseIsAtCorner())
+    if(view && mouseIsAtCorner())
     {
-      QGraphicsView *view=views[0];
       view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
       view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
       move_scene=true;
@@ -465,10 +484,10 @@ void ObjectsScene::moveObjectScene(void)
 
 void ObjectsScene::enablePannigMode(bool value)
 {
-  QList<QGraphicsView *> views=this->views();
+  QGraphicsView *view=getActiveViewport();
 
-  if(!views.isEmpty())
-   views[0]->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
+  if(view)
+   view->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
 }
 
 void ObjectsScene::enableSceneMove(bool value)

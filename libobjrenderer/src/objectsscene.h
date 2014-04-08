@@ -96,6 +96,8 @@ class ObjectsScene: public QGraphicsScene {
     Additionally this method configures the direction of movement when returning true */
     bool mouseIsAtCorner(void);
 
+    QGraphicsView *getActiveViewport(void);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
