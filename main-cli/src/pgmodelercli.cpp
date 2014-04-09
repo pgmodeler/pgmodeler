@@ -314,6 +314,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	{
 		int mode_cnt=0;
     bool fix_model=(opts.count(FIX_MODEL) > 0);
+    QFileInfo input_fi(opts[INPUT]), output_fi(opts[OUTPUT]);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
@@ -331,7 +332,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(!opts.count(EXPORT_TO_DBMS) && opts[OUTPUT].isEmpty())
 			throw Exception(trUtf8("No output file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-    else if(!opts.count(EXPORT_TO_DBMS) && QFileInfo(opts[INPUT])==QFileInfo(opts[OUTPUT]))
+    else if(!opts.count(EXPORT_TO_DBMS) && input_fi.absoluteFilePath()==output_fi.absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
@@ -340,10 +341,9 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-
     QDir::setCurrent(orig_work_dir);
-    opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
-    opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+    opts[INPUT]=input_fi.absoluteFilePath();
+    opts[OUTPUT]=output_fi.absoluteFilePath();
 
     //Changing the current working dir to the executable's directory in
     QDir::setCurrent(this->applicationDirPath());
