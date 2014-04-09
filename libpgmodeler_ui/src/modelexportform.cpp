@@ -49,6 +49,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
+  connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
+
 
 	SchemaParser::getPgSQLVersions(versions);
 	pgsqlvers_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));

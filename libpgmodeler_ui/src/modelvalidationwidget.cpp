@@ -59,6 +59,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
+    connect(validation_thread, &QThread::started, [=](){ validation_thread->setPriority(QThread::LowPriority); });
 		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
 		connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
 		connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));

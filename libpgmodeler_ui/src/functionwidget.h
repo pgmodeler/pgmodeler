@@ -33,7 +33,7 @@
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
-		Q_OBJECT
+    Q_OBJECT
 
 		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;

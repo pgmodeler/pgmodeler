@@ -24,13 +24,16 @@ ModelValidationHelper::ModelValidationHelper(void)
 	db_model=nullptr;
 	conn=nullptr;
 	valid_canceled=fix_mode=false;
+
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
 
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType)), this, SLOT(redirectExportProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
+  connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+
 }
 
 void ModelValidationHelper::sleepThread(unsigned msecs)

@@ -87,7 +87,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/sqlappendwidget.cpp \
 	   src/codecompletionwidget.cpp \
            src/swapobjectsidswidget.cpp \
-           src/temporarymodelthread.cpp \
            src/sqltoolwidget.cpp \
            src/tagwidget.cpp \
            src/modelfixform.cpp
@@ -157,7 +156,6 @@ HEADERS += src/mainwindow.h \
 	   src/sqlappendwidget.h \
 	   src/codecompletionwidget.h \
            src/swapobjectsidswidget.h \
-           src/temporarymodelthread.h \
            src/sqltoolwidget.h \
            src/tagwidget.h \
            src/modelfixform.h

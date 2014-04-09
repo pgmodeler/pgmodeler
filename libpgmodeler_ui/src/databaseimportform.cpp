@@ -28,7 +28,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 {
 	setupUi(this);
 
-	import_thread=new QThread(this);
+  import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
 
@@ -50,8 +50,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
-	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
+
+  connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
+  connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::LowPriority); });
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
