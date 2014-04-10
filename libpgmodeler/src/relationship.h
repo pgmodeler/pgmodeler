@@ -253,8 +253,11 @@ class Relationship: public BaseRelationship {
 		//! \brief Creates the special primary key using the names stored in the 'column_ids_pk_rel' vector
 		void createSpecialPrimaryKey(void);
 
-		//! \brief Removes the columns created by the relationship from the specified table primary key if exists.
+    //! \brief Removes all the columns created by the relationship from the specified table primary key if exists.
 		void removeColumnsFromTablePK(Table *table);
+
+    //! \brief Removes a single column created by the relationship from the specified table primary key if exists.
+    void removeColumnFromTablePK(Table *table, Column *column);
 
 		//! \brief Generates the object name according to the specified name pattern
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
@@ -408,9 +411,6 @@ class Relationship: public BaseRelationship {
 		//! \brief Removes the specified attribute or constraint from the relationship
 		void removeObject(TableObject *object);
 
-		//! \brief Removes all the attributes and constraints from the relationship
-		void removeObjects(void);
-
 		//! \brief Remove one attribute using its index
 		void removeAttribute(unsigned attrib_idx);
 
@@ -423,11 +423,17 @@ class Relationship: public BaseRelationship {
 		//! \brief Gets an attribute using its name
 		Column *getAttribute(const QString &name);
 
+    //! brief Returns the list of user added attributes
+    vector<TableObject *> getAttributes(void);
+
 		//! \brief Gets an constraint using its index
 		Constraint *getConstraint(unsigned constr_idx);
 
 		//! \brief Gets an constraint using its name
 		Constraint *getConstraint(const QString &name);
+
+    //! brief Returns the list of user added constraints
+    vector<TableObject *> getConstraints(void);
 
 		/*! \brief Returns the index of a relationship attribute or constraint. Returns -1
 		 when the object doesn't exists */
