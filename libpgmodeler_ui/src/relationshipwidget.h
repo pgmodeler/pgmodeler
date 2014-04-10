@@ -80,6 +80,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void removeObjects(void);
 		void showAdvancedObject(int row);
 		void selectCopyOptions(void);
+    void listSpecialPkColumns(void);
 
 	public slots:
 		void applyConfiguration(void);

@@ -198,8 +198,8 @@ void Relationship::saveObjectsIndexes(void)
 {
 	if(connected && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 	{
-		Constraint * gen_constr[]={ pk_relident, pk_special, fk_rel1n, uq_rel11};
-		unsigned i, count=sizeof(gen_constr)/sizeof(Constraint *);
+    vector<Constraint *>  gen_constr={ pk_relident, pk_special, fk_rel1n, uq_rel11};
+    unsigned i, count=gen_constr.size();
 
 		col_indexes.clear();
 		constr_indexes.clear();
@@ -312,6 +312,7 @@ void Relationship::createSpecialPrimaryKey(void)
 	if(!column_ids_pk_rel.empty())
 	{
 		unsigned i, count;
+    vector<Column *> gen_cols;
 
 		/* Allocates the primary key with the following feature:
 		 1) Protected and included by linking in order to be easily identified
@@ -328,13 +329,21 @@ void Relationship::createSpecialPrimaryKey(void)
 		//For generalization relationships generates the primary key in form of ALTER command
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
 
+    gen_cols=gen_columns;
+    for(auto attrib : rel_attributes)
+      gen_cols.push_back(dynamic_cast<Column *>(attrib));
+
 		//Adds the columns to the primary key
 		count=column_ids_pk_rel.size();
 		for(i=0; i < count; i++)
 		{
-			if(column_ids_pk_rel[i] < gen_columns.size() &&
+      /*if(column_ids_pk_rel[i] < gen_columns.size() &&
 				 !pk_special->isColumnExists(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
-				pk_special->addColumn(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
+        pk_special->addColumn(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS); */
+
+      if(column_ids_pk_rel[i] < gen_cols.size() &&
+         !pk_special->isColumnExists(gen_cols[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
+        pk_special->addColumn(gen_cols[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
 		}
 
 		try
@@ -547,12 +556,6 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	}
 }
 
-void Relationship::removeObjects(void)
-{
-	rel_attributes.clear();
-	rel_constraints.clear();
-}
-
 void Relationship::destroyObjects(void)
 {
 	while(!rel_constraints.empty())
@@ -593,7 +596,9 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		Column *col=nullptr;
 		Constraint *constr=nullptr;
 		vector<TableObject *>::iterator itr, itr_end;
+    vector<unsigned>::iterator sp_pk_itr;
 		bool refer=false;
+    int col_idx=0;
 
 		itr=rel_constraints.begin();
 		itr_end=rel_constraints.end();
@@ -618,6 +623,16 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 											.arg(Utf8String::create(this->getName(true)))
 											.arg(this->getTypeName()),
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    //Generating the column index inside the special pk column list
+    col_idx=getObjectIndex(col) + gen_columns.size();
+    sp_pk_itr=find(column_ids_pk_rel.begin(), column_ids_pk_rel.end(), col_idx);
+
+    //Remove the attribute from the special pk column id list
+    if(sp_pk_itr!=column_ids_pk_rel.end())
+      column_ids_pk_rel.erase(sp_pk_itr);
+
+    removeColumnFromTablePK(dynamic_cast<Table *>(col->getParentTable()), col);
 	}
 
   //Removing the object from the receiver table
@@ -740,7 +755,12 @@ Column *Relationship::getAttribute(unsigned attrib_idx)
 
 Column *Relationship::getAttribute(const QString &name)
 {
-	return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN)));
+  return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN)));
+}
+
+vector<TableObject *> Relationship::getAttributes(void)
+{
+  return(rel_attributes);
 }
 
 Constraint *Relationship::getConstraint(unsigned constr_idx)
@@ -754,7 +774,12 @@ Constraint *Relationship::getConstraint(unsigned constr_idx)
 
 Constraint *Relationship::getConstraint(const QString &name)
 {
-	return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT)));
+  return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT)));
+}
+
+vector<TableObject *> Relationship::getConstraints(void)
+{
+  return(rel_constraints);
 }
 
 unsigned Relationship::getAttributeCount(void)
@@ -1946,6 +1971,31 @@ void Relationship::removeColumnsFromTablePK(Table *table)
 			}
 		}
 	}
+}
+
+void Relationship::removeColumnFromTablePK(Table *table, Column *column)
+{
+  if(table && column)
+  {
+    Constraint *pk=nullptr;
+    unsigned i, count;
+
+    pk=table->getPrimaryKey();
+
+    if(pk)
+    {
+      count=pk->getColumnCount(Constraint::SOURCE_COLS);
+
+      for(i=0; i < count; i++)
+      {
+        if(column==pk->getColumn(i, Constraint::SOURCE_COLS))
+        {
+          pk->removeColumn(column->getName(), Constraint::SOURCE_COLS);
+          break;
+        }
+      }
+    }
+  }
 }
 
 void Relationship::disconnectRelationship(bool rem_tab_objs)
