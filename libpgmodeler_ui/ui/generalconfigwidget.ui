@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>559</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -53,15 +53,8 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="hide_rel_name_chk">
-        <property name="text">
-         <string>Hide relationship name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="oplist_size_lbl">
+      <item row="1" column="0">
+       <widget class="QLabel" name="grid_size_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -75,7 +68,14 @@
          </size>
         </property>
         <property name="text">
-         <string>Operation history:</string>
+         <string>Grid size:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="hide_rel_name_chk">
+        <property name="text">
+         <string>Hide relationship name</string>
         </property>
        </widget>
       </item>
@@ -130,6 +130,68 @@
         </item>
        </layout>
       </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="hide_table_tags_chk">
+        <property name="text">
+         <string>Hide table tags</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="hide_ext_attribs_chk">
+        <property name="text">
+         <string>Hide table extended attributes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="autosave_interv_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>160</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Autosave interval:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="corner_move_chk">
+        <property name="text">
+         <string>Move canvas by positioning mouse on corners</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="oplist_size_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Operation history:</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
@@ -180,32 +242,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="autosave_interv_chk">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Autosave interval:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="hide_ext_attribs_chk">
-        <property name="text">
-         <string>Hide table extended attributes</string>
-        </property>
-       </widget>
       </item>
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -264,36 +300,13 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="grid_size_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>0</height>
-         </size>
+      <item row="6" column="0" colspan="2">
+       <widget class="QCheckBox" name="invert_pan_range_chk">
+        <property name="toolTip">
+         <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
         </property>
         <property name="text">
-         <string>Grid size:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QCheckBox" name="hide_table_tags_chk">
-        <property name="text">
-         <string>Hide table tags</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QCheckBox" name="corner_move_chk">
-        <property name="text">
-         <string>Move canvas by positioning mouse on corners</string>
+         <string>Invert panning mode and range selection triggers</string>
         </property>
         <property name="checked">
          <bool>false</bool>

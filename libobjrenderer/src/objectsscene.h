@@ -37,7 +37,11 @@ class ObjectsScene: public QGraphicsScene {
 		Q_OBJECT
 
     //! brief Indicates if the corner move is enabled for the scene
-    static bool corner_move;
+    static bool corner_move,
+
+    /*! brief Indicates that panning mode and range selection model are activate in inverse mode.
+    By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
+    invert_panning_rangesel;
 
     //! brief Indicates if the scene need to be moved
     bool move_scene;
@@ -115,6 +119,7 @@ class ObjectsScene: public QGraphicsScene {
 		~ObjectsScene(void);
 
     static void enableCornerMove(bool enable);
+    static void invertPanningRangeSelection(bool invert);
     static bool isCornerMoveEnabled(void);
 
     static void setGridSize(unsigned size);
@@ -132,6 +137,7 @@ class ObjectsScene: public QGraphicsScene {
     vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
     bool isRangeSelectionEnabled(void);
+    bool isPanningRangeSelectionInverted(void);
 
 	public slots:
 		void alignObjectsToGrid(void);
