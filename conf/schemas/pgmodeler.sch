@@ -26,7 +26,8 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [		hide-table-tags="] %if @{hide-table-tags} %then true %else false %end ["] $br
 [		code-font="] @{code-font} ["] $br
 [		code-font-size="] @{code-font-size} ["] $br
-[		canvas-corner-move="] %if @{canvas-corner-move} %then true %else false %end ["]
+[		canvas-corner-move="] %if @{canvas-corner-move} %then true %else false %end ["] $br
+[		invert-panning-rangesel="] %if @{invert-panning-rangesel} %then true %else false %end ["]
 [/>] $br
 
 %if @{file} %then

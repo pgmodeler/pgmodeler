@@ -28,6 +28,7 @@ QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
 bool ObjectsScene::corner_move=true;
+bool ObjectsScene::invert_panning_rangesel=false;
 
 ObjectsScene::ObjectsScene(void)
 {
@@ -102,6 +103,11 @@ ObjectsScene::~ObjectsScene(void)
 void ObjectsScene::enableCornerMove(bool enable)
 {
   ObjectsScene::corner_move=enable;
+}
+
+void ObjectsScene::invertPanningRangeSelection(bool invert)
+{
+  ObjectsScene::invert_panning_rangesel=invert;
 }
 
 bool ObjectsScene::isCornerMoveEnabled(void)
@@ -377,7 +383,8 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
   if(event->buttons()==Qt::LeftButton)
   {
-    if(event->modifiers()==Qt::ShiftModifier)
+    if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
+       (invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
     {
       sel_ini_pnt=event->scenePos();
 
@@ -394,7 +401,8 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         item->setSelected(true);     
       /* Workaround to avoid the panning mode to be activated when user is only adding a
          graphical object (table / textbox / relationship / view) */
-      else if(view && view->cursor().shape()==Qt::ArrowCursor)
+      else if(((invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) || !invert_panning_rangesel)  &&
+              view && view->cursor().shape()==Qt::ArrowCursor)
         enablePannigMode(true);
     }
   }
@@ -807,4 +815,9 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 bool ObjectsScene::isRangeSelectionEnabled(void)
 {
   return(enable_range_sel);
+}
+
+bool ObjectsScene::isPanningRangeSelectionInverted()
+{
+  return(invert_panning_rangesel);
 }

@@ -18,6 +18,7 @@
 <!ATTLIST configuration hide-ext-attribs (false|true) "false">
 <!ATTLIST configuration hide-table-tags (false|true) "false">
 <!ATTLIST configuration canvas-corner-move (false|true) "true">
+<!ATTLIST configuration invert-panning-rangesel (false|true) "false">
 
 <!ATTLIST configuration code-font CDATA #IMPLIED>
 <!ATTLIST configuration code-font-size CDATA #IMPLIED>
