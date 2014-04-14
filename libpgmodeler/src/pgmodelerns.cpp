@@ -19,13 +19,13 @@
 #include "pgmodelerns.h"
 #include "databasemodel.h"
 
-template <class Classe>
-void PgModelerNS::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
+template <class Class>
+void PgModelerNS::copyObject(BaseObject **psrc_obj, Class *copy_obj)
 {
-	Classe *orig_obj=nullptr;
+  Class *orig_obj=nullptr;
 
 	//Gets the objects stored in the pointer
-	orig_obj=dynamic_cast<Classe *>(*psrc_obj);
+  orig_obj=dynamic_cast<Class *>(*psrc_obj);
 
 	//Raises an error if the copy object is not allocated
 	if(!copy_obj)
@@ -34,7 +34,7 @@ void PgModelerNS::copyObject(BaseObject **psrc_obj, Classe *copy_obj)
 	//Allocates the source object if its not allocated
 	if(!orig_obj)
 	{
-		orig_obj=new Classe;
+    orig_obj=new Class;
 		(*psrc_obj)=orig_obj;
 	}
 

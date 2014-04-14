@@ -17,6 +17,7 @@
 */
 
 #include "databasemodel.h"
+#include "pgmodelerns.h"
 
 unsigned DatabaseModel::dbmodel_id=20000;
 
@@ -1038,8 +1039,8 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
 					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
 					 the name of the new one */
-				if(getObjectIndex(rel->getName(), BASE_RELATIONSHIP) >= 0)
-					rel->setName(generateUniqueName(rel));
+        if(getObjectIndex(rel->getName(), BASE_RELATIONSHIP) >= 0)
+          rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
 
         addRelationship(rel);
 			}
@@ -1048,36 +1049,6 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		}
 
 	}
-}
-
-QString DatabaseModel::generateUniqueName(BaseObject *obj)
-{
-  unsigned counter=1;
-  QString aux_name;
-
-	if(!obj)
-		return("");
-
-	QString obj_name=obj->getName(), id=QString::number(obj->getObjectId());
-	int len = obj_name.size() + id.size();
-
-	if(len > BaseObject::OBJECT_NAME_MAX_LENGTH)
-	{
-		obj_name.chop(id.size() + 1);
-		obj_name+="_" + id;
-	}
-
-  if(!TableObject::isTableObject(obj->getObjectType()))
-  {
-    aux_name=obj_name;
-    while(getObjectIndex(aux_name, obj->getObjectType()) >= 0)
-      aux_name=QString("%1_%2").arg(obj_name).arg(counter++);
-
-    if(aux_name!=obj_name)
-      obj_name=aux_name;
-  }
-
-	return(obj_name);
 }
 
 void DatabaseModel::updateTablesFKRelationships(void)

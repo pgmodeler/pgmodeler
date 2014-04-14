@@ -17,6 +17,7 @@
 */
 
 #include "relationship.h"
+#include "pgmodelerns.h"
 #include <QApplication>
 
 const QString Relationship::SUFFIX_SEPARATOR("_");
@@ -806,7 +807,6 @@ void Relationship::addConstraints(Table *recv_tab)
 {
 	Constraint *constr=nullptr, *pk=nullptr;
 	unsigned constr_id, constr_cnt, i, count;
-	QString name, orig_name, aux;
 
 	try
 	{
@@ -823,22 +823,7 @@ void Relationship::addConstraints(Table *recv_tab)
 
 			if(constr->getConstraintType()!=ConstraintType::primary_key)
 			{
-				i=1;
-				name.clear();
-				aux.clear();
-
-				//Configures the name of the constraint in order to avoid name duplication errors
-				orig_name=constr->getName();
-				while(recv_tab->getConstraint(orig_name + aux))
-				{
-					aux=QString("%1").arg(i);
-					name=orig_name + aux;
-					i++;
-				}
-
-				if(name!="") constr->setName(name);
-
-				//Adds the constraint to the table
+        constr->setName(PgModelerNS::generateUniqueName(constr, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -1214,7 +1199,6 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 {
 	Constraint *pk=nullptr;
 	unsigned i, count;
-	QString name, aux;
 	bool new_pk=false;
 
 	try
@@ -1242,20 +1226,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 				pk=this->pk_relident;
 
 			new_pk=true;
-			i=1;
-			aux.clear();
-
-			//Configures a basic name for the primary key
-			name=generateObjectName(PK_PATTERN);
-
-			//Resolves any duplication of the new constraint name on the receiver table
-			while(recv_tab->getConstraint(name + aux))
-			{
-				aux=QString("%1").arg(i);
-				i++;
-			}
-
-			pk->setName(name + aux);
+      pk->setName(generateObjectName(PK_PATTERN));
 		}
 
 		//Adds the columns from the strong entity primary key on the weak entity primary key
@@ -1295,7 +1266,6 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 {
 	Constraint *uq=nullptr;
 	unsigned i, count;
-	QString name, aux;
 
 	try
 	{
@@ -1317,19 +1287,8 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 		while(i < count)
 			uq->addColumn(gen_columns[i++], Constraint::SOURCE_COLS);
 
-		//Configures the name for the constraint
-		i=1;
-		aux.clear();
-		name=generateObjectName(UQ_PATTERN);
-
-		//Resolves any duplication of the new constraint name on the receiver table
-		while(recv_tab->getConstraint(name + aux))
-		{
-			aux=QString("%1").arg(i);
-			i++;
-		}
-
-		uq->setName(name + aux);
+    uq->setName(generateObjectName(UQ_PATTERN));
+    uq->setName(PgModelerNS::generateUniqueName(uq, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 		recv_tab->addConstraint(uq);
 	}
 	catch(Exception &e)
@@ -1447,14 +1406,8 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 				name=generateObjectName(DST_FK_PATTERN);
 		}
 
-		//Resolves any duplication of the new constraint name on the receiver table
-		while(recv_tab->getConstraint(name + aux))
-		{
-			aux=QString("%1").arg(i);
-			i++;
-		}
-
-		fk->setName(name + aux);
+    fk->setName(name);
+    fk->setName(PgModelerNS::generateUniqueName(fk, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 		recv_tab->addConstraint(fk);
 	}
 	catch(Exception &e)
@@ -1474,7 +1427,6 @@ void Relationship::addAttributes(Table *recv_tab)
 {
 	unsigned i, count, i1;
 	Column *column=nullptr;
-	QString name, aux;
 
 	try
 	{
@@ -1489,18 +1441,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			if(column->getParentTable())
 				break;
 
-			name=column->getName();
-
-			//Resolves any duplication of the attribute name on the receiver table
-			while(recv_tab->getColumn(name + aux))
-			{
-				aux=QString("%1").arg(i1);
-				i1++;
-			}
-
-			column->setName(name + aux);
-			aux.clear();
-
+      column->setName(PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN))));
 			column->setAddedByLinking(true);
 			column->setParentRelationship(this);
 			recv_tab->addColumn(column);
@@ -1574,6 +1515,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 					name=generateObjectName(DST_COL_PATTERN, column_aux);
 			}
 
+      column->setName(name);
 			//Protects the column evicting that the user modifies it
 			column->setAddedByLinking(true);
 			//Set the parent table as null permiting the column to be added on the receiver table
@@ -1588,16 +1530,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			else if(column->getType()=="smallserial")
 				column->setType(PgSQLType("smallint"));
 
-			//Resolves any duplication of the column name on the receiver table
-			while(recv_tab->getColumn(name + aux))
-			{
-				aux=QString("%1").arg(i1);
-				i1++;
-			}
-
-			name+=aux;
 			if(prev_name!="")	column->setName(prev_name);
-			column->setName(name);
+      column->setName(name);
+      column->setName(PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN))));
 
 			/* If the old name given to the column is different from the current name, the current name
 			of the column will be the old name when the relationship is disconnected and
@@ -1609,7 +1544,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 				prev_ref_col_names[column_aux->getObjectId()]=column->getName();
 
-			//recv_tab->addColumn(column, (i < col_indexes.size() ? col_indexes[i] : -1));
 			recv_tab->addColumn(column);
 		}
 	}
