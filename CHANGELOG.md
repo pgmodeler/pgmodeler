@@ -4,7 +4,7 @@ Change Log
 v0.7.1
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: April ???, 2014</em><br/>
+<em>Release date: April 15, 2014</em><br/>
 
 * [New] Added option to invert panning mode and range selection triggers.
 * [New] Added support to use relationship attributes as special primary keys.
