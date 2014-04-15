@@ -73,7 +73,7 @@ namespace GlobalAttributes {
 	#endif
 
 	static const QString
-  PGMODELER_VERSION="0.7.1-beta1",
+  PGMODELER_VERSION="0.7.1",
   PGMODELER_VER_CODENAME="Brave Mastodon",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).remove(' '), "MMMddyyyy").toString("yyyyMMdd"),
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",

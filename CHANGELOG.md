@@ -1,6 +1,19 @@
 Change Log
 ---------
 
+v0.7.1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: April ???, 2014</em><br/>
+
+* [New] Added option to invert panning mode and range selection triggers.
+* [New] Added support to use relationship attributes as special primary keys.
+* [Change] Improvement on unique name generation for columns and constraints when connecting relatioships.
+* [Change] Improvement on copy / paste operations.
+* [Change] Minor workaround in order to try to fix the crash due to thread conflict mainly on Windows system.
+* [Fix] Minor fix on custom columns positioning.
+* [Fix] Input and output files are now correctly escaped on the model fix form and the process works fine.
+
 v0.7.1-beta1
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>

@@ -1425,14 +1425,14 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 void Relationship::addAttributes(Table *recv_tab)
 {
-	unsigned i, count, i1;
+  unsigned i, count;
 	Column *column=nullptr;
 
 	try
 	{
 		count=rel_attributes.size();
 
-		for(i=0, i1=1; i < count; i++)
+    for(i=0; i < count; i++)
 		{
 			column=dynamic_cast<Column *>(rel_attributes[i]);
 
@@ -1464,9 +1464,9 @@ void Relationship::addAttributes(Table *recv_tab)
 void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
-	unsigned i, count, i1;
+  unsigned i, count;
 	Column *column=nullptr, *column_aux=nullptr;
-	QString name, aux, prev_name;
+  QString name, prev_name;
 
 	try
 	{
@@ -1489,9 +1489,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 		 to the referenced column list of the relationship */
 		for(i=0; i < count; i++)
 		{
-			i1=1;
-			aux="";
-
 			column=new Column;
 			gen_columns.push_back(column);
 

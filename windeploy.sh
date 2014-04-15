@@ -1,7 +1,7 @@
 #/bin/bash
 
 QT_VERSION='5.2.0'
-PGSQL_VERSION='9.2'
+PGSQL_VERSION='9.3'
 QT_ROOT="/c/Qt/Qt${QT_VERSION}/${QT_VERSION}/mingw48_32/"
 QMAKE_ROOT=$QT_ROOT/bin
 MINGW_ROOT="/c/Qt/Qt${QT_VERSION}/Tools/mingw48_32/bin"
