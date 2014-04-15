@@ -591,6 +591,7 @@ void RelationshipView::configureLine(void)
 			tool_tip=Utf8String::create(base_rel->getName(true)) +
 							 " (" + base_rel->getTypeName() + ")";
 
+    tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)
@@ -704,8 +705,8 @@ void RelationshipView::configureAttributes(void)
 		QTextCharFormat fmt;
 		QFont font;
 		QRectF rect;
-		QPolygonF pol;
-		float py, px,
+    QPolygonF pol;
+    float py, px,
 				factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
 		fmt=font_config[ParsersAttributes::ATTRIBUTE];
@@ -717,13 +718,13 @@ void RelationshipView::configureAttributes(void)
 		rect.setSize(QSizeF(8 * factor, 8 * factor));
 
 		//Calculates the first attribute position based upon the attribute count and descriptor size
-		count=rel->getAttributeCount();
+    count=rel->getAttributeCount();
 		px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HORIZ_SPACING) * factor);
 		py=descriptor->pos().y() - (count * rect.height()/(4.0f * factor));
 
-		for(i=0; i < count; i++)
-		{
-			col=rel->getAttribute(i);
+    for(i=0; i < count; i++)
+    {
+      col=rel->getAttribute(i);
 
 			if(i >= static_cast<int>(attributes.size()))
 			{

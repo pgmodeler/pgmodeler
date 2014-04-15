@@ -1,7 +1,7 @@
 #/bin/bash
 
 QT_VERSION='5.2.0'
-PGSQL_VERSION='9.2'
+PGSQL_VERSION='9.3'
 QT_ROOT="/c/Qt/Qt${QT_VERSION}/${QT_VERSION}/mingw48_32/"
 QMAKE_ROOT=$QT_ROOT/bin
 MINGW_ROOT="/c/Qt/Qt${QT_VERSION}/Tools/mingw48_32/bin"
@@ -67,7 +67,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2013 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then

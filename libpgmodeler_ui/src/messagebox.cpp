@@ -78,7 +78,8 @@ void Messagebox::showExceptionList(void)
 	}
 }
 
-void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
+void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+                      const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	vector<Exception> list;
 	vector<Exception>::reverse_iterator itr,itr_end;
@@ -183,7 +184,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type)
 		str_aux.replace(")", ")</em>");
 	}
 
-	this->show(title,str_aux,icon_type,OK_BUTTON);
+  this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
 void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,

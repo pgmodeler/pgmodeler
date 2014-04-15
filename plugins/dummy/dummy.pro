@@ -44,7 +44,11 @@ SOURCES += src/dummy.cpp
 unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
 windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
 
+dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 dummy.files += res/dummy.png lang dummy.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
 windows:dummy.files += $$DESTDIR/$$LIB_PREFIX$$TARGET.a
-dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
+
+# This line force the copy of the generated .so to the destination folder.
+unix:dummy.extra = cp $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} $$PGMODELER_PLUGIN_DIR/$$TARGET > /dev/null
+
 INSTALLS += dummy

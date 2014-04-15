@@ -111,10 +111,6 @@ class SchemaParser {
 		 or conditional instructions */
 		static bool isSpecialCharacter(char chr);
 
-		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
-		called when generating XML code and only tag attributes are treated.*/
-		static QString convertCharsToXMLEntities(QString buf);
-
 		//! \brief Filename that was loaded by the parser
 		static QString filename;
 
@@ -191,6 +187,10 @@ class SchemaParser {
 
 		//! \brief Set if the parser must ignore empty attributes avoiding expcetion throwing
 		static void setIgnoreEmptyAttributes(bool ignore);
+
+    /*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
+    called when generating XML code and only tag attributes are treated.*/
+    static QString convertCharsToXMLEntities(QString buf);
 };
 
 #endif

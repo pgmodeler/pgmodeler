@@ -1482,16 +1482,19 @@ void ModelWidget::moveToSchema(void)
 
 		if(obj_graph)
 		{
-			SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
-			QPointF p;
+      SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+      QPointF p;
 
-			p.setX(dst_schema->pos().x());
-			p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+      if(dst_schema->isVisible())
+      {
+        p.setX(dst_schema->pos().x());
+        p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+        dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
+      }
 
-			dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
-			obj_graph->setModified(true);
-			schema->setModified(true);
-			prev_schema->setModified(true);
+      obj_graph->setModified(true);
+      schema->setModified(true);
+      prev_schema->setModified(true);
 		}
 
 		emit s_objectModified();
@@ -1743,9 +1746,11 @@ void ModelWidget::copyObjects(void)
 
 		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
 		if(object->getObjectType()!=BASE_RELATIONSHIP)
-		{
-			//Get the object dependencies if the user confirmed this situation
-			db_model->getObjectDependecies(object, deps, msg_box.result()==QDialog::Accepted);
+    {
+      if(msg_box.result()==QDialog::Accepted)
+        db_model->getObjectDependecies(object, deps, true);
+      else
+        deps.push_back(object);
 
 			/* Copying the special objects (which references columns added by relationship) in order
 			to be correclty created when pasted */
@@ -1783,12 +1788,10 @@ void ModelWidget::copyObjects(void)
 	itr=deps.begin();
 	itr_end=deps.end();
 
-
 	//Storing the objects ids in a auxiliary vector
 	while(itr!=itr_end)
 	{
-		object=(*itr);
-		//objs_id.push_back(object->getObjectId());
+    object=(*itr);
 		objs_map[object->getObjectId()]=object;
 		itr++;
 	}
@@ -1820,10 +1823,10 @@ void ModelWidget::pasteObjects(void)
 	Function *func=nullptr;
 	Constraint *constr=nullptr;
 	Operator *oper=nullptr;
-	QString aux_name, copy_obj_name;
+  QString aux_name, copy_obj_name;
 	ObjectType obj_type;
 	Exception error;
-	unsigned idx=0, pos=0;
+  unsigned pos=0;
 
 	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
 	task_prog_wgt->show();
@@ -1893,56 +1896,41 @@ void ModelWidget::pasteObjects(void)
 				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)
 				{
-					func=nullptr; oper=nullptr;
-					aux_name.clear();
-					idx=0;
+          func=nullptr; oper=nullptr;
 
-					//Store the orignal object name on a map
-					orig_obj_names[object]=object->getName();
+          //Store the orignal object name on a map
+          orig_obj_names[object]=object->getName();
 
-					do
-					{
-						//Creates an name suffix assigned to the object to be pasted in order to resolve conflicts
-						if(idx > 0)
-						{
-							if(obj_type==OBJ_OPERATOR)
-								aux_name=QString("").leftJustified(idx,'?');
-							else
-								aux_name=QString("_cp%1").arg(idx);
-						}
-						idx++;
+          /* For each object type as follow configures the name and the suffix and store them on the
+            'copy_obj_name' variable. This string is used to check if there are objects with the same name
+            on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
+          if(obj_type==OBJ_FUNCTION)
+          {
+            func=dynamic_cast<Function *>(object);
+            func->setName(PgModelerNS::generateUniqueName(func, (*db_model->getObjectList(OBJ_FUNCTION)), false, "_cp"));
+            copy_obj_name=func->getName();
+            func->setName(orig_obj_names[object]);
+          }
+          else if(obj_type==OBJ_OPERATOR)
+          {
+            oper=dynamic_cast<Operator *>(object);
+            oper->setName(PgModelerNS::generateUniqueName(oper, (*db_model->getObjectList(OBJ_OPERATOR))));
+            copy_obj_name=oper->getName();
+            oper->setName(orig_obj_names[object]);
+          }
+          else
+          {
+            if(tab_obj)
+              tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, "_cp"));
+            else
+              object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, "_cp"));
 
-						/* For each object type as follow configures the name and the suffix and store them on the
-						'copy_obj_name' variable. This string is used to check if there are objects with the same name
-						on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
-						if(obj_type==OBJ_FUNCTION)
-						{
-							func=dynamic_cast<Function *>(object);
-							func->setName(orig_obj_names[object] + aux_name);
-							copy_obj_name=func->getSignature();
-							func->setName(orig_obj_names[object]);
-						}
-						else if(obj_type==OBJ_OPERATOR)
-						{
-							oper=dynamic_cast<Operator *>(object);
-							oper->setName(orig_obj_names[object] + aux_name);
-							copy_obj_name=oper->getSignature();
-							oper->setName(orig_obj_names[object]);
-						}
-						else
-						{
-							object->setName(orig_obj_names[object] + aux_name);
-							copy_obj_name=object->getName(true);
-							object->setName(orig_obj_names[object]);
-						}
-					}
-					while((!tab_obj && db_model->getObject(copy_obj_name, obj_type)) ||
-								(tab_obj && sel_table && sel_table->getObject(copy_obj_name, obj_type)) ||
-								(tab_obj && sel_view  && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) &&
-								 sel_view->getObject(copy_obj_name, obj_type)));
+            copy_obj_name=object->getName();
+            object->setName(orig_obj_names[object]);
+          }
 
-					//Sets the new object name concatenating the suffix to the original name
-					object->setName(orig_obj_names[object] + aux_name);
+          //Sets the new object name concatenating the suffix to the original name
+          object->setName(copy_obj_name);
 				}
 			}
 		}

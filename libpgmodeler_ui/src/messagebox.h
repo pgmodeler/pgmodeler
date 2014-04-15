@@ -56,7 +56,9 @@ class Messagebox: public QDialog, public Ui::Messagebox {
               const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
               const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
-		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);
+    void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
+              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
+              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 		bool isCancelled(void);
 
 	private slots:

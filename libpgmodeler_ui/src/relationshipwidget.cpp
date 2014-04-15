@@ -329,10 +329,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	if(aux_rel)
 	{
-		vector<Column *> cols;
-		vector<unsigned> col_ids;
-    int count, idx;
-		QListWidgetItem *item=nullptr;
+    int idx;
 
 		pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
 		src_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_FK_PATTERN)));
@@ -366,26 +363,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
-			cols=aux_rel->getGeneratedColumns();
-
-			//Get the special primary key columns ids
-			col_ids=aux_rel->getSpecialPrimaryKeyCols();
-
-			count=cols.size();
-      for(idx=0; idx < count; idx++)
-			{
-        rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
-                                " (" + Utf8String::create(*cols[idx]->getType()) + ")");
-        item=rel_columns_lst->item(idx);
-				item->setCheckState(Qt::Unchecked);
-			}
-
-			count=col_ids.size();
-      for(idx=0; idx < count; idx++)
-			{
-        if(col_ids[idx] < static_cast<unsigned>(rel_columns_lst->count()))
-          rel_columns_lst->item(col_ids[idx])->setCheckState(Qt::Checked);
-			}
+      listSpecialPkColumns();
 
 			if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 			{
@@ -749,6 +727,9 @@ void RelationshipWidget::removeObjects(void)
 			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
 			rel->removeObject(object);
 		}
+
+    if(obj_type==OBJ_COLUMN)
+      listSpecialPkColumns();
 	}
 	catch(Exception &e)
 	{
@@ -790,6 +771,9 @@ void RelationshipWidget::removeObject(int row)
 		object=rel->getObject(row, obj_type);
     op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
     rel->removeObject(object);
+
+    if(obj_type==OBJ_COLUMN)
+      listSpecialPkColumns();
 	}
 	catch(Exception &e)
 	{
@@ -826,7 +810,45 @@ void RelationshipWidget::selectCopyOptions(void)
 		storage_chk->setChecked(false);
 		comments_chk->setChecked(false);
 		indexes_chk->setChecked(false);
-	}
+  }
+}
+
+void RelationshipWidget::listSpecialPkColumns(void)
+{
+  Relationship *aux_rel=dynamic_cast<Relationship *>(this->object);
+
+  if(aux_rel)
+  {
+    vector<Column *> cols;
+    vector<unsigned> col_ids;
+    int count, idx;
+    QListWidgetItem *item=nullptr;
+
+    rel_columns_lst->clear();
+    cols=aux_rel->getGeneratedColumns();
+
+    for(auto attrib : aux_rel->getAttributes())
+      cols.push_back(dynamic_cast<Column *>(attrib));
+
+    //Get the special primary key columns ids
+    col_ids=aux_rel->getSpecialPrimaryKeyCols();
+
+    count=cols.size();
+    for(idx=0; idx < count; idx++)
+    {
+      rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
+                               " (" + Utf8String::create(*cols[idx]->getType()) + ")");
+      item=rel_columns_lst->item(idx);
+      item->setCheckState(Qt::Unchecked);
+    }
+
+    count=col_ids.size();
+    for(idx=0; idx < count; idx++)
+    {
+      if(col_ids[idx] < static_cast<unsigned>(rel_columns_lst->count()))
+        rel_columns_lst->item(col_ids[idx])->setCheckState(Qt::Checked);
+    }
+  }
 }
 
 void RelationshipWidget::applyConfiguration(void)
@@ -940,6 +962,7 @@ void RelationshipWidget::applyConfiguration(void)
 				if(rel_type!=BaseRelationship::RELATIONSHIP_FK)
 					model->validateRelationships();
 
+        rel->saveObjectsIndexes();
 				rel->blockSignals(false);
 				rel->setModified(true);
 			}

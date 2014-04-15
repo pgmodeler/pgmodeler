@@ -168,6 +168,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
     about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     restoration_form=new ModelRestorationForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
@@ -228,6 +229,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
+  connect(action_fix_model,SIGNAL(triggered(bool)),model_fix_form,SLOT(exec()));
 
 	connect(models_tbw,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
@@ -286,6 +288,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
+
+  connect(model_fix_form, SIGNAL(s_modelLoadRequested(QString)), this, SLOT(loadModel(QString)));
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
@@ -367,6 +371,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
+  connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::LowPriority); });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -468,6 +473,7 @@ void MainWindow::stopTimers(bool value)
 	{
 		tmpmodel_save_timer.stop();
 		model_save_timer.stop();
+    tmpmodel_thread.quit();
 	}
 	else
 	{
@@ -1088,15 +1094,13 @@ void MainWindow::saveModel(ModelWidget *model)
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
 
-					if(file_dlg.exec()==QFileDialog::Accepted)
+          if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
 					{
-						if(!file_dlg.selectedFiles().isEmpty())
-							model->saveModel(file_dlg.selectedFiles().at(0));
-					}
-
-					recent_models.push_front(file_dlg.selectedFiles().at(0));
-					updateRecentModelsMenu();
-					models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+            model->saveModel(file_dlg.selectedFiles().at(0));
+            recent_models.push_front(file_dlg.selectedFiles().at(0));
+            updateRecentModelsMenu();
+            models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+          }
 				}
 				else
 					model->saveModel();
@@ -1220,7 +1224,12 @@ void MainWindow::loadModel(void)
 	catch(Exception &e)
 	{
 		msg_box.show(e);
-	}
+  }
+}
+
+void MainWindow::loadModel(const QString &filename)
+{
+  loadModels({ filename });
 }
 
 void MainWindow::loadModels(const QStringList &list)
@@ -1241,7 +1250,19 @@ void MainWindow::loadModels(const QStringList &list)
 	catch(Exception &e)
 	{
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
-																 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+                 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+                 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
+                 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
+                 trUtf8("Fix model"), trUtf8("Cancel"), "",
+                 ":/icones/icones/fixobject.png", ":/icones/icones/msgbox_erro.png");
+
+    if(msg_box.result()==QDialog::Accepted)
+    {
+      QFileInfo fi(list[i]);
+      model_fix_form->input_file_edt->setText(list[i]);
+      model_fix_form->output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
+      model_fix_form->exec();
+    }
 	}
 }
 

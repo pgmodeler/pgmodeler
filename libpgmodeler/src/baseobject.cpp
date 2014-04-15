@@ -614,7 +614,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(attributes[ParsersAttributes::NAME].isEmpty())
 			attributes[ParsersAttributes::NAME]=this->getName(format);
 
-		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
+    if(attributes[ParsersAttributes::SQL_OBJECT].isEmpty())
+      attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
 		if(schema)
 		{
@@ -679,12 +680,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
 				SchemaParser::setIgnoreUnkownAttributes(true);
-        //! \brief Checks if the objects name is the same as the passed name
-        //bool operator == (const QString &obj_name);
 
-        //! \brief Checks if the objects name differs from the passed name
-        //bool operator != (const QString &obj_name);
-				attributes[ParsersAttributes::COMMENT]=
+        attributes[ParsersAttributes::COMMENT]=
 						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
 		}
@@ -805,7 +802,20 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 		unsigned id_bkp=obj1->object_id;
 		obj1->object_id=obj2->object_id;
 		obj2->object_id=id_bkp;
-	}
+  }
+}
+
+void BaseObject::updateObjectId(BaseObject *obj)
+{
+  //Raises an error if some of the objects aren't allocated
+  if(!obj)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else  if(obj->isSystemObject())
+    throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+                    .arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
+                    ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else
+    obj->object_id=++global_id;
 }
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)

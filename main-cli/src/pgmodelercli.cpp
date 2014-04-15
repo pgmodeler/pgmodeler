@@ -57,10 +57,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		scene=nullptr;
 		zoom=1;
 
-    //Changing the current working dir to the executable's directory in
-    QDir::setCurrent(this->applicationDirPath());
-
-		initializeOptions();
+    initializeOptions();
 
 		if(argc > 1)
 		{
@@ -279,6 +276,11 @@ accepted structure. All available options are described below.") << endl;
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
+  QString orig_work_dir=QDir::current().absolutePath();
+
+  //Changing the current working dir to the executable's directory in
+  QDir::setCurrent(this->applicationDirPath());
+
 	//Loading connections
 	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
 	{
@@ -311,7 +313,8 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	else
 	{
 		int mode_cnt=0;
-		bool convert_file=(opts.count(FIX_MODEL) > 0);
+    bool fix_model=(opts.count(FIX_MODEL) > 0);
+    QFileInfo input_fi(opts[INPUT]), output_fi(opts[OUTPUT]);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
@@ -321,15 +324,15 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		if(opts.count(ZOOM_FACTOR))
 			zoom=opts[ZOOM_FACTOR].toFloat()/static_cast<float>(100);
 
-		if(!convert_file && mode_cnt==0)
+    if(!fix_model && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!convert_file && mode_cnt > 1)
+    else if(!fix_model && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(opts[INPUT].isEmpty())
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(!opts.count(EXPORT_TO_DBMS) && opts[OUTPUT].isEmpty())
 			throw Exception(trUtf8("No output file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!opts.count(EXPORT_TO_DBMS) && opts[INPUT]==opts[OUTPUT])
+    else if(!opts.count(EXPORT_TO_DBMS) && input_fi.absoluteFilePath()==output_fi.absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
@@ -338,8 +341,12 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-    opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
-    opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+    QDir::setCurrent(orig_work_dir);
+    opts[INPUT]=input_fi.absoluteFilePath();
+    opts[OUTPUT]=output_fi.absoluteFilePath();
+
+    //Changing the current working dir to the executable's directory in
+    QDir::setCurrent(this->applicationDirPath());
 
 		parsed_opts=opts;
 	}
@@ -350,7 +357,7 @@ int PgModelerCLI::exec(void)
 	try
 	{
 		if(!parsed_opts.empty())
-		{
+    {
 			if(!silent_mode)
 			{
 				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
@@ -365,6 +372,9 @@ int PgModelerCLI::exec(void)
 
 			if(parsed_opts.count(FIX_MODEL))
 			{
+        if(!silent_mode)
+          out << trUtf8("Fixed model file: ") << parsed_opts[OUTPUT] << endl;
+
 				extractObjectXML();
 				recreateObjects();
 				model->updateTablesFKRelationships();
@@ -473,11 +483,11 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 void PgModelerCLI::extractObjectXML(void)
 {
 	QFile input;
-	QString buf, lin, def_xml, end_tag, short_end_tag="/>";
+  QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL));
-	int end1=-1, start=-1, start1=-1, end=-1, pos=0;
-	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false;
+  int start=-1, end=-1;
+  bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
 
 	if(!silent_mode)
 		out << trUtf8("Extracting objects' XML...") << endl;
@@ -517,7 +527,7 @@ void PgModelerCLI::extractObjectXML(void)
 			{
 				//If the line contains an objects open tag
 				if((lin.startsWith('<') || lin.startsWith("\n<")) && !open_tag)
-				{
+        {
 					//Check the flag indicating an open tag
 					open_tag=true;
 
@@ -539,30 +549,32 @@ void PgModelerCLI::extractObjectXML(void)
 
 					if(is_rel)
 					{
-						//Searches the position of the start tag
-						start=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos);
+            end_extract_rel=short_tag=false;
 
-						//Searches the position of the start tag for the next relationship
-						start1=buf.indexOf("<" + ParsersAttributes::RELATIONSHIP, pos + ParsersAttributes::RELATIONSHIP.size());
+            while(!end_extract_rel && !ts.atEnd())
+            {
+              def_xml+=lin + "\n";
+              lin=lin.trimmed();
 
-						//Searches the position of the end tag and the short end tag ('/>')
-						end=buf.indexOf(end_tag, pos);
-						end1=buf.indexOf(short_end_tag, pos);
+              //Checking if the current line is the end of a short-tag relationship
+              if(!short_tag && !lin.startsWith("<") && lin.endsWith("/>"))
+                short_tag=true;
 
-						/* The relationship is considered with short end tag when the normal end tag
-						isn't between the two start tags and the short tag position is before the second start tag */
-						short_tag=(!(end >= start && end <= start1) && end1 < start1);
+              end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
+
+              if(!end_extract_rel)
+                lin=ts.readLine();
+            }
+
+            close_tag=true;
 					}
 				}
-				else if(open_tag && lin.contains(end_tag))
+        else if(open_tag && lin.contains(end_tag))
 					close_tag=true;
 			}
 
-			if(!lin.isEmpty())
-				def_xml+=lin + "\n";
-
-			//Accumulates the current buffer position
-			pos+=lin.size() + 1;
+      if(!is_rel && !lin.isEmpty())
+        def_xml+=lin + "\n";
 
 			//If the iteration reached the end of the object's definition
 			if(open_tag && close_tag)
@@ -572,7 +584,7 @@ void PgModelerCLI::extractObjectXML(void)
 					objs_xml.push_back(def_xml);
 
 				def_xml.clear();
-				open_tag=close_tag=is_rel=short_tag=false;
+        open_tag=close_tag=is_rel=false;
 			}
 		}
 	}

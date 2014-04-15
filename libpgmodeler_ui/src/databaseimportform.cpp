@@ -28,7 +28,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 {
 	setupUi(this);
 
-	import_thread=new QThread(this);
+  import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
 
@@ -50,8 +50,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
-	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
+
+  connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
+  connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::LowPriority); });
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -251,6 +253,9 @@ void DatabaseImportForm::listDatabases(void)
   {
     Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
+    //Close a previous connection opened by the import helper
+    import_helper.closeConnection();
+
     //List the available databases using the selected connection
     import_helper.setConnection(*conn);
     DatabaseImportForm::listDatabases(import_helper, true, database_cmb);
@@ -278,7 +283,8 @@ void DatabaseImportForm::hideProgress(bool value)
 	this->resize(this->width(),
 							 (value ? this->height() - 50 : this->height() + 50));
 
-	if(value)	timer.stop();
+  if(value)
+    timer.stop();
 }
 
 void DatabaseImportForm::showEvent(QShowEvent *)
@@ -327,6 +333,8 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 		if(!model_wgt)
 			this->setResult(QDialog::Rejected);
 	}
+
+  import_helper.closeConnection();
 }
 
 void DatabaseImportForm::captureThreadError(Exception e)
@@ -409,6 +417,11 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
+  import_helper.closeConnection();
+  import_thread->quit();
+  timer.stop();
+
 	this->accept();
 }
 

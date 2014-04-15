@@ -1,5 +1,68 @@
-Changelog
+Change Log
 ---------
+
+v0.7.1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: April 15, 2014</em><br/>
+
+* [New] Added option to invert panning mode and range selection triggers.
+* [New] Added support to use relationship attributes as special primary keys.
+* [Change] Improvement on unique name generation for columns and constraints when connecting relatioships.
+* [Change] Improvement on copy / paste operations.
+* [Change] Minor workaround in order to try to fix the crash due to thread conflict mainly on Windows system.
+* [Fix] Minor fix on custom columns positioning.
+* [Fix] Input and output files are now correctly escaped on the model fix form and the process works fine.
+
+v0.7.1-beta1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: April 8, 2014</em><br/>
+
+* [Change] Minor change on project's description text on about dialog.
+* [Fix] Workaround for the slow editing of function's definition. Disabled the automatic syntax highlighting.
+* [Fix] Minor fix on reverse engineering process. In some cases the process was aborted due to duplication of relationships caused by an incorreclty name generation for this kind of object.
+* [Fix] Minor fix on model objects widget when changing the visible object types.
+* [Fix] Fixed the conflict with panning mode and graphical object addition operation.
+* [Fix] Fixed a regression introduced by 0.7.1-beta on model fix process.
+
+v0.7.1-beta
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: April 6, 2014</em><br/>
+
+* [New] Created a small interface to pgmodeler-cli that enables the user to fix a broken model inside pgModeler GUI.
+* [New] Added support to assign a sequence as default value of a column. The sequence will be converted to "nextval('seqname'::regclass) and the validation process will check if the sequence is correctly referenced by the table that owns the column.
+* [Change] Changed the default behavior of left click on blank areas of canvas. Instead of create a range selection the user will move the viewport (panning mode). To enable range selection user must press SHIFT and click/move to draw the selection rectangle.
+* [Fix] Minor fix on connection class in order to accept empty passwords as well passwords that contains spaces.
+* [Fix] Fixed the column listing on constraint editing form after remove one or more columns.
+* [Fix] Fix a crash when canceling the model saving dialog on Windows.
+* [Fix] Minor patch on the model fix process.
+* [Fix] Fixed wrong default values for relationship added columns.
+* [Fix] Fixed a bug related to file paths with ampersand on config files.
+* [Fix] Fix the broken sql for inheritance when a child table don't have columns but only constraints.
+
+v0.7.1-alpha1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: March 29, 2014</em><br/>
+
+* [Change] Major model validation improvement. Now special objects are correctly validated.
+* [Fix] Fixed a crash when closing a model that contains a view that references columns added by relationships.
+* [Fix] Fixed wrong working directory handling on CLI.
+* [Fix] Fixed a bug on file loading process that could left behind some objects depending on size and arrange of the loaded model.
+* [Fix] Fixed the undesired behavior when moving a table to another schema.
+
+v0.7.1-alpha
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: March 21, 2014</em><br/>
+
+* [Fix] Fixed connection config. Empty passwords are now accepted.
+* [Fix] Fixed schema object code generation.
+* [Fix] Fixed the usage of PGMODELER_SCHEMAS_DIR environment variable on import process.
+* [Fix] Fixed "ALTER ... SET OWNER" DDL for materialized views.
+* [Fix] Fixed duplicated semicolon at end of permissions defintion.
 
 v0.7.0
 ------

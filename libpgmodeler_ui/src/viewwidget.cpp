@@ -74,10 +74,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
-		referencias_grid->addWidget(table_sel, 2,1,1,2);
-		referencias_grid->addWidget(column_sel, 3,1,1,2);
-		referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
-		referencias_grid->addWidget(references_tab, 7,0,2,0);
+    referencias_grid->addWidget(table_sel, 2,1,1,2);
+    referencias_grid->addWidget(column_sel, 3,1,1,2);
+    referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
+    referencias_grid->addWidget(references_tab, 7,0,2,0);
 
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
@@ -121,7 +121,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
     fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(materialized_rb);
     fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(with_no_data_chk);
     frame=generateVersionWarningFrame(fields_map);
-    view_grid->addWidget(frame, view_grid->count()+1, 0, 1, 4);
+    view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
     frame->setParent(this);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

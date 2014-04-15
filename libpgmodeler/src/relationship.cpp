@@ -17,6 +17,7 @@
 */
 
 #include "relationship.h"
+#include "pgmodelerns.h"
 #include <QApplication>
 
 const QString Relationship::SUFFIX_SEPARATOR("_");
@@ -198,8 +199,8 @@ void Relationship::saveObjectsIndexes(void)
 {
 	if(connected && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 	{
-		Constraint * gen_constr[]={ pk_relident, pk_special, fk_rel1n, uq_rel11};
-		unsigned i, count=sizeof(gen_constr)/sizeof(Constraint *);
+    vector<Constraint *>  gen_constr={ pk_relident, pk_special, fk_rel1n, uq_rel11};
+    unsigned i, count=gen_constr.size();
 
 		col_indexes.clear();
 		constr_indexes.clear();
@@ -312,6 +313,7 @@ void Relationship::createSpecialPrimaryKey(void)
 	if(!column_ids_pk_rel.empty())
 	{
 		unsigned i, count;
+    vector<Column *> gen_cols;
 
 		/* Allocates the primary key with the following feature:
 		 1) Protected and included by linking in order to be easily identified
@@ -328,13 +330,21 @@ void Relationship::createSpecialPrimaryKey(void)
 		//For generalization relationships generates the primary key in form of ALTER command
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
 
+    gen_cols=gen_columns;
+    for(auto attrib : rel_attributes)
+      gen_cols.push_back(dynamic_cast<Column *>(attrib));
+
 		//Adds the columns to the primary key
 		count=column_ids_pk_rel.size();
 		for(i=0; i < count; i++)
 		{
-			if(column_ids_pk_rel[i] < gen_columns.size() &&
+      /*if(column_ids_pk_rel[i] < gen_columns.size() &&
 				 !pk_special->isColumnExists(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
-				pk_special->addColumn(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
+        pk_special->addColumn(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS); */
+
+      if(column_ids_pk_rel[i] < gen_cols.size() &&
+         !pk_special->isColumnExists(gen_cols[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
+        pk_special->addColumn(gen_cols[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
 		}
 
 		try
@@ -547,12 +557,6 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	}
 }
 
-void Relationship::removeObjects(void)
-{
-	rel_attributes.clear();
-	rel_constraints.clear();
-}
-
 void Relationship::destroyObjects(void)
 {
 	while(!rel_constraints.empty())
@@ -593,7 +597,9 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		Column *col=nullptr;
 		Constraint *constr=nullptr;
 		vector<TableObject *>::iterator itr, itr_end;
+    vector<unsigned>::iterator sp_pk_itr;
 		bool refer=false;
+    int col_idx=0;
 
 		itr=rel_constraints.begin();
 		itr_end=rel_constraints.end();
@@ -618,6 +624,16 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 											.arg(Utf8String::create(this->getName(true)))
 											.arg(this->getTypeName()),
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    //Generating the column index inside the special pk column list
+    col_idx=getObjectIndex(col) + gen_columns.size();
+    sp_pk_itr=find(column_ids_pk_rel.begin(), column_ids_pk_rel.end(), col_idx);
+
+    //Remove the attribute from the special pk column id list
+    if(sp_pk_itr!=column_ids_pk_rel.end())
+      column_ids_pk_rel.erase(sp_pk_itr);
+
+    removeColumnFromTablePK(dynamic_cast<Table *>(col->getParentTable()), col);
 	}
 
   //Removing the object from the receiver table
@@ -740,7 +756,12 @@ Column *Relationship::getAttribute(unsigned attrib_idx)
 
 Column *Relationship::getAttribute(const QString &name)
 {
-	return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN)));
+  return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN)));
+}
+
+vector<TableObject *> Relationship::getAttributes(void)
+{
+  return(rel_attributes);
 }
 
 Constraint *Relationship::getConstraint(unsigned constr_idx)
@@ -754,7 +775,12 @@ Constraint *Relationship::getConstraint(unsigned constr_idx)
 
 Constraint *Relationship::getConstraint(const QString &name)
 {
-	return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT)));
+  return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT)));
+}
+
+vector<TableObject *> Relationship::getConstraints(void)
+{
+  return(rel_constraints);
 }
 
 unsigned Relationship::getAttributeCount(void)
@@ -781,7 +807,6 @@ void Relationship::addConstraints(Table *recv_tab)
 {
 	Constraint *constr=nullptr, *pk=nullptr;
 	unsigned constr_id, constr_cnt, i, count;
-	QString name, orig_name, aux;
 
 	try
 	{
@@ -798,22 +823,7 @@ void Relationship::addConstraints(Table *recv_tab)
 
 			if(constr->getConstraintType()!=ConstraintType::primary_key)
 			{
-				i=1;
-				name.clear();
-				aux.clear();
-
-				//Configures the name of the constraint in order to avoid name duplication errors
-				orig_name=constr->getName();
-				while(recv_tab->getConstraint(orig_name + aux))
-				{
-					aux=QString("%1").arg(i);
-					name=orig_name + aux;
-					i++;
-				}
-
-				if(name!="") constr->setName(name);
-
-				//Adds the constraint to the table
+        constr->setName(PgModelerNS::generateUniqueName(constr, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -1189,7 +1199,6 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 {
 	Constraint *pk=nullptr;
 	unsigned i, count;
-	QString name, aux;
 	bool new_pk=false;
 
 	try
@@ -1217,20 +1226,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 				pk=this->pk_relident;
 
 			new_pk=true;
-			i=1;
-			aux.clear();
-
-			//Configures a basic name for the primary key
-			name=generateObjectName(PK_PATTERN);
-
-			//Resolves any duplication of the new constraint name on the receiver table
-			while(recv_tab->getConstraint(name + aux))
-			{
-				aux=QString("%1").arg(i);
-				i++;
-			}
-
-			pk->setName(name + aux);
+      pk->setName(generateObjectName(PK_PATTERN));
 		}
 
 		//Adds the columns from the strong entity primary key on the weak entity primary key
@@ -1270,7 +1266,6 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 {
 	Constraint *uq=nullptr;
 	unsigned i, count;
-	QString name, aux;
 
 	try
 	{
@@ -1292,19 +1287,8 @@ void Relationship::addUniqueKey(/*Table *ref_tab,*/ Table *recv_tab)
 		while(i < count)
 			uq->addColumn(gen_columns[i++], Constraint::SOURCE_COLS);
 
-		//Configures the name for the constraint
-		i=1;
-		aux.clear();
-		name=generateObjectName(UQ_PATTERN);
-
-		//Resolves any duplication of the new constraint name on the receiver table
-		while(recv_tab->getConstraint(name + aux))
-		{
-			aux=QString("%1").arg(i);
-			i++;
-		}
-
-		uq->setName(name + aux);
+    uq->setName(generateObjectName(UQ_PATTERN));
+    uq->setName(PgModelerNS::generateUniqueName(uq, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 		recv_tab->addConstraint(uq);
 	}
 	catch(Exception &e)
@@ -1422,14 +1406,8 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 				name=generateObjectName(DST_FK_PATTERN);
 		}
 
-		//Resolves any duplication of the new constraint name on the receiver table
-		while(recv_tab->getConstraint(name + aux))
-		{
-			aux=QString("%1").arg(i);
-			i++;
-		}
-
-		fk->setName(name + aux);
+    fk->setName(name);
+    fk->setName(PgModelerNS::generateUniqueName(fk, (*recv_tab->getObjectList(OBJ_CONSTRAINT))));
 		recv_tab->addConstraint(fk);
 	}
 	catch(Exception &e)
@@ -1447,15 +1425,14 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 void Relationship::addAttributes(Table *recv_tab)
 {
-	unsigned i, count, i1;
+  unsigned i, count;
 	Column *column=nullptr;
-	QString name, aux;
 
 	try
 	{
 		count=rel_attributes.size();
 
-		for(i=0, i1=1; i < count; i++)
+    for(i=0; i < count; i++)
 		{
 			column=dynamic_cast<Column *>(rel_attributes[i]);
 
@@ -1464,18 +1441,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			if(column->getParentTable())
 				break;
 
-			name=column->getName();
-
-			//Resolves any duplication of the attribute name on the receiver table
-			while(recv_tab->getColumn(name + aux))
-			{
-				aux=QString("%1").arg(i1);
-				i1++;
-			}
-
-			column->setName(name + aux);
-			aux.clear();
-
+      column->setName(PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN))));
 			column->setAddedByLinking(true);
 			column->setParentRelationship(this);
 			recv_tab->addColumn(column);
@@ -1498,9 +1464,9 @@ void Relationship::addAttributes(Table *recv_tab)
 void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
-	unsigned i, count, i1;
+  unsigned i, count;
 	Column *column=nullptr, *column_aux=nullptr;
-	QString name, aux, prev_name;
+  QString name, prev_name;
 
 	try
 	{
@@ -1523,9 +1489,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 		 to the referenced column list of the relationship */
 		for(i=0; i < count; i++)
 		{
-			i1=1;
-			aux="";
-
 			column=new Column;
 			gen_columns.push_back(column);
 
@@ -1535,6 +1498,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
+      column->setDefaultValue("");
 
 			prev_name=prev_ref_col_names[column_aux->getObjectId()];
 
@@ -1548,6 +1512,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 					name=generateObjectName(DST_COL_PATTERN, column_aux);
 			}
 
+      column->setName(name);
 			//Protects the column evicting that the user modifies it
 			column->setAddedByLinking(true);
 			//Set the parent table as null permiting the column to be added on the receiver table
@@ -1562,16 +1527,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			else if(column->getType()=="smallserial")
 				column->setType(PgSQLType("smallint"));
 
-			//Resolves any duplication of the column name on the receiver table
-			while(recv_tab->getColumn(name + aux))
-			{
-				aux=QString("%1").arg(i1);
-				i1++;
-			}
-
-			name+=aux;
 			if(prev_name!="")	column->setName(prev_name);
-			column->setName(name);
+      column->setName(name);
+      column->setName(PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN))));
 
 			/* If the old name given to the column is different from the current name, the current name
 			of the column will be the old name when the relationship is disconnected and
@@ -1583,7 +1541,6 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 				prev_ref_col_names[column_aux->getObjectId()]=column->getName();
 
-			//recv_tab->addColumn(column, (i < col_indexes.size() ? col_indexes[i] : -1));
 			recv_tab->addColumn(column);
 		}
 	}
@@ -1945,6 +1902,31 @@ void Relationship::removeColumnsFromTablePK(Table *table)
 			}
 		}
 	}
+}
+
+void Relationship::removeColumnFromTablePK(Table *table, Column *column)
+{
+  if(table && column)
+  {
+    Constraint *pk=nullptr;
+    unsigned i, count;
+
+    pk=table->getPrimaryKey();
+
+    if(pk)
+    {
+      count=pk->getColumnCount(Constraint::SOURCE_COLS);
+
+      for(i=0; i < count; i++)
+      {
+        if(column==pk->getColumn(i, Constraint::SOURCE_COLS))
+        {
+          pk->removeColumn(column->getName(), Constraint::SOURCE_COLS);
+          break;
+        }
+      }
+    }
+  }
 }
 
 void Relationship::disconnectRelationship(bool rem_tab_objs)

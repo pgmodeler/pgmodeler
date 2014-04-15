@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=210;
+const int ERROR_COUNT=212;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -259,7 +259,9 @@ enum ErrorType {
 	ERR_MODEL_FILE_NOT_LOADED,
   ERR_INV_COLUMN_TABLE_TYPE,
   ERR_OPR_INV_ELEMENT_ID,
-  ERR_REF_ELEMENT_COLOR_ID
+  ERR_REF_ELEMENT_COLOR_ID,
+  ERR_ASG_INV_OBJECT_TYPE,
+  ERR_INCOMP_COL_TYPE_FOR_SEQ
 };
 
 class Exception {

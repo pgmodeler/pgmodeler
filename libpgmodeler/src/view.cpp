@@ -496,7 +496,22 @@ bool View::isReferRelationshipAddedColumn(void)
 		found=(column && column->isAddedByRelationship());
 	}
 
-	return(found);
+  return(found);
+}
+
+vector<Column *> View::getRelationshipAddedColumns(void)
+{
+  vector<Column *> cols;
+  Column *col=nullptr;
+
+  for(auto ref : references)
+  {
+    col=ref.getColumn();
+    if(col && col->isAddedByRelationship())
+      cols.push_back(col);
+  }
+
+  return(cols);
 }
 
 bool View::isReferencingTable(Table *tab)
@@ -540,6 +555,9 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
   attributes[ParsersAttributes::COLUMNS]="";
   attributes[ParsersAttributes::TAG]="";
+
+  if(materialized)
+    attributes[ParsersAttributes::SQL_OBJECT]="MATERIALIZED " + BaseObject::getSQLName(OBJ_VIEW);
 
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");

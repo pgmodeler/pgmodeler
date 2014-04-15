@@ -18,8 +18,8 @@
     %if @{columns} %then @{columns} %end
 
     %if @{constraints} %then
-	%if %not @{constr-sql-disabled} %then [,] %end
-	$br @{constraints}
+        %if %not @{constr-sql-disabled} %and @{columns} %then [,] $br %end
+        @{constraints}
     %end
   %end
 

@@ -45,10 +45,14 @@ SOURCES += src/xml2object.cpp \
 
 FORMS += ui/xml2objectwidget.ui
 
-unix:QMAKE_POST_LINK="chmod 644 $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
+unix:QMAKE_POST_LINK="chmod 644  $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}"
 windows:QMAKE_POST_LINK="cacls $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} /E /P :R"
 
+xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 xml2object.files += res/xml2object.png lang xml2object.json $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT}
 windows:xml2object.files += $$DESTDIR/$$LIB_PREFIX$$TARGET.a
-xml2object.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
+
+# This line force the copy of the generated .so to the destination folder.
+unix:xml2object.extra = cp $$DESTDIR/$${LIB_PREFIX}$${TARGET}.$${LIB_EXT} $$PGMODELER_PLUGIN_DIR/$$TARGET > /dev/null
+
 INSTALLS += xml2object

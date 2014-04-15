@@ -415,7 +415,9 @@ namespace ParsersAttributes {
   STYLES="styles",
   TAG="tag",
   COLORS="colors",
-  HIDE_POSTGRES_DB="hide-postgres-db";
+  HIDE_POSTGRES_DB="hide-postgres-db",
+  SEQUENCE="sequence",
+  INVERT_PANNING_RANGESEL="invert-panning-rangesel";
 }
 
 #endif

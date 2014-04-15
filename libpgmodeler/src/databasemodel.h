@@ -137,9 +137,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
-		//! \brief Creates a desambiguation name composed by the object name as well it`s id
-		QString generateUniqueName(BaseObject *obj);
-
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
@@ -262,6 +259,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 is ommited (nullptr), the method returns the first relationship where the source table is
 		 participating */
 		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
+
+    //! \brief Searchs and returns all the relationships that the specified table participates
+    vector<BaseRelationship *> getRelationships(BaseTable *tab);
 
 		void addTextbox(Textbox *txtbox, int obj_idx=-1);
 		void removeTextbox(Textbox *txtbox, int obj_idx=-1);

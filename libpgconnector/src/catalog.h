@@ -115,6 +115,11 @@ class Catalog {
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
+    /*! brief Closes the connection used by the catalog.
+    Once this method is called the user must call setConnection() again or the
+    catalog queries will fail */
+    void closeConnection(void);
+
 		//! \brief Configures the catalog query filter
 		void setFilter(unsigned filter);
 

@@ -1,8 +1,18 @@
 include(../pgmodeler.pro)
 
-DESTDIR=$$LIBDESTDIR
 TEMPLATE = lib
 TARGET = parsers
+
+!macx {
+ # Check if LIBDESTDIR points to another location other than DESTDIR
+ # in this case the INSTALLS will be used
+ !equals(LIBDESTDIR, $$DESTDIR) {
+  target.path = $$LIBDESTDIR
+  INSTALLS = target
+ }
+}
+
+macx:DESTDIR=$$LIBDESTDIR
 
 LIBS += $$DESTDIR/$$LIBUTILS \
 	$$XML_LIB

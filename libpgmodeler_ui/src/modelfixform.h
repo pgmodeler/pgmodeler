@@ -18,35 +18,46 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ColumnWidget
-\brief Implements the operations to create/edit columns via form.
+\class ModelFixForm
+\brief Implements an interface to pgmodeler-cli --fix-model command.
 */
 
-#ifndef COLUMN_WIDGET_H
-#define COLUMN_WIDGET_H
+#ifndef MODEL_FIX_FORM_H
+#define MODEL_FIX_FORM_H
 
-#include "baseobjectwidget.h"
-#include "ui_columnwidget.h"
-#include "pgsqltypewidget.h"
+#include <QtWidgets>
+#include "globalattributes.h"
+#include "ui_modelfixform.h"
 
-class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
+#include <iostream>
+using namespace std;
+
+class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 
-		SyntaxHighlighter *hl_default_value;
-		PgSQLTypeWidget *data_type;
-    ObjectSelectorWidget *sequence_sel;
+    const static QString PGMODELER_CLI;
 
-		void hideEvent(QHideEvent *event);
+    //! brief Process used to execute pgmodeler-cli
+    QProcess pgmodeler_cli_proc;
+
+    void hideEvent(QHideEvent *);
 
 	public:
-		ColumnWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
-
-	private slots:
+    ModelFixForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void applyConfiguration(void);
+    int exec(void);
+
+	private slots:
+    void enableFix(void);
+    void fixModel(void);
+    void selectFile(void);
+    void updateOutput(void);
+    void handleProcessFinish(int res);
+
+  signals:
+    void s_modelLoadRequested(QString);
 };
 
 #endif

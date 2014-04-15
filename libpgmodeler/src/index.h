@@ -51,8 +51,8 @@ class Index: public TableObject{
 
 	public:
 		static const  unsigned UNIQUE=0,
-															 CONCURRENT=1,
-															 FAST_UPDATE=2;
+                           CONCURRENT=1,
+                           FAST_UPDATE=2;
 
 		Index(void);
 
@@ -120,6 +120,12 @@ class Index: public TableObject{
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
+
+    /*! brief Returns the list of all columns that is created by relationships.
+    This method is slower than isReferRelationshipAddedColumn() so it's not
+    recommended to use it only check if the object is referencing columns
+    added by relationship */
+    vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if some index element is referencing the specified collation
 		bool isReferCollation(Collation *collation);

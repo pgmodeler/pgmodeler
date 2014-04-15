@@ -120,11 +120,15 @@ void SQLToolWidget::connectToDatabase(void)
   {
     Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
+    if(sql_cmd_conn.isStablished())
+      sql_cmd_conn.close();
+
     import_helper.setConnection(*conn);
     DatabaseImportForm::listDatabases(import_helper, false, database_cmb);
     database_cmb->setEnabled(database_cmb->count() > 1);
+    import_helper.closeConnection();
 
-    sql_cmd_conn=(*conn);
+    enableSQLExecution(false);
   }
   catch(Exception &e)
   {
@@ -138,14 +142,22 @@ void SQLToolWidget::listObjects(void)
   {
     if(database_cmb->currentIndex() > 0)
     {
+      Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
       task_prog_wgt->setWindowTitle(trUtf8("Retrieving objects from database..."));
       task_prog_wgt->show();
 
+      import_helper.setConnection(*conn);
       import_helper.setCurrentDatabase(database_cmb->currentText());
       import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);
-
       DatabaseImportForm::listObjects(import_helper, objects_trw, false, false);
+      import_helper.closeConnection();
 
+      if(sql_cmd_conn.isStablished())
+        sql_cmd_conn.close();
+
+      sql_cmd_conn=(*conn);
+      sql_cmd_conn.switchToDatabase(database_cmb->currentText());
       task_prog_wgt->close();
     }
     else
@@ -165,6 +177,7 @@ void SQLToolWidget::listObjects(void)
   }
   catch(Exception &e)
   {
+    task_prog_wgt->close();
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }

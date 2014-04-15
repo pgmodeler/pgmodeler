@@ -288,7 +288,20 @@ bool Trigger::isReferRelationshipAddedColumn(void)
 		itr++;
 	}
 
-	return(enc);
+  return(enc);
+}
+
+vector<Column *> Trigger::getRelationshipAddedColumns(void)
+{
+  vector<Column *> cols;
+
+  for(auto col : upd_columns)
+  {
+    if(col->isAddedByRelationship())
+      cols.push_back(col);
+  }
+
+  return(cols);
 }
 
 void Trigger::setBasicAttributes(unsigned def_type)

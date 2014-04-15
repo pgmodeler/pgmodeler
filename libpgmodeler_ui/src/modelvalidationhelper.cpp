@@ -24,19 +24,37 @@ ModelValidationHelper::ModelValidationHelper(void)
 	db_model=nullptr;
 	conn=nullptr;
 	valid_canceled=fix_mode=false;
+
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
 
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType)), this, SLOT(redirectExportProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
+  connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+
 }
 
 void ModelValidationHelper::sleepThread(unsigned msecs)
 {
 	if(qApp->thread()!=this->thread())
-		QThread::msleep(msecs);
+    QThread::msleep(msecs);
+}
+
+void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
+{
+  if(!refs.empty())
+  {
+    //Configures a validation info
+    ValidationInfo info=ValidationInfo(val_type, object, refs);
+    error_count++;
+
+    val_infos.push_back(info);
+
+    //Emit the signal containing the info
+    emit s_validationInfoGenerated(info);
+  }
 }
 
 void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
@@ -47,25 +65,46 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
-		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+    if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
+       info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
 		{
-			unsigned obj_id=info.getObject()->getObjectId();
+      BaseObject *info_obj=info.getObject(), *aux_obj=nullptr;
+      unsigned obj_id=info_obj->getObjectId();
 
-			//Search for the object with the minor id
-			while(!refs.empty() && !valid_canceled)
-			{
-				if(obj_id > refs.back()->getObjectId())
-				{
-					obj=refs.back();
-					obj_id=obj->getObjectId();
-				}
+      if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+      {
+        //Search for the object with the minor id
+        while(!refs.empty() && !valid_canceled)
+        {
+          //For commom broken reference, check if the object id is greater than the reference id
+          if(obj_id > refs.back()->getObjectId())
+          {
+            obj=refs.back();
+            obj_id=obj->getObjectId();
+          }
 
-				refs.pop_back();
-			}
+          refs.pop_back();
+        }
+      }
 
 			//Swap the id of the validation object and the found object (minor id)
 			if(obj)
-				BaseObject::swapObjectsIds(info.getObject(), obj, true);
+      {
+        BaseObject::swapObjectsIds(info_obj, obj, true);
+        aux_obj=obj;
+      }
+      else
+      {
+        BaseObject::updateObjectId(info_obj);
+        aux_obj=info_obj;
+      }
+
+      if(aux_obj->getObjectType()==OBJ_VIEW)
+      {
+        vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
+        for(auto rel : base_rels)
+          BaseObject::updateObjectId(rel);
+      }
 
 			sleepThread(5);
 		}
@@ -185,14 +224,14 @@ void ModelValidationHelper::validateModel(void)
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
 												 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW, OBJ_RELATIONSHIP },
 								aux_types[]={ OBJ_TABLE, OBJ_VIEW },
-							 tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX };
+               tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX },
+        obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=nullptr, *refer_obj=nullptr;
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
-		ValidationInfo info;
 		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
 		Constraint *constr=nullptr;
 		Relationship *rel=nullptr;
@@ -214,6 +253,7 @@ void ModelValidationHelper::validateModel(void)
 			while(itr!=obj_list->end()&& !valid_canceled)
 			{
 				object=(*itr);
+        obj_type=object->getObjectType();
 				itr++;
 
 				//Excluding the validation of system objects (created automatically)
@@ -223,7 +263,7 @@ void ModelValidationHelper::validateModel(void)
 
 					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
 					 * Reference table cannot own an id greater thant receiver table */
-					if(object->getObjectType()==OBJ_RELATIONSHIP)
+          if(obj_type==OBJ_RELATIONSHIP)
 					{
 						rel=dynamic_cast<Relationship *>(object);
 						if(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN ||
@@ -272,20 +312,82 @@ void ModelValidationHelper::validateModel(void)
 
 							refs.pop_back();
 						}
+
+            /* Validating a special object. The validation made here is to check if the special object
+            (constraint/index/trigger/view) references a column added by a relationship and
+            that relationship is being created after the creation of the special object */
+            if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW /* || obj_type==OBJ_SEQUENCE */)
+            {
+              vector<ObjectType> tab_aux_types={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
+              vector<TableObject *> *tab_objs;
+              vector<Column *> ref_cols;
+              vector<BaseObject *> rels;
+              BaseObject *rel=nullptr;
+              View *view=nullptr;
+              Constraint *constr=nullptr;
+
+              table=dynamic_cast<Table *>(object);
+              view=dynamic_cast<View *>(object);
+
+              if(table)
+              {
+                /* Checking the table children objects if they references some columns added by relationship.
+                If so, the id of the relationships are swapped with the child object if the first is created
+                after the latter. */
+                for(auto obj_tp : tab_aux_types)
+                {
+                  tab_objs = table->getObjectList(obj_tp);
+
+                  for(auto tab_obj : (*tab_objs))
+                  {
+                    ref_cols.clear();
+                    rels.clear();
+
+                    if(!tab_obj->isAddedByRelationship())
+                    {
+                      if(obj_tp==OBJ_CONSTRAINT)
+                      {
+                        constr=dynamic_cast<Constraint *>(tab_obj);
+
+                        if(constr->getConstraintType()!=ConstraintType::primary_key)
+                          ref_cols=constr->getRelationshipAddedColumns();
+                      }
+                      else if(obj_tp==OBJ_TRIGGER)
+                        ref_cols=dynamic_cast<Trigger *>(tab_obj)->getRelationshipAddedColumns();
+                      else
+                        ref_cols=dynamic_cast<Index *>(tab_obj)->getRelationshipAddedColumns();
+                    }
+
+                    //Getting the relationships that owns the columns
+                    for(auto ref_col : ref_cols)
+                    {
+                      rel=ref_col->getParentRelationship();
+                      if(rel->getObjectId() > tab_obj->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
+                        rels.push_back(rel);
+                    }
+
+                    generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, tab_obj, rels);
+                  }
+                }
+              }
+              else
+              {
+                ref_cols=view->getRelationshipAddedColumns();
+
+                //Getting the relationships that owns the columns
+                for(auto ref_col : ref_cols)
+                {
+                  rel=ref_col->getParentRelationship();
+                  if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
+                    rels.push_back(rel);
+                }
+
+                generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, object, rels);
+              }
+            }
 					}
 
-					//Case there is broken refereces to the object
-					if(!refs_aux.empty())
-					{
-						//Configures a validation info
-						info=ValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
-						error_count++;
-
-						val_infos.push_back(info);
-
-						//Emit the signal containing the info
-						emit s_validationInfoGenerated(info);
-					}
+          generateValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
 				}
 			}
 
@@ -340,7 +442,7 @@ void ModelValidationHelper::validateModel(void)
 			sleepThread(5);
 		}
 
-		/* Inserting the tables and views to the map in order to check if there is table objects
+    /* Inserting the tables and views to the map in order to check if there are table objects
 			 that conflicts with thems */
 		for(i=0; i < aux_cnt && !valid_canceled; i++)
 		{
@@ -363,19 +465,11 @@ void ModelValidationHelper::validateModel(void)
 			/* If the vector of the current map element has more the one object
 			indicates the duplicity thus generates a validation info */
 			if(mitr->second.size() > 1)
-			{
+      {
 				refs.assign(mitr->second.begin() + 1, mitr->second.end());
-
-				//Configures a validation info
-				info=ValidationInfo(ValidationInfo::NO_UNIQUE_NAME, mitr->second.front(), refs);
-				error_count++;
-				refs.clear();
-
-				val_infos.push_back(info);
-
-				//Emit the signal containing the info
-				emit s_validationInfoGenerated(info);
-			}
+        generateValidationInfo(ValidationInfo::NO_UNIQUE_NAME, mitr->second.front(), refs);
+        refs.clear();
+      }
 
 			//Emit a signal containing the validation progress
 			progress=20 + ((i/static_cast<float>(dup_objects.size()))*20);
@@ -429,6 +523,7 @@ void ModelValidationHelper::applyFixes(void)
 			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
 			{
 				validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
+                       val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
 											 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
 				resolveConflict(val_infos[i]);
 			}
