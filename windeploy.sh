@@ -30,15 +30,14 @@ QT_CONF=build/qt.conf
 DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
   
-DEP_LIBS="$QMAKE_ROOT/iconv.dll \
-		  $QMAKE_ROOT/icudt51.dll \
+DEP_LIBS="$QMAKE_ROOT/icudt51.dll \
 		  $QMAKE_ROOT/icuin51.dll \
 		  $QMAKE_ROOT/icuuc51.dll \
 		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
-		  $QMAKE_ROOT/libxml2.dll \
-		  $QMAKE_ROOT/iconv.dll \
+		  $QMAKE_ROOT/libxml2-2.dll \
+		  $QMAKE_ROOT/libiconv-2.dll \
 		  $QMAKE_ROOT/Qt5Core.dll \
 		  $QMAKE_ROOT/Qt5Gui.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
