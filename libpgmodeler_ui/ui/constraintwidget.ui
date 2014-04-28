@@ -209,6 +209,9 @@
      <property name="maximum">
       <number>100</number>
      </property>
+     <property name="value">
+      <number>100</number>
+     </property>
     </widget>
    </item>
    <item row="6" column="0">
@@ -488,6 +491,18 @@
        <string>Referenced Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
        <item row="1" column="2">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
