@@ -166,6 +166,7 @@ void FunctionWidget::showParameterForm(void)
 
 		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
 		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
+    parameter_wgt->param_variadic_chk->setEnabled(obj_sender==parameters_tab);
 		parameter_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->getSelectedRow();
