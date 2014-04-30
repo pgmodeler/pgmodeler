@@ -952,9 +952,11 @@ void DatabaseModel::removeView(View *view, int obj_idx)
 {
 	try
 	{
+    //The relationships that links tables to the view must be removed before erase the view itself
+    updateViewRelationships(view, true);
+
 		__removeObject(view, obj_idx);
 		PgSQLType::removeUserType(view->getName(true), view);
-		updateViewRelationships(view);
 	}
 	catch(Exception &e)
 	{
@@ -1062,7 +1064,7 @@ void DatabaseModel::updateTablesFKRelationships(void)
 	}
 }
 
-void DatabaseModel::updateViewRelationships(View *view)
+void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
 	Table *tab=nullptr;
 	BaseRelationship *rel=nullptr;
@@ -1072,7 +1074,7 @@ void DatabaseModel::updateViewRelationships(View *view)
 
 	if(!view)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(getObjectIndex(view) < 0)
+  else if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
 		itr=base_relationships.begin();

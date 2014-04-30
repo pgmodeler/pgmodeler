@@ -395,8 +395,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Index *createIndex(Table *table);
 		Trigger *createTrigger(BaseTable *table);
 
-		//! \brief Creates/removes the relationship between the passed view and the referecend tables
-		void updateViewRelationships(View *view);
+    //! \brief Creates/removes the relationship between the passed view and the referecend tables
+    void updateViewRelationships(View *view, bool force_rel_removal=false);
 
 		//! \brief Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
 		void updateTableFKRelationships(Table *table);

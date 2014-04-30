@@ -164,10 +164,11 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 			if(alias!="")
 				sql_def+=" AS " + BaseObject::formatName(alias);
-			sql_def+=", ";
 		}
 		else
 			sql_def=expression;
+
+    sql_def+=", ";
 	}
 	//Case the reference is after [JOIN | WHERE] keywords
 	else
