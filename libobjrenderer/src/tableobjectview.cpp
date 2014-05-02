@@ -25,7 +25,7 @@ const QString TableObjectView::TXT_EXCLUDE("ex");
 const QString TableObjectView::TXT_CHECK("ck");
 const QString TableObjectView::TXT_PRIMARY_KEY("pk");
 const QString TableObjectView::TXT_FOREIGN_KEY("fk");
-const QString TableObjectView::TXT_NOT_nullptr("nn");
+const QString TableObjectView::TXT_NOT_NULL("nn");
 const QString TableObjectView::CONSTR_DELIM_START("«");
 const QString TableObjectView::CONSTR_DELIM_END("»");
 
@@ -130,7 +130,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::unique)
 			{
-				attrib=ParsersAttributes::UQ_COLUMN;
+        attrib=ParsersAttributes::UQ_COLUMN;
 				pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -215,7 +215,7 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::UQ_COLUMN];
 				constr_type=ConstraintType::unique;
 			}
-			else if(str_constr.indexOf(TXT_NOT_nullptr)>=0)
+      else if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				fmt=font_config[ParsersAttributes::NN_COLUMN];
 			else
 				fmt=font_config[ParsersAttributes::COLUMN];
@@ -237,7 +237,7 @@ void TableObjectView::configureObject(void)
 			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + ", ";
 
-			if(str_constr.indexOf(TXT_NOT_nullptr)>=0)
+      if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				atribs_tip+="not null";
 		}
 		else
@@ -485,7 +485,7 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->isColumnExists(column, Constraint::SOURCE_COLS))
+      if(constr->isColumnReferenced(column, false))//constr->isColumnExists(column, Constraint::SOURCE_COLS))
 			{
 				constr_type=constr->getConstraintType();
 
@@ -503,7 +503,7 @@ QString TableObjectView::getConstraintString(Column *column)
 			}
 		}
 
-		if(column->isNotNull()) str_constr+=TXT_NOT_nullptr + CONSTR_SEPARATOR;
+    if(column->isNotNull()) str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
 
 		if(str_constr!="")
 			str_constr= CONSTR_DELIM_START +
