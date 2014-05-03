@@ -97,6 +97,8 @@ class Table: public BaseTable {
 		indicating if ALTER commands must be generated or not */
 		void updateAlterCmdsStatus(void);
 
+    void restoreRelObjectsIndexes(ObjectType obj_type);
+
 	public:	
 		Table(void);
 		~Table(void);

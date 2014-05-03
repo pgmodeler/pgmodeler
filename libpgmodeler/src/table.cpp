@@ -1174,7 +1174,68 @@ void Table::restoreRelObjectsIndexes(void)
 {
   if(!col_indexes.empty() || !constr_indexes.empty())
   {
+    restoreRelObjectsIndexes(OBJ_COLUMN);
+    restoreRelObjectsIndexes(OBJ_CONSTRAINT);
+    this->setModified(true);
+  }
+}
 
+void Table::restoreRelObjectsIndexes(ObjectType obj_type)
+{
+  vector<unsigned> obj_idxs;
+
+  if(obj_type==OBJ_COLUMN)
+    obj_idxs=col_indexes;
+  else
+    obj_idxs=constr_indexes;
+
+  if(!obj_idxs.empty())
+  {
+    vector<TableObject *> *list=getObjectList(obj_type);
+    vector<TableObject *> new_list;
+    map<TableObject *, unsigned> obj_pos_map;
+    map<unsigned, TableObject *> obj_ref_map;
+    unsigned i=0, pos=0, size=0, obj_idx;
+
+    //Gathering the relationship added objects
+    for(auto obj : *list)
+    {
+      if(obj->isAddedByLinking())
+      {
+        obj_ref_map[obj->getObjectId()]=obj;
+        obj_pos_map[obj]=obj_idxs[pos++];
+      }
+    }
+
+    size=list->size();
+    new_list.resize(size);
+
+    for(auto ref_itr : obj_ref_map)
+    {
+      obj_idx=obj_pos_map[ref_itr.second];
+
+      if(obj_idx >= size)
+        obj_idx=size-1;
+
+      new_list[obj_idx]=ref_itr.second;
+    }
+
+    pos=i=0;
+    while(pos < size && i < size)
+    {
+      if(!new_list[i] && !list->at(pos)->isAddedByLinking())
+      {
+        new_list[i]=list->at(pos);
+        pos++;
+        i++;
+      }
+      else if(list->at(pos)->isAddedByLinking())
+        pos++;
+      else if(new_list[i])
+        i++;
+    }
+
+    (*list)=new_list;
   }
 }
 

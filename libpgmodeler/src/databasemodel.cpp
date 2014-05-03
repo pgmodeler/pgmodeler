@@ -1482,11 +1482,14 @@ void DatabaseModel::validateRelationships(void)
 		itr++;
   } */
 
-  for(auto tab : tables)
-    dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
-
   if(!loading_model)
+  {
+    for(auto tab : tables)
+      dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
+
+
     xml_special_objs.clear();
+  }
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)

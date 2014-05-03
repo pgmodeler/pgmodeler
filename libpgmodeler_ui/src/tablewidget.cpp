@@ -628,10 +628,11 @@ void TableWidget::applyConfiguration(void)
 
 		try
 		{
+      table->saveRelObjectsIndexes();
+
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
 
-      table->saveRelObjectsIndexes();
 			model->updateTableFKRelationships(table);
 		}
 		catch(Exception &e)
