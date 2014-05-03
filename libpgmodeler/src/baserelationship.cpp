@@ -102,9 +102,6 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::UQ_PATTERN]="";
 	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
 	attributes[ParsersAttributes::DST_FK_PATTERN]="";
-	attributes[ParsersAttributes::COL_INDEXES]="";
-	attributes[ParsersAttributes::CONSTR_INDEXES]="";
-	attributes[ParsersAttributes::ATTRIB_INDEXES]="";
   attributes[ParsersAttributes::UPD_ACTION]="";
   attributes[ParsersAttributes::DEL_ACTION]="";
 

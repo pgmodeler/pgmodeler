@@ -109,6 +109,7 @@ namespace ParsersAttributes {
 	INHERIT="inherit",
 	INCREMENT="increment",
 	INDEXES="indexes",
+  INDEX="index",
 	START="start",
 	CONN_LIMIT="connlimit",
 	LANGUAGE="language",
@@ -377,7 +378,6 @@ namespace ParsersAttributes {
 	SRC_FK_PATTERN="src-fk-pattern",
 	DST_FK_PATTERN="dst-fk-pattern",
 	COL_INDEXES="col-indexes",
-	ATTRIB_INDEXES="attrib-indexes",
 	CONSTR_INDEXES="constr-indexes",
 	ICON="icon",
 	ROOT_DIR="root-dir",
@@ -417,7 +417,8 @@ namespace ParsersAttributes {
   COLORS="colors",
   HIDE_POSTGRES_DB="hide-postgres-db",
   SEQUENCE="sequence",
-  INVERT_PANNING_RANGESEL="invert-panning-rangesel";
+  INVERT_PANNING_RANGESEL="invert-panning-rangesel",
+  CUSTOMIDXS="customidxs";
 }
 
 #endif

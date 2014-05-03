@@ -13,12 +13,6 @@
    [ sql-disabled=] "true"
   %end
 
-  %if @{col-indexes} %or  @{constr-indexes} %then
-    $br [      ]
-    %if @{col-indexes} %then [ col-indexes=] "@{col-indexes}" %end
-    %if @{constr-indexes} %then [ constr-indexes=] "@{constr-indexes}" %end
-  %end
-
 > $br
 
  @{schema}
@@ -34,4 +28,8 @@
  %if @{indexes} %then @{indexes} %end
  %if @{rules} %then @{rules} %end
  %if @{triggers} %then @{triggers} %end
+ 
+ %if @{col-indexes} %then @{col-indexes} %end
+ %if @{constr-indexes} %then @{constr-indexes} %end
+
 </table>  $br $br

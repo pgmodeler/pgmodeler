@@ -21,13 +21,6 @@
     %if @{dst-fk-pattern} %then [ dst-fk-pattern=] "@{dst-fk-pattern}" %end
    %end
 
-  %if @{col-indexes} %or  @{constr-indexes} %or @{attrib-indexes} %then
-    $br $tb
-    %if @{col-indexes} %then [ col-indexes=] "@{col-indexes}" %end
-    %if @{attrib-indexes} %then [ attrib-indexes=] "@{attrib-indexes}" %end
-    %if @{constr-indexes} %then [ constr-indexes=] "@{constr-indexes}" %end
-   %end
-
   %if @{sql-disabled} %then
    $br $tb [ sql-disabled=] "true"
   %end

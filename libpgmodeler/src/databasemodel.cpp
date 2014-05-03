@@ -4229,10 +4229,9 @@ Table *DatabaseModel::createTable(void)
 	Table *table=nullptr;
 	TableObject *object=nullptr;
   BaseObject *tag=nullptr;
+  ObjectType obj_type;
   vector<unsigned> idxs;
-  ObjectType tab_obj_type[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
-  QStringList str_idxs, idx_attrib={ ParsersAttributes::COL_INDEXES, ParsersAttributes::CONSTR_INDEXES };
-  unsigned type_id=0;
+  vector<QString> names;
 
 	try
 	{
@@ -4242,25 +4241,6 @@ Table *DatabaseModel::createTable(void)
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
-
-    //Restoring the column / constraints indexes
-    for(auto attrib : idx_attrib)
-    {
-      idxs.clear();
-
-      if(!attribs[attrib].isEmpty())
-      {
-        str_idxs=attribs[attrib].split(",");
-
-        while(!str_idxs.isEmpty())
-        {
-          idxs.push_back(str_idxs.front().toUInt());
-          str_idxs.pop_front();
-        }
-
-        table->setRelObjectsIndexes(idxs, tab_obj_type[type_id++]);
-      }
-    }
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4298,6 +4278,40 @@ Table *DatabaseModel::createTable(void)
             }
 
             table->setTag(dynamic_cast<Tag *>(tag));
+          }
+          //Retrieving custom columns / constraint indexes
+          else if(elem==ParsersAttributes::CUSTOMIDXS)
+          {
+            XMLParser::getElementAttributes(aux_attribs);
+            obj_type=getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
+
+            XMLParser::savePosition();
+
+            if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+            {
+              do
+              {
+                if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+                {
+                  elem=XMLParser::getElementName();
+
+                  //The element <object> stores the index for each object in the current group
+                  if(elem==ParsersAttributes::OBJECT)
+                  {
+                    XMLParser::getElementAttributes(aux_attribs);
+                    names.push_back(aux_attribs[ParsersAttributes::NAME]);
+                    idxs.push_back(aux_attribs[ParsersAttributes::INDEX].toUInt());
+                  }
+                }
+              }
+              while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+
+              table->setRelObjectsIndexes(names, idxs, obj_type);
+              names.clear();
+              idxs.clear();
+            }
+
+            XMLParser::restorePosition();
           }
 
 					if(object)
@@ -5548,24 +5562,13 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		}
 		else
 		{
-			vector<unsigned> idxs;
-			QStringList str_idxs;
-      QString /*idx_attrib[]= { ParsersAttributes::COL_INDEXES,
-															ParsersAttributes::ATTRIB_INDEXES,
-                              ParsersAttributes::CONSTR_INDEXES }, */
-
-							pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
+      QString pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
 															ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
 															ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN };
 
-      unsigned /*idx_type[]= { Relationship::COL_INDEXES,
-                             Relationship::ATTRIB_INDEXES,
-                             Relationship::CONSTR_INDEXES }, */
-
-					pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
+      unsigned 	pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
 													Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
 													Relationship::PK_PATTERN, Relationship::UQ_PATTERN },
-          //count=sizeof(idx_type)/sizeof(unsigned),
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
       sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -5607,25 +5610,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			//Configuring the name patterns
 			for(i=0; i < pat_count; i++)
 				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
-
-			//Restoring the column / attributes / constraints indexes
-      /*for(i=0; i < count; i++)
-			{
-				idxs.clear();
-
-				if(!attribs[idx_attrib[i]].isEmpty())
-				{
-					str_idxs=attribs[idx_attrib[i]].split(",");
-
-					while(!str_idxs.isEmpty())
-					{
-						idxs.push_back(str_idxs.front().toUInt());
-						str_idxs.pop_front();
-					}
-
-					rel->setObjectsIndexes(idxs, idx_type[i]);
-				}
-      }*/
 		}
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
