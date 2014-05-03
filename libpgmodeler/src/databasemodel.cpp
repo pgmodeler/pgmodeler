@@ -1241,8 +1241,8 @@ void DatabaseModel::validateRelationships(void)
 				//Makes a cast to the correct object class
 				rel=dynamic_cast<Relationship *>(base_rel);
 
-				if(!loading_model)
-					rel->saveObjectsIndexes();
+        //if(!loading_model)
+        //	rel->saveObjectsIndexes();
 
 				//If the relationships is invalid
 				if(rel->isInvalidated())
@@ -1472,7 +1472,7 @@ void DatabaseModel::validateRelationships(void)
 	}
 
 
-	itr=relationships.begin();
+  /* itr=relationships.begin();
 	itr_end=relationships.end();
 
 	while(itr!=itr_end)
@@ -1480,7 +1480,10 @@ void DatabaseModel::validateRelationships(void)
 		rel=dynamic_cast<Relationship *>(*itr);
 		rel->restoreObjectsIndexes();
 		itr++;
-	}
+  } */
+
+  for(auto tab : tables)
+    dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
 
   if(!loading_model)
     xml_special_objs.clear();
@@ -4223,6 +4226,10 @@ Table *DatabaseModel::createTable(void)
 	Table *table=nullptr;
 	TableObject *object=nullptr;
   BaseObject *tag=nullptr;
+  vector<unsigned> idxs;
+  ObjectType tab_obj_type[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
+  QStringList str_idxs, idx_attrib={ ParsersAttributes::COL_INDEXES, ParsersAttributes::CONSTR_INDEXES };
+  unsigned type_id=0;
 
 	try
 	{
@@ -4232,6 +4239,25 @@ Table *DatabaseModel::createTable(void)
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
+
+    //Restoring the column / constraints indexes
+    for(auto attrib : idx_attrib)
+    {
+      idxs.clear();
+
+      if(!attribs[attrib].isEmpty())
+      {
+        str_idxs=attribs[attrib].split(",");
+
+        while(!str_idxs.isEmpty())
+        {
+          idxs.push_back(str_idxs.front().toUInt());
+          str_idxs.pop_front();
+        }
+
+        table->setRelObjectsIndexes(idxs, tab_obj_type[type_id++]);
+      }
+    }
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5436,7 +5462,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	ObjectType table_types[2]={OBJ_VIEW, OBJ_TABLE}, obj_rel_type;
 	QString str_aux, elem,
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
-                             ParsersAttributes::DST_TABLE };
+                       ParsersAttributes::DST_TABLE };
 
 	try
 	{
@@ -5521,22 +5547,22 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		{
 			vector<unsigned> idxs;
 			QStringList str_idxs;
-			QString idx_attrib[]= { ParsersAttributes::COL_INDEXES,
+      QString /*idx_attrib[]= { ParsersAttributes::COL_INDEXES,
 															ParsersAttributes::ATTRIB_INDEXES,
-															ParsersAttributes::CONSTR_INDEXES },
+                              ParsersAttributes::CONSTR_INDEXES }, */
 
 							pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
 															ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
 															ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN };
 
-			unsigned idx_type[]= { Relationship::COL_INDEXES,
-														 Relationship::ATTRIB_INDEXES,
-														 Relationship::CONSTR_INDEXES },
+      unsigned /*idx_type[]= { Relationship::COL_INDEXES,
+                             Relationship::ATTRIB_INDEXES,
+                             Relationship::CONSTR_INDEXES }, */
 
 					pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
 													Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
 													Relationship::PK_PATTERN, Relationship::UQ_PATTERN },
-					count=sizeof(idx_type)/sizeof(unsigned),
+          //count=sizeof(idx_type)/sizeof(unsigned),
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
       sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -5580,7 +5606,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
 
 			//Restoring the column / attributes / constraints indexes
-			for(i=0; i < count; i++)
+      /*for(i=0; i < count; i++)
 			{
 				idxs.clear();
 
@@ -5596,7 +5622,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 					rel->setObjectsIndexes(idxs, idx_type[i]);
 				}
-			}
+      }*/
 		}
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

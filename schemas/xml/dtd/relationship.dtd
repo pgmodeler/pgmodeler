@@ -23,9 +23,9 @@
 <!ATTLIST relationship uq-pattern CDATA #IMPLIED>
 <!ATTLIST relationship src-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
-<!ATTLIST relationship col-indexes CDATA #IMPLIED>
+<!-- <!ATTLIST relationship col-indexes CDATA #IMPLIED>
 <!ATTLIST relationship attrib-indexes CDATA #IMPLIED>
-<!ATTLIST relationship constr-indexes CDATA #IMPLIED>
+<!ATTLIST relationship constr-indexes CDATA #IMPLIED> -->
 <!ATTLIST relationship upd-action CDATA #IMPLIED>
 <!ATTLIST relationship del-action CDATA #IMPLIED>
 

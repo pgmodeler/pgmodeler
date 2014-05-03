@@ -195,7 +195,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col)
 	return(name);
 }
 
-void Relationship::saveObjectsIndexes(void)
+/* void Relationship::saveObjectsIndexes(void)
 {
 	if(connected && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 	{
@@ -261,7 +261,7 @@ void Relationship::setObjectsIndexes(vector<unsigned> &idxs, unsigned ref_type)
 	 attrib_indexes=idxs;
 	else
 	 constr_indexes=idxs;
-}
+} */
 
 void Relationship::setMandatoryTable(unsigned table_id, bool value)
 {
@@ -2421,7 +2421,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
 		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
 
-		if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
+    /* if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
 		{
 			count=col_indexes.size();
 			for(i=0; i < count; i++)
@@ -2442,7 +2442,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::COL_INDEXES].remove(attributes[ParsersAttributes::COL_INDEXES].size()-1,1);
 			attributes[ParsersAttributes::ATTRIB_INDEXES].remove(attributes[ParsersAttributes::ATTRIB_INDEXES].size()-1,1);
 			attributes[ParsersAttributes::CONSTR_INDEXES].remove(attributes[ParsersAttributes::CONSTR_INDEXES].size()-1,1);
-		}
+    } */
 
 		attributes[ParsersAttributes::COLUMNS]="";
 		count=rel_attributes.size();
@@ -2505,9 +2505,9 @@ void Relationship::operator = (Relationship &rel)
 	this->gen_columns.clear();
 	this->copy_options=rel.copy_options;
 	this->name_patterns=rel.name_patterns;
-	this->col_indexes=rel.col_indexes;
+/*	this->col_indexes=rel.col_indexes;
 	this->constr_indexes=rel.constr_indexes;
-	this->attrib_indexes=rel.attrib_indexes;
+  this->attrib_indexes=rel.attrib_indexes; */
   this->upd_action=rel.upd_action;
   this->del_action=rel.del_action;
 }

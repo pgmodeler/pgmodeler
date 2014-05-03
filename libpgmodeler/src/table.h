@@ -63,6 +63,9 @@ class Table: public BaseTable {
 		outside tha table's declaration */
 		gen_alter_cmds;
 
+    //! \brief Stores the relationship added column / constraints indexes
+    vector<unsigned> col_indexes,	constr_indexes;
+
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
@@ -75,6 +78,7 @@ class Table: public BaseTable {
 		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
+    void setRelObjectsIndexesAttribute(void);
 
 	protected:
 		//! \brief Adds an ancestor table
@@ -298,8 +302,14 @@ class Table: public BaseTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
+    void saveRelObjectsIndexes(void);
+
+    void restoreRelObjectsIndexes(void);
+
+    void setRelObjectsIndexes(vector<unsigned> &idxs, ObjectType obj_type);
+
 		friend class Relationship;
-		friend class OperationList;
+    friend class OperationList;
 };
 
 #endif

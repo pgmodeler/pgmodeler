@@ -631,6 +631,7 @@ void TableWidget::applyConfiguration(void)
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
 
+      table->saveRelObjectsIndexes();
 			model->updateTableFKRelationships(table);
 		}
 		catch(Exception &e)

@@ -137,9 +137,9 @@ class Relationship: public BaseRelationship {
 		pk_columns;
 
 		//! \brief Stores the column / constraints / attributes indexes on the receiver table
-		vector<unsigned> col_indexes,
+    /* vector<unsigned> col_indexes,
 		attrib_indexes,
-		constr_indexes;
+    constr_indexes; */
 
 		/*! \brief Stores the names of the columns referenced earlier, where
 			the key of the map is the identifier of each column created by
@@ -263,9 +263,9 @@ class Relationship: public BaseRelationship {
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
 
 	protected:
-		static const unsigned COL_INDEXES=0,
+    /* static const unsigned COL_INDEXES=0,
 															ATTRIB_INDEXES=1,
-															CONSTR_INDEXES=2;
+                              CONSTR_INDEXES=2; */
 
 		//! \brief Destroy all the relationship attributes and constraints
 		void destroyObjects(void);
@@ -281,9 +281,9 @@ class Relationship: public BaseRelationship {
 		 unique key used in 1-1 relationships */
 		vector<Constraint *> getGeneratedConstraints(void);
 
-		void saveObjectsIndexes(void);
+    /* void saveObjectsIndexes(void);
 		void restoreObjectsIndexes(void);
-		void setObjectsIndexes(vector<unsigned> &idxs, unsigned ref_type);
+    void setObjectsIndexes(vector<unsigned> &idxs, unsigned ref_type); */
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'

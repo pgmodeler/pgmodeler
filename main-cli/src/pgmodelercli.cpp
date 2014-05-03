@@ -710,7 +710,7 @@ void PgModelerCLI::recreateObjects(void)
 
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
-	QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(.)*(\")";
+  QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")"; //"(%1)( )*(=)(\")(.)*(\")";
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
@@ -740,12 +740,15 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-	//Remove auto-sufix, src-sufix and dst-sufix from <relationship> tags.
+  //Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
 		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
+    obj_xml.remove(QRegExp(att_regexp.arg("col-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("constr-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
 	}
 
 	//Renaming the tag <grant> to <permission>

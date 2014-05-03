@@ -33,6 +33,9 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
+  attributes[ParsersAttributes::COL_INDEXES]="";
+  attributes[ParsersAttributes::CONSTR_INDEXES]="";
+
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
 }
@@ -135,7 +138,22 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+}
+
+void Table::setRelObjectsIndexesAttribute(void)
+{
+  attributes[ParsersAttributes::COL_INDEXES]="";
+  attributes[ParsersAttributes::CONSTR_INDEXES]="";
+
+  for(auto col_idx : col_indexes)
+    attributes[ParsersAttributes::COL_INDEXES]+=QString("%1").arg(col_idx) + ",";
+
+  for(auto constr_idx : constr_indexes)
+    attributes[ParsersAttributes::CONSTR_INDEXES]+=QString("%1").arg(constr_idx) + ",";
+
+  attributes[ParsersAttributes::COL_INDEXES].remove(attributes[ParsersAttributes::COL_INDEXES].size()-1,1);
+  attributes[ParsersAttributes::CONSTR_INDEXES].remove(attributes[ParsersAttributes::CONSTR_INDEXES].size()-1,1);
 }
 
 void Table::setColumnsAttribute(unsigned def_type)
@@ -1116,6 +1134,50 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
   return(found);
 }
 
+void Table::setRelObjectsIndexes(vector<unsigned> &idxs, ObjectType obj_type)
+{
+  if(obj_type==OBJ_COLUMN)
+   col_indexes=idxs;
+  else
+   constr_indexes=idxs;
+}
+
+void Table::saveRelObjectsIndexes(void)
+{
+  col_indexes.clear();
+  constr_indexes.clear();
+
+  if(isReferRelationshipAddedObject())
+  {
+    unsigned idx=0;
+
+    for(auto col : columns)
+    {
+      if(col->isAddedByLinking())
+        col_indexes.push_back(idx);
+
+      idx++;
+    }
+
+    idx=0;
+    for(auto constr : constraints)
+    {
+      if(constr->isAddedByLinking())
+        constr_indexes.push_back(idx);
+
+      idx++;
+    }
+  }
+}
+
+void Table::restoreRelObjectsIndexes(void)
+{
+  if(!col_indexes.empty() || !constr_indexes.empty())
+  {
+
+  }
+}
+
 bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 {
 	bool found=false;
@@ -1184,6 +1246,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	setIndexesAttribute(def_type);
 	setRulesAttribute(def_type);
 	setAncestorTableAttribute();
+  setRelObjectsIndexesAttribute();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
 		setPositionAttribute();
