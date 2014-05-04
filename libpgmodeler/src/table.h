@@ -63,6 +63,9 @@ class Table: public BaseTable {
 		outside tha table's declaration */
 		gen_alter_cmds;
 
+    //! \brief Stores the relationship added column / constraints indexes
+    map<QString, unsigned> col_indexes,	constr_indexes;
+
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
@@ -75,6 +78,7 @@ class Table: public BaseTable {
 		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
+    void setRelObjectsIndexesAttribute(void);
 
 	protected:
 		//! \brief Adds an ancestor table
@@ -92,6 +96,9 @@ class Table: public BaseTable {
 		/*! \brief Updates the "decl_in_table" status for columns/constraints
 		indicating if ALTER commands must be generated or not */
 		void updateAlterCmdsStatus(void);
+
+    void saveRelObjectsIndexes(ObjectType obj_type);
+    void restoreRelObjectsIndexes(ObjectType obj_type);
 
 	public:	
 		Table(void);
@@ -276,9 +283,6 @@ class Table: public BaseTable {
 		//! \brief Swaps two objects position
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
 
-		//! \brief Move the object to the specified index
-		void moveObjectToIndex(TableObject *tab_obj, unsigned idx);
-
 		//! \brief Returns if the table references objects added by relationship
 		bool isReferRelationshipAddedObject(void);
 
@@ -298,8 +302,19 @@ class Table: public BaseTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
+    //! brief Save the current index of the objects created by relationship
+    void saveRelObjectsIndexes(void);
+
+    /*! brief Restore the position of the objects created by relationships.
+        This method must be used with caution since it generate a new list of object replacing
+        the original inside the table. Also this method can be slow in huge tables */
+    void restoreRelObjectsIndexes(void);
+
+    //! brief Creates custom index from rel. created object using a name and index vectors as input.
+    void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
+
 		friend class Relationship;
-		friend class OperationList;
+    friend class OperationList;
 };
 
 #endif

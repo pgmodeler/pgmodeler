@@ -710,7 +710,7 @@ void PgModelerCLI::recreateObjects(void)
 
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
-	QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(.)*(\")";
+  QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")"; //"(%1)( )*(=)(\")(.)*(\")";
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
@@ -740,12 +740,15 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-	//Remove auto-sufix, src-sufix and dst-sufix from <relationship> tags.
+  //Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
 		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
+    obj_xml.remove(QRegExp(att_regexp.arg("col-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("constr-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
 	}
 
 	//Renaming the tag <grant> to <permission>
@@ -803,8 +806,7 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 	ParsersAttributes::TABLE_NAME, ParsersAttributes::SPECIAL_PK_COLS, ParsersAttributes::TABLE,
 	ParsersAttributes::ANCESTOR_TABLE, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
 	ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN, ParsersAttributes::PK_PATTERN,
-	ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
-	ParsersAttributes::COL_INDEXES, ParsersAttributes::CONSTR_INDEXES, ParsersAttributes::ATTRIB_INDEXES };
+  ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);

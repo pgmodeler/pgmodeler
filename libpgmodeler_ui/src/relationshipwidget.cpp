@@ -962,7 +962,7 @@ void RelationshipWidget::applyConfiguration(void)
 				if(rel_type!=BaseRelationship::RELATIONSHIP_FK)
 					model->validateRelationships();
 
-        rel->saveObjectsIndexes();
+        //rel->saveObjectsIndexes();
 				rel->blockSignals(false);
 				rel->setModified(true);
 			}

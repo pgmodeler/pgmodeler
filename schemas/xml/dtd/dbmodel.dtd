@@ -52,6 +52,8 @@
 %extension;
 <!ENTITY % tag SYSTEM "tag.dtd">
 %tag;
+<!ENTITY % customidxs SYSTEM "customidxs.dtd">
+%customidxs;
 
 <!ELEMENT dbmodel ANY>
 
