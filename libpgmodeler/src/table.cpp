@@ -1229,12 +1229,25 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
     vector<TableObject *>::iterator itr;
     QString name;
     TableObject *tab_obj=nullptr;
-    unsigned i=0, pos=0, size=0, obj_idx, names_used=0;
+    unsigned i=0, pos=0, size=0, obj_idx, names_used=0, aux_size=0;
 
-    /* Creates a new list with size + 1 in order to allocate items that
-       eventually exceeds the list capacity */
     size=list->size();
-    new_list.resize(size + 1);
+
+    /* Indentify the maximum index on the existing rel objects. This is done
+    to correctly resize the new list in order to avoid exceed the list bounds
+    and consequently crashing the app */
+    for(auto itr : *obj_idxs)
+    {
+      if(aux_size < (itr.second + 1))
+        aux_size=itr.second + 1;
+    }
+
+    /* If the auxiliary size is lesser than the current object list size
+       the new list is resized with same capacity of the "list" vector */
+    if(aux_size < size)
+      aux_size=size;
+
+    new_list.resize(aux_size);
 
     for(auto obj : *list)
     {
@@ -1270,9 +1283,9 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
         i++;
     }
 
-    //Removing unused items (nullptr ones) from the list
-    while((itr=std::find(new_list.begin(), new_list.end(), nullptr))!=new_list.end())
-     new_list.erase(itr);
+    //Removing unused items (nullptr ones) from the list using remove_if and lambdas (for predicate)
+    new_list.erase(remove_if(new_list.begin(), new_list.end(),
+                             [](TableObject *obj){ return(obj==nullptr); }), new_list.end());
 
     (*list)=new_list;
 
