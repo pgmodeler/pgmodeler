@@ -193,37 +193,17 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	QString icon_name;
 
   if(!yes_lbl.isEmpty())
-  {
     yes_ok_btn->setText(yes_lbl);
-    yes_ok_btn->setIcon(QIcon(yes_ico));
-  }
   else
-  {
     yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
-    yes_ok_btn->setIcon(QPixmap(":/icones/icones/confirmar.png"));
-  }
 
-  if(!no_lbl.isEmpty())
-  {
-    no_btn->setText(no_lbl);
-    no_btn->setIcon(QIcon(no_ico));
-  }
-  else
-  {
-    no_btn->setText(trUtf8("&No"));
-    no_btn->setIcon(QPixmap(":/icones/icones/fechar1.png"));
-  }
+  yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(":/icones/icones/confirmar.png"));
 
-  if(!cancel_lbl.isEmpty())    
-  {
-    cancel_btn->setText(cancel_lbl);
-    cancel_btn->setIcon(QIcon(cancel_ico));
-  }
-  else
-  {
-    cancel_btn->setText(trUtf8("&Cancel"));
-    cancel_btn->setIcon(QPixmap(":/icones/icones/cancelar.png"));
-  }
+  no_btn->setText(!no_lbl.isEmpty() ? no_lbl : trUtf8("&No"));
+  no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) :QPixmap(":/icones/icones/fechar1.png") );
+
+  cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : trUtf8("&Cancel"));
+  cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(":/icones/icones/cancelar.png"));
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);

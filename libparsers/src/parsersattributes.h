@@ -366,6 +366,7 @@ namespace ParsersAttributes {
 	HANDLES_TYPE="handles-type",
 	CUR_VERSION="cur-version",
 	OLD_VERSION="old-version",
+  NEW_VERSION="new-version",
 	RECENT_MODELS="recent-models",
 	RECENT="recent",
 	HIDE_REL_NAME="hide-rel-name",

@@ -27,6 +27,11 @@
 
 #include <QtWidgets>
 #include <QPrintDialog>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
 #include "aboutform.h"
@@ -49,6 +54,12 @@ using namespace std;
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
+
+    QNetworkAccessManager update_chk_manager;
+
+    QNetworkReply *update_chk_reply;
+
+    bool silent_upd_check;
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
@@ -129,7 +140,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-		void addModel(const QString &filename="");
+    void addModel(const QString &filename="");
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -221,6 +232,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		/*! \brief Stop the saving timers. This is used when validating the model
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
+
+    void checkForUpdate(void);
+    void handleUpdateChecked(QNetworkReply *reply);
 };
 
 #endif

@@ -656,6 +656,7 @@
     </property>
     <addaction name="action_wiki"/>
     <addaction name="action_about"/>
+    <addaction name="action_check_update"/>
    </widget>
    <widget class="QMenu" name="show_menu">
     <property name="title">
@@ -1253,6 +1254,15 @@
    </property>
    <property name="text">
     <string>Fix a model</string>
+   </property>
+  </action>
+  <action name="action_check_update">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check for update</string>
    </property>
   </action>
  </widget>

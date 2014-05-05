@@ -100,6 +100,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
   vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
+  update_chk_reply=nullptr;
+  silent_upd_check=false;
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
 
@@ -224,6 +226,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																QIcon(QString(":/icones/icones/") +
                                       BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
+
+  connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
+  connect(action_check_update,SIGNAL(triggered(bool)),this,SLOT(checkForUpdate()));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -479,7 +484,7 @@ void MainWindow::stopTimers(bool value)
 	{
 		tmpmodel_save_timer.start();
 		model_save_timer.start();
-	}
+  }
 }
 
 MainWindow::~MainWindow(void)
@@ -494,6 +499,8 @@ void MainWindow::showEvent(QShowEvent *)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
  #endif
+
+  QTimer::singleShot(5000, this, SLOT(checkForUpdate()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1358,4 +1365,67 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
+}
+
+void MainWindow::checkForUpdate(void)
+{
+  QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL.arg(GlobalAttributes::PGMODELER_VERSION));
+  QNetworkRequest req(url);
+
+  silent_upd_check=(sender()!=action_check_update);
+  update_chk_reply=update_chk_manager.get(req);
+}
+
+void MainWindow::handleUpdateChecked(QNetworkReply *reply)
+{
+
+  if(reply->error()!=QNetworkReply::NoError && !silent_upd_check)
+  {
+    msg_box.show(trUtf8("Failed to check updates"),
+                 trUtf8("Could not check for updates! Please, verify your internet connectivity and try again! Connection error returned: <strong>%1</strong>.").arg(reply->errorString()),
+                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+  }
+  else
+  {
+    unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
+
+    if(http_status==301)
+    {
+      QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+      QNetworkRequest req(url);
+      update_chk_reply=update_chk_manager.get(req);
+    }
+    else
+    {
+      if(http_status==200)
+      {
+        QJsonDocument json_doc=QJsonDocument::fromJson(reply->readAll());
+        QJsonObject json_obj=json_doc.object();
+        QString value=json_obj.value(ParsersAttributes::NEW_VERSION).toString();
+
+        if(!value.isEmpty() && value!=ParsersAttributes::_FALSE_)
+        {
+          msg_box.show(trUtf8("New version found"),
+                       trUtf8("A new pgModeler release was found: <strong>%1</strong>. What do you want to do?").arg(value),
+                       Messagebox::CONFIRM_ICON, Messagebox::ALL_BUTTONS,
+                       trUtf8("Get binary package"),trUtf8("Get source code"),trUtf8("Do nothing"));
+        }
+        else if(!silent_upd_check)
+        {
+          msg_box.show(trUtf8("No update found"),
+                       trUtf8("You are currently running the most recent pgModeler version! No update needed."),
+                       Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+        }
+      }
+      else if(!silent_upd_check)
+      {
+        msg_box.show(trUtf8("Failed to check updates"),
+                     trUtf8("Could not check for updates! HTTP status code: <strong>%1</strong>").arg(http_status),
+                     Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+      }
+
+      delete(update_chk_reply);
+      update_chk_reply=nullptr;
+    }
+  }
 }

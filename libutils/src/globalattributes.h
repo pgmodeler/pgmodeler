@@ -73,10 +73,11 @@ namespace GlobalAttributes {
 	#endif
 
 	static const QString
-  PGMODELER_VERSION="0.7.2-alpha",
+  PGMODELER_VERSION="0.7.0-alpha",
   PGMODELER_VER_CODENAME="Brave Mastodon",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).remove(' '), "MMMddyyyy").toString("yyyyMMdd"),
 	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
+  PGMODELER_UPD_CHECK_URL="http://localhost/pgmodeler-site/update_check?current_ver=%1",
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
@@ -86,7 +87,6 @@ namespace GlobalAttributes {
 	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
 	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
-	COMMON_SCHEMA_DIR="common", //! \brief Default name for the commom schemas directory
 	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
 	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
