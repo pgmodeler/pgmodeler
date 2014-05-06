@@ -168,6 +168,8 @@
         <file>icones/result.png</file>
         <file>icones/tag.png</file>
         <file>icones/tag_grp.png</file>
+        <file>icones/dl_binary.png</file>
+        <file>icones/dl_source.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

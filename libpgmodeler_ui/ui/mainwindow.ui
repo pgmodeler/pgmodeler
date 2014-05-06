@@ -655,6 +655,7 @@
      <string>Help</string>
     </property>
     <addaction name="action_wiki"/>
+    <addaction name="action_check_update"/>
     <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="show_menu">
@@ -684,9 +685,58 @@
    <addaction name="plugins_menu"/>
    <addaction name="about_menu"/>
   </widget>
+  <widget class="QToolBar" name="general_tb">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>General</string>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_wiki"/>
+   <addaction name="action_configuration"/>
+   <addaction name="action_plugins"/>
+   <addaction name="action_import"/>
+   <addaction name="action_export"/>
+  </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
     <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="minimumSize">
     <size>
@@ -747,48 +797,50 @@
    <addaction name="action_previous"/>
    <addaction name="action_next"/>
   </widget>
-  <widget class="QToolBar" name="general_tb">
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
+  <widget class="QToolBar" name="update_tb">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="windowTitle">
-    <string>General</string>
-   </property>
-   <property name="toolTip">
-    <string/>
+    <string>Update check</string>
    </property>
    <property name="movable">
     <bool>false</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea</set>
+    <set>Qt::TopToolBarArea</set>
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>20</width>
+     <height>20</height>
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_wiki"/>
-   <addaction name="action_configuration"/>
-   <addaction name="action_plugins"/>
-   <addaction name="action_import"/>
-   <addaction name="action_export"/>
+   <addaction name="separator"/>
+   <addaction name="action_update_found"/>
   </widget>
   <action name="action_new_model">
    <property name="icon">
@@ -1253,6 +1305,30 @@
    </property>
    <property name="text">
     <string>Fix a model</string>
+   </property>
+  </action>
+  <action name="action_update_found">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+   </property>
+   <property name="text">
+    <string>New version found!</string>
+   </property>
+   <property name="toolTip">
+    <string>Update for the current version is available on project's site</string>
+   </property>
+  </action>
+  <action name="action_check_update">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check for update</string>
    </property>
   </action>
  </widget>

@@ -178,6 +178,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
     sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
+    update_notifier_wgt=new UpdateNotifierWidget(this);
+
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -224,6 +226,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																QIcon(QString(":/icones/icones/") +
                                       BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
+
+  connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
+  connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), update_tb, SLOT(setVisible(bool)));
+  connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+  connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -305,6 +312,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	model_valid_parent->setVisible(false);
   sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
+  update_notifier_wgt->setVisible(false);
+  update_tb->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -479,7 +488,7 @@ void MainWindow::stopTimers(bool value)
 	{
 		tmpmodel_save_timer.start();
 		model_save_timer.start();
-	}
+  }
 }
 
 MainWindow::~MainWindow(void)
@@ -490,10 +499,16 @@ MainWindow::~MainWindow(void)
 
 void MainWindow::showEvent(QShowEvent *)
 {
- #ifndef Q_OS_MAC
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
- #endif
+  GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+  map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
+
+  #ifndef Q_OS_MAC
+    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
+  #endif
+
+  //Enabling update check at startup
+  if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+    QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1358,4 +1373,27 @@ void MainWindow::openWiki(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
+}
+
+void MainWindow::toggleUpdateNotifier(bool show)
+{
+  if(show)
+  {
+    QAction *action=qobject_cast<QAction *>(sender());
+
+    if(!action)
+      update_notifier_wgt->move(0,0);
+    else
+    {
+      QWidget *wgt=update_tb->widgetForAction(action);
+      QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+
+      pos=wgt->mapTo(this, pos);
+      pos.setX(pos.x() - 9);
+      pos.setY(update_tb->pos().y() + update_tb->height() - 9);
+      update_notifier_wgt->move(pos);
+    }
+  }
+
+  update_notifier_wgt->setVisible(show);
 }
