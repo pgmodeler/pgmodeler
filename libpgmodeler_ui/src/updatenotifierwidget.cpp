@@ -24,6 +24,8 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {
   setupUi(this);
   setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
+
+  show_no_upd_msg=false;
   update_chk_reply=nullptr;
   old_pos=QPoint(-1,-1);
   frame->installEventFilter(this);
@@ -86,6 +88,8 @@ void UpdateNotifierWidget::checkForUpdate(void)
 {
   QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
   QNetworkRequest req(url);
+
+  show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
   update_chk_reply=update_chk_manager.get(req);
 }
 
@@ -128,6 +132,12 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
           ver_num_lbl->setText(version);
           changelog_txt->setText(changelog);
           ver_date_lbl->setText(date);
+        }
+        else if(show_no_upd_msg)
+        {
+          msg_box.show(trUtf8("No updates found"),
+                       trUtf8("You are running the most recent pgModeler version! No update needed."),
+                       Messagebox::INFO_ICON, Messagebox::OK_BUTTON);
         }
 
         emit s_updateAvailable(upd_found);

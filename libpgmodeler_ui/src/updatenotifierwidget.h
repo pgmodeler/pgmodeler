@@ -64,6 +64,11 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
   //! brief Stores the old mouse position to simulate the widget resizing
   QPoint old_pos;
 
+  /*! brief This attribute indicates wether a message informing that no updates are available
+      must be shown. Generally, this attribute is true when the user call the checkForUpdate()
+      from a QAction */
+  bool show_no_upd_msg;
+
   //! brief This event filter is used to resize the widget when the mouse is over the notifier
   bool eventFilter(QObject *obj, QEvent *event);
 

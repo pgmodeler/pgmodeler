@@ -1,6 +1,24 @@
 Change Log
 ---------
 
+v0.7.2-alpha
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: May 06, 2014</em><br/>
+
+* [New] Added a basic routine to check if there is some new version available on pgModeler site.
+* [Change] Custom  indexes for columns and constraints added by relationships are now stored on tables. In previous version the relationship was the responsible for that but this approach was provoking the bug related on issue 449.
+* [Change] Remove unused parser attributes and commented old code.
+* [Change] Removed attributes and methods from relationship which were responsible to control columns, attributes and constraints indexes.
+* [Fix] Fixed a bug that was changing the columns positions whenever a relationship was edited on the model.
+* [Fix] Minor fix when generate the string that denotes the assigned constraints to a column.
+* [Fix] Minor fix on function editing form when handling the result table columns. The variadic field is disabled on the parameter form.
+* [Fix] Fixed a crash when removing a view linked to tables.
+* [Fix] Minor fix on view reference code generation.
+* [Fix] Minor editing form size adjustments.
+* [Fix] Minor compilation fix on Windows system.
+
+
 v0.7.1
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>

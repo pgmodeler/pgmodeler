@@ -39,44 +39,22 @@ Known Issues
 Change Log
 ----------
 
-v0.7.1
+v0.7.2-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: April 15, 2014</em><br/>
+<em>Release date: May 06, 2014</em><br/>
 
-* [New] Added option to invert panning mode and range selection triggers.
-* [New] Added support to use relationship attributes as special primary keys.
-* [New] Created a small interface to pgmodeler-cli that enables the user to fix a broken model inside pgModeler GUI.
-* [New] Added support to assign a sequence as default value of a column. The sequence will be converted to "nextval('seqname'::regclass) and the validation process will check if the sequence is correctly referenced by the table that owns the column.
-* [Change] Improvement on unique name generation for columns and constraints when connecting relatioships.
-* [Change] Improvement on copy / paste operations.
-* [Change] Minor workaround in order to try to fix the crash due to thread conflict mainly on Windows system.
-* [Change] Minor change on project's description text on about dialog.
-* [Change] Changed the default behavior of left click on blank areas of canvas. Instead of create a range selection the user will move the viewport (panning mode). To enable range selection user must press SHIFT and click/move to draw the selection rectangle.
-* [Change] Major model validation improvement. Now special objects are correctly validated.
-* [Fix] Minor fix on custom columns positioning.
-* [Fix] Input and output files are now correctly escaped on the model fix form and the process works fine.
-* [Fix] Workaround for the slow editing of function's definition. Disabled the automatic syntax highlighting.
-* [Fix] Minor fix on reverse engineering process. In some cases the process was aborted due to duplication of relationships caused by an incorreclty name generation for this kind of object.
-* [Fix] Minor fix on model objects widget when changing the visible object types.
-* [Fix] Fixed the conflict with panning mode and graphical object addition operation.
-* [Fix] Fixed a regression introduced by 0.7.1-beta on model fix process.
-* [Fix] Minor fix on connection class in order to accept empty passwords as well passwords that contains spaces.
-* [Fix] Fixed the column listing on constraint editing form after remove one or more columns.
-* [Fix] Fix a crash when canceling the model saving dialog on Windows.
-* [Fix] Minor patch on the model fix process.
-* [Fix] Fixed wrong default values for relationship added columns.
-* [Fix] Fixed a bug related to file paths with ampersand on config files.
-* [Fix] Fix the broken sql for inheritance when a child table don't have columns but only constraints.
-* [Fix] Fixed a crash when closing a model that contains a view that references columns added by relationships.
-* [Fix] Fixed wrong working directory handling on CLI.
-* [Fix] Fixed a bug on file loading process that could left behind some objects depending on size and arrange of the loaded model.
-* [Fix] Fixed the undesired behavior when moving a table to another schema.
-* [Fix] Fixed connection config. Empty passwords are now accepted.
-* [Fix] Fixed schema object code generation.
-* [Fix] Fixed the usage of PGMODELER_SCHEMAS_DIR environment variable on import process.
-* [Fix] Fixed "ALTER ... SET OWNER" DDL for materialized views.
-* [Fix] Fixed duplicated semicolon at end of permissions defintion.
+* [New] Added a basic routine to check if there is some new version available on pgModeler site.
+* [Change] Custom  indexes for columns and constraints added by relationships are now stored on tables. In previous version the relationship was the responsible for that but this approach was provoking the bug related on issue 449.
+* [Change] Remove unused parser attributes and commented old code.
+* [Change] Removed attributes and methods from relationship which were responsible to control columns, attributes and constraints indexes.
+* [Fix] Fixed a bug that was changing the columns positions whenever a relationship was edited on the model.
+* [Fix] Minor fix when generate the string that denotes the assigned constraints to a column.
+* [Fix] Minor fix on function editing form when handling the result table columns. The variadic field is disabled on the parameter form.
+* [Fix] Fixed a crash when removing a view linked to tables.
+* [Fix] Minor fix on view reference code generation.
+* [Fix] Minor editing form size adjustments.
+* [Fix] Minor compilation fix on Windows system.
 
 The detailed change log can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

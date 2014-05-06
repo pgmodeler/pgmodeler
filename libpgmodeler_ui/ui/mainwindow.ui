@@ -655,8 +655,8 @@
      <string>Help</string>
     </property>
     <addaction name="action_wiki"/>
-    <addaction name="action_about"/>
     <addaction name="action_check_update"/>
+    <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="show_menu">
     <property name="title">
