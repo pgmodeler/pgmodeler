@@ -42,6 +42,7 @@ DEP_LIBS="$QMAKE_ROOT/icudt51.dll \
 		  $QMAKE_ROOT/Qt5Gui.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
 		  $QMAKE_ROOT/Qt5PrintSupport.dll \
+		  $QMAKE_ROOT/Qt5Network.dll \
 		  $PGSQL_ROOT/libpq.dll \
 		  $PGSQL_ROOT/libintl.dll \
 		  $PGSQL_ROOT/libeay32.dll \
