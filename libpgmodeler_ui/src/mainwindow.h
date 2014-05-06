@@ -27,11 +27,6 @@
 
 #include <QtWidgets>
 #include <QPrintDialog>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
 #include "aboutform.h"
@@ -48,18 +43,13 @@
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
+#include "updatenotifierwidget.h"
 
 using namespace std;
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
-
-    QNetworkAccessManager update_chk_manager;
-
-    QNetworkReply *update_chk_reply;
-
-    bool silent_upd_check;
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
@@ -102,6 +92,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
+
+    //! brief Update notifier popup widget
+    UpdateNotifierWidget *update_notifier_wgt;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;
@@ -224,17 +217,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
 
-		void showRightWidgetsBar(void);
-		void showBottomWidgetsBar(void);
-
-		void restoreLastSession(void);
-
 		/*! \brief Stop the saving timers. This is used when validating the model
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
-    void checkForUpdate(void);
-    void handleUpdateChecked(QNetworkReply *reply);
+    void showRightWidgetsBar(void);
+    void showBottomWidgetsBar(void);
+    void restoreLastSession(void);
+    void toggleUpdateNotifier(bool show);
 };
 
 #endif

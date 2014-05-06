@@ -61,6 +61,8 @@ class Messagebox: public QDialog, public Ui::Messagebox {
               const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 		bool isCancelled(void);
 
+    void setRawTextInformation(const QString &text, bool richtext);
+
 	private slots:
 		void handleYesOkClick(void);
 		void handleNoCancelClick(void);

@@ -100,8 +100,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
   vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
-  update_chk_reply=nullptr;
-  silent_upd_check=false;
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
 
@@ -180,6 +178,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
     sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
+    update_notifier_wgt=new UpdateNotifierWidget(this);
+
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -227,8 +227,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
                                       BaseObject::getSchemaName(obj_tp) +
 																			QString(".png")));
 
-  connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
-  connect(action_check_update,SIGNAL(triggered(bool)),this,SLOT(checkForUpdate()));
+  connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
+  connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), update_tb, SLOT(setVisible(bool)));
+  connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+  connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -310,6 +312,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	model_valid_parent->setVisible(false);
   sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
+  update_notifier_wgt->setVisible(false);
+  update_tb->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -495,12 +499,16 @@ MainWindow::~MainWindow(void)
 
 void MainWindow::showEvent(QShowEvent *)
 {
- #ifndef Q_OS_MAC
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
- #endif
+  GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+  map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-  QTimer::singleShot(5000, this, SLOT(checkForUpdate()));
+  #ifndef Q_OS_MAC
+    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
+  #endif
+
+  //Enabling update check at startup
+  if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+    QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1367,65 +1375,25 @@ void MainWindow::openWiki(void)
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
 }
 
-void MainWindow::checkForUpdate(void)
+void MainWindow::toggleUpdateNotifier(bool show)
 {
-  QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL.arg(GlobalAttributes::PGMODELER_VERSION));
-  QNetworkRequest req(url);
-
-  silent_upd_check=(sender()!=action_check_update);
-  update_chk_reply=update_chk_manager.get(req);
-}
-
-void MainWindow::handleUpdateChecked(QNetworkReply *reply)
-{
-
-  if(reply->error()!=QNetworkReply::NoError && !silent_upd_check)
+  if(show)
   {
-    msg_box.show(trUtf8("Failed to check updates"),
-                 trUtf8("Could not check for updates! Please, verify your internet connectivity and try again! Connection error returned: <strong>%1</strong>.").arg(reply->errorString()),
-                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
-  }
-  else
-  {
-    unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
+    QAction *action=qobject_cast<QAction *>(sender());
 
-    if(http_status==301)
-    {
-      QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
-      QNetworkRequest req(url);
-      update_chk_reply=update_chk_manager.get(req);
-    }
+    if(!action)
+      update_notifier_wgt->move(0,0);
     else
     {
-      if(http_status==200)
-      {
-        QJsonDocument json_doc=QJsonDocument::fromJson(reply->readAll());
-        QJsonObject json_obj=json_doc.object();
-        QString value=json_obj.value(ParsersAttributes::NEW_VERSION).toString();
+      QWidget *wgt=update_tb->widgetForAction(action);
+      QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
 
-        if(!value.isEmpty() && value!=ParsersAttributes::_FALSE_)
-        {
-          msg_box.show(trUtf8("New version found"),
-                       trUtf8("A new pgModeler release was found: <strong>%1</strong>. What do you want to do?").arg(value),
-                       Messagebox::CONFIRM_ICON, Messagebox::ALL_BUTTONS,
-                       trUtf8("Get binary package"),trUtf8("Get source code"),trUtf8("Do nothing"));
-        }
-        else if(!silent_upd_check)
-        {
-          msg_box.show(trUtf8("No update found"),
-                       trUtf8("You are currently running the most recent pgModeler version! No update needed."),
-                       Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-        }
-      }
-      else if(!silent_upd_check)
-      {
-        msg_box.show(trUtf8("Failed to check updates"),
-                     trUtf8("Could not check for updates! HTTP status code: <strong>%1</strong>").arg(http_status),
-                     Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
-      }
-
-      delete(update_chk_reply);
-      update_chk_reply=nullptr;
+      pos=wgt->mapTo(this, pos);
+      pos.setX(pos.x() - 9);
+      pos.setY(update_tb->pos().y() + update_tb->height() - 9);
+      update_notifier_wgt->move(pos);
     }
   }
+
+  update_notifier_wgt->setVisible(show);
 }

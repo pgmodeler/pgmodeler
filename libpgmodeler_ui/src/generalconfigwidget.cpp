@@ -56,6 +56,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]="";
 
 	selectPaperSize();
 }
@@ -78,6 +79,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 	autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
   corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
   invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
+  check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
 
 	print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 	print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -130,6 +132,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? "1" : "");
 
 		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())

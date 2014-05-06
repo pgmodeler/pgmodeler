@@ -76,8 +76,11 @@ namespace GlobalAttributes {
   PGMODELER_VERSION="0.7.0-alpha",
   PGMODELER_VER_CODENAME="Brave Mastodon",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).remove(' '), "MMMddyyyy").toString("yyyyMMdd"),
-	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
-  PGMODELER_UPD_CHECK_URL="http://localhost/pgmodeler-site/update_check?current_ver=%1",
+  PGMODELER_SITE="http://www.pgmodeler.com.br",
+  PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
+  PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
+  PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
+  PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
