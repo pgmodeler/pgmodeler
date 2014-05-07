@@ -175,13 +175,23 @@ rm -r $PKGNAME >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
-  echo "** Failed to create package!"
+  echo "** Failed to create installer package!"
+  echo "** Proceeding with basic deployment."
+  
+  mkdir $PKGNAME >> $LOG 2>&1
+  mv build/* $PKGNAME >> $LOG 2>&1
+
+  if [ $? -ne 0 ]; then
+	echo "** Failed to execute basic deployment!"
+	exit 1
+  fi
+
   echo
-  exit 1
+  echo "Directory created: $PKGNAME"
+else
+  mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
+  echo "File created: $PKGFILE"
 fi
 
-mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
-
-echo "File created: $PKGFILE"
 echo "pgModeler successfully deployed!"
 echo
