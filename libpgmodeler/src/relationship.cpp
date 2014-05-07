@@ -1516,7 +1516,7 @@ void Relationship::addColumnsRel11(void)
 		}
 		else
 		{
-			copyColumns(ref_tab, recv_tab, false);
+      copyColumns(ref_tab, recv_tab, (!identifier && (this->isTableMandatory(SRC_TABLE) || this->isTableMandatory(DST_TABLE))));
 
 			if(identifier)
 			{
