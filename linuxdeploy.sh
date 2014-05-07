@@ -56,6 +56,7 @@ else
   QT_LIBS="libQt5DBus.so.5 \
            libQt5PrintSupport.so.5 \
            libQt5Widgets.so.5 \
+           libQt5Network.so.5 \
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
            libicui18n.so.51 \
@@ -199,6 +200,7 @@ rm -r $PKGNAME  >> $LOG 2>&1
 mkdir $PKGNAME  >> $LOG 2>&1
 cp -r build/* $PKGNAME  >> $LOG 2>&1
 tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
+rm -r $PKGNAME  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
