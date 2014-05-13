@@ -35,13 +35,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		element_type=new PgSQLTypeWidget(this, trUtf8("Element Type"));
 		range_subtype=new PgSQLTypeWidget(this, trUtf8("Subtype"));
 
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
+        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 		grid->addWidget(like_type,6,0,1,0);
 		grid->addWidget(element_type,7,0,1,0);
 		grid->addItem(spacer,8,0);
 
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
+        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		{
 			functions_sel[i]=nullptr;
@@ -50,7 +50,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																					 ObjectTableWidget::EDIT_BUTTON, true, this);
+                                               ObjectTableWidget::EDIT_BUTTON, true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
@@ -75,10 +75,10 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		grid->addWidget(attributes_tab,3,0,1,2);
 		attributes_gb->setVisible(false);
 
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
+        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(base_attribs_twg->widget(1));
+        frame->setParent(base_attribs_twg->widget(0));
 
 		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
 		opclass_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
