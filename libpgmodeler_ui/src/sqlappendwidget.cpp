@@ -19,7 +19,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 
 		parent_form->setWindowTitle(trUtf8("Append SQL code"));
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-		parent_form->setMinimumSize(800, 600);
+        parent_form->setMinimumSize(640, 400);
 
 		font=name_edt->font();
 		font.setItalic(true);
