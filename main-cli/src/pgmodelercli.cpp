@@ -245,7 +245,7 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("General options: ") << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
-	out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable on pgModeler 0.6.x.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
+    out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
 	out << trUtf8("   %1, %2\t\t Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
