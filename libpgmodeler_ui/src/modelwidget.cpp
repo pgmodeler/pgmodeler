@@ -1796,6 +1796,7 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
+    copied_objects.clear();
 	obj_itr=objs_map.begin();
 	while(obj_itr!=objs_map.end())
 	{
