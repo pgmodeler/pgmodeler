@@ -377,19 +377,23 @@ void ModelObjectsWidget::updateObjectsView(void)
 
 void ModelObjectsWidget::updateObjectsList(void)
 {
-	if(db_model)
-	{
-    vector<ObjectType> visible_types;
+    vector<BaseObject *> objects;
 
-    for(auto tp : visible_objs_map)
+    if(db_model)
     {
-      if(tp.second)
-        visible_types.push_back(tp.first);
+        vector<ObjectType> visible_types;
+
+        for(auto tp : visible_objs_map)
+        {
+            if(tp.second)
+                visible_types.push_back(tp.first);
+        }
+
+        objects=db_model->findObjects("", visible_types,true, false, false, false);
+
     }
 
-    vector<BaseObject *> objects=db_model->findObjects("", visible_types,true, false, false, false);
-		ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
-	}
+    ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -795,6 +799,9 @@ void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 	visaoobjetos_stw->setEnabled(true);
 	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
 	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
+    tree_view_tb->setEnabled(enable);
+    list_view_tb->setEnabled(enable);
+    options_tb->setEnabled(enable);
 }
 
 void ModelObjectsWidget::showEvent(QShowEvent *)
