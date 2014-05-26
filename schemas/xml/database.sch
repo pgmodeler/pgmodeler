@@ -17,11 +17,16 @@
    [ append-at-eod=] "true"
   %end
 
+  %if @{prepend-at-bod} %then
+   [ prepend-at-bod=] "true"
+  %end
+
 > $br
 
 %if @{owner} %then @{owner} %end
 %if @{tablespace} %then @{tablespace} %end
 %if @{comment} %then @{comment} %end
 %if @{appended-sql} %then @{appended-sql} %end
+%if @{prepended-sql} %then @{prepended-sql} %end
 
 </database>  $br $br

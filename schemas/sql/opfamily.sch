@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE OPERATOR FAMILY ] @{name} [ USING ] @{index-type}; $br
 
 %if @{owner} %then @{owner} %end

@@ -5,6 +5,9 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 @{drop}
+
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE AGGREGATE ] @{name} [ (]@{types}[) (] $br
 $tb [SFUNC = ] @{transition}, $br
 $tb [STYPE = ] @{state-type} $br

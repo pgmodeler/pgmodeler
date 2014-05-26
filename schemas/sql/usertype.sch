@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE TYPE ] @{name}
 
 %if @{reduced-form} %then
@@ -63,7 +65,7 @@
   $br
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
-  %if @{appended-sql} %then @{appended-sql} %end
+  %if @{appended-sql} %then @{appended-sql} %end  
 %end
 
 # This is a special token that pgModeler recognizes as end of DDL command

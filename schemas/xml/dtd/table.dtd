@@ -13,7 +13,7 @@
 <!ENTITY % trigger SYSTEM "trigger.dtd">
 %trigger;
 
-<!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,position,column*,constraint*,index*,rule*,trigger*, customidxs*)>
+<!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,column*,constraint*,index*,rule*,trigger*, customidxs*)>
 <!ATTLIST table name CDATA #REQUIRED>
 <!ATTLIST table oids (true | false) "false">
 <!ATTLIST table gen-alter-cmds (true | false) "false">

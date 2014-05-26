@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE ]
 
 %if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then

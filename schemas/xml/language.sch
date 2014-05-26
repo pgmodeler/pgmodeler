@@ -22,6 +22,7 @@
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
   %if @{appended-sql} %then @{appended-sql} %end
+  %if @{prepended-sql} %then @{prepended-sql} %end
 
   %if @{handler} %then @{handler} %end
   %if @{validator} %then @{validator} %end

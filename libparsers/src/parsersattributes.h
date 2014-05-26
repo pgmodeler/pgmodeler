@@ -386,6 +386,8 @@ namespace ParsersAttributes {
 	COMPLETION_TRIGGER="completion-trigger",
 	APPENDED_SQL="appended-sql",
 	APPEND_AT_EOD="append-at-eod",
+  PREPENDED_SQL="prepended-sql",
+  PREPEND_AT_EOD="prepend-at-bod",
 	FONT_SIZE="font-size",
 	ADMIN_OPTION="admin-option",
 	LEAKPROOF="leakproof",

@@ -6,6 +6,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE FUNCTION ] @{name} $sp ( %if @{parameters} %then @{parameters} %end ) $br
 $tb [RETURNS ]
 

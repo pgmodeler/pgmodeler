@@ -23,5 +23,6 @@
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
   %if @{appended-sql} %then @{appended-sql} %end
+  %if @{prepended-sql} %then @{prepended-sql} %end
   </tablespace>  $br $br
 %end

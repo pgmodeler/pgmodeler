@@ -21,3 +21,4 @@
 <!ATTLIST columns ref-type (src-columns|dst-columns) "src-columns">
 
 <!ELEMENT appended-sql (#PCDATA)>
+<!ELEMENT prepended-sql (#PCDATA)>
