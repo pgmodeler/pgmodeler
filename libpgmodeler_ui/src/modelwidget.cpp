@@ -176,12 +176,30 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->centerOn(0,0);
-	this->applyZoom(1);
 
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
+
+  zoom_info_lbl=new QLabel(this);
+  zoom_info_lbl->raise();
+  zoom_info_lbl->setAutoFillBackground(false);
+  zoom_info_lbl->setText("Zoom: 100%");
+  zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+  zoom_info_lbl->setStyleSheet("color: #C0000000; \
+                               background-color: #C0FFFF80;\
+                               border: 1px solid #C0B16351;");
+
+  font=zoom_info_lbl->font();
+  font.setBold(true);
+  font.setPointSizeF(14);
+  zoom_info_lbl->setFont(font);
+  zoom_info_lbl->adjustSize();
+  zoom_info_lbl->setVisible(false);
+  //this->applyZoom(1);
+
+  zoom_info_timer.setInterval(3000);
 
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
   action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
@@ -300,6 +318,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		rels_menu->addAction(action);
 	}
 
+  connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
 	connect(action_protect, SIGNAL(triggered(bool)),this,SLOT(protectObject(void)));
@@ -362,6 +381,9 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 		ret.setHeight(viewport->rect().height());
 
 	scene->setSceneRect(ret);
+
+  zoom_info_lbl->move((this->width()/2) - (zoom_info_lbl->width()/2),
+                      (this->height()/2)  - (zoom_info_lbl->height()/2));
 
 	emit s_modelResized();
 }
@@ -450,7 +472,11 @@ void ModelWidget::applyZoom(float zoom)
 {
 	//Aplica o zoom somente se este for válido
 	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
-	{
+  {
+    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(zoom * 100, 'g' , 3)));
+    zoom_info_lbl->setVisible(true);
+    zoom_info_timer.start();
+
 		viewport->resetTransform();
 		viewport->scale(zoom, zoom);
 
