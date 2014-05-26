@@ -144,7 +144,12 @@ class BaseObject {
 						//! \brief Object's name (in PostgreSQL accepted format)
 						obj_name,
 
-						appended_sql;
+            //! brief The set of SQL commands appended on the objectc's definition
+            appended_sql,
+
+            //! brief The set of SQL commands prepended on the objectc's definition
+            prepended_sql;
+
 
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
 		 by SchemaParser on the object's code definition creation. The attribute
@@ -247,6 +252,9 @@ class BaseObject {
 		//! \brief Assign to the object a set of SQL commands to be appended to it's definition
 		void setAppendedSQL(const QString &sql);
 
+    //! \brief Assign to the object a set of SQL commands to be prepended to it's definition
+    void setPrependedSQL(const QString &sql);
+
 		//! \brief Returns if the generated SQL is commented
 		bool isSQLDisabled(void);
 
@@ -288,7 +296,9 @@ class BaseObject {
 		//! \brief Returns the collation that the object makes use
 		BaseObject *getCollation(void);
 
-		QString getAppendedSQL(void);
+    QString getAppendedSQL(void);
+
+    QString getPrependedSQL(void);
 
 		//! \brief Returns the object's generated id
 		unsigned getObjectId(void);

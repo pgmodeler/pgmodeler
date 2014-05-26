@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE ROLE ] @{name} [ WITH ]
 
 %if @{superuser} %then

@@ -9,6 +9,8 @@
 
  @{drop}
 
+ %if @{prepended-sql} %then @{prepended-sql} %end
+
  [CREATE COLLATION ] @{name}
 
   %if @{collation} %then

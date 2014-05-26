@@ -33,9 +33,9 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 	private:
 		Q_OBJECT
 
-		SyntaxHighlighter *sqlcode_hl;
+    SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;
 
-		CodeCompletionWidget *sqlcode_cp;
+    CodeCompletionWidget *append_sql_cp, *prepend_sql_cp;
 
 		QMenu insert_menu,
 					delete_menu,

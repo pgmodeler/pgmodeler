@@ -6,6 +6,8 @@
 [-- object: cast] ( @{source-type} [,] @{destiny-type} )  [ | type: ] @{sql-object} [ --] $br
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE CAST (] @{source-type} [ AS ] @{destiny-type} ) $br
 
 %if @{io-cast} %then

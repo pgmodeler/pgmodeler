@@ -30,6 +30,7 @@
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
   %if @{appended-sql} %then @{appended-sql} %end
+  %if @{prepended-sql} %then @{prepended-sql} %end
 
   %if @{left-type} %then @{left-type} %end
   %if @{right-type} %then @{right-type} %end

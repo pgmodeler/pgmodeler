@@ -9,17 +9,25 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_SQLAppendWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
-		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
-		sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+    append_sql_hl=new SyntaxHighlighter(append_sql_txt, false);
+    append_sql_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																	GlobalAttributes::DIR_SEPARATOR +
 																	GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																	GlobalAttributes::CONFIGURATION_EXT);
+    append_sql_cp=new CodeCompletionWidget(append_sql_txt);
 
-		sqlcode_cp=new CodeCompletionWidget(sqlcode_txt);
 
-		parent_form->setWindowTitle(trUtf8("Append SQL code"));
+    prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt, false);
+    prepend_sql_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                  GlobalAttributes::DIR_SEPARATOR +
+                                  GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                  GlobalAttributes::CONFIGURATION_EXT);
+    prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
+
+
+    parent_form->setWindowTitle(trUtf8("Append / Prepend SQL code"));
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-        parent_form->setMinimumSize(640, 400);
+    parent_form->setMinimumSize(640, 480);
 
 		font=name_edt->font();
 		font.setItalic(true);
@@ -120,13 +128,19 @@ void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			if(object->getObjectType()==OBJ_DATABASE)
 				end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
 
-			sqlcode_txt->setFocus();
-			sqlcode_txt->setPlainText(object->getAppendedSQL());
-			sqlcode_cp->configureCompletion(model, sqlcode_hl);
+      append_sql_txt->setFocus();
+      append_sql_txt->setPlainText(object->getAppendedSQL());
+      append_sql_cp->configureCompletion(model, append_sql_hl);
+      append_sql_txt->moveCursor(QTextCursor::End);
 
-			sqlcode_txt->moveCursor(QTextCursor::End);
+      append_sql_txt->setFocus();
+      prepend_sql_txt->setPlainText(object->getPrependedSQL());
+      prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
+      prepend_sql_txt->moveCursor(QTextCursor::End);
 
 			end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+      begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+
 			comment_edt->setText(object->getTypeName());
 			protected_obj_frm->setVisible(false);
 			parent_form->apply_ok_btn->setEnabled(true);
@@ -146,9 +160,14 @@ void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 void SQLAppendWidget::applyConfiguration(void)
 {
 	if(this->object->getObjectType()==OBJ_DATABASE)
+  {
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
+    dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());
+  }
 
-	this->object->setAppendedSQL(sqlcode_txt->toPlainText());
+  this->object->setAppendedSQL(append_sql_txt->toPlainText());
+  this->object->setPrependedSQL(prepend_sql_txt->toPlainText());
+  this->sqlcodes_twg->setCurrentIndex(0);
 	this->accept();
 }
 
@@ -161,6 +180,7 @@ void SQLAppendWidget::addCommand(void)
 			sel_cmd=QString("SELECT * FROM %1;"),
 			del_cmd=QString("DELETE * FROM %1;"),
 			upd_cmd=QString("UPDATE %1 SET ;");
+  QTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
 	if(sender()->objectName().contains("insert") ||
 		 sender()->objectName().contains("serial"))
@@ -218,6 +238,7 @@ void SQLAppendWidget::addCommand(void)
 
 void SQLAppendWidget::clearCode(void)
 {
+  QTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 	QTextCursor tc=sqlcode_txt->textCursor();
 	tc.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
 	tc.movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);

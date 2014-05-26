@@ -410,10 +410,10 @@ This will disable the code of all child and referrer objects.</string>
     <enum>Qt::StrongFocus</enum>
    </property>
    <property name="toolTip">
-    <string>Append a set of SQL commands to the object's definition.</string>
+    <string>Append or prepend a set of SQL commands to the object's definition.</string>
    </property>
    <property name="text">
-    <string>Append SQL</string>
+    <string>Custom SQL</string>
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">

@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE OPERATOR CLASS ] @{name} 
 %if @{default} %then [ DEFAULT ] %end
 

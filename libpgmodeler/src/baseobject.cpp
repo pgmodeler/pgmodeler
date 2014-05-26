@@ -83,6 +83,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
 	attributes[ParsersAttributes::APPENDED_SQL]="";
+  attributes[ParsersAttributes::PREPENDED_SQL]="";
   attributes[ParsersAttributes::DROP]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
@@ -458,7 +459,15 @@ void BaseObject::setAppendedSQL(const QString &sql)
 	if(!acceptsAppendedSQL())
 		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->appended_sql=sql;
+  this->appended_sql=sql;
+}
+
+void BaseObject::setPrependedSQL(const QString &sql)
+{
+  if(!acceptsAppendedSQL())
+    throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  this->prepended_sql=sql;
 }
 
 QString BaseObject::getName(bool format, bool prepend_schema)
@@ -507,7 +516,12 @@ BaseObject *BaseObject::getCollation(void)
 
 QString BaseObject::getAppendedSQL(void)
 {
-	return(appended_sql);
+  return(appended_sql);
+}
+
+QString BaseObject::getPrependedSQL(void)
+{
+  return(prepended_sql);
 }
 
 ObjectType BaseObject::getObjectType(void)
@@ -693,15 +707,31 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(def_type==SchemaParser::XML_DEFINITION)
 			{
-				SchemaParser::setIgnoreUnkownAttributes(true);
+        SchemaParser::setIgnoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
-						SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
+            SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::APPENDED_SQL]="-- Appended SQL commands --\n" +	appended_sql + "\n";
+        attributes[ParsersAttributes::APPENDED_SQL]="\n-- Appended SQL commands --\n" +	appended_sql + "\n---\n";
 			}
 		}
+
+    if(!prepended_sql.isEmpty())
+    {
+      attributes[ParsersAttributes::PREPENDED_SQL]=prepended_sql;
+
+      if(def_type==SchemaParser::XML_DEFINITION)
+      {
+        SchemaParser::setIgnoreUnkownAttributes(true);
+        attributes[ParsersAttributes::PREPENDED_SQL]=
+            SchemaParser::getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
+      }
+      else
+      {
+        attributes[ParsersAttributes::PREPENDED_SQL]="\n-- Prepended SQL commands --\n" +	prepended_sql + "\n---\n";
+      }
+    }
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {

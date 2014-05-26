@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE SCHEMA ] @{name}; $br
 %if @{owner} %then @{owner} %end
 %if @{comment} %then @{comment} %end

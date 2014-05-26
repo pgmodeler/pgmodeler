@@ -6,6 +6,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 CREATE %if @{default} %then [ DEFAULT] %end
 
 [ CONVERSION ] @{name} $br

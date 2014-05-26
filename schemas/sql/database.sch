@@ -9,6 +9,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE DATABASE ] @{name} $br
 
 %if @{template} %then

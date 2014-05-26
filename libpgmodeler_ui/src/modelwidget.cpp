@@ -260,7 +260,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 
-	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
+  action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Custom SQL"), this);
   action_append_sql->setShortcut(QKeySequence(trUtf8("Alt+Q")));
 
 	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);

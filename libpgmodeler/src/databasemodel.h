@@ -111,7 +111,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		invalidated,
 
 		//! \brief Indicates that appended SQL commands must be put at the very end of model definition
-		append_at_eod;
+    append_at_eod,
+
+    //! \brief Indicates that prepended SQL commands must be put at the very beginning of model definition
+    prepend_at_bod;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -202,8 +205,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Sets the sql appending at end of entire model definition
 		void setAppendAtEOD(bool value);
 
+    //! \brief Sets the sql prepeding at beginning of entire model definition
+    void setPrependAtBOD(bool value);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
+
+    //! \brief Returns the current state of the sql prepeding at beginning of entire model definition
+    bool isPrependedAtBOD(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);

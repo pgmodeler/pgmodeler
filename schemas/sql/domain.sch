@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE DOMAIN ] @{name} [ AS ] @{type}
 
 %if %not @{pgsql90} %and @{collation} %then
