@@ -187,13 +187,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   zoom_info_lbl->setAutoFillBackground(false);
   zoom_info_lbl->setText("Zoom: 100%");
   zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-  zoom_info_lbl->setStyleSheet("color: #C0000000; \
-                               background-color: #C0FFFF80;\
-                               border: 1px solid #C0B16351;");
+  zoom_info_lbl->setStyleSheet("color: #C8000000; \
+                               background-color: #C8FFFF80;\
+                               border: 1px solid #C8B16351;");
 
   font=zoom_info_lbl->font();
   font.setBold(true);
-  font.setPointSizeF(14);
+  font.setPointSizeF(12);
   zoom_info_lbl->setFont(font);
   zoom_info_lbl->adjustSize();
   zoom_info_lbl->setVisible(false);
