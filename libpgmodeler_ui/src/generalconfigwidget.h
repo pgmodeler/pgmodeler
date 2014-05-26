@@ -29,6 +29,7 @@
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
+#include "modelwidget.h"
 #include "messagebox.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {

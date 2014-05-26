@@ -424,7 +424,10 @@ namespace ParsersAttributes {
   CUSTOMIDXS="customidxs",
   CHANGELOG="changelog",
   DATE="date",
-  CHECK_UPDATE="check-update";
+  CHECK_UPDATE="check-update",
+  LAST_POSITION="last-position",
+  LAST_ZOOM="last-zoom",
+  SAVE_LAST_POSITION="save-last-position";
 }
 
 #endif

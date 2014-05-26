@@ -30,6 +30,7 @@ DatabaseModel::DatabaseModel(void)
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
 	conn_limit=-1;
+  last_zoom=1;
   loading_model=invalidated=append_at_eod=prepend_at_bod=false;
 	attributes[ParsersAttributes::ENCODING]="";
 	attributes[ParsersAttributes::TEMPLATE_DB]="";
@@ -2668,6 +2669,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
   prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_EOD]==ParsersAttributes::_TRUE_;
 
+
 	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
 
@@ -2683,6 +2685,7 @@ void DatabaseModel::loadModel(const QString &filename)
     attribs_map attribs;
     BaseObject *object=nullptr;
     bool protected_model=false;
+    QStringList pos_str;
 
     //Configuring the path to the base path for objects DTD
     dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
@@ -2709,6 +2712,15 @@ void DatabaseModel::loadModel(const QString &filename)
       XMLParser::getElementAttributes(attribs);
 
       this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
+
+      pos_str=attribs[ParsersAttributes::LAST_POSITION].split(",");
+
+      if(pos_str.size()>=2)
+        this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
+
+      this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toFloat();
+      if(this->last_zoom <= 0) this->last_zoom=1;
+
       protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
       if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -3026,7 +3038,27 @@ QString DatabaseModel::getErrorExtraInfo(void)
 	else
 		extra_info=XMLParser::getXMLBuffer();
 
-	return extra_info;
+  return extra_info;
+}
+
+void DatabaseModel::setLastPosition(const QPoint &pnt)
+{
+  last_pos=pnt;
+}
+
+QPoint DatabaseModel::getLastPosition(void)
+{
+  return(last_pos);
+}
+
+void DatabaseModel::setLastZoomFactor(float zoom)
+{
+  last_zoom=zoom;
+}
+
+float DatabaseModel::getLastZoomFactor(void)
+{
+  return(last_zoom);
 }
 
 Role *DatabaseModel::createRole(void)
@@ -6138,6 +6170,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     if(def_type==SchemaParser::XML_DEFINITION)
     {
       attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
+      attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+      attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
     }
     else
     {
