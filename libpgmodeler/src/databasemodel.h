@@ -116,6 +116,11 @@ class DatabaseModel:  public QObject, public BaseObject {
     //! \brief Indicates that prepended SQL commands must be put at the very beginning of model definition
     prepend_at_bod;
 
+    //! \brief Stores the last position on the model where the user was editing objects
+    QPoint last_pos;
+
+    float last_zoom;
+
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
@@ -453,6 +458,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
 		QString getErrorExtraInfo(void);
+
+    void setLastPosition(const QPoint &pnt);
+    QPoint getLastPosition(void);
+
+    void setLastZoomFactor(float zoom);
+    float getLastZoomFactor(void);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

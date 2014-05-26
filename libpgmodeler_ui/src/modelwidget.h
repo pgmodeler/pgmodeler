@@ -44,7 +44,7 @@ class ModelWidget: public QWidget {
 		float current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-		bool modified;
+    bool modified;
 
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *obj);
@@ -52,6 +52,8 @@ class ModelWidget: public QWidget {
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
 		static bool cut_operation;
+
+    static bool save_restore_pos;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -162,6 +164,7 @@ class ModelWidget: public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
+    void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
@@ -216,7 +219,17 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
-  private slots:
+    //! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
+    static void saveLastCanvasPosition(bool value);
+
+    //! brief Restore the last editing position on canvas as well the zoom factor
+    void restoreLastCanvasPosition(void);
+
+    /*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
+        the current values was saved on the database model */
+    bool saveLastCanvasPosition(void);
+
+private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 

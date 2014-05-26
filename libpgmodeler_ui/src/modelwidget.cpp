@@ -50,6 +50,7 @@
 #include "extensionwidget.h"
 #include "sqlappendwidget.h"
 #include "tagwidget.h"
+#include "configurationform.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -88,6 +89,7 @@ extern SQLAppendWidget *sqlappend_wgt;
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
+bool ModelWidget::save_restore_pos=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 
 const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
@@ -197,7 +199,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   zoom_info_lbl->setFont(font);
   zoom_info_lbl->adjustSize();
   zoom_info_lbl->setVisible(false);
-  //this->applyZoom(1);
 
   zoom_info_timer.setInterval(3000);
 
@@ -468,9 +469,60 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
   }
 }
 
+bool ModelWidget::saveLastCanvasPosition(void)
+{
+  if(save_restore_pos)
+  {
+    QScrollBar *hscroll=viewport->horizontalScrollBar(),
+               *vscroll=viewport->verticalScrollBar();
+    QPoint pos=db_model->getLastPosition();
+
+    //Save the zoom or position only one of these attributes has changed
+    if(db_model->getLastZoomFactor()!=current_zoom ||
+       pos.x()!=hscroll->value() || pos.y()!=vscroll->value())
+    {
+      db_model->setLastPosition(QPoint(viewport->horizontalScrollBar()->value(),
+                                       viewport->verticalScrollBar()->value()));
+      db_model->setLastZoomFactor(this->current_zoom);
+      return(true);
+    }
+  }
+
+  return(false);
+}
+
+void ModelWidget::hideEvent(QHideEvent *)
+{
+  try
+  {
+    if(!modified &&  saveLastCanvasPosition())
+      db_model->saveModel(this->filename, SchemaParser::XML_DEFINITION);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}
+
+void ModelWidget::restoreLastCanvasPosition(void)
+{
+  if(save_restore_pos)
+  {
+    QScrollBar *hscroll=viewport->horizontalScrollBar(),
+               *vscroll=viewport->verticalScrollBar();
+
+    if(db_model->getLastZoomFactor()!=1.0)
+      this->applyZoom(db_model->getLastZoomFactor());
+
+    hscroll->setValue(db_model->getLastPosition().x());
+    vscroll->setValue(db_model->getLastPosition().y());
+
+    scene->update();
+  }
+}
+
 void ModelWidget::applyZoom(float zoom)
 {
-	//Aplica o zoom somente se este for válido
 	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
   {
     zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(zoom * 100, 'g' , 3)));
@@ -677,7 +729,6 @@ void ModelWidget::configureObjectSelection(void)
 	BaseObjectView *item=nullptr;
 	map<unsigned, QGraphicsItem *> objs_map;
 	map<unsigned, QGraphicsItem *>::iterator itr;
-	//deque<unsigned> sort_vect;
 
 	selected_objects.clear();
 
@@ -940,18 +991,18 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));
-		task_prog_wgt->show();
+		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));	
+    task_prog_wgt->show();
 
-		db_model->loadModel(filename);
-		this->filename=filename;
-		this->adjustSceneSize();
+    db_model->loadModel(filename);
+    this->filename=filename;
+    this->adjustSceneSize();
 
 		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+    disconnect(db_model, nullptr, task_prog_wgt, nullptr);
 
 		protected_model_frm->setVisible(db_model->isProtected());
-		this->modified=false;
+    this->modified=false;
 	}
 	catch(Exception &e)
 	{
@@ -1144,9 +1195,11 @@ void ModelWidget::saveModel(const QString &filename)
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
-		task_prog_wgt->show();
+    task_prog_wgt->show();
 
-		db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
+    saveLastCanvasPosition();
+    db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
+
 		this->filename=filename;
 
 		task_prog_wgt->close();
@@ -2855,7 +2908,12 @@ DatabaseModel *ModelWidget::getDatabaseModel(void)
 
 OperationList *ModelWidget::getOperationList(void)
 {
-	return(op_list);
+  return(op_list);
+}
+
+void ModelWidget::saveLastCanvasPosition(bool value)
+{
+  ModelWidget::save_restore_pos=value;
 }
 
 void ModelWidget::highlightObject(void)
@@ -2875,7 +2933,7 @@ void ModelWidget::highlightObject(void)
 			obj_view->setSelected(true);
 			viewport->centerOn(obj_view);
 		}
-	}
+  }
 }
 
 void ModelWidget::createSequenceForColumn(void)
@@ -2898,12 +2956,12 @@ void ModelWidget::createSequenceForColumn(void)
 		op_list->registerObject(seq, Operation::OBJECT_CREATED);
 		db_model->addSequence(seq);
 
-        op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
-        //Changes the column type to the alias for serial type
-        col->setType(col->getType().getAliasType());
-        col->setSequence(seq);
+    op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
+    //Changes the column type to the alias for serial type
+    col->setType(col->getType().getAliasType());
+    col->setSequence(seq);
 
-        op_list->finishOperationChain();
+    op_list->finishOperationChain();
 
 		//Revalidate the relationships since the modified column can be a primary key
 		if(tab->getPrimaryKey()->isColumnReferenced(col))
