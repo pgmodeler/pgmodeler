@@ -842,7 +842,7 @@ void MainWindow::setCurrentModel(void)
 
 	if(current_model)
 	{
-		this->applyZoom();
+    //this->applyZoom();
 
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();

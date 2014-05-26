@@ -137,7 +137,13 @@ class ModelWidget: public QWidget {
 		QString filename,
 
 						//! \brief Stores the temporary database model filename
-						tmp_filename;
+            tmp_filename;
+
+    //! brief This label shows the user the current applied zoom
+    QLabel *zoom_info_lbl;
+
+    //! brief This timer controls the interval the zoom label is visible
+    QTimer zoom_info_timer;
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
