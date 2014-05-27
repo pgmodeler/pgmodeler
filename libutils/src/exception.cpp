@@ -230,8 +230,8 @@ QString Exception::messages[ERROR_COUNT][2]={
   {"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
   {"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
   {"ERR_ASG_INV_OBJECT_TYPE", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'")},
-  {"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")}
-
+  {"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
+  {"ERR_INV_USE_TMPNAMES_EXPORT_OPT", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
 };
 
 Exception::Exception(void)

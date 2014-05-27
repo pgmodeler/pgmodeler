@@ -102,7 +102,8 @@ class PgModelerCLI: public QApplication {
 		SIMULATE,
 		FIX_MODEL,
 		FIX_TRIES,
-		ZOOM_FACTOR;
+    ZOOM_FACTOR,
+    USE_TMP_NAMES;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);

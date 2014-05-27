@@ -59,7 +59,9 @@ class ModelValidationHelper: public QObject {
 		bool  valid_canceled,
 
 		//! \brief Indicates if the validation is on fix mode.
-		fix_mode;
+    fix_mode,
+
+    use_tmp_names;
 
 		/*! \brief Stores the validation infos generated during validation steps.
 		This vector is read when applying fixes */
@@ -77,7 +79,7 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="");
+    void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="", bool use_tmp_names=false);
 
 		//! \brief Switch the validator to fix mode
 		void switchToFixMode(bool value);
