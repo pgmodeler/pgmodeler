@@ -248,6 +248,8 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					parent_obj=objs[i]->getDatabase();
 
 				tab_item->setText(parent_obj ? Utf8String::create(parent_obj->getName()) : "-");
+        tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
+
 				tab_wgt->setItem(lin_idx, 2, tab_item);
 
 				if(parent_obj)
