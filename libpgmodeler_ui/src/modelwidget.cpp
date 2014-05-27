@@ -1490,7 +1490,7 @@ void ModelWidget::showDependenciesReferences(void)
 
 		if(object)
 		{
-			deps_refs_wgt->setAttributes(this->db_model, object);
+      deps_refs_wgt->setAttributes(this, object);
 			deps_refs_wgt->show();
 		}
 	}
