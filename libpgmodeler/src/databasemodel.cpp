@@ -6156,11 +6156,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
       gen_defs_count++;
 
-      emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
-                            msg.arg(def_type_str)
-                            .arg(Utf8String::create(object->getName()))
-                            .arg(object->getTypeName()),
-                            object->getObjectType());
+      if((def_type==SchemaParser::SQL_DEFINITION && !object->isSQLDisabled()) ||
+         (def_type==SchemaParser::XML_DEFINITION && !object->isSystemObject()))
+        emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+                              msg.arg(def_type_str)
+                              .arg(Utf8String::create(object->getName()))
+                              .arg(object->getTypeName()),
+                              object->getObjectType());
     }
 
     attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;

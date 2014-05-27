@@ -54,8 +54,13 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates to the exporter to drop database before export
 		drop_db,
 
+    //! \brief Indicates to the exporter to generate random names for database, roles and tablespaces before export (only in thread mode)
+    use_tmp_names,
+
 		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
-		export_canceled;
+    export_canceled,
+
+    db_sql_reenabled;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -70,6 +75,9 @@ class ModelExportHelper: public QObject {
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
 		map<Table *, bool> alter_cmds_status;
 
+    //! brief Stores the original object names before the call of generateRandomObjectNames()
+    map<BaseObject *, QString> orig_obj_names;
+
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
 
@@ -77,11 +85,20 @@ class ModelExportHelper: public QObject {
 		void restoreGenAtlerCmdsStatus(void);
 
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
-		void undoDBMSExport(DatabaseModel *db_model, Connection &conn);
+    void undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names);
+
+    /*! brief Cause the names of the database, roles and tablespaces to be replaced by a temporary name in order
+    to avoid duplicity error when exporting. This feature is only useful when validating the model against a
+    server which some of the objects (at cluster level) still exists */
+    void generateTempObjectNames(DatabaseModel *db_model);
+
+    //! brief Restore the original name of the database, roles and tablespaces
+    void restoreObjectNames(void);
 
 	protected:
 		//! \brief Configures the DBMS export params before start the export thread (only in thread mode)
-		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false, bool drop_db=false, bool simulate=false);
+    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
+                               bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
@@ -97,7 +114,8 @@ class ModelExportHelper: public QObject {
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
 		make the helper to ignore object duplicity errors */
-		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false, bool drop_db=false, bool simulate=false);
+    void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
+                      bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
 		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly

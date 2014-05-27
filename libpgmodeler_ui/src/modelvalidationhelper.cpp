@@ -23,7 +23,7 @@ ModelValidationHelper::ModelValidationHelper(void)
 	warn_count=error_count=progress=0;
 	db_model=nullptr;
 	conn=nullptr;
-	valid_canceled=fix_mode=false;
+  valid_canceled=fix_mode=use_tmp_names=false;
 
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
@@ -192,7 +192,7 @@ void ModelValidationHelper::redirectExportProgress(int prog, QString msg, Object
 	emit s_progressUpdated(progress, msg, obj_type);
 }
 
-void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver)
+void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver, bool use_tmp_names)
 {
 	fix_mode=false;
 	valid_canceled=false;
@@ -200,7 +200,8 @@ void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection
 	this->db_model=model;
 	this->conn=conn;
 	this->pgsql_ver=pgsql_ver;
-	export_helper.setExportToDBMSParams(model, conn, pgsql_ver, false, false, true);
+  this->use_tmp_names=use_tmp_names;
+  export_helper.setExportToDBMSParams(model, conn, pgsql_ver, false, false, true, use_tmp_names);
 }
 
 void ModelValidationHelper::switchToFixMode(bool value)
