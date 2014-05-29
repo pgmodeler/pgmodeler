@@ -43,8 +43,8 @@ $br $tb ( @{elements} $br $tb )
  $br $tb [TABLESPACE ] @{tablespace}
 %end
 
-%if @{condition} %then
- $br $tb [WHERE (] @{condition} [)]
+%if @{predicate} %then
+ $br $tb [WHERE (] @{predicate} [)]
 %end
 ; $br
 

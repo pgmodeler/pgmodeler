@@ -34,8 +34,8 @@ class Index: public TableObject{
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
 
-		//! \brief Conditional expression for the index
-		QString conditional_expr;
+    //! \brief Predicate expression for the index
+    QString predicate;
 
 		//! \brief Fill factor used by the index
 		unsigned fill_factor;
@@ -83,8 +83,8 @@ class Index: public TableObject{
 		//! \brief Remove all elements from the index
 		void removeIndexElements(void);
 
-		//! \brief Defines the conditional expression used by the index
-		void setConditionalExpression(const QString &expr);
+    //! \brief Defines the predicate used by the index
+    void setPredicate(const QString &expr);
 
 		//! \brief Defines the indexing method used by the index
 		void setIndexingType(IndexingType idx_type);
@@ -97,7 +97,7 @@ class Index: public TableObject{
 		void setFillFactor(unsigned factor);
 
 		//! \brief Gets the index conditional expression
-		QString getConditionalExpression(void);
+    QString getPredicate(void);
 
 		//! \brief Gets the index element count
 		unsigned getIndexElementCount(void);

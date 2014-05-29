@@ -4831,13 +4831,13 @@ Index *DatabaseModel::createIndex(Table *table)
 						createElement(idx_elem, index, table);
 						index->addIndexElement(idx_elem);
 					}
-					else if(elem==ParsersAttributes::CONDITION)
+          else if(elem==ParsersAttributes::PREDICATE)
 					{
 						XMLParser::savePosition();
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 						str_aux=XMLParser::getElementContent();
 						XMLParser::restorePosition();
-						index->setConditionalExpression(str_aux);
+            index->setPredicate(str_aux);
 					}
 				}
 			}

@@ -8,6 +8,7 @@
 
 <!ELEMENT comment (#PCDATA)>
 <!ELEMENT condition (#PCDATA)>
+<!ELEMENT predicate (#PCDATA)>
 
 <!ELEMENT expression (#PCDATA)>
 <!ATTLIST expression type (none|select-exp|from-exp|simple-exp|cte-exp) "none">

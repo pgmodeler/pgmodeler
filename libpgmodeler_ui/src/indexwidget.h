@@ -34,8 +34,8 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Syntax highlighter for conditional expression
-		SyntaxHighlighter *cond_expr_hl;
+    //! \brief Syntax highlighter for predicate
+    SyntaxHighlighter *predicate_hl;
 
 		ElementsWidget *elements_wgt;
 

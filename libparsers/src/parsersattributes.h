@@ -427,7 +427,8 @@ namespace ParsersAttributes {
   CHECK_UPDATE="check-update",
   LAST_POSITION="last-position",
   LAST_ZOOM="last-zoom",
-  SAVE_LAST_POSITION="save-last-position";
+  SAVE_LAST_POSITION="save-last-position",
+  PREDICATE="predicate";
 }
 
 #endif

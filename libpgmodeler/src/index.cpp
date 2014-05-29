@@ -31,7 +31,8 @@ Index::Index(void)
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::FACTOR]="";
-	attributes[ParsersAttributes::CONDITION]="";
+  //attributes[ParsersAttributes::CONDITION]="";
+  attributes[ParsersAttributes::PREDICATE]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
 	attributes[ParsersAttributes::NULLS_FIRST]="";
 	attributes[ParsersAttributes::ASC_ORDER]="";
@@ -207,9 +208,9 @@ void Index::setIndexingType(IndexingType idx_type)
 	this->indexing_type=idx_type;
 }
 
-void Index::setConditionalExpression(const QString &expr)
+void Index::setPredicate(const QString &expr)
 {
-	conditional_expr=expr;
+  predicate=expr;
 }
 
 unsigned Index::getFillFactor(void)
@@ -230,9 +231,9 @@ IndexingType Index::getIndexingType(void)
 	return(indexing_type);
 }
 
-QString Index::getConditionalExpression(void)
+QString Index::getPredicate(void)
 {
-	return(conditional_expr);
+  return(predicate);
 }
 
 bool Index::isReferRelationshipAddedColumn(void)
@@ -295,7 +296,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? "1" : "");
 	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? "1" : "");
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::CONDITION]=conditional_expr;
+  attributes[ParsersAttributes::PREDICATE]=predicate;
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 
   if(getParentTable())

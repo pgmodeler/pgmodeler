@@ -38,8 +38,8 @@
 
  @{elements}
 
- %if @{condition} %then
-   $tb <condition> <! $ob CDATA $ob @{condition} $cb $cb > </condition> $br
+ %if @{predicate} %then
+   $tb $tb <predicate> <! $ob CDATA $ob @{predicate} $cb $cb > </predicate> $br
  %end
  
 %if @{decl-in-table} %then $tb %end

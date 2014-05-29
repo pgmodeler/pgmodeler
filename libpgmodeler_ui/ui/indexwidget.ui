@@ -279,7 +279,7 @@
         </layout>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="cond_expr_lbl">
+        <widget class="QLabel" name="predicate_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -299,12 +299,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Conditional Expr.:</string>
+          <string>Predicate:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1" colspan="4">
-        <widget class="QTextEdit" name="cond_expr_txt">
+        <widget class="QTextEdit" name="predicate_txt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -368,7 +368,7 @@
   <tabstop>concurrent_chk</tabstop>
   <tabstop>unique_chk</tabstop>
   <tabstop>fast_update_chk</tabstop>
-  <tabstop>cond_expr_txt</tabstop>
+  <tabstop>predicate_txt</tabstop>
  </tabstops>
  <resources/>
  <connections/>

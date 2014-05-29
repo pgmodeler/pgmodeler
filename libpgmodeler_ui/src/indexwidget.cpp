@@ -27,9 +27,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		Ui_IndexWidget::setupUi(this);
 
-		//Cria um destacador de sintaxe no campo de expressão de checagem
-		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+    predicate_hl=new SyntaxHighlighter(predicate_txt, false);
+    predicate_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																						GlobalAttributes::DIR_SEPARATOR +
 																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																						GlobalAttributes::CONFIGURATION_EXT);
@@ -63,7 +62,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 {
 	BaseObjectWidget::hideEvent(event);
 
-	cond_expr_txt->clear();
+  predicate_txt->clear();
 	concurrent_chk->setChecked(false);
 	unique_chk->setChecked(false);
 	indexing_cmb->setCurrentIndex(0);
@@ -105,7 +104,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
-		cond_expr_txt->setPlainText(Utf8String::create(index->getConditionalExpression()));
+    predicate_txt->setPlainText(Utf8String::create(index->getPredicate()));
 
 		selectIndexingType();
 	}
@@ -129,7 +128,7 @@ void IndexWidget::applyConfiguration(void)
 		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
 		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
-		index->setConditionalExpression(cond_expr_txt->toPlainText().toUtf8());
+    index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 
 		if(fill_factor_chk->isChecked())

@@ -759,6 +759,13 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
     obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
 	}
 
+  //Renaming the tag <condition> to <predicate> on indexes
+  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_INDEX))))
+  {
+    obj_xml.replace(tag.arg(ParsersAttributes::CONDITION), tag.arg(ParsersAttributes::PREDICATE));
+    obj_xml.replace(end_tag.arg(ParsersAttributes::CONDITION), end_tag.arg(ParsersAttributes::PREDICATE));
+  }
+
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(tag.arg("grant")))
 	{
