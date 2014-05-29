@@ -7587,14 +7587,17 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		{
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[3]={OBJ_OPCLASS,
-															 OBJ_AGGREGATE,
-															 OBJ_OPERATOR};
+      ObjectType obj_types[]={OBJ_OPCLASS,
+                             OBJ_AGGREGATE,
+                              OBJ_OPERATOR,
+                              OBJ_TABLE };
 			unsigned i, i1, count;
 			OperatorClass *op_class=nullptr;
 			Operator *oper_aux=nullptr, *oper=dynamic_cast<Operator *>(object);
+      Table *table=nullptr;
+      Constraint *constr=nullptr;
 
-			for(i=0; i < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+      for(i=0; i < 4 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
 				obj_list=getObjectList(obj_types[i]);
 				itr=obj_list->begin();
@@ -7648,6 +7651,33 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						}
 					}
 				}
+        else
+        {
+          while(itr!=itr_end && !refer)
+          {
+            table=dynamic_cast<Table *>(*itr);
+            itr++;
+
+            count=table->getConstraintCount();
+            for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+            {
+              constr=table->getConstraint(i1);
+
+              if(constr->getConstraintType()==ConstraintType::exclude)
+              {
+                for(auto elem : constr->getExcludeElements())
+                {
+                  if(elem.getOperator()==oper)
+                  {
+                    refer=true;
+                    refs.push_back(constr);
+                    if(exclusion_mode) break;
+                  }
+                }
+              }
+            }
+          }
+        }
 			}
 		}
 
