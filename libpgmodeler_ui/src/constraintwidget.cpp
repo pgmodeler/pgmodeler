@@ -34,8 +34,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		grid->addWidget(excl_elems_wgt,0,0);
 		excl_elems_grp->setLayout(grid);
 
-		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false);
-		check_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+    expression_hl=new SyntaxHighlighter(expression_txt, false);
+    expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																				 GlobalAttributes::DIR_SEPARATOR +
 																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
@@ -290,7 +290,7 @@ void ConstraintWidget::selectReferencedTable(void)
 
 void ConstraintWidget::hideEvent(QHideEvent *event)
 {
-	check_expr_txt->clear();
+  expression_txt->clear();
 	column_cmb->clear();
 	ref_column_cmb->clear();
 
@@ -326,8 +326,8 @@ void ConstraintWidget::selectConstraintType(void)
 
 	if(!tablespace_sel->isVisible()) tablespace_sel->clearSelector();
 
-	check_expr_lbl->setVisible(constr_type==ConstraintType::check);
-	check_expr_txt->setVisible(constr_type==ConstraintType::check);
+  expression_lbl->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
+  expression_txt->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
 	no_inherit_chk->setVisible(constr_type==ConstraintType::check);
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
 	warn_frm->setVisible(constr_type==ConstraintType::check);
@@ -423,7 +423,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
 
-		check_expr_txt->setPlainText(Utf8String::create(constr->getCheckExpression()));
+    expression_txt->setPlainText(Utf8String::create(constr->getExpression()));
 		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
@@ -473,7 +473,7 @@ void ConstraintWidget::applyConfiguration(void)
 
 		constr=dynamic_cast<Constraint *>(this->object);
 		constr->setConstraintType(ConstraintType(constr_type_cmb->currentText()));
-		constr->setCheckExpression(check_expr_txt->toPlainText().toUtf8());
+    constr->setExpression(expression_txt->toPlainText().toUtf8());
 		constr->setFillFactor(fill_factor_sb->value());
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());

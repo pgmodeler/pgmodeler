@@ -69,8 +69,8 @@ class Constraint: public TableObject{
 		//! \brief Stores the exclude elements of the exclude constraint
 		vector<ExcludeElement> excl_elements;
 
-		//! \brief Stores the check expression (only for check constraints)
-		QString check_expr;
+    //! \brief Stores the check expression or the exclude predicate (only for check and exclude constraints)
+    QString expression;
 
 		//! \brief Stores the referenced table (only for foreign keys)
 		BaseTable *ref_table;
@@ -121,8 +121,8 @@ class Constraint: public TableObject{
 		//! \brief Defines the indexing type used by the constraint (only for exclude)
 		void setIndexType(IndexingType index_type);
 
-		//! \brief Defines the checking expresion used by the constraint (only for check constraint)
-		void setCheckExpression(const QString &expr);
+    //! \brief Defines the expresion used by the constraint (only for check and exclude constraint)
+    void setExpression(const QString &expr);
 
 		//! \brief Defines the referenced table (only for foreign key)
 		void setReferencedTable(BaseTable *tab_ref);
@@ -171,7 +171,7 @@ class Constraint: public TableObject{
 		ConstraintType getConstraintType(void);
 
 		//! \brief Returns the check expression
-		QString getCheckExpression(void);
+    QString getExpression(void);
 
 		//! \brief Returns the referenced table
 		BaseTable *getReferencedTable(void);

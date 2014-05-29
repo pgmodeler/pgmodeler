@@ -4583,7 +4583,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						XMLParser::savePosition();
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
-						constr->setCheckExpression(XMLParser::getElementContent());
+            constr->setExpression(XMLParser::getElementContent());
 
 						XMLParser::restorePosition();
 					}
