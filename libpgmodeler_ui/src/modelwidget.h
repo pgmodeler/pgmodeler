@@ -32,10 +32,13 @@
 #include "baseform.h"
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
+#include "newobjectoverlaywidget.h"
 
 class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
+
+    NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Message box used to show error/confirmation/alert messages
 		Messagebox msg_box;
@@ -323,6 +326,9 @@ private slots:
 
     //! \brief Highlights the object stored on the action that triggers the slot
 		void highlightObject(void);
+
+    void toggleNewObjectOverlay(void);
+    void adjustOverlayPosition(void);
 
 	public slots:
 		void loadModel(const QString &filename);

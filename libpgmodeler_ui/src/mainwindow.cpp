@@ -851,12 +851,12 @@ void MainWindow::setCurrentModel(void)
 		general_tb->addAction(current_model->action_new_object);
 		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->setShortcut(QKeySequence("N"));
+    //tool_btn->setShortcut(QKeySequence("N"));
 
 		general_tb->addAction(current_model->action_quick_actions);
 		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->setShortcut(QKeySequence("Q"));
+    //tool_btn->setShortcut(QKeySequence("Q"));
 
 		general_tb->addAction(current_model->action_edit);
 		general_tb->addAction(current_model->action_source_code);
