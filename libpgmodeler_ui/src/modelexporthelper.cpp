@@ -203,8 +203,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(!db_model)
 			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    emit s_progressUpdated(progress, trUtf8("Starting export to DBMS."));
-
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
@@ -221,6 +219,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		//Retrive the DBMS version in order to generate the correct code
     conn.connect();
     version=(conn.getPgSQLVersion()).mid(0,3);
+
+    emit s_progressUpdated(progress, trUtf8("Starting export to DBMS."));
 
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())
