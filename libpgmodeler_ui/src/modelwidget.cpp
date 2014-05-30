@@ -356,10 +356,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 
-  //connect(scene, SIGNAL(selectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
   connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
   connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
   connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -1258,7 +1258,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		unsigned rel_type=0, res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 
-    new_obj_overlay_wgt->hide();
+    //new_obj_overlay_wgt->hide();
 
 		/* Case the obj_type is greater than BASE_TABLE indicates that the object type is a
 		 relationship. To get the specific relationship id (1-1, 1-n, n-n, gen, dep) is necessary

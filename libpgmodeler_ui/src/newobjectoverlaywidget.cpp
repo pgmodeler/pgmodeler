@@ -47,7 +47,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
                                                                   { textbox_tb,    std::make_tuple(trUtf8("M"), OBJ_TEXTBOX)    },
                                                                   { type_tb,       std::make_tuple(trUtf8("Y"), OBJ_TYPE)       },
                                                                   { view_tb,       std::make_tuple(trUtf8("W"), OBJ_VIEW)       },
-                                                                  { tag_tb,        std::make_tuple(trUtf8("N"), OBJ_TAG)        },
+                                                                  { tag_tb,        std::make_tuple(trUtf8("9"), OBJ_TAG)        },
                                                                   { constraint_tb, std::make_tuple(trUtf8("Z"), OBJ_CONSTRAINT) },
                                                                   { index_tb,      std::make_tuple(trUtf8("X"), OBJ_INDEX)      },
                                                                   { column_tb,     std::make_tuple(trUtf8("C"), OBJ_COLUMN)     },
@@ -62,7 +62,6 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 
    vector<QToolButton *> permission_btns={db_perms_tb, sch_perms_tb, tab_perms_tb };
 
-
   for(auto itr : obj_shortcuts)
   {
     button=itr.first;
@@ -72,7 +71,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     button->setText(shortcut + ": " + button->text());
     button->setShortcut(QKeySequence(shortcut));
     connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
-    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 
   for(auto itr : rel_shortcuts)
@@ -87,7 +86,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     if(action_idx < rel_actions.size())
       connect(button, SIGNAL(clicked()), rel_actions[action_idx], SLOT(trigger()));
 
-    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 
   shortcut=trUtf8("0");
@@ -98,7 +97,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     button->setShortcut(QKeySequence(shortcut));
 
     connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
-    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 }
 
@@ -116,6 +115,4 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
   tab_perms_tb->setVisible(sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE);
 
   rel_btns_wgt->setVisible(sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
-
-  //this->adjustSize();
 }

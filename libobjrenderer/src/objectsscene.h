@@ -185,6 +185,9 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when a object is selected
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
+    //! brief Signal emtted when a blank area of the canvas is pressed
+    void s_objectsScenePressed(Qt::MouseButtons);
+
 		friend class ModelWidget;
 };
 

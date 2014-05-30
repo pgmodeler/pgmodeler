@@ -126,8 +126,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Cast</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Cast</string>
@@ -173,8 +173,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Language</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Language</string>
@@ -217,8 +217,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Role</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Role</string>
@@ -261,8 +261,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Schema</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Schema</string>
@@ -305,8 +305,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Tag</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Tablespace</string>
@@ -349,8 +349,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Tag</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Tag</string>
@@ -393,8 +393,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Textbox</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Textbox</string>
@@ -437,8 +437,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Permissions</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Permissions</string>
@@ -508,8 +508,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Domain</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Domain</string>
@@ -552,8 +552,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Conversion</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Conversion</string>
@@ -596,8 +596,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Aggregate</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Aggregate</string>
@@ -640,8 +640,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Collation</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Collation</string>
@@ -684,8 +684,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Table</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Table</string>
@@ -728,8 +728,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Type</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Type</string>
@@ -772,8 +772,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Operator Family</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Op. Family</string>
@@ -816,8 +816,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Sequence</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Sequence</string>
@@ -860,8 +860,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Extension</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Extension</string>
@@ -904,8 +904,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Function</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Function</string>
@@ -948,8 +948,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Operator Class</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Op. Class</string>
@@ -992,8 +992,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Operator</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Operator</string>
@@ -1036,8 +1036,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>View</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>View</string>
@@ -1080,8 +1080,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Permissions</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Permissions</string>
@@ -1151,8 +1151,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Rule</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Rule</string>
@@ -1195,8 +1195,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Index</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Index</string>
@@ -1239,8 +1239,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Column</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Column</string>
@@ -1283,8 +1283,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Constraint</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Constraint</string>
@@ -1327,8 +1327,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Trigger</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Trigger</string>
@@ -1371,8 +1371,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Permissions</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Permissions</string>
@@ -1442,8 +1442,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Many-to-many Relationship</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Many-to-many</string>
@@ -1486,8 +1486,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>One-to-many Relationship</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>One-to-many</string>
@@ -1530,8 +1530,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>One-to-one Relationship</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>One-to-one</string>
@@ -1574,8 +1574,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Generalization Relationship</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Inheritance</string>
@@ -1618,8 +1618,8 @@
              <bold>false</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>Copy Relationship</string>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Copy</string>

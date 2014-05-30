@@ -372,6 +372,9 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
   //Gets the item at mouse position
   QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
+  if(selectedItems().empty())
+    emit s_objectsScenePressed(event->buttons());
+
   /* If the relationship line is visible, indicates that the user is in the middle of
      a relationship creation, thus is needed to inform to the scene to activate the
      the multiselection to be able to select two tables and link them. By default,
