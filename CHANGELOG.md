@@ -1,6 +1,36 @@
 Change Log
 ---------
 
+v0.7.2-alpha1
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: May 30, 2014</em><br/>
+
+* [New] Introduced a "new object" overlay widget which gives user a quick access to actions that create objects.
+* [New] Added a step to fix indexes with old <condition> tag on command line interface.
+* [New] Added support to item interaction on "object's dependencies and references" dialog.
+* [New] Added support to generate temporary names for database, roles and tablespaces when running validation process. This will avoid errors if the original database and the other objects already exists on the server.
+* [New] Updated the CLI to include the option to generate temporary object's names.
+* [New] Added suppport to save and restore the last position and zoom on the canvas. This behavior can be deactivated on general settings.
+* [New] Added support to prepend SQL commands on object's definition.
+* [New] Added zoom info popup that appears whenever the user changes the current zoom factor.
+* [Change] Renamed the methods setCheckExpression and getCheckExpression methods to setExpression and getExpression because the expression is used either for check and exclude constraints.
+* [Change] Renamed the attribute "condition" to "predicate" on index class.
+* [Change] Improved the way SQL code is disabled/enabled on editing forms. User now is asked to apply the same disabling/enabling status to object's refereces.
+* [Change] Minor size adjustment on SQL append dialog.
+* [Change] Changed the order of the tabs on user-defined type editing form.
+* [Change] Minor appearance improvement on textbox editing form.
+* [Fix] Made visible the field related to predicate expression on exclude constraint editing form.
+* [Fix] Added reference checking between an exclude constraint and operators.
+* [Fix] Minor fix on copy operation that was not resetting the copied objects list if the user clicked several times the "copy" command without paste.
+* [Fix] Minor fix on the model object widget when disabling the controls.
+* [Fix] Minor fix on ModelWidget::createSequenceForColumn() operation. The generated sequence is now correctly assigned to the column.
+* [Fix] Minor fix on pgModeler command line interface menu text.
+* [Fix] Minor fix on permission.dtd file. Attribute "index" was incorreclty marked as required when its optinal.
+* [Fix] Minor fix on semantics of one-to-one relationship. When one of the tables are of mandatory participation the foreign key columns must not accept null values.
+* [Fix] Minor fix on Windows and Linux deployment scripts.
+
+
 v0.7.2-alpha
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
