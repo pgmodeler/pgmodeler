@@ -122,6 +122,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	modified=false;
 	new_obj_type=BASE_OBJECT;
 
+
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
 
@@ -236,6 +237,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
+  //action_new_object->setShortcut(QKeySequence(trUtf8("K")));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
 	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
@@ -319,6 +321,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		rels_menu->addAction(action);
 	}
 
+  new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
+  new_obj_overlay_wgt->setObjectName("new_obj_overlay_wgt");
+  new_obj_overlay_wgt->setVisible(false);
+
   connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
@@ -349,6 +355,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
+
+  connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -386,6 +397,7 @@ void ModelWidget::resizeEvent(QResizeEvent *)
   zoom_info_lbl->move((this->width()/2) - (zoom_info_lbl->width()/2),
                       (this->height()/2)  - (zoom_info_lbl->height()/2));
 
+  adjustOverlayPosition();
 	emit s_modelResized();
 }
 
@@ -406,8 +418,8 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		this->keyPressEvent(k_event);
 		return(true);
 	}
-	else
-		return(QWidget::eventFilter(object, event));
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
@@ -418,6 +430,11 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 		this->cancelObjectAddition();
 		scene->clearSelection();
 	}
+  else if(event->key()==Qt::Key_N)
+  {
+    //cout << "Show overlay" << endl;
+    toggleNewObjectOverlay();
+  }
   else if((event->modifiers()==Qt::ControlModifier ||
           (event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))) &&
           (event->key()==Qt::Key_Left || event->key()==Qt::Key_Right ||
@@ -624,10 +641,22 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
 		{
-			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-			viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
-			this->new_obj_type=obj_type;
-			this->enableModelActions(false);
+      /* A small checking to enable the overlay widget to create relationships and
+         other graphical objects without the user click on the canvas area */
+      if((obj_type > BASE_OBJECT &&
+          selected_objects.size()==2 &&
+          selected_objects.at(0)->getObjectType()==OBJ_TABLE &&
+          selected_objects.at(1)->getObjectType()==OBJ_TABLE))
+      {
+        this->showObjectForm(obj_type);
+      }
+      else
+      {
+        //For the graphical object, changes the cursor icon until the user click on the model to show the editing form
+        viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
+        this->new_obj_type=obj_type;
+        this->enableModelActions(false);
+      }
 		}
 	}
 }
@@ -1228,6 +1257,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 	{
 		unsigned rel_type=0, res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
+
+    //new_obj_overlay_wgt->hide();
 
 		/* Case the obj_type is greater than BASE_TABLE indicates that the object type is a
 		 relationship. To get the specific relationship id (1-1, 1-n, n-n, gen, dep) is necessary
@@ -2610,12 +2641,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
                            OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
+      /* QStringList shortcuts = { "A", "C", "L", "V", "D", "E", "F", "U", "P", "O", "I",
+                                "", "R", "S", "Q", "T", "B", "X", "Y", "W", "G" }; */
 
 			unsigned cnt = sizeof(types)/sizeof(ObjectType);
 
 			//Configures the "New object" menu with the types at database level
 			for(i=0; i < cnt; i++)
+      {
+        //actions_new_objects[types[i]]->setShortcut(QKeySequence(shortcuts[i]));
 				new_object_menu.addAction(actions_new_objects[types[i]]);
+      }
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
@@ -2934,6 +2970,29 @@ void ModelWidget::highlightObject(void)
 			viewport->centerOn(obj_view);
 		}
   }
+}
+
+void ModelWidget::toggleNewObjectOverlay(void)
+{
+  if(new_obj_overlay_wgt->isHidden())
+  {
+    new_obj_overlay_wgt->setSelectedObjects(selected_objects);
+    adjustOverlayPosition();
+
+    new_obj_overlay_wgt->raise();
+    new_obj_overlay_wgt->show();
+  }
+  else
+    new_obj_overlay_wgt->hide();
+}
+
+void ModelWidget::adjustOverlayPosition(void)
+{
+  int px=0, py=0;
+
+  px=(this->width()/2) - (new_obj_overlay_wgt->width()/2);
+  py=(this->height()/2) - (new_obj_overlay_wgt->height()/2);
+  new_obj_overlay_wgt->move(px, py);
 }
 
 void ModelWidget::createSequenceForColumn(void)

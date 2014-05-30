@@ -596,6 +596,9 @@
          <height>20</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Return</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -627,6 +630,9 @@
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="shortcut">
+        <string>Esc</string>
        </property>
       </widget>
      </item>
