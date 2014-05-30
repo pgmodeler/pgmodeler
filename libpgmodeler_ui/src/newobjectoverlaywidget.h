@@ -30,19 +30,23 @@
 #include "baseobject.h"
 #include "ui_newobjectoverlaywidget.h"
 
+//Adding the declaratino of ModelWidget class in order to be visible to NewObjectOverlayWidget
+class ModelWidget;
+
 class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
 	private:
 		Q_OBJECT
+    vector<QAction *> tab_obj_actions;
 
 	public:
-    NewObjectOverlayWidget(QWidget * parent = 0);
+    explicit NewObjectOverlayWidget(ModelWidget * parent);
 
-    void setSelectedObjects(vector<BaseObject *> sel_objs);
+    void setSelectedObjects(vector<BaseObject *> &sel_objs);
     void configureOverlayButtons(void);
 
 	public slots:
 
-	private slots:
+  private slots:
 };
 
 #endif

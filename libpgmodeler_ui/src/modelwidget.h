@@ -97,35 +97,6 @@ class ModelWidget: public QWidget {
 
 					break_rel_menu;
 
-		QAction *action_source_code,
-						*action_edit,
-						*action_protect,
-						*action_unprotect,
-						*action_remove,
-						*action_select_all,
-						*action_convert_relnn,
-						*action_copy,
-						*action_paste,
-						*action_cut,
-						*action_deps_refs,
-						*action_new_object,
-						*action_rename,
-						*action_moveto_schema,
-						*action_edit_perms,
-						*action_change_owner,
-						*action_quick_actions,
-						*action_sel_sch_children,
-						*action_highlight_object,
-						*action_parent_rel,
-						*action_append_sql,
-						*action_create_seq_col,
-						*action_break_rel_line,
-            *action_remove_rel_points,
-            *action_set_tag;
-
-		//! \brief Actions used to create new objects on the model
-		map<ObjectType, QAction *> actions_new_objects;
-
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
 
@@ -155,6 +126,35 @@ class ModelWidget: public QWidget {
 													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
 													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
 													BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+
+    QAction *action_source_code,
+            *action_edit,
+            *action_protect,
+            *action_unprotect,
+            *action_remove,
+            *action_select_all,
+            *action_convert_relnn,
+            *action_copy,
+            *action_paste,
+            *action_cut,
+            *action_deps_refs,
+            *action_new_object,
+            *action_rename,
+            *action_moveto_schema,
+            *action_edit_perms,
+            *action_change_owner,
+            *action_quick_actions,
+            *action_sel_sch_children,
+            *action_highlight_object,
+            *action_parent_rel,
+            *action_append_sql,
+            *action_create_seq_col,
+            *action_break_rel_line,
+            *action_remove_rel_points,
+            *action_set_tag;
+
+    //! \brief Actions used to create new objects on the model
+    map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -353,6 +353,7 @@ private slots:
 		friend class ModelValidationWidget;
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
+    friend class NewObjectOverlayWidget;
 };
 
 #endif

@@ -122,8 +122,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	modified=false;
 	new_obj_type=BASE_OBJECT;
 
-  new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
-  new_obj_overlay_wgt->setVisible(false);
 
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
@@ -322,6 +320,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 		rels_menu->addAction(action);
 	}
+
+  new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
+  new_obj_overlay_wgt->setObjectName("new_obj_overlay_wgt");
+  new_obj_overlay_wgt->setVisible(false);
 
   connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
@@ -639,10 +641,22 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
 		{
-			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-			viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
-			this->new_obj_type=obj_type;
-			this->enableModelActions(false);
+      /* A small checking to enable the overlay widget to create relationships and
+         other graphical objects without the user click on the canvas area */
+      if((obj_type > BASE_OBJECT &&
+          selected_objects.size()==2 &&
+          selected_objects.at(0)->getObjectType()==OBJ_TABLE &&
+          selected_objects.at(1)->getObjectType()==OBJ_TABLE))
+      {
+        this->showObjectForm(obj_type);
+      }
+      else
+      {
+        //For the graphical object, changes the cursor icon until the user click on the model to show the editing form
+        viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
+        this->new_obj_type=obj_type;
+        this->enableModelActions(false);
+      }
 		}
 	}
 }
@@ -2962,7 +2976,9 @@ void ModelWidget::toggleNewObjectOverlay(void)
 {
   if(new_obj_overlay_wgt->isHidden())
   {
+    new_obj_overlay_wgt->setSelectedObjects(selected_objects);
     adjustOverlayPosition();
+
     new_obj_overlay_wgt->raise();
     new_obj_overlay_wgt->show();
   }
