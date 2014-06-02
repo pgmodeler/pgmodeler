@@ -4,17 +4,18 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    QMAKE_ARGS="-r -spec linux-g++-64"
-    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc_64/bin
+    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc_64
+    FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    QMAKE_ARGS="-r -spec linux-g++"
-    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc/bin
+    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc
+    FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
 
+QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
 
@@ -59,9 +60,9 @@ else
            libQt5Network.so.5 \
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
-           libicui18n.so.51 \
-           libicuuc.so.51 \
-           libicudata.so.51"
+           libicui18n.so.5* \
+           libicuuc.so.5* \
+           libicudata.so.5*"
 fi
 
 clear
@@ -80,6 +81,7 @@ fi
 if [ -e "$FALLBACK_QMAKE_ROOT/qmake" ]; then
   QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_2=${QT_VER_2:0:5}
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
 
 # If Qt was not found in system path or fallback path

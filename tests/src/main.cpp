@@ -1,18 +1,10 @@
-#include <iostream>
-#include "exception.h"
-#include "mainwindow.h"
+#include <QApplication>
 
-using namespace std;
 
-int main(int, char **)
+int main(int argc, char **argv)
 {
-  try
-  {
-    return(0);
-  }
-  catch(Exception &e)
-  {
-    cout << e.getExceptionsText().toStdString() << endl;
-    return(e.getErrorType());
-  }
+  QApplication app(argc, argv);
+
+
+  return(app.exec());
 }

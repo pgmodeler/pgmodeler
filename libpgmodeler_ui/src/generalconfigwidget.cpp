@@ -194,7 +194,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 {
 	int unit=unity_cmb->currentIndex();
 
-	unity_cmb->setCurrentIndex(UNIT_PIXELS);
+  unity_cmb->setCurrentIndex(UNIT_POINT);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
 																		 (portrait_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
 																		 QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),

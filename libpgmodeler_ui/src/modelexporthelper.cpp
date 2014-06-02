@@ -81,7 +81,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       {
         prt.setPaperSize(paper_sz);
         prt.setOrientation(orient);
-        page_sz=prt.paperSize(QPrinter::DevicePixel);
+        page_sz=prt.paperSize(QPrinter::Point);
       }
 
       //Calculates the page count to be exported

@@ -429,10 +429,10 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		this->cancelObjectAddition();
 		scene->clearSelection();
+    new_obj_overlay_wgt->hide();
 	}
   else if(event->key()==Qt::Key_N)
-  {
-    //cout << "Show overlay" << endl;
+  {   
     toggleNewObjectOverlay();
   }
   else if((event->modifiers()==Qt::ControlModifier ||
@@ -1072,10 +1072,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QRectF margins;
-		QPrinter::PaperSize paper_size;
+    QRectF margins, page_rect;
+    QPrinter::PaperSize paper_size_id;
 		QPrinter::Orientation orient;
-		QSizeF page_size, custom_p_size;
+    QSizeF paper_size, custom_p_size;
+    QSize page_size;
 		QPen pen;
 		QFont font;
 		QPointF top_left, top_right, bottom_left, bottom_right,
@@ -1091,18 +1092,15 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		scene->clearSelection();
 
 		//Get the page size based on the printer settings
-		ObjectsScene::getPaperConfiguration(paper_size, orient, margins, custom_p_size);
+    ObjectsScene::getPaperConfiguration(paper_size_id, orient, margins, custom_p_size);
+    paper_size=printer->paperSize(QPrinter::Point);
 
-		page_size=printer->paperSize(QPrinter::DevicePixel);
-
-		if(paper_size!=QPrinter::Custom)
-			page_size-=margins.size();
-		else
-			#warning "Custom page size bug (QTBUG-33645) workaround."
-			printer->setPaperSize(QSizeF(page_size.height(), page_size.width()), QPrinter::DevicePixel);
+    if(paper_size_id!=QPrinter::Custom)
+      paper_size-=margins.size();
 
 		//Get the pages rect for printing
-    pages=scene->getPagesForPrinting(page_size, margins.size(), h_page_cnt, v_page_cnt);
+    pages=scene->getPagesForPrinting(paper_size, margins.size(), h_page_cnt, v_page_cnt);
+    page_size=printer->pageRect().size();
 
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
@@ -1114,11 +1112,14 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		//Calculates the auxiliary points to draw the page delimiter lines
 		top_left.setX(0); top_left.setY(0);
 		top_right.setX(page_size.width()); top_right.setY(0);
+
 		bottom_left.setX(0); bottom_left.setY(page_size.height());
 		bottom_right.setX(top_right.x()); bottom_right.setY(bottom_left.y());
-		h_top_mid.setX(page_size.width()/2); h_top_mid.setY(0);
+
+    h_top_mid.setX(page_size.width()/2); h_top_mid.setY(0);
 		h_bottom_mid.setX(h_top_mid.x()); h_bottom_mid.setY(bottom_right.y());
-		v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
+
+    v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
 		v_right_mid.setX(top_right.x()); v_right_mid.setY(v_left_mid.y());
 
 		dx.setX(margins.left());
@@ -1145,11 +1146,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			{
 				painter.drawLine(top_left, top_left + dx);
 				painter.drawLine(top_left, top_left + dy);
-			}
+      }
 
-			if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
-			{
-				painter.drawLine(top_right, top_right - dx1);
+      if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
+      {
+        painter.drawLine(top_right, top_right - dx1);
 				painter.drawLine(top_right, top_right + dy);
 			}
 
@@ -1187,7 +1188,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			{
 				painter.drawLine(v_right_mid, v_right_mid - dy1);
 				painter.drawLine(v_right_mid, v_right_mid + dy);
-			}
+      }
 
 			h_pg_id++;
 
@@ -1198,7 +1199,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			}
 
 			if(page < page_cnt-1)
-				printer->newPage();
+        printer->newPage();
 		}
 
 		//Restore the grid option backup
