@@ -1175,13 +1175,15 @@ void MainWindow::printModel(void)
 		printer=print_dlg->printer();
 
 		//Sets the printer options based upon the configurations from the scene
-		if(paper_size!=QPrinter::Custom)
+    /* if(paper_size!=QPrinter::Custom)
 			printer->setPaperSize(paper_size);
-		else
-			printer->setPaperSize(custom_size, QPrinter::DevicePixel);
+    else
+      printer->setPaperSize(custom_size, QPrinter::DevicePixel);
 
 		printer->setOrientation(orientation);
-		printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter);
+    printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
+    ObjectsScene::configurePrinter(printer);
+
 		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
 
 		print_dlg->exec();
@@ -1207,13 +1209,14 @@ void MainWindow::printModel(void)
 				if(msg_box.result()==QDialog::Rejected)
 				{
 					//Reverting the configurations to the scene defaults
-					if(paper_size!=QPrinter::Custom)
+        /*	if(paper_size!=QPrinter::Custom)
 						printer->setPaperSize(paper_size);
 					else
-						printer->setPaperSize(custom_size, QPrinter::DevicePixel);
+            printer->setPaperSize(custom_size, QPrinter::DevicePixel);
 
 					printer->setOrientation(orientation);
-					printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter);
+          printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
+          ObjectsScene::configurePrinter(printer);
 				}
 
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
