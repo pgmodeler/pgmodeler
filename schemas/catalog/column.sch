@@ -28,7 +28,7 @@
 	END
 	FROM pg_namespace AS ns
 	LEFT JOIN pg_type AS tp ON tp.typnamespace=ns.oid
-	WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, ]
+        WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, atttypid AS type_oid, ]
 
       %if @{pgsql90} %then
        [ NULL AS collation ]

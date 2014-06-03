@@ -217,6 +217,7 @@ class DatabaseImportHelper: public QObject {
 
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
+    void retrieveTableColumns(const QString &sch_name, const QString &tab_name, vector<unsigned> col_ids={});
 		void createObjects(void);
 		void createConstraints(void);
 		void createPermissions(void);
