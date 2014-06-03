@@ -668,13 +668,13 @@ void BaseObjectWidget::applyConfiguration(void)
 		{
 			BaseObject *aux_obj=nullptr, *aux_obj1=nullptr, *parent_obj=nullptr;
 			bool new_obj;
-			ObjectType obj_type;
+      ObjectType obj_type=object->getObjectType();
 			QString obj_name;
       vector<BaseObject *> ref_objs;
       Messagebox msgbox;
 
 
-			if(disable_sql_chk->isChecked()!=object->isSQLDisabled())
+      if(obj_type!=OBJ_DATABASE && disable_sql_chk->isChecked()!=object->isSQLDisabled())
       {
         msgbox.show(trUtf8("Confirmation"),
                     trUtf8("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.").arg(disable_sql_chk->isChecked() ? "disabling" : "enabling"),
@@ -684,7 +684,6 @@ void BaseObjectWidget::applyConfiguration(void)
           disableReferencesSQL(object);
       }
 
-			obj_type=object->getObjectType();
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			object->setSQLDisabled(disable_sql_chk->isChecked());
