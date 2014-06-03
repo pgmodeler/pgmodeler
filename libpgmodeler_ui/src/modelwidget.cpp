@@ -266,7 +266,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Custom SQL"), this);
   action_append_sql->setShortcut(QKeySequence(trUtf8("Alt+Q")));
 
-	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
+  action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to sequence"), this);
+  action_conv_int_serial=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to serial"), this);
+
 	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
 
 	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
@@ -343,7 +345,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
-	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceForColumn(void)));
+  connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceFromColumn(void)));
+  connect(action_conv_int_serial, SIGNAL(triggered(bool)), this, SLOT(convertIntegerToSerial(void)));
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
@@ -2776,6 +2779,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					action_create_seq_col->setData(QVariant::fromValue<void *>(col));
 					popup_menu.addAction(action_create_seq_col);
 				}
+        else if(col->getType().isIntegerType())
+        {
+          action_conv_int_serial->setData(QVariant::fromValue<void *>(col));
+          popup_menu.addAction(action_conv_int_serial);
+        }
 			}
 
 			popup_menu.addSeparator();
@@ -2996,7 +3004,7 @@ void ModelWidget::adjustOverlayPosition(void)
   new_obj_overlay_wgt->move(px, py);
 }
 
-void ModelWidget::createSequenceForColumn(void)
+void ModelWidget::createSequenceFromColumn(void)
 {
 	try
 	{
@@ -3034,7 +3042,47 @@ void ModelWidget::createSequenceForColumn(void)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void ModelWidget::convertIntegerToSerial(void)
+{
+  try
+  {
+    QAction *action=dynamic_cast<QAction *>(sender());
+    Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
+    Table *tab=dynamic_cast<Table *>(col->getParentTable());
+    PgSQLType col_type=col->getType();
+    QRegExp regexp("^nextval\\(.+\\:\\:regclass\\)");
+    QString serial_tp;
+
+    if(!col_type.isIntegerType() || !col->getDefaultValue().contains(regexp))
+      throw Exception(Exception::getErrorMessage(ERR_INV_CONV_INTEGER_TO_SERIAL).arg(col->getName()),
+                      ERR_INV_CONV_INTEGER_TO_SERIAL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
+
+    if(col_type=="integer" || col_type=="int4")
+      serial_tp="serial";
+    else if(col_type=="smallint" || col_type=="int2")
+      serial_tp="smallserial";
+    else
+      serial_tp="bigserial";
+
+    col->setType(PgSQLType(serial_tp));
+    col->setDefaultValue("");
+
+    //Revalidate the relationships since the modified column can be a primary key
+    if(tab->getPrimaryKey()->isColumnReferenced(col))
+      db_model->validateRelationships();
+
+    tab->setModified(true);
+    emit s_objectModified();
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }
 
 void ModelWidget::breakRelationshipLine(void)

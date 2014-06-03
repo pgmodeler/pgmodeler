@@ -77,9 +77,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	//Strike out the table name when its sql is disabled
 	fmt=font_config[schema_name_attrib];
 	font=fmt.font();
-	font.setStrikeOut(object->isSQLDisabled());
+  font.setStrikeOut(object->isSQLDisabled() && !schema->isRectVisible());
 
-	schema_name->setFont(font);
+  schema_name->setFont(font);
 
   if(!tag)
     schema_name->setBrush(fmt.foreground());

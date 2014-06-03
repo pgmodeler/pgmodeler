@@ -149,6 +149,7 @@ class ModelWidget: public QWidget {
             *action_parent_rel,
             *action_append_sql,
             *action_create_seq_col,
+            *action_conv_int_serial,
             *action_break_rel_line,
             *action_remove_rel_points,
             *action_set_tag;
@@ -316,7 +317,12 @@ private slots:
 
 		/*! \brief Creates a sequence based upon the selected column. This method changes the default value
 		for the column as well the type. */
-		void createSequenceForColumn(void);
+    void createSequenceFromColumn(void);
+
+    /*! \brief Creates a serial data type based upon the selected column data type. The prerequisite to create a serial data type
+        is that the column's type is an integer one (smallint, int, bigint) and the default value is a function call
+        to nextval('myseq'::regclass) */
+    void convertIntegerToSerial(void);
 
 		//! \brief Break the relationship line in one or two straight angles (see BREAK_??? constants)
 		void breakRelationshipLine(void);
