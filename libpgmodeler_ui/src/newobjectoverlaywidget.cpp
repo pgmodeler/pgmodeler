@@ -71,7 +71,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     button->setText(shortcut + ": " + button->text());
     button->setShortcut(QKeySequence(shortcut));
     connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
-    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 
   for(auto itr : rel_shortcuts)
@@ -86,7 +86,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     if(action_idx < rel_actions.size())
       connect(button, SIGNAL(clicked()), rel_actions[action_idx], SLOT(trigger()));
 
-    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 
   shortcut=trUtf8("0");
@@ -97,7 +97,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     button->setShortcut(QKeySequence(shortcut));
 
     connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
-    //connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 }
 

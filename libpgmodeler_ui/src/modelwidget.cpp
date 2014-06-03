@@ -430,9 +430,13 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	//Cancels the insertion action when ESC is pressed
 	if(event->key()==Qt::Key_Escape)
 	{
-		this->cancelObjectAddition();
-		scene->clearSelection();
-    new_obj_overlay_wgt->hide();
+    if(new_obj_overlay_wgt->isVisible())
+      new_obj_overlay_wgt->hide();
+    else
+    {
+      this->cancelObjectAddition();
+      scene->clearSelection();
+    }
 	}
   else if(event->key()==Qt::Key_N)
   {   
@@ -2983,7 +2987,8 @@ void ModelWidget::highlightObject(void)
 
 void ModelWidget::toggleNewObjectOverlay(void)
 {
-  if(new_obj_overlay_wgt->isHidden())
+  if(new_obj_overlay_wgt->isHidden() &&
+     (selected_objects.empty() || selected_objects[0]->getObjectType()!=BASE_RELATIONSHIP))
   {
     new_obj_overlay_wgt->setSelectedObjects(selected_objects);
     adjustOverlayPosition();
