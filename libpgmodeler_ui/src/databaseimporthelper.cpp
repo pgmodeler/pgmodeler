@@ -19,6 +19,7 @@
 #include "databaseimporthelper.h"
 
 const QString DatabaseImportHelper::ARRAY_PATTERN="((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$";
+const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML="\t<!--[ unknown object OID=%1 ]-->\n";
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
@@ -700,7 +701,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			else
 				/* If the object oid is valid but there is no attribute set to it creates a xml definition
 					 containing an alert indicating that the object is unknown */
-				xml_def=QString("\t<!--[ unknown object OID=%1 ]-->\n").arg(oid);
+        xml_def=QString(UNKNOWN_OBJECT_OID_XML).arg(oid);
 		}
 
 		return(xml_def);
@@ -1425,6 +1426,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	{
     unsigned tab_oid=attribs[ParsersAttributes::OID].toUInt(), type_oid=0;
 		Column col;
+    QString type_def, unknown_obj_xml;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, "0" },
 														{ ParsersAttributes::Y_POS, "0" }};
@@ -1463,7 +1465,15 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
       //Checking if the type used by the column exists, if not it'll be created when auto_resolve_deps is checked
       type_oid=itr->second[ParsersAttributes::TYPE_OID].toUInt();
       if(auto_resolve_deps && types.count(type_oid)==0)
-        getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
+      {
+        type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
+        unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
+
+        /* If the type still doesn't exists means that the column maybe is referencing a domain
+          this way pgModeler will try to retrieve the mentionend object */
+        if(type_def==unknown_obj_xml)
+          type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_DOMAIN);
+      }
 
       col.setType(PgSQLType::parseString(itr->second[ParsersAttributes::TYPE]));
       col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());

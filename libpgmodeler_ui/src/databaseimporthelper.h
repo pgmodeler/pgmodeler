@@ -35,7 +35,8 @@ class DatabaseImportHelper: public QObject {
 		Q_OBJECT
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		static const QString ARRAY_PATTERN;
+    static const QString ARRAY_PATTERN,
+    UNKNOWN_OBJECT_OID_XML;
 
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */

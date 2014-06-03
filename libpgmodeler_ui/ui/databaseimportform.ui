@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>716</height>
+    <height>714</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -632,7 +632,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Resolve dependencies automatically</string>
+                  <string>Automatically resolve dependencies</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -645,10 +645,16 @@
                   <bool>true</bool>
                  </property>
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>60</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -695,7 +701,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Resolve the object's dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to data types.</string>
+                  <string>Resolve some of the object's dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</string>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::PlainText</enum>
