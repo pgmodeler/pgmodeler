@@ -15,7 +15,9 @@ case `uname -m` in
     ;;
 esac
 
-QMAKE_ARGS="-r -spec linux-g++"
+# Uncomment this line if your system doesn't have LLVM (clang) compiler tools
+#QMAKE_ARGS="-r -spec linux-g++"
+QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
 
