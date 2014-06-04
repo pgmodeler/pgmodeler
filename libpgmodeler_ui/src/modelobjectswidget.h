@@ -89,8 +89,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void mouseMoveEvent(QMouseEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
+    bool eventFilter(QObject *object, QEvent *event);
 
-	public:
+  public:
 		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
 
 		BaseObject *getSelectedObject(void);

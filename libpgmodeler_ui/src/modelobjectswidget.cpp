@@ -68,6 +68,28 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+
+  objectslist_tbw->installEventFilter(this);
+  objectstree_tw->installEventFilter(this);
+}
+
+bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::FocusOut &&
+     (object==objectslist_tbw || object==objectstree_tw))
+  {
+    QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
+
+    if(evnt->reason()==Qt::MouseFocusReason)
+    {
+      objectslist_tbw->clearSelection();
+      objectstree_tw->clearSelection();
+      model_wgt->configurePopupMenu({});
+      return(true);
+    }
+  }
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void ModelObjectsWidget::hide(void)
@@ -817,8 +839,14 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
 			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
 		}
-	}
+  }
 }
+
+/* void ModelObjectsWidget::focusOutEvent(QFocusEvent *)
+{
+  objectslist_tbw->clearSelection();
+  objectstree_tw->clearSelection();
+} */
 
 void ModelObjectsWidget::closeEvent(QCloseEvent *)
 {

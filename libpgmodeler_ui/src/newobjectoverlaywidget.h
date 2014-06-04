@@ -42,6 +42,9 @@ class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget 
 
     void setSelectedObjects(vector<BaseObject *> &sel_objs);
     void configureOverlayButtons(void);
+
+  private slots:
+
 };
 
 #endif

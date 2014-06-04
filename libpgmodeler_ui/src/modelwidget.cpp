@@ -2647,10 +2647,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
                            OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
-      /* QStringList shortcuts = { "A", "C", "L", "V", "D", "E", "F", "U", "P", "O", "I",
-                                "", "R", "S", "Q", "T", "B", "X", "Y", "W", "G" }; */
-
-			unsigned cnt = sizeof(types)/sizeof(ObjectType);
+      unsigned cnt = sizeof(types)/sizeof(ObjectType);
 
 			//Configures the "New object" menu with the types at database level
 			for(i=0; i < cnt; i++)
@@ -2988,11 +2985,10 @@ void ModelWidget::toggleNewObjectOverlay(void)
   if(new_obj_overlay_wgt->isHidden() &&
      (selected_objects.empty() || selected_objects[0]->getObjectType()!=BASE_RELATIONSHIP))
   {
-    new_obj_overlay_wgt->setSelectedObjects(selected_objects);
-    adjustOverlayPosition();
-
     new_obj_overlay_wgt->raise();
     new_obj_overlay_wgt->show();
+    new_obj_overlay_wgt->setSelectedObjects(selected_objects);
+    this->adjustOverlayPosition();
   }
   else
     new_obj_overlay_wgt->hide();

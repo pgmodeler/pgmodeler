@@ -103,16 +103,26 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 
 void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 {
-  db_objs_btns_wgt->setVisible(sel_objs.empty());
+  ObjectType obj_type;
 
-  sch_objs_btns_wgt->setVisible(sel_objs.empty() || (sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_SCHEMA));
-  sch_perms_tb->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_SCHEMA));
+  if(sel_objs.size()==1)
+    obj_type=sel_objs.at(0)->getObjectType();
+  else if(sel_objs.empty())
+    obj_type=OBJ_DATABASE;
 
-  tab_objs_btns_wgt->setVisible(sel_objs.size()==1 && (sel_objs.at(0)->getObjectType()==OBJ_TABLE || sel_objs.at(0)->getObjectType()==OBJ_RELATIONSHIP));
-  index_tb->setVisible(sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE);
-  rule_tb->setVisible(sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE);
-  trigger_tb->setVisible(sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE);
-  tab_perms_tb->setVisible(sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE);
+  db_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE);
 
-  rel_btns_wgt->setVisible(sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
+  sch_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA);
+  sch_perms_tb->setVisible(obj_type==OBJ_SCHEMA);
+
+  tab_objs_btns_wgt->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_RELATIONSHIP);
+  index_tb->setVisible(obj_type==OBJ_TABLE);
+  rule_tb->setVisible(obj_type==OBJ_TABLE);
+  trigger_tb->setVisible(obj_type==OBJ_TABLE);
+  tab_perms_tb->setVisible(obj_type==OBJ_TABLE);
+
+  rel_btns_wgt->setVisible(sel_objs.size()==2 && obj_type==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
+
+  overlay_frm->adjustSize();
+  this->adjustSize();
 }
