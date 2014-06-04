@@ -6658,10 +6658,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			//** Getting the dependecies for column **
 			else if(obj_type==OBJ_COLUMN)
 			{
-				BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Column *>(object)->getType());
+        Column *col=dynamic_cast<Column *>(object);
+        BaseObject *usr_type=getObjectPgSQLType(col->getType()),
+                   *sequence=col->getSequence();
 
 				if(usr_type)
 					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+        if(sequence)
+          getObjectDependecies(sequence, deps, inc_indirect_deps);
 			}
 			//** Getting the dependecies for trigger **
 			else if(obj_type==OBJ_TRIGGER)

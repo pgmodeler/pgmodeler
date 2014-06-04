@@ -1266,8 +1266,6 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		unsigned rel_type=0, res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 
-    //new_obj_overlay_wgt->hide();
-
 		/* Case the obj_type is greater than BASE_TABLE indicates that the object type is a
 		 relationship. To get the specific relationship id (1-1, 1-n, n-n, gen, dep) is necessary
 		 to subtract the OBJ_RELATIONSHIP from the obj_type parameter, the result will point

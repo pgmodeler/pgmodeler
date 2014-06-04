@@ -111,7 +111,10 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 
   if(sel_obj)
   {
-    model_wgt->showObjectForm(sel_obj->getObjectType(), sel_obj);
+    if(TableObject::isTableObject(sel_obj->getObjectType()))
+      parent=dynamic_cast<TableObject *>(sel_obj)->getParentTable();
+
+    model_wgt->showObjectForm(sel_obj->getObjectType(), sel_obj, parent);
     clearTables();
 
     if(TableObject::isTableObject(this->object->getObjectType()))
