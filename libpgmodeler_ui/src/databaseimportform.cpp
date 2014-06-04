@@ -509,7 +509,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       //Retrieving and listing the cluster scoped objects
       sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                                    /*{OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA}*/
+
                                     BaseObject::getChildObjectTypes(OBJ_DATABASE), checkable_items, disable_empty_grps);
 
       inc=40/static_cast<float>(sch_items.size());
@@ -518,9 +518,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
       {
         //Retrieving and listing the schema scoped objects
         tab_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                                     BaseObject::getChildObjectTypes(OBJ_SCHEMA)
-                                    /*{OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
-                                     OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW}*/,
+                                     BaseObject::getChildObjectTypes(OBJ_SCHEMA),
                                     checkable_items, disable_empty_grps, sch_items.back(), sch_items.back()->text(0));
 
 
@@ -529,7 +527,6 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
         while(!tab_items.empty())
         {
           DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                            /*{ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX }*/
                               BaseObject::getChildObjectTypes(OBJ_TABLE), checkable_items, disable_empty_grps,
                             tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
           tab_items.pop_back();
@@ -574,9 +571,6 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
     grp_fnt.setItalic(true);
     tree_wgt->blockSignals(true);
-
-   // if(root)
-   //  root->takeChildren();
 
     try
     {

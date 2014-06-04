@@ -103,7 +103,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 
 void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 {
-  ObjectType obj_type;
+  ObjectType obj_type=BASE_OBJECT;
 
   if(sel_objs.size()==1)
     obj_type=sel_objs.at(0)->getObjectType();
