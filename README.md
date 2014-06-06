@@ -45,10 +45,12 @@ v0.7.2-beta
 <em>Release date: June 06, 2014</em><br/>
 
 * [New] Added an option to convert integer type to serial ones on columns which default value is a nextval(seq::regclass) call.
+* [Change] Changed the MacOS X deployment script to use Qt 5.3.
 * [Change] Minor size adjustment on the new object overlay.
 * [Change] The model objects widget now clears the selection when it lost the focus.
 * [Change] Minor change on new object overlay behavior. The overlay will be hidden when any tool button on it is pressed or the ESC key is pressed.
 * [Change] The partial database import was improved. Now pgModeler is capable to resolve dependencies of foreign key constraints, creating the needed tables automatically. Additionally, domains are automatically imported when referenced by columns.
+* [Fix] Fixed compilation process on Windows system.
 * [Fix] Fixed the crash handler call inside the main program.
 * [Fix] Minor fix on "object's deps. & refs." dialog that was triggering an error when trying to open a table child object from there.
 * [Fix] Added a entry on DatabaseModel::getObjectDependecies() to get the sequence that a column depends on.
