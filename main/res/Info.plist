@@ -33,7 +33,7 @@
        <key>CFBundleSignature</key>
        <string>????</string>
        <key>CFBundleVersion</key>
-       <string>0.7.2-alpha1</string>
+       <string>0.7.2-beta</string>
        <key>CSResourcesFileMapped</key>
        <true/>
        <key>NSHighResolutionCapable</key>

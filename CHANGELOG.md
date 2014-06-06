@@ -1,6 +1,28 @@
 Change Log
 ---------
 
+v0.7.2-beta
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: June 06, 2014</em><br/>
+
+* [New] Added an option to convert integer type to serial ones on columns which default value is a nextval(seq::regclass) call.
+* [Change] Minor size adjustment on the new object overlay.
+* [Change] The model objects widget now clears the selection when it lost the focus.
+* [Change] Minor change on new object overlay behavior. The overlay will be hidden when any tool button on it is pressed or the ESC key is pressed.
+* [Change] The partial database import was improved. Now pgModeler is capable to resolve dependencies of foreign key constraints, creating the needed tables automatically. Additionally, domains are automatically imported when referenced by columns.
+* [Fix] Fixed the crash handler call inside the main program.
+* [Fix] Minor fix on "object's deps. & refs." dialog that was triggering an error when trying to open a table child object from there.
+* [Fix] Added a entry on DatabaseModel::getObjectDependecies() to get the sequence that a column depends on.
+* [Fix] Fixed a bug column editing dialog that was wrongly removing the sequence assigned to a column.
+* [Fix] Fixed sample plugins compilation when using a LIBDIR value other than the default.
+* [Fix] Fixed the build number generation at compilation time.
+* [Fix] Minor fix on TableTitleView class to correctly strikeout the schema name only when the schema rectangle is not visible.
+* [Fix] Minor adjustment on databaseimportform.ui size.
+* [Fix] Fixed the custom page size bug due to patches provided by Qt 5.3. A conditional compilation statement was added on portions where the custom page size is used. This way the code can be build on any Qt version but the fix will available only on 5.3.
+* [Fix] Minor fix on the Linux deployment script.
+
+
 v0.7.2-alpha1
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
