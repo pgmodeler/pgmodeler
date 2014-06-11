@@ -54,6 +54,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
   drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
+  drop_cascade_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop cascade"), &handle_menu);
+  drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
+
   show_data_action=new QAction(QIcon(":icones/icones/result.png"), trUtf8("Show data"), &handle_menu);
 
   refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
@@ -147,9 +150,11 @@ void SQLToolWidget::listObjects(void)
       task_prog_wgt->setWindowTitle(trUtf8("Retrieving objects from database..."));
       task_prog_wgt->show();
 
-      import_helper.setConnection(*conn);
+
+	  /*import_helper.setConnection(*conn);
       import_helper.setCurrentDatabase(database_cmb->currentText());
-      import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);
+	  import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);*/
+	  configureImportHelper();
       DatabaseImportForm::listObjects(import_helper, objects_trw, false, false);
       import_helper.closeConnection();
 
@@ -247,6 +252,8 @@ void SQLToolWidget::updateCurrentItem(void)
     else
       objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
+	configureImportHelper();
+
     //Updates the group type only
     if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
       gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
@@ -291,7 +298,7 @@ void SQLToolWidget::updateCurrentItem(void)
       }
     }
 
-
+	import_helper.closeConnection();
     objects_trw->sortItems(0, Qt::AscendingOrder);
   }
 }
@@ -369,12 +376,12 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
   {
     QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
+	if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
     {
       if(k_event->key()==Qt::Key_F5)
         updateCurrentItem();
       else
-        dropObject(objects_trw->currentItem());
+		dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
 
       return(true);
     }
@@ -383,6 +390,14 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
   }
 
   return(QWidget::eventFilter(object, event));
+}
+
+void SQLToolWidget::configureImportHelper(void)
+{
+  Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+  import_helper.setConnection(*conn);
+  import_helper.setCurrentDatabase(database_cmb->currentText());
+  import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);
 }
 
 void SQLToolWidget::registerSQLCommand(const QString &cmd)
@@ -541,7 +556,7 @@ QByteArray SQLToolWidget::generateCSVBuffer(int start_row, int start_col, int ro
   return(buf);
 }
 
-void SQLToolWidget::dropObject(QTreeWidgetItem *item)
+void SQLToolWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 {
   Messagebox msg_box;
 
@@ -550,11 +565,16 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
     if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+	  QString msg;
 
-      msg_box.show(trUtf8("Confirmation"),
-                   trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-                   .arg(item->text(0)).arg(BaseObject::getTypeName(obj_type)),
-                   Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	  if(!cascade)
+		msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
+			.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
+	  else
+		msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it?")
+			.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
+
+	  msg_box.show(trUtf8("Confirmation"), msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)
       {
@@ -607,6 +627,9 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
         drop_cmd=SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
         drop_cmd.remove(QRegExp("^(--)"));
 
+		if(cascade)
+		  drop_cmd.replace(";"," CASCADE;");
+
         //Executes the drop cmd
         sql_cmd_conn.executeDDLCommand(drop_cmd);
 
@@ -622,8 +645,8 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item)
           parent->setData(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(cnt));
         }
 
-        if(item->parent())
-          item->parent()->takeChild(item->parent()->indexOfChild(item));
+		if(parent)
+		  parent->takeChild(parent->indexOfChild(item));
         else
           objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
@@ -716,14 +739,15 @@ void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
         handle_menu.addAction(show_data_action);
 
       handle_menu.addAction(drop_action);
+	  handle_menu.addAction(drop_cascade_action);
       handle_menu.addAction(refresh_action);
 
       if(!handle_menu.actions().isEmpty())
       {
         QAction *exec_action=handle_menu.exec(QCursor::pos());
 
-        if(exec_action==drop_action)
-          dropObject(item);
+		if(exec_action==drop_action || exec_action==drop_cascade_action)
+		  dropObject(item,  exec_action==drop_cascade_action);
         else if(exec_action==show_data_action)
           showObjectData(item);
       }
