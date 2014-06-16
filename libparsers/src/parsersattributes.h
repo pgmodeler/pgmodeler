@@ -429,7 +429,8 @@ namespace ParsersAttributes {
   LAST_ZOOM="last-zoom",
   SAVE_LAST_POSITION="save-last-position",
   PREDICATE="predicate",
-  TYPE_OID="type-oid";
+	TYPE_OID="type-oid",
+	UNLOGGED="unlogged";
 }
 
 #endif

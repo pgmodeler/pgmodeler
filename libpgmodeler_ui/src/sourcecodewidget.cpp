@@ -24,7 +24,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	try
 	{
-		vector<QString> versions;
 		QFont font;
 
 		Ui_SourceCodeWidget::setupUi(this);
@@ -41,8 +40,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setFont(font);
 		name_edt->setReadOnly(true);
 
-		SchemaParser::getPgSQLVersions(versions);
-		version_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
+		version_cmb->addItems(SchemaParser::getPgSQLVersions());
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);

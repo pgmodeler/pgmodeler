@@ -9,7 +9,13 @@
 
 %if @{prepended-sql} %then @{prepended-sql} %end
 
-[CREATE TABLE ] @{name} ( $br
+[CREATE]
+
+%if %not @{pgsql90} %and @{unlogged} %then
+  [ UNLOGGED]
+%end
+
+[ TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}
     %if @{columns} %then [,] %end

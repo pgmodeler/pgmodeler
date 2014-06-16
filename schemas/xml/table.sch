@@ -4,6 +4,7 @@
 [<table name=] "@{name}" 
   %if @{oids} %then [ oids="true"] %end
   %if @{gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
+  %if @{unlogged} %then [ unlogged="true"] %end
  
  %if @{protected} %then 
   [ protected=] "true"

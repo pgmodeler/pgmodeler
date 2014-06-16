@@ -82,7 +82,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="1" column="3">
        <widget class="QCheckBox" name="gen_alter_cmds_chk">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -92,6 +92,13 @@
         </property>
         <property name="text">
          <string>Generate ALTER for columns/constraints</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="unlogged_chk">
+        <property name="text">
+         <string>Unlogged</string>
         </property>
        </widget>
       </item>

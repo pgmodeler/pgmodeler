@@ -28,7 +28,7 @@
      %if @{enumerations} %then [ ENUM ] (@{enumerations}); %end
    %end
 
-   %if @{pgsql92} %or @{pgsql93} %and @{range} %then
+   %if %not @{pgsql90} %and %not @{pgsql91} %and @{range} %then
     [RANGE (] $br
     [SUBTYPE = ] @{subtype}
     

@@ -46,7 +46,7 @@
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
        string_to_array(pg_get_expr(id.indexprs, id.indexrelid),',') AS expressions, ]
 
-     %if %not @{pgsql92} %and %not @{pgsql93} %then
+     %if @{pgsql90} %or @{pgsql91} %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]
@@ -88,7 +88,7 @@
 	  WHEN 'f' THEN 'MATCH FULL'
 	  WHEN 'p' THEN 'MATCH PARTIAL' ]
 
-	  [ WHEN ] %if @{pgsql93} %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
+          [ WHEN ] %if @{pgsql93} %or @{pgsql94} %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
 
 	[ ELSE NULL
 	END AS comparison_type

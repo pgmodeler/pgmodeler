@@ -25,6 +25,16 @@
     [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
 	    tb.reltablespace AS tablespace, tb.relacl AS permission, relhasoids AS oids_bool, ]
 
+    %if @{pgsql90} %then
+     [ FALSE AS unlogged, ]
+    %else
+     [ CASE relpersistence
+         WHEN 'u' THEN TRUE
+         ELSE FALSE
+       END
+       AS unlogged, ]
+    %end
+
     [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid)],
 
     (@{comment}) [ AS comment ]

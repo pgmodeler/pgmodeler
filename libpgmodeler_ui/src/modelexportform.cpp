@@ -24,8 +24,6 @@ extern ConfigurationForm *configuration_form;
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	vector<QString> versions;
-
 	model=nullptr;
 	setupUi(this);
 
@@ -51,10 +49,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
   connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
 
-
-	SchemaParser::getPgSQLVersions(versions);
-	pgsqlvers_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
-	pgsqlvers1_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
+	pgsqlvers_cmb->addItems(SchemaParser::getPgSQLVersions());
+	pgsqlvers1_cmb->addItems(SchemaParser::getPgSQLVersions());
 
 	#ifdef Q_OS_WIN
 		this->frame->setFrameShape(QFrame::WinPanel);
