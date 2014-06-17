@@ -1901,6 +1901,11 @@ void DatabaseImportHelper::createTableInheritances()
 	}
 }
 
+void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
+{
+
+}
+
 QStringList DatabaseImportHelper::parseArrayValues(const QString array_val)
 {
 	QStringList list;

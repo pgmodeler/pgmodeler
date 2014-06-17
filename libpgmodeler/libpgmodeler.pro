@@ -61,7 +61,8 @@ HEADERS += src/textbox.h \
 	   src/typeattribute.h \
 	   src/extension.h \
 	   src/pgmodelerns.h \
-    src/tag.h
+    src/tag.h \
+    src/eventtrigger.h
 
 
 SOURCES +=  src/textbox.cpp \
@@ -107,5 +108,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/typeattribute.cpp \
 	    src/extension.cpp \
 	    src/pgmodelerns.cpp \
-    src/tag.cpp
+    src/tag.cpp \
+    src/eventtrigger.cpp
 

@@ -135,6 +135,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&extensions);
   else if(obj_type==OBJ_TAG)
     return(&tags);
+	else if(obj_type==OBJ_EVENT_TRIGGER)
+		return(&eventtriggers);
 	else
 		return(nullptr);
 }
@@ -910,7 +912,22 @@ void DatabaseModel::removeTag(Tag *tag, int obj_idx)
 
 Tag *DatabaseModel::getTag(unsigned obj_idx)
 {
-  return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
+	return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
+}
+
+void DatabaseModel::addEventTrigger(EventTrigger *evnttrig, int obj_idx)
+{
+
+}
+
+void DatabaseModel::removeEventTrigger(EventTrigger *evnttrig, int obj_idx)
+{
+
+}
+
+EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
+{
+
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -5085,6 +5102,11 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 	return(trigger);
 }
 
+EventTrigger *DatabaseModel::createEventTrigger(void)
+{
+
+}
+
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 {
 	attribs_map attribs;
@@ -6510,6 +6532,11 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
 				getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
 			}
+			//** Getting the dependecies for event trigger **
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+			{
+				getObjectDependecies(dynamic_cast<EventTrigger *>(object)->getFunction(), deps, inc_indirect_deps);
+			}
 			//** Getting the dependecies for function **
 			else if(obj_type==OBJ_FUNCTION)
 			{
@@ -6999,7 +7026,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Function *func=dynamic_cast<Function *>(object);
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[]={OBJ_CAST, OBJ_CONVERSION,
+			ObjectType obj_types[]={OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_CONVERSION,
 															OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_OPCLASS,
 															OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
 			unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
@@ -7022,6 +7049,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{
 						if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
+						{
+							refer=true;
+							refs.push_back(*itr);
+						}
+						itr++;
+					}
+				}
+				else if(obj_types[i]==OBJ_EVENT_TRIGGER)
+				{
+					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						if(dynamic_cast<EventTrigger *>(*itr)->getFunction()==func)
 						{
 							refer=true;
 							refs.push_back(*itr);

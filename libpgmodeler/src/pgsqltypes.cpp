@@ -209,7 +209,13 @@ QString BaseType::type_list[types_count]=
 	"MULTILINESTRING",
 	"MULTIPOLYGON",
   "GEOMETRY",
-	"GEOMETRYCOLLECTION"
+	"GEOMETRYCOLLECTION",
+
+	//Types used by the class EventTriggerMode
+	//offsets 233 to 235
+	"ddl_command_start",
+	"ddl_command_end",
+	"sql_drop"
 };
 
 BaseType::BaseType(void)
@@ -1910,3 +1916,40 @@ unsigned FiringType::operator = (const QString &type_name)
 	return(type_id);
 }
 
+/***************************
+ * CLASS: EventTriggerMode *
+ ***************************/
+EventTriggerMode::EventTriggerMode(void)
+{
+	type_idx=offset;
+}
+
+EventTriggerMode::EventTriggerMode(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+EventTriggerMode::EventTriggerMode(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void EventTriggerMode::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned EventTriggerMode::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned EventTriggerMode::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}

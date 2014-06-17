@@ -36,7 +36,7 @@ using namespace std;
 
 class BaseType{
 	private:
-		static const unsigned types_count=233;
+		static const unsigned types_count=236;
 
 	protected:
 		static QString type_list[types_count];
@@ -666,6 +666,25 @@ class FiringType: public BaseType{
 		FiringType(const QString &type_name);
 		FiringType(unsigned type_id);
 		FiringType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class EventTriggerMode: public BaseType{
+	private:
+		static const unsigned offset=233;
+		static const unsigned types_count=3;
+
+	public:
+		static const unsigned ddl_command_start=offset;
+		static const unsigned ddl_command_end=offset+1;
+		static const unsigned sql_drop=offset+2;
+
+		EventTriggerMode(const QString &type_name);
+		EventTriggerMode(unsigned type_id);
+		EventTriggerMode(void);
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

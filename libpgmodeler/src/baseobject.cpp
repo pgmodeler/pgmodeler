@@ -29,8 +29,9 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "relationship","textbox",	"permission",
-  "parameter", "typeattribute","tag","relationship"
+	"extension", "eventtrigger", "relationship",
+	"textbox",	"permission", "parameter", "typeattribute",
+	"tag", "relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -42,9 +43,9 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-  QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
-  QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"),
+	QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
+	QT_TR_NOOP("Tag"),  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -54,7 +55,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	"SEQUENCE", "ROLE", "CONVERSION", "CAST",
 	"LANGUAGE", "TYPE", "TABLESPACE",
 	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
-	"COLLATION", "EXTENSION"
+	"COLLATION", "EXTENSION", "EVENT TRIGGER"
 };
 
 /* Initializes the global id which is shared between instances
@@ -360,7 +361,8 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
 				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
-				 obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW);
+				 obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW ||
+				 obj_type==OBJ_EVENT_TRIGGER);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -851,8 +853,8 @@ void BaseObject::updateObjectId(BaseObject *obj)
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
   vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-                         OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
-                         OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+												 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_EVENT_TRIGGER,
+												 OBJ_TAG, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
                          OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
                          OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
                          OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
