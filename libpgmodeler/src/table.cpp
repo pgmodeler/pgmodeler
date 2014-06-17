@@ -21,7 +21,7 @@
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=gen_alter_cmds=false;
+	with_oid=gen_alter_cmds=unlogged=false;
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::INDEXES]="";
@@ -35,6 +35,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
   attributes[ParsersAttributes::COL_INDEXES]="";
   attributes[ParsersAttributes::CONSTR_INDEXES]="";
+	attributes[ParsersAttributes::UNLOGGED]="";
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -70,6 +71,11 @@ void Table::setSchema(BaseObject *schema)
 void Table::setWithOIDs(bool value)
 {
 	with_oid=value;
+}
+
+void Table::setUnlogged(bool value)
+{
+	unlogged=value;
 }
 
 void Table::setProtected(bool value)
@@ -1129,6 +1135,11 @@ bool Table::isWithOIDs(void)
 	return(with_oid);
 }
 
+bool Table::isUnlogged(void)
+{
+	return(unlogged);
+}
+
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
 	unsigned count,i;
@@ -1347,6 +1358,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 {
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
   attributes[ParsersAttributes::TAG]="";

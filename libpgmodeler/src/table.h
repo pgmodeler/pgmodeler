@@ -61,7 +61,10 @@ class Table: public BaseTable {
 		/*! \brief Indicates that constraints and columns are generated in for of ALTER commands.
 		When true this will cause constraints and columsn to be created in a separated command
 		outside tha table's declaration */
-		gen_alter_cmds;
+		gen_alter_cmds,
+
+		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
+		unlogged;
 
     //! \brief Stores the relationship added column / constraints indexes
     map<QString, unsigned> col_indexes,	constr_indexes;
@@ -109,6 +112,9 @@ class Table: public BaseTable {
 
 		//! \brief Defines if the table accepts OIDs
 		void setWithOIDs(bool value);
+
+		//! \brief Defines if the table is unlogged
+		void setUnlogged(bool value);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
@@ -266,6 +272,9 @@ class Table: public BaseTable {
 
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs(void);
+
+		//! \brief Returns if the table is configured as unlogged
+		bool isUnlogged(void);
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);

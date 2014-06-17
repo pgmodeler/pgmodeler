@@ -17,6 +17,7 @@
 <!ATTLIST table name CDATA #REQUIRED>
 <!ATTLIST table oids (true | false) "false">
 <!ATTLIST table gen-alter-cmds (true | false) "false">
+<!ATTLIST table unlogged (false|true) "false">
 <!ATTLIST table protected (false|true) "false">
 <!ATTLIST table sql-disabled (false|true) "false">
 <!ATTLIST table col-indexes CDATA #IMPLIED>

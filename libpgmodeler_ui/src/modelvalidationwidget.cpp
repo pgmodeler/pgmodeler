@@ -23,21 +23,14 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	try
 	{
-		vector<QString> vers;
-
 		setupUi(this);
 		this->setModel(nullptr);
 
 		swapobjectsids_wgt=nullptr;
 		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
 
-		SchemaParser::getPgSQLVersions(vers);
 		version_cmb->addItem(trUtf8("Autodetect"));
-		while(!vers.empty())
-		{
-			version_cmb->addItem(vers.back());
-			vers.pop_back();
-		}
+		version_cmb->addItems(SchemaParser::getPgSQLVersions());
 
 		options_frm->setVisible(false);
 		curr_step=0;

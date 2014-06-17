@@ -139,7 +139,8 @@ class SchemaParser {
 		static const QString PGSQL_VERSION_90,
 												 PGSQL_VERSION_91,
 												 PGSQL_VERSION_92,
-												 PGSQL_VERSION_93;
+												 PGSQL_VERSION_93,
+												 PGSQL_VERSION_94;
 
 		//! \brief Constants used to get a specific object definition
     static const unsigned SQL_DEFINITION=0,
@@ -172,9 +173,8 @@ class SchemaParser {
 		//! \brief Loads a schema file and inserts its line into the parser's buffer
 		static void loadFile(const QString &filename);
 
-		/*! \brief Returns the PostgreSQL version available based on the subdirectories on schema/sql.
-		 To be recognized as a version, the directory name must follow the rule: [NUMBER].[NUMBER](.[NUMBER])*/
-		static void getPgSQLVersions(vector<QString> &versions);
+		//! \brief Returns the PostgreSQL version supported by pgModeler
+		static QStringList getPgSQLVersions(void);
 
 		//! \brief Retorns the current PostgreSQL version used by the parser
 		static QString getPgSQLVersion(void);

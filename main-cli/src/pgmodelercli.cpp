@@ -766,6 +766,10 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
     obj_xml.replace(end_tag.arg(ParsersAttributes::CONDITION), end_tag.arg(ParsersAttributes::PREDICATE));
   }
 
+	//Renaming the attribute default to default-value on domain
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_DOMAIN))))
+		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
+
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(tag.arg("grant")))
 	{

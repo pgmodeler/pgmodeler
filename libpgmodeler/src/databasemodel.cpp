@@ -4281,6 +4281,7 @@ Table *DatabaseModel::createTable(void)
 		XMLParser::getElementAttributes(attribs);
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
+		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))

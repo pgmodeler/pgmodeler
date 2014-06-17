@@ -48,6 +48,7 @@ const QString SchemaParser::PGSQL_VERSION_90="9.0";
 const QString SchemaParser::PGSQL_VERSION_91="9.1";
 const QString SchemaParser::PGSQL_VERSION_92="9.2";
 const QString SchemaParser::PGSQL_VERSION_93="9.3";
+const QString SchemaParser::PGSQL_VERSION_94="9.4";
 
 vector<QString> SchemaParser::buffer;
 attribs_map SchemaParser::attributes;
@@ -58,21 +59,21 @@ unsigned SchemaParser::comment_count=0;
 bool SchemaParser::ignore_unk_atribs=false;
 bool SchemaParser::ignore_empty_atribs=false;
 
-QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_93;
+QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_94;
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
 	if(!pgsql_ver.isEmpty() &&
-		 (pgsql_ver < PGSQL_VERSION_90 || pgsql_ver > PGSQL_VERSION_93))
+		 (pgsql_ver < PGSQL_VERSION_90 || pgsql_ver > PGSQL_VERSION_94))
 		throw Exception(Exception::getErrorMessage(ERR_INV_POSTGRESQL_VERSION)
 										.arg(pgsql_ver)
-										.arg(PGSQL_VERSION_90 + ", " + PGSQL_VERSION_91 + ", " + PGSQL_VERSION_92 + ", " + PGSQL_VERSION_93),
+										.arg(getPgSQLVersions().join(", ")),
 										ERR_INV_POSTGRESQL_VERSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!pgsql_ver.isEmpty())
 		SchemaParser::pgsql_version=pgsql_ver;
 	else
-		SchemaParser::pgsql_version=PGSQL_VERSION_93;
+		SchemaParser::pgsql_version=PGSQL_VERSION_94;
 }
 
 QString SchemaParser::getPgSQLVersion(void)
@@ -80,13 +81,17 @@ QString SchemaParser::getPgSQLVersion(void)
 	return(SchemaParser::pgsql_version);
 }
 
-void SchemaParser::getPgSQLVersions(vector<QString> &versions)
+QStringList SchemaParser::getPgSQLVersions(void)
 {
-	versions.clear();
+	QStringList versions;
+
+	versions.push_back(PGSQL_VERSION_94);
 	versions.push_back(PGSQL_VERSION_93);
 	versions.push_back(PGSQL_VERSION_92);
 	versions.push_back(PGSQL_VERSION_91);
 	versions.push_back(PGSQL_VERSION_90);
+
+	return(versions);
 }
 
 void SchemaParser::restartParser(void)
@@ -645,9 +650,9 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 
 void SchemaParser::storePgSQLVersion(attribs_map &attribs)
 {
-	vector<QString> vers;
-	getPgSQLVersions(vers);
-	while(!vers.empty())
+	QStringList vers=getPgSQLVersions();
+
+	while(!vers.isEmpty())
 	{
 		//Setting the @{pgsql[VERSION]} attribute in other to know which version is being used
 		attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
