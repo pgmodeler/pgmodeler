@@ -11,7 +11,7 @@
   %end
 
   [ not-null=] %if @{not-null} %then "true" %else "false" %end
-  %if @{default-value} %then [ default=] "@{default-value}" %end
+  %if @{default-value} %then [ default-value=] "@{default-value}" %end
 
   %if @{protected} %then 
    [ protected=] "true"
