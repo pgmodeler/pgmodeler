@@ -4,5 +4,6 @@
 -->
 <!ELEMENT eventtrigger (role?, comment?, function, appended-sql?, prepended-sql?)>
 <!ATTLIST eventtrigger name CDATA #REQUIRED>
+<!ATTLIST eventtrigger mode CDATA #REQUIRED>
 <!ATTLIST eventtrigger protected (false|true) "false">
 <!ATTLIST eventtrigger sql-disabled (false|true) "false">

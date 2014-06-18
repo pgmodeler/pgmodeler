@@ -36,14 +36,18 @@ class EventTrigger: public BaseObject {
 
 		EventTriggerMode mode;
 
+		map<QString, QStringList> filter;
+
 	public:
 		EventTrigger(void);
 
 		void setMode(EventTriggerMode mode);
 		void setFunction(Function *func);
+		void setFilter(const QString &variable, const QStringList &values);
 
 		EventTriggerMode getMode(void);
 		Function *getFunction(void);
+		QStringList getFilter(const QString &variable);
 
 		QString getCodeDefinition(unsigned def_type);
 };

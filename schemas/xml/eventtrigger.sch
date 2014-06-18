@@ -1,23 +1,14 @@
-# XML definition for schemas
+# XML definition for event triggers
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-%if @{reduced-form} %then $tb %end
-[<schema name=] "@{name}"
+[<eventtrigger name=] "@{name}"
 
-%if @{reduced-form} %then
-/> $br
-%else
+  %if @{mode} %then
+   [ mode=] "@{mode}"
+  %end
 
   %if @{protected} %then 
    [ protected=] "true"
-  %end
-
-  %if @{rect-visible} %then 
-   [ rect-visible=] "true"
-  %end
-
-  %if @{fill-color} %then 
-   [ fill-color=] "@{fill-color}"
   %end
 
   %if @{sql-disabled} %then
@@ -28,8 +19,9 @@
 
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
+  %if @{function} %then @{function} %end
   %if @{appended-sql} %then @{appended-sql} %end
   %if @{prepended-sql} %then @{prepended-sql} %end
 
-  </schema>  $br $br
-%end
+</eventtrigger>  $br $br
+

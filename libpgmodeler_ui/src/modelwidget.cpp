@@ -112,7 +112,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 											 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-                       OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG };
+											 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -2643,7 +2643,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
+			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
                            OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
