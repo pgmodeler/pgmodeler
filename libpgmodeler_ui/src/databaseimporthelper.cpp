@@ -592,6 +592,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_TRIGGER: createTrigger(attribs); break;
 				case OBJ_INDEX: createIndex(attribs); break;
 				case OBJ_CONSTRAINT: createConstraint(attribs); break;
+				case OBJ_EVENT_TRIGGER: createEventTrigger(attribs); break;
 
 				default:
           qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
@@ -1741,8 +1742,6 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
     attribs[ParsersAttributes::REF_TABLE]=getDependencyObject(ref_tab_oid, OBJ_TABLE, false, true, false);
     attribs[ParsersAttributes::DST_COLUMNS]=getColumnNames(ref_tab_oid, attribs[ParsersAttributes::DST_COLUMNS]).join(",");
 		attribs[ParsersAttributes::TABLE]=tab_name;  
-    //attribs[ParsersAttributes::REF_TABLE]=getObjectName(attribs[ParsersAttributes::REF_TABLE]);
-
 
 		loadObjectXML(OBJ_CONSTRAINT, attribs);
 		constr=dbmodel->createConstraint(nullptr);
@@ -1752,6 +1751,27 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			table->addConstraint(constr);
 			table->setModified(true);
 		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
+{
+	try
+	{
+		attribs[ParsersAttributes::FUNCTION]=getDependencyObject(attribs[ParsersAttributes::FUNCTION], OBJ_FUNCTION, true, true);
+		attribs[ParsersAttributes::FILTER]=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
+																					.arg(ParsersAttributes::FILTER)
+																					.arg(ParsersAttributes::VARIABLE).arg(ParsersAttributes::TAG.toUpper())
+																					.arg(ParsersAttributes::VALUES)
+																					.arg(parseArrayValues(attribs[ParsersAttributes::VALUES].remove("\"")).join(","));
+
+		loadObjectXML(OBJ_EVENT_TRIGGER, attribs);
+		dbmodel->addEventTrigger(dbmodel->createEventTrigger());
 	}
 	catch(Exception &e)
 	{
@@ -1899,11 +1919,6 @@ void DatabaseImportHelper::createTableInheritances()
 			}
 		}
 	}
-}
-
-void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
-{
-
 }
 
 QStringList DatabaseImportHelper::parseArrayValues(const QString array_val)

@@ -34,18 +34,21 @@ class EventTrigger: public BaseObject {
 		//! \brief Function that is excuted when the trigger is activated
 		Function *function;
 
-		EventTriggerMode mode;
+		EventTriggerType event;
 
 		map<QString, QStringList> filter;
 
 	public:
 		EventTrigger(void);
 
-		void setMode(EventTriggerMode mode);
+		void setEvent(EventTriggerType evnt_type);
 		void setFunction(Function *func);
 		void setFilter(const QString &variable, const QStringList &values);
 
-		EventTriggerMode getMode(void);
+		void removeFilter(const QString &variable);
+		void clearFilter(void);
+
+		EventTriggerType getEvent(void);
 		Function *getFunction(void);
 		QStringList getFilter(const QString &variable);
 

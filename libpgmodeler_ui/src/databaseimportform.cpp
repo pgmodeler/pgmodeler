@@ -509,7 +509,6 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       //Retrieving and listing the cluster scoped objects
       sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-
                                     BaseObject::getChildObjectTypes(OBJ_DATABASE), checkable_items, disable_empty_grps);
 
       inc=40/static_cast<float>(sch_items.size());

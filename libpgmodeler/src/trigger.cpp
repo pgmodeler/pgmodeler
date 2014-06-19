@@ -100,7 +100,7 @@ void Trigger::setFunction(Function *func)
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
 		if(func->getReturnType()!="trigger")
-			throw Exception(ERR_ASG_INV_TRIGGER_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg("trigger"),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)

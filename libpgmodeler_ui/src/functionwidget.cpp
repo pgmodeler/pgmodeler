@@ -378,41 +378,34 @@ void FunctionWidget::selectLanguage(void)
 
 void FunctionWidget::validateConfiguredFunction(void)
 {
-	vector<BaseObject *> *obj_list;
 	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> obj_list;
 	Conversion *conv=nullptr;
 	Cast *cast=nullptr;
 	Aggregate *aggr=nullptr;
-	Trigger *trig=nullptr;
 	Language *lang=nullptr;
 	Operator *oper=nullptr;
 	Type *type=nullptr;
-	Table *tab=nullptr;
 	Function *func=nullptr;
 	BaseObject *object=nullptr;
-	unsigned i, i1, count;
-
-	//Object types that references a function
-	ObjectType types[7]={ OBJ_CONVERSION, OBJ_CAST,
-												OBJ_AGGREGATE, OBJ_TABLE,
-												OBJ_LANGUAGE, OBJ_OPERATOR, OBJ_TYPE };
+	ObjectType obj_type;
+	unsigned i1=0;
 
 	func=dynamic_cast<Function *>(this->object);
 
 	try
 	{
-		for(i=0; i < 7; i++)
+		model->getObjectReferences(func, obj_list);
+		itr=obj_list.begin();
+		itr_end=obj_list.end();
+
+		while(itr!=itr_end)
 		{
-			obj_list=model->getObjectList(types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
+			object=(*itr);
+			obj_type=object->getObjectType();
+			itr++;
 
-			while(itr!=itr_end)
-			{
-				object=(*itr);
-				itr++;
-
-				/* The validation of the function happens as follows:
+			/* The validation of the function happens as follows:
 
 				For each type of object in vector 'types' is obtained the list of objects.
 				If there are elements in this list, the function is assigned for each element
@@ -421,69 +414,64 @@ void FunctionWidget::validateConfiguredFunction(void)
 
 				If the function is invalid the instances raises	exceptions accusing the error
 				that is enough to check	the validity of the function in relation to objects that reference it. */
-				if(types[i]==OBJ_CONVERSION)
-				{
-					conv=dynamic_cast<Conversion *>(object);
-					if(conv->getConversionFunction()==func)
-						conv->setConversionFunction(func);
-				}
-				else if(types[i]==OBJ_CAST)
-				{
-					cast=dynamic_cast<Cast *>(object);
-					if(cast->getCastFunction()==func)
-						cast->setCastFunction(func);
-				}
-				else if(types[i]==OBJ_AGGREGATE)
-				{
-					aggr=dynamic_cast<Aggregate *>(object);
-					if(aggr->getFunction(Aggregate::FINAL_FUNC)==func)
-						aggr->setFunction(Aggregate::FINAL_FUNC, func);
-					else if(aggr->getFunction(Aggregate::TRANSITION_FUNC)==func)
-						aggr->setFunction(Aggregate::TRANSITION_FUNC, func);
-				}
-				else if(types[i]==OBJ_TABLE)
-				{
-					tab=dynamic_cast<Table *>(object);
-					count=tab->getTriggerCount();
+			if(obj_type==OBJ_CONVERSION)
+			{
+				conv=dynamic_cast<Conversion *>(object);
+				if(conv->getConversionFunction()==func)
+					conv->setConversionFunction(func);
+			}
+			else if(obj_type==OBJ_CAST)
+			{
+				cast=dynamic_cast<Cast *>(object);
+				if(cast->getCastFunction()==func)
+					cast->setCastFunction(func);
+			}
+			else if(obj_type==OBJ_AGGREGATE)
+			{
+				aggr=dynamic_cast<Aggregate *>(object);
+				if(aggr->getFunction(Aggregate::FINAL_FUNC)==func)
+					aggr->setFunction(Aggregate::FINAL_FUNC, func);
+				else if(aggr->getFunction(Aggregate::TRANSITION_FUNC)==func)
+					aggr->setFunction(Aggregate::TRANSITION_FUNC, func);
+			}
+			else if(obj_type==OBJ_TRIGGER)
+			{
+				dynamic_cast<Trigger *>(object)->setFunction(func);
+			}
+			else if(obj_type==OBJ_LANGUAGE)
+			{
+				lang=dynamic_cast<Language *>(object);
 
-					for(i1=0; i1 < count; i1++)
-					{
-						trig=tab->getTrigger(i1);
-						if(trig->getFunction()==func)
-							trig->setFunction(func);
-					}
-				}
-				else if(types[i]==OBJ_LANGUAGE)
+				for(i1=Language::VALIDATOR_FUNC; i1 <= Language::INLINE_FUNC; i1++)
 				{
-					lang=dynamic_cast<Language *>(object);
-
-					for(i1=Language::VALIDATOR_FUNC; i1 <= Language::INLINE_FUNC; i1++)
-					{
-						if(lang->getFunction(i1)==func)
-							lang->setFunction(func, i1);
-					}
+					if(lang->getFunction(i1)==func)
+						lang->setFunction(func, i1);
 				}
-				else if(types[i]==OBJ_OPERATOR)
+			}
+			else if(obj_type==OBJ_OPERATOR)
+			{
+				oper=dynamic_cast<Operator *>(object);
+				for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
 				{
-					oper=dynamic_cast<Operator *>(object);
-					for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
-					{
-						if(oper->getFunction(i1)==func)
-							oper->setFunction(func, i1);
-					}
+					if(oper->getFunction(i1)==func)
+						oper->setFunction(func, i1);
 				}
-				else if(types[i]==OBJ_TYPE)
+			}
+			else if(obj_type==OBJ_TYPE)
+			{
+				type=dynamic_cast<Type *>(object);
+				if(type->getConfiguration()==Type::BASE_TYPE)
 				{
-					type=dynamic_cast<Type *>(object);
-					if(type->getConfiguration()==Type::BASE_TYPE)
+					for(i1=Type::INPUT_FUNC; i1 <=Type::ANALYZE_FUNC; i1++)
 					{
-						for(i1=Type::INPUT_FUNC; i1 <=Type::ANALYZE_FUNC; i1++)
-						{
-							if(type->getFunction(i1)==func)
-								type->setFunction(i1, func);
-						}
+						if(type->getFunction(i1)==func)
+							type->setFunction(i1, func);
 					}
 				}
+			}
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+			{
+				dynamic_cast<EventTrigger *>(object)->setFunction(func);
 			}
 		}
 	}

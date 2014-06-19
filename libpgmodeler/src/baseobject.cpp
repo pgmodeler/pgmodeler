@@ -874,7 +874,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
   if(obj_type==OBJ_DATABASE)
-    return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA});
+		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EVENT_TRIGGER});
   else if(obj_type==OBJ_SCHEMA)
     return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
                                   OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});

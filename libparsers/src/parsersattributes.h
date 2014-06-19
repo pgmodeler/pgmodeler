@@ -430,7 +430,10 @@ namespace ParsersAttributes {
   SAVE_LAST_POSITION="save-last-position",
   PREDICATE="predicate",
 	TYPE_OID="type-oid",
-	UNLOGGED="unlogged";
+	UNLOGGED="unlogged",
+	EVENT="event",
+	FILTER="filter",
+	VARIABLE="variable";
 }
 
 #endif

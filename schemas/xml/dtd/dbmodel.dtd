@@ -54,6 +54,8 @@
 %tag;
 <!ENTITY % customidxs SYSTEM "customidxs.dtd">
 %customidxs;
+<!ENTITY % eventtrigger SYSTEM "eventtrigger.dtd">
+%eventtrigger;
 
 <!ELEMENT dbmodel ANY>
 

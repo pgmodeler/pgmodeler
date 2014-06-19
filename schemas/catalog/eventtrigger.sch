@@ -1,39 +1,45 @@
-# Catalog queries for schemas
+# Catalog queries for event triggers
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
-  [SELECT oid, nspname AS name FROM pg_namespace
-    WHERE (nspname NOT LIKE 'pg_temp%' AND nspname NOT LIKE 'pg_toast%') ]
+%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+  %if @{list} %then
+     [SELECT oid, evtname AS name FROM pg_event_trigger AS et ]
 
-  %if @{last-sys-oid} %then
-   [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
-  %end
+    %if @{last-sys-oid} %then
+     [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
+   %end
 
-  %if @{not-ext-object} %then
-   [ AND ] ( @{not-ext-object} )
-  %end
-
-%else
+   %if @{not-ext-object} %then
+     %if @{last-sys-oid} %then
+       [ AND ]
+     %else
+       [ WHERE ]
+     %end
+       ( @{not-ext-object} )
+   %end
+ %else
     %if @{attribs} %then
-      [SELECT oid, nspname AS name, nspacl AS permission, nspowner AS owner, ]
+      [SELECT oid, evtname AS name, evtevent AS event, evtowner AS owner, evtfoid AS function, evttags AS values, ]
 
 	(@{comment}) [ AS comment ]
 
-       [ FROM pg_namespace
-	  WHERE (nspname NOT LIKE 'pg_temp%' AND nspname NOT LIKE 'pg_toast%') ]
+       [ FROM pg_event_trigger AS et ]
 
-       %if @{last-sys-oid} %then
-	 [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
-       %end
-
-       %if @{filter-oids} %then
-	 [ AND oid IN (] @{filter-oids} )
-       %end
+      %if @{last-sys-oid} %then
+       [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
+      %end
 
       %if @{not-ext-object} %then
-	 [ AND ] ( @{not-ext-object} )
+         %if @{last-sys-oid} %then
+           [ AND ]
+         %else
+           [ WHERE ]
+         %end
+        ( @{not-ext-object} )
       %end
 
     %end
+ %end
+
 %end
