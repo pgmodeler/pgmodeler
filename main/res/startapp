@@ -26,4 +26,9 @@ export PGMODELER_PLUGINS_DIR=$PWD/plugins
 export PGMODELER_TMP_DIR=$PWD/tmp
 
 #Calls the executable redirecting the parameters to it
-$EXE ${@:2:20} &
+$EXE ${@:2:20}
+
+#WARNING: Do not change the lines below or it may affect pgModeler's execution
+res=$?
+echo "** startapp has ended ($res) **"
+echo

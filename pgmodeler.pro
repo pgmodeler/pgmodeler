@@ -176,7 +176,4 @@ unix {
 !macx:pgmodeler_data.files += pgmodeler.vars
 }
 
-# deploy binaries
-# pgmodeler.path = $$BINDESTDIR
-
 INSTALLS += pgmodeler_data pgmodeler_doc

@@ -28,7 +28,7 @@ void startCrashHandler(int signal)
 	QFile output;
 	QString lin, cmd;
 
-	/** At the moment the backtrace function does not exists on MingW (Windows) this way
+    /** At the moment the backtrace function does not exists on MingW (Windows) this way
 		 the code that generates the stacktrace is available only on Linux/Unix systems */
 	#ifndef Q_OS_WIN
     void *stack[30];

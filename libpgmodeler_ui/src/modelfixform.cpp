@@ -27,6 +27,8 @@ extern ConfigurationForm *configuration_form;
 	const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
 #endif
 
+const QString ModelFixForm::MACOS_STARTAPP_EXITMSG="startapp has ended";
+
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
   setupUi(this);
@@ -186,6 +188,20 @@ void ModelFixForm::updateOutput(void)
   cursor=output_txt->textCursor();
   cursor.movePosition(QTextCursor::End);
   output_txt->setTextCursor(cursor);
+
+  #ifdef Q_OS_MAC
+   if(txt.contains(MACOS_STARTAPP_EXITMSG))
+   {
+       int exitcode=0, pos=-1, pos1=-1;
+
+       pos=txt.indexOf(MACOS_STARTAPP_EXITMSG);
+       pos1=txt.indexOf(")", pos) - 1;
+       exitcode=txt.mid(pos + 1, pos1 - pos + 1).toInt();
+
+       pgmodeler_cli_proc.kill();
+       handleProcessFinish(exitcode);
+   }
+  #endif
 }
 
 void ModelFixForm::handleProcessFinish(int res)
