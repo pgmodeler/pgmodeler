@@ -225,6 +225,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
+
+		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
+		bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif

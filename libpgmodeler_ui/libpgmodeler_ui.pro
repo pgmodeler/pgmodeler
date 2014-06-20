@@ -91,7 +91,8 @@ SOURCES += src/mainwindow.cpp \
            src/tagwidget.cpp \
            src/modelfixform.cpp \
            src/updatenotifierwidget.cpp \
-           src/newobjectoverlaywidget.cpp
+           src/newobjectoverlaywidget.cpp \
+    src/eventtriggerwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -162,7 +163,8 @@ HEADERS += src/mainwindow.h \
            src/tagwidget.h \
            src/modelfixform.h \
            src/updatenotifierwidget.h \
-           src/newobjectoverlaywidget.h
+           src/newobjectoverlaywidget.h \
+    src/eventtriggerwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -224,6 +226,7 @@ FORMS += ui/mainwindow.ui \
          ui/tagwidget.ui \
          ui/modelfixform.ui \
          ui/updatenotifierwidget.ui \
-         ui/newobjectoverlaywidget.ui
+         ui/newobjectoverlaywidget.ui \
+    ui/eventtriggerwidget.ui
 
 

@@ -142,6 +142,7 @@ class DatabaseImportHelper: public QObject {
 		void createConstraint(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createTableInheritances(void);
+		void createEventTrigger(attribs_map &attribs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		QStringList parseArrayValues(const QString array_val);

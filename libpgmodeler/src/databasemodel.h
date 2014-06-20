@@ -52,6 +52,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "collation.h"
 #include "extension.h"
 #include "tag.h"
+#include "eventtrigger.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -98,6 +99,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> collations;
 		vector<BaseObject *> extensions;
     vector<BaseObject *> tags;
+		vector<BaseObject *> eventtriggers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -357,6 +359,10 @@ class DatabaseModel:  public QObject, public BaseObject {
     void removeTag(Tag *tag, int obj_idx=-1);
     Tag *getTag(unsigned obj_idx);
 
+		void addEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
+		void removeEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
+		EventTrigger *getEventTrigger(unsigned obj_idx);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
@@ -408,6 +414,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Constraint *createConstraint(BaseObject *parent_obj);
 		Index *createIndex(Table *table);
 		Trigger *createTrigger(BaseTable *table);
+		EventTrigger *createEventTrigger(void);
 
     //! \brief Creates/removes the relationship between the passed view and the referecend tables
     void updateViewRelationships(View *view, bool force_rel_removal=false);

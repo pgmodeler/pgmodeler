@@ -50,6 +50,7 @@
 #include "extensionwidget.h"
 #include "sqlappendwidget.h"
 #include "tagwidget.h"
+#include "eventtriggerwidget.h"
 #include "configurationform.h"
 
 extern DatabaseWidget *database_wgt;
@@ -85,6 +86,7 @@ extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
 extern SQLAppendWidget *sqlappend_wgt;
+extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -112,7 +114,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 											 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-                       OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG };
+											 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -1495,6 +1497,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
         res=(tag_wgt->result()==QDialog::Accepted);
       break;
 
+			case OBJ_EVENT_TRIGGER:
+				eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
+				eventtrigger_wgt->show();
+				res=(eventtrigger_wgt->result()==QDialog::Accepted);
+			break;
+
 			default:
 			case OBJ_DATABASE:
 				database_wgt->setAttributes(db_model);
@@ -2607,7 +2615,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
+		if(BaseObject::acceptsCustomSQL(obj->getObjectType()))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
 			quick_actions_menu.addAction(action_append_sql);
@@ -2643,7 +2651,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
+			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
                            OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };

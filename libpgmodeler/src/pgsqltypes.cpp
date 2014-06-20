@@ -112,31 +112,31 @@ QString BaseType::type_list[types_count]=
 	"xid", "cid", "tid",  "oidvector",
 
 	//Pseudo-types
-	//offsets 120 to 133
+	//offsets 120 to 134
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
-	"record","trigger","void","opaque", "fdw_handler",
+	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
 
 	//Interval types
-	//offsets 134 to 146
+	//offsets 135 to 147
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 147 to 149
+	//offsets 148 to 150
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 150 to 151
+	//offsets 151 to 152
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 152 to 157
+	//offsets 153 to 158
 	"sql",
 	"c",
 	"plpgsql",
@@ -145,7 +145,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 158 to 198
+	//offsets 159 to 199
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -157,25 +157,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 199 to 202
+	//offsets 200 to 203
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 203 to 205
+	//offsets 204 to 206
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 206 to 207
+	//offsets 207 to 208
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 208 to 221 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 209 to 222 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -192,7 +192,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 222 to 224
+	//offsets 223 to 225
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -201,7 +201,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 225 to 232
+	//offsets 226 to 233
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -209,7 +209,13 @@ QString BaseType::type_list[types_count]=
 	"MULTILINESTRING",
 	"MULTIPOLYGON",
   "GEOMETRY",
-	"GEOMETRYCOLLECTION"
+	"GEOMETRYCOLLECTION",
+
+	//Types used by the class EventTriggerMode
+	//offsets 234 to 236
+	"ddl_command_start",
+	"ddl_command_end",
+	"sql_drop"
 };
 
 BaseType::BaseType(void)
@@ -1910,3 +1916,40 @@ unsigned FiringType::operator = (const QString &type_name)
 	return(type_id);
 }
 
+/***************************
+ * CLASS: EventTriggerMode *
+ ***************************/
+EventTriggerType::EventTriggerType(void)
+{
+	type_idx=offset;
+}
+
+EventTriggerType::EventTriggerType(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+EventTriggerType::EventTriggerType(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void EventTriggerType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned EventTriggerType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned EventTriggerType::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}

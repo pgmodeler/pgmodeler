@@ -135,6 +135,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&extensions);
   else if(obj_type==OBJ_TAG)
     return(&tags);
+	else if(obj_type==OBJ_EVENT_TRIGGER)
+		return(&eventtriggers);
 	else
 		return(nullptr);
 }
@@ -194,6 +196,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
         addTag(dynamic_cast<Tag *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				addPermission(dynamic_cast<Permission *>(object));
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+				addEventTrigger(dynamic_cast<EventTrigger *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -886,14 +890,14 @@ Extension *DatabaseModel::getExtension(unsigned obj_idx)
 
 void DatabaseModel::addTag(Tag *tag, int obj_idx)
 {
-  try
-  {
-    __addObject(tag, obj_idx);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
+	try
+	{
+		__addObject(tag, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void DatabaseModel::removeTag(Tag *tag, int obj_idx)
@@ -910,7 +914,36 @@ void DatabaseModel::removeTag(Tag *tag, int obj_idx)
 
 Tag *DatabaseModel::getTag(unsigned obj_idx)
 {
-  return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
+	return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
+}
+
+void DatabaseModel::addEventTrigger(EventTrigger *evnttrig, int obj_idx)
+{
+	try
+	{
+		__addObject(evnttrig, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeEventTrigger(EventTrigger *evnttrig, int obj_idx)
+{
+	try
+	{
+			__removeObject(evnttrig, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
+{
+	return(dynamic_cast<EventTrigger *>(getObject(obj_idx, OBJ_EVENT_TRIGGER)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -2886,6 +2919,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
       object=createTag();
 		else if(obj_type==OBJ_PERMISSION)
 			object=createPermission();
+		else if(obj_type==OBJ_EVENT_TRIGGER)
+			object=createEventTrigger();
 	}
 
 	return(object);
@@ -5085,6 +5120,65 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 	return(trigger);
 }
 
+EventTrigger *DatabaseModel::createEventTrigger(void)
+{
+	attribs_map attribs;
+	EventTrigger *event_trig=nullptr;
+	BaseObject *func=nullptr;
+	QString elem;
+
+	try
+	{
+		event_trig=new EventTrigger;
+		setBasicAttributes(event_trig);
+		XMLParser::getElementAttributes(attribs);
+
+		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				{
+					elem=XMLParser::getElementName();
+
+					if(elem==ParsersAttributes::FUNCTION)
+					{
+						XMLParser::getElementAttributes(attribs);
+						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
+
+						//Raises an error if the function doesn't exists
+						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						{
+							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+															.arg(Utf8String::create(event_trig->getName()))
+															.arg(event_trig->getTypeName())
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
+															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						event_trig->setFunction(dynamic_cast<Function *>(func));
+					}
+					else if(elem==ParsersAttributes::FILTER)
+					{
+						XMLParser::getElementAttributes(attribs);
+						event_trig->setFilter(attribs[ParsersAttributes::VARIABLE], attribs[ParsersAttributes::VALUES].split(","));
+					}
+				}
+			}
+			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+	}
+	catch(Exception &e)
+	{
+		if(event_trig) delete(event_trig);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(event_trig);
+}
+
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 {
 	attribs_map attribs;
@@ -6233,7 +6327,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
   Constraint *constr=nullptr;
   Relationship *rel=nullptr;
   ObjectType aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
-      obj_types[]={ OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
+			obj_types[]={ OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
                     OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
                     OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
                     OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
@@ -6509,6 +6603,11 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				}
 
 				getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
+			}
+			//** Getting the dependecies for event trigger **
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+			{
+				getObjectDependecies(dynamic_cast<EventTrigger *>(object)->getFunction(), deps, inc_indirect_deps);
 			}
 			//** Getting the dependecies for function **
 			else if(obj_type==OBJ_FUNCTION)
@@ -6999,7 +7098,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Function *func=dynamic_cast<Function *>(object);
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[]={OBJ_CAST, OBJ_CONVERSION,
+			ObjectType obj_types[]={OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_CONVERSION,
 															OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_OPCLASS,
 															OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
 			unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
@@ -7022,6 +7121,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{
 						if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
+						{
+							refer=true;
+							refs.push_back(*itr);
+						}
+						itr++;
+					}
+				}
+				else if(obj_types[i]==OBJ_EVENT_TRIGGER)
+				{
+					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						if(dynamic_cast<EventTrigger *>(*itr)->getFunction()==func)
 						{
 							refer=true;
 							refs.push_back(*itr);

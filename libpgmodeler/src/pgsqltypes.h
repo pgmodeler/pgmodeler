@@ -36,7 +36,7 @@ using namespace std;
 
 class BaseType{
 	private:
-		static const unsigned types_count=233;
+		static const unsigned types_count=237;
 
 	protected:
 		static QString type_list[types_count];
@@ -214,7 +214,7 @@ class IndexingType: public BaseType{
 
 class IntervalType: public BaseType{
 	private:
-		static const unsigned offset=134;
+		static const unsigned offset=135;
     static const unsigned types_count=13;
 
 	public:
@@ -244,7 +244,7 @@ class IntervalType: public BaseType{
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-    static const unsigned offset=224;
+		static const unsigned offset=226;
     static const unsigned types_count=8;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -323,7 +323,7 @@ class UserTypeConfig {
 class PgSQLType: public BaseType{
 	private:
     static const unsigned offset=26;
-		static const unsigned types_count=108;
+		static const unsigned types_count=109;
 
 		//! \brief Offset for oid types
 		static const unsigned oid_start=107;
@@ -331,7 +331,7 @@ class PgSQLType: public BaseType{
 
 		//! \brief Offset for pseudo types
 		static const unsigned pseudo_start=120;
-		static const unsigned pseudo_end=133;
+		static const unsigned pseudo_end=134;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -486,7 +486,7 @@ class PgSQLType: public BaseType{
 
 class BehaviorType: public BaseType{
 	private:
-		static const unsigned offset=147;
+		static const unsigned offset=148;
     static const unsigned types_count=3;
 
 	public:
@@ -505,7 +505,7 @@ class BehaviorType: public BaseType{
 
 class SecurityType: public BaseType{
 	private:
-		static const unsigned offset=150;
+		static const unsigned offset=151;
     static const unsigned types_count=2;
 
 	public:
@@ -523,7 +523,7 @@ class SecurityType: public BaseType{
 
 class LanguageType: public BaseType{
 	private:
-		static const unsigned offset=152;
+		static const unsigned offset=153;
     static const unsigned types_count=6;
 
 	public:
@@ -545,7 +545,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static const unsigned offset=158;
+		static const unsigned offset=159;
     static const unsigned types_count=41;
 
 	public:
@@ -565,7 +565,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=199;
+		static const unsigned offset=200;
     static const unsigned types_count=4;
 
 	public:
@@ -588,7 +588,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=203;
+		static const unsigned offset=204;
     static const unsigned types_count=3;
 
 	public:
@@ -607,7 +607,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=206;
+		static const unsigned offset=207;
     static const unsigned types_count=2;
 
 	public:
@@ -625,7 +625,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=208;
+		static const unsigned offset=209;
     static const unsigned types_count=14;
 
 	public:
@@ -655,7 +655,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=222;
+		static const unsigned offset=223;
     static const unsigned types_count=3;
 
 	public:
@@ -666,6 +666,25 @@ class FiringType: public BaseType{
 		FiringType(const QString &type_name);
 		FiringType(unsigned type_id);
 		FiringType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class EventTriggerType: public BaseType{
+	private:
+		static const unsigned offset=234;
+		static const unsigned types_count=3;
+
+	public:
+		static const unsigned ddl_command_start=offset;
+		static const unsigned ddl_command_end=offset+1;
+		static const unsigned sql_drop=offset+2;
+
+		EventTriggerType(const QString &type_name);
+		EventTriggerType(unsigned type_id);
+		EventTriggerType(void);
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

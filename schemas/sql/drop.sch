@@ -11,28 +11,27 @@
  [-- DROP] $sp @{sql-object} $sp
 %end
 
-%if @{cast} %or @{extension} %or @{index} %or @{operator} %or
-    @{rule} %or @{trigger} %or @{aggregate} %or @{opclass} %or
-    @{opfamily} %or @{constraint} %or @{function} %then
-
-  %if @{cast} %then [(] @{source-type} [ AS ] @{destiny-type} [)] %end
-  %if @{extension} %then @{name} $sp CASCADE %end
-  %if @{index} %then @{schema}.@{name} %end
-  %if @{operator} %or @{function} %then @{signature} %end
-  %if @{rule} %or @{trigger} %then @{name} [ ON ] @{table} %end
-
-  %if @{aggregate} %or @{opclass} %or @{opfamily} %then
-    @{name}
-  %else
-    %if @{constraint} %and %not @{decl-in-table} %then
-     @{name}
-    %end
-  %end
+%if %not @{dif-sql} %then
+ @{name}
 %else
-  @{name}
+    %if @{cast} %or @{extension} %or @{index} %or @{operator} %or
+        @{rule} %or @{trigger} %or @{aggregate} %or @{opclass} %or
+        @{opfamily} %or @{constraint} %or @{function} %then
+
+        %if @{cast} %then [(] @{source-type} [ AS ] @{destiny-type} [)] %end
+        %if @{extension} %then @{name} $sp CASCADE %end
+        %if @{index} %then @{schema}.@{name} %end
+        %if @{operator} %or @{function} %then @{signature} %end
+        %if @{rule} %or @{trigger} %then @{name} [ ON ] @{table} %end
+
+      %if @{aggregate} %or @{opclass} %or @{opfamily} %then
+          @{name}
+      %else
+          %if @{constraint} %and %not @{decl-in-table} %then
+             @{name}
+          %end
+      %end
+    %end
 %end
 
 ; $br
-
-
-
