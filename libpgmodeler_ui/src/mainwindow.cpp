@@ -52,6 +52,7 @@
 #include "configurationform.h"
 #include "objectrenamewidget.h"
 #include "sqlappendwidget.h"
+#include "eventtriggerwidget.h"
 
 //Global forms and widgets
 AboutForm *about_form=nullptr;
@@ -90,6 +91,7 @@ ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
 ObjectRenameWidget *objectrename_wgt=nullptr;
 SQLAppendWidget *sqlappend_wgt=nullptr;
+EventTriggerWidget *eventtrigger_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -180,7 +182,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		obj_finder_wgt=new ObjectFinderWidget;
     update_notifier_wgt=new UpdateNotifierWidget(this);
 
-
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
 		textbox_wgt=new TextboxWidget(this);
@@ -215,6 +216,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		objectrename_wgt=new ObjectRenameWidget(this);
 		sqlappend_wgt=new SQLAppendWidget(this);
+		eventtrigger_wgt=new EventTriggerWidget(this);
 	}
 	catch(Exception &e)
 	{
@@ -291,6 +293,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
   connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+	connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));

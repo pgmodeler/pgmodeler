@@ -332,7 +332,7 @@ class BaseObject {
 		static bool acceptsCollation(ObjectType obj_type);
 
 		//! \brief Returns if the specified type accepts to have appended sql commands
-		static bool acceptsAppendedSQL(ObjectType obj_type);
+		static bool acceptsCustomSQL(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
@@ -347,7 +347,7 @@ class BaseObject {
 		bool acceptsCollation(void);
 
 		//! \brief Returns if the object accepts to have appended sql commands
-		bool acceptsAppendedSQL(void);
+		bool acceptsCustomSQL(void);
 
     /*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.

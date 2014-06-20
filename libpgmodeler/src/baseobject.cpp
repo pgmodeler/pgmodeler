@@ -396,7 +396,7 @@ bool BaseObject::acceptsCollation(void)
 	return(BaseObject::acceptsCollation(this->obj_type));
 }
 
-bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
+bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
 				 obj_type!=OBJ_RULE &&  obj_type!=OBJ_TRIGGER &&
@@ -404,12 +404,12 @@ bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
 				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
          obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
-         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
+				 obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG && obj_type!=OBJ_EVENT_TRIGGER);
 }
 
-bool BaseObject::acceptsAppendedSQL(void)
+bool BaseObject::acceptsCustomSQL(void)
 {
-	return(BaseObject::acceptsAppendedSQL(this->obj_type));
+	return(BaseObject::acceptsCustomSQL(this->obj_type));
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -458,7 +458,7 @@ void BaseObject::setCollation(BaseObject *collation)
 
 void BaseObject::setAppendedSQL(const QString &sql)
 {
-	if(!acceptsAppendedSQL())
+	if(!acceptsCustomSQL())
 		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   this->appended_sql=sql;
@@ -466,7 +466,7 @@ void BaseObject::setAppendedSQL(const QString &sql)
 
 void BaseObject::setPrependedSQL(const QString &sql)
 {
-  if(!acceptsAppendedSQL())
+  if(!acceptsCustomSQL())
     throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   this->prepended_sql=sql;

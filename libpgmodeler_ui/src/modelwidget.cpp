@@ -50,6 +50,7 @@
 #include "extensionwidget.h"
 #include "sqlappendwidget.h"
 #include "tagwidget.h"
+#include "eventtriggerwidget.h"
 #include "configurationform.h"
 
 extern DatabaseWidget *database_wgt;
@@ -85,6 +86,7 @@ extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
 extern SQLAppendWidget *sqlappend_wgt;
+extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -1495,6 +1497,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
         res=(tag_wgt->result()==QDialog::Accepted);
       break;
 
+			case OBJ_EVENT_TRIGGER:
+				eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
+				eventtrigger_wgt->show();
+				res=(eventtrigger_wgt->result()==QDialog::Accepted);
+			break;
+
 			default:
 			case OBJ_DATABASE:
 				database_wgt->setAttributes(db_model);
@@ -2607,7 +2615,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
+		if(BaseObject::acceptsCustomSQL(obj->getObjectType()))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
 			quick_actions_menu.addAction(action_append_sql);

@@ -31,11 +31,15 @@
 class EventTrigger: public BaseObject {
 	private:
 
-		//! \brief Function that is excuted when the trigger is activated
+		//! \brief Function that is excuted when the event trigger is activated
 		Function *function;
 
+		//! brief The event that fires the trigger
 		EventTriggerType event;
 
+		/*! brief This map contains the values used as condition on WHEN clause.
+				Currently the only supported variable is TAG, and the object will raise
+				error is other variable name is used on setFilter() call */
 		map<QString, QStringList> filter;
 
 	public:
@@ -44,6 +48,7 @@ class EventTrigger: public BaseObject {
 		void setEvent(EventTriggerType evnt_type);
 		void setFunction(Function *func);
 		void setFilter(const QString &variable, const QStringList &values);
+		void setFilter(const QString &variable, const QString &value);
 
 		void removeFilter(const QString &variable);
 		void clearFilter(void);

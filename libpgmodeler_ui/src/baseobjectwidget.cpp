@@ -439,7 +439,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
   disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
-	append_sql_tb->setVisible(BaseObject::acceptsAppendedSQL(obj_type));
+	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
 
 	schema_lbl->setVisible(BaseObject::acceptsSchema(obj_type));
 	schema_sel->setVisible(BaseObject::acceptsSchema(obj_type));

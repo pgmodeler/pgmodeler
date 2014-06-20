@@ -115,7 +115,7 @@ void ModelFixForm::enableFix(void)
 
 void ModelFixForm::fixModel(void)
 {
-  QString cmd="%1 --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
+	QString cmd="\"%1\" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
 
   cmd=cmd.arg(pgmodeler_cli_edt->text())
          .arg(fix_tries_sb->value())
