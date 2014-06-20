@@ -1436,7 +1436,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
 		//Drawing the button's text in a different offset in order to simulate the shadow
 		p.setPen(QColor(0,0,0, 128));
-		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, btn->height() - 21);
+		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, (btn->iconSize().height()) + 9);
 
 		p.drawText(QRect(pnt, ret.size()),btn->text());
 		p.end();

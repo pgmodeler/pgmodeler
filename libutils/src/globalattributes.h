@@ -69,7 +69,7 @@ namespace GlobalAttributes {
 		#endif
 	#else
         //For MacOSX the crash handler path is fixed (inside bundle)
-        CRASH_HANDLER_PATH=QString("startapp pgmodeler-ch");
+				CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
 	#endif
 
 	static const QString
@@ -84,6 +84,7 @@ namespace GlobalAttributes {
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
+	MACOS_STARTUP_SCRIPT="startapp",
 
 	DIR_SEPARATOR="/",
 	DEFAULT_CONFS_DIR="defaults", //! \brief Directory name which holds the default pgModeler configuration
