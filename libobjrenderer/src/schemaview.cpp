@@ -166,6 +166,7 @@ void SchemaView::configureObject(void)
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
+		font.setStrikeOut(!schema->isSystemObject() && schema->isSQLDisabled());
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
 		sch_name->setFont(font);
 		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
