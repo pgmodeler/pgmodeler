@@ -428,6 +428,9 @@
           </property>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>6</number>
+            </property>
             <item>
              <spacer name="verticalSpacer_2">
               <property name="orientation">
@@ -608,7 +611,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="autoFillBackground">

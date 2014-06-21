@@ -147,7 +147,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setMaximumSize(QSize(32, 32));
 	label->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
 
-	grid=new QGridLayout;
+  grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
 
 	label=new QLabel(protected_model_frm);

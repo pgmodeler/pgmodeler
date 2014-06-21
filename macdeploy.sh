@@ -1,7 +1,7 @@
 #/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.3.0/5.3/clang_64
+QT_ROOT=/Users/$USR/Qt5.2.1/5.2.1/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
 LOG=macdeploy.log
 

@@ -110,12 +110,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		configuration_form->loadConfiguration();
 
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
+    plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+    dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
 		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
 		confs=conf_wgt->getConfigurationParams();
@@ -442,14 +442,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	//Temporary models are saved every two minutes
 	tmpmodel_save_timer.setInterval(120000);
 
-	QList<QAction *> actions=general_tb->actions();
-	QToolButton *btn=nullptr;
+  QList<QAction *> actions=general_tb->actions();
+  QToolButton *btn=nullptr;
 
-	for(auto act : actions)
-	{
-		btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
-		btn->installEventFilter(this);
-	}
+  for(auto act : actions)
+  {
+    btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+    btn->installEventFilter(this);
+  }
+}
+
+MainWindow::~MainWindow(void)
+{
+   delete(overview_wgt);
+   delete(about_form);
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -501,12 +507,6 @@ void MainWindow::stopTimers(bool value)
 		tmpmodel_save_timer.start();
 		model_save_timer.start();
 	}
-}
-
-MainWindow::~MainWindow(void)
-{
-	//delete(overview_wgt);
-	//delete(about_form);
 }
 
 void MainWindow::showEvent(QShowEvent *)
@@ -852,29 +852,27 @@ void MainWindow::setCurrentModel(void)
 
 	if(current_model)
 	{
-		//this->applyZoom();
-
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 
 		general_tb->addAction(current_model->action_new_object);
-		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
+    tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->installEventFilter(this);
+    tool_btn->installEventFilter(this);
 
 		general_tb->addAction(current_model->action_quick_actions);
-		tool_btn=dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
+    tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->installEventFilter(this);
+    tool_btn->installEventFilter(this);
 
 		general_tb->addAction(current_model->action_edit);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit))->installEventFilter(this);
+    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit))->installEventFilter(this);
 
 		general_tb->addAction(current_model->action_source_code);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code))->installEventFilter(this);
+    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code))->installEventFilter(this);
 
 		general_tb->addAction(current_model->action_select_all);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all))->installEventFilter(this);
+    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all))->installEventFilter(this);
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
@@ -962,10 +960,16 @@ void MainWindow::applyZoom(void)
 void MainWindow::removeModelActions(void)
 {
 	QList<QAction *> act_list;
+  QToolButton *btn=nullptr;
+
 	act_list=general_tb->actions();
+
 	while(act_list.size() > 5)
 	{
-		general_tb->removeAction(act_list.back());
+    btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act_list.back()));
+    btn->removeEventFilter(this);
+
+    general_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
 }
