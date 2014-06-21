@@ -505,8 +505,9 @@ void MainWindow::stopTimers(bool value)
 
 MainWindow::~MainWindow(void)
 {
-	delete(overview_wgt);
-	delete(about_form);
+
+    //delete(overview_wgt);
+    //delete(about_form);
 }
 
 void MainWindow::showEvent(QShowEvent *)
@@ -539,6 +540,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		tmpmodel_thread.quit();
+        plugins_menu->clear();
 
 		//Checking if there is modified models and ask the user to save them before close the application
 		if(models_tbw->count() > 0)
@@ -604,6 +606,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					attribs.clear();
 					recent_models.pop_front();
 				}
+
+                recent_mdls_menu.clear();
 			}
 
 			conf_wgt->saveConfiguration();
@@ -819,13 +823,7 @@ void MainWindow::setCurrentModel(void)
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
 
-	//Removing model specific actions from general toolbar
-	act_list=general_tb->actions();
-	while(act_list.size() > 5)
-	{
-		general_tb->removeAction(act_list.back());
-		act_list.pop_back();
-	}
+    removeModelActions();
 
 	edit_menu->clear();
 	edit_menu->addAction(action_undo);
@@ -962,6 +960,17 @@ void MainWindow::applyZoom(void)
 	}
 }
 
+void MainWindow::removeModelActions(void)
+{
+    QList<QAction *> act_list;
+    act_list=general_tb->actions();
+    while(act_list.size() > 5)
+    {
+        general_tb->removeAction(act_list.back());
+        act_list.pop_back();
+    }
+}
+
 void MainWindow::closeModel(int model_id)
 {
 	QWidget *tab=nullptr;
@@ -999,6 +1008,9 @@ void MainWindow::closeModel(int model_id)
 			//Remove the temporary file related to the closed model
 			QDir arq_tmp;
 			arq_tmp.remove(model->getTempFilename());
+
+            //Removing model specific actions from general toolbar
+            removeModelActions();
 
 			if(model_id >= 0)
 				models_tbw->removeTab(model_id);

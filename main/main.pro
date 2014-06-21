@@ -8,8 +8,7 @@ windows:RCC_DIR=src/
 macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$BASEDIR; \
                        cp $$PWD/res/Info.plist $$BASEDIR; \
                        cp $$PWD/res/PkgInfo $$BASEDIR; \
-                       cp $$PWD/res/startapp $$DESTDIR; \
-                       mkdir $$DESTDIR/plugins > /dev/null"
+                       cp $$PWD/res/startapp $$DESTDIR"
 
 !macx {
  # Check if BINDESTDIR points to another location other than DESTDIR

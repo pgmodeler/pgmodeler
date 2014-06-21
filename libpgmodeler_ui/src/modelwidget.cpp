@@ -373,6 +373,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 ModelWidget::~ModelWidget(void)
 {
+    popup_menu.clear();
+    new_object_menu.clear();
+    quick_actions_menu.clear();
+    schemas_menu.clear();
+    owners_menu.clear();
+    tags_menu.clear();
+    break_rel_menu.clear();
 	op_list->removeOperations();
 	db_model->destroyObjects();
 	delete(viewport);
