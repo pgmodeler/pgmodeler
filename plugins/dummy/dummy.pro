@@ -14,7 +14,7 @@ PGMODELER_PLUGIN_DIR=$$RESDESTDIR/plugins
 
 macx {
  PGMODELER_SRC_DIR=../../
- PGMODELER_BASE_DIR=../../build/pgmodeler.app/Contents
+ PGMODELER_BASE_DIR=$$PGMODELER_SRC_DIR/build/pgmodeler.app/Contents
  PGMODELER_LIB_DIR=$$PGMODELER_BASE_DIR/Frameworks
  PGMODELER_PLUGIN_DIR=$$PGMODELER_BASE_DIR/MacOS/plugins
 }

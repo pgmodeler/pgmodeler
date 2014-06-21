@@ -130,7 +130,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-	public slots:
+
+public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
     void addModel(const QString &filename="");
@@ -228,6 +229,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
 		bool eventFilter(QObject *object, QEvent *event);
+
+                        void removeModelActions(void);
 };
 
 #endif

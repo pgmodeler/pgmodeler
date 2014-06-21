@@ -5,10 +5,10 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
-macx:QMAKE_POST_LINK+="cp -r res/Resources $$BASEDIR; \
-		       cp res/Info.plist $$BASEDIR; \
-		       cp res/PkgInfo $$BASEDIR; \
-		       cp res/startapp $$DESTDIR"
+macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$BASEDIR; \
+                       cp $$PWD/res/Info.plist $$BASEDIR; \
+                       cp $$PWD/res/PkgInfo $$BASEDIR; \
+                       cp $$PWD/res/startapp $$DESTDIR"
 
 !macx {
  # Check if BINDESTDIR points to another location other than DESTDIR

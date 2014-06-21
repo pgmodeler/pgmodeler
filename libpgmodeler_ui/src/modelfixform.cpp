@@ -126,13 +126,14 @@ void ModelFixForm::fixModel(void)
 		cmd+=" pgmodeler-cli";
 	#endif
 
-	cmd+=" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
+  cmd+=" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
   cmd=cmd.arg(pgmodeler_cli_edt->text())
          .arg(fix_tries_sb->value())
          .arg(input_file_edt->text())
          .arg(output_file_edt->text());
 
   output_txt->clear();
+  pgmodeler_cli_proc.blockSignals(false);
   pgmodeler_cli_proc.start(cmd);
 }
 
@@ -198,5 +199,7 @@ void ModelFixForm::handleProcessFinish(int res)
     emit s_modelLoadRequested(output_file_edt->text());
     this->close();
   }
+
+  pgmodeler_cli_proc.blockSignals(true);
 }
 

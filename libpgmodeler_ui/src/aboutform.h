@@ -34,7 +34,7 @@ class AboutForm: public QDialog, public Ui::AboutForm {
 		Q_OBJECT
 
 	public:
-		AboutForm(QWidget *parent = 0,  Qt::WindowFlags f = 0);
+    AboutForm(QWidget *parent = 0,  Qt::WindowFlags f = 0);
 };
 
 #endif
