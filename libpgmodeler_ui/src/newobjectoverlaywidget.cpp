@@ -119,8 +119,8 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
   rule_tb->setVisible(obj_type==OBJ_TABLE);
   trigger_tb->setVisible(obj_type==OBJ_TABLE);
   tab_perms_tb->setVisible(obj_type==OBJ_TABLE);
-
-  rel_btns_wgt->setVisible(sel_objs.size()==2 && obj_type==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
+	rel_btns_wgt->setVisible(sel_objs.size()==2 &&
+													 sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
 
   overlay_frm->adjustSize();
   this->adjustSize();
