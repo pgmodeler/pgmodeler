@@ -26,7 +26,7 @@ fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
-ISSFILE=pgmodeler.iss
+ISSFILE=./installer/pgmodeler.iss
 QT_CONF=build/qt.conf
 DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
