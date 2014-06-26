@@ -20,6 +20,7 @@ esac
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
+QT_IFW_ROOT=/opt/qt-if-1.5.0
 
 # Detecting current pgModeler version
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
@@ -27,9 +28,15 @@ BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
+GEN_INSTALLER_OPT='-gen-installer'
+GEN_INST_PKG=0
 
 if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+fi
+
+if [[ "$*" == "$GEN_INSTALLER_OPT" ]]; then
+  GEN_INST_PKG=1
 fi
 
 PKGFILE=$PKGNAME.tar.gz
@@ -123,6 +130,10 @@ if [ $BUNDLE_QT_LIBS = 0 ]; then
   echo "Qt libs will not be included on the package. (Found $NO_QT_LIBS_OPT)"
 fi
 
+if [ $GEN_INST_PKG = 1 ]; then
+  echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
@@ -198,8 +209,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-
-echo "Packaging installation..."
+echo "Generating tarball..."
 rm -r $PKGNAME  >> $LOG 2>&1
 mkdir $PKGNAME  >> $LOG 2>&1
 cp -r build/* $PKGNAME  >> $LOG 2>&1
@@ -214,5 +224,23 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "File created: $PKGFILE"
+
+
+if [ $GEN_INST_PKG = 1 ]; then
+
+  echo "Generating installer..."
+  $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
+
+ if [ $? -ne 0 ]; then
+   echo
+   echo "** Failed to create installer!"
+   echo
+   exit 1
+ fi
+
+ echo "File created: $PKGNAME.run"
+fi
+
+
 echo "pgModeler successfully deployed!"
 echo

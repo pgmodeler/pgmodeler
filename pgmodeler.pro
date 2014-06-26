@@ -174,6 +174,7 @@ pgmodeler_doc.path = $$DOCDESTDIR
 
 unix {
 !macx:pgmodeler_data.files += pgmodeler.vars
+linux:pgmodeler_data.files += start-pgmodeler.sh
 }
 
 INSTALLS += pgmodeler_data pgmodeler_doc

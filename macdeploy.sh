@@ -97,7 +97,7 @@ rm build/$BUNDLE/Contents/Frameworks/libpq*  >> $LOG 2>&1
 
 # Creates an empty dmg file named
 ln -s /Applications build/Applications >> $LOG 2>&1
-cp installer/installer_icon.icns build/.VolumeIcon.icns >> $LOG 2>&1
+cp installer/macosx/installer_icon.icns build/.VolumeIcon.icns >> $LOG 2>&1
 hdiutil create -format UDRW -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder build/ >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
