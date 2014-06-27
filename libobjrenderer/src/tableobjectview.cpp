@@ -337,6 +337,12 @@ void TableObjectView::configureObject(void)
 					str_constr+="f";
 					atribs_tip += "fast updated";
 				}
+
+				if(index->getIndexAttribute(Index::BUFFERING))
+				{
+					str_constr+="b";
+					atribs_tip += "buffering";
+				}
 			}
 
 			if(!str_constr.isEmpty())

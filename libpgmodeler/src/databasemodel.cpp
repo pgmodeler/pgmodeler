@@ -4850,6 +4850,7 @@ Index *DatabaseModel::createIndex(Table *table)
 		index->setIndexAttribute(Index::CONCURRENT, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
 		index->setIndexAttribute(Index::UNIQUE, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
 		index->setIndexAttribute(Index::FAST_UPDATE, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::BUFFERING, attribs[ParsersAttributes::BUFFERING]==ParsersAttributes::_TRUE_);
 
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());

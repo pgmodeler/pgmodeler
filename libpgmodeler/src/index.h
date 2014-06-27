@@ -43,8 +43,8 @@ class Index: public TableObject{
 		//! \brief Indexing method used by the index
 		IndexingType indexing_type;
 
-		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
-		bool index_attribs[3];
+		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE, BUFFERING)
+		bool index_attribs[4];
 
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(unsigned def_type);
@@ -52,7 +52,8 @@ class Index: public TableObject{
 	public:
 		static const  unsigned UNIQUE=0,
                            CONCURRENT=1,
-                           FAST_UPDATE=2;
+													 FAST_UPDATE=2,
+													 BUFFERING=3;
 
 		Index(void);
 

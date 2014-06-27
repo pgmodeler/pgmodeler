@@ -20,9 +20,9 @@
 
 Index::Index(void)
 {
-	index_attribs[UNIQUE]=false;
-	index_attribs[CONCURRENT]=false;
 	obj_type=OBJ_INDEX;
+	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
+	index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
 	fill_factor=90;
 	attributes[ParsersAttributes::UNIQUE]="";
 	attributes[ParsersAttributes::CONCURRENT]="";
@@ -31,7 +31,6 @@ Index::Index(void)
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::FACTOR]="";
-  //attributes[ParsersAttributes::CONDITION]="";
   attributes[ParsersAttributes::PREDICATE]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
 	attributes[ParsersAttributes::NULLS_FIRST]="";
@@ -39,6 +38,7 @@ Index::Index(void)
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
 	attributes[ParsersAttributes::FAST_UPDATE]="";
+	attributes[ParsersAttributes::BUFFERING]="";
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 }
 
@@ -192,7 +192,7 @@ unsigned Index::getIndexElementCount(void)
 
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
-	if(attrib_id > FAST_UPDATE)
+	if(attrib_id > BUFFERING)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	index_attribs[attrib_id]=value;
@@ -220,7 +220,7 @@ unsigned Index::getFillFactor(void)
 
 bool Index::getIndexAttribute(unsigned attrib_id)
 {
-	if(attrib_id > FAST_UPDATE)
+	if(attrib_id > BUFFERING)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(index_attribs[attrib_id]);
@@ -309,6 +309,9 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 
 	if(this->indexing_type==IndexingType::gin)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
+
+	if(this->indexing_type==IndexingType::gist)
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? "1" : "");
 
 	if(this->indexing_type==IndexingType::btree && fill_factor >= 10)
 	{

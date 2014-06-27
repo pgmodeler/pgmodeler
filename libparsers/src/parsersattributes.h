@@ -433,7 +433,8 @@ namespace ParsersAttributes {
 	UNLOGGED="unlogged",
 	EVENT="event",
 	FILTER="filter",
-	VARIABLE="variable";
+	VARIABLE="variable",
+	BUFFERING="buffering";
 }
 
 #endif

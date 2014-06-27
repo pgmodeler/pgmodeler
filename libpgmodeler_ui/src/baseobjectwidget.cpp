@@ -635,7 +635,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setWordWrap(true);
 
 	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields on the form are available only on specific PostgreSQL versions. \
-													When generating SQL code for versions other than those specified on field's tooltips pgModeler will ignore it's values.").arg(color.name()));
+													When generating SQL code for versions other than those specified on fields' tooltips pgModeler will ignore their values.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);

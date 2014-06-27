@@ -7,6 +7,7 @@
 <!ATTLIST index unique (true | false) "false">
 <!ATTLIST index concurrent (true | false) "false">
 <!ATTLIST index fast-update (true | false) "false">
+<!ATTLIST index buffering (true | false) "false">
 <!ATTLIST index index-type CDATA #REQUIRED>
 <!ATTLIST index factor CDATA #REQUIRED>
 <!ATTLIST index table CDATA #IMPLIED>
