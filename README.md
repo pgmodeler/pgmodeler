@@ -39,23 +39,7 @@ Known Issues
 Change Log
 ----------
 
-v0.7.2-beta1
-------
-<em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: June 21, 2014</em><br/>
-
-* [New] Added support for event trigger objects. The export and import processes were adjusted to handle this kind of object.
-* [New] Added support for UNLOGGED tables.
-* [New] Enabled PostgreSQL 9.4 export and import processes.
-* [New] Enabled the jsonb datatype for PostgreSQL 9.4.
-* [Change] Rolled back to Qt 5.2.1 the version used by the macdeploy.sh script due to crash reported in issue #494 and #482.
-* [Change] SQL tool improvement. Added a "drop cascade" action and fixed a bug when refreshing a specific item on database tree.
-* [Fix] Minor fix on ColumnWidget, disabled the line breaking in the field "Expression".
-* [Fix] Fixed the model fix dialog on MacOS X and Windows platforms.
-* [Fix] Schemas names are now correctly striked out on the rectangle when their SQL code is disabled. The system schemas public and pg_catalog will continue not to have their names striked out.
-* [Fix] Fixed a bug that was preventing default values of domains to be loaded from file.
-
-The detailed change log can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The detailed log of changes can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------

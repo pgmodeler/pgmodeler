@@ -169,7 +169,7 @@ INCLUDEPATH += $$XML_INC \
 pgmodeler_data.files = samples schemas lang conf
 pgmodeler_data.path = $$RESDESTDIR
 
-pgmodeler_doc.files = README.md CHANGELOG.md LICENSE
+pgmodeler_doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
 pgmodeler_doc.path = $$DOCDESTDIR
 
 unix {

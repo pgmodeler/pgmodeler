@@ -4,6 +4,7 @@ v0.7.2
 <em>Release date: June 30, 2014</em><br/>
 <em>Changes since <strong>v0.7.1</strong></em><br/>
 
+* [New] Added the missing attribute BUFFERING for Gist indexes.
 * [New] Added support for event trigger objects. The export and import processes were adjusted to handle this kind of object.
 * [New] Added support for UNLOGGED tables.
 * [New] Enabled PostgreSQL 9.4 export and import processes.

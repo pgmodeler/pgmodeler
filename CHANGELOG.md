@@ -6,6 +6,7 @@ v0.7.2
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
 <em>Release date: June 30, 2014</em><br/>
 
+* [New] Added the missing attribute BUFFERING for Gist indexes.
 * [New] Added an experimental installer for Linux based upon the Qt Installer Framework.
 * [New] Added an file called RELEASENOTES.md. This file will be read by the update notifier on server in order to return to the GUI the change log and additional release info.
 * [Change] Minor change on MacOS X deployment script to generate the dmg file with a custom icon.
