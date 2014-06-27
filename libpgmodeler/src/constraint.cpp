@@ -68,9 +68,9 @@ void Constraint::setActionType(ActionType action_type, unsigned act_id)
     this->upd_action=action_type;
 }
 
-void Constraint::setCheckExpression(const QString &expr)
+void Constraint::setExpression(const QString &expr)
 {
-	check_expr=expr;
+  expression=expr;
 }
 
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
@@ -266,9 +266,9 @@ ActionType Constraint::getActionType(unsigned act_id)
     return(upd_action);
 }
 
-QString Constraint::getCheckExpression(void)
+QString Constraint::getExpression(void)
 {
-	return(check_expr);
+  return(expression);
 }
 
 Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
@@ -638,7 +638,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[ParsersAttributes::TYPE]=attrib;
 	attributes[ParsersAttributes::UPD_ACTION]=(~upd_action);
 	attributes[ParsersAttributes::DEL_ACTION]=(~del_action);
-	attributes[ParsersAttributes::EXPRESSION]=check_expr;
+  attributes[ParsersAttributes::EXPRESSION]=expression;
 
 	if(constr_type!=ConstraintType::check)
 	{

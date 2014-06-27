@@ -31,7 +31,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
     Ui_ColumnWidget::setupUi(this);
 
     hl_default_value=nullptr;
-    hl_default_value=new SyntaxHighlighter(def_value_txt, false);
+	hl_default_value=new SyntaxHighlighter(def_value_txt, false, true);
     hl_default_value->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SQL_HIGHLIGHT_CONF +
@@ -43,9 +43,6 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 
     column_grid->addWidget(data_type,0,0,1,0);
     column_grid->addWidget(default_value_grp,1,0,1,1);
-    //column_grid->addWidget(def_value_lbl,1,0,1,1);
-    //column_grid->addWidget(def_value_txt,1,1,1,1);
-    //column_grid->addWidget(notnull_chk,1,2,1,1);
 
 		column_grid->addItem(spacer,column_grid->count(),0);
     dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1);
@@ -122,12 +119,12 @@ void ColumnWidget::applyConfiguration(void)
     if(expression_rb->isChecked())
     {
       column->setDefaultValue(def_value_txt->toPlainText());
-      column->setSequence(nullptr);
+      //column->setSequence(nullptr);
     }
     else
     {
       column->setSequence(sequence_sel->getSelectedObject());
-      column->setDefaultValue("");
+      //column->setDefaultValue("");
     }
 
 		column->setType(data_type->getPgSQLType());

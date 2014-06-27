@@ -36,6 +36,10 @@ $br $tb ( @{elements} $br $tb )
   [FASTUPDATE = ON]
  %end
 
+ %if @{buffering} %and %not @{pgsql90} %and %not @{pgsql91} %then
+  [BUFFERING = ON]
+ %end
+
 [)]
 %end
 
@@ -43,8 +47,8 @@ $br $tb ( @{elements} $br $tb )
  $br $tb [TABLESPACE ] @{tablespace}
 %end
 
-%if @{condition} %then
- $br $tb [WHERE (] @{condition} [)]
+%if @{predicate} %then
+ $br $tb [WHERE (] @{predicate} [)]
 %end
 ; $br
 

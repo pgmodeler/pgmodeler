@@ -7,7 +7,15 @@
 
 @{drop}
 
-[CREATE TABLE ] @{name} ( $br
+%if @{prepended-sql} %then @{prepended-sql} %end
+
+[CREATE]
+
+%if %not @{pgsql90} %and @{unlogged} %then
+  [ UNLOGGED]
+%end
+
+[ TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}
     %if @{columns} %then [,] %end

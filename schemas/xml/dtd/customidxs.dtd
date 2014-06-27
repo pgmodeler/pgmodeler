@@ -1,0 +1,6 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT customidxs (object+)>
+<!ATTLIST customidxs object-type (column|constraint) "column">

@@ -129,6 +129,9 @@ class ObjectsScene: public QGraphicsScene {
 		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
 		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
 
+    static void configurePrinter(QPrinter *printer);
+    static void configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient);
+
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
@@ -184,6 +187,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Signal emitted when a object is selected
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
+
+    //! brief Signal emtted when a blank area of the canvas is pressed
+    void s_objectsScenePressed(Qt::MouseButtons);
 
 		friend class ModelWidget;
 };

@@ -31,6 +31,7 @@
  %if @{comment} %then @{comment} %end
  %if @{tag} %then @{tag} %end
  %if @{appended-sql} %then @{appended-sql} %end
+ %if @{prepended-sql} %then @{prepended-sql} %end
  @{position}
  @{references}
 

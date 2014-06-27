@@ -112,7 +112,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="check_expr_lbl">
+    <widget class="QLabel" name="expression_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -126,12 +126,12 @@
       </size>
      </property>
      <property name="text">
-      <string>Check Expr.:</string>
+      <string>Expression:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1" colspan="3">
-    <widget class="QTextEdit" name="check_expr_txt">
+    <widget class="QTextEdit" name="expression_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -207,6 +207,9 @@
       <number>10</number>
      </property>
      <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
       <number>100</number>
      </property>
     </widget>
@@ -488,6 +491,18 @@
        <string>Referenced Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
        <item row="1" column="2">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
@@ -594,7 +609,7 @@
   <tabstop>constr_type_cmb</tabstop>
   <tabstop>match_cmb</tabstop>
   <tabstop>no_inherit_chk</tabstop>
-  <tabstop>check_expr_txt</tabstop>
+  <tabstop>expression_txt</tabstop>
   <tabstop>fill_factor_sb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>

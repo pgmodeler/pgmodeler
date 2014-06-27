@@ -57,7 +57,7 @@ class TableObjectView: public BaseObjectView
 													TYPE_SEPARATOR,
 													CONSTR_SEPARATOR,
 													TXT_FOREIGN_KEY,
-													TXT_NOT_nullptr,
+                          TXT_NOT_NULL,
 													TXT_PRIMARY_KEY,
 													TXT_UNIQUE,
 													TXT_CHECK,

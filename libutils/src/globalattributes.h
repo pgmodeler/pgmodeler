@@ -33,60 +33,25 @@
 #include <QDate>
 
 namespace GlobalAttributes {
-
-	/*! \brief Variables used to reference the pgModeler directories.
-	 By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
-	 the working dir. But these values ​​can be overwritten using the
-	 environment variables:
-
-		 PGMODELER_SCHEMAS_DIR
-		 PGMODELER_CONF_DIR
-		 PGMODELER_LANG_DIR
-		 PGMODELER_PLUGINS_DIR
-		 PGMODELER_TMP_DIR
-*/
-
 	static const QString
-	/*! \brief According to the libxml documentation , the paths used by the parser are
-		 in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
-		 C:\a\b\c, this caused the error in the parser that could not find
-		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
-
-	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
-	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
-	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
-	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
-	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
-	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
-
-	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
-	different location for pgmodeler-ch */
-	#ifndef Q_OS_MAC
-		#ifdef Q_OS_LINUX
-			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("pgmodeler-ch"));
-		#else
-			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("pgmodeler-ch.exe"));
-		#endif
-	#else
-        //For MacOSX the crash handler path is fixed (inside bundle)
-        CRASH_HANDLER_PATH=QString("startapp pgmodeler-ch");
-	#endif
-
-	static const QString
-  PGMODELER_VERSION="0.7.1",
+	PGMODELER_VERSION="0.7.2",
   PGMODELER_VER_CODENAME="Brave Mastodon",
-  PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).remove(' '), "MMMddyyyy").toString("yyyyMMdd"),
-	PGMODELER_WIKI="http://www.pgmodeler.com.br/wiki",
+  PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
+  PGMODELER_SITE="http://www.pgmodeler.com.br",
+  PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
+  PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
+  PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
+  PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
+	MACOS_STARTUP_SCRIPT="startapp",
 
 	DIR_SEPARATOR="/",
 	DEFAULT_CONFS_DIR="defaults", //! \brief Directory name which holds the default pgModeler configuration
 	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
 	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
-	COMMON_SCHEMA_DIR="common", //! \brief Default name for the commom schemas directory
 	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
 	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
@@ -111,6 +76,44 @@ namespace GlobalAttributes {
 	DEFAULT_QT_STYLE="Fusion",
 	NO_STYLESHEET_OPT="-no-stylesheet",
 	UI_STYLE_OPT="-style";
+
+
+	/*! \brief Variables used to reference the pgModeler directories.
+	 By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
+	 the working dir. But these values ​​can be overwritten using the
+	 environment variables:
+
+		 PGMODELER_SCHEMAS_DIR
+		 PGMODELER_CONF_DIR
+		 PGMODELER_LANG_DIR
+		 PGMODELER_PLUGINS_DIR
+		 PGMODELER_TMP_DIR      */
+
+	static const QString
+	/*! \brief According to the libxml documentation , the paths used by the parser are
+		 in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
+		 C:\a\b\c, this caused the error in the parser that could not find
+		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
+
+	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
+	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
+	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
+	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
+	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
+	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
+
+	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
+	different location for pgmodeler-ch */
+	#ifndef Q_OS_MAC
+		#ifdef Q_OS_LINUX
+			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("./pgmodeler-ch"));
+		#else
+			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("./pgmodeler-ch.exe"));
+		#endif
+	#else
+		//For MacOSX the crash handler path is fixed (inside bundle)
+		CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
+	#endif
 }
 
 #endif

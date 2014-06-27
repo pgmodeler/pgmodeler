@@ -20,7 +20,12 @@
 #include "configurationform.h"
 
 extern ConfigurationForm *configuration_form;
-const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
+
+#ifndef Q_OS_MAC
+	const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
+#else
+	const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
+#endif
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -74,25 +79,25 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-  QString pgmodeler_cli=qApp->applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + PGMODELER_CLI;
+	QString pgmodeler_cli=qApp->applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + PGMODELER_CLI;
 
-  #ifdef Q_OS_WIN
-    pgmodeler_cli+=".exe";
-  #endif
+	#ifdef Q_OS_WIN
+		pgmodeler_cli+=".exe";
+	#endif
 
-  QFileInfo fi(pgmodeler_cli);
+	QFileInfo fi(pgmodeler_cli);
 
-  //Show an warning if the cli command doesn't exists
-  if(!fi.exists())
-  {
-    msg_lbl->setText(trUtf8("Could not locate <strong>pgmodeler-cli</strong> tool on <strong>%1</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.").arg(fi.absoluteDir().absolutePath()));
-    message_frm->setVisible(true);
-    pgmodeler_cli_lbl->setVisible(true);
-    pgmodeler_cli_edt->setVisible(true);
-    sel_cli_exe_tb->setVisible(true);
-  }
-  else
-    pgmodeler_cli_edt->setText(fi.absoluteFilePath());
+	//Show an warning if the cli command doesn't exists
+	if(!fi.exists())
+	{
+		msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%1</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.").arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
+		message_frm->setVisible(true);
+		pgmodeler_cli_lbl->setVisible(true);
+		pgmodeler_cli_edt->setVisible(true);
+		sel_cli_exe_tb->setVisible(true);
+	}
+	else
+		pgmodeler_cli_edt->setText(fi.absoluteFilePath());
 
   return(QDialog::exec());
 }
@@ -115,14 +120,20 @@ void ModelFixForm::enableFix(void)
 
 void ModelFixForm::fixModel(void)
 {
-  QString cmd="%1 --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
+	QString cmd="\"%1\"";
 
+	#ifdef Q_OS_MAC
+		cmd+=" pgmodeler-cli";
+	#endif
+
+  cmd+=" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
   cmd=cmd.arg(pgmodeler_cli_edt->text())
          .arg(fix_tries_sb->value())
          .arg(input_file_edt->text())
          .arg(output_file_edt->text());
 
   output_txt->clear();
+  pgmodeler_cli_proc.blockSignals(false);
   pgmodeler_cli_proc.start(cmd);
 }
 
@@ -188,5 +199,7 @@ void ModelFixForm::handleProcessFinish(int res)
     emit s_modelLoadRequested(output_file_edt->text());
     this->close();
   }
+
+  pgmodeler_cli_proc.blockSignals(true);
 }
 

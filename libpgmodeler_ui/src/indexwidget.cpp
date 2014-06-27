@@ -24,12 +24,13 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	{
 		QStringList list;
 		QGridLayout *grid=nullptr;
+		map<QString, vector<QWidget *> > fields_map;
+		QFrame *frame=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
 
-		//Cria um destacador de sintaxe no campo de expressão de checagem
-		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+    predicate_hl=new SyntaxHighlighter(predicate_txt, false);
+    predicate_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																						GlobalAttributes::DIR_SEPARATOR +
 																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																						GlobalAttributes::CONFIGURATION_EXT);
@@ -47,11 +48,18 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(buffering_chk);
+		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
+		frame->setParent(this);
+		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
+		grid->addWidget(frame, grid->count(), 0, 1, 5);
+
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
     configureTabOrder();
+		selectIndexingType();
 	}
 	catch(Exception &e)
 	{
@@ -63,9 +71,10 @@ void IndexWidget::hideEvent(QHideEvent *event)
 {
 	BaseObjectWidget::hideEvent(event);
 
-	cond_expr_txt->clear();
+  predicate_txt->clear();
 	concurrent_chk->setChecked(false);
 	unique_chk->setChecked(false);
+	buffering_chk->setChecked(false);
 	indexing_cmb->setCurrentIndex(0);
 	fill_factor_sb->setValue(90);
 	tabWidget->setCurrentIndex(0);
@@ -76,6 +85,7 @@ void IndexWidget::selectIndexingType(void)
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
 	fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 }
 
@@ -105,7 +115,8 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
-		cond_expr_txt->setPlainText(Utf8String::create(index->getConditionalExpression()));
+		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
+    predicate_txt->setPlainText(Utf8String::create(index->getPredicate()));
 
 		selectIndexingType();
 	}
@@ -129,7 +140,8 @@ void IndexWidget::applyConfiguration(void)
 		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
 		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
-		index->setConditionalExpression(cond_expr_txt->toPlainText().toUtf8());
+		index->setIndexAttribute(Index::BUFFERING, buffering_chk->isChecked());
+    index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 
 		if(fill_factor_chk->isChecked())

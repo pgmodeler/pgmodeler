@@ -11,6 +11,8 @@
  -- @{comment} -- $br
 %end
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE TABLESPACE ] @{name} $br
 
 %if @{owner} %then

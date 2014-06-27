@@ -1,7 +1,7 @@
 #/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.2.0/5.2.0/clang_64
+QT_ROOT=/Users/$USR/Qt5.2.1/5.2.1/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
 LOG=macdeploy.log
 
@@ -96,11 +96,26 @@ $QT_ROOT/bin/macdeployqt build/$BUNDLE >> $LOG 2>&1
 rm build/$BUNDLE/Contents/Frameworks/libpq*  >> $LOG 2>&1
 
 # Creates an empty dmg file named
-hdiutil create -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder build/ >> $LOG 2>&1
+ln -s /Applications build/Applications >> $LOG 2>&1
+cp installer/macosx/installer_icon.icns build/.VolumeIcon.icns >> $LOG 2>&1
+hdiutil create -format UDRW -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder build/ >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
   echo "** Failed to create package!"
+  echo
+  exit 1
+fi
+
+echo "Updating package default icon..."
+open $PKGFILE --hide >> $LOG 2>&1
+sleep 3
+SetFile -a C /Volumes/$APPNAME >> $LOG 2>&1
+umount /Volumes/$APPNAME >> $LOG 2>&1
+
+if [ $? -ne 0 ]; then
+  echo
+  echo "** Failed to update package icon!"
   echo
   exit 1
 fi

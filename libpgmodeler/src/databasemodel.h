@@ -52,6 +52,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "collation.h"
 #include "extension.h"
 #include "tag.h"
+#include "eventtrigger.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -98,6 +99,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> collations;
 		vector<BaseObject *> extensions;
     vector<BaseObject *> tags;
+		vector<BaseObject *> eventtriggers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -111,7 +113,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		invalidated,
 
 		//! \brief Indicates that appended SQL commands must be put at the very end of model definition
-		append_at_eod;
+    append_at_eod,
+
+    //! \brief Indicates that prepended SQL commands must be put at the very beginning of model definition
+    prepend_at_bod;
+
+    //! \brief Stores the last position on the model where the user was editing objects
+    QPoint last_pos;
+
+    float last_zoom;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -202,8 +212,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Sets the sql appending at end of entire model definition
 		void setAppendAtEOD(bool value);
 
+    //! \brief Sets the sql prepeding at beginning of entire model definition
+    void setPrependAtBOD(bool value);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
+
+    //! \brief Returns the current state of the sql prepeding at beginning of entire model definition
+    bool isPrependedAtBOD(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);
@@ -343,6 +359,10 @@ class DatabaseModel:  public QObject, public BaseObject {
     void removeTag(Tag *tag, int obj_idx=-1);
     Tag *getTag(unsigned obj_idx);
 
+		void addEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
+		void removeEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
+		EventTrigger *getEventTrigger(unsigned obj_idx);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
@@ -394,9 +414,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Constraint *createConstraint(BaseObject *parent_obj);
 		Index *createIndex(Table *table);
 		Trigger *createTrigger(BaseTable *table);
+		EventTrigger *createEventTrigger(void);
 
-		//! \brief Creates/removes the relationship between the passed view and the referecend tables
-		void updateViewRelationships(View *view);
+    //! \brief Creates/removes the relationship between the passed view and the referecend tables
+    void updateViewRelationships(View *view, bool force_rel_removal=false);
 
 		//! \brief Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
 		void updateTableFKRelationships(Table *table);
@@ -444,6 +465,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
 		QString getErrorExtraInfo(void);
+
+    void setLastPosition(const QPoint &pnt);
+    QPoint getLastPosition(void);
+
+    void setLastZoomFactor(float zoom);
+    float getLastZoomFactor(void);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

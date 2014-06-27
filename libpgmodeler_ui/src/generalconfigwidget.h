@@ -29,13 +29,14 @@
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
+#include "modelwidget.h"
 #include "messagebox.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
 		static const unsigned UNIT_MILIMETERS=0,
-													UNIT_PIXELS=1,
+                          UNIT_POINT=1,
 													UNIT_INCHS=2,
 													UNIT_CENTIMETERS=3;
 

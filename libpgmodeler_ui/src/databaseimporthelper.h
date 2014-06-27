@@ -35,7 +35,8 @@ class DatabaseImportHelper: public QObject {
 		Q_OBJECT
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		static const QString ARRAY_PATTERN;
+    static const QString ARRAY_PATTERN,
+    UNKNOWN_OBJECT_OID_XML;
 
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */
@@ -141,6 +142,7 @@ class DatabaseImportHelper: public QObject {
 		void createConstraint(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createTableInheritances(void);
+		void createEventTrigger(attribs_map &attribs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		QStringList parseArrayValues(const QString array_val);
@@ -217,6 +219,7 @@ class DatabaseImportHelper: public QObject {
 
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
+    void retrieveTableColumns(const QString &sch_name, const QString &tab_name, vector<unsigned> col_ids={});
 		void createObjects(void);
 		void createConstraints(void);
 		void createPermissions(void);

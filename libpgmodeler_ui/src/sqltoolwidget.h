@@ -55,7 +55,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
           //! brief Stores the actions to drop and show object's data
           handle_menu;
 
-    QAction *copy_action, *drop_action, *show_data_action, *refresh_action;
+	QAction *copy_action, *drop_action, *drop_cascade_action, *show_data_action, *refresh_action;
 
 
     //! brief Generates a CSV buffer based upon the selection on the results grid
@@ -66,7 +66,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void enableSQLExecution(bool enable);
 
     //! brief Drops the object represented by the specified item
-    void dropObject(QTreeWidgetItem *item);
+	void dropObject(QTreeWidgetItem *item, bool cascade);
 
     //! brief Shows the data of the object represented by the specified item
     void showObjectData(QTreeWidgetItem *item);
@@ -80,6 +80,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void showError(Exception &e);
 
     bool eventFilter(QObject *object, QEvent *event);
+
+	void configureImportHelper(void);
 
   public:
     SQLToolWidget(QWidget * parent = 0);

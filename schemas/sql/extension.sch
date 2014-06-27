@@ -9,6 +9,8 @@
 
   @{drop}
 
+  %if @{prepended-sql} %then @{prepended-sql} %end
+
   [CREATE EXTENSION ] @{name} $br
   [      WITH SCHEMA ] @{schema}
     

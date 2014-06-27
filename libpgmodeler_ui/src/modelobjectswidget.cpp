@@ -68,6 +68,28 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+
+  objectslist_tbw->installEventFilter(this);
+  objectstree_tw->installEventFilter(this);
+}
+
+bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::FocusOut &&
+     (object==objectslist_tbw || object==objectstree_tw))
+  {
+    QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
+
+    if(evnt->reason()==Qt::MouseFocusReason)
+    {
+      objectslist_tbw->clearSelection();
+      objectstree_tw->clearSelection();
+      model_wgt->configurePopupMenu({});
+      return(true);
+    }
+  }
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void ModelObjectsWidget::hide(void)
@@ -377,19 +399,23 @@ void ModelObjectsWidget::updateObjectsView(void)
 
 void ModelObjectsWidget::updateObjectsList(void)
 {
-	if(db_model)
-	{
-    vector<ObjectType> visible_types;
+    vector<BaseObject *> objects;
 
-    for(auto tp : visible_objs_map)
+    if(db_model)
     {
-      if(tp.second)
-        visible_types.push_back(tp.first);
+        vector<ObjectType> visible_types;
+
+        for(auto tp : visible_objs_map)
+        {
+            if(tp.second)
+                visible_types.push_back(tp.first);
+        }
+
+        objects=db_model->findObjects("", visible_types,true, false, false, false);
+
     }
 
-    vector<BaseObject *> objects=db_model->findObjects("", visible_types,true, false, false, false);
-		ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
-	}
+    ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -673,7 +699,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
     vector<BaseObject *> ref_list, tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
 												 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-                         OBJ_RELATIONSHIP, OBJ_TAG };
+												 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER, OBJ_TAG };
     unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try
@@ -795,6 +821,9 @@ void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 	visaoobjetos_stw->setEnabled(true);
 	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
 	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
+    tree_view_tb->setEnabled(enable);
+    list_view_tb->setEnabled(enable);
+    options_tb->setEnabled(enable);
 }
 
 void ModelObjectsWidget::showEvent(QShowEvent *)
@@ -810,8 +839,14 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
 			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
 		}
-	}
+  }
 }
+
+/* void ModelObjectsWidget::focusOutEvent(QFocusEvent *)
+{
+  objectslist_tbw->clearSelection();
+  objectstree_tw->clearSelection();
+} */
 
 void ModelObjectsWidget::closeEvent(QCloseEvent *)
 {

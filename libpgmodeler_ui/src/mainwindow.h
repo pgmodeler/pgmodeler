@@ -43,6 +43,7 @@
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
+#include "updatenotifierwidget.h"
 
 using namespace std;
 
@@ -92,6 +93,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
 
+    //! brief Update notifier popup widget
+    UpdateNotifierWidget *update_notifier_wgt;
+
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;
 
@@ -126,10 +130,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-	public slots:
+
+public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-		void addModel(const QString &filename="");
+    void addModel(const QString &filename="");
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -213,14 +218,19 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
 
-		void showRightWidgetsBar(void);
-		void showBottomWidgetsBar(void);
-
-		void restoreLastSession(void);
-
 		/*! \brief Stop the saving timers. This is used when validating the model
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
+
+    void showRightWidgetsBar(void);
+    void showBottomWidgetsBar(void);
+    void restoreLastSession(void);
+    void toggleUpdateNotifier(bool show);
+
+		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
+		bool eventFilter(QObject *object, QEvent *event);
+
+                        void removeModelActions(void);
 };
 
 #endif

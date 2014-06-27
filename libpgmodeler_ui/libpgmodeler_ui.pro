@@ -89,7 +89,10 @@ SOURCES += src/mainwindow.cpp \
            src/swapobjectsidswidget.cpp \
            src/sqltoolwidget.cpp \
            src/tagwidget.cpp \
-           src/modelfixform.cpp
+           src/modelfixform.cpp \
+           src/updatenotifierwidget.cpp \
+           src/newobjectoverlaywidget.cpp \
+    src/eventtriggerwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -158,7 +161,10 @@ HEADERS += src/mainwindow.h \
            src/swapobjectsidswidget.h \
            src/sqltoolwidget.h \
            src/tagwidget.h \
-           src/modelfixform.h
+           src/modelfixform.h \
+           src/updatenotifierwidget.h \
+           src/newobjectoverlaywidget.h \
+    src/eventtriggerwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/aboutform.ui \
@@ -218,6 +224,9 @@ FORMS += ui/mainwindow.ui \
          ui/swapobjectsidswidget.ui \
          ui/sqltoolwidget.ui \
          ui/tagwidget.ui \
-         ui/modelfixform.ui
+         ui/modelfixform.ui \
+         ui/updatenotifierwidget.ui \
+         ui/newobjectoverlaywidget.ui \
+    ui/eventtriggerwidget.ui
 
 

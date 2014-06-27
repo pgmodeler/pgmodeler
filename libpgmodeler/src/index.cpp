@@ -20,9 +20,9 @@
 
 Index::Index(void)
 {
-	index_attribs[UNIQUE]=false;
-	index_attribs[CONCURRENT]=false;
 	obj_type=OBJ_INDEX;
+	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
+	index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
 	fill_factor=90;
 	attributes[ParsersAttributes::UNIQUE]="";
 	attributes[ParsersAttributes::CONCURRENT]="";
@@ -31,13 +31,14 @@ Index::Index(void)
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::FACTOR]="";
-	attributes[ParsersAttributes::CONDITION]="";
+  attributes[ParsersAttributes::PREDICATE]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
 	attributes[ParsersAttributes::NULLS_FIRST]="";
 	attributes[ParsersAttributes::ASC_ORDER]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
 	attributes[ParsersAttributes::FAST_UPDATE]="";
+	attributes[ParsersAttributes::BUFFERING]="";
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 }
 
@@ -191,7 +192,7 @@ unsigned Index::getIndexElementCount(void)
 
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
-	if(attrib_id > FAST_UPDATE)
+	if(attrib_id > BUFFERING)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	index_attribs[attrib_id]=value;
@@ -207,9 +208,9 @@ void Index::setIndexingType(IndexingType idx_type)
 	this->indexing_type=idx_type;
 }
 
-void Index::setConditionalExpression(const QString &expr)
+void Index::setPredicate(const QString &expr)
 {
-	conditional_expr=expr;
+  predicate=expr;
 }
 
 unsigned Index::getFillFactor(void)
@@ -219,7 +220,7 @@ unsigned Index::getFillFactor(void)
 
 bool Index::getIndexAttribute(unsigned attrib_id)
 {
-	if(attrib_id > FAST_UPDATE)
+	if(attrib_id > BUFFERING)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(index_attribs[attrib_id]);
@@ -230,9 +231,9 @@ IndexingType Index::getIndexingType(void)
 	return(indexing_type);
 }
 
-QString Index::getConditionalExpression(void)
+QString Index::getPredicate(void)
 {
-	return(conditional_expr);
+  return(predicate);
 }
 
 bool Index::isReferRelationshipAddedColumn(void)
@@ -295,7 +296,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? "1" : "");
 	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? "1" : "");
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::CONDITION]=conditional_expr;
+  attributes[ParsersAttributes::PREDICATE]=predicate;
 	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 
   if(getParentTable())
@@ -308,6 +309,9 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 
 	if(this->indexing_type==IndexingType::gin)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
+
+	if(this->indexing_type==IndexingType::gist)
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? "1" : "");
 
 	if(this->indexing_type==IndexingType::btree && fill_factor >= 10)
 	{

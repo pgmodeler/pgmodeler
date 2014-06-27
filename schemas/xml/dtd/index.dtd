@@ -2,11 +2,12 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT index (tablespace?,comment?,idxelement+,condition?)>
+<!ELEMENT index (tablespace?,comment?,idxelement+,predicate?)>
 <!ATTLIST index name CDATA #REQUIRED>
 <!ATTLIST index unique (true | false) "false">
 <!ATTLIST index concurrent (true | false) "false">
 <!ATTLIST index fast-update (true | false) "false">
+<!ATTLIST index buffering (true | false) "false">
 <!ATTLIST index index-type CDATA #REQUIRED>
 <!ATTLIST index factor CDATA #REQUIRED>
 <!ATTLIST index table CDATA #IMPLIED>

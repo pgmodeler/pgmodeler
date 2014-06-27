@@ -24,10 +24,10 @@ macx {
 }
 
 windows {
- PGSQL_LIB = C:/PostgreSQL/9.2/bin/libpq.dll
- PGSQL_INC = C:/PostgreSQL/9.2/include
- XML_INC = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/include
- XML_LIB = C:/Qt/Qt5.2.0/5.2.0/mingw48_32/bin/libxml2.dll
+ PGSQL_LIB = C:/PostgreSQL/9.3/bin/libpq.dll
+ PGSQL_INC = C:/PostgreSQL/9.3/include
+ XML_INC = C:/Qt/Qt5.3.0/5.3/mingw482_32/include
+ XML_LIB = C:/Qt/Qt5.3.0/5.3/mingw482_32/bin/libxml2-2.dll
 }
 
 macx | windows {
@@ -103,7 +103,7 @@ SUBDIRS = libutils \
 #Include the tests subproject only on debug mode
 CONFIG(debug, debug|release):SUBDIRS+=tests
 
-QT += core widgets printsupport
+QT += core widgets printsupport network
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
@@ -169,14 +169,12 @@ INCLUDEPATH += $$XML_INC \
 pgmodeler_data.files = samples schemas lang conf
 pgmodeler_data.path = $$RESDESTDIR
 
-pgmodeler_doc.files = README.md CHANGELOG.md LICENSE
+pgmodeler_doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
 pgmodeler_doc.path = $$DOCDESTDIR
 
 unix {
 !macx:pgmodeler_data.files += pgmodeler.vars
+linux:pgmodeler_data.files += start-pgmodeler.sh
 }
-
-# deploy binaries
-# pgmodeler.path = $$BINDESTDIR
 
 INSTALLS += pgmodeler_data pgmodeler_doc

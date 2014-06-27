@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE TYPE ] @{name}
 
 %if @{reduced-form} %then
@@ -26,7 +28,7 @@
      %if @{enumerations} %then [ ENUM ] (@{enumerations}); %end
    %end
 
-   %if @{pgsql92} %or @{pgsql93} %and @{range} %then
+   %if %not @{pgsql90} %and %not @{pgsql91} %and @{range} %then
     [RANGE (] $br
     [SUBTYPE = ] @{subtype}
     
@@ -63,7 +65,7 @@
   $br
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
-  %if @{appended-sql} %then @{appended-sql} %end
+  %if @{appended-sql} %then @{appended-sql} %end  
 %end
 
 # This is a special token that pgModeler recognizes as end of DDL command

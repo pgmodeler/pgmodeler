@@ -4,19 +4,23 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    QMAKE_ARGS="-r -spec linux-g++-64"
-    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc_64/bin
+    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc_64
+    FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    QMAKE_ARGS="-r -spec linux-g++"
-    FALLBACK_QMAKE_ROOT=/opt/qt-5.2.1/5.2.1/gcc/bin
+    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc
+    FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
 
+# Uncomment this line if your system doesn't have LLVM (clang) compiler tools
+#QMAKE_ARGS="-r -spec linux-g++"
+QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
+QT_IFW_ROOT=/opt/qt-if-1.5.0
 
 # Detecting current pgModeler version
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
@@ -24,9 +28,15 @@ BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
+GEN_INSTALLER_OPT='-gen-installer'
+GEN_INST_PKG=0
 
 if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+fi
+
+if [[ "$*" == "$GEN_INSTALLER_OPT" ]]; then
+  GEN_INST_PKG=1
 fi
 
 PKGFILE=$PKGNAME.tar.gz
@@ -56,11 +66,12 @@ else
   QT_LIBS="libQt5DBus.so.5 \
            libQt5PrintSupport.so.5 \
            libQt5Widgets.so.5 \
+           libQt5Network.so.5 \
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
-           libicui18n.so.51 \
-           libicuuc.so.51 \
-           libicudata.so.51"
+           libicui18n.so.5* \
+           libicuuc.so.5* \
+           libicudata.so.5*"
 fi
 
 clear
@@ -79,6 +90,7 @@ fi
 if [ -e "$FALLBACK_QMAKE_ROOT/qmake" ]; then
   QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_2=${QT_VER_2:0:5}
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
 
 # If Qt was not found in system path or fallback path
@@ -116,6 +128,10 @@ echo "Deploying version: $DEPLOY_VER"
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
   echo "Qt libs will not be included on the package. (Found $NO_QT_LIBS_OPT)"
+fi
+
+if [ $GEN_INST_PKG = 1 ]; then
+  echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
 fi
 
 echo "Cleaning previous compilation..."
@@ -193,12 +209,12 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-
-echo "Packaging installation..."
+echo "Generating tarball..."
 rm -r $PKGNAME  >> $LOG 2>&1
 mkdir $PKGNAME  >> $LOG 2>&1
 cp -r build/* $PKGNAME  >> $LOG 2>&1
 tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
+rm -r $PKGNAME  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -208,5 +224,23 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "File created: $PKGFILE"
+
+
+if [ $GEN_INST_PKG = 1 ]; then
+
+  echo "Generating installer..."
+  $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
+
+ if [ $? -ne 0 ]; then
+   echo
+   echo "** Failed to create installer!"
+   echo
+   exit 1
+ fi
+
+ echo "File created: $PKGNAME.run"
+fi
+
+
 echo "pgModeler successfully deployed!"
 echo

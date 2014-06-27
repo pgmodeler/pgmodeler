@@ -137,6 +137,9 @@ void PgModelerNS::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, Object
     case OBJ_TAG:
      copyObject(psrc_obj, dynamic_cast<Tag *>(copy_obj));
     break;
+		case OBJ_EVENT_TRIGGER:
+		 copyObject(psrc_obj, dynamic_cast<EventTrigger *>(copy_obj));
+		break;
 		default:
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;

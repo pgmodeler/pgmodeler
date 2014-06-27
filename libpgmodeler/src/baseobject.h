@@ -62,6 +62,7 @@ enum ObjectType {
 	OBJ_DATABASE,
 	OBJ_COLLATION,
 	OBJ_EXTENSION,
+	OBJ_EVENT_TRIGGER,
 	OBJ_RELATIONSHIP,
 	OBJ_TEXTBOX,
 	OBJ_PERMISSION,
@@ -93,7 +94,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType (excluding BASE_OBJECT and BASE_TABLE).
-    static const int OBJECT_TYPE_COUNT=34;
+		static const int OBJECT_TYPE_COUNT=35;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -144,7 +145,12 @@ class BaseObject {
 						//! \brief Object's name (in PostgreSQL accepted format)
 						obj_name,
 
-						appended_sql;
+            //! brief The set of SQL commands appended on the objectc's definition
+            appended_sql,
+
+            //! brief The set of SQL commands prepended on the objectc's definition
+            prepended_sql;
+
 
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
 		 by SchemaParser on the object's code definition creation. The attribute
@@ -247,6 +253,9 @@ class BaseObject {
 		//! \brief Assign to the object a set of SQL commands to be appended to it's definition
 		void setAppendedSQL(const QString &sql);
 
+    //! \brief Assign to the object a set of SQL commands to be prepended to it's definition
+    void setPrependedSQL(const QString &sql);
+
 		//! \brief Returns if the generated SQL is commented
 		bool isSQLDisabled(void);
 
@@ -288,7 +297,9 @@ class BaseObject {
 		//! \brief Returns the collation that the object makes use
 		BaseObject *getCollation(void);
 
-		QString getAppendedSQL(void);
+    QString getAppendedSQL(void);
+
+    QString getPrependedSQL(void);
 
 		//! \brief Returns the object's generated id
 		unsigned getObjectId(void);
@@ -321,7 +332,7 @@ class BaseObject {
 		static bool acceptsCollation(ObjectType obj_type);
 
 		//! \brief Returns if the specified type accepts to have appended sql commands
-		static bool acceptsAppendedSQL(ObjectType obj_type);
+		static bool acceptsCustomSQL(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
@@ -336,7 +347,7 @@ class BaseObject {
 		bool acceptsCollation(void);
 
 		//! \brief Returns if the object accepts to have appended sql commands
-		bool acceptsAppendedSQL(void);
+		bool acceptsCustomSQL(void);
 
     /*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.

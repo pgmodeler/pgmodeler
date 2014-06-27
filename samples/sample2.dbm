@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel>
+<dbmodel pgmodeler-ver="0.7.2-beta1" last-position="0,0" last-zoom="1">
 <role name="admin1"
       superuser="true"
       connlimit="500"
@@ -53,7 +53,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[comentario no espaco tabela teste]]></comment>
 </tablespace>
 
-<schema name="public" rect-visible="true" fill-color="#ffc0c0">
+<database name="sampledb" encoding="UTF8" template="template1" connlimit="10" lc-collate="pt_BR" lc-ctype="pt_BR">
+	<role name="admin1"/>
+	<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
+	<comment><![CDATA[comentario no banco de dados teste]]></comment>
+</database>
+
+<schema name="public" protected="true" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
 </schema>
 
 <schema name="schema_B" rect-visible="true" fill-color="#c0c0ff">
@@ -66,12 +72,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <schema name="schema_C" rect-visible="true" fill-color="#ffdca8">
 </schema>
-
-<database name="sampledb" encoding="UTF8" template="template1" connlimit="10" lc-collate="pt_BR" lc-ctype="pt_BR">
-	<role name="admin1"/>
-	<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
-	<comment><![CDATA[comentario no banco de dados teste]]></comment>
-</database>
 
 <function name="funcao_validator"
 		window-func="false"
@@ -1005,14 +1005,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</line>
 </relationship>
 
-<sequence name="sequencia_teste"
-	 start="2" increment="1"
-	 min-value="0" max-value="9223372036854775807"
-	 cache="1" cycle="true" owner-col="&quot;schema_B&quot;.&quot;table_B3&quot;.&quot;coluna_B1&quot;">
-	<schema name="&quot;schema_B&quot;"/>
-	<comment><![CDATA[Comentário na sequencia teste]]></comment>
-</sequence>
-
 <textbox name="caixa_texto_Teste" italic="true" font-size="9">
 	<position x="340" y="240"/>
 	<comment><![CDATA[Caixa X:0 Y:0]]></comment>
@@ -1022,7 +1014,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4" constr-indexes="3,4"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 src-required="false" dst-required="true"/>
@@ -1031,14 +1022,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4" constr-indexes="3,4"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="750.444" y="556.293"/>
-	<position x="750.444" y="503.333"/>
-	<position x="655.111" y="503.333"/>
+		<position x="748.444" y="550.693"/>
+	<position x="748.444" y="503.333"/>
+	<position x="653.777" y="503.333"/>
 	</line>
 </relationship>
 
@@ -1046,7 +1036,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="5" constr-indexes="5"
 	 src-table="&quot;schema_A&quot;.&quot;table_A3&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 src-required="false" dst-required="false">
@@ -1060,7 +1049,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4" constr-indexes="2,3"
 	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 src-required="true" dst-required="false"	 identifier="true"
@@ -1070,7 +1058,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4,-1" attrib-indexes="5,6,7" constr-indexes="3,4294967295"
 	 src-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
 	 src-required="true" dst-required="false"	 identifier="true"
@@ -1098,7 +1085,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4,-1" attrib-indexes="5,6,7" constr-indexes="3,4294967295"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="public.&quot;tabela_B_4c&quot;"
 	 src-required="false" dst-required="false"
@@ -1121,7 +1107,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="4,5" constr-indexes="3"
 	 src-table="public.&quot;tabela_B_4c&quot;"
 	 dst-table="public.&quot;tabela_B_4a&quot;"
 	 src-required="false" dst-required="false"
@@ -1139,7 +1124,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 col-indexes="5" constr-indexes="4"
 	 src-table="&quot;schema_C&quot;.&quot;table_C3&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 src-required="false" dst-required="false"

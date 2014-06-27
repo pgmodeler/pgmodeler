@@ -21,7 +21,7 @@
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=gen_alter_cmds=false;
+	with_oid=gen_alter_cmds=unlogged=false;
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
 	attributes[ParsersAttributes::INDEXES]="";
@@ -33,6 +33,10 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
+  attributes[ParsersAttributes::COL_INDEXES]="";
+  attributes[ParsersAttributes::CONSTR_INDEXES]="";
+	attributes[ParsersAttributes::UNLOGGED]="";
+
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
 }
@@ -67,6 +71,11 @@ void Table::setSchema(BaseObject *schema)
 void Table::setWithOIDs(bool value)
 {
 	with_oid=value;
+}
+
+void Table::setUnlogged(bool value)
+{
+	unlogged=value;
 }
 
 void Table::setProtected(bool value)
@@ -135,7 +144,35 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+}
+
+void Table::setRelObjectsIndexesAttribute(void)
+{
+  attribs_map aux_attribs;
+  vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
+  QString attribs[]={ ParsersAttributes::COL_INDEXES,  ParsersAttributes::CONSTR_INDEXES };
+  ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
+  unsigned idx=0, size=obj_indexes.size();
+
+  for(idx=0; idx < size; idx++)
+  {
+    attributes[attribs[idx]]="";
+
+    if(!obj_indexes[idx]->empty())
+    {
+      for(auto obj_idx : (*obj_indexes[idx]))
+      {
+        aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
+        aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
+        aux_attribs[ParsersAttributes::OBJECTS]+=SchemaParser::getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XML_DEFINITION);
+      }
+
+      aux_attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
+      attributes[attribs[idx]]=SchemaParser::getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XML_DEFINITION);
+      aux_attribs.clear();
+    }
+  }
 }
 
 void Table::setColumnsAttribute(unsigned def_type)
@@ -1098,6 +1135,11 @@ bool Table::isWithOIDs(void)
 	return(with_oid);
 }
 
+bool Table::isUnlogged(void)
+{
+	return(unlogged);
+}
+
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
 	unsigned count,i;
@@ -1114,6 +1156,156 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 	}
 
   return(found);
+}
+
+void Table::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type)
+{
+  if(!obj_names.empty() && obj_names.size()==idxs.size())
+  {
+    map<QString, unsigned > *obj_idxs_map=nullptr;
+    unsigned idx=0, size=obj_names.size();
+
+    if(obj_type==OBJ_COLUMN)
+      obj_idxs_map=&col_indexes;
+    else if(obj_type==OBJ_CONSTRAINT)
+      obj_idxs_map=&constr_indexes;
+    else
+      throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    for(idx=0; idx < size; idx++)
+      (*obj_idxs_map)[obj_names[idx]]=idxs[idx];
+  }
+}
+
+void Table::saveRelObjectsIndexes(ObjectType obj_type)
+{
+  map<QString, unsigned > *obj_idxs_map=nullptr;
+  vector<TableObject *> *list=nullptr;
+
+  if(obj_type==OBJ_COLUMN)
+  {
+    obj_idxs_map=&col_indexes;
+    list=&columns;
+  }
+  else if(obj_type==OBJ_CONSTRAINT)
+  {
+    obj_idxs_map=&constr_indexes;
+    list=&constraints;
+  }
+
+  obj_idxs_map->clear();
+
+  if(isReferRelationshipAddedObject())
+  {
+    unsigned idx=0;
+
+    for(auto obj : (*list))
+    {
+      if(obj->isAddedByLinking())
+        (*obj_idxs_map)[obj->getName()]=idx;
+
+      idx++;
+    }
+  }
+}
+
+void Table::saveRelObjectsIndexes(void)
+{
+  saveRelObjectsIndexes(OBJ_COLUMN);
+  saveRelObjectsIndexes(OBJ_CONSTRAINT);
+}
+
+void Table::restoreRelObjectsIndexes(void)
+{
+  restoreRelObjectsIndexes(OBJ_COLUMN);
+  restoreRelObjectsIndexes(OBJ_CONSTRAINT);
+
+  if(!col_indexes.empty() || !constr_indexes.empty())
+   this->setModified(true);
+}
+
+void Table::restoreRelObjectsIndexes(ObjectType obj_type)
+{
+  map<QString, unsigned> *obj_idxs=nullptr;
+
+  if(obj_type==OBJ_COLUMN)
+    obj_idxs=&col_indexes;
+  else
+    obj_idxs=&constr_indexes;
+
+  if(!obj_idxs->empty())
+  {
+    vector<TableObject *> *list=getObjectList(obj_type);
+    vector<TableObject *> new_list;
+    vector<TableObject *>::iterator itr;
+    QString name;
+    TableObject *tab_obj=nullptr;
+    unsigned i=0, pos=0, size=0, obj_idx, names_used=0, aux_size=0;
+
+    size=list->size();
+
+    /* Indentify the maximum index on the existing rel objects. This is done
+    to correctly resize the new list in order to avoid exceed the list bounds
+    and consequently crashing the app */
+    for(auto itr : *obj_idxs)
+    {
+      if(aux_size < (itr.second + 1))
+        aux_size=itr.second + 1;
+    }
+
+    /* If the auxiliary size is lesser than the current object list size
+       the new list is resized with same capacity of the "list" vector */
+    if(aux_size < size)
+      aux_size=size;
+
+    new_list.resize(aux_size);
+
+    for(auto obj : *list)
+    {
+      name=obj->getName();
+
+      //Check if the current object is a relationship created one and its name is on the custom index map
+      if(obj->isAddedByLinking() && obj_idxs->count(name))
+      {
+        //Allocate the object on its original position
+        obj_idx=obj_idxs->at(name);
+        new_list[obj_idx]=obj;
+        names_used++;
+      }
+    }
+
+    /* Allocating the other objects, the ones that aren't created by relationship or
+       the one which were created by relationship but weren't positioned yet */
+    pos=i=0;
+    while(pos < size && i < size)
+    {
+      tab_obj=list->at(pos);
+      name=tab_obj->getName();
+
+      if(!new_list[i] && obj_idxs->count(name)==0)
+      {
+        new_list[i]=tab_obj;
+        pos++;
+        i++;
+      }
+      else if(obj_idxs->count(name)!=0)
+        pos++;
+      else if(new_list[i])
+        i++;
+    }
+
+    //Removing unused items (nullptr ones) from the list using remove_if and lambdas (for predicate)
+    new_list.erase(remove_if(new_list.begin(), new_list.end(),
+                             [](TableObject *obj){ return(obj==nullptr); }), new_list.end());
+
+    (*list)=new_list;
+
+    /* Checking if the object names used are equal to the map size. If not, indicates that
+       one o more objects on the map doesn't exists anymore on the table thus there is
+       the need to updated the object index map */
+    if(names_used!=obj_idxs->size())
+      saveRelObjectsIndexes(obj_type);
+  }
 }
 
 bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
@@ -1166,6 +1358,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 {
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? "1" : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
   attributes[ParsersAttributes::TAG]="";
@@ -1186,7 +1379,10 @@ QString Table::getCodeDefinition(unsigned def_type)
 	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
+  {
+    setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+  }
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -1196,7 +1392,10 @@ void Table::operator = (Table &tab)
 	QString prev_name = this->getName(true);
 
   (*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
-	this->with_oid=tab.with_oid;
+
+  this->with_oid=tab.with_oid;
+  this->col_indexes=tab.col_indexes;
+  this->constr_indexes=tab.constr_indexes;
 
 	setGenerateAlterCmds(tab.gen_alter_cmds);
 	setProtected(tab.is_protected);
@@ -1266,26 +1465,6 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 				(*itr2)=aux_obj;
 			}
 		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}
-
-void Table::moveObjectToIndex(TableObject *tab_obj, unsigned idx)
-{
-	unsigned curr_idx;
-
-	try
-	{
-		if(!tab_obj)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		curr_idx=getObjectIndex(tab_obj);
-
-		if(curr_idx!=idx)
-			swapObjectsIndexes(tab_obj->getObjectType(), curr_idx, idx);
 	}
 	catch(Exception &e)
 	{

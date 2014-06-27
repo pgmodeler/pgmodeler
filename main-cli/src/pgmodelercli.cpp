@@ -43,6 +43,7 @@ QString PgModelerCLI::SIMULATE="--simulate";
 QString PgModelerCLI::FIX_MODEL="--fix-model";
 QString PgModelerCLI::FIX_TRIES="--fix-tries";
 QString PgModelerCLI::ZOOM_FACTOR="--zoom";
+QString PgModelerCLI::USE_TMP_NAMES="--use-tmp-names";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -186,6 +187,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[FIX_MODEL]=false;
 	long_opts[FIX_TRIES]=true;
 	long_opts[ZOOM_FACTOR]=true;
+  long_opts[USE_TMP_NAMES]=false;
 
 
 	short_opts[INPUT]="-i";
@@ -212,6 +214,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[FIX_MODEL]="-F";
 	short_opts[FIX_TRIES]="-t";
 	short_opts[ZOOM_FACTOR]="-z";
+  short_opts[USE_TMP_NAMES]="-n";
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -245,7 +248,7 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("General options: ") << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
-	out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable on pgModeler 0.6.x.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
+  out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
 	out << trUtf8("   %1, %2\t\t Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
@@ -265,7 +268,8 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
 	out << trUtf8("   %1, %2\t\t Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
 	out << trUtf8("   %1, %2\t\t Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
-	out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
+  out << trUtf8("   %1, %2\t\t Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[USE_TMP_NAMES]).arg(USE_TMP_NAMES) << endl;
+  out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
 	out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
 	out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
 	out << trUtf8("   %1, %2=[USER]\t\t PosrgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
@@ -416,7 +420,11 @@ int PgModelerCLI::exec(void)
 					if(!silent_mode)
 						out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
 
-					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER], parsed_opts.count(IGNORE_DUPLICATES) > 0, parsed_opts.count(DROP_DATABASE) > 0, parsed_opts.count(SIMULATE) > 0);
+          export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER],
+                                  parsed_opts.count(IGNORE_DUPLICATES) > 0,
+                                  parsed_opts.count(DROP_DATABASE) > 0,
+                                  parsed_opts.count(SIMULATE) > 0,
+                                  parsed_opts.count(USE_TMP_NAMES) > 0);
 				}
 
 				if(!silent_mode)
@@ -710,7 +718,7 @@ void PgModelerCLI::recreateObjects(void)
 
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
-	QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(.)*(\")";
+  QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")"; //"(%1)( )*(=)(\")(.)*(\")";
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
@@ -740,13 +748,27 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-	//Remove auto-sufix, src-sufix and dst-sufix from <relationship> tags.
+  //Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
 		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
+    obj_xml.remove(QRegExp(att_regexp.arg("col-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("constr-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
 	}
+
+  //Renaming the tag <condition> to <predicate> on indexes
+  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_INDEX))))
+  {
+    obj_xml.replace(tag.arg(ParsersAttributes::CONDITION), tag.arg(ParsersAttributes::PREDICATE));
+    obj_xml.replace(end_tag.arg(ParsersAttributes::CONDITION), end_tag.arg(ParsersAttributes::PREDICATE));
+  }
+
+	//Renaming the attribute default to default-value on domain
+	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_DOMAIN))))
+		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
 
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(tag.arg("grant")))
@@ -803,8 +825,7 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 	ParsersAttributes::TABLE_NAME, ParsersAttributes::SPECIAL_PK_COLS, ParsersAttributes::TABLE,
 	ParsersAttributes::ANCESTOR_TABLE, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
 	ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN, ParsersAttributes::PK_PATTERN,
-	ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
-	ParsersAttributes::COL_INDEXES, ParsersAttributes::CONSTR_INDEXES, ParsersAttributes::ATTRIB_INDEXES };
+  ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);

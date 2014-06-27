@@ -37,7 +37,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 
 		QFrame *info_frm, *warn_frm;
 
-		SyntaxHighlighter *check_expr_hl;
+    SyntaxHighlighter *expression_hl;
 
 		ElementsWidget *excl_elems_wgt;
 

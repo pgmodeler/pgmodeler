@@ -14,6 +14,14 @@
   [ protected=] "true"
  %end
 
+ %if @{last-position} %then
+  [ last-position=] "@{last-position}"
+ %end
+
+ %if @{last-zoom} %then
+  [ last-zoom=] "@{last-zoom}"
+ %end
+
  > $br
  %if @{objects} %then @{objects} %end
  %if @{permission} %then @{permission} %end

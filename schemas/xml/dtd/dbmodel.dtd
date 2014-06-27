@@ -52,9 +52,15 @@
 %extension;
 <!ENTITY % tag SYSTEM "tag.dtd">
 %tag;
+<!ENTITY % customidxs SYSTEM "customidxs.dtd">
+%customidxs;
+<!ENTITY % eventtrigger SYSTEM "eventtrigger.dtd">
+%eventtrigger;
 
 <!ELEMENT dbmodel ANY>
 
 <!ATTLIST dbmodel author CDATA #IMPLIED>
 <!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST dbmodel protected (false|true) "false">
+<!ATTLIST dbmodel last-position CDATA #IMPLIED>
+<!ATTLIST dbmodel last-zoom CDATA #IMPLIED>

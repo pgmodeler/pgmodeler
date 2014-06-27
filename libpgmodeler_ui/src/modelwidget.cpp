@@ -50,6 +50,8 @@
 #include "extensionwidget.h"
 #include "sqlappendwidget.h"
 #include "tagwidget.h"
+#include "eventtriggerwidget.h"
+#include "configurationform.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -84,10 +86,12 @@ extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern ObjectRenameWidget *objectrename_wgt;
 extern PermissionWidget *permission_wgt;
 extern SQLAppendWidget *sqlappend_wgt;
+extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
+bool ModelWidget::save_restore_pos=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 
 const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
@@ -110,7 +114,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 											 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 											 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 											 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-                       OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG };
+											 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -119,6 +123,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	current_zoom=1;
 	modified=false;
 	new_obj_type=BASE_OBJECT;
+
 
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
@@ -142,7 +147,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setMaximumSize(QSize(32, 32));
 	label->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
 
-	grid=new QGridLayout;
+  grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
 
 	label=new QLabel(protected_model_frm);
@@ -176,12 +181,29 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->centerOn(0,0);
-	this->applyZoom(1);
 
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
+
+  zoom_info_lbl=new QLabel(this);
+  zoom_info_lbl->raise();
+  zoom_info_lbl->setAutoFillBackground(false);
+  zoom_info_lbl->setText("Zoom: 100%");
+  zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+  zoom_info_lbl->setStyleSheet("color: #C8000000; \
+                               background-color: #C8FFFF80;\
+                               border: 1px solid #C8B16351;");
+
+  font=zoom_info_lbl->font();
+  font.setBold(true);
+  font.setPointSizeF(12);
+  zoom_info_lbl->setFont(font);
+  zoom_info_lbl->adjustSize();
+  zoom_info_lbl->setVisible(false);
+
+  zoom_info_timer.setInterval(3000);
 
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
   action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
@@ -217,6 +239,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
+  //action_new_object->setShortcut(QKeySequence(trUtf8("K")));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
 	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
@@ -242,10 +265,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
 	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
 
-	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Append SQL"), this);
+  action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Custom SQL"), this);
   action_append_sql->setShortcut(QKeySequence(trUtf8("Alt+Q")));
 
-	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Create sequence"), this);
+  action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to sequence"), this);
+  action_conv_int_serial=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to serial"), this);
+
 	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
 
 	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
@@ -300,6 +325,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		rels_menu->addAction(action);
 	}
 
+  new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
+  new_obj_overlay_wgt->setObjectName("new_obj_overlay_wgt");
+  new_obj_overlay_wgt->setVisible(false);
+
+  connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
 	connect(action_protect, SIGNAL(triggered(bool)),this,SLOT(protectObject(void)));
@@ -317,7 +347,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(appendSQL(void)));
-	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceForColumn(void)));
+  connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceFromColumn(void)));
+  connect(action_conv_int_serial, SIGNAL(triggered(bool)), this, SLOT(convertIntegerToSerial(void)));
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
@@ -330,6 +361,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 
+  connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
+  connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
+
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
@@ -337,6 +373,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 ModelWidget::~ModelWidget(void)
 {
+    popup_menu.clear();
+    new_object_menu.clear();
+    quick_actions_menu.clear();
+    schemas_menu.clear();
+    owners_menu.clear();
+    tags_menu.clear();
+    break_rel_menu.clear();
 	op_list->removeOperations();
 	db_model->destroyObjects();
 	delete(viewport);
@@ -363,6 +406,10 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 	scene->setSceneRect(ret);
 
+  zoom_info_lbl->move((this->width()/2) - (zoom_info_lbl->width()/2),
+                      (this->height()/2)  - (zoom_info_lbl->height()/2));
+
+  adjustOverlayPosition();
 	emit s_modelResized();
 }
 
@@ -383,8 +430,8 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		this->keyPressEvent(k_event);
 		return(true);
 	}
-	else
-		return(QWidget::eventFilter(object, event));
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
@@ -392,9 +439,18 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	//Cancels the insertion action when ESC is pressed
 	if(event->key()==Qt::Key_Escape)
 	{
-		this->cancelObjectAddition();
-		scene->clearSelection();
+    if(new_obj_overlay_wgt->isVisible())
+      new_obj_overlay_wgt->hide();
+    else
+    {
+      this->cancelObjectAddition();
+      scene->clearSelection();
+    }
 	}
+  else if(event->key()==Qt::Key_N)
+  {   
+    toggleNewObjectOverlay();
+  }
   else if((event->modifiers()==Qt::ControlModifier ||
           (event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))) &&
           (event->key()==Qt::Key_Left || event->key()==Qt::Key_Right ||
@@ -446,11 +502,66 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
   }
 }
 
+bool ModelWidget::saveLastCanvasPosition(void)
+{
+  if(save_restore_pos)
+  {
+    QScrollBar *hscroll=viewport->horizontalScrollBar(),
+               *vscroll=viewport->verticalScrollBar();
+    QPoint pos=db_model->getLastPosition();
+
+    //Save the zoom or position only one of these attributes has changed
+    if(db_model->getLastZoomFactor()!=current_zoom ||
+       pos.x()!=hscroll->value() || pos.y()!=vscroll->value())
+    {
+      db_model->setLastPosition(QPoint(viewport->horizontalScrollBar()->value(),
+                                       viewport->verticalScrollBar()->value()));
+      db_model->setLastZoomFactor(this->current_zoom);
+      return(true);
+    }
+  }
+
+  return(false);
+}
+
+void ModelWidget::hideEvent(QHideEvent *)
+{
+  try
+  {
+    if(!modified &&  saveLastCanvasPosition())
+      db_model->saveModel(this->filename, SchemaParser::XML_DEFINITION);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}
+
+void ModelWidget::restoreLastCanvasPosition(void)
+{
+  if(save_restore_pos)
+  {
+    QScrollBar *hscroll=viewport->horizontalScrollBar(),
+               *vscroll=viewport->verticalScrollBar();
+
+    if(db_model->getLastZoomFactor()!=1.0)
+      this->applyZoom(db_model->getLastZoomFactor());
+
+    hscroll->setValue(db_model->getLastPosition().x());
+    vscroll->setValue(db_model->getLastPosition().y());
+
+    scene->update();
+  }
+}
+
 void ModelWidget::applyZoom(float zoom)
 {
-	//Aplica o zoom somente se este for válido
 	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
-	{
+  {
+    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(zoom * 100, 'g' , 3)));
+    zoom_info_lbl->setVisible(true);
+    zoom_info_timer.start();
+
 		viewport->resetTransform();
 		viewport->scale(zoom, zoom);
 
@@ -546,10 +657,22 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
 		{
-			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-			viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
-			this->new_obj_type=obj_type;
-			this->enableModelActions(false);
+      /* A small checking to enable the overlay widget to create relationships and
+         other graphical objects without the user click on the canvas area */
+      if((obj_type > BASE_OBJECT &&
+          selected_objects.size()==2 &&
+          selected_objects.at(0)->getObjectType()==OBJ_TABLE &&
+          selected_objects.at(1)->getObjectType()==OBJ_TABLE))
+      {
+        this->showObjectForm(obj_type);
+      }
+      else
+      {
+        //For the graphical object, changes the cursor icon until the user click on the model to show the editing form
+        viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
+        this->new_obj_type=obj_type;
+        this->enableModelActions(false);
+      }
 		}
 	}
 }
@@ -651,7 +774,6 @@ void ModelWidget::configureObjectSelection(void)
 	BaseObjectView *item=nullptr;
 	map<unsigned, QGraphicsItem *> objs_map;
 	map<unsigned, QGraphicsItem *>::iterator itr;
-	//deque<unsigned> sort_vect;
 
 	selected_objects.clear();
 
@@ -914,18 +1036,18 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));
-		task_prog_wgt->show();
+		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));	
+    task_prog_wgt->show();
 
-		db_model->loadModel(filename);
-		this->filename=filename;
-		this->adjustSceneSize();
+    db_model->loadModel(filename);
+    this->filename=filename;
+    this->adjustSceneSize();
 
 		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+    disconnect(db_model, nullptr, task_prog_wgt, nullptr);
 
 		protected_model_frm->setVisible(db_model->isProtected());
-		this->modified=false;
+    this->modified=false;
 	}
 	catch(Exception &e)
 	{
@@ -966,10 +1088,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QRectF margins;
-		QPrinter::PaperSize paper_size;
+    QRectF margins, page_rect;
+    QPrinter::PaperSize paper_size_id;
 		QPrinter::Orientation orient;
-		QSizeF page_size, custom_p_size;
+    QSizeF paper_size, custom_p_size;
+    QSize page_size;
 		QPen pen;
 		QFont font;
 		QPointF top_left, top_right, bottom_left, bottom_right,
@@ -985,18 +1108,15 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		scene->clearSelection();
 
 		//Get the page size based on the printer settings
-		ObjectsScene::getPaperConfiguration(paper_size, orient, margins, custom_p_size);
+    ObjectsScene::getPaperConfiguration(paper_size_id, orient, margins, custom_p_size);
+    paper_size=printer->paperSize(QPrinter::Point);
 
-		page_size=printer->paperSize(QPrinter::DevicePixel);
-
-		if(paper_size!=QPrinter::Custom)
-			page_size-=margins.size();
-		else
-			#warning "Custom page size bug (QTBUG-33645) workaround."
-			printer->setPaperSize(QSizeF(page_size.height(), page_size.width()), QPrinter::DevicePixel);
+    if(paper_size_id!=QPrinter::Custom)
+      paper_size-=margins.size();
 
 		//Get the pages rect for printing
-    pages=scene->getPagesForPrinting(page_size, margins.size(), h_page_cnt, v_page_cnt);
+    pages=scene->getPagesForPrinting(paper_size, margins.size(), h_page_cnt, v_page_cnt);
+    page_size=printer->pageRect().size();
 
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
@@ -1008,11 +1128,14 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		//Calculates the auxiliary points to draw the page delimiter lines
 		top_left.setX(0); top_left.setY(0);
 		top_right.setX(page_size.width()); top_right.setY(0);
+
 		bottom_left.setX(0); bottom_left.setY(page_size.height());
 		bottom_right.setX(top_right.x()); bottom_right.setY(bottom_left.y());
-		h_top_mid.setX(page_size.width()/2); h_top_mid.setY(0);
+
+    h_top_mid.setX(page_size.width()/2); h_top_mid.setY(0);
 		h_bottom_mid.setX(h_top_mid.x()); h_bottom_mid.setY(bottom_right.y());
-		v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
+
+    v_left_mid.setX(top_left.x()); v_left_mid.setY(page_size.height()/2);
 		v_right_mid.setX(top_right.x()); v_right_mid.setY(v_left_mid.y());
 
 		dx.setX(margins.left());
@@ -1039,11 +1162,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			{
 				painter.drawLine(top_left, top_left + dx);
 				painter.drawLine(top_left, top_left + dy);
-			}
+      }
 
-			if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
-			{
-				painter.drawLine(top_right, top_right - dx1);
+      if(h_pg_id==h_page_cnt-1 && v_pg_id==0)
+      {
+        painter.drawLine(top_right, top_right - dx1);
 				painter.drawLine(top_right, top_right + dy);
 			}
 
@@ -1081,7 +1204,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			{
 				painter.drawLine(v_right_mid, v_right_mid - dy1);
 				painter.drawLine(v_right_mid, v_right_mid + dy);
-			}
+      }
 
 			h_pg_id++;
 
@@ -1092,7 +1215,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 			}
 
 			if(page < page_cnt-1)
-				printer->newPage();
+        printer->newPage();
 		}
 
 		//Restore the grid option backup
@@ -1118,9 +1241,11 @@ void ModelWidget::saveModel(const QString &filename)
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
-		task_prog_wgt->show();
+    task_prog_wgt->show();
 
-		db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
+    saveLastCanvasPosition();
+    db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
+
 		this->filename=filename;
 
 		task_prog_wgt->close();
@@ -1379,6 +1504,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
         res=(tag_wgt->result()==QDialog::Accepted);
       break;
 
+			case OBJ_EVENT_TRIGGER:
+				eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
+				eventtrigger_wgt->show();
+				res=(eventtrigger_wgt->result()==QDialog::Accepted);
+			break;
+
 			default:
 			case OBJ_DATABASE:
 				database_wgt->setAttributes(db_model);
@@ -1411,7 +1542,7 @@ void ModelWidget::showDependenciesReferences(void)
 
 		if(object)
 		{
-			deps_refs_wgt->setAttributes(this->db_model, object);
+      deps_refs_wgt->setAttributes(this, object);
 			deps_refs_wgt->show();
 		}
 	}
@@ -1796,6 +1927,7 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
+    copied_objects.clear();
 	obj_itr=objs_map.begin();
 	while(obj_itr!=objs_map.end())
 	{
@@ -2490,7 +2622,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(BaseObject::acceptsAppendedSQL(obj->getObjectType()))
+		if(BaseObject::acceptsCustomSQL(obj->getObjectType()))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
 			quick_actions_menu.addAction(action_append_sql);
@@ -2526,16 +2658,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
+			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
 													 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
                            OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
-
-			unsigned cnt = sizeof(types)/sizeof(ObjectType);
+      unsigned cnt = sizeof(types)/sizeof(ObjectType);
 
 			//Configures the "New object" menu with the types at database level
 			for(i=0; i < cnt; i++)
+      {
+        //actions_new_objects[types[i]]->setShortcut(QKeySequence(shortcuts[i]));
 				new_object_menu.addAction(actions_new_objects[types[i]]);
+      }
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
@@ -2659,6 +2793,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					action_create_seq_col->setData(QVariant::fromValue<void *>(col));
 					popup_menu.addAction(action_create_seq_col);
 				}
+        else if(col->getType().isIntegerType())
+        {
+          action_conv_int_serial->setData(QVariant::fromValue<void *>(col));
+          popup_menu.addAction(action_conv_int_serial);
+        }
 			}
 
 			popup_menu.addSeparator();
@@ -2828,7 +2967,12 @@ DatabaseModel *ModelWidget::getDatabaseModel(void)
 
 OperationList *ModelWidget::getOperationList(void)
 {
-	return(op_list);
+  return(op_list);
+}
+
+void ModelWidget::saveLastCanvasPosition(bool value)
+{
+  ModelWidget::save_restore_pos=value;
 }
 
 void ModelWidget::highlightObject(void)
@@ -2848,10 +2992,33 @@ void ModelWidget::highlightObject(void)
 			obj_view->setSelected(true);
 			viewport->centerOn(obj_view);
 		}
-	}
+  }
 }
 
-void ModelWidget::createSequenceForColumn(void)
+void ModelWidget::toggleNewObjectOverlay(void)
+{
+  if(new_obj_overlay_wgt->isHidden() &&
+     (selected_objects.empty() || selected_objects[0]->getObjectType()!=BASE_RELATIONSHIP))
+  {
+    new_obj_overlay_wgt->raise();
+    new_obj_overlay_wgt->show();
+    new_obj_overlay_wgt->setSelectedObjects(selected_objects);
+    this->adjustOverlayPosition();
+  }
+  else
+    new_obj_overlay_wgt->hide();
+}
+
+void ModelWidget::adjustOverlayPosition(void)
+{
+  int px=0, py=0;
+
+  px=(this->width()/2) - (new_obj_overlay_wgt->width()/2);
+  py=(this->height()/2) - (new_obj_overlay_wgt->height()/2);
+  new_obj_overlay_wgt->move(px, py);
+}
+
+void ModelWidget::createSequenceFromColumn(void)
 {
 	try
 	{
@@ -2861,25 +3028,22 @@ void ModelWidget::createSequenceForColumn(void)
 		Table *tab=dynamic_cast<Table *>(col->getParentTable());
 
 		op_list->startOperationChain();
-		op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
 
-		//Creates a sequence which name is like the ones auto generated by PostgreSQL
+        //Creates a sequence which name is like the ones auto generated by PostgreSQL
 		seq=new Sequence;
 		seq->setName(BaseObject::formatName(tab->getName() + "_" + col->getName() + "_seq"));
 		seq->setSchema(tab->getSchema());
 		seq->setDefaultValues(col->getType());
-		seq->setOwnerColumn(col);
-
-		//Changes the column type to the alias for serial type
-		col->setType(col->getType().getAliasType());
-		col->setNotNull(true);
-
-		//Clean up the column's default value since it'll be set when the sequence is created
-		col->setDefaultValue("");
 
 		op_list->registerObject(seq, Operation::OBJECT_CREATED);
 		db_model->addSequence(seq);
-		op_list->finishOperationChain();
+
+    op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
+    //Changes the column type to the alias for serial type
+    col->setType(col->getType().getAliasType());
+    col->setSequence(seq);
+
+    op_list->finishOperationChain();
 
 		//Revalidate the relationships since the modified column can be a primary key
 		if(tab->getPrimaryKey()->isColumnReferenced(col))
@@ -2892,7 +3056,47 @@ void ModelWidget::createSequenceForColumn(void)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void ModelWidget::convertIntegerToSerial(void)
+{
+  try
+  {
+    QAction *action=dynamic_cast<QAction *>(sender());
+    Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
+    Table *tab=dynamic_cast<Table *>(col->getParentTable());
+    PgSQLType col_type=col->getType();
+    QRegExp regexp("^nextval\\(.+\\:\\:regclass\\)");
+    QString serial_tp;
+
+    if(!col_type.isIntegerType() || !col->getDefaultValue().contains(regexp))
+      throw Exception(Exception::getErrorMessage(ERR_INV_CONV_INTEGER_TO_SERIAL).arg(col->getName()),
+                      ERR_INV_CONV_INTEGER_TO_SERIAL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
+
+    if(col_type=="integer" || col_type=="int4")
+      serial_tp="serial";
+    else if(col_type=="smallint" || col_type=="int2")
+      serial_tp="smallserial";
+    else
+      serial_tp="bigserial";
+
+    col->setType(PgSQLType(serial_tp));
+    col->setDefaultValue("");
+
+    //Revalidate the relationships since the modified column can be a primary key
+    if(tab->getPrimaryKey()->isColumnReferenced(col))
+      db_model->validateRelationships();
+
+    tab->setModified(true);
+    emit s_objectModified();
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }
 
 void ModelWidget::breakRelationshipLine(void)

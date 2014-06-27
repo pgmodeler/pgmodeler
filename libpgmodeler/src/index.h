@@ -34,8 +34,8 @@ class Index: public TableObject{
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
 
-		//! \brief Conditional expression for the index
-		QString conditional_expr;
+    //! \brief Predicate expression for the index
+    QString predicate;
 
 		//! \brief Fill factor used by the index
 		unsigned fill_factor;
@@ -43,8 +43,8 @@ class Index: public TableObject{
 		//! \brief Indexing method used by the index
 		IndexingType indexing_type;
 
-		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
-		bool index_attribs[3];
+		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE, BUFFERING)
+		bool index_attribs[4];
 
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(unsigned def_type);
@@ -52,7 +52,8 @@ class Index: public TableObject{
 	public:
 		static const  unsigned UNIQUE=0,
                            CONCURRENT=1,
-                           FAST_UPDATE=2;
+													 FAST_UPDATE=2,
+													 BUFFERING=3;
 
 		Index(void);
 
@@ -83,8 +84,8 @@ class Index: public TableObject{
 		//! \brief Remove all elements from the index
 		void removeIndexElements(void);
 
-		//! \brief Defines the conditional expression used by the index
-		void setConditionalExpression(const QString &expr);
+    //! \brief Defines the predicate used by the index
+    void setPredicate(const QString &expr);
 
 		//! \brief Defines the indexing method used by the index
 		void setIndexingType(IndexingType idx_type);
@@ -97,7 +98,7 @@ class Index: public TableObject{
 		void setFillFactor(unsigned factor);
 
 		//! \brief Gets the index conditional expression
-		QString getConditionalExpression(void);
+    QString getPredicate(void);
 
 		//! \brief Gets the index element count
 		unsigned getIndexElementCount(void);

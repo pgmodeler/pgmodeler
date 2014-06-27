@@ -29,8 +29,9 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "relationship","textbox",	"permission",
-  "parameter", "typeattribute","tag","relationship"
+	"extension", "eventtrigger", "relationship",
+	"textbox",	"permission", "parameter", "typeattribute",
+	"tag", "relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -42,9 +43,9 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-  QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
-  QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"),
+	QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
+	QT_TR_NOOP("Tag"),  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -54,7 +55,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	"SEQUENCE", "ROLE", "CONVERSION", "CAST",
 	"LANGUAGE", "TYPE", "TABLESPACE",
 	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
-	"COLLATION", "EXTENSION"
+	"COLLATION", "EXTENSION", "EVENT TRIGGER"
 };
 
 /* Initializes the global id which is shared between instances
@@ -83,6 +84,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
 	attributes[ParsersAttributes::APPENDED_SQL]="";
+  attributes[ParsersAttributes::PREPENDED_SQL]="";
   attributes[ParsersAttributes::DROP]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
@@ -359,7 +361,8 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
 				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
-				 obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW);
+				 obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW ||
+				 obj_type==OBJ_EVENT_TRIGGER);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -393,7 +396,7 @@ bool BaseObject::acceptsCollation(void)
 	return(BaseObject::acceptsCollation(this->obj_type));
 }
 
-bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
+bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
 				 obj_type!=OBJ_RULE &&  obj_type!=OBJ_TRIGGER &&
@@ -401,12 +404,12 @@ bool BaseObject::acceptsAppendedSQL(ObjectType obj_type)
 				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
          obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
-         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
+				 obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
 }
 
-bool BaseObject::acceptsAppendedSQL(void)
+bool BaseObject::acceptsCustomSQL(void)
 {
-	return(BaseObject::acceptsAppendedSQL(this->obj_type));
+	return(BaseObject::acceptsCustomSQL(this->obj_type));
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -455,10 +458,18 @@ void BaseObject::setCollation(BaseObject *collation)
 
 void BaseObject::setAppendedSQL(const QString &sql)
 {
-	if(!acceptsAppendedSQL())
+	if(!acceptsCustomSQL())
 		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->appended_sql=sql;
+  this->appended_sql=sql;
+}
+
+void BaseObject::setPrependedSQL(const QString &sql)
+{
+  if(!acceptsCustomSQL())
+    throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  this->prepended_sql=sql;
 }
 
 QString BaseObject::getName(bool format, bool prepend_schema)
@@ -507,7 +518,12 @@ BaseObject *BaseObject::getCollation(void)
 
 QString BaseObject::getAppendedSQL(void)
 {
-	return(appended_sql);
+  return(appended_sql);
+}
+
+QString BaseObject::getPrependedSQL(void)
+{
+  return(prepended_sql);
 }
 
 ObjectType BaseObject::getObjectType(void)
@@ -693,15 +709,31 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(def_type==SchemaParser::XML_DEFINITION)
 			{
-				SchemaParser::setIgnoreUnkownAttributes(true);
+        SchemaParser::setIgnoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
-						SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
+            SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::APPENDED_SQL]="-- Appended SQL commands --\n" +	appended_sql + "\n";
+        attributes[ParsersAttributes::APPENDED_SQL]="\n-- Appended SQL commands --\n" +	appended_sql + "\n---\n";
 			}
 		}
+
+    if(!prepended_sql.isEmpty())
+    {
+      attributes[ParsersAttributes::PREPENDED_SQL]=prepended_sql;
+
+      if(def_type==SchemaParser::XML_DEFINITION)
+      {
+        SchemaParser::setIgnoreUnkownAttributes(true);
+        attributes[ParsersAttributes::PREPENDED_SQL]=
+            SchemaParser::getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
+      }
+      else
+      {
+        attributes[ParsersAttributes::PREPENDED_SQL]="\n-- Prepended SQL commands --\n" +	prepended_sql + "\n---\n";
+      }
+    }
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
@@ -821,8 +853,8 @@ void BaseObject::updateObjectId(BaseObject *obj)
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 {
   vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-                         OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_TAG,
-                         OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+												 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_EVENT_TRIGGER,
+												 OBJ_TAG, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
                          OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
                          OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
                          OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
@@ -842,7 +874,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
   if(obj_type==OBJ_DATABASE)
-    return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA});
+		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EVENT_TRIGGER});
   else if(obj_type==OBJ_SCHEMA)
     return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
                                   OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});

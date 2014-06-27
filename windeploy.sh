@@ -1,10 +1,11 @@
 #/bin/bash
 
-QT_VERSION='5.2.0'
+QT_INSTALL_VERSION='5.3.0'
+QT_BASE_VERSION='5.3'
 PGSQL_VERSION='9.3'
-QT_ROOT="/c/Qt/Qt${QT_VERSION}/${QT_VERSION}/mingw48_32/"
+QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw482_32/"
 QMAKE_ROOT=$QT_ROOT/bin
-MINGW_ROOT="/c/Qt/Qt${QT_VERSION}/Tools/mingw48_32/bin"
+MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw482_32/bin"
 PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
 QMAKE_ARGS="-r -spec win32-g++"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
@@ -25,24 +26,24 @@ fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
-ISSFILE=pgmodeler.iss
+ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF=build/qt.conf
 DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
   
-DEP_LIBS="$QMAKE_ROOT/iconv.dll \
-		  $QMAKE_ROOT/icudt51.dll \
-		  $QMAKE_ROOT/icuin51.dll \
-		  $QMAKE_ROOT/icuuc51.dll \
+DEP_LIBS="$QMAKE_ROOT/icudt52.dll \
+		  $QMAKE_ROOT/icuin52.dll \
+		  $QMAKE_ROOT/icuuc52.dll \
 		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
-		  $QMAKE_ROOT/libxml2.dll \
-		  $QMAKE_ROOT/iconv.dll \
+		  $QMAKE_ROOT/libxml2-2.dll \
+		  $QMAKE_ROOT/libiconv-2.dll \
 		  $QMAKE_ROOT/Qt5Core.dll \
 		  $QMAKE_ROOT/Qt5Gui.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
 		  $QMAKE_ROOT/Qt5PrintSupport.dll \
+		  $QMAKE_ROOT/Qt5Network.dll \
 		  $PGSQL_ROOT/libpq.dll \
 		  $PGSQL_ROOT/libintl.dll \
 		  $PGSQL_ROOT/libeay32.dll \
@@ -175,13 +176,23 @@ rm -r $PKGNAME >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
-  echo "** Failed to create package!"
+  echo "** Failed to create installer package!"
+  echo "** Proceeding with basic deployment."
+  
+  mkdir $PKGNAME >> $LOG 2>&1
+  mv build/* $PKGNAME >> $LOG 2>&1
+
+  if [ $? -ne 0 ]; then
+	echo "** Failed to execute basic deployment!"
+	exit 1
+  fi
+
   echo
-  exit 1
+  echo "Directory created: $PKGNAME"
+else
+  mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
+  echo "File created: $PKGFILE"
 fi
 
-mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
-
-echo "File created: $PKGFILE"
 echo "pgModeler successfully deployed!"
 echo

@@ -3,7 +3,8 @@
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
 	sql_gen_progress=progress=0;
-	db_created=ignore_dup=drop_db=export_canceled=simulate=false;
+  db_created=ignore_dup=drop_db=export_canceled=false;
+  simulate=use_tmp_names=db_sql_reenabled=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 	db_model=nullptr;
 	connection=nullptr;
@@ -21,7 +22,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		progress=sql_gen_progress=0;
 		SchemaParser::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-													 trUtf8("PostgreSQL %1 version code generation...").arg(SchemaParser::getPgSQLVersion()),
+                           trUtf8("PostgreSQL %1 version code generation.").arg(SchemaParser::getPgSQLVersion()),
 													 OBJ_DATABASE);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
@@ -80,7 +81,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       {
         prt.setPaperSize(paper_sz);
         prt.setOrientation(orient);
-        page_sz=prt.paperSize(QPrinter::DevicePixel);
+        page_sz=prt.paperSize(QPrinter::Point);
       }
 
       //Calculates the page count to be exported
@@ -132,7 +133,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
       emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 100,
-                             trUtf8("Rendering objects onto the output pixmap..."), BASE_OBJECT);
+                             trUtf8("Rendering objects onto the output pixmap."), BASE_OBJECT);
 
       //Render the entire viewport onto the pixmap
       viewp.render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -171,7 +172,7 @@ void ModelExportHelper::sleepThread(unsigned msecs)
 		QThread::msleep(msecs);
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_tmp_names)
 {
 	int type_id;
 	QString  version, sql_buf, sql_cmd, lin;
@@ -214,26 +215,45 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		db_created=false;
 		progress=sql_gen_progress=0;
 		created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
-		conn.connect();
 
 		//Retrive the DBMS version in order to generate the correct code
-		version=(conn.getPgSQLVersion()).mid(0,3);
+    conn.connect();
+    version=(conn.getPgSQLVersion()).mid(0,3);
+
+    emit s_progressUpdated(progress, trUtf8("Starting export to DBMS."));
 
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())
 		{
 			SchemaParser::setPgSQLVersion(pgsql_ver);
-			emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1...").arg(pgsql_ver));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1.").arg(pgsql_ver));
 		}
 		else
 		{
 			SchemaParser::setPgSQLVersion(version);
-			emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected...").arg(version));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected.").arg(version));
 		}
+
+    if(simulate && use_tmp_names)
+    {
+      emit s_progressUpdated(progress, trUtf8("Generating temporary names for database, roles and tablespaces."));
+      generateTempObjectNames(db_model);
+    }
+    else if(use_tmp_names)
+      throw Exception(ERR_INV_USE_TMPNAMES_EXPORT_OPT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+
+    if(simulate && db_model->isSQLDisabled())
+    {
+      db_model->setSQLDisabled(false);
+      db_sql_reenabled=true;
+      emit s_progressUpdated(progress, trUtf8("Enabling the SQL code for database `%1'' to avoid errors.").arg(db_model->getName()));
+    }
+
 
 		if(ignore_dup)
 		{
-			emit s_progressUpdated(progress, trUtf8("Ignoring object duplication errors..."));
+      emit s_progressUpdated(progress, trUtf8("Ignoring object duplication errors."));
 
 			//Save the current status for ALTER command generation for table columns/constraints
 			saveGenAtlerCmdsStatus(db_model);
@@ -241,12 +261,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 		if(drop_db)
 		{
-			emit s_progressUpdated(progress, trUtf8("Trying to drop database `%1'...").arg(db_model->getName()));
+      emit s_progressUpdated(progress, trUtf8("Trying to drop database `%1'.").arg(db_model->getName()));
 			conn.executeDDLCommand(QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true)));
 		}
 
 		if(simulate)
-			emit s_progressUpdated(progress, trUtf8("Simulation mode activated..."));
+      emit s_progressUpdated(progress, trUtf8("Simulation mode activated."));
 
 		//Creates the roles and tablespaces separately from the other objects
 		for(type_id=0; type_id < 2 && !export_canceled; type_id++)
@@ -264,7 +284,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
-																	 trUtf8("Creating object `%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
+                                   trUtf8("Creating object `%1' (%2).").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
 																	 object->getObjectType());
 
 						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -295,7 +315,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
-															 trUtf8("Creating database `%1'...").arg(Utf8String::create(db_model->getName())),
+                               trUtf8("Creating database `%1'.").arg(Utf8String::create(db_model->getName())),
 															 OBJ_DATABASE);
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
@@ -322,12 +342,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn=conn;
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
-														 trUtf8("Connecting to database `%1'...").arg(Utf8String::create(db_model->getName())));
+                             trUtf8("Connecting to database `%1'.").arg(Utf8String::create(db_model->getName())));
 
 			new_db_conn.connect();
 			progress=30;
 			//Creating the other object types
-			emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'...").arg(Utf8String::create(db_model->getName())));
+      emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'.").arg(Utf8String::create(db_model->getName())));
 
 			//Generates the sql from entire model
 			sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
@@ -426,12 +446,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 							}
 
 							emit s_progressUpdated(aux_prog,
-																		 trUtf8("Creating object `%1' (%2)...").arg(obj_name).arg(obj_type),
+                                     trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_type),
 																		 obj_types[obj_id]);
 						}
 						else
 							//General commands like alter / set aren't explicitly shown
-							emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command..."));
+              emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."));
 
 						//Executes the extracted SQL command
 						if(!sql_cmd.isEmpty())
@@ -471,7 +491,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		/* If the process was a simulation or even canceled undo the export
 		removing the created objects */
 		if(simulate || export_canceled)
-			undoDBMSExport(db_model, conn);
+      undoDBMSExport(db_model, conn, use_tmp_names);
 
 		if(conn.isStablished())
 			conn.close();
@@ -496,7 +516,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			if(new_db_conn.isStablished()) new_db_conn.close();
 
 			//Undo the export removing the created objects
-			undoDBMSExport(db_model, conn);
+      undoDBMSExport(db_model, conn, use_tmp_names);
 		}
 		catch(Exception &){}
 
@@ -574,7 +594,7 @@ void ModelExportHelper::restoreGenAtlerCmdsStatus(void)
 	alter_cmds_status.clear();
 }
 
-void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn)
+void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names)
 {
  QString drop_cmd=QString("DROP %1 %2;");
  ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
@@ -584,7 +604,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
  //In case of error during the export all created object are removed
  if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)
  {
-	 emit s_progressUpdated(100, trUtf8("Destroying created objects..."));
+   emit s_progressUpdated(99, trUtf8("Destroying objects created on the server."));
 
 	 //Dropping the database
 	 if(db_created)
@@ -608,6 +628,63 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 		 }
 	 }
  }
+
+ if(use_tmp_names)
+ {
+  emit s_progressUpdated(100, trUtf8("Restoring orignal names of database, roles and tablespaces."));
+  restoreObjectNames();
+ }
+
+ if(db_sql_reenabled)
+ {
+   db_model->setSQLDisabled(true);
+   db_sql_reenabled=false;
+ }
+}
+
+void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
+{
+  QString tmp_name;
+  QTextStream stream(&tmp_name);
+  QDateTime dt=QDateTime::currentDateTime();
+  QCryptographicHash hash(QCryptographicHash::Md5);
+  map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, "db_" },
+                                          {OBJ_ROLE, "rl_"},
+                                          {OBJ_TABLESPACE, "tb_"} };
+
+  orig_obj_names.clear();
+  orig_obj_names[db_model]=db_model->getName();
+
+  for(auto role : *db_model->getObjectList(OBJ_ROLE))
+  {
+    if(!role->isSystemObject())
+      orig_obj_names[role]=role->getName();
+  }
+
+  for(auto tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
+  {
+    if(!tabspc->isSystemObject())
+      orig_obj_names[tabspc]=tabspc->getName();
+  }
+
+
+  for(auto obj : orig_obj_names)
+  {
+    stream << reinterpret_cast<unsigned *>(obj.first)  << "_" << dt.toTime_t();
+
+    //Generates an unique name for the permission through md5 hash
+    hash.addData(QByteArray(tmp_name.toStdString().c_str()));
+    tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
+
+    obj.first->setName(tmp_name.mid(0,15));
+    tmp_name.clear();
+  }
+}
+
+void ModelExportHelper::restoreObjectNames(void)
+{
+  for(auto obj : orig_obj_names)
+    obj.first->setName(obj.second);
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
@@ -618,7 +695,7 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_rand_names)
 {
 	this->db_model=db_model;
 	this->connection=conn;
@@ -626,12 +703,13 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 	this->ignore_dup=ignore_dup;
 	this->simulate=simulate;
 	this->drop_db=drop_db;
+  this->use_tmp_names=use_rand_names;
 }
 
 void ModelExportHelper::exportToDBMS(void)
 {
 	if(connection)
-		exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate);
+    exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names);
 }
 
 void ModelExportHelper::cancelExport(void)

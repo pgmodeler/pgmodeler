@@ -4,6 +4,7 @@
 [<table name=] "@{name}" 
   %if @{oids} %then [ oids="true"] %end
   %if @{gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
+  %if @{unlogged} %then [ unlogged="true"] %end
  
  %if @{protected} %then 
   [ protected=] "true"
@@ -21,6 +22,7 @@
  %if @{comment} %then @{comment} %end
  %if @{tag} %then @{tag} %end
  %if @{appended-sql} %then @{appended-sql} %end
+ %if @{prepended-sql} %then @{prepended-sql} %end
  @{position}
 
  %if @{columns} %then @{columns} %end
@@ -28,4 +30,8 @@
  %if @{indexes} %then @{indexes} %end
  %if @{rules} %then @{rules} %end
  %if @{triggers} %then @{triggers} %end
+ 
+ %if @{col-indexes} %then @{col-indexes} %end
+ %if @{constr-indexes} %then @{constr-indexes} %end
+
 </table>  $br $br

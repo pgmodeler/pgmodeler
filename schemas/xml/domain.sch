@@ -11,7 +11,7 @@
   %end
 
   [ not-null=] %if @{not-null} %then "true" %else "false" %end
-  %if @{default-value} %then [ default=] "@{default-value}" %end
+  %if @{default-value} %then [ default-value=] "@{default-value}" %end
 
   %if @{protected} %then 
    [ protected=] "true"
@@ -28,6 +28,7 @@
   %if @{collation} %then @{collation} %end
   %if @{comment} %then @{comment} %end
   %if @{appended-sql} %then @{appended-sql} %end
+  %if @{prepended-sql} %then @{prepended-sql} %end
 
   $tb @{type}
 

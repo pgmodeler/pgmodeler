@@ -23,21 +23,14 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	try
 	{
-		vector<QString> vers;
-
 		setupUi(this);
 		this->setModel(nullptr);
 
 		swapobjectsids_wgt=nullptr;
 		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
 
-		SchemaParser::getPgSQLVersions(vers);
 		version_cmb->addItem(trUtf8("Autodetect"));
-		while(!vers.empty())
-		{
-			version_cmb->addItem(vers.back());
-			vers.pop_back();
-		}
+		version_cmb->addItems(SchemaParser::getPgSQLVersions());
 
 		options_frm->setVisible(false);
 		curr_step=0;
@@ -53,9 +46,11 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
+    connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
 		connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
+    connect(use_tmp_names_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
@@ -413,7 +408,7 @@ void ModelValidationWidget::configureValidation(void)
 			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		}
 
-		validation_helper.setValidationParams(model_wgt->getDatabaseModel(), conn, ver);
+    validation_helper.setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());
 	}
 }
 

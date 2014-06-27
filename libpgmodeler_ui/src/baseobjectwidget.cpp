@@ -439,7 +439,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
   disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
-	append_sql_tb->setVisible(BaseObject::acceptsAppendedSQL(obj_type));
+	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
 
 	schema_lbl->setVisible(BaseObject::acceptsSchema(obj_type));
 	schema_sel->setVisible(BaseObject::acceptsSchema(obj_type));
@@ -635,7 +635,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setWordWrap(true);
 
 	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields on the form are available only on specific PostgreSQL versions. \
-													When generating SQL code for versions other than those specified on field's tooltips pgModeler will ignore it's values.").arg(color.name()));
+													When generating SQL code for versions other than those specified on fields' tooltips pgModeler will ignore their values.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);
@@ -668,14 +668,22 @@ void BaseObjectWidget::applyConfiguration(void)
 		{
 			BaseObject *aux_obj=nullptr, *aux_obj1=nullptr, *parent_obj=nullptr;
 			bool new_obj;
-			ObjectType obj_type;
+      ObjectType obj_type=object->getObjectType();
 			QString obj_name;
       vector<BaseObject *> ref_objs;
+      Messagebox msgbox;
 
-			if(disable_sql_chk->isChecked()!=object->isSQLDisabled())
-				disableReferencesSQL(object);
 
-			obj_type=object->getObjectType();
+      if(obj_type!=OBJ_DATABASE && disable_sql_chk->isChecked()!=object->isSQLDisabled())
+      {
+        msgbox.show(trUtf8("Confirmation"),
+                    trUtf8("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.").arg(disable_sql_chk->isChecked() ? "disabling" : "enabling"),
+                    Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+        if(msgbox.result()==QDialog::Accepted)
+          disableReferencesSQL(object);
+      }
+
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			object->setSQLDisabled(disable_sql_chk->isChecked());

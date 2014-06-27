@@ -143,16 +143,28 @@ void ObjectsScene::setGridSize(unsigned size)
 		QPainter painter;
 		QPen pen;
 
-		if(paper_size!=QPrinter::Custom)
-			printer.setPaperSize(paper_size);
-		else
-			printer.setPaperSize(custom_paper_size, QPrinter::DevicePixel);
+  /*  if(paper_size!=QPrinter::Custom)
+      printer.setPaperSize(paper_size);
+    else
+    {
+      #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+        QPageLayout pl;
+        QPageSize ps;
 
-		printer.setOrientation(page_orientation);
-		printer.setPageMargins(page_margins.left(), page_margins.top(),
-													 page_margins.right(), page_margins.bottom(), QPrinter::DevicePixel);
+        pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
+        ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
+        pl.setPageSize(ps);
+        printer.setPageSize(pl.pageSize());
+      #else
+        printer.setPaperSize(custom_paper_size, QPrinter::Point);
+        printer.setPageMargins(page_margins.left(), page_margins.top(),
+                               page_margins.right(), page_margins.bottom(), QPrinter::Point);
+      #endif
+    }
 
-		aux_size=printer.paperSize(QPrinter::DevicePixel);
+    printer.setOrientation(page_orientation); */
+    configurePrinter(&printer);
+    aux_size=printer.paperSize(QPrinter::Point);
 		aux_size-=page_margins.size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
@@ -263,9 +275,9 @@ void ObjectsScene::getGridOptions(bool &show_grd, bool &align_objs_grd, bool &sh
 void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
 {
 	ObjectsScene::paper_size=paper_sz;
-	ObjectsScene::page_orientation=orient;
+  ObjectsScene::page_orientation=orient;
 	ObjectsScene::page_margins=margins;
-	ObjectsScene::custom_paper_size=custom_size;
+  ObjectsScene::custom_paper_size=custom_size;
 }
 
 void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
@@ -273,7 +285,60 @@ void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter
 	paper_sz=ObjectsScene::paper_size;
 	orient=ObjectsScene::page_orientation;
 	margins=ObjectsScene::page_margins;
-	custom_size=ObjectsScene::custom_paper_size;
+  custom_size=ObjectsScene::custom_paper_size;
+}
+
+void ObjectsScene::configurePrinter(QPrinter *printer)
+{
+  if(!printer)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  if(paper_size!=QPrinter::Custom)
+   printer->setPaperSize(paper_size);
+  else
+  {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+      //The QTBUG-33645 is fixed on Qt 5.3
+      QPageLayout pl;
+      QPageSize ps;
+      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
+      pl.setPageSize(ps);
+      pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
+      printer->setPageSize(pl.pageSize());
+    #else
+      #warning "Custom page size bug (QTBUG-33645) workaround for Qt 5.2 or lower. NOTE: This issue is fixed on Qt 5.3"
+      printer->setPaperSize(QSizeF(custom_paper_size.height(), custom_paper_size.width()), QPrinter::Point);
+    #endif
+  }
+
+  if(paper_size==QPrinter::Custom)
+  {
+    if(custom_paper_size.width() > custom_paper_size.height())
+      ObjectsScene::page_orientation=QPrinter::Landscape;
+    else
+      ObjectsScene::page_orientation=QPrinter::Portrait;
+  }
+  else
+     printer->setOrientation(page_orientation);
+
+  printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
+}
+
+void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient)
+{
+  QPrinter::PaperSize orig_page_sz=paper_size;
+  QPrinter::Orientation orig_orient=page_orientation;
+  QSizeF orig_custom_sz=custom_paper_size;
+
+  paper_size=QPrinter::Custom;
+  page_orientation=orient;
+  custom_paper_size=custom_size;
+
+  configurePrinter(printer);
+
+  paper_size=orig_page_sz;
+  page_orientation=orig_orient;
+  custom_paper_size=orig_custom_sz;
 }
 
 void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
@@ -371,6 +436,9 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
   //Gets the item at mouse position
   QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
+
+  if(selectedItems().empty())
+    emit s_objectsScenePressed(event->buttons());
 
   /* If the relationship line is visible, indicates that the user is in the middle of
      a relationship creation, thus is needed to inform to the scene to activate the

@@ -61,7 +61,13 @@ class Table: public BaseTable {
 		/*! \brief Indicates that constraints and columns are generated in for of ALTER commands.
 		When true this will cause constraints and columsn to be created in a separated command
 		outside tha table's declaration */
-		gen_alter_cmds;
+		gen_alter_cmds,
+
+		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
+		unlogged;
+
+    //! \brief Stores the relationship added column / constraints indexes
+    map<QString, unsigned> col_indexes,	constr_indexes;
 
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
@@ -75,6 +81,7 @@ class Table: public BaseTable {
 		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
+    void setRelObjectsIndexesAttribute(void);
 
 	protected:
 		//! \brief Adds an ancestor table
@@ -93,6 +100,9 @@ class Table: public BaseTable {
 		indicating if ALTER commands must be generated or not */
 		void updateAlterCmdsStatus(void);
 
+    void saveRelObjectsIndexes(ObjectType obj_type);
+    void restoreRelObjectsIndexes(ObjectType obj_type);
+
 	public:	
 		Table(void);
 		~Table(void);
@@ -102,6 +112,9 @@ class Table: public BaseTable {
 
 		//! \brief Defines if the table accepts OIDs
 		void setWithOIDs(bool value);
+
+		//! \brief Defines if the table is unlogged
+		void setUnlogged(bool value);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
@@ -260,6 +273,9 @@ class Table: public BaseTable {
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs(void);
 
+		//! \brief Returns if the table is configured as unlogged
+		bool isUnlogged(void);
+
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);
 
@@ -275,9 +291,6 @@ class Table: public BaseTable {
 
 		//! \brief Swaps two objects position
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
-
-		//! \brief Move the object to the specified index
-		void moveObjectToIndex(TableObject *tab_obj, unsigned idx);
 
 		//! \brief Returns if the table references objects added by relationship
 		bool isReferRelationshipAddedObject(void);
@@ -298,8 +311,19 @@ class Table: public BaseTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
+    //! brief Save the current index of the objects created by relationship
+    void saveRelObjectsIndexes(void);
+
+    /*! brief Restore the position of the objects created by relationships.
+        This method must be used with caution since it generate a new list of object replacing
+        the original inside the table. Also this method can be slow in huge tables */
+    void restoreRelObjectsIndexes(void);
+
+    //! brief Creates custom index from rel. created object using a name and index vectors as input.
+    void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
+
 		friend class Relationship;
-		friend class OperationList;
+    friend class OperationList;
 };
 
 #endif

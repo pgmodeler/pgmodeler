@@ -443,9 +443,9 @@ void View::setDeclarationAttribute(void)
 						 tipo_sql[i]==Reference::SQL_REFER_FROM)
 					{
 						//Removing the final comma from SELECT / FROM declarations
-						qtd=decl.size();
-						if(decl[qtd-2]==',')
-							decl.remove(qtd-2,2);
+            qtd=decl.size();
+            if(decl[qtd-2]==',')
+              decl.remove(qtd-2,2);
 					}
 				}
 			}

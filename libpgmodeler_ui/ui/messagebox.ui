@@ -286,7 +286,7 @@
            <number>2</number>
           </property>
           <item row="0" column="0">
-           <widget class="QTextBrowser" name="exceptions_txt">
+           <widget class="QTextBrowser" name="raw_info_txt">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
@@ -327,7 +327,7 @@
          <number>4</number>
         </property>
         <item>
-         <widget class="QToolButton" name="show_errors_txt_tb">
+         <widget class="QToolButton" name="show_raw_info_tb">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -335,7 +335,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Show excpetion stack in text format (useful to report errors).</string>
+           <string>Show raw text errors or information.</string>
           </property>
           <property name="text">
            <string/>
@@ -529,12 +529,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>show_errors_txt_tb</tabstop>
+  <tabstop>show_raw_info_tb</tabstop>
   <tabstop>show_errors_tb</tabstop>
   <tabstop>yes_ok_btn</tabstop>
   <tabstop>no_btn</tabstop>
   <tabstop>cancel_btn</tabstop>
-  <tabstop>exceptions_txt</tabstop>
+  <tabstop>raw_info_txt</tabstop>
   <tabstop>exceptions_trw</tabstop>
  </tabstops>
  <resources>

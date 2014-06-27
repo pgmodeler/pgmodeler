@@ -34,11 +34,17 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	QGridLayout *grid=nullptr;
 	ObjectTableWidget *tab=nullptr;
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+	map<QString, vector<QWidget *> > fields_map;
+	QFrame *frame=nullptr;
 
 	Ui_TableWidget::setupUi(this);
 
-	operation_count=0;
+	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(unlogged_chk);
+	frame=generateVersionWarningFrame(fields_map);
+	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
+	frame->setParent(this);
 
+	operation_count=0;
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
@@ -49,7 +55,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),2);
 
   tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
-  dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 2);
+	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
@@ -113,7 +119,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
-	parent_form->setMinimumSize(550, 560);
+	parent_form->setMinimumSize(580, 620);
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
@@ -128,6 +134,7 @@ void TableWidget::hideEvent(QHideEvent *event)
 
 	parent_tables->removeRows();
 	with_oids_chk->setChecked(false);
+	unlogged_chk->setChecked(false);
 	attributes_tbw->setCurrentIndex(0);
 
 	itr=objects_tab_map.begin();
@@ -281,6 +288,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		parent_tables->clearSelection();
 		with_oids_chk->setChecked(table->isWithOIDs());
+		unlogged_chk->setChecked(table->isUnlogged());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
 
     tag_sel->setModel(this->model);
@@ -622,12 +630,15 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
+		table->setUnlogged(unlogged_chk->isChecked());
     table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
 
 		try
 		{
+      table->saveRelObjectsIndexes();
+
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
 

@@ -32,16 +32,20 @@
 class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
 		Q_OBJECT
+    ModelWidget *model_wgt;
 
 		void hideEvent(QHideEvent *event);
 		void applyConfiguration(void){}
+    void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
 	public:
 		ObjectDepsRefsWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj=nullptr);
+    void setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj=nullptr);
 
-	private slots:
-		void updateDependencies(void);
+  private slots:
+    void clearTables(void);
+    void updateObjectTables(void);
+    void handleItemSelection(QTableWidgetItem *item);
 };
 
 #endif
