@@ -29,6 +29,7 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
   update_chk_reply=nullptr;
   old_pos=QPoint(-1,-1);
   frame->installEventFilter(this);
+
   connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
   //C++11 lambda slots
@@ -47,6 +48,12 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
             this->close();
             emit s_visibilityChanged(false);
           });
+
+	connect(hide_tb, &QToolButton::clicked, this,
+					[=](){
+						this->close();
+						emit s_visibilityChanged(false);
+					});
 }
 
 bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)

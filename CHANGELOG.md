@@ -1,6 +1,19 @@
 Change Log
 ---------
 
+v0.7.2
+------
+<em>Codename: <strong>Brave Mastodon</strong></em><br/>
+<em>Release date: June 30, 2014</em><br/>
+
+* [New] Added an experimental installer for Linux based upon the Qt Installer Framework.
+* [New] Added an file called RELEASENOTES.md. This file will be read by the update notifier on server in order to return to the GUI the change log and additional release info.
+* [Change] Minor change on MacOS X deployment script to generate the dmg file with a custom icon.
+* [Change] Restored the start-pgmodeler.sh file due to difficulties that some users are having when running pgModeler on Linux systems.
+* [Change] Created the folder "installer" to store all files related to installers of all platforms
+* [Fix] Fixed deployment on Linux. Now start-pgmodeler.sh is correclty copied.
+* [Fix] Fixed the display of relationship actions on NewObjectOverlayWidget
+
 v0.7.2-beta1
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>

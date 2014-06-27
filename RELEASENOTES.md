@@ -2,7 +2,7 @@ v0.7.2
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
 <em>Release date: June 30, 2014</em><br/>
-<em>Changes since <strong>0.7.1</strong></em><br/>
+<em>Changes since <strong>v0.7.1</strong></em><br/>
 
 * [New] Added support for event trigger objects. The export and import processes were adjusted to handle this kind of object.
 * [New] Added support for UNLOGGED tables.
