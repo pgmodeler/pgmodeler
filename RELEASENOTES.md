@@ -1,7 +1,7 @@
 v0.7.2
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: June 30, 2014</em><br/>
+<em>Release date: June 27, 2014</em><br/>
 <em>Changes since <strong>v0.7.1</strong></em><br/>
 
 * [New] Added the missing attribute BUFFERING for Gist indexes.
@@ -35,6 +35,7 @@ v0.7.2
 * [Change] Custom  indexes for columns and constraints added by relationships are now stored on tables. In previous version the relationship was the responsible for that but this approach was provoking the bug related on issue 449.
 * [Change] Remove unused parser attributes and commented old code.
 * [Change] Removed attributes and methods from relationship which were responsible to control columns, attributes and constraints indexes.
+* [Fix] Fixed a regression related to sequences not being included on database model XML code.
 * [Fix] Minor fix on ColumnWidget, disabled the line breaking in the field "Expression".
 * [Fix] Fixed the model fix dialog on MacOS X and Windows platforms.
 * [Fix] Schemas names are now correctly striked out on the rectangle when their SQL code is disabled. The system schemas public and pg_catalog will continue not to have their names striked out.

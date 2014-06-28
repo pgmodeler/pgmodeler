@@ -4,7 +4,7 @@ Change Log
 v0.7.2
 ------
 <em>Codename: <strong>Brave Mastodon</strong></em><br/>
-<em>Release date: June 30, 2014</em><br/>
+<em>Release date: June 27, 2014</em><br/>
 
 * [New] Added the missing attribute BUFFERING for Gist indexes.
 * [New] Added an experimental installer for Linux based upon the Qt Installer Framework.
@@ -12,6 +12,7 @@ v0.7.2
 * [Change] Minor change on MacOS X deployment script to generate the dmg file with a custom icon.
 * [Change] Restored the start-pgmodeler.sh file due to difficulties that some users are having when running pgModeler on Linux systems.
 * [Change] Created the folder "installer" to store all files related to installers of all platforms
+* [Fix] Fixed a regression related to sequences not being included on database model XML code.
 * [Fix] Fixed deployment on Linux. Now start-pgmodeler.sh is correclty copied.
 * [Fix] Fixed the display of relationship actions on NewObjectOverlayWidget
 
