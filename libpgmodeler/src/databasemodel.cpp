@@ -6315,7 +6315,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
 {
-  unsigned i, count;
   BaseObject *object=nullptr;
   vector<BaseObject *> fkeys;
   vector<BaseObject *> fk_rels;
@@ -6333,7 +6332,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
                     OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
                     OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
                     OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
-  unsigned aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
+	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType), count=sizeof(obj_types)/sizeof(ObjectType);
 
   //The first objects on the map will be roles, tablespaces, schemas and tags
   for(i=0; i < aux_obj_cnt; i++)
@@ -6349,11 +6348,6 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
 
   //Includes the database model on the objects map permitting to create the code in a correct order
   objects_map[this->getObjectId()]=this;
-
-  if(def_type==SchemaParser::XML_DEFINITION)
-    count=18;
-  else
-    count=14;
 
   for(i=0; i < count; i++)
   {
