@@ -193,26 +193,27 @@ void BaseObjectView::loadObjectsStyle(void)
 	QString elem,
 			config_file=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
 									GlobalAttributes::OBJECTS_STYLE_CONF + GlobalAttributes::CONFIGURATION_EXT;
+	XMLParser xmlparser;
 
 	try
 	{
-		XMLParser::restartParser();
-		XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+		xmlparser.restartParser();
+		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECTS_STYLE_CONF +
 													GlobalAttributes::OBJECT_DTD_EXT, GlobalAttributes::OBJECTS_STYLE_CONF);
-		XMLParser::loadXMLFile(config_file);
+		xmlparser.loadXMLFile(config_file);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					XMLParser::getElementAttributes(attribs);
-					elem=XMLParser::getElementName();
+					xmlparser.getElementAttributes(attribs);
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::GLOBAL)
 					{
@@ -246,7 +247,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)

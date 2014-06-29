@@ -28,6 +28,7 @@ OperationList::OperationList(DatabaseModel *model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->model=model;
+	xmlparser=model->getXMLParser();
 	current_index=0;
 	next_op_chain=Operation::NO_CHAIN;
 	ignore_chain=false;
@@ -683,8 +684,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 oper->op_type==Operation::OBJECT_MOVED)))
 		{
 			//Resets the XML parser and loads the buffer xml from the operation
-			XMLParser::restartParser();
-			XMLParser::loadXMLBuffer(oper->xml_definition);
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(oper->xml_definition);
 
 			if(obj_type==OBJ_TRIGGER)
 				aux_obj=model->createTrigger(parent_tab);

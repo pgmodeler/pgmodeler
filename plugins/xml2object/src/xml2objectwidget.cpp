@@ -63,23 +63,24 @@ void Xml2ObjectWidget::generateObject(void)
 		BaseObject *object=nullptr;
 		ObjectType obj_type;
 		QString elem_name;
+		XMLParser *xmlparser=model->getXMLParser();
 
 		if(!op_list->isOperationChainStarted())
 			op_list->startOperationChain();
 
-		XMLParser::restartParser();
-		XMLParser::loadXMLBuffer(code_txt->toPlainText().toUtf8());
+		xmlparser->restartParser();
+		xmlparser->loadXMLBuffer(code_txt->toPlainText().toUtf8());
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser->accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser->getElementType()==XML_ELEMENT_NODE)
 				{
-					elem_name=XMLParser::getElementName();
+					elem_name=xmlparser->getElementName();
 					obj_type=model->getObjectType(elem_name);
 
-					XMLParser::savePosition();
+					xmlparser->savePosition();
 
 					object=model->createObject(obj_type);
 
@@ -90,10 +91,10 @@ void Xml2ObjectWidget::generateObject(void)
 						op_list->registerObject(object, Operation::OBJECT_CREATED, -1, model);
 					}
 
-					XMLParser::restorePosition();
+					xmlparser->restorePosition();
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser->accessElement(xmlparser->NEXT_ELEMENT));
 		}
 
 		op_list->finishOperationChain();

@@ -1796,11 +1796,11 @@ void DatabaseModel::createSpecialObject(const QString &xml_def, unsigned obj_id)
 	try
 	{
 		//Restart the XML parser to read the passed xml buffer
-		XMLParser::restartParser();
-		XMLParser::loadXMLBuffer(xml_def);
+		xmlparser.restartParser();
+		xmlparser.loadXMLBuffer(xml_def);
 
 		//Identifies the object type through the start element on xml buffer
-		obj_type=getObjectType(XMLParser::getElementName());
+		obj_type=getObjectType(xmlparser.getElementName());
 
 		if(obj_type==OBJ_SEQUENCE)
 			object=createSequence(true);
@@ -2731,18 +2731,18 @@ void DatabaseModel::loadModel(const QString &filename)
     try
     {
       loading_model=true;
-      XMLParser::restartParser();
+			xmlparser.restartParser();
 
       //Loads the root DTD
-      XMLParser::setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
+			xmlparser.setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
                             GlobalAttributes::OBJECT_DTD_EXT,
                             GlobalAttributes::ROOT_DTD);
 
       //Loads the file validating it against the root DTD
-      XMLParser::loadXMLFile(filename);
+			xmlparser.loadXMLFile(filename);
 
       //Gets the basic model information
-      XMLParser::getElementAttributes(attribs);
+			xmlparser.getElementAttributes(attribs);
 
       this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
 
@@ -2756,20 +2756,20 @@ void DatabaseModel::loadModel(const QString &filename)
 
       protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-      if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+			if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
       {
         do
         {
-          if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+					if(xmlparser.getElementType()==XML_ELEMENT_NODE)
           {
-            elem_name=XMLParser::getElementName();
+						elem_name=xmlparser.getElementName();
 
             //Indentifies the object type to be load according to the current element on the parser
             obj_type=getObjectType(elem_name);
 
             if(obj_type==OBJ_DATABASE)
             {
-              XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
               configureDatabase(attribs);
             }
             else
@@ -2777,7 +2777,7 @@ void DatabaseModel::loadModel(const QString &filename)
               try
               {
                 //Saves the current position of the parser before create any object
-                XMLParser::savePosition();
+								xmlparser.savePosition();
                 object=createObject(obj_type);
 
                 if(object)
@@ -2785,24 +2785,24 @@ void DatabaseModel::loadModel(const QString &filename)
                   if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
                     addObject(object);
 
-                  emit s_objectLoaded((XMLParser::getCurrentBufferLine()/static_cast<float>(XMLParser::getBufferLineCount()))*100,
+									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
                                       trUtf8("Loading: `%1' `(%2)'")
                                       .arg(Utf8String::create(object->getName()))
                                       .arg(object->getTypeName()),
                                       obj_type);
                 }
 
-                XMLParser::restorePosition();
+								xmlparser.restorePosition();
               }
               catch(Exception &e)
               {
-                QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+								QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
                 throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
               }
             }
           }
         }
-        while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+				while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
       }
 
       this->BaseObject::setProtected(protected_model);
@@ -2827,8 +2827,8 @@ void DatabaseModel::loadModel(const QString &filename)
       loading_model=false;
       destroyObjects();
 
-      if(XMLParser::getCurrentElement())
-        extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+			if(xmlparser.getCurrentElement())
+				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
       if(e.getErrorType()>=ERR_INVALID_SYNTAX)
       {
@@ -2938,7 +2938,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	if(!object)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	XMLParser::getElementAttributes(attribs);
+	xmlparser.getElementAttributes(attribs);
 
 	obj_type_aux=object->getObjectType();
 	if(obj_type_aux!=OBJ_CAST)
@@ -2947,29 +2947,29 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
 
-	XMLParser::savePosition();
+	xmlparser.savePosition();
 
-	if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+	if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 	{
 		do
 		{
-			if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+			if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 			{
-				elem_name=XMLParser::getElementName();
+				elem_name=xmlparser.getElementName();
 
 				//Defines the object's comment
 				if(elem_name==ParsersAttributes::COMMENT)
 				{
-					XMLParser::savePosition();
-					XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-					object->setComment(XMLParser::getElementContent());
-					XMLParser::restorePosition();
+					xmlparser.savePosition();
+					xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+					object->setComment(xmlparser.getElementContent());
+					xmlparser.restorePosition();
 				}
 				//Defines the object's schema
 				else if(elem_name==ParsersAttributes::SCHEMA)
 				{
 					obj_type=OBJ_SCHEMA;
-					XMLParser::getElementAttributes(attribs_aux);
+					xmlparser.getElementAttributes(attribs_aux);
 					schema=dynamic_cast<Schema *>(getObject(attribs_aux[ParsersAttributes::NAME], obj_type));
 					object->setSchema(schema);
 					has_error=(!schema && !attribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -2978,7 +2978,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				else if(elem_name==ParsersAttributes::TABLESPACE)
 				{
 					obj_type=OBJ_TABLESPACE;
-					XMLParser::getElementAttributes(attribs_aux);
+					xmlparser.getElementAttributes(attribs_aux);
 					tabspc=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
 					object->setTablespace(tabspc);
 					has_error=(!tabspc && !attribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -2987,7 +2987,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				else if(elem_name==ParsersAttributes::ROLE)
 				{
 					obj_type=OBJ_ROLE;
-					XMLParser::getElementAttributes(attribs_aux);
+					xmlparser.getElementAttributes(attribs_aux);
 					owner=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
 					object->setOwner(owner);
 					has_error=(!owner && !attribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -2996,29 +2996,29 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				else if(elem_name==ParsersAttributes::COLLATION)
 				{
 					obj_type=OBJ_COLLATION;
-					XMLParser::getElementAttributes(attribs_aux);
+					xmlparser.getElementAttributes(attribs_aux);
 					collation=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
 					object->setCollation(collation);
 					has_error=(!collation && !attribs_aux[ParsersAttributes::NAME].isEmpty());
 				}
 				else if(elem_name==ParsersAttributes::APPENDED_SQL)
 				{
-					XMLParser::savePosition();
-					XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-					object->setAppendedSQL(XMLParser::getElementContent());
-					XMLParser::restorePosition();
+					xmlparser.savePosition();
+					xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+					object->setAppendedSQL(xmlparser.getElementContent());
+					xmlparser.restorePosition();
 				}
         else if(elem_name==ParsersAttributes::PREPENDED_SQL)
         {
-          XMLParser::savePosition();
-          XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-          object->setPrependedSQL(XMLParser::getElementContent());
-          XMLParser::restorePosition();
+					xmlparser.savePosition();
+					xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+					object->setPrependedSQL(xmlparser.getElementContent());
+					xmlparser.restorePosition();
         }
 				//Defines the object's position (only for graphical objects)
 				else if(elem_name==ParsersAttributes::POSITION)
 				{
-					XMLParser::getElementAttributes(attribs);
+					xmlparser.getElementAttributes(attribs);
 
 					if(elem_name==ParsersAttributes::POSITION &&
 						 (obj_type_aux!=OBJ_RELATIONSHIP &&
@@ -3032,10 +3032,10 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				}
 			}
 		}
-		while(!has_error && XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		while(!has_error && xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 	}
 
-	XMLParser::restorePosition();
+	xmlparser.restorePosition();
 	object->setProtected(protected_obj);
 	object->setSQLDisabled(sql_disabled);
 
@@ -3067,11 +3067,11 @@ QString DatabaseModel::getErrorExtraInfo(void)
 {
 	QString extra_info;
 
-	if(!XMLParser::getLoadedFilename().isEmpty())
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
-							 .arg(XMLParser::getCurrentElement()->line);
+	if(!xmlparser.getLoadedFilename().isEmpty())
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename())
+							 .arg(xmlparser.getCurrentElement()->line);
 	else
-		extra_info=XMLParser::getXMLBuffer();
+		extra_info=xmlparser.getXMLBuffer();
 
   return extra_info;
 }
@@ -3122,7 +3122,7 @@ Role *DatabaseModel::createRole(void)
 		setBasicAttributes(role);
 
 		//Gets all the attributes values from the XML
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		role->setPassword(attribs[ParsersAttributes::PASSWORD]);
 		role->setValidity(attribs[ParsersAttributes::VALIDITY]);
@@ -3137,19 +3137,19 @@ Role *DatabaseModel::createRole(void)
 			role->setOption(op_vect[i], marked);
 		}
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem_name=XMLParser::getElementName();
+					elem_name=xmlparser.getElementName();
 
 					//Getting the member roles
 					if(elem_name==ParsersAttributes::ROLES)
 					{
 						//Gets the member roles attributes
-						XMLParser::getElementAttributes(attribs_aux);
+						xmlparser.getElementAttributes(attribs_aux);
 
 						//The member roles names are separated by comma, so it is needed to split them
 						list=attribs_aux[ParsersAttributes::NAMES].split(',');
@@ -3184,7 +3184,7 @@ Role *DatabaseModel::createRole(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -3205,7 +3205,7 @@ Tablespace *DatabaseModel::createTablespace(void)
 	{
 		tabspc=new Tablespace;
 		setBasicAttributes(tabspc);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		tabspc->setDirectory(attribs[ParsersAttributes::DIRECTORY]);
 	}
 	catch(Exception &e)
@@ -3225,7 +3225,7 @@ Schema *DatabaseModel::createSchema(void)
 	try
 	{
 		schema=new Schema;
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
 		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
@@ -3250,22 +3250,22 @@ Language *DatabaseModel::createLanguage(void)
 	try
 	{
 		lang=new Language;
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(lang);
 
 		lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					obj_type=getObjectType(XMLParser::getElementName());
+					obj_type=getObjectType(xmlparser.getElementName());
 
 					if(obj_type==OBJ_FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						//Gets the function reference type
 						ref_type=attribs[ParsersAttributes::REF_TYPE];
@@ -3302,7 +3302,7 @@ Language *DatabaseModel::createLanguage(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 	}
@@ -3329,7 +3329,7 @@ Function *DatabaseModel::createFunction(void)
 	{
 		func=new Function;
 		setBasicAttributes(func);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(!attribs[ParsersAttributes::RETURNS_SETOF].isEmpty())
 			func->setReturnSetOf(attribs[ParsersAttributes::RETURNS_SETOF]==
@@ -3358,56 +3358,56 @@ Function *DatabaseModel::createFunction(void)
 		if(!attribs[ParsersAttributes::ROW_AMOUNT].isEmpty())
 			func->setRowAmount(attribs[ParsersAttributes::ROW_AMOUNT].toInt());
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 					obj_type=getObjectType(elem);
 
 					//Gets the function return type from the XML
 					if(elem==ParsersAttributes::RETURN_TYPE)
 					{
-						XMLParser::savePosition();
+						xmlparser.savePosition();
 
 						try
 						{
-							XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 							do
 							{
-								if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 								{
 									//when the element found is a TYPE indicates that the function return type is a single one
-									if(XMLParser::getElementName()==ParsersAttributes::TYPE)
+									if(xmlparser.getElementName()==ParsersAttributes::TYPE)
 									{
 										type=createPgSQLType();
 										func->setReturnType(type);
 									}
 									//when the element found is a PARAMETER indicates that the function return type is a table
-									else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
+									else if(xmlparser.getElementName()==ParsersAttributes::PARAMETER)
 									{
 										param=createParameter();
 										func->addReturnedTableColumn(param.getName(), param.getType());
 									}
 								}
 							}
-							while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+							while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
-							XMLParser::restorePosition();
+							xmlparser.restorePosition();
 						}
 						catch(Exception &e)
 						{
-							XMLParser::restorePosition();
+							xmlparser.restorePosition();
 							throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 						}
 					}
 					//Gets the function language
 					else if(obj_type==OBJ_LANGUAGE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[ParsersAttributes::NAME], obj_type);
 
 						//Raises an error if the function doesn't exisits
@@ -3422,30 +3422,30 @@ Function *DatabaseModel::createFunction(void)
 						func->setLanguage(dynamic_cast<Language *>(object));
 					}
 					//Gets a function parameter
-					else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
+					else if(xmlparser.getElementName()==ParsersAttributes::PARAMETER)
 					{
 						param=createParameter();
 						func->addParameter(param);
 					}
 					//Gets the function code definition
-					else if(XMLParser::getElementName()==ParsersAttributes::DEFINITION)
+					else if(xmlparser.getElementName()==ParsersAttributes::DEFINITION)
 					{
-						XMLParser::savePosition();
-						XMLParser::getElementAttributes(attribs_aux);
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs_aux);
 
 						if(!attribs_aux[ParsersAttributes::LIBRARY].isEmpty())
 						{
 							func->setLibrary(attribs_aux[ParsersAttributes::LIBRARY]);
 							func->setSymbol(attribs_aux[ParsersAttributes::SYMBOL]);
 						}
-						else if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
-							func->setSourceCode(XMLParser::getElementContent());
+						else if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+							func->setSourceCode(xmlparser.getElementContent());
 
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -3476,19 +3476,19 @@ Parameter DatabaseModel::createParameter(void)
 
 	try
 	{
-		XMLParser::savePosition();
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.savePosition();
+		xmlparser.getElementAttributes(attribs);
 
 		param.setName(attribs[ParsersAttributes::NAME]);
 		param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::TYPE)
 					{
@@ -3496,19 +3496,19 @@ Parameter DatabaseModel::createParameter(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
 		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
 		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::_TRUE_);
 
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 	}
 	catch(Exception &e)
 	{
 		QString extra_info=getErrorExtraInfo();
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
@@ -3524,18 +3524,18 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 
 	try
 	{
-		XMLParser::savePosition();
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.savePosition();
+		xmlparser.getElementAttributes(attribs);
 
 		tpattrib.setName(attribs[ParsersAttributes::NAME]);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::TYPE)
 					{
@@ -3543,7 +3543,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 					}
 					else if(elem==ParsersAttributes::COLLATION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						collation=getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION);
 
@@ -3562,15 +3562,15 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 	}
 	catch(Exception &e)
 	{
 		QString extra_info=getErrorExtraInfo();
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
@@ -3588,7 +3588,7 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 	IntervalType interv_type;
 	SpatialType spatial_type;
 
-	XMLParser::getElementAttributes(attribs);
+	xmlparser.getElementAttributes(attribs);
 
 	if(!attribs[ParsersAttributes::LENGTH].isEmpty())
 		length=attribs[ParsersAttributes::LENGTH].toUInt();
@@ -3641,7 +3641,7 @@ Type *DatabaseModel::createType(void)
 	{
 		type=new Type;
 		setBasicAttributes(type);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
 		{
@@ -3692,18 +3692,18 @@ Type *DatabaseModel::createType(void)
 			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SUBTYPE_DIFF_FUNC;
 		}
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					//Specific operations for ENUM type
 					if(elem==ParsersAttributes::ENUM_TYPE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						enums=attribs[ParsersAttributes::VALUES].split(",");
 
 						count=enums.size();
@@ -3727,7 +3727,7 @@ Type *DatabaseModel::createType(void)
 					}
 					else if(elem==ParsersAttributes::COLLATION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						collation=getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION);
 
 						//Raises an error if the operator class doesn't exists
@@ -3745,7 +3745,7 @@ Type *DatabaseModel::createType(void)
 					}
 					if(elem==ParsersAttributes::OP_CLASS)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
 
 						//Raises an error if the operator class doesn't exists
@@ -3764,7 +3764,7 @@ Type *DatabaseModel::createType(void)
 					//Configuring the functions used by the type (only for BASE type)
 					else if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						//Tries to get the function from the model
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
@@ -3785,7 +3785,7 @@ Type *DatabaseModel::createType(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -3818,7 +3818,7 @@ Domain *DatabaseModel::createDomain(void)
 	{
 		domain=new Domain;
 		setBasicAttributes(domain);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(!attribs[ParsersAttributes::CONSTRAINT].isEmpty())
 			domain->setConstraintName(attribs[ParsersAttributes::CONSTRAINT]);
@@ -3829,13 +3829,13 @@ Domain *DatabaseModel::createDomain(void)
 		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==
 				ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					//If a type element is found it'll be extracted an type which the domain is applied
 					if(elem==ParsersAttributes::TYPE)
@@ -3844,14 +3844,14 @@ Domain *DatabaseModel::createDomain(void)
 					}
 					else if(elem==ParsersAttributes::EXPRESSION)
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						domain->setExpression(XMLParser::getElementContent());
-						XMLParser::restorePosition();
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						domain->setExpression(xmlparser.getElementContent());
+						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(xmlparser.NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -3876,7 +3876,7 @@ Cast *DatabaseModel::createCast(void)
 	{
 		cast=new Cast;
 		setBasicAttributes(cast);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::IMPLICIT)
 			cast->setCastType(Cast::IMPLICIT);
@@ -3887,13 +3887,13 @@ Cast *DatabaseModel::createCast(void)
 
 		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					//Extract one argument type from the XML
 					if(elem==ParsersAttributes::TYPE)
@@ -3908,7 +3908,7 @@ Cast *DatabaseModel::createCast(void)
 					//Extracts the conversion function
 					else if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists
@@ -3924,7 +3924,7 @@ Cast *DatabaseModel::createCast(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -3947,7 +3947,7 @@ Conversion *DatabaseModel::createConversion(void)
 	{
 		conv=new Conversion;
 		setBasicAttributes(conv);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		conv->setEncoding(Conversion::SRC_ENCODING,
 											EncodingType(attribs[ParsersAttributes::SRC_ENCODING]));
@@ -3957,17 +3957,17 @@ Conversion *DatabaseModel::createConversion(void)
 
 		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists
@@ -3983,7 +3983,7 @@ Conversion *DatabaseModel::createConversion(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4010,7 +4010,7 @@ Operator *DatabaseModel::createOperator(void)
 	{
 		oper=new Operator;
 		setBasicAttributes(oper);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		oper->setMerges(attribs[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
 		oper->setHashes(attribs[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
@@ -4022,17 +4022,17 @@ Operator *DatabaseModel::createOperator(void)
 		oper_types[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
 		oper_types[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==objs_schemas[OBJ_OPERATOR])
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						oper_aux=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPERATOR);
 
 						//Raises an error if the auxiliary operator doesn't exists
@@ -4049,7 +4049,7 @@ Operator *DatabaseModel::createOperator(void)
 					}
 					else if(elem==ParsersAttributes::TYPE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						if(attribs[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
 							arg_type=Operator::LEFT_ARG;
@@ -4061,7 +4061,7 @@ Operator *DatabaseModel::createOperator(void)
 					}
 					else if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists on the model
@@ -4078,7 +4078,7 @@ Operator *DatabaseModel::createOperator(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4105,7 +4105,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	{
 		op_class=new OperatorClass;
 		setBasicAttributes(op_class);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		op_class->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
 		op_class->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
@@ -4114,17 +4114,17 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OPERATOR_ELEM;
 		elem_types[ParsersAttributes::STORAGE]=OperatorClassElement::STORAGE_ELEM;
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==objs_schemas[OBJ_OPFAMILY])
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[ParsersAttributes::NAME], OBJ_OPFAMILY);
 
 						//Raises an error if the operator family doesn't exists
@@ -4140,20 +4140,20 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					}
 					else if(elem==ParsersAttributes::TYPE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 						op_class->setDataType(type);
 					}
 					else if(elem==ParsersAttributes::ELEMENT)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						stg_number=attribs[ParsersAttributes::STRATEGY_NUM].toUInt();
 						elem_type=elem_types[attribs[ParsersAttributes::TYPE]];
 
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.getElementAttributes(attribs);
 
 						if(elem_type==OperatorClassElement::STORAGE_ELEM)
 						{
@@ -4170,11 +4170,11 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 							object=getObject(attribs[ParsersAttributes::SIGNATURE],OBJ_OPERATOR);
 							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
 
-							if(XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
+							if(xmlparser.hasElement(XMLParser::NEXT_ELEMENT))
 							{
-								XMLParser::savePosition();
-								XMLParser::accessElement(XMLParser::NEXT_ELEMENT);
-								XMLParser::getElementAttributes(attribs_aux);
+								xmlparser.savePosition();
+								xmlparser.accessElement(XMLParser::NEXT_ELEMENT);
+								xmlparser.getElementAttributes(attribs_aux);
 
 								object=getObject(attribs_aux[ParsersAttributes::NAME],OBJ_OPFAMILY);
 
@@ -4187,16 +4187,16 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 								class_elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(object));
-								XMLParser::restorePosition();
+								xmlparser.restorePosition();
 							}
 						}
 
 						op_class->addElement(class_elem);
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4217,7 +4217,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 	{
 		op_family=new OperatorFamily;
 		setBasicAttributes(op_family);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		op_family->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
 	}
 	catch(Exception &e)
@@ -4241,21 +4241,21 @@ Aggregate *DatabaseModel::createAggregate(void)
 	{
 		aggreg=new Aggregate;
 		setBasicAttributes(aggreg);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		aggreg->setInitialCondition(attribs[ParsersAttributes::INITIAL_COND]);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::TYPE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 
 						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::STATE_TYPE)
@@ -4265,7 +4265,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 					}
 					else if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists on the model
@@ -4286,7 +4286,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4313,20 +4313,20 @@ Table *DatabaseModel::createTable(void)
 	{
 		table=new Table;
 		setBasicAttributes(table);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
-					XMLParser::savePosition();
+					elem=xmlparser.getElementName();
+					xmlparser.savePosition();
 					object=nullptr;
 
 					if(elem==BaseObject::objs_schemas[OBJ_COLUMN])
@@ -4341,7 +4341,7 @@ Table *DatabaseModel::createTable(void)
 						object=createTrigger(table);
           else if(elem==BaseObject::objs_schemas[OBJ_TAG])
           {
-            XMLParser::getElementAttributes(aux_attribs);
+						xmlparser.getElementAttributes(aux_attribs);
             tag=getObject(aux_attribs[ParsersAttributes::NAME] ,OBJ_TAG);
 
             if(!tag)
@@ -4359,45 +4359,45 @@ Table *DatabaseModel::createTable(void)
           //Retrieving custom columns / constraint indexes
           else if(elem==ParsersAttributes::CUSTOMIDXS)
           {
-            XMLParser::getElementAttributes(aux_attribs);
+						xmlparser.getElementAttributes(aux_attribs);
             obj_type=getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
 
-            XMLParser::savePosition();
+						xmlparser.savePosition();
 
-            if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+						if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
             {
               do
               {
-                if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
                 {
-                  elem=XMLParser::getElementName();
+									elem=xmlparser.getElementName();
 
                   //The element <object> stores the index for each object in the current group
                   if(elem==ParsersAttributes::OBJECT)
                   {
-                    XMLParser::getElementAttributes(aux_attribs);
+										xmlparser.getElementAttributes(aux_attribs);
                     names.push_back(aux_attribs[ParsersAttributes::NAME]);
                     idxs.push_back(aux_attribs[ParsersAttributes::INDEX].toUInt());
                   }
                 }
               }
-              while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+							while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
               table->setRelObjectsIndexes(names, idxs, obj_type);
               names.clear();
               idxs.clear();
             }
 
-            XMLParser::restorePosition();
+						xmlparser.restorePosition();
           }
 
 					if(object)
 						table->addObject(object);
 
-					XMLParser::restorePosition();
+					xmlparser.restorePosition();
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		table->setProtected(table->isProtected());
@@ -4405,7 +4405,7 @@ Table *DatabaseModel::createTable(void)
 	catch(Exception &e)
 	{
 		QString extra_info=getErrorExtraInfo();
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 
 		if(table) delete(table);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
@@ -4426,7 +4426,7 @@ Column *DatabaseModel::createColumn(void)
 		column=new Column;
 		setBasicAttributes(column);
 
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
@@ -4446,13 +4446,13 @@ Column *DatabaseModel::createColumn(void)
       column->setSequence(seq);
     }
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::TYPE)
 					{
@@ -4460,7 +4460,7 @@ Column *DatabaseModel::createColumn(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4491,7 +4491,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 	try
 	{
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		//If the constraint parent is allocated
 		if(parent_obj)
@@ -4601,13 +4601,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		}
 
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::EXCLUDE_ELEMENT)
 					{
@@ -4616,16 +4616,16 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 					}
 					else if(elem==ParsersAttributes::EXPRESSION)
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
-            constr->setExpression(XMLParser::getElementContent());
+						constr->setExpression(xmlparser.getElementContent());
 
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::COLUMNS)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						col_list=attribs[ParsersAttributes::NAMES].split(',');
 						count=col_list.count();
@@ -4665,7 +4665,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		if(ins_constr_table)
@@ -4696,28 +4696,28 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	Collation *collation=nullptr;
 	QString xml_elem;
 
-	xml_elem=XMLParser::getElementName();
+	xml_elem=xmlparser.getElementName();
 
 	if(xml_elem==ParsersAttributes::INDEX_ELEMENT || xml_elem==ParsersAttributes::EXCLUDE_ELEMENT)
 	{
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		elem.setSortingAttribute(Element::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
 		elem.setSortingAttribute(Element::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 
-		XMLParser::savePosition();
-		XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+		xmlparser.savePosition();
+		xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 		do
 		{
-			xml_elem=XMLParser::getElementName();
+			xml_elem=xmlparser.getElementName();
 
-			if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+			if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 			{
 				if(xml_elem==ParsersAttributes::OP_CLASS)
 				{
-					XMLParser::getElementAttributes(attribs);
+					xmlparser.getElementAttributes(attribs);
 					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
 
 					//Raises an error if the operator class doesn't exists
@@ -4736,7 +4736,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				//Checking if elem is a ExcludeElement to be able to assign an operator to it
 				else if(xml_elem==ParsersAttributes::OPERATOR && dynamic_cast<ExcludeElement *>(&elem))
 				{
-					XMLParser::getElementAttributes(attribs);
+					xmlparser.getElementAttributes(attribs);
 					oper=dynamic_cast<Operator *>(getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPERATOR));
 
 					//Raises an error if the operator doesn't exists
@@ -4754,7 +4754,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				}
 				else if(xml_elem==ParsersAttributes::COLLATION && dynamic_cast<IndexElement *>(&elem))
 				{
-					XMLParser::getElementAttributes(attribs);
+					xmlparser.getElementAttributes(attribs);
 					collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION));
 
 					//Raises an error if the operator class doesn't exists
@@ -4772,7 +4772,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				}
 				else if(xml_elem==ParsersAttributes::COLUMN)
 				{
-					XMLParser::getElementAttributes(attribs);
+					xmlparser.getElementAttributes(attribs);
 
 					if(parent_obj->getObjectType()==OBJ_TABLE)
 					{
@@ -4801,17 +4801,22 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				}
 				else if(xml_elem==ParsersAttributes::EXPRESSION)
 				{
-					XMLParser::savePosition();
-					XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-					elem.setExpression(XMLParser::getElementContent());
-					XMLParser::restorePosition();
+					xmlparser.savePosition();
+					xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+					elem.setExpression(xmlparser.getElementContent());
+					xmlparser.restorePosition();
 				}
 			}
 		}
-		while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 	}
+}
+
+XMLParser *DatabaseModel::getXMLParser(void)
+{
+	return(&xmlparser);
 }
 
 Index *DatabaseModel::createIndex(Table *table)
@@ -4824,7 +4829,7 @@ Index *DatabaseModel::createIndex(Table *table)
 
 	try
 	{
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(!table)
 		{
@@ -4855,13 +4860,13 @@ Index *DatabaseModel::createIndex(Table *table)
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::INDEX_ELEMENT)
 					{
@@ -4870,15 +4875,15 @@ Index *DatabaseModel::createIndex(Table *table)
 					}
           else if(elem==ParsersAttributes::PREDICATE)
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						str_aux=XMLParser::getElementContent();
-						XMLParser::restorePosition();
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						str_aux=xmlparser.getElementContent();
+						xmlparser.restorePosition();
             index->setPredicate(str_aux);
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		if(inc_idx_table)
@@ -4909,26 +4914,26 @@ Rule *DatabaseModel::createRule(void)
 		rule=new Rule;
 		setBasicAttributes(rule);
 
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
 		rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::COMMANDS ||
 						 elem==ParsersAttributes::CONDITION)
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
-						str_aux=XMLParser::getElementContent();
-						XMLParser::restorePosition();
+						str_aux=xmlparser.getElementContent();
+						xmlparser.restorePosition();
 
 						if(elem==ParsersAttributes::COMMANDS)
 						{
@@ -4945,7 +4950,7 @@ Rule *DatabaseModel::createRule(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -4970,7 +4975,7 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 
 	try
 	{
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(!table && attribs[ParsersAttributes::TABLE].isEmpty())
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5049,17 +5054,17 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 			trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
 		}
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists
@@ -5078,15 +5083,15 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 					}
 					else if(elem==ParsersAttributes::CONDITION)
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						str_aux=XMLParser::getElementContent();
-						XMLParser::restorePosition();
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						str_aux=xmlparser.getElementContent();
+						xmlparser.restorePosition();
 						trigger->setCondition(str_aux);
 					}
 					else if(elem==ParsersAttributes::COLUMNS)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						list_aux=attribs[ParsersAttributes::NAMES].split(',');
 						count=list_aux.count();
@@ -5103,7 +5108,7 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		if(inc_trig_table)
@@ -5132,19 +5137,19 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	{
 		event_trig=new EventTrigger;
 		setBasicAttributes(event_trig);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::FUNCTION)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
 						//Raises an error if the function doesn't exists
@@ -5162,12 +5167,12 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 					}
 					else if(elem==ParsersAttributes::FILTER)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						event_trig->setFilter(attribs[ParsersAttributes::VARIABLE], attribs[ParsersAttributes::VALUES].split(","));
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 	}
@@ -5194,7 +5199,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 	{
 		sequence=new Sequence;
 		setBasicAttributes(sequence);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		sequence->setValues(attribs[ParsersAttributes::MIN_VALUE],
 				attribs[ParsersAttributes::MAX_VALUE],
@@ -5277,22 +5282,22 @@ View *DatabaseModel::createView(void)
 		view=new View;
 		setBasicAttributes(view);
 
-    XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
     view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::_TRUE_);
     view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
     view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::REFERENCE)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 
 						//If the table name is specified tries to create a reference to a table/column
 						if(!attribs[ParsersAttributes::TABLE].isEmpty())
@@ -5340,24 +5345,24 @@ View *DatabaseModel::createView(void)
 						}
 						else
 						{
-							XMLParser::savePosition();
+							xmlparser.savePosition();
 							str_aux=attribs[ParsersAttributes::ALIAS];
 
-							XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-							XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-							refs.push_back(Reference(XMLParser::getElementContent(),str_aux));
+							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+							refs.push_back(Reference(xmlparser.getElementContent(),str_aux));
 
-							XMLParser::restorePosition();
+							xmlparser.restorePosition();
 						}
 					}
 					else if(elem==ParsersAttributes::EXPRESSION)
 					{
-						XMLParser::savePosition();
-						XMLParser::getElementAttributes(attribs);
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 						if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CTE_EXPRESSION)
-							view->setCommomTableExpression(XMLParser::getElementContent());
+							view->setCommomTableExpression(xmlparser.getElementContent());
 						else
 						{
 							if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
@@ -5368,7 +5373,7 @@ View *DatabaseModel::createView(void)
 								type=Reference::SQL_REFER_WHERE;
 
 
-							list_aux=XMLParser::getElementContent().split(',');
+							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();
 
 							//Indicates that some of the references were used in the expressions
@@ -5382,23 +5387,23 @@ View *DatabaseModel::createView(void)
 							}
 						}
 
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==BaseObject::getSchemaName(OBJ_RULE))
 					{
-						XMLParser::savePosition();
+						xmlparser.savePosition();
 						view->addRule(createRule());
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
 					{
-						XMLParser::savePosition();
+						xmlparser.savePosition();
 						view->addTrigger(createTrigger(view));
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
           else if(elem==BaseObject::getSchemaName(OBJ_TAG))
           {
-            XMLParser::getElementAttributes(aux_attribs);
+						xmlparser.getElementAttributes(aux_attribs);
             tag=getObject(aux_attribs[ParsersAttributes::NAME] ,OBJ_TAG);
 
             if(!tag)
@@ -5415,7 +5420,7 @@ View *DatabaseModel::createView(void)
           }
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
 		/** Special case for refereces used as view definition **
@@ -5461,7 +5466,7 @@ Collation *DatabaseModel::createCollation(void)
 		collation=new Collation;
 		setBasicAttributes(collation);
 
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		encoding=EncodingType(attribs[ParsersAttributes::ENCODING]);
 		collation->setEncoding(encoding);
@@ -5511,7 +5516,7 @@ Extension *DatabaseModel::createExtension(void)
 	try
 	{
 		extension=new Extension;
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
 		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::_TRUE_);
@@ -5538,22 +5543,22 @@ Tag *DatabaseModel::createTag(void)
     tag=new Tag;
     setBasicAttributes(tag);
 
-    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
     {
       do
       {
-        if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
         {
-          elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
           if(elem==ParsersAttributes::STYLE)
           {
-            XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
             tag->setElementColors(attribs[ParsersAttributes::ID],attribs[ParsersAttributes::COLORS]);
           }
         }
       }
-      while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
     }
 
     return(tag);
@@ -5575,7 +5580,7 @@ Textbox *DatabaseModel::createTextbox(void)
 		txtbox=new Textbox;
 		setBasicAttributes(txtbox);
 
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 
 		if(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
 			txtbox->setTextAttribute(Textbox::ITALIC_TXT, true);
@@ -5624,7 +5629,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		labels_id[ParsersAttributes::SRC_LABEL]=BaseRelationship::SRC_CARD_LABEL;
 		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DST_CARD_LABEL;
 
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
 		if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW &&
@@ -5749,52 +5754,52 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
 		}
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					elem=XMLParser::getElementName();
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::COLUMN && rel)
 					{
-						XMLParser::savePosition();
+						xmlparser.savePosition();
 						rel->addObject(createColumn());
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::CONSTRAINT && rel)
 					{
-						XMLParser::savePosition();
+						xmlparser.savePosition();
 						rel->addObject(createConstraint(rel));
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::LINE)
 					{
 						vector<QPointF> points;
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 						do
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 							points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
 															 attribs[ParsersAttributes::Y_POS].toFloat()));
 						}
-						while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+						while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
 						base_rel->setPoints(points);
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::LABEL)
 					{
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						str_aux=attribs[ParsersAttributes::REF_TYPE];
 
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						XMLParser::getElementAttributes(attribs);
-						XMLParser::restorePosition();
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.getElementAttributes(attribs);
+						xmlparser.restorePosition();
 
 						base_rel->setLabelDistance(labels_id[str_aux],
 																			 QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
@@ -5804,7 +5809,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					{
 						QList<QString> col_list;
 
-						XMLParser::getElementAttributes(attribs);
+						xmlparser.getElementAttributes(attribs);
 						col_list=attribs[ParsersAttributes::INDEXES].split(',');
 
 						while(!col_list.isEmpty())
@@ -5817,7 +5822,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -5858,13 +5863,13 @@ Permission *DatabaseModel::createPermission(void)
 
 	try
 	{  
-		XMLParser::getElementAttributes(priv_attribs);
+		xmlparser.getElementAttributes(priv_attribs);
 		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::_TRUE_;
 		cascade=priv_attribs[ParsersAttributes::CASCADE]==ParsersAttributes::_TRUE_;
 
-		XMLParser::savePosition();
-		XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-		XMLParser::getElementAttributes(attribs);
+		xmlparser.savePosition();
+		xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+		xmlparser.getElementAttributes(attribs);
 
 		obj_type=getObjectType(attribs[ParsersAttributes::TYPE]);
 		obj_name=attribs[ParsersAttributes::NAME];
@@ -5898,9 +5903,9 @@ Permission *DatabaseModel::createPermission(void)
 
 		do
 		{
-			if(XMLParser::getElementName()==ParsersAttributes::ROLES)
+			if(xmlparser.getElementName()==ParsersAttributes::ROLES)
 			{
-				XMLParser::getElementAttributes(attribs);
+				xmlparser.getElementAttributes(attribs);
 
 				list=attribs[ParsersAttributes::NAMES].split(',');
 				len=list.size();
@@ -5925,9 +5930,9 @@ Permission *DatabaseModel::createPermission(void)
 					perm->addRole(role);
 				}
 			}
-			else if(XMLParser::getElementName()==ParsersAttributes::PRIVILEGES)
+			else if(xmlparser.getElementName()==ParsersAttributes::PRIVILEGES)
 			{
-				XMLParser::getElementAttributes(priv_attribs);
+				xmlparser.getElementAttributes(priv_attribs);
 
 				itr=priv_attribs.begin();
 				itr_end=priv_attribs.end();
@@ -5970,9 +5975,9 @@ Permission *DatabaseModel::createPermission(void)
 				}
 			}
 		}
-		while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
-		XMLParser::restorePosition();
+		xmlparser.restorePosition();
 	}
 	catch(Exception &e)
 	{

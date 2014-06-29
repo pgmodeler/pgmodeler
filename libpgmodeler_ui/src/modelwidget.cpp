@@ -167,6 +167,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	protected_model_frm->setLayout(grid);
 
 	db_model=new DatabaseModel;
+	xmlparser=db_model->getXMLParser();
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,2000,2000));
@@ -891,8 +892,8 @@ void ModelWidget::convertRelationshipNN(void)
 					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 					//Creates the table from the xml code
-					XMLParser::restartParser();
-					XMLParser::loadXMLBuffer(xml_buf);
+					xmlparser->restartParser();
+					xmlparser->loadXMLBuffer(xml_buf);
 					tab=db_model->createTable();
 					tab_name=tab->getName();
 
@@ -915,8 +916,8 @@ void ModelWidget::convertRelationshipNN(void)
 						{
 							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XML_DEFINITION,true);
 
-							XMLParser::restartParser();
-							XMLParser::loadXMLBuffer(xml_buf);
+							xmlparser->restartParser();
+							xmlparser->loadXMLBuffer(xml_buf);
 							constr=db_model->createConstraint(tab);
 							tab->addConstraint(constr);
 						}
@@ -2142,13 +2143,13 @@ void ModelWidget::pasteObjects(void)
 	{
 		if(xml_objs.count(*itr))
 		{
-			XMLParser::restartParser();
-			XMLParser::loadXMLBuffer(xml_objs[*itr]);
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(xml_objs[*itr]);
 
 			try
 			{
 				//Creates the object from the XML
-				object=db_model->createObject(db_model->getObjectType(XMLParser::getElementName()));
+				object=db_model->createObject(db_model->getObjectType(xmlparser->getElementName()));
 				tab_obj=dynamic_cast<TableObject *>(object);
 				constr=dynamic_cast<Constraint *>(tab_obj);
 

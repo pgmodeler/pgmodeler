@@ -56,6 +56,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 
 		model=nullptr;
 		scene=nullptr;
+		xmlparser=nullptr;
 		zoom=1;
 
     initializeOptions();
@@ -105,6 +106,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		if(!parsed_opts.empty())
 		{
 			model=new DatabaseModel;
+			xmlparser=model->getXMLParser();
 			silent_mode=(parsed_opts.count(SILENT));
 
 			//If the export is to png image loads additional configurations
@@ -634,11 +636,11 @@ void PgModelerCLI::recreateObjects(void)
 
 		try
 		{
-			XMLParser::restartParser();
-			XMLParser::loadXMLBuffer(xml_def);
-			obj_type=model->getObjectType(XMLParser::getElementName());
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(xml_def);
+			obj_type=model->getObjectType(xmlparser->getElementName());
 
-			XMLParser::getElementAttributes(attribs);
+			xmlparser->getElementAttributes(attribs);
 
 			if(obj_type==OBJ_DATABASE)
 				model->configureDatabase(attribs);
@@ -654,8 +656,8 @@ void PgModelerCLI::recreateObjects(void)
 					if(!list.isEmpty())
 					{
 						constr.append(list);
-						XMLParser::restartParser();
-						XMLParser::loadXMLBuffer(xml_def);
+						xmlparser->restartParser();
+						xmlparser->loadXMLBuffer(xml_def);
 					}
 				}
 

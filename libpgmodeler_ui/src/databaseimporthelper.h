@@ -116,6 +116,8 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
 
+		XMLParser *xmlparser;
+
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
 		void createTablespace(attribs_map &attribs);

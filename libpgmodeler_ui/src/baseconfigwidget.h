@@ -32,6 +32,8 @@
 
 class BaseConfigWidget {
 	protected:
+		XMLParser xmlparser;
+
 		/*! \brief Stores the configuration params, the main key is the xml element name
 		 and the value is a map where the key is the attribute name and the value
 		 is the current attribute value */

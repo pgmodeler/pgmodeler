@@ -62,6 +62,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
+		XMLParser xmlparser;
+
 		//! \brief Database encoding
 		EncodingType encoding;
 
@@ -146,6 +148,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
+
+		//! brief Returns extra error info when loading database models
+		QString getErrorExtraInfo(void);
 
 	public:
 		DatabaseModel(void);
@@ -464,13 +469,18 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
-		QString getErrorExtraInfo(void);
-
     void setLastPosition(const QPoint &pnt);
     QPoint getLastPosition(void);
 
     void setLastZoomFactor(float zoom);
     float getLastZoomFactor(void);
+
+		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
+		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call
+		 the create* method.
+
+		\note: This is not the better approach and certainly will be changed in future releases */
+		XMLParser *getXMLParser(void);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
