@@ -19,8 +19,8 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 {
 	attribs_map attributes;
 
+	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
 	attributes[ParsersAttributes::OPERATOR]="";
-
 	configureAttributes(attributes, def_type);
 
 	if(_operator)
@@ -31,5 +31,5 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::OPERATOR]=_operator->getCodeDefinition(def_type, true);
 	}
 
-	return(SchemaParser::getCodeDefinition(ParsersAttributes::EXCLUDE_ELEMENT, attributes, def_type));
+	return(schparser.getCodeDefinition(ParsersAttributes::EXCLUDE_ELEMENT, attributes, def_type));
 }

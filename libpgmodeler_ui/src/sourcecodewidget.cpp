@@ -118,7 +118,7 @@ void SourceCodeWidget::generateSourceCode(int)
 								task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 			}
 
-			SchemaParser::setPgSQLVersion(version_cmb->currentText());
+			BaseObject::setPgSQLVersion(version_cmb->currentText());
 			sqlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::SQL_DEFINITION)));
 		}
 

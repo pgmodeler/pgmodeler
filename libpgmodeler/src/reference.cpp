@@ -199,6 +199,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 QString Reference::getXMLDefinition(void)
 {
 	attribs_map attribs;
+	SchemaParser schparser;
 
 	attribs[ParsersAttributes::TABLE]="";
 	attribs[ParsersAttributes::COLUMN]="";
@@ -213,8 +214,7 @@ QString Reference::getXMLDefinition(void)
 	attribs[ParsersAttributes::ALIAS]=alias;
 	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
-	return(SchemaParser::getCodeDefinition(ParsersAttributes::REFERENCE,
-																				 attribs, SchemaParser::XML_DEFINITION));
+	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XML_DEFINITION));
 }
 
 bool Reference::operator == (Reference &refer)

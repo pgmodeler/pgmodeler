@@ -49,6 +49,8 @@ class Element {
 				 sorting_enabled;
 
 	protected:
+		SchemaParser schparser;
+
 		void configureAttributes(attribs_map &attributes, unsigned def_type);
 
 	public:
@@ -57,7 +59,7 @@ class Element {
 															NULLS_FIRST=1;
 
 		Element(void);
-        virtual ~Element(void) {}
+		virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
 		void setColumn(Column *column);
@@ -77,7 +79,6 @@ class Element {
 		bool isSortingEnabled(void);
 
 		virtual QString getCodeDefinition(unsigned) = 0;
-
 		bool operator == (Element &elem);
 };
 

@@ -50,7 +50,7 @@ const QString SchemaParser::PGSQL_VERSION_92="9.2";
 const QString SchemaParser::PGSQL_VERSION_93="9.3";
 const QString SchemaParser::PGSQL_VERSION_94="9.4";
 
-vector<QString> SchemaParser::buffer;
+/*vector<QString> SchemaParser::buffer;
 attribs_map SchemaParser::attributes;
 QString SchemaParser::filename="";
 unsigned SchemaParser::line=0;
@@ -59,7 +59,14 @@ unsigned SchemaParser::comment_count=0;
 bool SchemaParser::ignore_unk_atribs=false;
 bool SchemaParser::ignore_empty_atribs=false;
 
-QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_94;
+QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_94; */
+
+SchemaParser::SchemaParser(void)
+{
+	line=column=comment_count=0;
+	ignore_unk_atribs=ignore_empty_atribs=false;
+	pgsql_version=SchemaParser::PGSQL_VERSION_94;
+}
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
@@ -71,27 +78,20 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 										ERR_INV_POSTGRESQL_VERSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!pgsql_ver.isEmpty())
-		SchemaParser::pgsql_version=pgsql_ver;
+		pgsql_version=pgsql_ver;
 	else
-		SchemaParser::pgsql_version=PGSQL_VERSION_94;
+		pgsql_version=PGSQL_VERSION_94;
 }
 
 QString SchemaParser::getPgSQLVersion(void)
 {
-	return(SchemaParser::pgsql_version);
+	return(pgsql_version);
 }
 
 QStringList SchemaParser::getPgSQLVersions(void)
 {
-	QStringList versions;
-
-	versions.push_back(PGSQL_VERSION_94);
-	versions.push_back(PGSQL_VERSION_93);
-	versions.push_back(PGSQL_VERSION_92);
-	versions.push_back(PGSQL_VERSION_91);
-	versions.push_back(PGSQL_VERSION_90);
-
-	return(versions);
+	return(QStringList{ PGSQL_VERSION_94, PGSQL_VERSION_93, PGSQL_VERSION_92,
+											PGSQL_VERSION_91, PGSQL_VERSION_90 });
 }
 
 void SchemaParser::restartParser(void)

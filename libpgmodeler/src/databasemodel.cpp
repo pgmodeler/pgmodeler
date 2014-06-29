@@ -6308,7 +6308,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   }
 
   attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? "1" : "");
-  def=SchemaParser::getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
+	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
   if(prepend_at_bod && def_type==SchemaParser::SQL_DEFINITION)
     def="-- Prepended SQL commands --\n" +	this->prepended_sql + "\n---\n\n" + def;

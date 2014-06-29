@@ -65,6 +65,8 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
    DatabaseModel, Tag */
 unsigned BaseObject::global_id=40000;
 
+QString BaseObject::pgsql_ver=SchemaParser::PGSQL_VERSION_94;
+
 BaseObject::BaseObject(void)
 {
 	object_id=BaseObject::global_id++;
@@ -594,6 +596,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		bool format;
 
+		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
 		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
 
 		//Formats the object's name in case the SQL definition is being generated
@@ -674,9 +677,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 						obj_type!=OBJ_DATABASE) ||
 					 def_type==SchemaParser::XML_DEFINITION)
 				{
-					SchemaParser::setIgnoreUnkownAttributes(true);
+					schparser.setIgnoreUnkownAttributes(true);
 					attributes[ParsersAttributes::OWNER]=
-							SchemaParser::getCodeDefinition(ParsersAttributes::OWNER, attributes, def_type);
+							schparser.getCodeDefinition(ParsersAttributes::OWNER, attributes, def_type);
 				}
 			}
 			else
@@ -695,10 +698,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 					obj_type!=OBJ_DATABASE) ||
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
-				SchemaParser::setIgnoreUnkownAttributes(true);
+				schparser.setIgnoreUnkownAttributes(true);
 
         attributes[ParsersAttributes::COMMENT]=
-						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
+						schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
 		}
 
@@ -709,9 +712,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(def_type==SchemaParser::XML_DEFINITION)
 			{
-        SchemaParser::setIgnoreUnkownAttributes(true);
+				schparser.setIgnoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
-            SchemaParser::getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
+						schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
 			}
 			else
 			{
@@ -725,9 +728,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
       if(def_type==SchemaParser::XML_DEFINITION)
       {
-        SchemaParser::setIgnoreUnkownAttributes(true);
+				schparser.setIgnoreUnkownAttributes(true);
         attributes[ParsersAttributes::PREPENDED_SQL]=
-            SchemaParser::getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
+						schparser.getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
       }
       else
       {
@@ -737,10 +740,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
-      SchemaParser::setIgnoreUnkownAttributes(true);
-      SchemaParser::setIgnoreEmptyAttributes(true);
+			schparser.setIgnoreUnkownAttributes(true);
+			schparser.setIgnoreEmptyAttributes(true);
       attributes[ParsersAttributes::DROP]=
-          SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
+					schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
     }
 
 		if(reduced_form)
@@ -748,11 +751,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 			attributes[ParsersAttributes::REDUCED_FORM]="";
 
-
-
 		try
 		{
-			code_def+=SchemaParser::getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
+			code_def+=schparser.getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
 
 			//Internally disabling the SQL definition
 			if(sql_disabled && def_type==SchemaParser::SQL_DEFINITION)
@@ -772,7 +773,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 		catch(Exception &e)
 		{
-			SchemaParser::restartParser();
+			schparser.restartParser();
 			clearAttributes();
 
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
@@ -881,7 +882,17 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
   else if(obj_type==OBJ_TABLE)
     return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
   else
-    return(vector<ObjectType>()={});
+		return(vector<ObjectType>()={});
+}
+
+void BaseObject::setPgSQLVersion(const QString &ver)
+{
+	pgsql_ver=ver;
+}
+
+QString BaseObject::getPgSQLVersion(void)
+{
+	return(pgsql_ver);
 }
 
 void BaseObject::operator = (BaseObject &obj)

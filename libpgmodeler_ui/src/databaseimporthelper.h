@@ -118,6 +118,8 @@ class DatabaseImportHelper: public QObject {
 
 		XMLParser *xmlparser;
 
+		SchemaParser schparser;
+
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
 		void createTablespace(attribs_map &attribs);

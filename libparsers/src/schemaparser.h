@@ -38,11 +38,11 @@ class SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */
-		static bool ignore_unk_atribs;
+		bool ignore_unk_atribs;
 
 		/*! \brief Indicates that the parser should ignore empty
 		 attributes avoiding raising exceptions */
-		static bool ignore_empty_atribs;
+		bool ignore_empty_atribs;
 
 		static const char CHR_COMMENT,			//! \brief Character that starts a comment
 											CHR_LINE_END,			//! \brief Character that indicates end of line
@@ -74,13 +74,13 @@ class SchemaParser {
 
 
 		//! \brief Get an attribute name from the buffer on the current position
-		static QString getAttribute(void);
+		QString getAttribute(void);
 
 		//! \brief Get an conditional instruction from the buffer on the current position
-		static QString getConditional(void);
+		QString getConditional(void);
 
 		//! \brief Get an metacharacter from the buffer on the current position
-		static QString getMetaCharacter(void);
+		QString getMetaCharacter(void);
 
 		/*! \brief Returns the result (true|false) of conditional expression evaluation.
 		The expression is evaluated from the left to the right and not support Polish Notation, so
@@ -95,43 +95,44 @@ class SchemaParser {
 				%if @{a1} %or %not @{a3} %then --> TRUE
 				%if @{a1} %and @{a3} %then --> FALSE
 		*/
-		static bool evaluateExpression(void);
+		bool evaluateExpression(void);
 
     //! brief Increments the column counter while blank chars (space and tabs) are found on the line
-    static void ignoreBlankChars(const QString &line);
+		void ignoreBlankChars(const QString &line);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
-		static QString getWord(void);
+		QString getWord(void);
 
 		//! \brief Gets a pure text, ignoring elements of the language
-		static QString getPureText(void);
+		QString getPureText(void);
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
-		static bool isSpecialCharacter(char chr);
+		bool isSpecialCharacter(char chr);
 
 		//! \brief Filename that was loaded by the parser
-		static QString filename;
+		QString filename;
 
 		/*! \brief Vectorial representation of the loaded file. This is the buffer that is
 		 analyzed by de parser */
-		static vector<QString> buffer;
+		vector<QString> buffer;
 
-		static unsigned line, //! \brief Current line where the parser reading is
-										column, //! \brief Current column where the parser reading is
-										/*! \brief Comment line ammout extracted. This attribute is used to make the correct
-										 reference to the line on file that has syntax errors */
-										comment_count;
+		unsigned line, //! \brief Current line where the parser reading is
+						 column, //! \brief Current column where the parser reading is
 
-		static attribs_map attributes;
+						/*! \brief Comment line ammout extracted. This attribute is used to make the correct
+											reference to the line on file that has syntax errors */
+						 comment_count;
+
+		attribs_map attributes;
 
 		//! \brief PostgreSQL version currently used by the parser
-		static QString pgsql_version;
+		QString pgsql_version;
 
 		/*! \brief Creates an special attribute indicating which version of PostgreSQL the
 		parser is configured */
-		static void storePgSQLVersion(attribs_map &attribs);
+		void storePgSQLVersion(attribs_map &attribs);
 
 	public:
 
@@ -144,51 +145,53 @@ class SchemaParser {
 
 		//! \brief Constants used to get a specific object definition
     static const unsigned SQL_DEFINITION=0,
-															XML_DEFINITION=1;
+													XML_DEFINITION=1;
+
+		SchemaParser(void);
 
 		/*! \brief Set the version of PostgreSQL to be adopted by the parser in obtaining
 		 the definition of the objects. This function should always be called at
 		 software startup or when the user wants to change the default version
 		 of the database */
-		static void setPgSQLVersion(const QString &pgsql_ver);
+		void setPgSQLVersion(const QString &pgsql_ver);
 
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the
 		 map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL
 		 in order to the to correct schema be loaded */
-		static QString getCodeDefinition(const QString &obj_name, attribs_map &attribs, unsigned def_type);
+		QString getCodeDefinition(const QString &obj_name, attribs_map &attribs, unsigned def_type);
 
 		/*! \brief Generic method that loads a schema file and for a given map of attributes
 		 this method returns the data of the file analyzed and filled with the values ​​of the
 		 attributes map */
-		static QString getCodeDefinition(const QString &filename, attribs_map &attribs);
+		QString getCodeDefinition(const QString &filename, attribs_map &attribs);
 
 		/*! \brief Generic method that interprets a pre-specified buffer (see loadBuffer()) and for a given map
 		 of attributes this method returns the data of the buffer analyzed and filled with the values ​​of the
 		 attributes map */
-		static QString getCodeDefinition(attribs_map &attribs);
+		QString getCodeDefinition(attribs_map &attribs);
 
 		//! \brief Loads the buffer with a string
-		static void loadBuffer(const QString &buf);
+		void loadBuffer(const QString &buf);
 
 		//! \brief Loads a schema file and inserts its line into the parser's buffer
-		static void loadFile(const QString &filename);
+		void loadFile(const QString &filename);
+
+		//! \brief Resets the parser in order to do new analysis
+		void restartParser(void);
+
+		//! \brief Set if the parser must ignore unknown attributes avoiding expcetion throwing
+		void setIgnoreUnkownAttributes(bool ignore);
+
+		//! \brief Set if the parser must ignore empty attributes avoiding expcetion throwing
+		void setIgnoreEmptyAttributes(bool ignore);
+
+		//! \brief Retorns the current PostgreSQL version used by the parser
+		QString getPgSQLVersion(void);
 
 		//! \brief Returns the PostgreSQL version supported by pgModeler
 		static QStringList getPgSQLVersions(void);
 
-		//! \brief Retorns the current PostgreSQL version used by the parser
-		static QString getPgSQLVersion(void);
-
-		//! \brief Resets the parser in order to do new analysis
-		static void restartParser(void);
-
-		//! \brief Set if the parser must ignore unknown attributes avoiding expcetion throwing
-		static void setIgnoreUnkownAttributes(bool ignore);
-
-		//! \brief Set if the parser must ignore empty attributes avoiding expcetion throwing
-		static void setIgnoreEmptyAttributes(bool ignore);
-
-    /*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
+		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
     called when generating XML code and only tag attributes are treated.*/
     static QString convertCharsToXMLEntities(QString buf);
 };

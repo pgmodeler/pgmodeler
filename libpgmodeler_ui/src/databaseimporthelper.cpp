@@ -622,7 +622,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 		QString xml_def;
 
 		if(!attribs[ParsersAttributes::COMMENT].isEmpty())
-			xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
+			xml_def=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
 
 		return(xml_def);
 	}
@@ -695,9 +695,9 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				if(generate_xml)
 				{
 					obj_attr[ParsersAttributes::REDUCED_FORM]="1";
-					SchemaParser::setIgnoreUnkownAttributes(true);
-					xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
-					SchemaParser::setIgnoreUnkownAttributes(false);
+					schparser.setIgnoreUnkownAttributes(true);
+					xml_def=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
+					schparser.setIgnoreUnkownAttributes(false);
 				}
 				else
 					xml_def=obj_name;
@@ -722,10 +722,10 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 	try
 	{
-		SchemaParser::setIgnoreUnkownAttributes(true);
-		xml_buf=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
+		schparser.setIgnoreUnkownAttributes(true);
+		xml_buf=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
 
-		SchemaParser::setIgnoreUnkownAttributes(false);
+		schparser.setIgnoreUnkownAttributes(false);
 		xmlparser->restartParser();
 
 		if(debug_mode)
@@ -1141,9 +1141,9 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		//Generating the complete XML code for operator class elements
 		for(unsigned i=0; i < elems.size(); i++)
 		{
-			SchemaParser::setIgnoreUnkownAttributes(true);
-			attribs[ParsersAttributes::ELEMENTS]+=SchemaParser::getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
-			SchemaParser::setIgnoreUnkownAttributes(false);
+			schparser.setIgnoreUnkownAttributes(true);
+			attribs[ParsersAttributes::ELEMENTS]+=schparser.getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
+			schparser.setIgnoreUnkownAttributes(false);
 		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
@@ -1437,8 +1437,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 
 		attribs[ParsersAttributes::COLUMNS]="";
-		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																				 pos_attrib, SchemaParser::XML_DEFINITION);
+		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
 
     //Retrieving columns if they were not retrieved yet
@@ -1517,8 +1516,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 														{ ParsersAttributes::Y_POS, "0" }};
 
 
-		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																				 pos_attrib, SchemaParser::XML_DEFINITION);
+		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
     ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
 		ref.setDefinitionExpression(true);
@@ -2131,9 +2129,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			{
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
 				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
-				SchemaParser::setIgnoreUnkownAttributes(true);
-				xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
-				SchemaParser::setIgnoreUnkownAttributes(false);
+
+				schparser.setIgnoreUnkownAttributes(true);
+				xml_def=schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
+				schparser.setIgnoreUnkownAttributes(false);
 			}
 			else
 				return(obj_name);

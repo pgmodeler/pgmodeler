@@ -72,7 +72,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		}
 
 		//Generates the configuration from the schema file
-		buf.append(SchemaParser::getCodeDefinition(sch_filename, attribs));
+		buf.append(schparser.getCodeDefinition(sch_filename, attribs));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())

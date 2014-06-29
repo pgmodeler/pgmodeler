@@ -34,6 +34,8 @@ This class is the basis for the reverse engineering feature.
 
 class Catalog {
 	private:
+		SchemaParser schparser;
+
 		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
 		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory

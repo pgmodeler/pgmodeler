@@ -413,16 +413,16 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i).remove(QRegExp(" \\((.)*\\)"));
 
-				SchemaParser::setIgnoreUnkownAttributes(true);
+				schparser.setIgnoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
-						SchemaParser::getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SCHEMAS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::CONNECTIONS_CONF +
-																						GlobalAttributes::SCHEMA_EXT,
-																						attribs);
-				SchemaParser::setIgnoreUnkownAttributes(false);
+						schparser.getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
+																				GlobalAttributes::DIR_SEPARATOR +
+																				GlobalAttributes::SCHEMAS_DIR +
+																				GlobalAttributes::DIR_SEPARATOR +
+																				GlobalAttributes::CONNECTIONS_CONF +
+																				GlobalAttributes::SCHEMA_EXT,
+																				attribs);
+				schparser.setIgnoreUnkownAttributes(false);
 			}
 		}
 

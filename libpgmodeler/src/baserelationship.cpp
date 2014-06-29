@@ -361,7 +361,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		attributes[ParsersAttributes::X_POS]=QString("%1").arg(points[i].x());
 		attributes[ParsersAttributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
+		str_aux+=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 	}
 	attributes[ParsersAttributes::POINTS]=str_aux;
 
@@ -372,9 +372,9 @@ void BaseRelationship::setRelationshipAttributes(void)
 		{
 			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 			attributes[ParsersAttributes::REF_TYPE]=label_attribs[i];
-			str_aux+=SchemaParser::getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
+			str_aux+=schparser.getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
 		}
 	}
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;

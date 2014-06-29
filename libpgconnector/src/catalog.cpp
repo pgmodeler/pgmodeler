@@ -125,7 +125,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	{
 		QString sql;
 
-		SchemaParser::setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
+		schparser.setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 		attribs[qry_type]="1";
 
 		if(exclude_sys_objs || list_only_sys_objs)
@@ -142,13 +142,13 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 
-		SchemaParser::setIgnoreUnkownAttributes(true);
-		SchemaParser::setIgnoreEmptyAttributes(true);
+		schparser.setIgnoreUnkownAttributes(true);
+		schparser.setIgnoreEmptyAttributes(true);
 
-		sql=SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																				CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-																				BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
-																				attribs).simplified();
+		sql=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																		CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																		BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
+																		attribs).simplified();
 
 		//Append a LIMIT clause when the single_result is set
 		if(single_result)
@@ -278,10 +278,10 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
 												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "")}};
 
-		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 "get" + ParsersAttributes::COMMENT + GlobalAttributes::SCHEMA_EXT,
-																					 attribs).simplified());
+		return(schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																			 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																			 "get" + ParsersAttributes::COMMENT + GlobalAttributes::SCHEMA_EXT,
+																			 attribs).simplified());
 	}
 	catch(Exception &e)
 	{
@@ -296,10 +296,10 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
 												 {ParsersAttributes::EXT_OBJ_OIDS, ext_obj_oids}};
 
-		return(SchemaParser::getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 "notextobject" + GlobalAttributes::SCHEMA_EXT,
-																					 attribs).simplified());
+		return(schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																			 CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+																			 "notextobject" + GlobalAttributes::SCHEMA_EXT,
+																			 attribs).simplified());
 	}
 	catch(Exception &e)
 	{
