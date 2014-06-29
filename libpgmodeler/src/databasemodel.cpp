@@ -6045,6 +6045,7 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 
 			if(revalidate_rels || ref_tab_inheritance)
 			{
+				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}

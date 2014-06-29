@@ -1427,9 +1427,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 					name=generateObjectName(DST_COL_PATTERN, column_aux);
 			}
 
-      column->setName(name);
 			//Protects the column evicting that the user modifies it
 			column->setAddedByLinking(true);
+
 			//Set the parent table as null permiting the column to be added on the receiver table
 			column->setParentTable(nullptr);
 			column->setParentRelationship(this);
@@ -1442,9 +1442,15 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			else if(column->getType()=="smallserial")
 				column->setType(PgSQLType("smallint"));
 
-			if(prev_name!="")	column->setName(prev_name);
-      column->setName(name);
-      column->setName(PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN))));
+			column->setName(name);
+			name=PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN)));
+			column->setName(name);
+
+			if(prev_name!="")
+			{
+				column->setName(prev_name);
+				column->setName(name);
+			}
 
 			/* If the old name given to the column is different from the current name, the current name
 			of the column will be the old name when the relationship is disconnected and
@@ -1881,6 +1887,13 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			{
 				Constraint *pk=nullptr, *constr=nullptr;
 				unsigned i, count;
+
+				/*if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
+				{
+					i=0;
+					for(auto column : pk_columns)
+					 prev_ref_col_names[column->getObjectId()]=gen_columns[i++]->getOldName();
+				}*/
 
 				/* In case of relationship 1-1 and 1-n is necessary remove the
 				foreign key that represents the relationship furthermore columns

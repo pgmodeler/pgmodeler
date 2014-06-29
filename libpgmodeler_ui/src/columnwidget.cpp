@@ -110,27 +110,20 @@ void ColumnWidget::applyConfiguration(void)
 	try
 	{
 		Column *column=nullptr;
-
 		startConfiguration<Column>();
 
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
 
     if(expression_rb->isChecked())
-    {
       column->setDefaultValue(def_value_txt->toPlainText());
-      //column->setSequence(nullptr);
-    }
     else
-    {
       column->setSequence(sequence_sel->getSelectedObject());
-      //column->setDefaultValue("");
-    }
 
 		column->setType(data_type->getPgSQLType());
 
-		BaseObjectWidget::applyConfiguration();
 
+		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}
 	catch(Exception &e)
