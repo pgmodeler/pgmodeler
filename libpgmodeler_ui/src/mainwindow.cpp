@@ -55,7 +55,6 @@
 #include "eventtriggerwidget.h"
 
 //Global forms and widgets
-AboutForm *about_form=nullptr;
 TextboxWidget *textbox_wgt=nullptr;
 SourceCodeWidget *sourcecode_wgt=nullptr;
 DatabaseWidget *database_wgt=nullptr;
@@ -168,7 +167,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		about_wgt=new AboutWidget(this);
 		model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -234,6 +233,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
 	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 
+	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
+	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
+
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
@@ -243,7 +245,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(models_tbw,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_about,SIGNAL(triggered(bool)),about_form,SLOT(show()));
 	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -317,6 +318,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	bg_saving_wgt->setVisible(false);
 	update_notifier_wgt->setVisible(false);
 	update_tb->setVisible(false);
+	about_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -455,7 +457,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 MainWindow::~MainWindow(void)
 {
    delete(overview_wgt);
-   delete(about_form);
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -1415,23 +1416,36 @@ void MainWindow::toggleUpdateNotifier(bool show)
 {
 	if(show)
 	{
-		QAction *action=qobject_cast<QAction *>(sender());
-
-		if(!action)
-			update_notifier_wgt->move(0,0);
-		else
-		{
-			QWidget *wgt=update_tb->widgetForAction(action);
-			QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
-
-			pos=wgt->mapTo(this, pos);
-			pos.setX(pos.x() - 9);
-			pos.setY(update_tb->pos().y() + update_tb->height() - 9);
-			update_notifier_wgt->move(pos);
-		}
+		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), update_tb, true);
+		action_about->setChecked(false);
 	}
 
 	update_notifier_wgt->setVisible(show);
+}
+
+void MainWindow::toggleAboutWidget(bool show)
+{
+	if(show)
+	{
+		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		action_update_found->setChecked(false);
+	}
+
+	about_wgt->setVisible(show);
+}
+
+void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
+{
+	if(widget && act && toolbar)
+	{
+		QWidget *wgt=toolbar->widgetForAction(act);
+		QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+
+		if(map_to_window) pos=wgt->mapTo(this, pos);
+		pos.setX(pos.x() - 9);
+		pos.setY(toolbar->pos().y() + toolbar->height() - 9);
+		widget->move(pos);
+	}
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)

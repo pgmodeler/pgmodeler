@@ -611,7 +611,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -799,6 +799,8 @@
    <addaction name="separator"/>
    <addaction name="action_previous"/>
    <addaction name="action_next"/>
+   <addaction name="separator"/>
+   <addaction name="action_about"/>
   </widget>
   <widget class="QToolBar" name="update_tb">
    <property name="sizePolicy">
@@ -993,6 +995,9 @@
    </property>
   </action>
   <action name="action_about">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
