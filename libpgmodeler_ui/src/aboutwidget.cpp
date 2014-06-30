@@ -16,25 +16,20 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup libpgmodeler_ui
-\class AboutForm
-\brief Form that contains information about software authoring and licensing.
-*/
+#include "aboutwidget.h"
 
-#ifndef ABOUT_FORM_H
-#define ABOUT_FORM_H
+AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
+{
+	setupUi(this);
 
-#include <QDialog>
-#include "ui_aboutform.h"
-#include "globalattributes.h"
+	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
+	code_name_lbl->setText(QString(" « %1 »").arg(GlobalAttributes::PGMODELER_VER_CODENAME));
+  build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
-class AboutForm: public QDialog, public Ui::AboutForm {
-	private:
-		Q_OBJECT
+	connect(hide_tb, &QToolButton::clicked, this,
+					[=](){
+						this->close();
+						emit s_visibilityChanged(false);
+					});
+}
 
-	public:
-    AboutForm(QWidget *parent = 0,  Qt::WindowFlags f = 0);
-};
-
-#endif

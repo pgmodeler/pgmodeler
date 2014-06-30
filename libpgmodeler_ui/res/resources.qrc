@@ -172,6 +172,7 @@
         <file>icones/dl_source.png</file>
         <file>icones/eventtrigger_grp.png</file>
         <file>icones/eventtrigger.png</file>
+        <file>icones/update.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

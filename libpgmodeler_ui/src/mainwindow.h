@@ -29,7 +29,7 @@
 #include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
-#include "aboutform.h"
+#include "aboutwidget.h"
 #include "messagebox.h"
 #include "baseform.h"
 #include "modelrestorationform.h"
@@ -50,6 +50,8 @@ using namespace std;
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
+
+		AboutWidget *about_wgt;
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
@@ -122,6 +124,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
+
+		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -226,6 +230,7 @@ public slots:
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
+		void toggleAboutWidget(bool show);
 
 		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
 		bool eventFilter(QObject *object, QEvent *event);
