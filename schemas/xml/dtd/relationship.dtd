@@ -25,6 +25,7 @@
 <!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship upd-action CDATA #IMPLIED>
 <!ATTLIST relationship del-action CDATA #IMPLIED>
+<!ATTLIST relationship line-color CDATA #IMPLIED>
 
 <!ELEMENT line (position+)>
 

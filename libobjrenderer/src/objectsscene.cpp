@@ -143,26 +143,6 @@ void ObjectsScene::setGridSize(unsigned size)
 		QPainter painter;
 		QPen pen;
 
-  /*  if(paper_size!=QPrinter::Custom)
-      printer.setPaperSize(paper_size);
-    else
-    {
-      #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-        QPageLayout pl;
-        QPageSize ps;
-
-        pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-        ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
-        pl.setPageSize(ps);
-        printer.setPageSize(pl.pageSize());
-      #else
-        printer.setPaperSize(custom_paper_size, QPrinter::Point);
-        printer.setPageMargins(page_margins.left(), page_margins.top(),
-                               page_margins.right(), page_margins.bottom(), QPrinter::Point);
-      #endif
-    }
-
-    printer.setOrientation(page_orientation); */
     configurePrinter(&printer);
     aux_size=printer.paperSize(QPrinter::Point);
 		aux_size-=page_margins.size();

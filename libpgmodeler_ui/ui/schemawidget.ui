@@ -6,32 +6,73 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
+    <width>499</width>
     <height>31</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QToolButton" name="fill_color_tb">
+  <widget class="QLabel" name="fill_color_lbl">
    <property name="geometry">
     <rect>
-     <x>87</x>
-     <y>5</y>
-     <width>45</width>
-     <height>23</height>
+     <x>0</x>
+     <y>2</y>
+     <width>60</width>
+     <height>16</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>45</width>
-     <height>23</height>
+     <width>60</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Fill color:</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="show_rect_chk">
+   <property name="geometry">
+    <rect>
+     <x>134</x>
+     <y>5</y>
+     <width>108</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Show rectangle</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="fill_color_tb">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>67</x>
+     <y>3</y>
+     <width>60</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>60</width>
+     <height>25</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>45</width>
-     <height>23</height>
+     <width>60</width>
+     <height>25</height>
     </size>
    </property>
    <property name="palette">
@@ -73,44 +114,6 @@
    </property>
    <property name="text">
     <string/>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="show_rect_chk">
-   <property name="geometry">
-    <rect>
-     <x>138</x>
-     <y>6</y>
-     <width>123</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Show rectangle</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="fill_color_lbl">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>4</y>
-     <width>80</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Fill color:</string>
    </property>
   </widget>
  </widget>

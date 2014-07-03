@@ -5622,6 +5622,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	QString str_aux, elem,
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
                        ParsersAttributes::DST_TABLE };
+	QColor line_color=Qt::transparent;
 
 	try
 	{
@@ -5631,6 +5632,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+
+		if(!attribs[ParsersAttributes::LINE_COLOR].isEmpty())
+			line_color=QColor(attribs[ParsersAttributes::LINE_COLOR]);
 
 		if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW &&
 			 attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATIONSHIP_FK)
@@ -5840,6 +5844,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	}
 
 	base_rel->setProtected(protect);
+	base_rel->setLineColor(line_color);
 
 	if(base_rel && base_rel->getObjectType()==BASE_RELATIONSHIP)
 		base_rel->connectRelationship();

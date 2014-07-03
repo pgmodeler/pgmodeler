@@ -123,7 +123,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 	{
 		unsigned i, count;
 		QPen pen;
-		QColor color;
+		QColor color, line_color=this->getSourceObject()->getLineColor();
 
 		this->setSelectionOrder(value.toBool());
 		pos_info_pol->setVisible(value.toBool());
@@ -143,17 +143,21 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			graph_points[i]->setVisible(value.toBool());
 
 		//Alter the relationship line color when it is selected
+		if(line_color==Qt::transparent)
+			line_color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+
 		if(value.toBool())
 		{
 			QColor cor1=BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color(),
-					cor2=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+					cor2=line_color;
 
 			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
 			color.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
 			color.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
+			color.setAlphaF((cor1.alphaF() + cor2.alphaF())/2.0f);
 		}
 		else
-			color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+			color=line_color;
 
 		count=lines.size();
 		for(i=0; i < count; i++)
@@ -168,9 +172,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		for(i=0; i < count; i++)
 			attributes[i]->childItems().at(3)->setVisible(value.toBool());
 
-
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
-													value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),	value.toBool());
 	}
 
 	return(value);
@@ -510,8 +512,15 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
+		//Configuring the relationship line color
+		if(base_rel->getLineColor()!=Qt::transparent)
+			//Using custom color
+			pen.setColor(base_rel->getLineColor());
+		else
+			//Using the default color
+			pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+
 		//For dependency relationships the line is dashed
-		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
 			pen.setStyle(Qt::DashLine);
 
@@ -616,7 +625,13 @@ void RelationshipView::configureDescriptor(void)
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
 
-	pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+	//Configuring the relationship descriptor color
+	if(base_rel->getLineColor()!=Qt::transparent)
+		//Using custom color
+		pen.setColor(base_rel->getLineColor());
+	else
+		//Using the default color
+		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 		pen.setStyle(Qt::DashLine);
