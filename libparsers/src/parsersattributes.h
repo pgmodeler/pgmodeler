@@ -434,7 +434,8 @@ namespace ParsersAttributes {
 	EVENT="event",
 	FILTER="filter",
 	VARIABLE="variable",
-	BUFFERING="buffering";
+	BUFFERING="buffering",
+	LINE_COLOR="line-color";
 }
 
 #endif

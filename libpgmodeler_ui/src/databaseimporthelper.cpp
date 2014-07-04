@@ -23,6 +23,9 @@ const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML="\t<!--[ unknown obje
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
+	random_device rand_seed;
+	rand_num_engine.seed(rand_seed());
+
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
@@ -784,11 +787,15 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
 	Schema *schema=nullptr;
+	std::uniform_int_distribution<unsigned> dist(0,255);
 
 	try
 	{
 		attribs[ParsersAttributes::RECT_VISIBLE]="";
-		attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
+		//attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
+		attribs[ParsersAttributes::FILL_COLOR]=QColor(dist(rand_num_engine),
+																									dist(rand_num_engine),
+																									dist(rand_num_engine)).name();
 		loadObjectXML(OBJ_SCHEMA, attribs);
 
 		schema=dbmodel->createSchema();

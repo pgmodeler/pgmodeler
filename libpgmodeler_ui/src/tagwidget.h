@@ -26,21 +26,24 @@
 #define TAG_WIDGET_H
 
 #include "baseobjectwidget.h"
+#include "colorpickerwidget.h"
 #include "ui_tagwidget.h"
 
 class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 	private:
 		Q_OBJECT
 
+		/*! brief Stores all color picker using the attribute the represents as map key.
+				These attributes are: TABLE_NAME, TABLE_SCHEMA_NAME, TABLE_TITLE, TABLE_BODY, TABLE_EXT_BODY */
+		map<QString, ColorPickerWidget *> color_pickers;
+
 	public:
     TagWidget(QWidget * parent = 0);
-    void setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag);
 
 	public slots:
 		void applyConfiguration(void);
-
-	private slots:
-    void selectColor(void);
 };
 
 #endif

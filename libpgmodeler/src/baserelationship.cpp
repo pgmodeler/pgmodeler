@@ -28,6 +28,8 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 		lables[i]=nullptr;
 
 	(*(this))=(*rel);
+
+	line_color=QColor(Qt::transparent);
 }
 
 BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
@@ -104,6 +106,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::DST_FK_PATTERN]="";
   attributes[ParsersAttributes::UPD_ACTION]="";
   attributes[ParsersAttributes::DEL_ACTION]="";
+	attributes[ParsersAttributes::LINE_COLOR]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -325,10 +328,10 @@ bool BaseRelationship::isBidirectional(void)
 
 void BaseRelationship::setRelationshipAttributes(void)
 {
-	unsigned count, i;
-	QString str_aux,
-			label_attribs[3]={ ParsersAttributes::SRC_LABEL,
-												 ParsersAttributes::DST_LABEL,
+    unsigned count, i;
+    QString str_aux,
+            label_attribs[3]={ ParsersAttributes::SRC_LABEL,
+                               ParsersAttributes::DST_LABEL,
 												 ParsersAttributes::NAME_LABEL};
 
 	switch(rel_type)
@@ -377,7 +380,9 @@ void BaseRelationship::setRelationshipAttributes(void)
 			str_aux+=schparser.getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
 		}
 	}
+
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
+	attributes[ParsersAttributes::LINE_COLOR]=(line_color!=Qt::transparent ? line_color.name() : "");
 }
 
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
@@ -431,6 +436,16 @@ QPointF BaseRelationship::getLabelDistance(unsigned label_id)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->lables_dist[label_id]);
+}
+
+void BaseRelationship::setLineColor(const QColor &color)
+{
+	line_color=color;
+}
+
+QColor BaseRelationship::getLineColor(void)
+{
+	return(line_color);
 }
 
 vector<QPointF> BaseRelationship::getPoints(void)

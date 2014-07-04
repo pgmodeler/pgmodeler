@@ -494,7 +494,7 @@ unsigned OperationList::getChainSize(void)
 	if(!operations.empty() &&
 		 operations[i]->chain_type!=Operation::NO_CHAIN)
 	{
-		unsigned chain_type=0;
+		unsigned chain_type=Operation::NO_CHAIN;
 		int inc=0;
 
 		//Case the operation is the end of a chain  runs the list in reverse order (from end to start)
