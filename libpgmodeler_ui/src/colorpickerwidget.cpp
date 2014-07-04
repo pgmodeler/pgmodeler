@@ -79,6 +79,19 @@ QColor ColorPickerWidget::getColor(unsigned color_idx)
 	return(buttons[color_idx]->palette().color(QPalette::Button));
 }
 
+unsigned ColorPickerWidget::getColorCount(void)
+{
+	return(colors.size());
+}
+
+bool ColorPickerWidget::isButtonVisible(unsigned idx)
+{
+	if(idx > static_cast<unsigned>(buttons.size()))
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(buttons[idx]->isVisible());
+}
+
 void ColorPickerWidget::setEnabled(bool value)
 {
 	int i=0;
@@ -87,6 +100,14 @@ void ColorPickerWidget::setEnabled(bool value)
 		btn->setPalette(value ? colors[i++] : disable_pal);
 
 	QWidget::setEnabled(value);
+}
+
+void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
+{
+	if(idx > static_cast<unsigned>(buttons.size()))
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	buttons[idx]->setVisible(value);
 }
 
 void ColorPickerWidget::selectColor(void)
@@ -105,6 +126,7 @@ void ColorPickerWidget::selectColor(void)
 		btn->setPalette(palette);
 
 		colors[buttons.indexOf(btn)]=palette.color(QPalette::Button);
+		emit s_colorChanged(static_cast<unsigned>(buttons.indexOf(btn)), color_dlg.selectedColor());
 	}
 }
 
@@ -124,5 +146,7 @@ void ColorPickerWidget::generateRandomColors(void)
 		palette.setColor(QPalette::Button, color);
 		btn->setPalette(palette);
 	}
+
+	emit s_colorsChanged();
 }
 

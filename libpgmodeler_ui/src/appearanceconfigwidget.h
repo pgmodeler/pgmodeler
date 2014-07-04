@@ -27,6 +27,7 @@
 
 #include "ui_appearanceconfigwidget.h"
 #include "baseconfigwidget.h"
+#include "colorpickerwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
@@ -43,6 +44,8 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
 				QColor colors[3];
 				bool obj_conf;
 		};
+
+		ColorPickerWidget *color_picker;
 
 		//! \brief Color picker dialog
 		QColorDialog color_dlg;
@@ -75,7 +78,7 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
 	private slots:
 		void enableConfigElement(void);
 		void applyFontStyle(void);
-		void applyElementColor(void);
+		void applyElementColor(unsigned color_idx, QColor color);
 
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}
