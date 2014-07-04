@@ -118,6 +118,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		rel_attribs_tbw->widget(4)->setLayout(grid);
 
+		color_picker=new ColorPickerWidget(1,this);
+		color_picker->setEnabled(false);
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(0)->layout());
+		grid->addWidget(color_picker, 0, 1);
+
     configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
     parent_form->setMinimumSize(this->minimumSize());
 
@@ -169,6 +174,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(indexes_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(storage_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
+
+		connect(line_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
 	}
 	catch(Exception &e)
 	{
@@ -438,6 +445,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	copy_options_grp->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP &&
 															 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP);
 
+	line_color_chk->setChecked(base_rel->getLineColor()!=Qt::transparent);
+	color_picker->setColor(0, base_rel->getLineColor());
 	listAdvancedObjects();
 }
 
@@ -951,6 +960,11 @@ void RelationshipWidget::applyConfiguration(void)
 				rel->setSpecialPrimaryKeyCols(col_ids);
 			}
 
+			if(line_color_chk->isChecked())
+				rel->setLineColor(color_picker->getColor(0));
+			else
+				rel->setLineColor(Qt::transparent);
+
 			try
 			{
 				//Checking if there is relationship redundancy
@@ -962,7 +976,6 @@ void RelationshipWidget::applyConfiguration(void)
 				if(rel_type!=BaseRelationship::RELATIONSHIP_FK)
 					model->validateRelationships();
 
-        //rel->saveObjectsIndexes();
 				rel->blockSignals(false);
 				rel->setModified(true);
 			}

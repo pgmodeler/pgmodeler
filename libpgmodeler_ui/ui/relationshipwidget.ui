@@ -72,7 +72,7 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="1" column="1" colspan="3">
+       <item row="1" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QRadioButton" name="rel_11_rb">
@@ -299,7 +299,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="1" colspan="3">
+       <item row="6" column="1" colspan="2">
         <widget class="QLabel" name="ref_tab_hint_lbl">
          <property name="enabled">
           <bool>true</bool>
@@ -365,7 +365,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="3">
+       <item row="2" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QCheckBox" name="table1_mand_chk">
@@ -470,7 +470,7 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="0" colspan="4">
+       <item row="13" column="0" colspan="3">
         <widget class="QGroupBox" name="foreign_key_gb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -632,7 +632,7 @@
          </layout>
         </widget>
        </item>
-       <item row="12" column="0" colspan="4">
+       <item row="12" column="0" colspan="3">
         <widget class="QGroupBox" name="copy_options_grp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -777,7 +777,7 @@
          </layout>
         </widget>
        </item>
-       <item row="14" column="0" colspan="4">
+       <item row="14" column="0" colspan="3">
         <widget class="QGroupBox" name="name_patterns_grp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -1129,7 +1129,7 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="0" colspan="4">
+       <item row="15" column="0" colspan="3">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1145,14 +1145,14 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="1" colspan="3">
+       <item row="3" column="1" colspan="2">
         <widget class="QLineEdit" name="relnn_tab_name_edt">
          <property name="toolTip">
           <string>Name of the table generated from many to many relationship</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="3">
+       <item row="4" column="1" colspan="2">
         <widget class="QTextEdit" name="ref_table_txt">
          <property name="minimumSize">
           <size>
@@ -1191,7 +1191,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1" colspan="3">
+       <item row="7" column="1" colspan="2">
         <widget class="QTextEdit" name="recv_table_txt">
          <property name="minimumSize">
           <size>
@@ -1230,7 +1230,14 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1" colspan="3">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="line_color_chk">
+         <property name="text">
+          <string>Line Color:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1" colspan="2">
         <widget class="QLabel" name="recv_tab_hint_lbl">
          <property name="enabled">
           <bool>true</bool>
@@ -1295,90 +1302,6 @@
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="line_color_chk">
-         <property name="text">
-          <string>Line Color:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="3">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QToolButton" name="color_select_tb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>60</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>60</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="random_color_tb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Generate random line color</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="shortcut">
-            <string>Alt+R</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
@@ -1479,8 +1402,6 @@
   <tabstop>uq_pattern_txt</tabstop>
   <tabstop>rel_columns_lst</tabstop>
  </tabstops>
- <resources>
-  <include location="../res/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

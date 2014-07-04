@@ -28,10 +28,13 @@
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
 #include "objecttablewidget.h"
+#include "colorpickerwidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
+
+		ColorPickerWidget *color_picker;
 
 		/*! \brief Operation list element count before editing the relationship. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to

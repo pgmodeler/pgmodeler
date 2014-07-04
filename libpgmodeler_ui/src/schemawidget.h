@@ -41,9 +41,6 @@ class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 
 	public slots:
 		void applyConfiguration(void);
-
-	private slots:
-		void selectFillColor(void);
 };
 
 #endif

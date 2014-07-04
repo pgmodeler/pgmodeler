@@ -42,9 +42,14 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 		//! brief Random number generator engine used to generate random colors for buttons
 		default_random_engine rand_num_engine;
 
-		unsigned color_count;
-
+		//! brief List of buttons used to configure each color
 		QList<QToolButton *> buttons;
+
+		//! brief List of colors assinged for each button
+		QList<QColor> colors;
+
+		//! brief Palette assinged to buttons when the color picker is disabled
+		QPalette disable_pal;
 
 	public:
 		static const unsigned MAX_COLOR_BUTTONS=20;
@@ -53,6 +58,9 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 
 		void setColor(unsigned color_idx, const QColor &color);
 		QColor getColor(unsigned color_idx);
+
+	public slots:
+		void setEnabled(bool value);
 
 	private slots:
 		void selectColor(void);
