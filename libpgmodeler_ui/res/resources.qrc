@@ -190,5 +190,8 @@
         <file>styles/h_menu_indicator.png</file>
         <file>styles/close_tab_hover.png</file>
         <file>styles/close_tab.png</file>
+        <file>styles/toolbar_bg.png</file>
+        <file>styles/centralwgt_bg.png</file>
+        <file>styles/btn_checked_bg.png</file>
     </qresource>
 </RCC>

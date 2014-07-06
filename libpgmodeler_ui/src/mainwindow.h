@@ -53,6 +53,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		AboutWidget *about_wgt;
 
+		QLabel *bg_image;
+
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
 
@@ -122,6 +124,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
 		void showEvent(QShowEvent *);
 
+		void resizeEvent(QResizeEvent *);
+
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
@@ -135,7 +139,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void loadModels(const QStringList &list);
 
 
-public slots:
+	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
     void addModel(const QString &filename="");

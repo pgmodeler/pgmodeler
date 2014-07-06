@@ -100,9 +100,21 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
+	QGraphicsDropShadowEffect *drop_shadow=nullptr;
 
+	bg_image=nullptr;
 	setupUi(this);
+
+	#warning "Teste!"
+	models_tbw->tabBar()->setVisible(false);
 	print_dlg=new QPrintDialog(this);
+
+	QPixmap px=QPixmap(":styles/styles/pgmodeler_bg_logo.png");
+	bg_image=new QLabel(centralwidget);
+	bg_image->setPixmap(px);
+	bg_image->setMinimumSize(px.size());
+	bg_image->lower();
+	general_tb->layout()->setContentsMargins(0,0,0,0);
 
 	try
 	{
@@ -168,6 +180,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
 		about_wgt=new AboutWidget(this);
+		drop_shadow=new QGraphicsDropShadowEffect(about_wgt);
+		drop_shadow->setOffset(5,5);
+		drop_shadow->setBlurRadius(5);
+		about_wgt->setGraphicsEffect(drop_shadow);
+
+		update_notifier_wgt=new UpdateNotifierWidget(this);
+		drop_shadow=new QGraphicsDropShadowEffect(update_notifier_wgt);
+		drop_shadow->setOffset(5,5);
+		drop_shadow->setBlurRadius(5);
+		update_notifier_wgt->setGraphicsEffect(drop_shadow);
+
 		model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -179,7 +202,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
 		sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
-		update_notifier_wgt=new UpdateNotifierWidget(this);
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -524,6 +546,15 @@ void MainWindow::showEvent(QShowEvent *)
 		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
 }
 
+void MainWindow::resizeEvent(QResizeEvent *)
+{
+	if(bg_image)
+	{
+		bg_image->move(centralwidget->width()/2 - bg_image->width()/2 ,
+									 centralwidget->height()/2 - bg_image->height()/2);
+	}
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	//pgModeler will not close when the validation thread is still running
@@ -737,6 +768,7 @@ void MainWindow::addModel(const QString &filename)
 	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	models_tbw->blockSignals(false);
+	models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
 
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -1464,8 +1496,8 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 		ret=p.fontMetrics().boundingRect(btn->text().replace(" ","_")).normalized();
 
 		//Drawing the button's text in a different offset in order to simulate the shadow
-		p.setPen(QColor(0,0,0, 128));
-		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, (btn->iconSize().height()) + 9);
+		p.setPen(QColor(0,0,0));
+		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, (btn->iconSize().height()) + 8);
 
 		p.drawText(QRect(pnt, ret.size()),btn->text());
 		p.end();
