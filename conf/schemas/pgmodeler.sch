@@ -27,9 +27,10 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [		code-font="] @{code-font} ["] $br
 [		code-font-size="] @{code-font-size} ["] $br
 [		canvas-corner-move="] %if @{canvas-corner-move} %then true %else false %end ["] $br
-[		invert-panning-rangesel="] %if @{invert-panning-rangesel} %then true %else false %end ["]
-[		check-update="] %if @{check-update} %then true %else false %end ["]
-[		save-last-position="] %if @{save-last-position} %then true %else false %end ["]
+[		invert-panning-rangesel="] %if @{invert-panning-rangesel} %then true %else false %end ["] $br
+[		check-update="] %if @{check-update} %then true %else false %end ["] $br
+[		save-last-position="] %if @{save-last-position} %then true %else false %end ["] $br
+[		show-main-menu="] %if @{show-main-menu} %then true %else false %end ["]
 [/>] $br
 
 %if @{file} %then
