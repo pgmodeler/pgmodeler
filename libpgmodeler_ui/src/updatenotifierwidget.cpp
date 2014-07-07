@@ -101,9 +101,8 @@ void UpdateNotifierWidget::checkForUpdate(void)
 	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
 	QNetworkRequest req(url);
 
-	//show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
-	//update_chk_reply=update_chk_manager.get(req);
-	emit s_updateAvailable(true);
+	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
+	update_chk_reply=update_chk_manager.get(req);
 }
 
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
