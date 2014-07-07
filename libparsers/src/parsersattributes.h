@@ -435,7 +435,8 @@ namespace ParsersAttributes {
 	FILTER="filter",
 	VARIABLE="variable",
 	BUFFERING="buffering",
-	LINE_COLOR="line-color";
+	LINE_COLOR="line-color",
+	SHOW_MAIN_MENU="show-main-menu";
 }
 
 #endif

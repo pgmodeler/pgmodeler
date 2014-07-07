@@ -22,6 +22,11 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
+	drop_shadow->setOffset(5,5);
+	drop_shadow->setBlurRadius(30);
+	this->setGraphicsEffect(drop_shadow);
+
 	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
 	code_name_lbl->setText(QString(" « %1 »").arg(GlobalAttributes::PGMODELER_VER_CODENAME));
   build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);

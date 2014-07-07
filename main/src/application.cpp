@@ -19,25 +19,13 @@
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
-  bool enable_stylesheet=true;
   QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
   QFile ui_style(GlobalAttributes::CONFIGURATIONS_DIR +
                  GlobalAttributes::DIR_SEPARATOR +
                  GlobalAttributes::UI_STYLE_CONF +
                  GlobalAttributes::CONFIGURATION_EXT);
-  QString stylesheet, plugin_name, plug_lang_dir, plug_lang_file;
-  QStringList dir_list, params=this->arguments();
-  int idx;
-
-  //Checking if the user want to disable stylesheets using param: -no-stylesheet
-  idx=params.indexOf(QRegExp(GlobalAttributes::NO_STYLESHEET_OPT, Qt::CaseSensitive, QRegExp::FixedString));
-
-  //Disabling the stylesheet
-  if(idx>=0)
-  {
-    params.erase(params.begin() + idx);
-    enable_stylesheet=false;
-  }
+	QString plugin_name, plug_lang_dir, plug_lang_file;
+	QStringList dir_list;
 
   //Changing the current working dir to the executable's directory in
   QDir::setCurrent(this->applicationDirPath());
@@ -78,23 +66,18 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
     }
   }
 
-  if(enable_stylesheet)
-  {
-    //Loading app style sheet
-    ui_style.open(QFile::ReadOnly);
+	//Loading app style sheet
+	ui_style.open(QFile::ReadOnly);
 
-    //Raises an error if ui style is not found
-    if(!ui_style.isOpen())
-    {
-      Messagebox msg;
-      msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
-                         ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-    }
-    else
-      stylesheet=ui_style.readAll();
-
-    this->setStyleSheet(stylesheet);
-  }
+	//Raises an error if ui style is not found
+	if(!ui_style.isOpen())
+	{
+		Messagebox msg;
+		msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
+											 ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+	}
+	else
+		this->setStyleSheet(ui_style.readAll());
 }
 
 bool Application::notify(QObject *receiver, QEvent *event)

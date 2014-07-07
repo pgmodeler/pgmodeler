@@ -44,6 +44,7 @@
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"
+#include "modelnavigationwidget.h"
 
 using namespace std;
 
@@ -52,6 +53,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		Q_OBJECT
 
 		AboutWidget *about_wgt;
+
+		QLabel *bg_image;
+
+		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
@@ -114,13 +119,17 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		prev_session_files;
 
 		//! \brief Stores the actions related to recent models
-		QMenu recent_mdls_menu;
+		QMenu recent_mdls_menu,
+
+		main_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
 
 		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
 		void showEvent(QShowEvent *);
+
+		void resizeEvent(QResizeEvent *);
 
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
@@ -134,8 +143,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-
-public slots:
+	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
     void addModel(const QString &filename="");
@@ -154,6 +162,8 @@ public slots:
 		ModelWidget *getModel(int idx);
 
 	private slots:
+		void showMainMenu(void);
+
 		//! \brief Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
 		void setGridOptions(void);
 

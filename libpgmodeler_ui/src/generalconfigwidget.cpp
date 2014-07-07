@@ -58,6 +58,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]="";
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
 
 	selectPaperSize();
 }
