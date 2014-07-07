@@ -25,7 +25,8 @@
 #ifndef ABOUT_WIDGET_H
 #define ABOUT_WIDGET_H
 
-#include <QDialog>
+#include <QWidget>
+#include <QGraphicsDropShadowEffect>
 #include "ui_aboutwidget.h"
 #include "globalattributes.h"
 

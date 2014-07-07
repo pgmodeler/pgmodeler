@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
-	QGraphicsDropShadowEffect *drop_shadow=nullptr;
 
 	bg_image=nullptr;
 	setupUi(this);
@@ -180,17 +179,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
 		about_wgt=new AboutWidget(this);
-		drop_shadow=new QGraphicsDropShadowEffect(about_wgt);
-		drop_shadow->setOffset(5,5);
-		drop_shadow->setBlurRadius(5);
-		about_wgt->setGraphicsEffect(drop_shadow);
-
 		update_notifier_wgt=new UpdateNotifierWidget(this);
-		drop_shadow=new QGraphicsDropShadowEffect(update_notifier_wgt);
-		drop_shadow->setOffset(5,5);
-		drop_shadow->setBlurRadius(5);
-		update_notifier_wgt->setGraphicsEffect(drop_shadow);
-
 		model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -250,8 +239,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																 BaseObject::getSchemaName(obj_tp) +
 																 QString(".png")));
 
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
 	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), update_tb, SLOT(setVisible(bool)));
 	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
 	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 
@@ -339,7 +329,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	update_notifier_wgt->setVisible(false);
-	update_tb->setVisible(false);
 	about_wgt->setVisible(false);
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
@@ -540,6 +529,9 @@ void MainWindow::showEvent(QShowEvent *)
 #ifndef Q_OS_MAC
 	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
 #endif
+
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	action_update_found->setVisible(false);
 
 	//Enabling update check at startup
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
@@ -1448,7 +1440,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
 {
 	if(show)
 	{
-		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), update_tb, true);
+		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
 		action_about->setChecked(false);
 	}
 

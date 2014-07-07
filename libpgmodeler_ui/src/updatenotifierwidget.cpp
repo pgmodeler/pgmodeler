@@ -30,6 +30,11 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
   old_pos=QPoint(-1,-1);
   frame->installEventFilter(this);
 
+	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
+	drop_shadow->setOffset(5,5);
+	drop_shadow->setBlurRadius(30);
+	this->setGraphicsEffect(drop_shadow);
+
   connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
   //C++11 lambda slots
@@ -96,8 +101,9 @@ void UpdateNotifierWidget::checkForUpdate(void)
 	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
 	QNetworkRequest req(url);
 
-	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
-	update_chk_reply=update_chk_manager.get(req);
+	//show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
+	//update_chk_reply=update_chk_manager.get(req);
+	emit s_updateAvailable(true);
 }
 
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
