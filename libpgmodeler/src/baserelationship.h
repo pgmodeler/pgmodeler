@@ -96,8 +96,8 @@ class BaseRelationship: public BaseGraphicObject  {
 															REL_NAME_LABEL=2;
 
 		//! \brief Constants used to reference the source and destination tables
-		static const unsigned SRC_TABLE=3,
-															DST_TABLE=4;
+		static const unsigned SRC_TABLE=0,
+															DST_TABLE=1;
 
 		BaseRelationship(BaseRelationship *rel);
 

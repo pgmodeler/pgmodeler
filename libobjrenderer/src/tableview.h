@@ -34,9 +34,15 @@ class TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
+		map<TableObject *, vector<QPointF>> conn_points;
+
+		void generateConnectionPoints(void);
+
 	public:
 		TableView(Table *table);
 		~TableView(void);
+
+		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
 
 	private slots:
 		void configureObject(void);

@@ -623,6 +623,7 @@ void TableWidget::applyConfiguration(void)
 	try
 	{
 		Table *table=nullptr;
+		vector<BaseRelationship *> rels;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -637,7 +638,7 @@ void TableWidget::applyConfiguration(void)
 
 		try
 		{
-      table->saveRelObjectsIndexes();
+			table->saveRelObjectsIndexes();
 
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
@@ -656,6 +657,20 @@ void TableWidget::applyConfiguration(void)
 
 		op_list->finishOperationChain();
 		finishConfiguration();
+
+		if(RelationshipView::getLineConnectinMode()==RelationshipView::CONNECT_FK_TO_PK)
+		{
+			/* Forcing the update of relationships connected to the table in order to reconfigure the line
+			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */
+			rels=model->getRelationships(table);
+			for(auto rel : rels)
+			{
+				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+					 rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+					 rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					rel->setModified(true);
+			}
+		}
 	}
 	catch(Exception &e)
 	{

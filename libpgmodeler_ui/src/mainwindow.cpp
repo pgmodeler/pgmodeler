@@ -1365,6 +1365,9 @@ void MainWindow::loadModels(const QStringList &list)
 {
 	int i=0;
 
+	#warning "Teste!"
+	RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_FK_TO_PK);
+
 	try
 	{
 		for(i=0; i < list.count(); i++)
