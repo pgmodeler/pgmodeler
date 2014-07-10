@@ -19,7 +19,7 @@
 #include "relationshipview.h"
 
 bool RelationshipView::hide_name_label=false;
-unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_CENTER_PNTS;
+unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
