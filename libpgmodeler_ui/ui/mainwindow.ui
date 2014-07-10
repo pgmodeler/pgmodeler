@@ -1297,7 +1297,7 @@
   <action name="action_main_menu">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/filter.png</normaloff>:/icones/icones/filter.png</iconset>
+     <normaloff>:/icones/icones/mainmenu.png</normaloff>:/icones/icones/mainmenu.png</iconset>
    </property>
    <property name="text">
     <string>action_main_menu</string>

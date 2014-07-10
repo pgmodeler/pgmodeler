@@ -51,7 +51,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+     <normaloff>:/icones/icones/random.png</normaloff>:/icones/icones/random.png</iconset>
    </property>
    <property name="iconSize">
     <size>

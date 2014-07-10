@@ -754,6 +754,7 @@ void RelationshipView::configureDescriptor(void)
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
+	QColor line_color=base_rel->getLineColor();
 
 	//Configuring the relationship descriptor color
 	if(base_rel->getLineColor()!=Qt::transparent)
@@ -767,7 +768,27 @@ void RelationshipView::configureDescriptor(void)
 		pen.setStyle(Qt::DashLine);
 
 	descriptor->setPen(pen);
-	descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+
+	if(line_color!=Qt::transparent)
+	{
+		QColor colors[2];
+		QLinearGradient grad;
+		BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP, colors[0], colors[1]);
+
+		for(unsigned i=0; i < 2; i++)
+		{
+			colors[i].setRed((colors[i].red() + line_color.red() + 255)/3);
+			colors[i].setGreen((colors[i].green() + line_color.green() + 255)/3);
+			colors[i].setBlue((colors[i].blue() + line_color.blue() + 255)/3);
+			grad.setColorAt(i, colors[i]);
+		}
+
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);;
+		descriptor->setBrush(grad);
+	}
+	else
+		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 		 rel_type==BaseRelationship::RELATIONSHIP_GEN)

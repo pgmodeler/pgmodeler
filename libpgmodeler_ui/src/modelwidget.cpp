@@ -3107,8 +3107,6 @@ void ModelWidget::breakRelationshipLine(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
-		BaseTableView *src_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject()),
-									*dst_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 		float dx, dy;
 		unsigned break_type=action->data().toUInt();
 		QPointF src_pnt, dst_pnt;

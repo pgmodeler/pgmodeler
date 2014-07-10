@@ -178,6 +178,8 @@
         <file>icones/open_big.png</file>
         <file>icones/last_session_big.png</file>
         <file>icones/last_session.png</file>
+        <file>icones/mainmenu.png</file>
+        <file>icones/random.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

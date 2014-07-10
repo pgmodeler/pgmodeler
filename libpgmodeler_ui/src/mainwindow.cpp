@@ -754,7 +754,7 @@ void MainWindow::updateRecentModelsMenu(void)
 
 	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
 	central_wgt->recent_tb->setEnabled(action_recent_models->isEnabled());
-	central_wgt->recent_tb->setMenu(&recent_mdls_menu);
+	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
 void MainWindow::loadRecentModel(void)
