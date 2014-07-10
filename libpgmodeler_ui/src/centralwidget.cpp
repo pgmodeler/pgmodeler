@@ -16,36 +16,22 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup libobjrenderer
-\class TableView
-\brief Implements the graphical representation for tables.
-*/
+#include "centralwidget.h"
+#include "QGraphicsDropShadowEffect"
 
-#ifndef TABLE_VIEW_H
-#define TABLE_VIEW_H
+CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
+{
+	setupUi(this);
 
-#include "table.h"
-#include "basetableview.h"
-#include "tabletitleview.h"
-#include "tableobjectview.h"
+	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb };
+	QGraphicsDropShadowEffect *shadow=nullptr;
 
-class TableView: public BaseTableView {
-	private:
-		Q_OBJECT
-
-		map<TableObject *, vector<QPointF>> conn_points;
-
-		void generateConnectionPoints(void);
-
-	public:
-		TableView(Table *table);
-		~TableView(void);
-
-		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
-
-	private slots:
-		void configureObject(void);
-};
-
-#endif
+	for(auto btn : btns)
+	{
+		shadow=new QGraphicsDropShadowEffect(this);
+		shadow->setXOffset(3);
+		shadow->setYOffset(3);
+		shadow->setBlurRadius(10);
+		btn->setGraphicsEffect(shadow);
+	}
+}

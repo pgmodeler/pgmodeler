@@ -3106,34 +3106,39 @@ void ModelWidget::breakRelationshipLine(void)
 	{
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
+		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
 		BaseTableView *src_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject()),
 									*dst_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 		float dx, dy;
 		unsigned break_type=action->data().toUInt();
+		QPointF src_pnt, dst_pnt;
 
 		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
 
+		src_pnt=rel_view->getConnectionPoint(BaseRelationship::SRC_TABLE);
+		dst_pnt=rel_view->getConnectionPoint(BaseRelationship::DST_TABLE);
+
 		if(break_type==BREAK_VERT_NINETY_DEGREES)
-			rel->setPoints({ QPointF(src_tab->getCenter().x(), dst_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(src_pnt.x(), dst_pnt.y()) });
 		else if(break_type==BREAK_HORIZ_NINETY_DEGREES)
-			rel->setPoints({ QPointF(dst_tab->getCenter().x(), src_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(dst_pnt.x(), src_pnt.y()) });
 		else if(break_type==BREAK_HORIZ_2NINETY_DEGREES)
 		{
 			//Calculates the midle vertical point between the tables centers
-			dy=(src_tab->getCenter().y() + dst_tab->getCenter().y())/2;
+			dy=(src_pnt.y() + dst_pnt.y())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(src_tab->getCenter().x(), dy),
-											 QPointF(dst_tab->getCenter().x(), dy) });
+			rel->setPoints({ QPointF(src_pnt.x(), dy),
+											 QPointF(dst_pnt.x(), dy) });
 		}
 		else
 		{
 			//Calculates the middle horizontal point between the tables centers
-			dx=(src_tab->getCenter().x() + dst_tab->getCenter().x())/2;
+			dx=(src_pnt.x() + dst_pnt.x())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(dx, src_tab->getCenter().y()),
-											 QPointF(dx, dst_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(dx, src_pnt.y()),
+											 QPointF(dx, dst_pnt.y()) });
 		}
 
 		rel->setModified(true);

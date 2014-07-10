@@ -101,16 +101,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
-	bg_image=nullptr;
+	central_wgt=nullptr;
 	setupUi(this);
 	models_tbw->tabBar()->setVisible(false);
 	print_dlg=new QPrintDialog(this);
 
-	QPixmap px=QPixmap(":styles/styles/pgmodeler_bg_logo.png");
-	bg_image=new QLabel(centralwidget);
-	bg_image->setPixmap(px);
-	bg_image->setMinimumSize(px.size());
-	bg_image->lower();
+	central_wgt=new CentralWidget(bg_widget);
 	general_tb->layout()->setContentsMargins(0,0,0,0);
 
 	try
@@ -160,6 +156,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
+		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -254,6 +251,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																 BaseObject::getSchemaName(obj_tp) +
 																 QString(".png")));
 
+	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
+	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
+	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
+
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 
@@ -272,7 +273,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 	connect(action_fix_model,SIGNAL(triggered(bool)),model_fix_form,SLOT(exec()));
 
-	//connect(models_tbw,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
@@ -291,7 +291,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
-	//connect(models_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeModel(int)));
 	connect(model_nav_wgt, SIGNAL(s_modelRemoved(int)), this, SLOT(closeModel(int)));
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
@@ -482,7 +481,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   for(auto act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
-    btn->installEventFilter(this);
+		btn->setGraphicsEffect(createDropShadow(btn));
+		//btn->installEventFilter(this);
   }
 }
 
@@ -519,6 +519,7 @@ void MainWindow::restoreLastSession(void)
 
 			saveTemporaryModels(true);
 			action_restore_session->setEnabled(false);
+			central_wgt->last_session_tb->setEnabled(false);
 		}
 		catch(Exception &e)
 		{
@@ -570,10 +571,10 @@ void MainWindow::showEvent(QShowEvent *)
 
 void MainWindow::resizeEvent(QResizeEvent *)
 {
-	if(bg_image)
+	if(central_wgt)
 	{
-		bg_image->move(centralwidget->width()/2 - bg_image->width()/2 ,
-									 centralwidget->height()/2 - bg_image->height()/2);
+		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
+											bg_widget->height()/2 - central_wgt->height()/2);
 	}
 }
 
@@ -752,6 +753,8 @@ void MainWindow::updateRecentModelsMenu(void)
 	}
 
 	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
+	central_wgt->recent_tb->setEnabled(action_recent_models->isEnabled());
+	central_wgt->recent_tb->setMenu(&recent_mdls_menu);
 }
 
 void MainWindow::loadRecentModel(void)
@@ -799,6 +802,8 @@ void MainWindow::addModel(const QString &filename)
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
 	model_tab->db_model->setInvalidated(false);
+
+	central_wgt->setVisible(false);
 
 	if(!filename.isEmpty())
 	{
@@ -861,6 +866,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	models_tbw->blockSignals(false);
 	setCurrentModel();
+	central_wgt->setVisible(false);
 }
 
 int MainWindow::getModelCount(void)
@@ -931,21 +937,26 @@ void MainWindow::setCurrentModel(void)
 		general_tb->addAction(current_model->action_new_object);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-    tool_btn->installEventFilter(this);
+		//tool_btn->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_quick_actions);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-    tool_btn->installEventFilter(this);
+		//tool_btn->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_edit);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));//->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_source_code);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));//->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_select_all);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));//->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
@@ -1033,15 +1044,14 @@ void MainWindow::applyZoom(void)
 void MainWindow::removeModelActions(void)
 {
 	QList<QAction *> act_list;
-  QToolButton *btn=nullptr;
+	//QToolButton *btn=nullptr;
 
 	act_list=general_tb->actions();
 
 	while(act_list.size() > 5)
 	{
-    btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act_list.back()));
-    btn->removeEventFilter(this);
-
+		//btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act_list.back()));
+		//btn->removeEventFilter(this);
     general_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
@@ -1106,6 +1116,7 @@ void MainWindow::closeModel(int model_id)
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		models_tbw->setVisible(false);
+		central_wgt->setVisible(true);
 	}
 	else
 	{
@@ -1525,7 +1536,20 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 	}
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
+QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
+{
+	QGraphicsDropShadowEffect *shadow=nullptr;
+
+	shadow=new QGraphicsDropShadowEffect(btn);
+	shadow->setXOffset(2);
+	shadow->setYOffset(2);
+	shadow->setBlurRadius(5);
+	shadow->setColor(QColor(0,0,0, 100));
+
+	return(shadow);
+}
+
+/*bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
 	QPaintEvent *p_event=dynamic_cast<QPaintEvent *>(event);
 	QToolButton *btn=dynamic_cast<QToolButton *>(object);
@@ -1549,4 +1573,4 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	}
 
 	return(QWidget::eventFilter(object, event));
-}
+}*/

@@ -19,6 +19,7 @@
 #include "relationshipview.h"
 
 bool RelationshipView::hide_name_label=false;
+unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
@@ -58,7 +59,6 @@ RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
 
-	//this->disconnectTables();
 	disconnect(this, nullptr, this->getSourceObject(), nullptr);
 
 	for(int i=0; i < 3; i++)
@@ -75,6 +75,22 @@ RelationshipView::~RelationshipView(void)
 		item=lines.back();
 		this->removeFromGroup(item);
 		lines.pop_back();
+		delete(item);
+	}
+
+	while(!fk_lines.empty())
+	{
+		item=fk_lines.back();
+		this->removeFromGroup(item);
+		fk_lines.pop_back();
+		delete(item);
+	}
+
+	while(!pk_lines.empty())
+	{
+		item=pk_lines.back();
+		this->removeFromGroup(item);
+		pk_lines.pop_back();
 		delete(item);
 	}
 
@@ -98,6 +114,27 @@ void RelationshipView::hideNameLabel(bool value)
 bool RelationshipView::isNameLabelHidden(void)
 {
 	return(hide_name_label);
+}
+
+void RelationshipView::setLineConnectionMode(unsigned mode)
+{
+	if(mode > CONNECT_FK_TO_PK)
+		mode=CONNECT_FK_TO_PK;
+
+	line_conn_mode=mode;
+}
+
+unsigned RelationshipView::getLineConnectinMode(void)
+{
+	return(line_conn_mode);
+}
+
+QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
+{
+	if(table_idx > 2)
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(conn_points[table_idx]);
 }
 
 BaseRelationship *RelationshipView::getSourceObject(void)
@@ -124,6 +161,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		unsigned i, count;
 		QPen pen;
 		QColor color, line_color=this->getSourceObject()->getLineColor();
+		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
 		pos_info_pol->setVisible(value.toBool());
@@ -159,12 +197,15 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		else
 			color=line_color;
 
-		count=lines.size();
-		for(i=0; i < count; i++)
+		rel_lines=lines;
+		rel_lines.insert(rel_lines.end(), fk_lines.begin(), fk_lines.end());
+		rel_lines.insert(rel_lines.end(), pk_lines.begin(), pk_lines.end());
+
+		for(auto lin : rel_lines)
 		{
-			pen=lines[i]->pen();
+			pen=lin->pen();
 			pen.setColor(color);
-			lines[i]->setPen(pen);
+			lin->setPen(pen);
 		}
 
 		//Shows/hides the attribute's selection
@@ -394,16 +435,15 @@ void RelationshipView::configureLine(void)
 	{
 		BaseRelationship *base_rel=this->getSourceObject();
 		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-		vector<QPointF> points;
-		QLineF lin_aux[2];
+		vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
-		QPointF pos, p_int, p_central[2];
+		QPointF pos, p_int, p_central[2], pk_pnt, fk_pnt;
 		QRectF rect;
-		QGraphicsItem *item=nullptr;
 		QPen pen;
 		QGraphicsPolygonItem *pol=nullptr;
 		QPolygonF pol_aux;
 		QString tool_tip;
+		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
 		bool bidirectional=base_rel->isBidirectional();
 
@@ -439,6 +479,10 @@ void RelationshipView::configureLine(void)
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
+			bool rel_1n=( !bidirectional &&
+										(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+										 base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+										 base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
 
 			if(rel &&
 				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
@@ -448,34 +492,66 @@ void RelationshipView::configureLine(void)
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
 			}
 
-			for(i=0; i < 2; i++)
+			if(line_conn_mode==CONNECT_CENTER_PNTS || !rel_1n)
 			{
-				rect=tables[i]->boundingRect();
-				pos=tables[i]->pos();
+				for(i=0; i < 2; i++)
+					p_central[i]=tables[i]->getCenter();
+			}
+			else if(line_conn_mode==CONNECT_FK_TO_PK && rel_1n)
+			{
+				QPointF pnt;
+				float fk_py=0, pk_py=0, fk_px=0, pk_px=0;
+				vector<Constraint *> fks;
+				Table *ref_tab=nullptr, *rec_tab=nullptr;
+				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
+				unsigned cnt=0, i=0, pk_pnt_type=0, fk_pnt_type=0;
 
-				//Calculates the table's cental point
-				p_central[i].setX(pos.x() + (rect.width()/2.0f));
-				p_central[i].setY(pos.y() + (rect.height()/2.0f));
+				if(!rel)
+				{
+					ref_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
+					rec_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
+				}
+				else
+				{
+					ref_tab=rel->getReferenceTable();
+					rec_tab=rel->getReceiverTable();
+				}
+
+				rec_tab->getForeignKeys(fks, true, ref_tab);
+				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
+				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
+				pk_pnt_type=(ref_tab_view->pos().x() >= rec_tab_view->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				fk_pnt_type=(pk_pnt_type==BaseTableView::RIGHT_CONN_POINT ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+
+				for(auto constr : fks)
+				{
+					cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
+
+					for(i=0; i < cnt; i++)
+					{
+						pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SOURCE_COLS), fk_pnt_type);
+						fk_py+=pnt.y();
+						fk_px=pnt.x();
+						fk_points.push_back(this->mapFromItem(rec_tab_view, pnt));
+
+						pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::REFERENCED_COLS), pk_pnt_type);
+						pk_py+=pnt.y();
+						pk_px=pnt.x();
+						pk_points.push_back(this->mapFromItem(ref_tab_view, pnt));
+					}
+				}
+
+				if(!fks.empty())
+				{
+					float pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
+								fk_dx=(fk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH);
+
+					p_central[0]=pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
+					p_central[1]=fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
+				}
 			}
 
 			points=base_rel->getPoints();
-
-			/* Case there is no user added points the auxiliary line will be the one formed by
-			the tables central points */
-			if(points.empty())
-			{
-				lin_aux[0].setPoints(p_central[0], p_central[1]);
-				lin_aux[1]=lin_aux[0];
-			}
-			/* Case there are points on the relationship, the auxiliary lines will be:
-			1) between the source table central point and the first user added point
-			2) between the destination table central point and the last user added point */
-			else
-			{
-				lin_aux[0].setPoints(p_central[0], points[0]);
-				lin_aux[1].setPoints(p_central[1], points[points.size()-1]);
-			}
-
 			count=points.size();
 			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(5,0));
 			pol_aux.append(QPointF(5,5)); pol_aux.append(QPointF(0,5));
@@ -511,6 +587,9 @@ void RelationshipView::configureLine(void)
 				i--;
 			}
 		}
+
+		conn_points[0]=p_central[0];
+		conn_points[1]=p_central[1];
 
 		//Configuring the relationship line color
 		if(base_rel->getLineColor()!=Qt::transparent)
@@ -548,6 +627,55 @@ void RelationshipView::configureLine(void)
 			points.insert(points.begin() + idx_lin_desc, p_int);
 		}
 
+		if(line_conn_mode==CONNECT_FK_TO_PK)
+		{
+			vector<QPointF> ref_points={ fk_pnt, pk_pnt };
+			vector<vector<QPointF> *> ref_pnt_vects={ &fk_points, &pk_points };
+			vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
+			vector<QPointF> *ref_pnt=nullptr;
+			vector<QGraphicsLineItem *> *ref_lin=nullptr;
+
+			for(unsigned vet_idx=0; vet_idx < 2; vet_idx++)
+			{
+				ref_pnt=ref_pnt_vects[vet_idx];
+				ref_lin=ref_lines[vet_idx];
+				count=ref_pnt->size();
+
+				for(i=0; i < count; i++)
+				{
+					if(i >= static_cast<int>(ref_lin->size()))
+					{
+						lin=new QGraphicsLineItem;
+						lin->setZValue(-1);
+						ref_lin->push_back(lin);
+						this->addToGroup(lin);
+					}
+					else
+						lin=ref_lin->at(i);
+
+					//If the relationship is identifier or bidirectional, the line has its thickness modified
+					if(rel && (rel->isIdentifier() && vet_idx==0))
+						pen.setWidthF(1.7f);
+					else
+						pen.setWidthF(1.0f);
+
+					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
+					lin->setPen(pen);
+				}
+
+				//Destroy the unused pk or fk lines
+				i=ref_pnt->size()-1;
+				while(i > static_cast<int>(ref_lin->size()-1))
+				{
+					item=ref_lin->back();
+					ref_lin->pop_back();
+					this->removeFromGroup(item);
+					delete(item);
+					i--;
+				}
+			}
+		}
+
 		//Create the relationship lines
 		count=points.size();
 		for(i=0; i < count-1; i++)
@@ -572,6 +700,7 @@ void RelationshipView::configureLine(void)
 			lin->setPen(pen);
 		}
 
+		//Removing unused lines
 		if(!base_rel->isSelfRelationship())
 		{
 			i=points.size()-1;
@@ -585,6 +714,7 @@ void RelationshipView::configureLine(void)
 				i1--;
 			}
 		}
+
 
 		this->configureDescriptor();
 		this->configureLabels();

@@ -865,6 +865,7 @@ void RelationshipWidget::applyConfiguration(void)
 	try
 	{
 		Relationship *rel=nullptr;
+		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
 		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
 		vector<unsigned> col_ids;
 
@@ -882,6 +883,11 @@ void RelationshipWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
+		if(line_color_chk->isChecked())
+			base_rel->setLineColor(color_picker->getColor(0));
+		else
+			base_rel->setLineColor(Qt::transparent);
+
 		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
 		{
 			QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
@@ -891,7 +897,7 @@ void RelationshipWidget::applyConfiguration(void)
 																Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
 																Relationship::PK_PATTERN, Relationship::UQ_PATTERN };
 
-			rel=dynamic_cast<Relationship *>(this->object);
+			rel=dynamic_cast<Relationship *>(base_rel);
 
 			if(name_patterns_grp->isVisible())
 			{
@@ -960,11 +966,6 @@ void RelationshipWidget::applyConfiguration(void)
 				rel->setSpecialPrimaryKeyCols(col_ids);
 			}
 
-			if(line_color_chk->isChecked())
-				rel->setLineColor(color_picker->getColor(0));
-			else
-				rel->setLineColor(Qt::transparent);
-
 			try
 			{
 				//Checking if there is relationship redundancy
@@ -977,7 +978,6 @@ void RelationshipWidget::applyConfiguration(void)
 					model->validateRelationships();
 
 				rel->blockSignals(false);
-				rel->setModified(true);
 			}
 			catch(Exception &e)
 			{

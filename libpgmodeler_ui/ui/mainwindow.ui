@@ -56,7 +56,7 @@
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="bg_widget">
    <layout class="QGridLayout" name="gridLayout_4">
     <property name="leftMargin">
      <number>0</number>
@@ -788,7 +788,6 @@
    <addaction name="action_save_model"/>
    <addaction name="action_save_as"/>
    <addaction name="action_print"/>
-   <addaction name="action_close_model"/>
    <addaction name="separator"/>
    <addaction name="action_dec_zoom"/>
    <addaction name="action_normal_zoom"/>
@@ -1254,6 +1253,10 @@
    </property>
   </action>
   <action name="action_restore_session">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/last_session.png</normaloff>:/icones/icones/last_session.png</iconset>
+   </property>
    <property name="text">
     <string>Restore Session</string>
    </property>

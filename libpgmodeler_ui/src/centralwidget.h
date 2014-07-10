@@ -17,35 +17,23 @@
 */
 
 /**
-\ingroup libobjrenderer
-\class TableView
-\brief Implements the graphical representation for tables.
+\ingroup libpgmodeler_ui
+\class CentralWidget
 */
 
-#ifndef TABLE_VIEW_H
-#define TABLE_VIEW_H
+#ifndef CENTRAL_WIDGET_H
+#define CENTRAL_WIDGET_H
 
-#include "table.h"
-#include "basetableview.h"
-#include "tabletitleview.h"
-#include "tableobjectview.h"
+#include "ui_centralwidget.h"
 
-class TableView: public BaseTableView {
+class CentralWidget: public QWidget, public Ui::CentralWidget {
 	private:
 		Q_OBJECT
 
-		map<TableObject *, vector<QPointF>> conn_points;
-
-		void generateConnectionPoints(void);
-
 	public:
-		TableView(Table *table);
-		~TableView(void);
+		CentralWidget(QWidget * parent = 0);
 
-		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
-
-	private slots:
-		void configureObject(void);
+	public slots:
 };
 
 #endif

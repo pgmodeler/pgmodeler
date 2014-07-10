@@ -94,7 +94,8 @@ SOURCES += src/mainwindow.cpp \
            src/eventtriggerwidget.cpp \
            src/aboutwidget.cpp \
            src/colorpickerwidget.cpp \
-    src/modelnavigationwidget.cpp
+    src/modelnavigationwidget.cpp \
+    src/centralwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -168,7 +169,8 @@ HEADERS += src/mainwindow.h \
            src/eventtriggerwidget.h \
            src/aboutwidget.h \
            src/colorpickerwidget.h \
-    src/modelnavigationwidget.h
+    src/modelnavigationwidget.h \
+    src/centralwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -233,6 +235,7 @@ FORMS += ui/mainwindow.ui \
          ui/eventtriggerwidget.ui \
          ui/aboutwidget.ui \
          ui/colorpickerwidget.ui \
-    ui/modelnavigationwidget.ui
+    ui/modelnavigationwidget.ui \
+    ui/centralwidget.ui
 
 

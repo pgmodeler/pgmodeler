@@ -1072,6 +1072,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 			if(!rel && ref_tab->getDatabase()==this)
 			{
 				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
+				rel->setLineColor(Qt::transparent);
 
 				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
 					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
@@ -1521,7 +1522,6 @@ void DatabaseModel::validateRelationships(void)
   {
     for(auto tab : tables)
       dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
-
 
     xml_special_objs.clear();
   }

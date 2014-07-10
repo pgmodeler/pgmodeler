@@ -45,6 +45,7 @@
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"
 #include "modelnavigationwidget.h"
+#include "centralwidget.h"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		AboutWidget *about_wgt;
 
-		QLabel *bg_image;
+		CentralWidget *central_wgt;
 
 		ModelNavigationWidget *model_nav_wgt;
 
@@ -135,6 +136,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		const static int MAX_RECENT_MODELS=10;
 
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
+
+		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -243,9 +246,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleAboutWidget(bool show);
 
 		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
-		bool eventFilter(QObject *object, QEvent *event);
+		//bool eventFilter(QObject *object, QEvent *event);
 
-                        void removeModelActions(void);
+		void removeModelActions(void);
 };
 
 #endif
