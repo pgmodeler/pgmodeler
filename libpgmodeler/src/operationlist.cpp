@@ -807,7 +807,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			marked to force the redraw at the time of its restoration */
 		else if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
 						obj_type==BASE_RELATIONSHIP || obj_type==OBJ_RELATIONSHIP ||
-						obj_type==OBJ_TEXTBOX)
+						obj_type==OBJ_TEXTBOX || obj_type==OBJ_SCHEMA)
 		{
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
