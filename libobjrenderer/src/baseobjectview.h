@@ -154,6 +154,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	signals:
 		//! \brief Signal emmited when the object is (un)selected
 		void s_objectSelected(BaseGraphicObject *object, bool selected);
+
+		//! brief Signal emmited whenever the width or height of the table changes
+		void s_objectDimensionChanged(void);
 };
 
 #endif

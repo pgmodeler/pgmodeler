@@ -46,6 +46,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		this->src_table=src_tab;
 		this->dst_table=dst_tab;
 		this->rel_type=rel_type;
+		this->line_color=QColor(Qt::transparent);
 
 		for(unsigned i=0; i < 3; i++)
 		{
