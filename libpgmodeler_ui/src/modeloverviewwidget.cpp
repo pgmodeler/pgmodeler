@@ -73,6 +73,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 void ModelOverviewWidget::closeEvent(QCloseEvent *event)
 {
+	model=nullptr;
 	emit s_overviewVisible(false);
 	QWidget::closeEvent(event);
 }

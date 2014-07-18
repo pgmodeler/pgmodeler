@@ -34,7 +34,7 @@ void TableView::configureObject(void)
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	QPolygonF pol;
 	int i, count, obj_idx;
-	float width, type_width=0, px=0, cy=0;
+	float width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -49,6 +49,9 @@ void TableView::configureObject(void)
 	//Configures the table title
 	title->configureObject(table);
 	px=0;
+
+	old_width=this->bounding_rect.width();
+	old_height=this->bounding_rect.height();
 
 	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
@@ -241,6 +244,10 @@ void TableView::configureObject(void)
 	this->setToolTip(this->table_tooltip);
 
   configureTag();
+
+	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
+		 (old_height!=0 && this->bounding_rect.height()!=old_height))
+		emit s_objectDimensionChanged();
 }
 
 QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
@@ -250,7 +257,8 @@ QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
 	else if(pnt_type > RIGHT_CONN_POINT)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(conn_points.count(tab_obj)==0)
-		throw Exception(ERR_REF_OBJ_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		//Returns the center point in case of the connection point of the table object wasn't calculated already
+		return(this->getCenter());
 
 	return(conn_points[tab_obj][pnt_type]);
 }

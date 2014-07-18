@@ -611,8 +611,8 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 		scene->addItem(item);
 
-		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
-			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
+		//if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+			//dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 
 	this->modified=true;
@@ -705,8 +705,12 @@ void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
 
 void ModelWidget::handleObjectsMovement(bool end_moviment)
 {
-	vector<BaseObject *> ::iterator itr, itr_end;
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> reg_tables;
+	QList<BaseObjectView *> tables;
+
 	BaseGraphicObject *obj=nullptr;
+	Schema *schema=nullptr;
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -719,10 +723,26 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 		{
 			obj=dynamic_cast<BaseGraphicObject *>(*itr);
 
-			if(!dynamic_cast<BaseRelationship *>(obj) &&
-				 !dynamic_cast<Schema *>(obj) &&
-				 (obj && !obj->isProtected()))
-				op_list->registerObject(obj, Operation::OBJECT_MOVED);
+			if(!dynamic_cast<BaseRelationship *>(obj) && (obj && !obj->isProtected()))
+			{
+				schema=dynamic_cast<Schema *>(obj);
+
+				//Register the object if it is not a schema or a table already registered
+				if(!schema && std::find(reg_tables.begin(), reg_tables.end(), obj)==reg_tables.end())
+					op_list->registerObject(obj, Operation::OBJECT_MOVED);
+				else if(schema)
+				{
+					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
+					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
+					for(auto tab : tables)
+					{
+						op_list->registerObject(tab->getSourceObject(), Operation::OBJECT_MOVED);
+
+						//Registers the table on a auxiliary list to avoid multiple registration on operation history
+						reg_tables.push_back(tab->getSourceObject());
+					}
+				}
+			}
 
 			itr++;
 		}

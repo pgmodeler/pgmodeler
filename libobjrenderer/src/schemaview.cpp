@@ -38,6 +38,8 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	this->configureObject();
 	all_selected=false;
+
+	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
 SchemaView::~SchemaView()
@@ -49,8 +51,8 @@ void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(event->buttons()==Qt::LeftButton)
 	{
-		all_selected=this->isChildrenSelected();
-		this->setFlag(QGraphicsItem::ItemIsMovable, all_selected);
+		//all_selected=this->isChildrenSelected();
+		//this->setFlag(QGraphicsItem::ItemIsMovable, all_selected);
 	}
 
 	//If the user press SHIFT + left-click select all the schema children
@@ -119,9 +121,30 @@ bool SchemaView::isChildrenSelected(void)
 	return(selected);
 }
 
+QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+	if(change==ItemPositionChange)
+		last_pos=this->pos();
+	else if(change==ItemPositionHasChanged && this->isSelected())
+	{	
+		float dx=pos().x() - last_pos.x(),
+					dy=pos().y() - last_pos.y();
+
+		for(auto child : children)
+			child->moveBy(dx, dy);
+	}
+
+	return(BaseObjectView::itemChange(change, value));
+}
+
 unsigned SchemaView::getChildrenCount()
 {
 	return(children.size());
+}
+
+QList<BaseObjectView *> SchemaView::getChildren(void)
+{
+	return(children);
 }
 
 void SchemaView::configureObject(void)
@@ -182,8 +205,10 @@ void SchemaView::configureObject(void)
 		box->setPolygon(pol);
 
 		//Sets the schema view position
+		this->setFlag(ItemSendsGeometryChanges, false);
 		this->moveBy(-this->pos().x(),-this->pos().y());
 		this->setPos(QPointF(x1, y1 - txt_h));
+		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
 		color.setAlpha(80);

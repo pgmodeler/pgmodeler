@@ -36,6 +36,7 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Graphical point radius
     static constexpr float GRAPHIC_PNT_RADIUS=2.5f;
 
+		//! brief Length of the lines linked to fk/pk columns
 		static constexpr float CONN_LINE_LENGTH=20.0f;
 
 		//! \brief Indicates that the relationship labels must be hidden
@@ -102,6 +103,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Configures the position info object
 		void configurePositionInfo(void);
 
+		//! brief Configures the specified label's position based as well some styles for it
+		void configureLabelPosition(unsigned label_id, float x, float y);
+
 	protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -148,8 +152,12 @@ class RelationshipView: public BaseObjectView {
 		semantics	and connects the fk columns of receiver table to pk columns on reference table */
 		static void setLineConnectionMode(unsigned mode);
 
+		//! brief Returns the line connection mode used for the relationships
 		static unsigned getLineConnectinMode(void);
 
+		/*! brief Returns the connection point for the specified table. The connection point is
+		 where the relationship is connected on envolved tables. The point returned deffers depending on the
+		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);
 
 	signals:

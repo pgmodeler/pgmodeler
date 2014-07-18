@@ -187,6 +187,7 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 {
 	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
 
+	line_color_chk->setChecked(false);
 	identifier_chk->setChecked(false);
 	table1_mand_chk->setChecked(false);
 	table2_mand_chk->setChecked(false);
