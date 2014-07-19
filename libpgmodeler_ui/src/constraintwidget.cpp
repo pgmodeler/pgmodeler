@@ -429,8 +429,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
 		fill_factor_sb->setValue(constr->getFillFactor());
-    on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
-    on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
+		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
+		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
 
 		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
 		if(ref_table)

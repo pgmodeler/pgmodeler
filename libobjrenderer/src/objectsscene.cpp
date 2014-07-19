@@ -431,11 +431,11 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
   if(event->buttons()==Qt::LeftButton)
   {
+		sel_ini_pnt=event->scenePos();
+
     if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
        (invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
     {
-      sel_ini_pnt=event->scenePos();
-
       if(enable_range_sel && this->selectedItems().isEmpty())
       {
         selection_rect->setVisible(true);

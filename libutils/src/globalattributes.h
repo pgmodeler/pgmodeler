@@ -63,6 +63,7 @@ namespace GlobalAttributes {
 	OBJECTS_STYLE_CONF="objects-style", //! \brief Default name for the object style configuration file
 	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
 	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
+	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
 
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight

@@ -128,6 +128,13 @@
         </property>
        </widget>
       </item>
+      <item row="6" column="1" colspan="2">
+       <widget class="QCheckBox" name="hide_ext_attribs_chk">
+        <property name="text">
+         <string>Hide table extended attributes</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0">
        <widget class="QCheckBox" name="autosave_interv_chk">
         <property name="sizePolicy">
@@ -306,20 +313,6 @@
         </item>
        </layout>
       </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QCheckBox" name="save_last_pos_chk">
-        <property name="text">
-         <string>Save and restore the last canvas position and zoom factor</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1" colspan="2">
-       <widget class="QCheckBox" name="hide_ext_attribs_chk">
-        <property name="text">
-         <string>Hide table extended attributes</string>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="1" colspan="2">
        <widget class="QCheckBox" name="corner_move_chk">
         <property name="text">
@@ -327,6 +320,13 @@
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QCheckBox" name="save_last_pos_chk">
+        <property name="text">
+         <string>Save and restore the last canvas position and zoom</string>
         </property>
        </widget>
       </item>

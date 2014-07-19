@@ -219,13 +219,13 @@ void RelationshipWidget::showEvent(QShowEvent *)
   if(rel_fk_rb->isChecked() ||
      (rel_dep_rb->isChecked() &&
       this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-    parent_form->setMinimumSize(620, 450);
+		parent_form->setMinimumSize(640, 450);
   else if(rel_gen_rb->isChecked())
-    parent_form->setMinimumSize(620, 550);
+		parent_form->setMinimumSize(640, 550);
   else if(rel_nn_rb->isChecked())
-    parent_form->setMinimumSize(620, 610);
+		parent_form->setMinimumSize(640, 610);
   else
-    parent_form->setMinimumSize(620, 660);
+		parent_form->setMinimumSize(640, 660);
 
   parent_form->resize(parent_form->minimumSize());
 }
@@ -352,7 +352,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
-    deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
+		deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
 
     idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
     del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);

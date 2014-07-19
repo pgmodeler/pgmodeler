@@ -65,51 +65,58 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 
 void GeneralConfigWidget::loadConfiguration(void)
 {
-	QStringList margin, custom_size;
-	vector<QString> key_attribs;
-  unsigned interv=0;
+	try
+	{
+		QStringList margin, custom_size;
+		vector<QString> key_attribs;
+		unsigned interv=0;
 
-	key_attribs.push_back(ParsersAttributes::ID);
-	BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, key_attribs);
+		key_attribs.push_back(ParsersAttributes::ID);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, key_attribs);
 
-	grid_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
-	oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
+		grid_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
+		oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
 
-	interv=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
-	autosave_interv_chk->setChecked(interv > 0);
-	autosave_interv_spb->setValue(interv);
-	autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
-  corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
-  invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
-  check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
-  save_last_pos_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]==ParsersAttributes::_TRUE_);
+		interv=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
+		autosave_interv_chk->setChecked(interv > 0);
+		autosave_interv_spb->setValue(interv);
+		autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
+		corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
+		invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
+		check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
+		save_last_pos_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]==ParsersAttributes::_TRUE_);
 
-	print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
-	print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
+		print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
+		print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
 
-	paper_cmb->setCurrentIndex((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
-	portrait_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
-	landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
+		paper_cmb->setCurrentIndex((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
+		portrait_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
+		landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
 
-	margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
-	custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(",");
+		margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
+		custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(",");
 
-	left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
-	top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
-	right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
-	bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
+		left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
+		top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
+		right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
+		bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
 
-	width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
-	height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
+		width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
+		height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
 
-	hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
-	hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
-  hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
+		hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+		hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
+		hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
 
-  font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
-  font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
+		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
+		font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
 
-	this->applyConfiguration();
+		this->applyConfiguration();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void GeneralConfigWidget::saveConfiguration()
