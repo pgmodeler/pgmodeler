@@ -20,10 +20,12 @@
 #include "constraintwidget.h"
 #include "columnwidget.h"
 #include "tablewidget.h"
+#include "configurationform.h"
 
 extern ConstraintWidget *constraint_wgt;
 extern ColumnWidget *column_wgt;
 extern TableWidget *table_wgt;
+extern ConfigurationForm *configuration_form;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
@@ -33,6 +35,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		QStringList list;
 		QGridLayout *grid=nullptr;
+		QVBoxLayout *vlayout=nullptr;
 		QFrame *frame=nullptr;
 		QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																	src_fk_pattern_txt, dst_fk_pattern_txt,
@@ -138,8 +141,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																																 .arg(Relationship::SRC_TAB_TOKEN)
 																																 .arg(Relationship::DST_TAB_TOKEN)
 																																 .arg(Relationship::GEN_TAB_TOKEN));
-		grid=dynamic_cast<QGridLayout *>(name_patterns_grp->layout());
-		grid->addWidget(frame, grid->count()+1, 0, 1, 4);
+		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
+		vlayout->addWidget(frame);
 
     ActionType::getTypes(list);
     list.push_front(trUtf8("Default"));
@@ -176,6 +179,9 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 
 		connect(line_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
+
+		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
+		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
 	}
 	catch(Exception &e)
 	{
@@ -219,13 +225,13 @@ void RelationshipWidget::showEvent(QShowEvent *)
   if(rel_fk_rb->isChecked() ||
      (rel_dep_rb->isChecked() &&
       this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-		parent_form->setMinimumSize(640, 450);
+		parent_form->setMinimumSize(640, 490);
   else if(rel_gen_rb->isChecked())
-		parent_form->setMinimumSize(640, 550);
+		parent_form->setMinimumSize(640, 590);
   else if(rel_nn_rb->isChecked())
-		parent_form->setMinimumSize(640, 610);
+		parent_form->setMinimumSize(640, 690);
   else
-		parent_form->setMinimumSize(640, 660);
+		parent_form->setMinimumSize(640, 710);
 
   parent_form->resize(parent_form->minimumSize());
 }
@@ -260,7 +266,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 																rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 	unsigned rel_type, i;
 	Relationship *aux_rel=nullptr;
-	bool rel1n, relnn, relgen_dep;
+	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
 
 	if(!base_rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -337,28 +343,28 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	if(aux_rel)
 	{
-    int idx;
+		//int idx;
 
-		pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
+		/*pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
 		src_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_FK_PATTERN)));
 		dst_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::DST_FK_PATTERN)));
 		uq_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::UQ_PATTERN)));
 		src_col_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_COL_PATTERN)));
-		dst_col_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::DST_COL_PATTERN)));
+		dst_col_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::DST_COL_PATTERN)));*/
 
 		table1_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::SRC_TABLE));
 		table2_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::DST_TABLE));
 		identifier_chk->setChecked(aux_rel->isIdentifier());
-		deferrable_chk->setChecked(aux_rel->isDeferrable());
+		//deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
-		deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
+		//deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
 
-    idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
-    del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		//idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
+		//del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-    idx=upd_action_cmb->findText(~aux_rel->getActionType(Constraint::UPDATE_ACTION));
-    upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		//idx=upd_action_cmb->findText(~aux_rel->getActionType(Constraint::UPDATE_ACTION));
+		//upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
     attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 		constraints_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
@@ -398,8 +404,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 							rel_type==BaseRelationship::RELATIONSHIP_GEN ||
 							rel_type==BaseRelationship::RELATIONSHIP_FK);
 
-	name_patterns_grp->setVisible(rel1n || relnn ||
-																(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
+	use_name_patterns=(rel1n || relnn ||
+										 (relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
+
+	name_patterns_grp->setVisible(use_name_patterns);
 
 	dst_col_pattern_txt->setEnabled(relnn);
 	dst_fk_pattern_txt->setEnabled(relnn);
@@ -449,6 +457,92 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	line_color_chk->setChecked(base_rel->getLineColor()!=Qt::transparent);
 	color_picker->setColor(0, base_rel->getLineColor());
 	listAdvancedObjects();
+
+	if(rel1n || relnn)
+	{
+		fk_gconf_chk->blockSignals(true);
+		fk_gconf_chk->setChecked(this->new_object);
+		useFKGlobalSettings(this->new_object);
+		fk_gconf_chk->blockSignals(false);
+	}
+
+	if(use_name_patterns)
+	{
+		patterns_gconf_chk->blockSignals(true);
+		patterns_gconf_chk->setChecked(this->new_object);
+		usePatternGlobalSettings(this->new_object);
+		patterns_gconf_chk->blockSignals(false);
+	}
+}
+
+void RelationshipWidget::useFKGlobalSettings(bool value)
+{
+	fk_wgt->setEnabled(!value);
+
+	if(value)
+	{
+		//Using the global settings
+		RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
+		deferrable_chk->setChecked(rel_conf_wgt->deferrable_chk->isChecked());
+		deferral_cmb->setCurrentText(rel_conf_wgt->deferral_cmb->currentText());
+		upd_action_cmb->setCurrentText(rel_conf_wgt->upd_action_cmb->currentText());
+		del_action_cmb->setCurrentText(rel_conf_wgt->del_action_cmb->currentText());
+	}
+	else
+	{
+		Relationship *rel=dynamic_cast<Relationship *>(this->object);
+		int idx=-1;
+
+		//Using the settings of the relatinship itself
+		if(rel)
+		{
+			deferrable_chk->setChecked(rel->isDeferrable());
+			idx=deferral_cmb->findText(~rel->getDeferralType());
+			deferral_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+			idx=del_action_cmb->findText(~rel->getActionType(Constraint::DELETE_ACTION));
+			del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+			idx=upd_action_cmb->findText(~rel->getActionType(Constraint::UPDATE_ACTION));
+			upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		}
+	}
+}
+
+void RelationshipWidget::usePatternGlobalSettings(bool value)
+{
+	Relationship *rel=dynamic_cast<Relationship *>(this->object);
+	patterns_wgt->setEnabled(!value);
+
+	if(rel)
+	{
+		if(value)
+		{
+			RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
+			map<QString, attribs_map> confs;
+			QString rel_type=rel->getRelTypeAttribute();
+
+			confs=rel_conf_wgt->getConfigurationParams();
+
+			//Using the global settings
+			pk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::PK_PATTERN]);
+			src_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_FK_PATTERN]);
+			dst_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_FK_PATTERN]);
+			uq_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::UQ_PATTERN]);
+			src_col_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_COL_PATTERN]);
+			dst_col_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_COL_PATTERN]);
+		}
+		else
+		{
+			//Using the settings of the relatinship itself
+			pk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_PATTERN));
+			src_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_FK_PATTERN));
+			dst_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_FK_PATTERN));
+			uq_pattern_txt->setPlainText(rel->getNamePattern(Relationship::UQ_PATTERN));
+			src_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_COL_PATTERN));
+			dst_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_COL_PATTERN));
+		}
+	}
 }
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
@@ -858,7 +952,7 @@ void RelationshipWidget::listSpecialPkColumns(void)
       if(col_ids[idx] < static_cast<unsigned>(rel_columns_lst->count()))
         rel_columns_lst->item(col_ids[idx])->setCheckState(Qt::Checked);
     }
-  }
+	}
 }
 
 void RelationshipWidget::applyConfiguration(void)
@@ -904,10 +998,7 @@ void RelationshipWidget::applyConfiguration(void)
 			{
 				count=sizeof(pattern_ids)/sizeof(unsigned);
 				for(i=0; i < count; i++)
-				{
-					if(pattern_fields[i]->isEnabled())
-						rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
-				}
+					rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
 			}
 
 			rel_type=rel->getRelationshipType();

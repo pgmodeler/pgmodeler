@@ -1,6 +1,5 @@
 # XML definition for basic configurations file
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
 [<?xml version="1.0" encoding="UTF-8" ?>] $br
 [<!--] $br
 [  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.] $br

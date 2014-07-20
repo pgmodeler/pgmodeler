@@ -335,7 +335,7 @@ void BaseRelationship::setRelationshipAttributes(void)
                                ParsersAttributes::DST_LABEL,
 												 ParsersAttributes::NAME_LABEL};
 
-	switch(rel_type)
+	/*switch(rel_type)
 	{
 		case RELATIONSHIP_11: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
 		case RELATIONSHIP_1N: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
@@ -348,8 +348,9 @@ void BaseRelationship::setRelationshipAttributes(void)
 			else
 				attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;
 		break;
-	}
+	}*/
 
+	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
 	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? "1" : "");
 	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? "1" : "");
 
@@ -480,5 +481,23 @@ void BaseRelationship::operator = (BaseRelationship &rel)
 
 	this->setMandatoryTable(SRC_TABLE, rel.src_mandatory);
 	this->setMandatoryTable(DST_TABLE, rel.dst_mandatory);
+}
+
+QString BaseRelationship::getRelTypeAttribute(void)
+{
+	switch(rel_type)
+	{
+		case RELATIONSHIP_11: return(ParsersAttributes::RELATIONSHIP_11); break;
+		case RELATIONSHIP_1N: return(ParsersAttributes::RELATIONSHIP_1N); break;
+		case RELATIONSHIP_NN: return(ParsersAttributes::RELATIONSHIP_NN); break;
+		case RELATIONSHIP_GEN: return(ParsersAttributes::RELATIONSHIP_GEN); break;
+		case RELATIONSHIP_FK: return(ParsersAttributes::RELATIONSHIP_FK); break;
+		default:
+			if(src_table->getObjectType()==OBJ_VIEW)
+				return(ParsersAttributes::RELATION_TAB_VIEW);
+			else
+				return(ParsersAttributes::RELATIONSHIP_DEP);
+		break;
+	}
 }
 

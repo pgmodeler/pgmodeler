@@ -58,8 +58,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
    map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
                                                            { rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
                                                            { relnn_tb,  std::make_tuple(trUtf8("3"), 2) },
-                                                           { relgen_tb, std::make_tuple(trUtf8("4"), 3) },
-                                                           { reldep_tb, std::make_tuple(trUtf8("5"), 4) } };
+																													 { reldep_tb, std::make_tuple(trUtf8("5"), 3) },
+																													 { relgen_tb, std::make_tuple(trUtf8("4"), 4) } };
 
 	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 

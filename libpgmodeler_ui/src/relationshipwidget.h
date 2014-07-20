@@ -85,6 +85,9 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void selectCopyOptions(void);
     void listSpecialPkColumns(void);
 
+		void useFKGlobalSettings(bool value);
+		void usePatternGlobalSettings(bool value);
+
 	public slots:
 		void applyConfiguration(void);
 		void cancelConfiguration(void);

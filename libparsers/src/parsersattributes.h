@@ -441,7 +441,9 @@ namespace ParsersAttributes {
 	CONNECT_FK_TO_PK="fk-to-pk",
 	CONNECT_CENTER_PNTS="center-pnts",
 	CONNECTION="connection",
-	MODE="mode";
+	MODE="mode",
+	PATTERNS="patterns",
+	NAME_PATTERNS="name-patterns";
 }
 
 #endif

@@ -1,6 +1,5 @@
 # XML definition for connections configuration
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
 %if @{connections} %then
 
 [<?xml version="1.0" encoding="UTF-8" ?>] $br

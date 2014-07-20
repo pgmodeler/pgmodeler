@@ -37,8 +37,6 @@ class RelationshipConfigWidget: public QWidget, public Ui::RelationshipConfigWid
 
 		map<QString, attribs_map> patterns;
 
-		SyntaxHighlighter *patterns_hl[6];
-
 	public:
 		RelationshipConfigWidget(QWidget * parent=0);
 

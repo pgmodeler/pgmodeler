@@ -493,18 +493,18 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="3">
+       <widget class="QComboBox" name="upd_action_cmb"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="del_action_cmb"/>
+      </item>
       <item row="1" column="2">
        <widget class="QLabel" name="on_update_lbl">
         <property name="text">
          <string>ON UPDATE:</string>
         </property>
        </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="del_action_cmb"/>
-      </item>
-      <item row="1" column="3">
-       <widget class="QComboBox" name="upd_action_cmb"/>
       </item>
      </layout>
     </widget>
@@ -541,6 +541,13 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Relationship type:</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
        <widget class="QTextEdit" name="src_col_pattern_txt">
         <property name="sizePolicy">
@@ -741,6 +748,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="dst_col_pattern_lbl">
+        <property name="toolTip">
+         <string>Pattern for columns generated based upon target table's pk (n-n).</string>
+        </property>
+        <property name="text">
+         <string>Column (Target):</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <widget class="QTextEdit" name="src_fk_pattern_txt">
         <property name="sizePolicy">
@@ -785,16 +802,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="dst_col_pattern_lbl">
-        <property name="toolTip">
-         <string>Pattern for columns generated based upon target table's pk (n-n).</string>
-        </property>
-        <property name="text">
-         <string>Column (Target):</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="src_col_pattern_lbl">
         <property name="toolTip">
@@ -802,13 +809,6 @@
         </property>
         <property name="text">
          <string>Column (Source):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Relationship type:</string>
         </property>
        </widget>
       </item>

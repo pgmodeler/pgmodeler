@@ -26,16 +26,18 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 
+	SyntaxHighlighter *pattern_hl=nullptr;
 	QList<QTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																			src_fk_pattern_txt, dst_fk_pattern_txt,
 																			pk_pattern_txt, uq_pattern_txt };
+
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
-		patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true, true);
-		patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, true);
+		pattern_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+																	GlobalAttributes::DIR_SEPARATOR +
+																	GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
+																	GlobalAttributes::CONFIGURATION_EXT);
 
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
@@ -99,74 +101,36 @@ void RelationshipConfigWidget::saveConfiguration(void)
 {
 	try
 	{
-		/*map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir;
+		QString patterns_sch, root_dir;
 
 		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR;
 
-		file_sch=root_dir +
+		patterns_sch=root_dir +
 						 GlobalAttributes::SCHEMAS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR +
-						 ParsersAttributes::_FILE_ +
+						 ParsersAttributes::PATTERNS +
 						 GlobalAttributes::SCHEMA_EXT;
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(oplist_size_spb->value());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? "1" : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? "1" : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? "1" : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? "1" : "");
 
-		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
-																																										 .arg(top_marg->value())
-																																										 .arg(right_marg->value())
-																																										 .arg(bottom_marg->value());
+		config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=(fk_to_pk_chk->isChecked() ? ParsersAttributes::CONNECT_FK_TO_PK : ParsersAttributes::CONNECT_CENTER_PNTS);
 
-		if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
-			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
-		else
-			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]=deferral_cmb->currentText();
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : "");
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : "");
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
+		config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]="";
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? "1" : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? "1" : "");
-
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
-
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
-
-		itr=config_params.begin();
-		itr_end=config_params.end();
-
-		while(itr!=itr_end)
+		for(auto itr : patterns)
 		{
-			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
-			{
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
-			}
-			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::RECENT + QString(")([0-9]+)"))))
-			{
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
-			}
+			schparser.setIgnoreUnkownAttributes(true);
+			schparser.setIgnoreEmptyAttributes(true);
+			config_params[itr.first]=itr.second;
+			config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+		}
 
-			itr++;
-		} */
-
-		//BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF);
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF);
 	}
 	catch(Exception &e)
 	{
