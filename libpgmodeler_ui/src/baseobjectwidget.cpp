@@ -531,14 +531,16 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 
 	ico_lbl = new QLabel(info_frm);
 	ico_lbl->setObjectName(Utf8String::create("icone_lbl"));
-	ico_lbl->setMinimumSize(QSize(32, 32));
-	ico_lbl->setMaximumSize(QSize(32, 32));
+	ico_lbl->setMinimumSize(QSize(24, 24));
+	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_info.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(info_frm);
+	msg_lbl->setFont(font);
 	msg_lbl->setObjectName(Utf8String::create("message_lbl"));
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
@@ -622,14 +624,16 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 	ico_lbl = new QLabel(alert_frm);
 	ico_lbl->setObjectName(Utf8String::create("icone_lbl"));
-	ico_lbl->setMinimumSize(QSize(32, 32));
-	ico_lbl->setMaximumSize(QSize(32, 32));
+	ico_lbl->setMinimumSize(QSize(24, 24));
+	ico_lbl->setMaximumSize(QSize(24, 24));
+	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(alert_frm);
+	msg_lbl->setFont(font);
 	msg_lbl->setObjectName(Utf8String::create("mensagelm_lb"));
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);

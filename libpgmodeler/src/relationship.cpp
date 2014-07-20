@@ -140,7 +140,7 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 {
 	if(!pattern.isEmpty())
-	{
+	{		
 		QString aux_name=pattern,
 				pat_tokens[]={ SRC_TAB_TOKEN, DST_TAB_TOKEN,
 											 GEN_TAB_TOKEN, SRC_COL_TOKEN };

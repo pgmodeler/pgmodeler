@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>620</height>
+    <width>740</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>690</width>
-    <height>620</height>
+    <width>740</width>
+    <height>660</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,9 @@
       </property>
       <property name="bottomMargin">
        <number>4</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>2</number>
       </property>
       <item row="0" column="0">
        <widget class="QListWidget" name="icons_lst">
@@ -196,7 +199,16 @@
         </item>
         <item>
          <property name="text">
-          <string>Style</string>
+          <string>Relationships</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/relationshiptv.png</normaloff>:/icones/icones/relationshiptv.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Appearance</string>
          </property>
          <property name="textAlignment">
           <set>AlignLeft|AlignVCenter</set>
@@ -275,6 +287,7 @@
           </sizepolicy>
          </property>
         </widget>
+        <widget class="QWidget" name="relationships_pg"/>
         <widget class="QWidget" name="style_pg"/>
         <widget class="QWidget" name="connections_pg"/>
         <widget class="QWidget" name="plugins_pg"/>

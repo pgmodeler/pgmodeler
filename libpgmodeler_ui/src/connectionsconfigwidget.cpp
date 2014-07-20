@@ -59,48 +59,55 @@ void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 
 void ConnectionsConfigWidget::loadConfiguration(void)
 {
-	vector<QString> key_attribs;
-	map<QString, attribs_map >::iterator itr, itr_end;
-	Connection *conn=nullptr;
-
-	//Destroy all the loaded connections
-	while(connections_cmb->count() > 0)
-		this->removeConnection();
-
-	key_attribs.push_back(ParsersAttributes::ALIAS);
-	BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
-
-	itr=config_params.begin();
-	itr_end=config_params.end();
-
-	while(itr!=itr_end)
+	try
 	{
-		conn=new Connection;
+		vector<QString> key_attribs;
+		map<QString, attribs_map >::iterator itr, itr_end;
+		Connection *conn=nullptr;
 
-		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
-		conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
-		conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
-		conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
-		conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
-		conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[Connection::PARAM_CONN_TIMEOUT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
-		conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_KEY, itr->second[Connection::PARAM_SSL_KEY]);
-		conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
-		conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
-		conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
-		conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
+		//Destroy all the loaded connections
+		while(connections_cmb->count() > 0)
+			this->removeConnection();
 
-		connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]) +
-				QString(" (%1:%2)").arg(itr->second[Connection::PARAM_SERVER_FQDN]).arg(itr->second[Connection::PARAM_PORT]),
-				QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
+		key_attribs.push_back(ParsersAttributes::ALIAS);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
 
-		itr++;
+		itr=config_params.begin();
+		itr_end=config_params.end();
+
+		while(itr!=itr_end)
+		{
+			conn=new Connection;
+
+			conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
+			conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
+			conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
+			conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
+			conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
+			conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[Connection::PARAM_CONN_TIMEOUT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
+			conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_KEY, itr->second[Connection::PARAM_SSL_KEY]);
+			conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
+			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
+			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
+			conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
+
+			connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]) +
+					QString(" (%1:%2)").arg(itr->second[Connection::PARAM_SERVER_FQDN]).arg(itr->second[Connection::PARAM_PORT]),
+					QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
+
+			itr++;
+		}
+
+		edit_tb->setEnabled(connections_cmb->count() > 0);
+		remove_tb->setEnabled(connections_cmb->count() > 0);
 	}
-
-	edit_tb->setEnabled(connections_cmb->count() > 0);
-	remove_tb->setEnabled(connections_cmb->count() > 0);
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void ConnectionsConfigWidget::enableCertificates(void)

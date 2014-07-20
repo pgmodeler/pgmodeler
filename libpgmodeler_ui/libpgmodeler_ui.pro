@@ -95,7 +95,8 @@ SOURCES += src/mainwindow.cpp \
            src/aboutwidget.cpp \
            src/colorpickerwidget.cpp \
     src/modelnavigationwidget.cpp \
-    src/centralwidget.cpp
+    src/centralwidget.cpp \
+    src/relationshipconfigwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -170,7 +171,8 @@ HEADERS += src/mainwindow.h \
            src/aboutwidget.h \
            src/colorpickerwidget.h \
     src/modelnavigationwidget.h \
-    src/centralwidget.h
+    src/centralwidget.h \
+    src/relationshipconfigwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -236,6 +238,7 @@ FORMS += ui/mainwindow.ui \
          ui/aboutwidget.ui \
          ui/colorpickerwidget.ui \
     ui/modelnavigationwidget.ui \
-    ui/centralwidget.ui
+    ui/centralwidget.ui \
+    ui/relationshipconfigwidget.ui
 
 

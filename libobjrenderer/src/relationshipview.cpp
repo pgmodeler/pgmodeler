@@ -498,8 +498,22 @@ void RelationshipView::configureLine(void)
 
 			if(line_conn_mode==CONNECT_CENTER_PNTS || !rel_1n)
 			{
+				vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
+
 				for(i=0; i < 2; i++)
 					p_central[i]=tables[i]->getCenter();
+
+				//Destroying the fk and pk connection lines when the line mode changes
+				for(i=0; i < 2; i++)
+				{
+					while(!ref_lines[i]->empty())
+					{
+						item=ref_lines[i]->back();
+						ref_lines[i]->pop_back();
+						this->removeFromGroup(item);
+						delete(item);
+					}
+				}
 			}
 			else if(line_conn_mode==CONNECT_FK_TO_PK && rel_1n)
 			{
@@ -524,8 +538,11 @@ void RelationshipView::configureLine(void)
 				rec_tab->getForeignKeys(fks, true, ref_tab);
 				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
 				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
-				pk_pnt_type=(ref_tab_view->pos().x() >= rec_tab_view->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
-				fk_pnt_type=(pk_pnt_type==BaseTableView::RIGHT_CONN_POINT ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				//pk_pnt_type=(ref_tab_view->pos().x() >= rec_tab_view->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				//fk_pnt_type=(pk_pnt_type==BaseTableView::RIGHT_CONN_POINT ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+
+				pk_pnt_type=(ref_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				fk_pnt_type=(rec_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
 
 				for(auto constr : fks)
 				{
@@ -996,26 +1013,11 @@ void RelationshipView::configureLabels(void)
 		 descriptor->boundingRect().width())/2.0f);
 
 	if(base_rel->isSelfRelationship())
-		y=pnt.y() -
-			labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
+		y=pnt.y() -	labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
 	else
 		y=pnt.y() + descriptor->boundingRect().height() + VERT_SPACING;
 
-	labels_ini_pos[BaseRelationship::REL_NAME_LABEL]=QPointF(x,y);
-
-	if(!std::isnan(label_dist.x()))
-	{
-		x+=label_dist.x();
-		y+=label_dist.y();
-	}
-
 	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
-	/*labels[BaseRelationship::REL_NAME_LABEL]->setPos(x,y);
-	labels[BaseRelationship::REL_NAME_LABEL]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
-	labels[BaseRelationship::REL_NAME_LABEL]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-																													BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
-	dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject())->setModified(true); */
-
 	configureLabelPosition(BaseRelationship::REL_NAME_LABEL, x, y);
 
 	if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&

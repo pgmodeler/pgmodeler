@@ -20,40 +20,45 @@
 
 ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+	QGridLayout *layout=nullptr;
 
-		QGridLayout *layout=nullptr;
+	setupUi(this);
 
-		setupUi(this);
+	general_conf=new GeneralConfigWidget(this);
+	appearance_conf=new AppearanceConfigWidget(this);
+	connections_conf=new ConnectionsConfigWidget(this);
+	plugins_conf=new PluginsConfigWidget(this);
+	relationships_conf=new RelationshipConfigWidget(this);
 
-		general_conf=new GeneralConfigWidget(this);
-		appearance_conf=new AppearanceConfigWidget(this);
-		connections_conf=new ConnectionsConfigWidget(this);
-		plugins_conf=new PluginsConfigWidget(this);
+	layout=new QGridLayout;
+	layout->setContentsMargins(4,4,4,4);
+	layout->addWidget(general_conf);
+	confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
 
-		layout=new QGridLayout;
-		layout->setContentsMargins(4,4,4,4);
-		layout->addWidget(general_conf);
-		confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
+	layout=new QGridLayout;
+	layout->setContentsMargins(4,4,4,4);
+	layout->addWidget(appearance_conf);
+	confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
 
-		layout=new QGridLayout;
-		layout->setContentsMargins(4,4,4,4);
-		layout->addWidget(appearance_conf);
-		confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
+	layout=new QGridLayout;
+	layout->setContentsMargins(4,4,4,4);
+	layout->addWidget(connections_conf);
+	confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
 
-		layout=new QGridLayout;
-		layout->setContentsMargins(4,4,4,4);
-		layout->addWidget(connections_conf);
-		confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
+	layout=new QGridLayout;
+	layout->setContentsMargins(4,4,4,4);
+	layout->addWidget(plugins_conf);
+	confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
 
-		layout=new QGridLayout;
-		layout->setContentsMargins(4,4,4,4);
-		layout->addWidget(plugins_conf);
-		confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
+	layout=new QGridLayout;
+	layout->setContentsMargins(4,4,4,4);
+	layout->addWidget(relationships_conf);
+	confs_stw->widget(RELATIONSHIPS_CONF_WGT)->setLayout(layout);
 
-		connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
-		connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
-		connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
+	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
+	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
+	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
+	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 }
 
 void ConfigurationForm::close(void)
@@ -76,8 +81,13 @@ void ConfigurationForm::applyConfiguration(void)
 {
 	general_conf->saveConfiguration();
 	general_conf->applyConfiguration();
+
+	relationships_conf->saveConfiguration();
+	relationships_conf->applyConfiguration();
+
 	appearance_conf->saveConfiguration();
 	connections_conf->saveConfiguration();
+
 	QDialog::accept();
 }
 
@@ -86,6 +96,7 @@ void ConfigurationForm::loadConfiguration(void)
 	try
 	{
 		general_conf->loadConfiguration();
+		relationships_conf->loadConfiguration();
 		appearance_conf->loadConfiguration();
 		connections_conf->loadConfiguration();
 		plugins_conf->loadPlugins();
@@ -114,6 +125,10 @@ void ConfigurationForm::restoreDefaults(void)
 				dynamic_cast<GeneralConfigWidget *>(this->getConfigurationWidget(GENERAL_CONF_WGT))->restoreDefaults();
 			break;
 
+			case RELATIONSHIPS_CONF_WGT:
+				dynamic_cast<RelationshipConfigWidget *>(this->getConfigurationWidget(RELATIONSHIPS_CONF_WGT))->restoreDefaults();
+			break;
+
 			case APPEARANCE_CONF_WGT:
 				dynamic_cast<AppearanceConfigWidget *>(this->getConfigurationWidget(APPEARANCE_CONF_WGT))->restoreDefaults();
 			break;
@@ -137,6 +152,7 @@ BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 		switch(idx)
 		{
 			case GENERAL_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(general_conf)); break;
+			case RELATIONSHIPS_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(relationships_conf)); break;
 			case APPEARANCE_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(appearance_conf)); break;
 			case CONNECTIONS_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(connections_conf)); break;
 			default:
