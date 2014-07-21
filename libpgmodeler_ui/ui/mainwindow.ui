@@ -57,6 +57,9 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="bg_widget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <property name="leftMargin">
      <number>0</number>
@@ -371,6 +374,9 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -396,7 +402,7 @@
          <height>480</height>
         </size>
        </property>
-       <property name="autoFillBackground">
+       <property name="mouseTracking">
         <bool>false</bool>
        </property>
        <layout class="QGridLayout" name="gridLayout">

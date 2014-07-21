@@ -59,6 +59,7 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 
 	signals:
 		void s_modelRemoved(int idx);
+		void s_modelCloseRequested(int idx);
 		void s_currentModelChanged(int idx);
 };
 

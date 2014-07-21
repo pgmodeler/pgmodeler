@@ -53,10 +53,16 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
+		//! \brief Maximum number of files listed on recent models menu
+		const static int MAX_RECENT_MODELS=10;
+
 		AboutWidget *about_wgt;
 
+		/*! brief Widget positioned on the center of main window that contains some basic operations like
+		create new model, open a file, restore session */
 		CentralWidget *central_wgt;
 
+		//! brief Widget used to navigate through the opened models.
 		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Thread that controls temporary model file savings
@@ -132,11 +138,16 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=10;
+		/*! brief This event filter controls the position of central widget putting it on top or base
+		of it's parent's stack whenever the widgets model_valid_parent, obj_finder_parent or sql_tool_parent
+		colides or not with the central_wgt in order to avoid this latter to be on top of them causing an
+		undesired overlay */
+		bool eventFilter(QObject *object, QEvent *event);
 
+		//! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
+		//! brief Creates drop shadown on a tool button that represents an QAction
 		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 	public:
@@ -244,10 +255,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
-
-		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
-		//bool eventFilter(QObject *object, QEvent *event);
-
 		void removeModelActions(void);
 };
 

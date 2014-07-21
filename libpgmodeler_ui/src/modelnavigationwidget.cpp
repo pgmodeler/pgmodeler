@@ -25,7 +25,7 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	connect(models_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(close_tb, &QToolButton::clicked,
-					[=](){ removeModel(models_cmb->currentIndex()); });
+					[=](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
 
 	connect(next_tb, &QToolButton::clicked,
 					[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()+1); });
@@ -55,7 +55,12 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 		models_cmb->blockSignals(true);
 		models_cmb->addItem(model->getDatabaseModel()->getName(), model->getFilename());
 		models_cmb->setCurrentIndex(models_cmb->count()-1);
-		models_cmb->setToolTip(model->getFilename());
+
+		if(model->getFilename().isEmpty())
+			models_cmb->setToolTip(trUtf8("(model not saved yet)"));
+		else
+			models_cmb->setToolTip(model->getFilename());
+
 		models_cmb->blockSignals(false);
 		enableNavigationButtons();
 	}

@@ -18,6 +18,7 @@
 
 #include "centralwidget.h"
 #include "QGraphicsDropShadowEffect"
+#include "QTextStream"
 
 CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 {
