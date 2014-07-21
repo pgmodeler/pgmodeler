@@ -15,6 +15,9 @@ v0.8.0-alpha
 * [New] Relationship objects now supports custom line colors.
 * [New] Added the static methods setPgSQLVersion and getPgSQLVersion on BaseObject class in order to override the PostgreSQL version used to generate code for all instances of that class.
 * [New] Introduced a method DatabaseModel::getXMLParser() in order to return the xmlparser of the model to permit user create new objects from xml code within the current database model.
+* [Change] Minor adjustment on central widget buttons style on MacOS X.
+* [Change] Disabled the collapsed main menu on MacOS X due to particularities on GUI of this system.
+* [Change] Minor adjustment on main menu construction on Linux/Windows.
 * [Change] Major change on main UI style in order to make a cleaner interface and gain more space on canvas to handle models.
 * [Change] Minor model objects style refreshment.
 * [Change] Minor optimization on class AppearanceConfigWidget by adding color pickers in order to select color of the elements.
