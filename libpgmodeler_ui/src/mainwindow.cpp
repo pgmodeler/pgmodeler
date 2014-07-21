@@ -281,7 +281,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
-	//connect(model_nav_wgt, SIGNAL(s_modelRemoved(int)), this, SLOT(closeModel(int)));
 	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
@@ -485,9 +484,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   #ifdef Q_OS_MAC
     control_tb->removeAction(action_main_menu);
-    //action_main_menu->setVisible(false);
     action_main_menu->setEnabled(false);
   #else
+		plugins_menu->menuAction()->setIconVisibleInMenu(false);
     main_menu.addMenu(file_menu);
     main_menu.addMenu(edit_menu);
     main_menu.addMenu(show_menu);
@@ -844,8 +843,6 @@ void MainWindow::addModel(const QString &filename)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
-	//else
-	//	models_tbw->setTabToolTip(models_tbw->currentIndex(), trUtf8("(model not saved yet)"));
 
 	model_nav_wgt->addModel(model_tab);
 	setCurrentModel();
