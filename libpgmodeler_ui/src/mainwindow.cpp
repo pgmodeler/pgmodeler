@@ -175,20 +175,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		model_nav_wgt=new ModelNavigationWidget(this);
 
-		control_tb->addWidget(model_nav_wgt);
-		control_tb->addSeparator();
-		control_tb->addAction(action_about);
-		control_tb->addAction(action_update_found);
-
-		main_menu.addMenu(file_menu);
-		main_menu.addMenu(edit_menu);
-		main_menu.addMenu(show_menu);
-		main_menu.addMenu(plugins_menu);
-		main_menu.addMenu(about_menu);
-		main_menu.addSeparator();
-		main_menu.addAction(action_show_main_menu);
-		action_main_menu->setMenu(&main_menu);
-		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+    control_tb->addWidget(model_nav_wgt);
+    control_tb->addSeparator();
+    control_tb->addAction(action_about);
+    control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
 		update_notifier_wgt=new UpdateNotifierWidget(this);
@@ -436,7 +426,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())
 	{
@@ -493,6 +482,22 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
 		btn->setGraphicsEffect(createDropShadow(btn));
   }
+
+  #ifdef Q_OS_MAC
+    control_tb->removeAction(action_main_menu);
+    //action_main_menu->setVisible(false);
+    action_main_menu->setEnabled(false);
+  #else
+    main_menu.addMenu(file_menu);
+    main_menu.addMenu(edit_menu);
+    main_menu.addMenu(show_menu);
+    main_menu.addMenu(plugins_menu);
+    main_menu.addMenu(about_menu);
+    main_menu.addSeparator();
+    main_menu.addAction(action_show_main_menu);
+    action_main_menu->setMenu(&main_menu);
+    dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+  #endif
 }
 
 MainWindow::~MainWindow(void)
@@ -557,17 +562,17 @@ void MainWindow::showEvent(QShowEvent *)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-#ifndef Q_OS_MAC
-	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
-#endif
+  #ifndef Q_OS_MAC
+    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
 
-	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
+    //Hiding/showing the main menu bar depending on the retrieved conf
+    main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 
-	if(main_menu_mb->isVisible())
-		file_menu->addAction(action_hide_main_menu);
+    if(main_menu_mb->isVisible())
+      file_menu->addAction(action_hide_main_menu);
 
-	action_main_menu->setVisible(!main_menu_mb->isVisible());
+    action_main_menu->setVisible(!main_menu_mb->isVisible());
+  #endif
 
 	//Positioning the update notifier widget before showing it (if there is an update)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
