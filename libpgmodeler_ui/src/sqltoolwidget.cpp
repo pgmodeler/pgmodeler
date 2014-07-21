@@ -425,7 +425,7 @@ void SQLToolWidget::runSQLCommand(void)
   try
   {
     ResultSet res;
-    QString cmd=sql_cmd_txt->textCursor().selectedText();
+		QString cmd=sql_cmd_txt->textCursor().selectedText().simplified();
 
     if(cmd.isEmpty())
       cmd=sql_cmd_txt->toPlainText();

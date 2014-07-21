@@ -106,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	models_tbw->tabBar()->setVisible(false);
 	print_dlg=new QPrintDialog(this);
 
-	central_wgt=new CentralWidget(bg_widget);
+	central_wgt=new CentralWidget(models_tbw_parent);
 	general_tb->layout()->setContentsMargins(0,0,0,0);
 
 	try
@@ -291,7 +291,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
-	connect(model_nav_wgt, SIGNAL(s_modelRemoved(int)), this, SLOT(closeModel(int)));
+	//connect(model_nav_wgt, SIGNAL(s_modelRemoved(int)), this, SLOT(closeModel(int)));
+	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
@@ -342,6 +343,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	current_model=nullptr;
 	models_tbw->setVisible(false);
+	models_tbw->installEventFilter(this);
+
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
@@ -350,6 +353,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	bg_saving_wgt->setVisible(false);
 	update_notifier_wgt->setVisible(false);
 	about_wgt->setVisible(false);
+
+	models_tbw_parent->lower();
+	central_wgt->lower();
+	v_splitter1->lower();
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -365,16 +372,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(model_valid_wgt);
 	model_valid_parent->setLayout(hlayout);
+	model_valid_parent->installEventFilter(this);
 
 	hlayout=new QHBoxLayout;
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
+	obj_finder_parent->installEventFilter(this);
 
 	vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
 	vlayout->addWidget(sql_tool_wgt);
 	sql_tool_parent->setLayout(vlayout);
+	sql_tool_parent->installEventFilter(this);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -482,7 +492,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
 		btn->setGraphicsEffect(createDropShadow(btn));
-		//btn->installEventFilter(this);
   }
 }
 
@@ -803,8 +812,6 @@ void MainWindow::addModel(const QString &filename)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
 	model_tab->db_model->setInvalidated(false);
 
-	central_wgt->setVisible(false);
-
 	if(!filename.isEmpty())
 	{
 		try
@@ -814,9 +821,6 @@ void MainWindow::addModel(const QString &filename)
 			//Get the "public" schema and set as system object
 			public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", OBJ_SCHEMA));
 			if(public_sch)	public_sch->setSystemObject(true);
-
-			/*models_tbw->setTabText(models_tbw->currentIndex(),
-														 Utf8String::create(model_tab->db_model->getName()));*/
 
 			models_tbw->setVisible(true);
 			model_tab->restoreLastCanvasPosition();
@@ -832,17 +836,13 @@ void MainWindow::addModel(const QString &filename)
 			delete(model_tab);
 			updateToolsState(true);
 
-			central_wgt->setVisible(models_tbw->currentIndex() < 0);
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
-	else
-		models_tbw->setTabToolTip(models_tbw->currentIndex(), trUtf8("(model not saved yet)"));
+	//else
+	//	models_tbw->setTabToolTip(models_tbw->currentIndex(), trUtf8("(model not saved yet)"));
 
 	model_nav_wgt->addModel(model_tab);
-
-	//The model is set to modified when no model file is loaded
-	model_tab->setModified(filename.isEmpty());
 	setCurrentModel();
 
 	if(start_timers)
@@ -852,6 +852,8 @@ void MainWindow::addModel(const QString &filename)
 
 		tmpmodel_save_timer.start();
 	}
+
+	model_tab->setModified(false);
 }
 
 void MainWindow::addModel(ModelWidget *model_wgt)
@@ -868,7 +870,6 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	models_tbw->blockSignals(false);
 	setCurrentModel();
-	central_wgt->setVisible(false);
 }
 
 int MainWindow::getModelCount(void)
@@ -939,17 +940,15 @@ void MainWindow::setCurrentModel(void)
 		general_tb->addAction(current_model->action_new_object);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		//tool_btn->installEventFilter(this);
 		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_quick_actions);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		//tool_btn->installEventFilter(this);
 		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_edit);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));//->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
 		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_source_code);
@@ -1046,14 +1045,10 @@ void MainWindow::applyZoom(void)
 void MainWindow::removeModelActions(void)
 {
 	QList<QAction *> act_list;
-	//QToolButton *btn=nullptr;
-
 	act_list=general_tb->actions();
 
 	while(act_list.size() > 5)
 	{
-		//btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act_list.back()));
-		//btn->removeEventFilter(this);
     general_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
@@ -1085,7 +1080,7 @@ void MainWindow::closeModel(int model_id)
 		if(!model->isModified() ||
 			 (model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
-
+			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
 
 			disconnect(tab, nullptr, oper_list_wgt, nullptr);
@@ -1120,7 +1115,6 @@ void MainWindow::closeModel(int model_id)
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		models_tbw->setVisible(false);
-		central_wgt->setVisible(true);
 	}
 	else
 	{
@@ -1130,12 +1124,8 @@ void MainWindow::closeModel(int model_id)
 
 void MainWindow::updateModelTabName(void)
 {
-	QString str=model_nav_wgt->getText(models_tbw->currentIndex());
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-	{
-	 //	models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
 		model_nav_wgt->updateModelText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()), current_model->getFilename());
-	}
 }
 
 void MainWindow::applyConfigurations(void)
@@ -1300,13 +1290,6 @@ void MainWindow::printModel(void)
 		printer=print_dlg->printer();
 
 		//Sets the printer options based upon the configurations from the scene
-		/* if(paper_size!=QPrinter::Custom)
-			printer->setPaperSize(paper_size);
-		else
-			printer->setPaperSize(custom_size, QPrinter::DevicePixel);
-
-		printer->setOrientation(orientation);
-		printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
 		ObjectsScene::configurePrinter(printer);
 
 		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
@@ -1332,17 +1315,7 @@ void MainWindow::printModel(void)
 			if(!msg_box.isCancelled())
 			{
 				if(msg_box.result()==QDialog::Rejected)
-				{
-					//Reverting the configurations to the scene defaults
-					/*	if(paper_size!=QPrinter::Custom)
-						printer->setPaperSize(paper_size);
-					else
-						printer->setPaperSize(custom_size, QPrinter::DevicePixel);
-
-					printer->setOrientation(orientation);
-					printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
 					ObjectsScene::configurePrinter(printer);
-				}
 
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}
@@ -1438,10 +1411,6 @@ void MainWindow::updateToolsState(bool model_closed)
 
 	if(!model_closed && current_model && models_tbw->count() > 0)
 	{
-		/*action_previous->setEnabled(models_tbw->currentIndex() > 0 &&
-																models_tbw->count() > 1);
-		action_next->setEnabled(models_tbw->currentIndex() >= 0 &&
-														models_tbw->currentIndex()!=(models_tbw->count()-1)); */
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
@@ -1526,6 +1495,39 @@ void MainWindow::toggleAboutWidget(bool show)
 	about_wgt->setVisible(show);
 }
 
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+	QWidget *wgt=qobject_cast<QWidget *>(object);
+
+	if((event->type()==QEvent::Resize || event->type()==QEvent::Show || event->type()==QEvent::Hide) &&
+		 (wgt==model_valid_parent || wgt==obj_finder_parent || wgt==sql_tool_parent || wgt==models_tbw))
+	{
+		QWidgetList wgt_list={ model_valid_parent, obj_finder_parent, sql_tool_parent, models_tbw };
+		QPoint pos;
+		QRect ret;
+		bool intersects=false;
+
+		for(auto wgt_aux : wgt_list)
+		{
+			pos=(wgt_aux==sql_tool_parent ? wgt_aux->pos() : wgt_aux->mapTo(models_tbw_parent, wgt_aux->pos()));
+			ret=QRect(QPoint(0, pos.y()), wgt_aux->size());
+
+			if(!intersects && wgt_aux->isVisible() && ret.intersects(central_wgt->geometry()))
+			{
+				intersects=true;
+				break;
+			}
+		}
+
+		if(intersects)
+			central_wgt->lower();
+		else if(!models_tbw->isVisible())
+			central_wgt->raise();
+	}
+
+	return(QMainWindow::eventFilter(object, event));
+}
+
 void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
 {
 	if(widget && act && toolbar)
@@ -1552,29 +1554,3 @@ QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
 
 	return(shadow);
 }
-
-/*bool MainWindow::eventFilter(QObject *object, QEvent *event)
-{
-	QPaintEvent *p_event=dynamic_cast<QPaintEvent *>(event);
-	QToolButton *btn=dynamic_cast<QToolButton *>(object);
-
-	if(p_event && btn && btn->parent()==general_tb && btn->isEnabled())
-	{
-		QPainter p;
-		QRect ret;
-		QPoint pnt;
-
-		p.begin(btn);
-		p.setFont(btn->font());
-		ret=p.fontMetrics().boundingRect(btn->text().replace(" ","_")).normalized();
-
-		//Drawing the button's text in a different offset in order to simulate the shadow
-		p.setPen(QColor(0,0,0));
-		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, (btn->iconSize().height()) + 8);
-
-		p.drawText(QRect(pnt, ret.size()),btn->text());
-		p.end();
-	}
-
-	return(QWidget::eventFilter(object, event));
-}*/
