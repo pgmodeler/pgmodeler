@@ -26,11 +26,14 @@
 #define SCHEMA_WIDGET_H
 
 #include "baseobjectwidget.h"
+#include "colorpickerwidget.h"
 #include "ui_schemawidget.h"
 
 class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 	private:
 		Q_OBJECT
+
+		ColorPickerWidget *color_picker;
 
 	public:
 		SchemaWidget(QWidget * parent = 0);
@@ -38,9 +41,6 @@ class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 
 	public slots:
 		void applyConfiguration(void);
-
-	private slots:
-		void selectFillColor(void);
 };
 
 #endif

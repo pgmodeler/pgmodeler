@@ -23,10 +23,15 @@ const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML="\t<!--[ unknown obje
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
+	random_device rand_seed;
+	rand_num_engine.seed(rand_seed());
+
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
 	model_wgt=nullptr;
+	xmlparser=nullptr;
+	dbmodel=nullptr;
 }
 
 void DatabaseImportHelper::setConnection(Connection &conn)
@@ -72,6 +77,7 @@ void DatabaseImportHelper::setSelectedOIDs(ModelWidget *model_wgt, map<ObjectTyp
 
 	this->model_wgt=model_wgt;
 	dbmodel=model_wgt->getDatabaseModel();
+	xmlparser=dbmodel->getXMLParser();
 	object_oids=obj_oids;
 	column_oids=col_oids;
 
@@ -619,7 +625,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 		QString xml_def;
 
 		if(!attribs[ParsersAttributes::COMMENT].isEmpty())
-			xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
+			xml_def=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::XML_DEFINITION);
 
 		return(xml_def);
 	}
@@ -692,9 +698,9 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				if(generate_xml)
 				{
 					obj_attr[ParsersAttributes::REDUCED_FORM]="1";
-					SchemaParser::setIgnoreUnkownAttributes(true);
-					xml_def=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
-					SchemaParser::setIgnoreUnkownAttributes(false);
+					schparser.setIgnoreUnkownAttributes(true);
+					xml_def=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
+					schparser.setIgnoreUnkownAttributes(false);
 				}
 				else
 					xml_def=obj_name;
@@ -719,11 +725,11 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 	try
 	{
-		SchemaParser::setIgnoreUnkownAttributes(true);
-		xml_buf=SchemaParser::getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
+		schparser.setIgnoreUnkownAttributes(true);
+		xml_buf=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
 
-		SchemaParser::setIgnoreUnkownAttributes(false);
-		XMLParser::restartParser();
+		schparser.setIgnoreUnkownAttributes(false);
+		xmlparser->restartParser();
 
 		if(debug_mode)
 		{
@@ -731,7 +737,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 			ts << xml_buf << endl;
 		}
 
-		XMLParser::loadXMLBuffer(xml_buf);
+		xmlparser->loadXMLBuffer(xml_buf);
 	}
 	catch(Exception &e)
 	{
@@ -781,11 +787,15 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 void DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
 	Schema *schema=nullptr;
+	std::uniform_int_distribution<unsigned> dist(0,255);
 
 	try
 	{
 		attribs[ParsersAttributes::RECT_VISIBLE]="";
-		attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
+		//attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
+		attribs[ParsersAttributes::FILL_COLOR]=QColor(dist(rand_num_engine),
+																									dist(rand_num_engine),
+																									dist(rand_num_engine)).name();
 		loadObjectXML(OBJ_SCHEMA, attribs);
 
 		schema=dbmodel->createSchema();
@@ -795,7 +805,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	{
 		if(schema) delete(schema);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -820,7 +830,7 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 	{
 		if(role) delete(role);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -840,7 +850,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 	{
 		if(dom) delete(dom);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -858,7 +868,7 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 	{
 		if(ext) delete(ext);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1015,7 +1025,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	{
 		if(func) delete(func);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1052,7 +1062,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 	{
 		if(lang) delete(lang);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1070,7 +1080,7 @@ void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
 	{
 		if(opfam) delete(opfam);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1138,9 +1148,9 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		//Generating the complete XML code for operator class elements
 		for(unsigned i=0; i < elems.size(); i++)
 		{
-			SchemaParser::setIgnoreUnkownAttributes(true);
-			attribs[ParsersAttributes::ELEMENTS]+=SchemaParser::getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
-			SchemaParser::setIgnoreUnkownAttributes(false);
+			schparser.setIgnoreUnkownAttributes(true);
+			attribs[ParsersAttributes::ELEMENTS]+=schparser.getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
+			schparser.setIgnoreUnkownAttributes(false);
 		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
@@ -1151,7 +1161,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	{
 		if(opclass) delete(opclass);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1210,7 +1220,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	{
 		if(oper) delete(oper);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1228,7 +1238,7 @@ void DatabaseImportHelper::createCollation(attribs_map &attribs)
 	{
 		if(coll) delete(coll);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1249,7 +1259,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 	{
 		if(cast) delete(cast);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1268,7 +1278,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 	{
 		if(conv) delete(conv);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1303,7 +1313,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 	{
 		if(seq) delete(seq);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1340,7 +1350,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	{
 		if(agg) delete(agg);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1415,7 +1425,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	{
 		if(type) delete(type);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1434,8 +1444,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 
 		attribs[ParsersAttributes::COLUMNS]="";
-		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																				 pos_attrib, SchemaParser::XML_DEFINITION);
+		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
 
     //Retrieving columns if they were not retrieved yet
@@ -1499,7 +1508,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	{
 		if(table) delete(table);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1514,8 +1523,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 														{ ParsersAttributes::Y_POS, "0" }};
 
 
-		attribs[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																				 pos_attrib, SchemaParser::XML_DEFINITION);
+		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
     ref=Reference(attribs[ParsersAttributes::DEFINITION],"");
 		ref.setDefinitionExpression(true);
@@ -1529,7 +1537,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	{
 		if(view) delete(view);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1579,7 +1587,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 	{
 		if(rule) delete(rule);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1597,7 +1605,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1665,7 +1673,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1755,7 +1763,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1776,7 +1784,7 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -1956,7 +1964,7 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, XMLParser::getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -2128,9 +2136,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			{
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
 				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
-				SchemaParser::setIgnoreUnkownAttributes(true);
-				xml_def=SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
-				SchemaParser::setIgnoreUnkownAttributes(false);
+
+				schparser.setIgnoreUnkownAttributes(true);
+				xml_def=schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
+				schparser.setIgnoreUnkownAttributes(false);
 			}
 			else
 				return(obj_name);

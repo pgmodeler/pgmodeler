@@ -33,8 +33,8 @@ void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	QPolygonF pol;
-	int i, count, idx;
-	float width, type_width=0, px=0;
+	int i, count, obj_idx;
+	float width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -50,11 +50,14 @@ void TableView::configureObject(void)
 	title->configureObject(table);
 	px=0;
 
-	for(idx=0; idx < 2; idx++)
+	old_width=this->bounding_rect.width();
+	old_height=this->bounding_rect.height();
+
+	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
 		tab_objs.clear();
 
-		if(idx==0)
+		if(obj_idx==0)
 		{
 			tab_objs.assign(table->getObjectList(OBJ_COLUMN)->begin(),
 											table->getObjectList(OBJ_COLUMN)->end());
@@ -72,16 +75,16 @@ void TableView::configureObject(void)
 		}
 
 		//Gets the subitems of the current group
-		subitems=groups[idx]->childItems();
-		groups[idx]->moveBy(-groups[idx]->scenePos().x(),
-												-groups[idx]->scenePos().y());
+		subitems=groups[obj_idx]->childItems();
+		groups[obj_idx]->moveBy(-groups[obj_idx]->scenePos().x(),
+												-groups[obj_idx]->scenePos().y());
 		count=tab_objs.size();
 
 		//Special case: if there is no item on extended attributes, the extended body is hidden
-		if(idx==1)
+		if(obj_idx==1)
 		{
-			groups[idx]->setVisible(count > 0 && !hide_ext_attribs);
-			bodies[idx]->setVisible(count > 0 && !hide_ext_attribs);
+			groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
+			bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
 		}
 
 		for(i=0; i < count; i++)
@@ -122,7 +125,7 @@ void TableView::configureObject(void)
 		while(i > count-1)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
-			groups[idx]->removeFromGroup(col_item);
+			groups[obj_idx]->removeFromGroup(col_item);
 			delete(col_item);
 			i--;
 		}
@@ -131,7 +134,7 @@ void TableView::configureObject(void)
 		while(!col_items.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(col_items.front());
-			groups[idx]->removeFromGroup(col_item);
+			groups[obj_idx]->removeFromGroup(col_item);
 			col_items.pop_front();
 
 			//Positioning the type label
@@ -139,7 +142,7 @@ void TableView::configureObject(void)
 
 			//Positioning the constraints label
 			col_item->setChildObjectXPos(3, px + type_width);
-			groups[idx]->addToGroup(col_item);
+			groups[obj_idx]->addToGroup(col_item);
 		}
 	}
 
@@ -166,38 +169,49 @@ void TableView::configureObject(void)
 	pol.append(QPointF(0.0f,1.0f));
 
 	//Resizes the columns/extended attributes using the new width
-	for(idx=0; idx < 2; idx++)
+	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
-		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
+		this->resizePolygon(pol, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING));
 
-    bodies[idx]->setPolygon(pol);
-    pen=this->getBorderStyle(atribs[idx]);
+		bodies[obj_idx]->setPolygon(pol);
+		pen=this->getBorderStyle(atribs[obj_idx]);
 
     if(!tag)
-      bodies[idx]->setBrush(this->getFillStyle(atribs[idx]));
+			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
     else
     {
-      pen.setColor(tag->getElementColor(atribs[idx], Tag::BORDER_COLOR));
-      bodies[idx]->setBrush(tag->getFillStyle(atribs[idx]));
+			pen.setColor(tag->getElementColor(atribs[obj_idx], Tag::BORDER_COLOR));
+			bodies[obj_idx]->setBrush(tag->getFillStyle(atribs[obj_idx]));
     }
 
-    bodies[idx]->setPen(pen);
+		bodies[obj_idx]->setPen(pen);
 
-		if(idx==0)
-			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+		if(obj_idx==0)
+			bodies[obj_idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
-			bodies[idx]->setPos(title->pos().x(),
+			bodies[obj_idx]->setPos(title->pos().x(),
 													title->boundingRect().height() +
 													bodies[0]->boundingRect().height() - 2);
-		groups[idx]->setPos(bodies[idx]->pos());
+		groups[obj_idx]->setPos(bodies[obj_idx]->pos());
 
-		subitems=groups[idx]->childItems();
+		subitems=groups[obj_idx]->childItems();
 		while(!subitems.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
 																	 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+
+
+			//Generating the connection points of the columns
+			if(obj_idx==0)
+			{
+				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
+				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
+				conn_points[tab_obj].resize(2);
+				conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(col_item->pos().x(), cy);
+				conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(col_item->pos().x() + width - 4.5f , cy);
+			}
 		}
 	}
 
@@ -230,4 +244,21 @@ void TableView::configureObject(void)
 	this->setToolTip(this->table_tooltip);
 
   configureTag();
+
+	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
+		 (old_height!=0 && this->bounding_rect.height()!=old_height))
+		emit s_objectDimensionChanged();
+}
+
+QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
+{
+	if(!tab_obj)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(pnt_type > RIGHT_CONN_POINT)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(conn_points.count(tab_obj)==0)
+		//Returns the center point in case of the connection point of the table object wasn't calculated already
+		return(this->getCenter());
+
+	return(conn_points[tab_obj][pnt_type]);
 }

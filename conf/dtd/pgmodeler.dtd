@@ -21,6 +21,7 @@
 <!ATTLIST configuration invert-panning-rangesel (false|true) "false">
 <!ATTLIST configuration check-update (false|true) "false">
 <!ATTLIST configuration save-last-position (false|true) "false">
+<!ATTLIST configuration show-main-menu (false|true) "false">
 <!ATTLIST configuration code-font CDATA #IMPLIED>
 <!ATTLIST configuration code-font-size CDATA #IMPLIED>
 

@@ -18,14 +18,14 @@
 
 #include "xmlparser.h"
 
-QString XMLParser::xml_doc_filename="";
+/*QString XMLParser::xml_doc_filename="";
 QString XMLParser::xml_buffer="";
 QString XMLParser::dtd_decl="";
 QString XMLParser::xml_decl="";
 xmlNode *XMLParser::root_elem=nullptr;
 xmlNode *XMLParser::curr_elem=nullptr;
 xmlDoc *XMLParser::xml_doc=nullptr;
-stack<xmlNode*> XMLParser::elems_stack;
+stack<xmlNode*> XMLParser::elems_stack; */
 
 const QString XMLParser::CHAR_AMP="&amp;";
 const QString XMLParser::CHAR_LT="&lt;";
@@ -35,7 +35,10 @@ const QString XMLParser::CHAR_APOS="&apos;";
 
 XMLParser::XMLParser(void)
 {
-  xmlInitParser();
+	root_elem=nullptr;
+	curr_elem=nullptr;
+	xml_doc=nullptr;
+	xmlInitParser();
 }
 
 XMLParser::~XMLParser(void)

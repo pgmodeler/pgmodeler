@@ -38,6 +38,8 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		XMLParser *xmlparser;
+
     NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Message box used to show error/confirmation/alert messages

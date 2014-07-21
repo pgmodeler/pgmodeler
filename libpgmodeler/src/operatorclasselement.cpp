@@ -121,6 +121,7 @@ unsigned OperatorClassElement::getStrategyNumber(void)
 
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 {
+	SchemaParser schparser;
 	attribs_map attributes;
 
 	attributes[ParsersAttributes::TYPE]="";
@@ -173,7 +174,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::DEFINITION]=storage.getCodeDefinition(def_type);
 	}
 
-	return(SchemaParser::getCodeDefinition(ParsersAttributes::ELEMENT,attributes, def_type));
+	return(schparser.getCodeDefinition(ParsersAttributes::ELEMENT,attributes, def_type));
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)

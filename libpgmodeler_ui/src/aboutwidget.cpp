@@ -1,0 +1,40 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+#include "aboutwidget.h"
+
+AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
+{
+	setupUi(this);
+
+	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
+	drop_shadow->setOffset(5,5);
+	drop_shadow->setBlurRadius(30);
+	this->setGraphicsEffect(drop_shadow);
+
+	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
+	code_name_lbl->setText(QString(" « %1 »").arg(GlobalAttributes::PGMODELER_VER_CODENAME));
+  build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
+
+	connect(hide_tb, &QToolButton::clicked, this,
+					[=](){
+						this->close();
+						emit s_visibilityChanged(false);
+					});
+}
+

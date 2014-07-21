@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.7.2-beta1" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-alpha" last-position="0,0" last-zoom="1">
 <role name="admin1"
       superuser="true"
       connlimit="500"
@@ -657,28 +657,28 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tabela_B_4a">
+<table name="tabela_B_4a" protected="true">
 	<schema name="public"/>
 	<position x="1052" y="770"/>
-	<column name="coluna_B">
+	<column name="coluna_B" protected="true">
 		<type name="serial"/>
 	</column>
-	<column name="coluna_B1">
+	<column name="coluna_B1" protected="true">
 		<type name="integer"/>
 	</column>
-	<column name="coluna_B2" not-null="true">
+	<column name="coluna_B2" not-null="true" protected="true">
 		<type name="text"/>
 	</column>
-	<column name="coluna_B3">
+	<column name="coluna_B3" protected="true">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="public.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" protected="true" table="public.&quot;tabela_B_4a&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="public.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" protected="true" table="public.&quot;tabela_B_4a&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="public.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" protected="true" table="public.&quot;tabela_B_4a&quot;">
 			<expression><![CDATA[ "coluna_B2" > 0 ]]></expression>
 	</constraint>
 </table>

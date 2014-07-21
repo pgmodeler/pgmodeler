@@ -24,7 +24,6 @@ LIBS = $$DESTDIR/$$LIBUTILS \
 
 SOURCES += src/mainwindow.cpp \
 	   src/modelwidget.cpp \
-	   src/aboutform.cpp \
 	   src/messagebox.cpp \
 	   src/textboxwidget.cpp \
 	   src/baseobjectwidget.cpp \
@@ -33,7 +32,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-	   src/databasewidget.cpp \
+           src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/objecttablewidget.cpp \
 	   src/rolewidget.cpp \
@@ -92,11 +91,15 @@ SOURCES += src/mainwindow.cpp \
            src/modelfixform.cpp \
            src/updatenotifierwidget.cpp \
            src/newobjectoverlaywidget.cpp \
-    src/eventtriggerwidget.cpp
+           src/eventtriggerwidget.cpp \
+           src/aboutwidget.cpp \
+           src/colorpickerwidget.cpp \
+    src/modelnavigationwidget.cpp \
+    src/centralwidget.cpp \
+    src/relationshipconfigwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
-	   src/aboutform.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
 	   src/textboxwidget.h \
@@ -105,7 +108,7 @@ HEADERS += src/mainwindow.h \
 	   src/baseform.h \
 	   src/sourcecodewidget.h \
 	   src/syntaxhighlighter.h \
-	   src/databasewidget.h \
+           src/databasewidget.h \
 	   src/schemawidget.h \
 	   src/objecttablewidget.h \
 	   src/rolewidget.h \
@@ -164,10 +167,14 @@ HEADERS += src/mainwindow.h \
            src/modelfixform.h \
            src/updatenotifierwidget.h \
            src/newobjectoverlaywidget.h \
-    src/eventtriggerwidget.h
+           src/eventtriggerwidget.h \
+           src/aboutwidget.h \
+           src/colorpickerwidget.h \
+    src/modelnavigationwidget.h \
+    src/centralwidget.h \
+    src/relationshipconfigwidget.h
 
 FORMS += ui/mainwindow.ui \
-	 ui/aboutform.ui \
 	 ui/textboxwidget.ui \
 	 ui/messagebox.ui \
 	 ui/operationlistwidget.ui \
@@ -227,6 +234,11 @@ FORMS += ui/mainwindow.ui \
          ui/modelfixform.ui \
          ui/updatenotifierwidget.ui \
          ui/newobjectoverlaywidget.ui \
-    ui/eventtriggerwidget.ui
+         ui/eventtriggerwidget.ui \
+         ui/aboutwidget.ui \
+         ui/colorpickerwidget.ui \
+    ui/modelnavigationwidget.ui \
+    ui/centralwidget.ui \
+    ui/relationshipconfigwidget.ui
 
 

@@ -87,7 +87,7 @@ void ObjectRenameWidget::applyRenaming(void)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 			BaseObject *aux_obj=nullptr, *parent_obj=nullptr;
 			QString fmt_name;
-      vector<BaseObject *> ref_objs;
+			vector<BaseObject *> ref_objs;
 
 			obj_type=object->getObjectType();
 

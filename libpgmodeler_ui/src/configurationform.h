@@ -30,6 +30,7 @@
 #include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
 #include "pluginsconfigwidget.h"
+#include "relationshipconfigwidget.h"
 
 class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
@@ -40,13 +41,15 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		AppearanceConfigWidget *appearance_conf;
 		ConnectionsConfigWidget *connections_conf;
 		PluginsConfigWidget *plugins_conf;
+		RelationshipConfigWidget *relationships_conf;
 
 
 	public:
 		static const int	GENERAL_CONF_WGT=0,
-                      APPEARANCE_CONF_WGT=1,
-                      CONNECTIONS_CONF_WGT=2,
-                      PLUGINS_CONF_WGT=3;
+											RELATIONSHIPS_CONF_WGT=1,
+											APPEARANCE_CONF_WGT=2,
+											CONNECTIONS_CONF_WGT=3,
+											PLUGINS_CONF_WGT=4;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 

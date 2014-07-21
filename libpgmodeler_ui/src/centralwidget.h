@@ -16,14 +16,24 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "aboutform.h"
+/**
+\ingroup libpgmodeler_ui
+\class CentralWidget
+*/
 
-AboutForm::AboutForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
-{
-	setupUi(this);
+#ifndef CENTRAL_WIDGET_H
+#define CENTRAL_WIDGET_H
 
-	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
-	code_name_lbl->setText(QString(" « %1 »").arg(GlobalAttributes::PGMODELER_VER_CODENAME));
-  build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
-}
+#include "ui_centralwidget.h"
 
+class CentralWidget: public QWidget, public Ui::CentralWidget {
+	private:
+		Q_OBJECT
+
+	public:
+		CentralWidget(QWidget * parent = 0);
+
+	public slots:
+};
+
+#endif

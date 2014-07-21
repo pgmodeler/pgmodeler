@@ -72,7 +72,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		}
 
 		//Generates the configuration from the schema file
-		buf.append(SchemaParser::getCodeDefinition(sch_filename, attribs));
+		schparser.setIgnoreEmptyAttributes(true);
+		buf.append(schparser.getCodeDefinition(sch_filename, attribs));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
@@ -126,8 +127,8 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 	try
 	{
 		config_params.clear();
-		XMLParser::restartParser();
-		XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+		xmlparser.restartParser();
+		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
@@ -135,35 +136,35 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 													GlobalAttributes::OBJECT_DTD_EXT,
 													conf_id);
 
-		XMLParser::loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
+		xmlparser.loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
 													 GlobalAttributes::DIR_SEPARATOR +
 													 conf_id +
 													 GlobalAttributes::CONFIGURATION_EXT);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
 					this->getConfigurationParams(key_attribs);
 
-					if(XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
+					if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
 					{
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 						do
 						{
 							this->getConfigurationParams(key_attribs);
 						}
-						while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+						while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -178,7 +179,7 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
 	attribs_map::iterator itr, itr_end;
 	QString key;
 
-	XMLParser::getElementAttributes(aux_attribs);
+	xmlparser.getElementAttributes(aux_attribs);
 
 	itr=aux_attribs.begin();
 	itr_end=aux_attribs.end();
@@ -192,7 +193,7 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
 	}
 
 	if(key.isEmpty())
-		key=XMLParser::getElementName();
+		key=xmlparser.getElementName();
 
 	if(!aux_attribs.empty())
 		config_params[key]=aux_attribs;

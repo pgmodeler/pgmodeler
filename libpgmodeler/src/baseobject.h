@@ -76,10 +76,14 @@ enum ObjectType {
 
 class BaseObject {
 	private:
+		static QString pgsql_ver;
+
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
 	protected:
+		SchemaParser schparser;
+
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
 		 As object instances are created this value ​​are incremented. In some classes
 		 like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
@@ -360,6 +364,13 @@ class BaseObject {
     and this one returns only the valid types for the current specified type. For now the only accepted
     types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
     static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
+
+		/*! brief Sets the default version when generating the SQL code. This affects all instances of classes that
+				is based upon this one */
+		static void setPgSQLVersion(const QString &ver);
+
+		//! brief Returns the current version for SQL code generation
+		static QString getPgSQLVersion(void);
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

@@ -19,6 +19,7 @@
 #include "relationshipview.h"
 
 bool RelationshipView::hide_name_label=false;
+unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
@@ -58,7 +59,6 @@ RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
 
-	//this->disconnectTables();
 	disconnect(this, nullptr, this->getSourceObject(), nullptr);
 
 	for(int i=0; i < 3; i++)
@@ -75,6 +75,22 @@ RelationshipView::~RelationshipView(void)
 		item=lines.back();
 		this->removeFromGroup(item);
 		lines.pop_back();
+		delete(item);
+	}
+
+	while(!fk_lines.empty())
+	{
+		item=fk_lines.back();
+		this->removeFromGroup(item);
+		fk_lines.pop_back();
+		delete(item);
+	}
+
+	while(!pk_lines.empty())
+	{
+		item=pk_lines.back();
+		this->removeFromGroup(item);
+		pk_lines.pop_back();
 		delete(item);
 	}
 
@@ -100,6 +116,27 @@ bool RelationshipView::isNameLabelHidden(void)
 	return(hide_name_label);
 }
 
+void RelationshipView::setLineConnectionMode(unsigned mode)
+{
+	if(mode > CONNECT_FK_TO_PK)
+		mode=CONNECT_FK_TO_PK;
+
+	line_conn_mode=mode;
+}
+
+unsigned RelationshipView::getLineConnectinMode(void)
+{
+	return(line_conn_mode);
+}
+
+QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
+{
+	if(table_idx > 2)
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(conn_points[table_idx]);
+}
+
 BaseRelationship *RelationshipView::getSourceObject(void)
 {
 	return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getSourceObject()));
@@ -123,7 +160,8 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 	{
 		unsigned i, count;
 		QPen pen;
-		QColor color;
+		QColor color, line_color=this->getSourceObject()->getLineColor();
+		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
 		pos_info_pol->setVisible(value.toBool());
@@ -143,24 +181,31 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			graph_points[i]->setVisible(value.toBool());
 
 		//Alter the relationship line color when it is selected
+		if(line_color==Qt::transparent)
+			line_color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+
 		if(value.toBool())
 		{
 			QColor cor1=BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color(),
-					cor2=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+					cor2=line_color;
 
 			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
 			color.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
 			color.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
+			color.setAlphaF((cor1.alphaF() + cor2.alphaF())/2.0f);
 		}
 		else
-			color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+			color=line_color;
 
-		count=lines.size();
-		for(i=0; i < count; i++)
+		rel_lines=lines;
+		rel_lines.insert(rel_lines.end(), fk_lines.begin(), fk_lines.end());
+		rel_lines.insert(rel_lines.end(), pk_lines.begin(), pk_lines.end());
+
+		for(auto lin : rel_lines)
 		{
-			pen=lines[i]->pen();
+			pen=lin->pen();
 			pen.setColor(color);
-			lines[i]->setPen(pen);
+			lin->setPen(pen);
 		}
 
 		//Shows/hides the attribute's selection
@@ -168,9 +213,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		for(i=0; i < count; i++)
 			attributes[i]->childItems().at(3)->setVisible(value.toBool());
 
-
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
-													value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),	value.toBool());
 	}
 
 	return(value);
@@ -369,7 +412,10 @@ void RelationshipView::configureObject(void)
 	this->configureLine();
 
 	for(unsigned i=0; i < 2; i++)
+	{
 		connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
+		connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
+	}
 
 	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
 }
@@ -392,20 +438,20 @@ void RelationshipView::configureLine(void)
 	{
 		BaseRelationship *base_rel=this->getSourceObject();
 		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-		vector<QPointF> points;
-		QLineF lin_aux[2];
+		vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
-		QPointF pos, p_int, p_central[2];
+		QPointF pos, p_int, p_central[2], pk_pnt, fk_pnt;
 		QRectF rect;
-		QGraphicsItem *item=nullptr;
 		QPen pen;
 		QGraphicsPolygonItem *pol=nullptr;
 		QPolygonF pol_aux;
 		QString tool_tip;
+		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
 		bool bidirectional=base_rel->isBidirectional();
 
 		configuring_line=true;
+		pen.setCapStyle(Qt::RoundCap);
 
 		if(base_rel->isSelfRelationship())
 		{
@@ -437,6 +483,10 @@ void RelationshipView::configureLine(void)
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
+			bool rel_1n=( !bidirectional &&
+										(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+										 base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+										 base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
 
 			if(rel &&
 				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
@@ -446,34 +496,83 @@ void RelationshipView::configureLine(void)
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
 			}
 
-			for(i=0; i < 2; i++)
+			if(line_conn_mode==CONNECT_CENTER_PNTS || !rel_1n)
 			{
-				rect=tables[i]->boundingRect();
-				pos=tables[i]->pos();
+				vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
 
-				//Calculates the table's cental point
-				p_central[i].setX(pos.x() + (rect.width()/2.0f));
-				p_central[i].setY(pos.y() + (rect.height()/2.0f));
+				for(i=0; i < 2; i++)
+					p_central[i]=tables[i]->getCenter();
+
+				//Destroying the fk and pk connection lines when the line mode changes
+				for(i=0; i < 2; i++)
+				{
+					while(!ref_lines[i]->empty())
+					{
+						item=ref_lines[i]->back();
+						ref_lines[i]->pop_back();
+						this->removeFromGroup(item);
+						delete(item);
+					}
+				}
+			}
+			else if(line_conn_mode==CONNECT_FK_TO_PK && rel_1n)
+			{
+				QPointF pnt;
+				float fk_py=0, pk_py=0, fk_px=0, pk_px=0;
+				vector<Constraint *> fks;
+				Table *ref_tab=nullptr, *rec_tab=nullptr;
+				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
+				unsigned cnt=0, i=0, pk_pnt_type=0, fk_pnt_type=0;
+
+				if(!rel)
+				{
+					ref_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
+					rec_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
+				}
+				else
+				{
+					ref_tab=rel->getReferenceTable();
+					rec_tab=rel->getReceiverTable();
+				}
+
+				rec_tab->getForeignKeys(fks, true, ref_tab);
+				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
+				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
+				//pk_pnt_type=(ref_tab_view->pos().x() >= rec_tab_view->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				//fk_pnt_type=(pk_pnt_type==BaseTableView::RIGHT_CONN_POINT ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+
+				pk_pnt_type=(ref_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				fk_pnt_type=(rec_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+
+				for(auto constr : fks)
+				{
+					cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
+
+					for(i=0; i < cnt; i++)
+					{
+						pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SOURCE_COLS), fk_pnt_type);
+						fk_py+=pnt.y();
+						fk_px=pnt.x();
+						fk_points.push_back(this->mapFromItem(rec_tab_view, pnt));
+
+						pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::REFERENCED_COLS), pk_pnt_type);
+						pk_py+=pnt.y();
+						pk_px=pnt.x();
+						pk_points.push_back(this->mapFromItem(ref_tab_view, pnt));
+					}
+				}
+
+				if(!fks.empty())
+				{
+					float pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
+								fk_dx=(fk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH);
+
+					p_central[0]=pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
+					p_central[1]=fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
+				}
 			}
 
 			points=base_rel->getPoints();
-
-			/* Case there is no user added points the auxiliary line will be the one formed by
-			the tables central points */
-			if(points.empty())
-			{
-				lin_aux[0].setPoints(p_central[0], p_central[1]);
-				lin_aux[1]=lin_aux[0];
-			}
-			/* Case there are points on the relationship, the auxiliary lines will be:
-			1) between the source table central point and the first user added point
-			2) between the destination table central point and the last user added point */
-			else
-			{
-				lin_aux[0].setPoints(p_central[0], points[0]);
-				lin_aux[1].setPoints(p_central[1], points[points.size()-1]);
-			}
-
 			count=points.size();
 			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(5,0));
 			pol_aux.append(QPointF(5,5)); pol_aux.append(QPointF(0,5));
@@ -510,8 +609,18 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
+		conn_points[0]=p_central[0];
+		conn_points[1]=p_central[1];
+
+		//Configuring the relationship line color
+		if(base_rel->getLineColor()!=Qt::transparent)
+			//Using custom color
+			pen.setColor(base_rel->getLineColor());
+		else
+			//Using the default color
+			pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+
 		//For dependency relationships the line is dashed
-		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
 			pen.setStyle(Qt::DashLine);
 
@@ -539,6 +648,55 @@ void RelationshipView::configureLine(void)
 			points.insert(points.begin() + idx_lin_desc, p_int);
 		}
 
+		if(line_conn_mode==CONNECT_FK_TO_PK)
+		{
+			vector<QPointF> ref_points={ fk_pnt, pk_pnt };
+			vector<vector<QPointF> *> ref_pnt_vects={ &fk_points, &pk_points };
+			vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
+			vector<QPointF> *ref_pnt=nullptr;
+			vector<QGraphicsLineItem *> *ref_lin=nullptr;
+
+			for(unsigned vet_idx=0; vet_idx < 2; vet_idx++)
+			{
+				ref_pnt=ref_pnt_vects[vet_idx];
+				ref_lin=ref_lines[vet_idx];
+				count=ref_pnt->size();
+
+				for(i=0; i < count; i++)
+				{
+					if(i >= static_cast<int>(ref_lin->size()))
+					{
+						lin=new QGraphicsLineItem;
+						lin->setZValue(-1);
+						ref_lin->push_back(lin);
+						this->addToGroup(lin);
+					}
+					else
+						lin=ref_lin->at(i);
+
+					//If the relationship is identifier or bidirectional, the line has its thickness modified
+					if(rel && (rel->isIdentifier() && vet_idx==0))
+						pen.setWidthF(1.75f);
+					else
+						pen.setWidthF(1.15f);
+
+					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
+					lin->setPen(pen);
+				}
+
+				//Destroy the unused pk or fk lines
+				i=ref_lin->size()-1;
+				while(i > static_cast<int>(count-1))
+				{
+					item=ref_lin->back();
+					ref_lin->pop_back();
+					this->removeFromGroup(item);
+					delete(item);
+					i--;
+				}
+			}
+		}
+
 		//Create the relationship lines
 		count=points.size();
 		for(i=0; i < count-1; i++)
@@ -555,14 +713,15 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(bidirectional || (rel && (rel->isIdentifier() && i >= idx_lin_desc)))
-				pen.setWidthF(1.7f);
+				pen.setWidthF(1.75f);
 			else
-				pen.setWidthF(1.0f);
+				pen.setWidthF(1.15f);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
 		}
 
+		//Removing unused lines
 		if(!base_rel->isSelfRelationship())
 		{
 			i=points.size()-1;
@@ -576,6 +735,7 @@ void RelationshipView::configureLine(void)
 				i1--;
 			}
 		}
+
 
 		this->configureDescriptor();
 		this->configureLabels();
@@ -615,14 +775,41 @@ void RelationshipView::configureDescriptor(void)
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
+	QColor line_color=base_rel->getLineColor();
 
-	pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+	//Configuring the relationship descriptor color
+	if(base_rel->getLineColor()!=Qt::transparent)
+		//Using custom color
+		pen.setColor(base_rel->getLineColor());
+	else
+		//Using the default color
+		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 		pen.setStyle(Qt::DashLine);
 
 	descriptor->setPen(pen);
-	descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+
+	if(line_color!=Qt::transparent)
+	{
+		QColor colors[2];
+		QLinearGradient grad;
+		BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP, colors[0], colors[1]);
+
+		for(unsigned i=0; i < 2; i++)
+		{
+			colors[i].setRed((colors[i].red() + line_color.red() + 255)/3);
+			colors[i].setGreen((colors[i].green() + line_color.green() + 255)/3);
+			colors[i].setBlue((colors[i].blue() + line_color.blue() + 255)/3);
+			grad.setColorAt(i, colors[i]);
+		}
+
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);;
+		descriptor->setBrush(grad);
+	}
+	else
+		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 		 rel_type==BaseRelationship::RELATIONSHIP_GEN)
@@ -826,25 +1013,12 @@ void RelationshipView::configureLabels(void)
 		 descriptor->boundingRect().width())/2.0f);
 
 	if(base_rel->isSelfRelationship())
-		y=pnt.y() -
-			labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
+		y=pnt.y() -	labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
 	else
 		y=pnt.y() + descriptor->boundingRect().height() + VERT_SPACING;
 
-	labels_ini_pos[BaseRelationship::REL_NAME_LABEL]=QPointF(x,y);
-
-	if(!std::isnan(label_dist.x()))
-	{
-		x+=label_dist.x();
-		y+=label_dist.y();
-	}
-
 	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
-	labels[BaseRelationship::REL_NAME_LABEL]->setPos(x,y);
-	labels[BaseRelationship::REL_NAME_LABEL]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
-	labels[BaseRelationship::REL_NAME_LABEL]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-																													BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
-	dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject())->setModified(true);
+	configureLabelPosition(BaseRelationship::REL_NAME_LABEL, x, y);
 
 	if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
 		 rel_type!=BaseRelationship::RELATIONSHIP_DEP)
@@ -857,101 +1031,134 @@ void RelationshipView::configureLabels(void)
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
 														BaseRelationship::DST_CARD_LABEL };
 
-		lins[0]=lines[0]->line();
-		lins[1]=lines[lines.size()-1]->line();
-
-
-		/* Creating lines that represents the tables border in order to calculate the
-		 position of the cardinality labels via intersection point */
-		for(idx=0; idx < 2; idx++)
+		if(!base_rel->isSelfRelationship() &&
+			 line_conn_mode==CONNECT_FK_TO_PK && rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
-			rect=tables[idx]->boundingRect();
-			pos=tables[idx]->pos();
-
-			//Cria as linhas de borda da tabela
-			borders[idx][0].setPoints(pos, QPointF(pos.x(), pos.y() + rect.height()));
-			borders[idx][1].setPoints(QPointF(pos.x(), pos.y() + rect.height()),
-																QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
-			borders[idx][2].setPoints(QPointF(pos.x() + rect.width(), pos.y()),
-																QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
-			borders[idx][3].setPoints(pos, QPointF(pos.x() + rect.width(), pos.y()));
-		}
-
-		for(idx=0; idx < 2; idx++)
-		{
-			for(i1=0; i1 < 4; i1++)
+			for(idx=0; idx < 2; idx++)
 			{
-				if(lins[idx].intersect(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
+				pos=conn_points[idx];
+				da=labels[idx]->boundingRect().height()/2.0f;
+
+				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
+					 (rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
+					x=pos.x() - (labels[idx]->boundingRect().width() * 0.75f);
+				else
+					x=pos.x() - (labels[idx]->boundingRect().width() * 0.25f);
+
+				configureLabelPosition(label_ids[idx], x, pos.y() - da);
+			}
+		}
+		else
+		{
+			lins[0]=lines[0]->line();
+			lins[1]=lines[lines.size()-1]->line();
+
+			/* Creating lines that represents the tables border in order to calculate the
+				 position of the cardinality labels via intersection point */
+			for(idx=0; idx < 2; idx++)
+			{
+				rect=tables[idx]->boundingRect();
+				pos=tables[idx]->pos();
+
+				borders[idx][0].setPoints(pos, QPointF(pos.x(), pos.y() + rect.height()));
+				borders[idx][1].setPoints(QPointF(pos.x(), pos.y() + rect.height()),
+																	QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+				borders[idx][2].setPoints(QPointF(pos.x() + rect.width(), pos.y()),
+																	QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+				borders[idx][3].setPoints(pos, QPointF(pos.x() + rect.width(), pos.y()));
+			}
+
+			for(idx=0; idx < 2; idx++)
+			{
+				for(i1=0; i1 < 4; i1++)
 				{
-					if(idx==0)
-						lins[idx].setP1(p_int);
-					else
-						lins[idx].setP2(p_int);
-					break;
+					if(lins[idx].intersect(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
+					{
+						if(idx==0)
+							lins[idx].setP1(p_int);
+						else
+							lins[idx].setP2(p_int);
+						break;
+					}
 				}
 			}
-		}
 
-		for(idx=0; idx < 2; idx++)
+			for(idx=0; idx < 2; idx++)
+			{
+				if(idx==0)
+				{
+					pi=lins[idx].p1();
+					pf=lins[idx].p2();
+				}
+				else
+				{
+					pi=lins[idx].p2();
+					pf=lins[idx].p1();
+				}
+
+				dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
+				da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
+
+				x=pi.x() - dl;
+				y=pi.y() - da;
+
+				tab_rect.setTopLeft(tables[idx]->pos());
+				tab_rect.setSize(tables[idx]->boundingRect().size());
+
+				rect.setTopLeft(QPointF(x,y));
+				rect.setSize(labels[idx]->boundingRect().size());
+
+				if(rect.contains(tab_rect.bottomRight()))
+				{ x+=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+				else if(rect.contains(tab_rect.bottomLeft()))
+				{ x-=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+				else if(rect.contains(tab_rect.topLeft()))
+				{ x-=dl + HORIZ_SPACING; y-=da + VERT_SPACING; }
+				else if(rect.contains(tab_rect.topRight()))
+				{ x+=dl + HORIZ_SPACING;  y-=da + VERT_SPACING; }
+				else
+				{
+					if(tab_rect.contains(rect.bottomLeft()) && tab_rect.contains(rect.bottomRight()))
+						y-=da + VERT_SPACING;
+					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.topRight()))
+						y+=da + VERT_SPACING;
+
+					if(tab_rect.contains(rect.topRight()) && tab_rect.contains(rect.bottomRight()))
+						x-=dl + HORIZ_SPACING;
+					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.bottomLeft()))
+						x+=dl + HORIZ_SPACING;
+				}
+
+				configureLabelPosition(label_ids[idx], x, y);
+			}
+		}
+	}
+}
+
+void RelationshipView::configureLabelPosition(unsigned label_id, float x, float y)
+{
+	if(label_id > BaseRelationship::REL_NAME_LABEL)
+		throw Exception(ERR_REF_OBJ_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(labels[label_id])
+	{
+		BaseRelationship *base_rel=this->getSourceObject();
+		QPointF label_dist;
+
+		labels_ini_pos[label_id]=QPointF(x,y);
+		label_dist=base_rel->getLabelDistance(label_id);
+
+		if(!std::isnan(label_dist.x()))
 		{
-			if(idx==0)
-			{
-				pi=lins[idx].p1();
-				pf=lins[idx].p2();
-			}
-			else
-			{
-				pi=lins[idx].p2();
-				pf=lins[idx].p1();
-			}
-
-			dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
-			da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
-
-			x=pi.x() - dl;
-			y=pi.y() - da;
-
-			tab_rect.setTopLeft(tables[idx]->pos());
-			tab_rect.setSize(tables[idx]->boundingRect().size());
-
-			rect.setTopLeft(QPointF(x,y));
-			rect.setSize(labels[idx]->boundingRect().size());
-
-			if(rect.contains(tab_rect.bottomRight()))
-			{ x+=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
-			else if(rect.contains(tab_rect.bottomLeft()))
-			{ x-=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
-			else if(rect.contains(tab_rect.topLeft()))
-			{ x-=dl + HORIZ_SPACING; y-=da + VERT_SPACING; }
-			else if(rect.contains(tab_rect.topRight()))
-			{ x+=dl + HORIZ_SPACING;  y-=da + VERT_SPACING; }
-			else
-			{
-				if(tab_rect.contains(rect.bottomLeft()) && tab_rect.contains(rect.bottomRight()))
-					y-=da + VERT_SPACING;
-				else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.topRight()))
-					y+=da + VERT_SPACING;
-
-				if(tab_rect.contains(rect.topRight()) && tab_rect.contains(rect.bottomRight()))
-					x-=dl + HORIZ_SPACING;
-				else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.bottomLeft()))
-					x+=dl + HORIZ_SPACING;
-			}
-
-			labels_ini_pos[label_ids[idx]]=QPointF(x,y);
-			label_dist=base_rel->getLabelDistance(label_ids[idx]);
-			if(!std::isnan(label_dist.x()))
-			{
-				x+=label_dist.x();
-				y+=label_dist.y();
-			}
-
-			labels[label_ids[idx]]->setPos(x,y);
-			labels[label_ids[idx]]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
-			labels[label_ids[idx]]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-																						BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
-			dynamic_cast<Textbox *>(labels[label_ids[idx]]->getSourceObject())->setModified(true);
+			x+=label_dist.x();
+			y+=label_dist.y();
 		}
+
+		labels[label_id]->setPos(x,y);
+		labels[label_id]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
+																		BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
+		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
 	}
 }
 

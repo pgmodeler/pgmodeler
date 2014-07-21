@@ -125,14 +125,12 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
-		SchemaParser::setIgnoreUnkownAttributes(true);
-
+		schparser.setIgnoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
 			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
 
-		attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs,
-																																								 SchemaParser::SQL_DEFINITION);
-		SchemaParser::setIgnoreUnkownAttributes(false);
+		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
+		schparser.setIgnoreUnkownAttributes(false);
 	}
 }
 
@@ -165,11 +163,11 @@ void Table::setRelObjectsIndexesAttribute(void)
       {
         aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
         aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
-        aux_attribs[ParsersAttributes::OBJECTS]+=SchemaParser::getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XML_DEFINITION);
+				aux_attribs[ParsersAttributes::OBJECTS]+=schparser.getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XML_DEFINITION);
       }
 
       aux_attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
-      attributes[attribs[idx]]=SchemaParser::getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XML_DEFINITION);
+			attributes[attribs[idx]]=schparser.getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XML_DEFINITION);
       aux_attribs.clear();
     }
   }

@@ -34,6 +34,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
   private:
     Q_OBJECT
 
+		SchemaParser schparser;
+
     //! brief Syntax highlighter for sql input field
     SyntaxHighlighter *sql_cmd_hl;
 

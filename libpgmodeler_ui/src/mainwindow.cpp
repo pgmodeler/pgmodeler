@@ -55,7 +55,6 @@
 #include "eventtriggerwidget.h"
 
 //Global forms and widgets
-AboutForm *about_form=nullptr;
 TextboxWidget *textbox_wgt=nullptr;
 SourceCodeWidget *sourcecode_wgt=nullptr;
 DatabaseWidget *database_wgt=nullptr;
@@ -102,8 +101,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
+	central_wgt=nullptr;
 	setupUi(this);
+	models_tbw->tabBar()->setVisible(false);
 	print_dlg=new QPrintDialog(this);
+
+	central_wgt=new CentralWidget(models_tbw_parent);
+	general_tb->layout()->setContentsMargins(0,0,0,0);
 
 	try
 	{
@@ -152,6 +156,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
+		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -168,7 +173,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		about_form=new AboutForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		model_nav_wgt=new ModelNavigationWidget(this);
+
+    control_tb->addWidget(model_nav_wgt);
+    control_tb->addSeparator();
+    control_tb->addAction(action_about);
+    control_tb->addAction(action_update_found);
+
+		about_wgt=new AboutWidget(this);
+		update_notifier_wgt=new UpdateNotifierWidget(this);
 		model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -180,7 +193,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
 		sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
-		update_notifier_wgt=new UpdateNotifierWidget(this);
 
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
@@ -229,10 +241,21 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																 BaseObject::getSchemaName(obj_tp) +
 																 QString(".png")));
 
+	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
+	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
+	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
+
+	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
 	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), update_tb, SLOT(setVisible(bool)));
 	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
 	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+
+	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
+	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -240,10 +263,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 	connect(action_fix_model,SIGNAL(triggered(bool)),model_fix_form,SLOT(exec()));
 
-	connect(models_tbw,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_about,SIGNAL(triggered(bool)),about_form,SLOT(show()));
 	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -259,7 +280,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationListUpdated(void)), this, SLOT(__updateToolsState(void)));
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
-	connect(models_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeModel(int)));
+
+	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
+	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
@@ -309,6 +332,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	current_model=nullptr;
 	models_tbw->setVisible(false);
+	models_tbw->installEventFilter(this);
+
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
@@ -316,7 +341,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	sql_tool_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	update_notifier_wgt->setVisible(false);
-	update_tb->setVisible(false);
+	about_wgt->setVisible(false);
+
+	models_tbw_parent->lower();
+	central_wgt->lower();
+	v_splitter1->lower();
 
 	QVBoxLayout *vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
@@ -332,16 +361,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(model_valid_wgt);
 	model_valid_parent->setLayout(hlayout);
+	model_valid_parent->installEventFilter(this);
 
 	hlayout=new QHBoxLayout;
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
+	obj_finder_parent->installEventFilter(this);
 
 	vlayout=new QVBoxLayout;
 	vlayout->setContentsMargins(0,0,0,0);
 	vlayout->addWidget(sql_tool_wgt);
 	sql_tool_parent->setLayout(vlayout);
+	sql_tool_parent->installEventFilter(this);
 
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
@@ -392,7 +424,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
-
 
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())
@@ -448,14 +479,29 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   for(auto act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
-    btn->installEventFilter(this);
+		btn->setGraphicsEffect(createDropShadow(btn));
   }
+
+  #ifdef Q_OS_MAC
+    control_tb->removeAction(action_main_menu);
+    action_main_menu->setEnabled(false);
+  #else
+		plugins_menu->menuAction()->setIconVisibleInMenu(false);
+    main_menu.addMenu(file_menu);
+    main_menu.addMenu(edit_menu);
+    main_menu.addMenu(show_menu);
+    main_menu.addMenu(plugins_menu);
+    main_menu.addMenu(about_menu);
+    main_menu.addSeparator();
+    main_menu.addAction(action_show_main_menu);
+    action_main_menu->setMenu(&main_menu);
+    dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+  #endif
 }
 
 MainWindow::~MainWindow(void)
 {
    delete(overview_wgt);
-   delete(about_form);
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -486,6 +532,7 @@ void MainWindow::restoreLastSession(void)
 
 			saveTemporaryModels(true);
 			action_restore_session->setEnabled(false);
+			central_wgt->last_session_tb->setEnabled(false);
 		}
 		catch(Exception &e)
 		{
@@ -514,13 +561,34 @@ void MainWindow::showEvent(QShowEvent *)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-#ifndef Q_OS_MAC
-	QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
-#endif
+  #ifndef Q_OS_MAC
+    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
+
+    //Hiding/showing the main menu bar depending on the retrieved conf
+    main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
+
+    if(main_menu_mb->isVisible())
+      file_menu->addAction(action_hide_main_menu);
+
+    action_main_menu->setVisible(!main_menu_mb->isVisible());
+  #endif
+
+	//Positioning the update notifier widget before showing it (if there is an update)
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	action_update_found->setVisible(false);
 
 	//Enabling update check at startup
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
 		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+}
+
+void MainWindow::resizeEvent(QResizeEvent *)
+{
+	if(central_wgt)
+	{
+		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
+											bg_widget->height()/2 - central_wgt->height()/2);
+	}
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -572,6 +640,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 			confs=conf_wgt->getConfigurationParams();
 			conf_wgt->removeConfigurationParams();
+
+			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? "1" : "";
+			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
+			attribs.clear();
 
 			//Saving the session
 			count=models_tbw->count();
@@ -694,6 +766,8 @@ void MainWindow::updateRecentModelsMenu(void)
 	}
 
 	action_recent_models->setEnabled(!recent_mdls_menu.isEmpty());
+	central_wgt->recent_tb->setEnabled(action_recent_models->isEnabled());
+	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
 void MainWindow::loadRecentModel(void)
@@ -736,6 +810,7 @@ void MainWindow::addModel(const QString &filename)
 	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	models_tbw->blockSignals(false);
+	models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
 
 	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	model_tab->db_model->createSystemObjects(filename.isEmpty());
@@ -751,14 +826,12 @@ void MainWindow::addModel(const QString &filename)
 			public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", OBJ_SCHEMA));
 			if(public_sch)	public_sch->setSystemObject(true);
 
-			models_tbw->setTabText(models_tbw->currentIndex(),
-														 Utf8String::create(model_tab->db_model->getName()));
-
 			models_tbw->setVisible(true);
 			model_tab->restoreLastCanvasPosition();
 		}
 		catch(Exception &e)
 		{
+			central_wgt->update();
 			model_tab->setParent(nullptr);
 
 			//Destroy the temp file generated by allocating a new model widget
@@ -770,11 +843,8 @@ void MainWindow::addModel(const QString &filename)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
-	else
-		models_tbw->setTabToolTip(models_tbw->currentIndex(), trUtf8("(model not saved yet)"));
 
-	//The model is set to modified when no model file is loaded
-	model_tab->setModified(filename.isEmpty());
+	model_nav_wgt->addModel(model_tab);
 	setCurrentModel();
 
 	if(start_timers)
@@ -784,6 +854,8 @@ void MainWindow::addModel(const QString &filename)
 
 		tmpmodel_save_timer.start();
 	}
+
+	model_tab->setModified(false);
 }
 
 void MainWindow::addModel(ModelWidget *model_wgt)
@@ -792,6 +864,8 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(model_wgt->parent())
 		throw Exception(ERR_ASG_WGT_ALREADY_HAS_PARENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	model_nav_wgt->addModel(model_wgt);
 
 	models_tbw->blockSignals(true);
 	models_tbw->addTab(model_wgt, Utf8String::create(model_wgt->getDatabaseModel()->getName()));
@@ -813,15 +887,24 @@ ModelWidget *MainWindow::getModel(int idx)
 	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
 }
 
+void MainWindow::showMainMenu(void)
+{
+	action_main_menu->setVisible(sender()!=action_show_main_menu);
+	main_menu_mb->setVisible(sender()==action_show_main_menu);
+
+	if(sender()!=action_show_main_menu)
+		file_menu->removeAction(action_hide_main_menu);
+	else
+		file_menu->addAction(action_hide_main_menu);
+}
+
 void MainWindow::setCurrentModel(void)
 {
 	QObject *object=nullptr;
-	QList<QAction *> act_list;
 	QToolButton *tool_btn=nullptr;
 
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
-
 	removeModelActions();
 
 	edit_menu->clear();
@@ -848,6 +931,7 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
+	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
 	if(current_model)
@@ -858,21 +942,24 @@ void MainWindow::setCurrentModel(void)
 		general_tb->addAction(current_model->action_new_object);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-    tool_btn->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_quick_actions);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-    tool_btn->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_edit);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_source_code);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));//->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		general_tb->addAction(current_model->action_select_all);
-    qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all))->installEventFilter(this);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));//->installEventFilter(this);
+		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
@@ -960,15 +1047,10 @@ void MainWindow::applyZoom(void)
 void MainWindow::removeModelActions(void)
 {
 	QList<QAction *> act_list;
-  QToolButton *btn=nullptr;
-
 	act_list=general_tb->actions();
 
 	while(act_list.size() > 5)
 	{
-    btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act_list.back()));
-    btn->removeEventFilter(this);
-
     general_tb->removeAction(act_list.back());
 		act_list.pop_back();
 	}
@@ -977,6 +1059,8 @@ void MainWindow::removeModelActions(void)
 void MainWindow::closeModel(int model_id)
 {
 	QWidget *tab=nullptr;
+
+	overview_wgt->close();
 
 	if(model_id >= 0)
 		tab=models_tbw->widget(model_id);
@@ -998,7 +1082,7 @@ void MainWindow::closeModel(int model_id)
 		if(!model->isModified() ||
 			 (model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
-
+			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
 
 			disconnect(tab, nullptr, oper_list_wgt, nullptr);
@@ -1032,6 +1116,7 @@ void MainWindow::closeModel(int model_id)
 		updateToolsState(true);
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
+		models_tbw->setVisible(false);
 	}
 	else
 	{
@@ -1042,9 +1127,7 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-	{
-		models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
-	}
+		model_nav_wgt->updateModelText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()), current_model->getFilename());
 }
 
 void MainWindow::applyConfigurations(void)
@@ -1147,7 +1230,9 @@ void MainWindow::saveModel(ModelWidget *model)
 						model->saveModel(file_dlg.selectedFiles().at(0));
 						recent_models.push_front(file_dlg.selectedFiles().at(0));
 						updateRecentModelsMenu();
-						models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+
+						//models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
+						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
 					}
 				}
 				else
@@ -1207,13 +1292,6 @@ void MainWindow::printModel(void)
 		printer=print_dlg->printer();
 
 		//Sets the printer options based upon the configurations from the scene
-		/* if(paper_size!=QPrinter::Custom)
-			printer->setPaperSize(paper_size);
-		else
-			printer->setPaperSize(custom_size, QPrinter::DevicePixel);
-
-		printer->setOrientation(orientation);
-		printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
 		ObjectsScene::configurePrinter(printer);
 
 		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
@@ -1239,17 +1317,7 @@ void MainWindow::printModel(void)
 			if(!msg_box.isCancelled())
 			{
 				if(msg_box.result()==QDialog::Rejected)
-				{
-					//Reverting the configurations to the scene defaults
-					/*	if(paper_size!=QPrinter::Custom)
-						printer->setPaperSize(paper_size);
-					else
-						printer->setPaperSize(custom_size, QPrinter::DevicePixel);
-
-					printer->setOrientation(orientation);
-					printer->setPageMargins(margins.left(), margins.top(), margins.width(), margins.height(), QPrinter::Millimeter); */
 					ObjectsScene::configurePrinter(printer);
-				}
 
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}
@@ -1299,7 +1367,7 @@ void MainWindow::loadModels(const QStringList &list)
 		saveTemporaryModels(true);
 	}
 	catch(Exception &e)
-	{
+	{	
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
 													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
@@ -1345,10 +1413,6 @@ void MainWindow::updateToolsState(bool model_closed)
 
 	if(!model_closed && current_model && models_tbw->count() > 0)
 	{
-		action_previous->setEnabled(models_tbw->currentIndex() > 0 &&
-																models_tbw->count() > 1);
-		action_next->setEnabled(models_tbw->currentIndex() >= 0 &&
-														models_tbw->currentIndex()!=(models_tbw->count()-1));
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
@@ -1415,47 +1479,80 @@ void MainWindow::toggleUpdateNotifier(bool show)
 {
 	if(show)
 	{
-		QAction *action=qobject_cast<QAction *>(sender());
-
-		if(!action)
-			update_notifier_wgt->move(0,0);
-		else
-		{
-			QWidget *wgt=update_tb->widgetForAction(action);
-			QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
-
-			pos=wgt->mapTo(this, pos);
-			pos.setX(pos.x() - 9);
-			pos.setY(update_tb->pos().y() + update_tb->height() - 9);
-			update_notifier_wgt->move(pos);
-		}
+		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		action_about->setChecked(false);
 	}
 
 	update_notifier_wgt->setVisible(show);
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
+void MainWindow::toggleAboutWidget(bool show)
 {
-	QPaintEvent *p_event=dynamic_cast<QPaintEvent *>(event);
-	QToolButton *btn=dynamic_cast<QToolButton *>(object);
-
-	if(p_event && btn && btn->parent()==general_tb && btn->isEnabled())
+	if(show)
 	{
-		QPainter p;
-		QRect ret;
-		QPoint pnt;
-
-		p.begin(btn);
-		p.setFont(btn->font());
-		ret=p.fontMetrics().boundingRect(btn->text().replace(" ","_")).normalized();
-
-		//Drawing the button's text in a different offset in order to simulate the shadow
-		p.setPen(QColor(0,0,0, 128));
-		pnt=QPoint((btn->width()/2) - (static_cast<float>(ret.width())/2) + 1, (btn->iconSize().height()) + 9);
-
-		p.drawText(QRect(pnt, ret.size()),btn->text());
-		p.end();
+		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		action_update_found->setChecked(false);
 	}
 
-	return(QWidget::eventFilter(object, event));
+	about_wgt->setVisible(show);
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+	QWidget *wgt=qobject_cast<QWidget *>(object);
+
+	if((event->type()==QEvent::Resize || event->type()==QEvent::Show || event->type()==QEvent::Hide) &&
+		 (wgt==model_valid_parent || wgt==obj_finder_parent || wgt==sql_tool_parent || wgt==models_tbw))
+	{
+		QWidgetList wgt_list={ model_valid_parent, obj_finder_parent, sql_tool_parent, models_tbw };
+		QPoint pos;
+		QRect ret;
+		bool intersects=false;
+
+		for(auto wgt_aux : wgt_list)
+		{
+			pos=(wgt_aux==sql_tool_parent ? wgt_aux->pos() : wgt_aux->mapTo(models_tbw_parent, wgt_aux->pos()));
+			ret=QRect(QPoint(0, pos.y()), wgt_aux->size());
+
+			if(!intersects && wgt_aux->isVisible() && ret.intersects(central_wgt->geometry()))
+			{
+				intersects=true;
+				break;
+			}
+		}
+
+		if(intersects)
+			central_wgt->lower();
+		else if(!models_tbw->isVisible())
+			central_wgt->raise();
+	}
+
+	return(QMainWindow::eventFilter(object, event));
+}
+
+void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
+{
+	if(widget && act && toolbar)
+	{
+		QWidget *wgt=toolbar->widgetForAction(act);
+		QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+
+		if(map_to_window) pos=wgt->mapTo(this, pos);
+		pos.setX(pos.x() - 9);
+		pos.setY(toolbar->pos().y() + toolbar->height() - 9);
+		widget->move(pos);
+	}
+}
+
+QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
+{
+	QGraphicsDropShadowEffect *shadow=nullptr;
+
+	shadow=new QGraphicsDropShadowEffect(btn);
+	shadow->setXOffset(2);
+	shadow->setYOffset(2);
+	shadow->setBlurRadius(5);
+	shadow->setColor(QColor(0,0,0, 100));
+
+	return(shadow);
 }

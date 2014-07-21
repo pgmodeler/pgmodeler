@@ -157,7 +157,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
           attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + "," +
               itr.second[FILL_COLOR2].name() + "," + itr.second[BORDER_COLOR].name();
 
-        attributes[ParsersAttributes::STYLES]+=SchemaParser::getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
+				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
       }
     }
     catch(Exception &e)

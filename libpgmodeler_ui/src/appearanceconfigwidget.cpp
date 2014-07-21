@@ -53,6 +53,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 		conf_items[i].obj_conf=(std::find(conf_obj_ids.begin(), conf_obj_ids.end(), i)!=conf_obj_ids.end());
 	}
 
+	color_picker=new ColorPickerWidget(3, this);
+
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,500,500));
@@ -69,18 +71,23 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	viewp->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewp->centerOn(0,0);
 
-	appearanceconfig_grid->addWidget(viewp, appearanceconfig_grid->count()-1, 0, 1, 5);
+	appearanceconfig_grid->addWidget(color_picker, 3, 2, 1, 4);
+	appearanceconfig_grid->addWidget(viewp, 4 , 0, 1, 6);
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
-	connect(color1_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-	connect(color2_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-	connect(color3_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle(void)));
 	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle(void)));
 	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
 	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
 	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
+
+	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
+
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged,
+					[=](){
+									for(unsigned i=0; i < color_picker->getColorCount(); i++)
+										applyElementColor(i, color_picker->getColor(i));
+							 });
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget(void)
@@ -250,7 +257,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 
 void AppearanceConfigWidget::enableConfigElement(void)
 {
-	QPalette pal;
+	//QPalette pal;
 	int idx=element_cmb->currentIndex();
 
 	//Widgets enabled only when the global font element is selected (idx==0)
@@ -265,15 +272,12 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	italic_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
 
 	colors_lbl->setVisible(idx!=0);
-	color1_tb->setVisible(idx!=0);
+	color_picker->setVisible(colors_lbl->isVisible());
 
-	//Widgets visible when a object configuration element is selected
-	color2_tb->setVisible(conf_items[idx].obj_conf);
-	color3_tb->setVisible(conf_items[idx].obj_conf);
+	//Buttons visible when a object configuration element is selected
+	color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
+	color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
 
-	color1_tb->blockSignals(true);
-	color2_tb->blockSignals(true);
-	color3_tb->blockSignals(true);
 	underline_chk->blockSignals(true);
 	italic_chk->blockSignals(true);
 	bold_chk->blockSignals(true);
@@ -283,8 +287,7 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	if(!conf_items[idx].obj_conf)
 	{
 		QTextCharFormat fmt=BaseObjectView::getFontStyle(conf_items[idx].conf_id);
-		pal.setColor(QPalette::Button, fmt.foreground().color());
-		color1_tb->setPalette(pal);
+		color_picker->setColor(0, fmt.foreground().color());
 		underline_chk->setChecked(fmt.font().underline());
 		italic_chk->setChecked(fmt.font().italic());
 		bold_chk->setChecked(fmt.font().bold());
@@ -294,26 +297,16 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	else
 	{
 		QColor color1, color2;
-
 		BaseObjectView::getFillStyle(conf_items[idx].conf_id, color1, color2);
 
-		pal.setColor(QPalette::Button, color1);
-		color1_tb->setPalette(pal);
-
-		pal.setColor(QPalette::Button, color2);
-		color2_tb->setPalette(pal);
-
-		pal.setColor(QPalette::Button, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
-		color3_tb->setPalette(pal);
-
+		color_picker->setColor(0, color1);
+		color_picker->setColor(1, color2);
+		color_picker->setColor(2, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
 		underline_chk->setChecked(false);
 		italic_chk->setChecked(false);
 		bold_chk->setChecked(false);
 	}
 
-	color1_tb->blockSignals(false);
-	color2_tb->blockSignals(false);
-	color3_tb->blockSignals(false);
 	underline_chk->blockSignals(false);
 	italic_chk->blockSignals(false);
 	bold_chk->blockSignals(false);
@@ -321,44 +314,22 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	font_size_spb->blockSignals(false);
 }
 
-void AppearanceConfigWidget::applyElementColor(void)
+void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 {
-	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-
-	if(btn)
+	if(conf_items[element_cmb->currentIndex()].obj_conf)
 	{
-		QPalette pal;
-		unsigned color_idx;
-
-		pal=btn->palette();
-		color_dlg.setCurrentColor(pal.color(QPalette::Button));
-		color_dlg.exec();
-
-		if(color_dlg.result()==QDialog::Accepted)
-		{
-			pal.setColor(QPalette::Button, color_dlg.selectedColor());
-			btn->setPalette(pal);
-
-			if(conf_items[element_cmb->currentIndex()].obj_conf)
-			{
-				if(btn==color1_tb) color_idx=0;
-				else if(btn==color2_tb) color_idx=1;
-				else color_idx=2;
-
-				conf_items[element_cmb->currentIndex()].colors[color_idx]=color_dlg.selectedColor();
-				BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color_dlg.selectedColor(), color_idx);
-			}
-			else
-			{
-				conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color_dlg.selectedColor());
-				BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
-						conf_items[element_cmb->currentIndex()].font_fmt);
-			}
-
-			model->setObjectsModified();
-			scene->update();
-		}
+		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
+		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
 	}
+	else
+	{
+		conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color);
+		BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
+				conf_items[element_cmb->currentIndex()].font_fmt);
+	}
+
+	model->setObjectsModified();
+	scene->update();
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)

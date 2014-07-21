@@ -34,8 +34,8 @@
 
 namespace GlobalAttributes {
 	static const QString
-	PGMODELER_VERSION="0.7.2",
-  PGMODELER_VER_CODENAME="Brave Mastodon",
+	PGMODELER_VERSION="0.8.0-alpha",
+	PGMODELER_VER_CODENAME="Faithful Elephant",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
   PGMODELER_SITE="http://www.pgmodeler.com.br",
   PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
@@ -63,6 +63,7 @@ namespace GlobalAttributes {
 	OBJECTS_STYLE_CONF="objects-style", //! \brief Default name for the object style configuration file
 	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
 	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
+	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
 
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
@@ -74,7 +75,6 @@ namespace GlobalAttributes {
 	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 	the executable using -style option. This same style is applied to crash handler. */
 	DEFAULT_QT_STYLE="Fusion",
-	NO_STYLESHEET_OPT="-no-stylesheet",
 	UI_STYLE_OPT="-style";
 
 

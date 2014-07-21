@@ -29,10 +29,16 @@
 #include <QThread>
 #include "catalog.h"
 #include "modelwidget.h"
+#include <random>
+
+using namespace std;
 
 class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
+
+		//! brief Random number generator engine used to generate random colors for imported schemas
+		default_random_engine rand_num_engine;
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
     static const QString ARRAY_PATTERN,
@@ -115,6 +121,10 @@ class DatabaseImportHelper: public QObject {
 
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
+
+		XMLParser *xmlparser;
+
+		SchemaParser schparser;
 
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);

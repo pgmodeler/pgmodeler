@@ -29,7 +29,7 @@
 #include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "modelwidget.h"
-#include "aboutform.h"
+#include "aboutwidget.h"
 #include "messagebox.h"
 #include "baseform.h"
 #include "modelrestorationform.h"
@@ -44,12 +44,26 @@
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"
+#include "modelnavigationwidget.h"
+#include "centralwidget.h"
 
 using namespace std;
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
+
+		//! \brief Maximum number of files listed on recent models menu
+		const static int MAX_RECENT_MODELS=10;
+
+		AboutWidget *about_wgt;
+
+		/*! brief Widget positioned on the center of main window that contains some basic operations like
+		create new model, open a file, restore session */
+		CentralWidget *central_wgt;
+
+		//! brief Widget used to navigate through the opened models.
+		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
@@ -112,7 +126,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		prev_session_files;
 
 		//! \brief Stores the actions related to recent models
-		QMenu recent_mdls_menu;
+		QMenu recent_mdls_menu,
+
+		main_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -120,8 +136,19 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
 		void showEvent(QShowEvent *);
 
-		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=10;
+		void resizeEvent(QResizeEvent *);
+
+		/*! brief This event filter controls the position of central widget putting it on top or base
+		of it's parent's stack whenever the widgets model_valid_parent, obj_finder_parent or sql_tool_parent
+		colides or not with the central_wgt in order to avoid this latter to be on top of them causing an
+		undesired overlay */
+		bool eventFilter(QObject *object, QEvent *event);
+
+		//! brief Set the postion of a floating widget based upon an action at a tool bar
+		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
+
+		//! brief Creates drop shadown on a tool button that represents an QAction
+		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -130,8 +157,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-
-public slots:
+	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
     void addModel(const QString &filename="");
@@ -150,6 +176,8 @@ public slots:
 		ModelWidget *getModel(int idx);
 
 	private slots:
+		void showMainMenu(void);
+
 		//! \brief Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
 		void setGridOptions(void);
 
@@ -226,11 +254,8 @@ public slots:
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
-
-		//! brief The only purpose of this event filter is to draw a simple shadown on general toolbar button' texts
-		bool eventFilter(QObject *object, QEvent *event);
-
-                        void removeModelActions(void);
+		void toggleAboutWidget(bool show);
+		void removeModelActions(void);
 };
 
 #endif

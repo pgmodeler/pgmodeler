@@ -37,6 +37,7 @@
 class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
+		XMLParser xmlparser;
 
 		//! \brief Auxiliary class used by the highlighter that stores informations	about multiline code blocks
 		class MultiLineInfo: public QTextBlockUserData {

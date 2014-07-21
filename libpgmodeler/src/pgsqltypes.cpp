@@ -1415,6 +1415,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 	else
 	{
 		attribs_map attribs;
+		SchemaParser schparser;
 
 		attribs[ParsersAttributes::LENGTH]="";
 		attribs[ParsersAttributes::DIMENSION]="";
@@ -1450,7 +1451,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(with_timezone)
 			attribs[ParsersAttributes::WITH_TIMEZONE]="1";
 
-		return(SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
+		return(schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}
 }
 

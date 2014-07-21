@@ -60,8 +60,7 @@ void BaseGraphicObject::setPositionAttribute(void)
 {
 	attributes[ParsersAttributes::X_POS]=QString("%1").arg(position.x());
 	attributes[ParsersAttributes::Y_POS]=QString("%1").arg(position.y());
-	attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																					attributes, SchemaParser::XML_DEFINITION);
+	attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)

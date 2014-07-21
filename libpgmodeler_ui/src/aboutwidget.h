@@ -22,19 +22,23 @@
 \brief Form that contains information about software authoring and licensing.
 */
 
-#ifndef ABOUT_FORM_H
-#define ABOUT_FORM_H
+#ifndef ABOUT_WIDGET_H
+#define ABOUT_WIDGET_H
 
-#include <QDialog>
-#include "ui_aboutform.h"
+#include <QWidget>
+#include <QGraphicsDropShadowEffect>
+#include "ui_aboutwidget.h"
 #include "globalattributes.h"
 
-class AboutForm: public QDialog, public Ui::AboutForm {
+class AboutWidget: public QWidget, public Ui::AboutWidget {
 	private:
 		Q_OBJECT
 
 	public:
-    AboutForm(QWidget *parent = 0,  Qt::WindowFlags f = 0);
+		AboutWidget(QWidget *parent = 0);
+
+	signals:
+		void s_visibilityChanged(bool value);
 };
 
 #endif

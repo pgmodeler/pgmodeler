@@ -434,7 +434,16 @@ namespace ParsersAttributes {
 	EVENT="event",
 	FILTER="filter",
 	VARIABLE="variable",
-	BUFFERING="buffering";
+	BUFFERING="buffering",
+	LINE_COLOR="line-color",
+	SHOW_MAIN_MENU="show-main-menu",
+	FOREIGN_KEYS="foreign-keys",
+	CONNECT_FK_TO_PK="fk-to-pk",
+	CONNECT_CENTER_PNTS="center-pnts",
+	CONNECTION="connection",
+	MODE="mode",
+	PATTERNS="patterns",
+	NAME_PATTERNS="name-patterns";
 }
 
 #endif

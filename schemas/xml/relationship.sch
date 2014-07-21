@@ -21,6 +21,10 @@
     %if @{dst-fk-pattern} %then [ dst-fk-pattern=] "@{dst-fk-pattern}" %end
    %end
 
+  %if @{line-color} %then
+   $br $tb [ line-color=] "@{line-color}"
+  %end
+
   %if @{sql-disabled} %then
    $br $tb [ sql-disabled=] "true"
   %end

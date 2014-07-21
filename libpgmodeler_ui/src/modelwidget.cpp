@@ -167,6 +167,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	protected_model_frm->setLayout(grid);
 
 	db_model=new DatabaseModel;
+	xmlparser=db_model->getXMLParser();
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,2000,2000));
@@ -373,13 +374,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 ModelWidget::~ModelWidget(void)
 {
-    popup_menu.clear();
-    new_object_menu.clear();
-    quick_actions_menu.clear();
-    schemas_menu.clear();
-    owners_menu.clear();
-    tags_menu.clear();
-    break_rel_menu.clear();
+	popup_menu.clear();
+	new_object_menu.clear();
+	quick_actions_menu.clear();
+	schemas_menu.clear();
+	owners_menu.clear();
+	tags_menu.clear();
+	break_rel_menu.clear();
 	op_list->removeOperations();
 	db_model->destroyObjects();
 	delete(viewport);
@@ -609,9 +610,6 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 		}
 
 		scene->addItem(item);
-
-		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
-			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 
 	this->modified=true;
@@ -704,8 +702,12 @@ void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
 
 void ModelWidget::handleObjectsMovement(bool end_moviment)
 {
-	vector<BaseObject *> ::iterator itr, itr_end;
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> reg_tables;
+	QList<BaseObjectView *> tables;
+
 	BaseGraphicObject *obj=nullptr;
+	Schema *schema=nullptr;
 
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
@@ -718,10 +720,26 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 		{
 			obj=dynamic_cast<BaseGraphicObject *>(*itr);
 
-			if(!dynamic_cast<BaseRelationship *>(obj) &&
-				 !dynamic_cast<Schema *>(obj) &&
-				 (obj && !obj->isProtected()))
-				op_list->registerObject(obj, Operation::OBJECT_MOVED);
+			if(!dynamic_cast<BaseRelationship *>(obj) && (obj && !obj->isProtected()))
+			{
+				schema=dynamic_cast<Schema *>(obj);
+
+				//Register the object if it is not a schema or a table already registered
+				if(!schema && std::find(reg_tables.begin(), reg_tables.end(), obj)==reg_tables.end())
+					op_list->registerObject(obj, Operation::OBJECT_MOVED);
+				else if(schema)
+				{
+					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
+					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
+					for(auto tab : tables)
+					{
+						op_list->registerObject(tab->getSourceObject(), Operation::OBJECT_MOVED);
+
+						//Registers the table on a auxiliary list to avoid multiple registration on operation history
+						reg_tables.push_back(tab->getSourceObject());
+					}
+				}
+			}
 
 			itr++;
 		}
@@ -891,8 +909,8 @@ void ModelWidget::convertRelationshipNN(void)
 					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 					//Creates the table from the xml code
-					XMLParser::restartParser();
-					XMLParser::loadXMLBuffer(xml_buf);
+					xmlparser->restartParser();
+					xmlparser->loadXMLBuffer(xml_buf);
 					tab=db_model->createTable();
 					tab_name=tab->getName();
 
@@ -915,8 +933,8 @@ void ModelWidget::convertRelationshipNN(void)
 						{
 							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XML_DEFINITION,true);
 
-							XMLParser::restartParser();
-							XMLParser::loadXMLBuffer(xml_buf);
+							xmlparser->restartParser();
+							xmlparser->loadXMLBuffer(xml_buf);
 							constr=db_model->createConstraint(tab);
 							tab->addConstraint(constr);
 						}
@@ -2142,13 +2160,13 @@ void ModelWidget::pasteObjects(void)
 	{
 		if(xml_objs.count(*itr))
 		{
-			XMLParser::restartParser();
-			XMLParser::loadXMLBuffer(xml_objs[*itr]);
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(xml_objs[*itr]);
 
 			try
 			{
 				//Creates the object from the XML
-				object=db_model->createObject(db_model->getObjectType(XMLParser::getElementName()));
+				object=db_model->createObject(db_model->getObjectType(xmlparser->getElementName()));
 				tab_obj=dynamic_cast<TableObject *>(object);
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
@@ -3105,34 +3123,37 @@ void ModelWidget::breakRelationshipLine(void)
 	{
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
-		BaseTableView *src_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject()),
-									*dst_tab=reinterpret_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
 		float dx, dy;
 		unsigned break_type=action->data().toUInt();
+		QPointF src_pnt, dst_pnt;
 
 		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
 
+		src_pnt=rel_view->getConnectionPoint(BaseRelationship::SRC_TABLE);
+		dst_pnt=rel_view->getConnectionPoint(BaseRelationship::DST_TABLE);
+
 		if(break_type==BREAK_VERT_NINETY_DEGREES)
-			rel->setPoints({ QPointF(src_tab->getCenter().x(), dst_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(src_pnt.x(), dst_pnt.y()) });
 		else if(break_type==BREAK_HORIZ_NINETY_DEGREES)
-			rel->setPoints({ QPointF(dst_tab->getCenter().x(), src_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(dst_pnt.x(), src_pnt.y()) });
 		else if(break_type==BREAK_HORIZ_2NINETY_DEGREES)
 		{
 			//Calculates the midle vertical point between the tables centers
-			dy=(src_tab->getCenter().y() + dst_tab->getCenter().y())/2;
+			dy=(src_pnt.y() + dst_pnt.y())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(src_tab->getCenter().x(), dy),
-											 QPointF(dst_tab->getCenter().x(), dy) });
+			rel->setPoints({ QPointF(src_pnt.x(), dy),
+											 QPointF(dst_pnt.x(), dy) });
 		}
 		else
 		{
 			//Calculates the middle horizontal point between the tables centers
-			dx=(src_tab->getCenter().x() + dst_tab->getCenter().x())/2;
+			dx=(src_pnt.x() + dst_pnt.x())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(dx, src_tab->getCenter().y()),
-											 QPointF(dx, dst_tab->getCenter().y()) });
+			rel->setPoints({ QPointF(dx, src_pnt.y()),
+											 QPointF(dx, dst_pnt.y()) });
 		}
 
 		rel->setModified(true);

@@ -425,7 +425,7 @@ void SQLToolWidget::runSQLCommand(void)
   try
   {
     ResultSet res;
-    QString cmd=sql_cmd_txt->textCursor().selectedText();
+		QString cmd=sql_cmd_txt->textCursor().selectedText().simplified();
 
     if(cmd.isEmpty())
       cmd=sql_cmd_txt->toPlainText();
@@ -622,9 +622,9 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item, bool cascade)
         }
 
         //Generate the drop command
-        SchemaParser::setIgnoreEmptyAttributes(true);
-        SchemaParser::setIgnoreUnkownAttributes(true);
-        drop_cmd=SchemaParser::getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
+				schparser.setIgnoreEmptyAttributes(true);
+				schparser.setIgnoreUnkownAttributes(true);
+				drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
         drop_cmd.remove(QRegExp("^(--)"));
 
 		if(cascade)

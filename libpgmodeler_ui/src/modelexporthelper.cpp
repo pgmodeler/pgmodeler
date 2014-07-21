@@ -20,9 +20,9 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	try
 	{
 		progress=sql_gen_progress=0;
-		SchemaParser::setPgSQLVersion(pgsql_ver);
+		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-                           trUtf8("PostgreSQL %1 version code generation.").arg(SchemaParser::getPgSQLVersion()),
+													 trUtf8("PostgreSQL %1 version code generation.").arg(BaseObject::getPgSQLVersion()),
 													 OBJ_DATABASE);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
@@ -225,12 +225,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())
 		{
-			SchemaParser::setPgSQLVersion(pgsql_ver);
+			BaseObject::setPgSQLVersion(pgsql_ver);
       emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1.").arg(pgsql_ver));
 		}
 		else
 		{
-			SchemaParser::setPgSQLVersion(version);
+			BaseObject::setPgSQLVersion(version);
       emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected.").arg(version));
 		}
 

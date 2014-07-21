@@ -21,30 +21,34 @@
 SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA)
 {
 	Ui_SchemaWidget::setupUi(this);
+	QHBoxLayout *hbox=nullptr;
+
 	configureFormLayout(nullptr, OBJ_SCHEMA);
 
-	baseobject_grid->addWidget(fill_color_lbl, baseobject_grid->count(), 0, 1, 1);
-	baseobject_grid->addWidget(fill_color_tb, baseobject_grid->count()-1, 1, 1, 1);
-	baseobject_grid->addWidget(show_rect_chk, baseobject_grid->count()-2, 2, 1, 1);
+	color_picker=new ColorPickerWidget(1, this);
 
+	hbox=new QHBoxLayout;
+	hbox->setContentsMargins(2,0,0,0);
+	hbox->addWidget(fill_color_lbl);
+	hbox->addWidget(color_picker);
+	hbox->addWidget(show_rect_chk);
+
+	baseobject_grid->addLayout(hbox, baseobject_grid->count(), 0, 1, baseobject_grid->columnCount());
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	connect(fill_color_tb, SIGNAL(clicked(void)), this, SLOT(selectFillColor(void)));
 
 	parent_form->setMinimumSize(500, 220);
 	parent_form->setMaximumHeight(220);
 
-  configureTabOrder({ fill_color_tb, show_rect_chk });
+	configureTabOrder({ color_picker, show_rect_chk });
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)
 {
 	bool enable=false;
-	QPalette palette;
 
 	BaseObjectWidget::setAttributes(model, op_list, schema);
 
-
-	enable=!(schema && schema->isSystemObject());//this->object->getName()=="public");
+	enable=!(schema && schema->isSystemObject());
 	edt_perms_tb->setEnabled(enable);
 	name_edt->setEnabled(enable);
 	comment_edt->setEnabled(enable);
@@ -57,30 +61,13 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 			protected_obj_frm->setVisible(false);
 			parent_form->apply_ok_btn->setEnabled(true);
 		}
-		palette.setColor(QPalette::Button, schema->getFillColor());
+
+		color_picker->setColor(0, schema->getFillColor());
 	}
 	else
-		palette.setColor(QPalette::Button, QColor(225,225,225));
+		color_picker->setColor(0, QColor(225,225,225));
 
-	fill_color_tb->setPalette(palette);
 	show_rect_chk->setChecked(schema && schema->isRectVisible());
-}
-
-void SchemaWidget::selectFillColor(void)
-{
-	QColorDialog color_dlg;
-	QPalette palette;
-
-	color_dlg.setWindowTitle(trUtf8("Select fill color"));
-	color_dlg.setCurrentColor(fill_color_tb->palette().color(QPalette::Button));
-	color_dlg.exec();
-
-
-	if(color_dlg.result()==QDialog::Accepted)
-	{
-		palette.setColor(QPalette::Button, color_dlg.selectedColor());
-		fill_color_tb->setPalette(palette);
-	}
 }
 
 void SchemaWidget::applyConfiguration(void)
@@ -94,7 +81,7 @@ void SchemaWidget::applyConfiguration(void)
 		BaseObjectWidget::applyConfiguration();
 
 		schema->setRectVisible(show_rect_chk->isChecked());
-		schema->setFillColor(fill_color_tb->palette().color(QPalette::Button));
+		schema->setFillColor(color_picker->getColor(0));
 		model->validateSchemaRenaming(dynamic_cast<Schema *>(this->object), this->prev_name);
 
 		finishConfiguration();

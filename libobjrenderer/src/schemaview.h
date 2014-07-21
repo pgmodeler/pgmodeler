@@ -38,6 +38,8 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsPolygonItem *box;
 
+		QPointF last_pos;
+
 		//! \brief Indicates if all children objects are selected
 		bool all_selected;
 
@@ -53,6 +55,8 @@ class SchemaView: public BaseObjectView
 		//! \brief Returns if all children are selected
 		bool isChildrenSelected(void);
 
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
 	public:
 		SchemaView(Schema *schema);
 		~SchemaView(void);
@@ -60,6 +64,7 @@ class SchemaView: public BaseObjectView
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
 		unsigned getChildrenCount(void);
+		QList<BaseObjectView *> getChildren(void);
 
 	public slots:
 		void configureObject(void);
