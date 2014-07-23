@@ -397,7 +397,7 @@ void SQLToolWidget::configureImportHelper(void)
   Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
   import_helper.setConnection(*conn);
   import_helper.setCurrentDatabase(database_cmb->currentText());
-  import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false);
+	import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false, false);
 }
 
 void SQLToolWidget::registerSQLCommand(const QString &cmd)

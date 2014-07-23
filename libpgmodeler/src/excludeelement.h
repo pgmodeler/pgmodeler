@@ -41,6 +41,8 @@ class ExcludeElement: public Element {
 		Operator *getOperator(void);
 
 		virtual QString getCodeDefinition(unsigned def_type) final;
+
+		bool operator == (ExcludeElement &elem);
 };
 
 #endif

@@ -1072,7 +1072,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 			if(!rel && ref_tab->getDatabase()==this)
 			{
 				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
-				rel->setLineColor(Qt::transparent);
+				rel->setCustomColor(Qt::transparent);
 
 				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
 					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
@@ -3609,6 +3609,15 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 
 	name=attribs[ParsersAttributes::NAME];
 
+	/* A small tweak to detect a timestamp/date type which name contains the time zone modifier.
+		 This situation can occur mainly on reverse engineering operation where the data type of objects
+		 in most of times came as string form and need to be parsed */
+	if(!with_timezone && attribs[ParsersAttributes::NAME].contains("with time zone", Qt::CaseInsensitive))
+	{
+		with_timezone=true;
+		name.remove(" with time zone", Qt::CaseInsensitive);
+	}
+
 	type_idx=PgSQLType::getBaseTypeIndex(name);
 	if(type_idx!=PgSQLType::null)
 	{
@@ -5622,7 +5631,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	QString str_aux, elem,
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
                        ParsersAttributes::DST_TABLE };
-	QColor line_color=Qt::transparent;
+	QColor custom_color=Qt::transparent;
 
 	try
 	{
@@ -5633,8 +5642,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-		if(!attribs[ParsersAttributes::LINE_COLOR].isEmpty())
-			line_color=QColor(attribs[ParsersAttributes::LINE_COLOR]);
+		if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
+			custom_color=QColor(attribs[ParsersAttributes::CUSTOM_COLOR]);
 
 		if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW &&
 			 attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATIONSHIP_FK)
@@ -5844,7 +5853,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	}
 
 	base_rel->setProtected(protect);
-	base_rel->setLineColor(line_color);
+	base_rel->setCustomColor(custom_color);
 
 	if(base_rel && base_rel->getObjectType()==BASE_RELATIONSHIP)
 		base_rel->connectRelationship();

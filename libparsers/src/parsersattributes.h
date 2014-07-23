@@ -435,7 +435,7 @@ namespace ParsersAttributes {
 	FILTER="filter",
 	VARIABLE="variable",
 	BUFFERING="buffering",
-	LINE_COLOR="line-color",
+	CUSTOM_COLOR="custom-color",
 	SHOW_MAIN_MENU="show-main-menu",
 	FOREIGN_KEYS="foreign-keys",
 	CONNECT_FK_TO_PK="fk-to-pk",

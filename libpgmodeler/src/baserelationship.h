@@ -34,8 +34,8 @@
 
 class BaseRelationship: public BaseGraphicObject  {
 	protected:
-		//! brief This attribute overrides the default color configuration for relationship line
-		QColor line_color;
+		//! brief This attribute overrides the default color configuration for relationship line and descriptor
+		QColor custom_color;
 
 		//! \brief Represents the points added by the user on the relationship line
 		vector<QPointF> points;
@@ -150,9 +150,9 @@ class BaseRelationship: public BaseGraphicObject  {
 		//! \brief Gets the distance of the specified label in relation to its origin
 		QPointF getLabelDistance(unsigned label_id);
 
-		void setLineColor(const QColor &color);
+		void setCustomColor(const QColor &color);
 
-		QColor getLineColor(void);
+		QColor getCustomColor(void);
 
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);
