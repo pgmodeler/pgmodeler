@@ -80,8 +80,8 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 void OperatorClass::addElement(OperatorClassElement elem)
 {
 	//The operator class does not accept duplicate elements on the list
-	if(isElementExists(elem))
-		throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//if(isElementExists(elem))
+	//	throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	elements.push_back(elem);
 }

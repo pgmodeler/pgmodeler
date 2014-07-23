@@ -750,15 +750,17 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-  //Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
+		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
 		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
     obj_xml.remove(QRegExp(att_regexp.arg("col-indexes")));
     obj_xml.remove(QRegExp(att_regexp.arg("constr-indexes")));
     obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
+
+		obj_xml.replace("line-color", ParsersAttributes::CUSTOM_COLOR);
 	}
 
   //Renaming the tag <condition> to <predicate> on indexes

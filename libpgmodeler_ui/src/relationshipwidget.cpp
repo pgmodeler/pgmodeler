@@ -178,7 +178,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(storage_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 
-		connect(line_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
+		connect(custom_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
 
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
@@ -193,7 +193,7 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 {
 	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
 
-	line_color_chk->setChecked(false);
+	custom_color_chk->setChecked(false);
 	identifier_chk->setChecked(false);
 	table1_mand_chk->setChecked(false);
 	table2_mand_chk->setChecked(false);
@@ -454,8 +454,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	copy_options_grp->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP &&
 															 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP);
 
-	line_color_chk->setChecked(base_rel->getLineColor()!=Qt::transparent);
-	color_picker->setColor(0, base_rel->getLineColor());
+	custom_color_chk->setChecked(base_rel->getCustomColor()!=Qt::transparent);
+	color_picker->setColor(0, base_rel->getCustomColor());
 	listAdvancedObjects();
 
 	if(rel1n || relnn)
@@ -978,10 +978,10 @@ void RelationshipWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		if(line_color_chk->isChecked())
-			base_rel->setLineColor(color_picker->getColor(0));
+		if(custom_color_chk->isChecked())
+			base_rel->setCustomColor(color_picker->getColor(0));
 		else
-			base_rel->setLineColor(Qt::transparent);
+			base_rel->setCustomColor(Qt::transparent);
 
 		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
 		{

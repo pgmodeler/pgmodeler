@@ -113,7 +113,8 @@ void DatabaseImportForm::importDatabase(void)
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 
 		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(), debug_mode_chk->isChecked());
+																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
+																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 		import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
 
 		timer.stop();
@@ -219,7 +220,8 @@ void DatabaseImportForm::listObjects(void)
 			//Set the working database on import helper
 			import_helper.setCurrentDatabase(database_cmb->currentText());
 			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(), debug_mode_chk->isChecked());
+																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
+																		 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 
       //List the objects using the static helper method
       DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true);

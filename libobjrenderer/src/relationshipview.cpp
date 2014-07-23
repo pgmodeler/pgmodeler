@@ -160,7 +160,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 	{
 		unsigned i, count;
 		QPen pen;
-		QColor color, line_color=this->getSourceObject()->getLineColor();
+		QColor color, line_color=this->getSourceObject()->getCustomColor();
 		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
@@ -613,9 +613,9 @@ void RelationshipView::configureLine(void)
 		conn_points[1]=p_central[1];
 
 		//Configuring the relationship line color
-		if(base_rel->getLineColor()!=Qt::transparent)
+		if(base_rel->getCustomColor()!=Qt::transparent)
 			//Using custom color
-			pen.setColor(base_rel->getLineColor());
+			pen.setColor(base_rel->getCustomColor());
 		else
 			//Using the default color
 			pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
@@ -775,12 +775,12 @@ void RelationshipView::configureDescriptor(void)
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
-	QColor line_color=base_rel->getLineColor();
+	QColor line_color=base_rel->getCustomColor();
 
 	//Configuring the relationship descriptor color
-	if(base_rel->getLineColor()!=Qt::transparent)
+	if(base_rel->getCustomColor()!=Qt::transparent)
 		//Using custom color
-		pen.setColor(base_rel->getLineColor());
+		pen.setColor(base_rel->getCustomColor());
 	else
 		//Using the default color
 		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);

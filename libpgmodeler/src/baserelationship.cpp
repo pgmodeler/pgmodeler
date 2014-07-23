@@ -29,7 +29,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 
 	(*(this))=(*rel);
 
-	line_color=QColor(Qt::transparent);
+	custom_color=QColor(Qt::transparent);
 }
 
 BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
@@ -46,7 +46,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		this->src_table=src_tab;
 		this->dst_table=dst_tab;
 		this->rel_type=rel_type;
-		this->line_color=QColor(Qt::transparent);
+		this->custom_color=QColor(Qt::transparent);
 
 		for(unsigned i=0; i < 3; i++)
 		{
@@ -107,7 +107,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::DST_FK_PATTERN]="";
   attributes[ParsersAttributes::UPD_ACTION]="";
   attributes[ParsersAttributes::DEL_ACTION]="";
-	attributes[ParsersAttributes::LINE_COLOR]="";
+	attributes[ParsersAttributes::CUSTOM_COLOR]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -384,7 +384,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	}
 
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
-	attributes[ParsersAttributes::LINE_COLOR]=(line_color!=Qt::transparent ? line_color.name() : "");
+	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : "");
 }
 
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
@@ -440,14 +440,14 @@ QPointF BaseRelationship::getLabelDistance(unsigned label_id)
 	return(this->lables_dist[label_id]);
 }
 
-void BaseRelationship::setLineColor(const QColor &color)
+void BaseRelationship::setCustomColor(const QColor &color)
 {
-	line_color=color;
+	custom_color=color;
 }
 
-QColor BaseRelationship::getLineColor(void)
+QColor BaseRelationship::getCustomColor(void)
 {
-	return(line_color);
+	return(custom_color);
 }
 
 vector<QPointF> BaseRelationship::getPoints(void)

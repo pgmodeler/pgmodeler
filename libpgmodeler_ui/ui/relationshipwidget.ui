@@ -1311,9 +1311,9 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QCheckBox" name="line_color_chk">
+        <widget class="QCheckBox" name="custom_color_chk">
          <property name="text">
-          <string>Line Color:</string>
+          <string>Custom Color:</string>
          </property>
         </widget>
        </item>

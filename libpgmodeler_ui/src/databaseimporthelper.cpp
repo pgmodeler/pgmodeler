@@ -26,7 +26,7 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
-	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
+	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
 	model_wgt=nullptr;
@@ -96,13 +96,14 @@ void DatabaseImportHelper::setSelectedOIDs(ModelWidget *model_wgt, map<ObjectTyp
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors)
 {
 	this->import_sys_objs=import_sys_objs;
 	this->import_ext_objs=import_ext_objs;
 	this->auto_resolve_deps=auto_resolve_deps;
 	this->ignore_errors=ignore_errors;
 	this->debug_mode=debug_mode;
+	this->rand_rel_colors=rand_rel_colors;
 
 	Connection::setPrintSQL(debug_mode);
 
@@ -517,6 +518,32 @@ void DatabaseImportHelper::importDatabase(void)
 		else
 			emit s_importCanceled();
 
+		//Generating random colors for relationships
+		if(rand_rel_colors)
+		{
+			vector<BaseObject *> *rels=nullptr;
+			vector<BaseObject *>::iterator itr, itr_end;
+			std::uniform_int_distribution<unsigned> dist(0,255);
+			ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+
+			for(unsigned i=0; i < 2; i++)
+			{
+				rels=dbmodel->getObjectList(rel_type[i]);
+				itr=rels->begin();
+				itr_end=rels->end();
+
+				while(itr!=itr_end)
+				{
+					dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
+																																			dist(rand_num_engine),
+																																			dist(rand_num_engine)));
+					itr++;
+				}
+			}
+		}
+
+		//Forcing the update of tables and views in order to correctly draw their titles without the schema's name
+		dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
 		resetImportParameters();   
 		sleepThread(20);
 	}
@@ -792,7 +819,6 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	try
 	{
 		attribs[ParsersAttributes::RECT_VISIBLE]="";
-		//attribs[ParsersAttributes::FILL_COLOR]=QColor(rand() % 255, rand() % 255, rand() % 255).name();
 		attribs[ParsersAttributes::FILL_COLOR]=QColor(dist(rand_num_engine),
 																									dist(rand_num_engine),
 																									dist(rand_num_engine)).name();
@@ -960,15 +986,14 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 				//Create the type
 				param_types[i].remove("[]");
-				type=PgSQLType(param_types[i]);
+				type=PgSQLType::parseString(param_types[i]);//PgSQLType(param_types[i]);
 				type.setDimension(dim);
 			}
 
 			//Alocates a new parameter
 			param=Parameter();
 			param.setType(type);
-
-			param.setIn(true);
+			//param.setIn(true);
 
 			if(param_names.isEmpty())
 				param.setName(QString("_param%1").arg(i+1));
@@ -2021,7 +2046,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 								params.push_back("VARIADIC " + arg_types[i]);
 						}
 						else
-							params.push_back("IN " + arg_types[i]);
+							params.push_back(/*"IN " +*/ arg_types[i]);
 					}
 				}
 				else
@@ -2125,6 +2150,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			}
 			else
 				obj_name=type_attr[ParsersAttributes::NAME];
+
+			/* Removing the optional modifier "without time zone" from date/time types.
+				 Since the class PgSQLTypes ommits the modifier it is necessary to reproduce
+				 this behavior here to avoid futher errors */
+			if(obj_name.startsWith("timestamp") || obj_name.startsWith("time"))
+				obj_name.remove(" without time zone");
 
 			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);

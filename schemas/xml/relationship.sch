@@ -21,8 +21,8 @@
     %if @{dst-fk-pattern} %then [ dst-fk-pattern=] "@{dst-fk-pattern}" %end
    %end
 
-  %if @{line-color} %then
-   $br $tb [ line-color=] "@{line-color}"
+  %if @{custom-color} %then
+   $br $tb [ custom-color=] "@{custom-color}"
   %end
 
   %if @{sql-disabled} %then

@@ -38,34 +38,6 @@
    <property name="bottomMargin">
     <number>4</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="validate_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Va&amp;lidate</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="11">
     <widget class="QWidget" name="prog_info_wgt" native="true">
      <property name="minimumSize">
@@ -756,6 +728,37 @@
      <property name="icon">
       <iconset resource="../res/resources.qrc">
        <normaloff>:/icones/icones/swapobjs.png</normaloff>:/icones/icones/swapobjs.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QToolButton" name="validate_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Va&amp;lidate</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
      </property>
      <property name="iconSize">
       <size>

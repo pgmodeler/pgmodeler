@@ -76,7 +76,10 @@ class DatabaseImportHelper: public QObject {
 		auto_resolve_deps,
 
 		//! \brief Outputs to STDOUT the executed query catalogs as well the generated XML
-		debug_mode;
+		debug_mode,
+
+		//! \brief Generate random colors for relationships
+		rand_rel_colors;
 
 		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
@@ -216,7 +219,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Defines the selected object to be imported
 		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
-    void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode);
+		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors);
 
 		unsigned getLastSystemOID(void);
 

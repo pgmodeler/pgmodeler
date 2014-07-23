@@ -183,6 +183,7 @@ bool OperatorClassElement::operator == (OperatorClassElement &elem)
 				 this->storage == elem.storage &&
 				 this->function == elem.function &&
 				 this->_operator == elem._operator &&
-				 this->strategy_number == elem.strategy_number);
+				 this->strategy_number == elem.strategy_number &&
+				 this->op_family == elem.op_family);
 }
 
