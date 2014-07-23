@@ -6149,6 +6149,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
+	qint64 dt1=QDateTime::currentDateTime().currentMSecsSinceEpoch();
+
   attribs_map attribs_aux;
   float general_obj_cnt, gen_defs_count;
   bool sql_disabled=false;
@@ -6329,6 +6331,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
   if(append_at_eod && def_type==SchemaParser::SQL_DEFINITION)
     def+="-- Appended SQL commands --\n" +	this->appended_sql + "\n---\n";
+
+	qint64 dt2=QDateTime::currentDateTime().currentMSecsSinceEpoch();
+
+	cout << "code generation time: " << dt2 - dt1 << " ms" << endl;
+	cout << "---" << endl;
 
   return(def);
 }

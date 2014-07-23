@@ -2281,139 +2281,121 @@ bool Relationship::isInvalidated(void)
 
 QString Relationship::getCodeDefinition(unsigned def_type)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
-	{
-		if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
-		{
-			unsigned count, i;
-
-			attributes[ParsersAttributes::RELATIONSHIP_1N]="1";
-			attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->getCodeDefinition(def_type);
-
-			if(uq_rel11)
-				attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->getCodeDefinition(def_type);
-
-			count=rel_constraints.size();
-			for(i=0; i < count; i++)
-			{
-				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::primary_key)
-					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
-
-			}
-
-			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-		}
-		else if(table_relnn && rel_type==RELATIONSHIP_NN)
-		{
-			unsigned count, i;
-
-			attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
-			attributes[ParsersAttributes::TABLE]=table_relnn->getCodeDefinition(def_type);
-
-			count=table_relnn->getConstraintCount();
-			for(i=0; i < count; i++)
-			{
-				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key &&
-					 table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::check)
-					attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
-			}
-		}
-		else if(rel_type==RELATIONSHIP_GEN)
-		{
-			attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
-			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-		}
-
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));
-	}
+	if(!code_invalidated && !cached_code[def_type].isEmpty())
+		return(cached_code[def_type]);
 	else
 	{
-		unsigned count, i;
-		bool reduced_form;
-
-		setRelationshipAttributes();
-		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
-		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
-		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
-    attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
-    attributes[ParsersAttributes::DEL_ACTION]=~del_action;
-
-		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
-		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
-		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
-
-		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
-		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
-		attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PK_PATTERN];
-		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UQ_PATTERN];
-		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
-		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
-
-    /* if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
+		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			count=col_indexes.size();
-			for(i=0; i < count; i++)
-				attributes[ParsersAttributes::COL_INDEXES]+=QString("%1").arg(col_indexes[i]) + ",";
+			if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
+			{
+				unsigned count, i;
 
-			count=attrib_indexes.size();
-			for(i=0; i < count; i++)
-				attributes[ParsersAttributes::ATTRIB_INDEXES]+=QString("%1").arg(attrib_indexes[i]) + ",";
+				attributes[ParsersAttributes::RELATIONSHIP_1N]="1";
+				attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->getCodeDefinition(def_type);
 
-			count=constr_indexes.size();
-			for(i=0; i < count; i++)
-				attributes[ParsersAttributes::CONSTR_INDEXES]+=QString("%1").arg(constr_indexes[i]) + ",";
+				if(uq_rel11)
+					attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->getCodeDefinition(def_type);
 
+				count=rel_constraints.size();
+				for(i=0; i < count; i++)
+				{
+					if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::primary_key)
+						attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
+
+				}
+
+				attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+			}
+			else if(table_relnn && rel_type==RELATIONSHIP_NN)
+			{
+				unsigned count, i;
+
+				attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
+				attributes[ParsersAttributes::TABLE]=table_relnn->getCodeDefinition(def_type);
+
+				count=table_relnn->getConstraintCount();
+				for(i=0; i < count; i++)
+				{
+					if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key &&
+						 table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::check)
+						attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
+				}
+			}
+			else if(rel_type==RELATIONSHIP_GEN)
+			{
+				attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
+				attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+			}
+
+			return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));
+		}
+		else
+		{
+			unsigned count, i;
+			bool reduced_form;
+
+			setRelationshipAttributes();
+			attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
+			attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
+			attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
+			attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
+			attributes[ParsersAttributes::DEL_ACTION]=~del_action;
+
+			attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
+			attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
+			attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
+
+			attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
+			attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
+			attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PK_PATTERN];
+			attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UQ_PATTERN];
+			attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
+			attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
+
+			attributes[ParsersAttributes::COLUMNS]="";
+			count=rel_attributes.size();
+			for(i=0; i < count; i++)
+			{
+				attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Column *>(rel_attributes[i])->
+																								getCodeDefinition(SchemaParser::XML_DEFINITION);
+			}
+
+			attributes[ParsersAttributes::CONSTRAINTS]="";
 			count=rel_constraints.size();
 			for(i=0; i < count; i++)
-				attributes[ParsersAttributes::COL_INDEXES]+=QString("%1").arg(getReceiverTable()->getObjectIndex(rel_constraints[i]->getName(), OBJ_CONSTRAINT)) + ",";
-
-			attributes[ParsersAttributes::COL_INDEXES].remove(attributes[ParsersAttributes::COL_INDEXES].size()-1,1);
-			attributes[ParsersAttributes::ATTRIB_INDEXES].remove(attributes[ParsersAttributes::ATTRIB_INDEXES].size()-1,1);
-			attributes[ParsersAttributes::CONSTR_INDEXES].remove(attributes[ParsersAttributes::CONSTR_INDEXES].size()-1,1);
-    } */
-
-		attributes[ParsersAttributes::COLUMNS]="";
-		count=rel_attributes.size();
-		for(i=0; i < count; i++)
-		{
-			attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Column *>(rel_attributes[i])->
-																							getCodeDefinition(SchemaParser::XML_DEFINITION);
-		}
-
-		attributes[ParsersAttributes::CONSTRAINTS]="";
-		count=rel_constraints.size();
-		for(i=0; i < count; i++)
-		{
-			if(!rel_constraints[i]->isProtected())
-				attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-																										getCodeDefinition(SchemaParser::XML_DEFINITION, true);
-		}
-
-		count=column_ids_pk_rel.size();
-		for(i=0; i < count; i++)
-		{
-			if(!gen_columns.empty() && i < gen_columns.size())
 			{
-				attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
-				if(i < count-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
+				if(!rel_constraints[i]->isProtected())
+					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
+																											getCodeDefinition(SchemaParser::XML_DEFINITION, true);
 			}
+
+			count=column_ids_pk_rel.size();
+			for(i=0; i < count; i++)
+			{
+				if(!gen_columns.empty() && i < gen_columns.size())
+				{
+					attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
+					if(i < count-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
+				}
+			}
+
+			if(copy_options.getCopyMode()!=0)
+			{
+				attributes[ParsersAttributes::COPY_OPTIONS]=QString("%1").arg(copy_options.getCopyOptionsIds());
+				attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());;
+			}
+
+			reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
+									 attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
+									 attributes[ParsersAttributes::POINTS].isEmpty() &&
+									 attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty() &&
+									 attributes[ParsersAttributes::POINTS].isEmpty() &&
+									 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+
+
+			return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION, reduced_form));
 		}
-
-		if(copy_options.getCopyMode()!=0)
-		{
-			attributes[ParsersAttributes::COPY_OPTIONS]=QString("%1").arg(copy_options.getCopyOptionsIds());
-			attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());;
-		}
-
-		reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
-									attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
-									attributes[ParsersAttributes::POINTS].isEmpty() &&
-									attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty() &&
-									attributes[ParsersAttributes::POINTS].isEmpty() &&
-									attributes[ParsersAttributes::LABELS_POS].isEmpty());
-
-
-		return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION, reduced_form));
 	}
 }
 

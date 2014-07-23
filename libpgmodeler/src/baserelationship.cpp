@@ -389,33 +389,39 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
-  {
-    if(rel_type!=RELATIONSHIP_FK)
-      return("");
-    else
-    {
-      QString sql_code;
-      vector<Constraint *> fks;
-
-      dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
-
-      while(!fks.empty())
-      {
-        sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-        fks.pop_back();
-      }
-
-      return(sql_code);
-    }
-  }
+	if(!code_invalidated && !cached_code[def_type].isEmpty())
+		return(cached_code[def_type]);
 	else
 	{
-		bool reduced_form;
-		setRelationshipAttributes();
-		reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
-									attributes[ParsersAttributes::LABELS_POS].isEmpty());
-		return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+		if(def_type==SchemaParser::SQL_DEFINITION)
+		{
+			if(rel_type!=RELATIONSHIP_FK)
+				return("");
+			else
+			{
+				QString sql_code;
+				vector<Constraint *> fks;
+
+				dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
+
+				while(!fks.empty())
+				{
+					sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					fks.pop_back();
+				}
+
+				cached_code[def_type]=sql_code;
+				return(sql_code);
+			}
+		}
+		else
+		{
+			bool reduced_form;
+			setRelationshipAttributes();
+			reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
+									 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+			return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+		}
 	}
 }
 

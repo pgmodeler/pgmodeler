@@ -114,7 +114,12 @@ class BaseObject {
 		/*! \brief Indicates if the generated SQL code is disable. When this flag is true
 		the object's SQL code is created normally but is commented. This is useful when using
 		the role only as a reference since it already exists on the destination server. */
-		sql_disabled;
+		sql_disabled,
+
+		code_invalidated;
+
+		QString cached_code[2],
+						cached_reduced_code;
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
