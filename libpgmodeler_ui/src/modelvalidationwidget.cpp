@@ -53,8 +53,10 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     connect(use_tmp_names_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
+
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
-    connect(validation_thread, &QThread::started, [=](){ validation_thread->setPriority(QThread::LowPriority); });
+		connect(validation_thread, &QThread::started, [=](){ validation_thread->setPriority(QThread::HighPriority); });
+
 		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
 		connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
 		connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
@@ -88,7 +90,7 @@ void ModelValidationWidget::reenableValidation(void)
 		swap_ids_btn->setEnabled(true);
 		cancel_btn->setEnabled(false);
 		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
-		clear_btn->setEnabled(output_trw->topLevelItemCount() > 0);
+		clear_btn->setEnabled(true);
 		options_btn->setEnabled(true);
 		options_frm->setEnabled(true);
 		ico_lbl->setVisible(false);
@@ -111,6 +113,7 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	options_btn->setEnabled(false);
 	model_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
+	options_frm->setEnabled(false);
 }
 
 void ModelValidationWidget::clearOutput(void)
@@ -161,12 +164,13 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
-	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
-	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
+	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr, *proxy_obj_item=nullptr;
+	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr, *proxy_obj_label=nullptr;
 	vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
+	BaseObject *proxy_obj=nullptr;
 
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
@@ -176,15 +180,15 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 									.arg(val_info.getReferences().size()));
   else if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
   {
-    QString str_aux;
+		QString str_aux;
 
-    if(TableObject::isTableObject(val_info.getObject()->getObjectType()))
-    {
-      TableObject *tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
-      str_aux=QString(" owned by table <strong>%1</strong> ").arg(tab_obj->getParentTable()->getName(true).remove("\""));
-    }
+		if(TableObject::isTableObject(val_info.getObject()->getObjectType()))
+		{
+			TableObject *tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
+			str_aux=QString(" owned by table <strong>%1</strong> ").arg(tab_obj->getParentTable()->getName(true).remove("\""));
+		}
 
-    label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3]%4 is referencing columns created by <strong>%5</strong> relationship(s) but is created before them.")
+		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3]%4 is referencing columns created by <strong>%5</strong> relationship(s) but is created before them.")
                   .arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
                   .arg(val_info.getObject()->getTypeName())
                   .arg(val_info.getObject()->getObjectId())
@@ -248,21 +252,37 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		refs=val_info.getReferences();
 		while(!refs.empty())
 		{
+			if(val_info.getProxyObject())
+			{
+				proxy_obj=val_info.getProxyObject();
+				proxy_obj_item=new QTreeWidgetItem(item);
+				proxy_obj_label=new QLabel;
+				proxy_obj_item->setIcon(0, QPixmap(QString(":/icones/icones/") + proxy_obj->getSchemaName() + QString(".png")));
+
+				proxy_obj_label->setText(trUtf8("Proxy object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
+												.arg(Utf8String::create(proxy_obj->getName(true)).remove("\""))
+												.arg(Utf8String::create(proxy_obj->getTypeName()))
+												.arg(proxy_obj->getObjectId()));
+
+				output_trw->setItemWidget(proxy_obj_item, 0, proxy_obj_label);
+				proxy_obj=nullptr;
+			}
+
 			item1=new QTreeWidgetItem(item);
 			label1=new QLabel;
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
 
+			tab_obj=dynamic_cast<TableObject *>(refs.back());
+			ref_name=refs.back()->getName(true);
+
+			if(tab_obj)
+				ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + "." + ref_name;
 
 			if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
 			{
-				TableObject *tab_obj=dynamic_cast<TableObject *>(refs.back());
-				ref_name=refs.back()->getName(true);
-
 				//If the referrer object is a table object, concatenates the parent table name
 				if(tab_obj)
 				{
-					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + "." + ref_name;
-
 					if(tab_obj->isAddedByRelationship())
 					{
 						QPalette pal;
@@ -284,12 +304,12 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			{
         if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
           label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
-                          .arg(Utf8String::create(refs.back()->getName(true)))
+													.arg(Utf8String::create(ref_name).remove("\""))
                           .arg(refs.back()->getObjectId()));
         else
         {
           label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
-                          .arg(Utf8String::create(refs.back()->getName(true)))
+													.arg(Utf8String::create(ref_name).remove("\""))
                           .arg(Utf8String::create(refs.back()->getTypeName()))
                           .arg(refs.back()->getObjectId()));
         }
