@@ -47,7 +47,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
-  connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
+	connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::HighPriority); });
 
 	pgsqlvers_cmb->addItems(SchemaParser::getPgSQLVersions());
 	pgsqlvers1_cmb->addItems(SchemaParser::getPgSQLVersions());

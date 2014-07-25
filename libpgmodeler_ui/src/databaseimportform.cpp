@@ -53,7 +53,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 
   connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
-  connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::LowPriority); });
+	connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)

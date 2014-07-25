@@ -36,7 +36,13 @@ class ValidationInfo {
 		unsigned val_type;
 
 		//! \brief Object which the validation info belongs to
-		BaseObject *object;
+		BaseObject *object,
+
+		/*! \brief Object which was analyzed and contains an implicit inconsistency related to the "object" attribute.
+		 *  An example of proxy object is a foreign key constraint in this case the foreign key is analyzed but the
+				inconsistency is on to its parent table which is referencing another table (through the fk)
+				and this last table is being created before the first one. The same analogy applies to relationship objects. */
+		*proxy_object;
 
 		/*! \brief References to the validated object. This vector isn't filled when
 		the info is about SQL validation */
@@ -52,7 +58,7 @@ class ValidationInfo {
                           VALIDATION_ABORTED=4;
 
 		ValidationInfo(void);
-		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
+		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references, BaseObject *proxy_object=nullptr);
 		ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
@@ -61,6 +67,9 @@ class ValidationInfo {
 
 		//! \brief Returns the object which the validation info belongs to
 		BaseObject *getObject(void);
+
+		//! \brief Returns the prooxy object which parent or children contains the inconsistency
+		BaseObject *getProxyObject(void);
 
 		//! \brief Returns the objects that somehow references the validation info object
 		vector<BaseObject *> getReferences(void);

@@ -143,10 +143,19 @@ void SwapObjectsIdsWidget::changeObjectsIds(void)
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 						 *dst_obj=dst_object_sel->getSelectedObject();
+	BaseGraphicObject *graph_src_obj=dynamic_cast<BaseGraphicObject *>(src_obj),
+										*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
 	try
 	{
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
+
+		if(graph_src_obj)
+			graph_src_obj->setModified(true);
+
+		if(graph_dst_obj)
+			graph_dst_obj->setModified(true);
+
 		this->accept();
 		parent_form.close();
 	}
