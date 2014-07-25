@@ -27,6 +27,7 @@ BaseTable::BaseTable(void)
 
 void BaseTable::setTag(Tag *tag)
 {
+	setCodeInvalidated(this->tag != tag);
   this->tag=tag;
 }
 

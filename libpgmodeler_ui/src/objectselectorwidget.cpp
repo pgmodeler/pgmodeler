@@ -69,11 +69,21 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
     connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
 		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
+
+		obj_name_txt->installEventFilter(this);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
+{
+	if(evnt->type()==QEvent::MouseButtonPress && obj==obj_name_txt)
+		showObjectView();
+
+	return(QWidget::eventFilter(obj, evnt));
 }
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)

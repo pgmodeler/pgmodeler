@@ -87,6 +87,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
     QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 
 		void mouseMoveEvent(QMouseEvent *);
+		void resizeEvent(QResizeEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
     bool eventFilter(QObject *object, QEvent *event);
@@ -122,6 +123,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void showObjectMenu(void);
 		void editObject(void);
 		void collapseAll(void);
+		void filterObjects(void);
 
 	signals:
 		void s_visibilityChanged(BaseObject *,bool);

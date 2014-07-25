@@ -27,9 +27,6 @@
 
  %if @{columns} %then @{columns} %end
  %if @{constraints} %then @{constraints} %end
- %if @{indexes} %then @{indexes} %end
- %if @{rules} %then @{rules} %end
- %if @{triggers} %then @{triggers} %end
  
  %if @{col-indexes} %then @{col-indexes} %end
  %if @{constr-indexes} %then @{constr-indexes} %end

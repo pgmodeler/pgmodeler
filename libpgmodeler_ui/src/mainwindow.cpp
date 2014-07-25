@@ -415,7 +415,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
-	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::LowPriority); });
+	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -1114,6 +1114,7 @@ void MainWindow::closeModel(int model_id)
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
 		oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
 		updateToolsState(true);
+		__updateDockWidgets();
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		models_tbw->setVisible(false);

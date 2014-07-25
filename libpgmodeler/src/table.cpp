@@ -24,9 +24,6 @@ Table::Table(void) : BaseTable()
 	with_oid=gen_alter_cmds=unlogged=false;
 	attributes[ParsersAttributes::COLUMNS]="";
 	attributes[ParsersAttributes::CONSTRAINTS]="";
-	attributes[ParsersAttributes::INDEXES]="";
-	attributes[ParsersAttributes::TRIGGERS]="";
-	attributes[ParsersAttributes::RULES]="";
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
 	attributes[ParsersAttributes::COPY_TABLE]="";
@@ -276,71 +273,6 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	}
 
 	attributes[ParsersAttributes::CONSTRAINTS]=str_constr;
-}
-
-void Table::setTriggersAttribute(unsigned def_type)
-{
-	QString str_trig;
-	unsigned i, count;
-	Trigger *trig=nullptr;
-
-	count=triggers.size();
-	for(i=0; i < count; i++)
-	{
-		trig=dynamic_cast<Trigger *>(triggers.at(i));
-
-		/* Triggers that references columns added by relationship (special object)
-		 do not have their code definition generated here. They are treated
-		 in the database model code generation method */
-    /*if((!trig->isReferRelationshipAddedColumn() &&
-				def_type==SchemaParser::XML_DEFINITION) ||
-       def_type==SchemaParser::SQL_DEFINITION)*/
-    if(!trig->isReferRelationshipAddedColumn())
-			str_trig+=trig->getCodeDefinition(def_type);
-	}
-
-	attributes[ParsersAttributes::TRIGGERS]=str_trig;
-}
-
-void Table::setIndexesAttribute(unsigned def_type)
-{
-	QString str_ind;
-	unsigned i, count;
-	Index *ind=nullptr;
-
-	count=indexes.size();
-	for(i=0; i < count; i++)
-	{
-		ind=dynamic_cast<Index *>(indexes[i]);
-
-		/* Indexes that references columns added by relationship (special object)
-		 do not have their code definition generated here. They are treated
-		 in the database model code generation method */
-    /*if((!ind->isAddedByRelationship() &&
-        !ind->isReferRelationshipAddedColumn() &&
-				def_type==SchemaParser::XML_DEFINITION) ||
-       def_type==SchemaParser::SQL_DEFINITION) */
-    if(!ind->isReferRelationshipAddedColumn())
-			str_ind+=ind->getCodeDefinition(def_type);
-	}
-
-	attributes[ParsersAttributes::INDEXES]=str_ind;
-}
-
-void Table::setRulesAttribute(unsigned def_type)
-{
-	QString str_rule;
-	unsigned i, count;
-
-	count=rules.size();
-	for(i=0; i < count; i++)
-	{
-		if((def_type==SchemaParser::XML_DEFINITION) ||
-			 def_type==SchemaParser::SQL_DEFINITION)
-			str_rule+=rules[i]->getCodeDefinition(def_type);
-	}
-
-	attributes[ParsersAttributes::RULES]=str_rule;
 }
 
 vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
@@ -1371,9 +1303,6 @@ QString Table::getCodeDefinition(unsigned def_type)
 
 	setColumnsAttribute(def_type);
 	setConstraintsAttribute(def_type);
-	setTriggersAttribute(def_type);
-	setIndexesAttribute(def_type);
-	setRulesAttribute(def_type);
 	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
@@ -1426,7 +1355,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 {
 	vector<TableObject *> *obj_list=nullptr;
 	vector<TableObject *>::iterator itr1, itr2;
-	TableObject *aux_obj=nullptr;
+	TableObject *aux_obj=nullptr, *aux_obj1=nullptr;
 
 	try
 	{
@@ -1440,6 +1369,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 			//If the idx1 is out of bound inserts the element idx2 at the list's begin
 			else if(idx1 >= obj_list->size())
 			{
+				aux_obj1=obj_list->front();
 				itr2=obj_list->begin() + idx2;
 				aux_obj=(*itr2);
 				obj_list->erase(itr2);
@@ -1450,6 +1380,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 			{
 				itr1=obj_list->begin() + idx1;
 				aux_obj=(*itr1);
+				aux_obj1=obj_list->back();
 				obj_list->erase(itr1);
 				obj_list->push_back(aux_obj);
 			}
@@ -1459,9 +1390,12 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 				itr1=obj_list->begin() + idx1;
 				itr2=obj_list->begin() + idx2;
 
-				(*itr1)=(*itr2);
+				(*itr1)=aux_obj1=(*itr2);
 				(*itr2)=aux_obj;
 			}
+
+			if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT)
+				BaseObject::swapObjectsIds(aux_obj, aux_obj1, false);
 		}
 	}
 	catch(Exception &e)

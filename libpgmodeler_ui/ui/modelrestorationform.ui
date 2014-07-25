@@ -118,14 +118,14 @@
           <widget class="QLabel" name="label_2">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="text">
@@ -137,14 +137,18 @@
            <property name="pixmap">
             <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_alerta.png</pixmap>
            </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label_3">
            <property name="font">
             <font>
+             <pointsize>8</pointsize>
              <weight>50</weight>
-             <italic>false</italic>
+             <italic>true</italic>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>

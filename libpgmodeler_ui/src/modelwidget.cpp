@@ -525,9 +525,9 @@ bool ModelWidget::saveLastCanvasPosition(void)
   return(false);
 }
 
-void ModelWidget::hideEvent(QHideEvent *)
+/* void ModelWidget::hideEvent(QHideEvent *)
 {
-  try
+	try
   {
     if(!modified &&  saveLastCanvasPosition())
       db_model->saveModel(this->filename, SchemaParser::XML_DEFINITION);
@@ -535,8 +535,8 @@ void ModelWidget::hideEvent(QHideEvent *)
   catch(Exception &e)
   {
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
-}
+	}
+} */
 
 void ModelWidget::restoreLastCanvasPosition(void)
 {

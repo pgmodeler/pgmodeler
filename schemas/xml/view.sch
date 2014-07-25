@@ -51,7 +51,4 @@
   $tb [<expression type="cte-exp">] <! $ob CDATA $ob @{cte-exp} $cb $cb ></expression> $br
  %end
 
- %if @{triggers} %then @{triggers} %end
- %if @{rules} %then @{rules} %end
-
 </view> $br $br

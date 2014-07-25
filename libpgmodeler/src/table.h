@@ -76,9 +76,6 @@ class Table: public BaseTable {
 		//! \brief The methods below generates the table attributes used by the SchemaParser
 		void setColumnsAttribute(unsigned def_type);
 		void setConstraintsAttribute(unsigned def_type);
-		void setTriggersAttribute(unsigned def_type);
-		void setIndexesAttribute(unsigned def_type);
-		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
     void setRelObjectsIndexesAttribute(void);

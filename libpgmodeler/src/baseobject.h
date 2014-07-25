@@ -76,7 +76,11 @@ enum ObjectType {
 
 class BaseObject {
 	private:
+		//! brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
+
+		//! brief Indicates the the cached code enabled
+		static bool use_cached_code;
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
@@ -114,7 +118,15 @@ class BaseObject {
 		/*! \brief Indicates if the generated SQL code is disable. When this flag is true
 		the object's SQL code is created normally but is commented. This is useful when using
 		the role only as a reference since it already exists on the destination server. */
-		sql_disabled;
+		sql_disabled,
+
+		//! brief Indicates if the cached code is invalidated
+		code_invalidated;
+
+		//! brief Stores the cached xml and sql code
+		QString cached_code[2],
+		//! brief Stores the xml code in reduced form
+						cached_reduced_code;
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
@@ -352,6 +364,18 @@ class BaseObject {
 
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsCustomSQL(void);
+
+		/*! brief Marks the current cached code as invalid and forces its regenaration.
+				This method has no effect when the cached code support is disables. See enableCachedCode() */
+		void setCodeInvalidated(bool value);
+
+		//! brief Returns if the code (sql and xml) is invalidated
+		bool isCodeInvalidated(void);
+
+		/*! brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
+				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
+				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
+		static void enableCachedCode(bool value);
 
     /*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.

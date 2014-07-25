@@ -72,7 +72,7 @@ class ModelValidationHelper: public QObject {
 		finished before completely quit the thread itself otherwise the method don't do anything. */
 		void sleepThread(unsigned msecs);
 
-    void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
+		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs, BaseObject *proxy_obj=nullptr);
 
 	public:
 		ModelValidationHelper(void);

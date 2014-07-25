@@ -53,7 +53,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 
   connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
-  connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::LowPriority); });
+	connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -164,7 +164,7 @@ bool DatabaseImportForm::hasCheckedItems(void)
 	while(*itr && !selected)
 	{
 		//Only valid items (OID > 0) and with Checked state are considered as selected
-		selected=((*itr)->checkState(0)==Qt::Checked && (*itr)->data(0, Qt::UserRole).value<unsigned>() > 0);
+		selected=((*itr)->checkState(0)==Qt::Checked && (*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>() > 0);
 		++itr;
 	}
 
@@ -349,39 +349,51 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 void DatabaseImportForm::filterObjects(void)
 {
-  DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), by_oid_chk->isChecked());
+	DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), (by_oid_chk->isChecked() ? OBJECT_ID : 0));
 }
 
-void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, bool filter_by_oid)
+void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, int search_column)
 {
-  QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, filter_by_oid);
-  QTreeWidgetItemIterator itr(tree_wgt);
-  QTreeWidgetItem *parent=nullptr;
+	if(!tree_wgt)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  tree_wgt->blockSignals(true);
-  tree_wgt->collapseAll();
-  while(*itr)
-  {
-    (*itr)->setHidden(true);
-    ++itr;
-  }
+	QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
+	QTreeWidgetItemIterator itr(tree_wgt);
+	QTreeWidgetItem *parent=nullptr;
 
-  while(!items.isEmpty())
-  {
-    items.front()->setExpanded(true);
-    items.front()->setHidden(false);
-    parent=items.front()->parent();
+	tree_wgt->blockSignals(true);
+	tree_wgt->collapseAll();
 
-    while(parent)
-    {
-      parent->setHidden(false);
-      parent->setExpanded(true);
-      parent=parent->parent();
-    }
+	while(*itr)
+	{
+		(*itr)->setHidden(!pattern.isEmpty());
+		++itr;
+	}
 
-    items.pop_front();
-  }
-  tree_wgt->blockSignals(false);
+	if(pattern.isEmpty())
+	{
+		tree_wgt->topLevelItem(0)->setExpanded(true);
+	}
+	else
+	{
+		while(!items.isEmpty())
+		{
+			items.front()->setExpanded(true);
+			items.front()->setHidden(false);
+			parent=items.front()->parent();
+
+			while(parent)
+			{
+				parent->setHidden(false);
+				parent->setExpanded(true);
+				parent=parent->parent();
+			}
+
+			items.pop_front();
+		}
+	}
+
+	tree_wgt->blockSignals(false);
 }
 
 void DatabaseImportForm::cancelImport(void)

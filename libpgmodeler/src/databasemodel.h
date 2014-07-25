@@ -407,7 +407,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Aggregate *createAggregate(void);
 		Table *createTable(void);
 		Column *createColumn(void);
-		Rule *createRule(void);
 		Sequence *createSequence(bool ignore_onwer=false);
 		View *createView(void);
 		Collation *createCollation(void);
@@ -417,8 +416,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);
 		Constraint *createConstraint(BaseObject *parent_obj);
-		Index *createIndex(Table *table);
-		Trigger *createTrigger(BaseTable *table);
+		Rule *createRule(void);
+		Index *createIndex(void);
+		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
 
     //! \brief Creates/removes the relationship between the passed view and the referecend tables
