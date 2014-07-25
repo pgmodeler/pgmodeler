@@ -538,8 +538,6 @@ void RelationshipView::configureLine(void)
 				rec_tab->getForeignKeys(fks, true, ref_tab);
 				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
 				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
-				//pk_pnt_type=(ref_tab_view->pos().x() >= rec_tab_view->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
-				//fk_pnt_type=(pk_pnt_type==BaseTableView::RIGHT_CONN_POINT ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
 
 				pk_pnt_type=(ref_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
 				fk_pnt_type=(rec_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
@@ -567,8 +565,19 @@ void RelationshipView::configureLine(void)
 					float pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
 								fk_dx=(fk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH);
 
-					p_central[0]=pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
-					p_central[1]=fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
+					pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
+					fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
+
+					if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					{
+						p_central[1]=pk_pnt;
+						p_central[0]=fk_pnt;
+					}
+					else
+					{
+						p_central[0]=pk_pnt;
+						p_central[1]=fk_pnt;
+					}
 				}
 			}
 
@@ -999,11 +1008,11 @@ void RelationshipView::configureLabels(void)
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
-	if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+	/*if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 	{
 		base_rel->setMandatoryTable(BaseRelationship::SRC_TABLE, true);
 		base_rel->setMandatoryTable(BaseRelationship::DST_TABLE, true);
-	}
+	}*/
 
 	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
 
@@ -1025,7 +1034,7 @@ void RelationshipView::configureLabels(void)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-		float dl, da;
+		float dl, da, factor;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
@@ -1041,9 +1050,15 @@ void RelationshipView::configureLabels(void)
 
 				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
 					 (rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
-					x=pos.x() - (labels[idx]->boundingRect().width() * 0.75f);
+				{
+					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.45 : 0.75);
+					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
+				}
 				else
-					x=pos.x() - (labels[idx]->boundingRect().width() * 0.25f);
+				{
+					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.50 : 0.25);
+					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
+				}
 
 				configureLabelPosition(label_ids[idx], x, pos.y() - da);
 			}
@@ -1155,6 +1170,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 		}
 
 		labels[label_id]->setPos(x,y);
+		labels[label_id]->setToolTip(this->toolTip());
 		labels[label_id]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
 		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
 																		BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));

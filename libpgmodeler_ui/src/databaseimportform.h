@@ -67,11 +67,12 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
     //! brief Constants used to access the tree widget items data
-    static const unsigned OBJECT_ID=0,
-                          OBJECT_TYPE=1,
-                          OBJECT_SCHEMA=2,
-                          OBJECT_TABLE=3,
-                          OBJECT_COUNT=4; //Only for gropus
+		static const unsigned /*OBJECT_NAME=0,*/
+													OBJECT_ID=0,
+													OBJECT_TYPE=1,
+													OBJECT_SCHEMA=2,
+													OBJECT_TABLE=3,
+													OBJECT_COUNT=4; //Only for gropus
 
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
@@ -84,7 +85,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
     static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps);
 
-    static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, bool filter_by_oid);
+		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column=OBJECT_ID);
 
     /*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
     The "root" parameter is used to associate the group of objects as child of it.

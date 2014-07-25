@@ -56,8 +56,8 @@ $br
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
 
-%if @{triggers} %then @{triggers} %end
-%if @{rules} %then @{rules} %end
+#%if @{triggers} %then @{triggers} %end
+#%if @{rules} %then @{rules} %end
 %if @{comment} %then @{comment} %end
 %if @{owner} %then @{owner} %end
 %if @{appended-sql} %then @{appended-sql} %end

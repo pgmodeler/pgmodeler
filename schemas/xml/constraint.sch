@@ -75,3 +75,4 @@
  
 %if @{decl-in-table} %then $tb %end
 </constraint> $br
+%if %not @{decl-in-table} %then $br %end

@@ -674,7 +674,6 @@ void BaseObjectWidget::applyConfiguration(void)
 			bool new_obj;
       ObjectType obj_type=object->getObjectType();
 			QString obj_name;
-      vector<BaseObject *> ref_objs;
       Messagebox msgbox;
 
 
@@ -781,19 +780,6 @@ void BaseObjectWidget::applyConfiguration(void)
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
 				object->setSchema(esquema);
 			}
-
-      if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-         object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-         object->getObjectType()==OBJ_EXTENSION)
-      {
-        model->getObjectReferences(object, ref_objs);
-
-        for(auto obj : ref_objs)
-        {
-          if(obj->getObjectType()==OBJ_COLUMN)
-            dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
-        }
-      }
 		}
 		catch(Exception &e)
 		{
@@ -809,6 +795,7 @@ void BaseObjectWidget::finishConfiguration(void)
 		ObjectType obj_type=this->object->getObjectType();
 		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
+		vector<BaseObject *> ref_objs;
 
 		if(new_object)
 		{
@@ -841,6 +828,22 @@ void BaseObjectWidget::finishConfiguration(void)
         this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 		}
 
+		if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
+			 object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
+			 object->getObjectType()==OBJ_EXTENSION)
+		{
+			model->getObjectReferences(object, ref_objs);
+
+			for(auto obj : ref_objs)
+			{
+				obj->setCodeInvalidated(true);
+
+				if(obj->getObjectType()==OBJ_COLUMN)
+					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+			}
+		}
+
+		object->setCodeInvalidated(true);
 		this->accept();
 		parent_form->hide();
 
@@ -855,6 +858,7 @@ void BaseObjectWidget::finishConfiguration(void)
 					graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
 
 				graph_obj->setModified(true);
+				graph_obj->setCodeInvalidated(true);
 			}
 			else if(graph_obj)
 			{

@@ -83,30 +83,44 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
             obj_id=obj->getObjectId();
           }
 
+					//Swap the id of the validation object and the found object (minor id)
+					if(obj)
+					{
+						TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+
+						if(!tab_obj)
+						{
+							BaseObject::swapObjectsIds(info_obj, obj, true);
+							aux_obj=info_obj;
+						}
+						else if(tab_obj && tab_obj->getParentTable()==info_obj)
+						{
+							BaseObject::updateObjectId(tab_obj);
+						}
+					}
+					/*else if(!refs.empty())
+					{
+						BaseObject::updateObjectId(info_obj);
+						aux_obj=info_obj;
+					}*/
+
+					if(aux_obj && (aux_obj->getObjectType()==OBJ_VIEW || aux_obj->getObjectType()==OBJ_TABLE))
+					{
+						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
+						for(auto rel : base_rels)
+						{
+							if(rel->getObjectId() < aux_obj->getObjectId())
+								BaseObject::updateObjectId(rel);
+						}
+					}
+
           refs.pop_back();
+					obj=nullptr;
+					obj_id=info_obj->getObjectId();
         }
       }
 
-			//Swap the id of the validation object and the found object (minor id)
-			if(obj)
-      {
-        BaseObject::swapObjectsIds(info_obj, obj, true);
-        aux_obj=obj;
-      }
-      else
-      {
-        BaseObject::updateObjectId(info_obj);
-        aux_obj=info_obj;
-      }
-
-      if(aux_obj->getObjectType()==OBJ_VIEW)
-      {
-        vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
-        for(auto rel : base_rels)
-          BaseObject::updateObjectId(rel);
-      }
-
-			sleepThread(5);
+			//sleepThread(10);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
@@ -166,7 +180,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				}
 
 				refs.pop_back();
-				sleepThread(5);
+				//sleepThread(10);
 			}
 		}
 	}
@@ -234,7 +248,7 @@ void ModelValidationHelper::validateModel(void)
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
 		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
-		Constraint *constr=nullptr;
+		Constraint *fk_constr=nullptr;
 		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
@@ -251,7 +265,7 @@ void ModelValidationHelper::validateModel(void)
 			obj_list=db_model->getObjectList(types[i]);
 			itr=obj_list->begin();
 
-			while(itr!=obj_list->end()&& !valid_canceled)
+			while(itr!=obj_list->end() && !valid_canceled)
 			{
 				object=(*itr);
         obj_type=object->getObjectType();
@@ -289,20 +303,29 @@ void ModelValidationHelper::validateModel(void)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered
 							tab_obj=dynamic_cast<TableObject *>(refs.back());
-							constr=dynamic_cast<Constraint *>(tab_obj);
+							fk_constr=dynamic_cast<Constraint *>(tab_obj);
 
 							/* If the current referrer object has an id less than reference object's id
 						then it will be pushed into the list of invalid references. The only exception is
 						for foreign keys that are discarded from any validation since they are always created
 						at end of code defintion being free of any reference breaking. */
-							if(object != refs.back() &&
-								 (!constr || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
-								 ((!tab_obj && refs.back()->getObjectId() <= object->getObjectId()) ||
+							/*if(object != refs.back() &&
+								 (!fk_constr || (fk_constr && fk_constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+								 ((!fk_constr && refs.back()->getObjectId() <= object->getObjectId()) ||
 									(tab_obj && !tab_obj->isAddedByRelationship() &&
-									 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))
+									 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))*/
+
+							if(object != refs.back() &&
+								 ((
+									 (fk_constr && fk_constr->getConstraintType()!=ConstraintType::foreign_key) &&
+									 (fk_constr->getParentTable()->getObjectId() <= object->getObjectId())
+									)
+									|| (refs.back()->getObjectId() <= object->getObjectId())))
 							{
-								if(tab_obj)
-									refer_obj=tab_obj->getParentTable();
+								//if(tab_obj)
+								//	refer_obj=tab_obj->getParentTable();
+								if(fk_constr)
+									refer_obj=fk_constr->getParentTable();
 								else
 									refer_obj=refs.back();
 
@@ -428,14 +451,14 @@ void ModelValidationHelper::validateModel(void)
 					name.remove("\"");
 
 					//Trying to convert the object to constraint
-					constr=dynamic_cast<Constraint *>(tab_obj);
+					fk_constr=dynamic_cast<Constraint *>(tab_obj);
 
 					/* If the object is an index or	a primary key, unique or exclude constraint,
 					insert the object on duplicated	objects map */
-					if((!constr ||
-							(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
-													constr->getConstraintType()==ConstraintType::unique ||
-													constr->getConstraintType()==ConstraintType::exclude))))
+					if((!fk_constr ||
+							(fk_constr && (fk_constr->getConstraintType()==ConstraintType::primary_key ||
+													fk_constr->getConstraintType()==ConstraintType::unique ||
+													fk_constr->getConstraintType()==ConstraintType::exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}
@@ -526,13 +549,20 @@ void ModelValidationHelper::applyFixes(void)
 				validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
                        val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
 											 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
-				resolveConflict(val_infos[i]);
+
+				//sleepThread(200);
+
+				if(!valid_canceled)
+					resolveConflict(val_infos[i]);
 			}
 
 			emit s_fixApplied();
 
-			validateModel();
-			sleepThread(5);
+			//sleepThread(200);
+			sleepThread(10);
+
+			if(!valid_canceled)
+				validateModel();
 		}
 
 		if(!valid_canceled && val_infos.empty())

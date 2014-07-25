@@ -2901,13 +2901,13 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 		else if(obj_type==OBJ_CONSTRAINT)
 			object=createConstraint(nullptr);
 		else if(obj_type==OBJ_TRIGGER)
-			object=createTrigger(nullptr);
+			object=createTrigger();//nullptr);
 		else if(obj_type==OBJ_INDEX)
-			object=createIndex(nullptr);
+			object=createIndex();//nullptr);
 		else if(obj_type==OBJ_COLUMN)
 			object=createColumn();
 		else if(obj_type==OBJ_RULE)
-			object=createRule();
+			object=createRule();//nullptr);
 		else if(obj_type==OBJ_RELATIONSHIP ||
 						obj_type==BASE_RELATIONSHIP)
 			object=createRelationship();
@@ -4342,12 +4342,12 @@ Table *DatabaseModel::createTable(void)
 						object=createColumn();
 					else if(elem==BaseObject::objs_schemas[OBJ_CONSTRAINT])
 						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[OBJ_INDEX])
+					/*else if(elem==BaseObject::objs_schemas[OBJ_INDEX])
 						object=createIndex(table);
 					else if(elem==BaseObject::objs_schemas[OBJ_RULE])
-						object=createRule();
+						object=createRule(table);
 					else if(elem==BaseObject::objs_schemas[OBJ_TRIGGER])
-						object=createTrigger(table);
+						object=createTrigger(table); */
           else if(elem==BaseObject::objs_schemas[OBJ_TAG])
           {
 						xmlparser.getElementAttributes(aux_attribs);
@@ -4828,21 +4828,22 @@ XMLParser *DatabaseModel::getXMLParser(void)
 	return(&xmlparser);
 }
 
-Index *DatabaseModel::createIndex(Table *table)
+Index *DatabaseModel::createIndex(void)//Table *table)
 {
 	attribs_map attribs;
 	Index *index=nullptr;
 	QString elem, str_aux;
-	bool inc_idx_table=false;
+	//bool inc_idx_table=false;
 	IndexElement idx_elem;
+	Table *table=nullptr;
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		if(!table)
-		{
-			inc_idx_table=true;
+		//if(!table)
+		//{
+			//inc_idx_table=true;
 			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
 			//Raises an error if the parent table doesn't exists
@@ -4856,7 +4857,7 @@ Index *DatabaseModel::createIndex(Table *table)
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
-		}
+		//}
 
 		index=new Index;
 		setBasicAttributes(index);
@@ -4895,11 +4896,11 @@ Index *DatabaseModel::createIndex(Table *table)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		if(inc_idx_table)
-		{
+		//if(inc_idx_table)
+		//{
 			table->addIndex(index);
 			table->setModified(true);
-		}
+		//}
 	}
 	catch(Exception &e)
 	{
@@ -4917,6 +4918,8 @@ Rule *DatabaseModel::createRule(void)
 	Rule *rule=nullptr;
 	QString elem, str_aux;
 	int count, i;
+	//bool inc_rule_table=false;
+	BaseTable *table=nullptr;
 
 	try
 	{
@@ -4924,6 +4927,26 @@ Rule *DatabaseModel::createRule(void)
 		setBasicAttributes(rule);
 
 		xmlparser.getElementAttributes(attribs);
+
+		if(attribs[ParsersAttributes::TABLE].isEmpty())
+			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(!attribs[ParsersAttributes::TABLE].isEmpty())
+		{
+			//inc_rule_table=true;
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
+			if(!table)
+				table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
+
+			if(!table)
+				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+					.arg(BaseObject::getTypeName(OBJ_RULE))
+					.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
+					.arg(BaseObject::getTypeName(OBJ_TABLE)),
+					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
 		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
 		rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
 
@@ -4961,6 +4984,12 @@ Rule *DatabaseModel::createRule(void)
 			}
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
+
+		//if(inc_rule_table)
+		//{
+			table->addObject(rule);
+			table->setModified(true);
+	//	}
 	}
 	catch(Exception &e)
 	{
@@ -4971,7 +5000,7 @@ Rule *DatabaseModel::createRule(void)
 	return(rule);
 }
 
-Trigger *DatabaseModel::createTrigger(BaseTable *table)
+Trigger *DatabaseModel::createTrigger(void)//BaseTable *table)
 {
 	attribs_map attribs;
 	Trigger *trigger=nullptr;
@@ -4980,17 +5009,18 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 	int count, i;
 	BaseObject *ref_table=nullptr, *func=nullptr;
 	Column *column=nullptr;
-	bool inc_trig_table=false;
+	//bool inc_trig_table=false;
+	BaseTable *table=nullptr;
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		if(!table && attribs[ParsersAttributes::TABLE].isEmpty())
+		if(/*!table && */attribs[ParsersAttributes::TABLE].isEmpty())
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!table && !attribs[ParsersAttributes::TABLE].isEmpty())
 		{
-			inc_trig_table=true;
+			//inc_trig_table=true;
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
 			if(!table)
@@ -5120,11 +5150,11 @@ Trigger *DatabaseModel::createTrigger(BaseTable *table)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		if(inc_trig_table)
-		{
+		//if(inc_trig_table)
+		//{
 			table->addObject(trigger);
 			table->setModified(true);
-		}
+		//}
 	}
 	catch(Exception &e)
 	{
@@ -5398,18 +5428,18 @@ View *DatabaseModel::createView(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==BaseObject::getSchemaName(OBJ_RULE))
+					/*else if(elem==BaseObject::getSchemaName(OBJ_RULE))
 					{
 						xmlparser.savePosition();
 						view->addRule(createRule());
 						xmlparser.restorePosition();
-					}
-					else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
+					}*/
+					/* else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
 					{
 						xmlparser.savePosition();
 						view->addTrigger(createTrigger(view));
 						xmlparser.restorePosition();
-					}
+					}*/
           else if(elem==BaseObject::getSchemaName(OBJ_TAG))
           {
 						xmlparser.getElementAttributes(aux_attribs);
@@ -6149,8 +6179,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
-	qint64 dt1=QDateTime::currentDateTime().currentMSecsSinceEpoch();
-
   attribs_map attribs_aux;
   float general_obj_cnt, gen_defs_count;
   bool sql_disabled=false;
@@ -6227,7 +6255,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       }
       else if(obj_type==OBJ_CONSTRAINT)
       {
-        attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getCodeDefinition(def_type, true);
+				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getCodeDefinition(def_type, true);
       }
       else if(obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE ||  obj_type==OBJ_SCHEMA)
       {
@@ -6332,11 +6360,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   if(append_at_eod && def_type==SchemaParser::SQL_DEFINITION)
     def+="-- Appended SQL commands --\n" +	this->appended_sql + "\n---\n";
 
-	qint64 dt2=QDateTime::currentDateTime().currentMSecsSinceEpoch();
-
-	cout << "code generation time: " << dt2 - dt1 << " ms" << endl;
-	cout << "---" << endl;
-
   return(def);
 }
 
@@ -6352,6 +6375,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
   Index *index=nullptr;
   Trigger *trigger=nullptr;
   Constraint *constr=nullptr;
+	Rule *rule=nullptr;
+	View *view=nullptr;
   Relationship *rel=nullptr;
   ObjectType aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
 			obj_types[]={ OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
@@ -6407,7 +6432,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
   for(auto obj : tables)
   {
     table=dynamic_cast<Table *>(obj);
-    itr++;
+		//itr++;
 
     count=table->getConstraintCount();
     for(i=0; i < count; i++)
@@ -6421,27 +6446,60 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
          ((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())))
         objects_map[constr->getObjectId()]=constr;
       else if(constr->getConstraintType()==ConstraintType::foreign_key && !constr->isAddedByLinking())
-        fkeys.push_back(constr);
+				fkeys.push_back(constr);
     }
 
     count=table->getTriggerCount();
     for(i=0; i < count; i++)
     {
-      trigger=table->getTrigger(i);
+			trigger=table->getTrigger(i);
 
-      if(trigger->isReferRelationshipAddedColumn())
-        objects_map[trigger->getObjectId()]=trigger;
+			//if(trigger->isReferRelationshipAddedColumn())
+			//  objects_map[trigger->getObjectId()]=trigger;
+			objects_map[trigger->getObjectId()]=trigger;
     }
 
     count=table->getIndexCount();
     for(i=0; i < count; i++)
     {
-      index=table->getIndex(i);
+			index=table->getIndex(i);
 
-      if(index->isReferRelationshipAddedColumn())
-        objects_map[index->getObjectId()]=index;
+			//if(index->isReferRelationshipAddedColumn())
+			// objects_map[index->getObjectId()]=index;
+			objects_map[index->getObjectId()]=index;
     }
+
+		count=table->getRuleCount();
+		for(i=0; i < count; i++)
+		{
+			rule=table->getRule(i);
+
+			//if(index->isReferRelationshipAddedColumn())
+			// objects_map[index->getObjectId()]=index;
+			objects_map[rule->getObjectId()]=rule;
+		}
   }
+
+	/* Getting and storing the special objects (which reference columns of tables added for relationships)
+			on the map of objects. */
+	for(auto obj : views)
+	{
+		view=dynamic_cast<View *>(obj);
+
+		count=view->getTriggerCount();
+		for(i=0; i < count; i++)
+		{
+			trigger=view->getTrigger(i);
+			objects_map[trigger->getObjectId()]=trigger;
+		}
+
+		count=view->getRuleCount();
+		for(i=0; i < count; i++)
+		{
+			rule=view->getRule(i);
+			objects_map[rule->getObjectId()]=rule;
+		}
+	}
 
   /* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
 
@@ -6986,6 +7044,13 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			itr_perm++;
 		}
 
+		if(obj_type==OBJ_VIEW && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			View *view=dynamic_cast<View *>(object);
+			vector<BaseObject *> tab_objs=view->getObjects();
+			refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
+		}
+
 		if(obj_type==OBJ_TABLE && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			Table *table=dynamic_cast<Table *>(object);
@@ -6996,7 +7061,15 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			BaseRelationship *base_rel=nullptr;
 			View *view=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
+			vector<TableObject *> *tab_objs;
 			unsigned i, count;
+			ObjectType tab_obj_types[3]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+
+			for(i=0; i < 3; i++)
+			{
+				tab_objs=table->getObjectList(tab_obj_types[i]);
+				refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
+			}
 
 			itr=relationships.begin();
 			itr_end=relationships.end();

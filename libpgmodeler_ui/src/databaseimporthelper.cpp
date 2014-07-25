@@ -534,6 +534,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 				while(itr!=itr_end)
 				{
+					(*itr)->setCodeInvalidated(true);
 					dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
 																																			dist(rand_num_engine),
 																																			dist(rand_num_engine)));
@@ -1404,6 +1405,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				type_attrib.setName(values[0].remove("\""));
 				type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
 				type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
+				type_attrib.setCodeInvalidated(true);
 
 				attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			}
@@ -1520,6 +1522,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         getDependencyObject(itr->second[ParsersAttributes::COLLATION], OBJ_COLLATION);
 
       col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
+			col.setCodeInvalidated(true);
 
 			attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			itr++;
@@ -1569,11 +1572,11 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	Rule *rule=nullptr;
-	BaseTable *table=nullptr;
-	QString tab_name=getObjectName(attribs[ParsersAttributes::TABLE]),
+	//BaseTable *table=nullptr;
+	QString /*tab_name=getObjectName(attribs[ParsersAttributes::TABLE]),*/
 					cmds=attribs[ParsersAttributes::COMMANDS];
 	int start=-1, end=-1;
-	QRegExp cmd_regexp("(DO)( )+(\\()"), cond_regexp("(WHERE)(.)+(DO)");
+	QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+"), cond_regexp("(WHERE)(.)+(DO)");
 	QStringList commands;
 
 	try
@@ -1586,27 +1589,28 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		}
 
 		start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
-		end=cmds.lastIndexOf(");") - 2;
-		commands=cmds.mid(start, end-start).split(";", QString::SkipEmptyParts);
+		end=cmds.lastIndexOf(";");// - 2;
+		commands=cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts);
 		attribs[ParsersAttributes::COMMANDS]=commands.join(";");
+		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
 
 		//Check if the table exists
-		table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
+		//table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
 		//If the table doesn't exists will check if a view exists instead
-		if(!table)
+		/*if(!table)
 			table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
 											.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_RULE))
 											.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
-											ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__); */
 
 		loadObjectXML(OBJ_RULE, attribs);
-		rule=dbmodel->createRule();
-		table->addObject(rule);
-		table->setModified(true);
+		rule=dbmodel->createRule();//nullptr);
+		//table->addObject(rule);
+		//table->setModified(true);
 	}
 	catch(Exception &e)
 	{
@@ -1625,7 +1629,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[ParsersAttributes::ARGUMENTS]=parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(",\"\"")).join(",");
 
 		loadObjectXML(OBJ_TRIGGER, attribs);
-		dbmodel->createTrigger(nullptr);
+		dbmodel->createTrigger();//nullptr);
 	}
 	catch(Exception &e)
 	{
@@ -1693,7 +1697,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 
 		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
 		loadObjectXML(OBJ_INDEX, attribs);
-		dbmodel->createIndex(nullptr);
+		dbmodel->createIndex();//nullptr);
 	}
 	catch(Exception &e)
 	{

@@ -30,24 +30,20 @@ BaseGraphicObject::BaseGraphicObject(void)
 void BaseGraphicObject::setProtected(bool value)
 {
 	BaseObject::setProtected(value);
-
-	//if(!this->signalsBlocked())
-		emit s_objectProtected(this->isProtected());
+	emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setSystemObject(bool value)
 {
 	BaseObject::setSystemObject(value);
-
-	// if(!this->signalsBlocked())
-		 emit s_objectProtected(this->isProtected());
+	emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setModified(bool value)
 {
 	is_modified=value;
 
-	if(/*!this->signalsBlocked() &&*/ is_modified)
+	if(is_modified)
 		emit s_objectModified();
 }
 
@@ -65,6 +61,7 @@ void BaseGraphicObject::setPositionAttribute(void)
 
 void  BaseGraphicObject::setPosition(QPointF pos)
 {
+	setCodeInvalidated(position != pos);
 	position=pos;
 }
 

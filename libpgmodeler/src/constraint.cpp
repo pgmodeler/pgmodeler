@@ -666,9 +666,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	/* Case the constraint doesn't referece some column added by relationship it will be declared
-		inside the parent table construction by the use of 'decl-in-table' schema attribute. */
-	if(!isDeclaredInTable())
+	if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
 		attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
 		attributes[ParsersAttributes::DECL_IN_TABLE]="1";

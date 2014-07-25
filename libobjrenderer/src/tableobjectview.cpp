@@ -509,7 +509,8 @@ QString TableObjectView::getConstraintString(Column *column)
 			}
 		}
 
-    if(column->isNotNull()) str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
+		if(column->isNotNull() && !str_constr.contains(TXT_PRIMARY_KEY))
+			str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
 
 		if(str_constr!="")
 			str_constr= CONSTR_DELIM_START +

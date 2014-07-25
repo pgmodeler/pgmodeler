@@ -280,13 +280,19 @@ void BaseRelationship::setConnected(bool value)
 void BaseRelationship::disconnectRelationship(void)
 {
 	if(connected)
+	{
 		setConnected(false);
+		setCodeInvalidated(true);
+	}
 }
 
 void BaseRelationship::connectRelationship(void)
 {
 	if(!connected)
+	{
 		setConnected(true);
+		setCodeInvalidated(true);
+	}
 }
 
 Textbox *BaseRelationship::getLabel(unsigned label_id)

@@ -49,9 +49,9 @@ $br )
   %if @{constraints} %then $br @{constraints} %end
 %end
 
-%if @{indexes} %then @{indexes} $br %end
-%if @{triggers} %then @{triggers} $br %end
-%if @{rules} %then @{rules} $br %end
+#%if @{indexes} %then @{indexes} $br %end
+#%if @{triggers} %then @{triggers} $br %end
+#%if @{rules} %then @{rules} $br %end
 
 %if @{comment} %then @{comment} %end
 %if @{cols-comment} %then @{cols-comment} %end

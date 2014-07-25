@@ -170,7 +170,7 @@ class ModelWidget: public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
-    void hideEvent(QHideEvent *);
+		//void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);

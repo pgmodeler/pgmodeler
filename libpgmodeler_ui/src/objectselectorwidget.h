@@ -57,6 +57,8 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		//! \brief Configures the selectors attributes at construction time
 		void configureSelector(bool install_highlighter);
 
+		bool eventFilter(QObject *obj, QEvent *evnt);
+
 	public:
 		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
 		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);

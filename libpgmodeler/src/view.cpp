@@ -28,8 +28,8 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::FROM_EXP]="";
 	attributes[ParsersAttributes::SIMPLE_EXP]="";
 	attributes[ParsersAttributes::CTE_EXPRESSION]="";
-	attributes[ParsersAttributes::TRIGGERS]="";
-	attributes[ParsersAttributes::RULES]="";
+	//attributes[ParsersAttributes::TRIGGERS]="";
+	//attributes[ParsersAttributes::RULES]="";
   attributes[ParsersAttributes::MATERIALIZED]="";
   attributes[ParsersAttributes::RECURSIVE]="";
   attributes[ParsersAttributes::WITH_NO_DATA]="";
@@ -547,7 +547,7 @@ bool View::isReferencingColumn(Column *col)
 
 QString View::getCodeDefinition(unsigned def_type)
 {
-	unsigned count, i;
+	//unsigned count, i;
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
   attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
@@ -573,13 +573,13 @@ QString View::getCodeDefinition(unsigned def_type)
 		setReferencesAttribute();
 	}
 
-	count=triggers.size();
-	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::TRIGGERS]+=triggers[i]->getCodeDefinition(def_type);
+	//count=triggers.size();
+	//for(i=0; i < count; i++)
+	//	attributes[ParsersAttributes::TRIGGERS]+=triggers[i]->getCodeDefinition(def_type);
 
-	count=rules.size();
-	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::RULES]+=rules[i]->getCodeDefinition(def_type);
+	//count=rules.size();
+	//for(i=0; i < count; i++)
+	//	attributes[ParsersAttributes::RULES]+=rules[i]->getCodeDefinition(def_type);
 
 
 	return(BaseObject::__getCodeDefinition(def_type));

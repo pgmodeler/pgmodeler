@@ -688,9 +688,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			xmlparser->loadXMLBuffer(oper->xml_definition);
 
 			if(obj_type==OBJ_TRIGGER)
-				aux_obj=model->createTrigger(parent_tab);
+				aux_obj=model->createTrigger();//parent_tab);
 			else if(obj_type==OBJ_INDEX)
-				aux_obj=model->createIndex(dynamic_cast<Table *>(parent_tab));
+				aux_obj=model->createIndex();//dynamic_cast<Table *>(parent_tab));
 			else if(obj_type==OBJ_CONSTRAINT)
 				aux_obj=model->createConstraint(oper->parent_obj);
 			else if(obj_type==OBJ_SEQUENCE)

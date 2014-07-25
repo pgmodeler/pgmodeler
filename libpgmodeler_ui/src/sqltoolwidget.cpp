@@ -90,7 +90,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
           [=](){ sql_cmd_txt->setText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
 
   connect(filter_edt, &QLineEdit::textChanged,
-          [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(), false); });
+					[=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(), 0); });
 
   objects_trw->installEventFilter(this);
 }
