@@ -4342,12 +4342,6 @@ Table *DatabaseModel::createTable(void)
 						object=createColumn();
 					else if(elem==BaseObject::objs_schemas[OBJ_CONSTRAINT])
 						object=createConstraint(table);
-					/*else if(elem==BaseObject::objs_schemas[OBJ_INDEX])
-						object=createIndex(table);
-					else if(elem==BaseObject::objs_schemas[OBJ_RULE])
-						object=createRule(table);
-					else if(elem==BaseObject::objs_schemas[OBJ_TRIGGER])
-						object=createTrigger(table); */
           else if(elem==BaseObject::objs_schemas[OBJ_TAG])
           {
 						xmlparser.getElementAttributes(aux_attribs);
@@ -4828,12 +4822,11 @@ XMLParser *DatabaseModel::getXMLParser(void)
 	return(&xmlparser);
 }
 
-Index *DatabaseModel::createIndex(void)//Table *table)
+Index *DatabaseModel::createIndex(void)
 {
 	attribs_map attribs;
 	Index *index=nullptr;
 	QString elem, str_aux;
-	//bool inc_idx_table=false;
 	IndexElement idx_elem;
 	Table *table=nullptr;
 
@@ -4841,23 +4834,19 @@ Index *DatabaseModel::createIndex(void)//Table *table)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		//if(!table)
-		//{
-			//inc_idx_table=true;
-			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+		table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
-			//Raises an error if the parent table doesn't exists
-			if(!table)
-			{
-				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
-						.arg(BaseObject::getTypeName(OBJ_INDEX))
-						.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
-						.arg(BaseObject::getTypeName(OBJ_TABLE));
+		//Raises an error if the parent table doesn't exists
+		if(!table)
+		{
+			str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+					.arg(BaseObject::getTypeName(OBJ_INDEX))
+					.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
+					.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			}
-		//}
+			throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		index=new Index;
 		setBasicAttributes(index);
@@ -4896,11 +4885,8 @@ Index *DatabaseModel::createIndex(void)//Table *table)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		//if(inc_idx_table)
-		//{
-			table->addIndex(index);
-			table->setModified(true);
-		//}
+		table->addIndex(index);
+		table->setModified(true);
 	}
 	catch(Exception &e)
 	{
@@ -4918,7 +4904,6 @@ Rule *DatabaseModel::createRule(void)
 	Rule *rule=nullptr;
 	QString elem, str_aux;
 	int count, i;
-	//bool inc_rule_table=false;
 	BaseTable *table=nullptr;
 
 	try
@@ -4928,24 +4913,19 @@ Rule *DatabaseModel::createRule(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::TABLE].isEmpty())
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!attribs[ParsersAttributes::TABLE].isEmpty())
-		{
-			//inc_rule_table=true;
-			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
-			if(!table)
-				table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
+		if(!table)
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
-			if(!table)
-				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
-					.arg(BaseObject::getTypeName(OBJ_RULE))
-					.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
-					.arg(BaseObject::getTypeName(OBJ_TABLE)),
-					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
+		if(!table)
+			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+											.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+				.arg(BaseObject::getTypeName(OBJ_RULE))
+				.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
+				.arg(BaseObject::getTypeName(OBJ_TABLE)),
+				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 
 		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
 		rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
@@ -4985,11 +4965,8 @@ Rule *DatabaseModel::createRule(void)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		//if(inc_rule_table)
-		//{
-			table->addObject(rule);
-			table->setModified(true);
-	//	}
+		table->addObject(rule);
+		table->setModified(true);
 	}
 	catch(Exception &e)
 	{
@@ -5000,7 +4977,7 @@ Rule *DatabaseModel::createRule(void)
 	return(rule);
 }
 
-Trigger *DatabaseModel::createTrigger(void)//BaseTable *table)
+Trigger *DatabaseModel::createTrigger(void)
 {
 	attribs_map attribs;
 	Trigger *trigger=nullptr;
@@ -5009,31 +4986,25 @@ Trigger *DatabaseModel::createTrigger(void)//BaseTable *table)
 	int count, i;
 	BaseObject *ref_table=nullptr, *func=nullptr;
 	Column *column=nullptr;
-	//bool inc_trig_table=false;
 	BaseTable *table=nullptr;
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		if(/*!table && */attribs[ParsersAttributes::TABLE].isEmpty())
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!table && !attribs[ParsersAttributes::TABLE].isEmpty())
-		{
-			//inc_trig_table=true;
-			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
-			if(!table)
-				table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
+		if(!table)
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
-			if(!table)
-				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
-					.arg(BaseObject::getTypeName(OBJ_TRIGGER))
-					.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
-					.arg(BaseObject::getTypeName(OBJ_TABLE)),
-					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
+		if(!table)
+			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+											.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+				.arg(BaseObject::getTypeName(OBJ_TRIGGER))
+				.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
+				.arg(BaseObject::getTypeName(OBJ_TABLE)),
+				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 
 		trigger=new Trigger;
 		trigger->setParentTable(table);
@@ -5150,11 +5121,8 @@ Trigger *DatabaseModel::createTrigger(void)//BaseTable *table)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		//if(inc_trig_table)
-		//{
-			table->addObject(trigger);
-			table->setModified(true);
-		//}
+		table->addObject(trigger);
+		table->setModified(true);
 	}
 	catch(Exception &e)
 	{
@@ -5428,18 +5396,6 @@ View *DatabaseModel::createView(void)
 
 						xmlparser.restorePosition();
 					}
-					/*else if(elem==BaseObject::getSchemaName(OBJ_RULE))
-					{
-						xmlparser.savePosition();
-						view->addRule(createRule());
-						xmlparser.restorePosition();
-					}*/
-					/* else if(elem==BaseObject::getSchemaName(OBJ_TRIGGER))
-					{
-						xmlparser.savePosition();
-						view->addTrigger(createTrigger(view));
-						xmlparser.restorePosition();
-					}*/
           else if(elem==BaseObject::getSchemaName(OBJ_TAG))
           {
 						xmlparser.getElementAttributes(aux_attribs);

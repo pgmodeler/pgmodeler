@@ -416,9 +416,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);
 		Constraint *createConstraint(BaseObject *parent_obj);
-		Rule *createRule(void);/*BaseTable *table);*/
-		Index *createIndex(void);//Table *table);
-		Trigger *createTrigger(void);//BaseTable *table);
+		Rule *createRule(void);
+		Index *createIndex(void);
+		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
 
     //! \brief Creates/removes the relationship between the passed view and the referecend tables

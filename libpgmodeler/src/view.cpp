@@ -547,8 +547,6 @@ bool View::isReferencingColumn(Column *col)
 
 QString View::getCodeDefinition(unsigned def_type)
 {
-	//unsigned count, i;
-
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
   attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
   attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
@@ -572,15 +570,6 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setReferencesAttribute();
 	}
-
-	//count=triggers.size();
-	//for(i=0; i < count; i++)
-	//	attributes[ParsersAttributes::TRIGGERS]+=triggers[i]->getCodeDefinition(def_type);
-
-	//count=rules.size();
-	//for(i=0; i < count; i++)
-	//	attributes[ParsersAttributes::RULES]+=rules[i]->getCodeDefinition(def_type);
-
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

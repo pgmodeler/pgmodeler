@@ -33,7 +33,6 @@ ModelValidationHelper::ModelValidationHelper(void)
   connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::LowPriority); });
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-
 }
 
 void ModelValidationHelper::sleepThread(unsigned msecs)
@@ -98,11 +97,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 							BaseObject::updateObjectId(tab_obj);
 						}
 					}
-					/*else if(!refs.empty())
-					{
-						BaseObject::updateObjectId(info_obj);
-						aux_obj=info_obj;
-					}*/
 
 					if(aux_obj && (aux_obj->getObjectType()==OBJ_VIEW || aux_obj->getObjectType()==OBJ_TABLE))
 					{
@@ -238,9 +232,9 @@ void ModelValidationHelper::validateModel(void)
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
 												 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
 												 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW, OBJ_RELATIONSHIP },
-								aux_types[]={ OBJ_TABLE, OBJ_VIEW },
-               tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX },
-        obj_type;
+							aux_types[]={ OBJ_TABLE, OBJ_VIEW },
+							tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX },
+							obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=nullptr, *refer_obj=nullptr;
@@ -309,12 +303,6 @@ void ModelValidationHelper::validateModel(void)
 						then it will be pushed into the list of invalid references. The only exception is
 						for foreign keys that are discarded from any validation since they are always created
 						at end of code defintion being free of any reference breaking. */
-							/*if(object != refs.back() &&
-								 (!fk_constr || (fk_constr && fk_constr->getConstraintType()!=ConstraintType::foreign_key)) &&
-								 ((!fk_constr && refs.back()->getObjectId() <= object->getObjectId()) ||
-									(tab_obj && !tab_obj->isAddedByRelationship() &&
-									 tab_obj->getParentTable()->getObjectId() <= object->getObjectId())))*/
-
 							if(object != refs.back() &&
 								 ((
 									 (fk_constr && fk_constr->getConstraintType()!=ConstraintType::foreign_key) &&
@@ -322,8 +310,6 @@ void ModelValidationHelper::validateModel(void)
 									)
 									|| (refs.back()->getObjectId() <= object->getObjectId())))
 							{
-								//if(tab_obj)
-								//	refer_obj=tab_obj->getParentTable();
 								if(fk_constr)
 									refer_obj=fk_constr->getParentTable();
 								else
@@ -550,15 +536,12 @@ void ModelValidationHelper::applyFixes(void)
                        val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
 											 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
 
-				//sleepThread(200);
-
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
 			}
 
 			emit s_fixApplied();
 
-			//sleepThread(200);
 			sleepThread(10);
 
 			if(!valid_canceled)
