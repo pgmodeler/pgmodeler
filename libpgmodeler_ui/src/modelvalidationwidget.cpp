@@ -164,13 +164,12 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
-	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr, *proxy_obj_item=nullptr;
-	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr, *proxy_obj_label=nullptr;
+	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
+	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
 	vector<BaseObject *> refs;
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
-	BaseObject *proxy_obj=nullptr;
 
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
@@ -252,22 +251,6 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		refs=val_info.getReferences();
 		while(!refs.empty())
 		{
-			if(val_info.getProxyObject())
-			{
-				proxy_obj=val_info.getProxyObject();
-				proxy_obj_item=new QTreeWidgetItem(item);
-				proxy_obj_label=new QLabel;
-				proxy_obj_item->setIcon(0, QPixmap(QString(":/icones/icones/") + proxy_obj->getSchemaName() + QString(".png")));
-
-				proxy_obj_label->setText(trUtf8("Proxy object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
-												.arg(Utf8String::create(proxy_obj->getName(true)).remove("\""))
-												.arg(Utf8String::create(proxy_obj->getTypeName()))
-												.arg(proxy_obj->getObjectId()));
-
-				output_trw->setItemWidget(proxy_obj_item, 0, proxy_obj_label);
-				proxy_obj=nullptr;
-			}
-
 			item1=new QTreeWidgetItem(item);
 			label1=new QLabel;
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
@@ -411,7 +394,6 @@ void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_ty
 	obj_name.replace(")",")</em>");
 	object_lbl->setText(trUtf8("Processing object: %1").arg(obj_name));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
-	this->repaint();
 }
 
 void ModelValidationWidget::configureValidation(void)

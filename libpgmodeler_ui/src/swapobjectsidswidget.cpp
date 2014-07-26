@@ -13,6 +13,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		types.erase(std::find(types.begin(), types.end(), OBJ_ROLE));
 		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
 		types.erase(std::find(types.begin(), types.end(), OBJ_RELATIONSHIP));
+		types.erase(std::find(types.begin(), types.end(), OBJ_COLUMN));
+		types.erase(std::find(types.begin(), types.end(), OBJ_CONSTRAINT));
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;

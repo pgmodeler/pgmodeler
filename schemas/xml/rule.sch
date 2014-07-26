@@ -19,6 +19,9 @@
 
  %if @{comment} %then $tb @{comment} %end
 
+ %if @{appended-sql} %then @{appended-sql} %end
+ %if @{prepended-sql} %then @{prepended-sql} %end
+
  %if @{condition} %then
   $tb $tb <condition> <! $ob CDATA $ob @{condition} $cb $cb > </condition> $br
  %end

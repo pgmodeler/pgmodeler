@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE OR REPLACE RULE ] @{name} [ AS ] @{event-type} $br
 $tb [TO ] @{table} $br
 
@@ -22,9 +24,12 @@ $tb [DO ] @{exec-type} $sp
 %end
 ;$br
 
+%if @{comment} %then @{comment} %end
+
+%if @{appended-sql} %then @{appended-sql} %end
+
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
 
-%if @{comment} %then @{comment} %end
 

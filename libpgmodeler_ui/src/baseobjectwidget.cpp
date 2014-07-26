@@ -73,16 +73,17 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
-		baseobject_grid->addWidget(name_edt, 1, 1, 1, 3);
-		baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
+		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
+		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
+		//baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
 		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
 		baseobject_grid->addWidget(collation_sel, 5, 1, 1, 4);
     baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
-    baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
+		baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
     baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
-    baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
+		baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
 		baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
 
@@ -364,6 +365,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		bool prot;
 
+		obj_id_lbl->setVisible(true);
+		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
 		name_edt->setText(Utf8String::create(object->getName()));
 		comment_edt->setText(Utf8String::create(object->getComment()));
 		owner_sel->setSelectedObject(object->getOwner());
@@ -389,6 +392,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 	else
 	{
+		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
 		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)

@@ -404,9 +404,8 @@ bool BaseObject::acceptsCollation(void)
 bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
-				 obj_type!=OBJ_RULE &&  obj_type!=OBJ_TRIGGER &&
-				 obj_type!=OBJ_INDEX && obj_type!=OBJ_RELATIONSHIP &&
-				 obj_type!=OBJ_TEXTBOX  && obj_type!=OBJ_PARAMETER &&
+				 obj_type!=OBJ_RELATIONSHIP &&
+				 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
          obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
 				 obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);

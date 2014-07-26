@@ -130,6 +130,15 @@
          </attribute>
          <column>
           <property name="text">
+           <string>ID</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/resources.qrc">
+            <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Object</string>
           </property>
           <property name="icon">
@@ -258,6 +267,15 @@
          </attribute>
          <column>
           <property name="text">
+           <string>ID</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/resources.qrc">
+            <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Object</string>
           </property>
           <property name="icon">
@@ -335,14 +353,14 @@
        <widget class="QLabel" name="label_3">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
@@ -354,12 +372,16 @@
         <property name="pixmap">
          <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_alerta.png</pixmap>
         </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label_4">
         <property name="font">
          <font>
+          <pointsize>8</pointsize>
           <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>

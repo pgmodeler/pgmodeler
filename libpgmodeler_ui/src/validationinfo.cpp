@@ -20,11 +20,11 @@
 
 ValidationInfo::ValidationInfo(void)
 {
-	object=proxy_object=nullptr;
+	object=nullptr;
 	val_type=VALIDATION_ABORTED;
 }
 
-ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references,  BaseObject *proxy_object)
+ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)
 {
  if(val_type >= SQL_VALIDATION_ERR)
 	 throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -34,7 +34,6 @@ ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<Bas
 
  this->val_type=val_type;
  this->object=object;
- this->proxy_object=proxy_object;
  this->references=references;
 }
 
@@ -68,11 +67,6 @@ unsigned ValidationInfo::getValidationType(void)
 BaseObject *ValidationInfo::getObject(void)
 {
 	return(object);
-}
-
-BaseObject *ValidationInfo::getProxyObject(void)
-{
-	return(proxy_object);
 }
 
 vector<BaseObject *> ValidationInfo::getReferences(void)

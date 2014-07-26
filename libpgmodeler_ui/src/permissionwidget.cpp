@@ -157,6 +157,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	perms_changed=false;
 	protected_obj_frm->setVisible(false);
 	parent_form->apply_ok_btn->setEnabled(true);
+	obj_id_lbl->setVisible(false);
 
 	if(object)
 	{

@@ -7,6 +7,8 @@
 
 @{drop}
 
+%if @{prepended-sql} %then @{prepended-sql} %end
+
 [CREATE ] 
 %if @{constraint} %then [CONSTRAINT ]%end
 [TRIGGER ] @{name} $br
@@ -32,6 +34,8 @@ $tb [EXECUTE PROCEDURE ] @{trigger-func}(
 %if @{arguments} %then @{arguments} %end ); $br
 
 %if @{comment} %then @{comment} %end
+
+%if @{appended-sql} %then @{appended-sql} %end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!

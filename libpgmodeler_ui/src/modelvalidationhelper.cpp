@@ -41,12 +41,12 @@ void ModelValidationHelper::sleepThread(unsigned msecs)
     QThread::msleep(msecs);
 }
 
-void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs, BaseObject *proxy_obj)
+void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
 {
   if(!refs.empty())
   {
     //Configures a validation info
-		ValidationInfo info=ValidationInfo(val_type, object, refs, proxy_obj);
+		ValidationInfo info=ValidationInfo(val_type, object, refs);
     error_count++;
 
     val_infos.push_back(info);
@@ -237,12 +237,13 @@ void ModelValidationHelper::validateModel(void)
 							obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 						count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
-		BaseObject *object=nullptr, *refer_obj=nullptr, *proxy_obj=nullptr;
+		BaseObject *object=nullptr, *refer_obj=nullptr;
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
 		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
-		Constraint *fk_constr=nullptr;
+		Constraint *constr=nullptr;
+		Column *col=nullptr;
 		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
@@ -261,7 +262,6 @@ void ModelValidationHelper::validateModel(void)
 
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
-				proxy_obj=nullptr;
 				object=(*itr);
         obj_type=object->getObjectType();
 				refs_aux.clear();
@@ -287,7 +287,6 @@ void ModelValidationHelper::validateModel(void)
 
 							if(ref_tab->getObjectId() > recv_tab->getObjectId())
 							{
-								proxy_obj=object;
 								object=ref_tab;
 								refs_aux.push_back(recv_tab);
 							}
@@ -301,7 +300,8 @@ void ModelValidationHelper::validateModel(void)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered
 							tab_obj=dynamic_cast<TableObject *>(refs.back());
-							fk_constr=dynamic_cast<Constraint *>(tab_obj);
+							constr=dynamic_cast<Constraint *>(tab_obj);
+							col=dynamic_cast<Column *>(tab_obj);
 
 							/* If the current referrer object has an id less than reference object's id
 						then it will be pushed into the list of invalid references. The only exception is
@@ -309,22 +309,17 @@ void ModelValidationHelper::validateModel(void)
 						at end of code defintion being free of any reference breaking. */
 							if(object != refs.back() &&
 								 ((
-									 (fk_constr && fk_constr->getConstraintType()!=ConstraintType::foreign_key) &&
-									 (fk_constr->getParentTable()->getObjectId() <= object->getObjectId())
-									)
+										(col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())
+										)
 									|| (refs.back()->getObjectId() <= object->getObjectId())))
 							{
-								if(fk_constr)
-								{
-									proxy_obj=fk_constr;
-									refer_obj=fk_constr->getParentTable();
-								}
+								if(col || constr)
+									refer_obj=tab_obj->getParentTable();
 								else
 									refer_obj=refs.back();
 
-								//Push the referrer object only if not exists on the list
-								//if(std::find(refs_aux.begin(), refs_aux.end(), refer_obj)==refs_aux.end())
-									refs_aux.push_back(refer_obj);
+								refs_aux.push_back(refer_obj);
 							}
 
 							refs.pop_back();
@@ -406,7 +401,7 @@ void ModelValidationHelper::validateModel(void)
             }
 					}
 
-					generateValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux, proxy_obj);
+					generateValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
 				}
 			}
 
@@ -426,8 +421,7 @@ void ModelValidationHelper::validateModel(void)
 		while(itr!=obj_list->end() && !valid_canceled)
 		{
 			table=dynamic_cast<Table *>(*itr);
-
-			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(object->getTypeName()), table->getObjectType());
+			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(table->getTypeName()), table->getObjectType());
 
 			itr++;
 
@@ -445,14 +439,14 @@ void ModelValidationHelper::validateModel(void)
 					name.remove("\"");
 
 					//Trying to convert the object to constraint
-					fk_constr=dynamic_cast<Constraint *>(tab_obj);
+					constr=dynamic_cast<Constraint *>(tab_obj);
 
 					/* If the object is an index or	a primary key, unique or exclude constraint,
 					insert the object on duplicated	objects map */
-					if((!fk_constr ||
-							(fk_constr && (fk_constr->getConstraintType()==ConstraintType::primary_key ||
-													fk_constr->getConstraintType()==ConstraintType::unique ||
-													fk_constr->getConstraintType()==ConstraintType::exclude))))
+					if((!constr ||
+							(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
+													constr->getConstraintType()==ConstraintType::unique ||
+													constr->getConstraintType()==ConstraintType::exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}

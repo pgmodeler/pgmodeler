@@ -61,6 +61,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	}
 	else
 	{
+		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
@@ -417,23 +418,23 @@ void ModelObjectsWidget::updateObjectsView(void)
 
 void ModelObjectsWidget::updateObjectsList(void)
 {
-    vector<BaseObject *> objects;
+	vector<BaseObject *> objects;
 
-    if(db_model)
-    {
-        vector<ObjectType> visible_types;
+	if(db_model)
+	{
+		vector<ObjectType> visible_types;
 
-        for(auto tp : visible_objs_map)
-        {
-            if(tp.second)
-                visible_types.push_back(tp.first);
-        }
+		for(auto tp : visible_objs_map)
+		{
+			if(tp.second)
+				visible_types.push_back(tp.first);
+		}
 
-        objects=db_model->findObjects("", visible_types,true, false, false, false);
+		objects=db_model->findObjects("", visible_types,true, false, false, false);
 
-    }
+	}
 
-    ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
+	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -851,6 +852,7 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 	{
 		QWidget *wgt=QApplication::activeWindow();
 
+		filter_edt->setFocus();
 		filter_edt->blockSignals(true);
 		by_id_chk->blockSignals(true);
 		filter_edt->clear();

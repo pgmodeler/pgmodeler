@@ -39,7 +39,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		comment_edt->setReadOnly(true);
 		name_edt->setFont(font);
 		name_edt->setReadOnly(true);
-
 		version_cmb->addItems(SchemaParser::getPgSQLVersions());
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
@@ -149,6 +148,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
+			this->obj_id_lbl->setVisible(false);
 
 			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
 																			BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));

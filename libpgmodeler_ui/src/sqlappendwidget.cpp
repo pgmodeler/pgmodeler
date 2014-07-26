@@ -114,47 +114,46 @@ void SQLAppendWidget::configureMenus(void)
 
 void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 {
-	if(object)
+	if(!object)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(!BaseObject::acceptsCustomSQL(object->getObjectType()))
+		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
 	{
-		if(TableObject::isTableObject(object->getObjectType()))
-			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!object)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		BaseObjectWidget::setAttributes(model, object, nullptr);
 
-		try
-		{
-			BaseObjectWidget::setAttributes(model, object, nullptr);
+		if(object->getObjectType()==OBJ_DATABASE)
+			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
 
-			if(object->getObjectType()==OBJ_DATABASE)
-				end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
+		append_sql_txt->setFocus();
+		append_sql_txt->setPlainText(object->getAppendedSQL());
+		append_sql_cp->configureCompletion(model, append_sql_hl);
+		append_sql_txt->moveCursor(QTextCursor::End);
 
-      append_sql_txt->setFocus();
-      append_sql_txt->setPlainText(object->getAppendedSQL());
-      append_sql_cp->configureCompletion(model, append_sql_hl);
-      append_sql_txt->moveCursor(QTextCursor::End);
+		append_sql_txt->setFocus();
+		prepend_sql_txt->setPlainText(object->getPrependedSQL());
+		prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
+		prepend_sql_txt->moveCursor(QTextCursor::End);
 
-      append_sql_txt->setFocus();
-      prepend_sql_txt->setPlainText(object->getPrependedSQL());
-      prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
-      prepend_sql_txt->moveCursor(QTextCursor::End);
+		end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+		begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 
-			end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
-      begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+		comment_edt->setText(object->getTypeName());
+		protected_obj_frm->setVisible(false);
+		obj_id_lbl->setVisible(false);
+		parent_form->apply_ok_btn->setEnabled(true);
 
-			comment_edt->setText(object->getTypeName());
-			protected_obj_frm->setVisible(false);
-			parent_form->apply_ok_btn->setEnabled(true);
+		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
+																		BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
 
-			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-																			BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
-
-			configureMenus();
-		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		}
+		configureMenus();
 	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+
 }
 
 void SQLAppendWidget::applyConfiguration(void)
