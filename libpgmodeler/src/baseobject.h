@@ -201,6 +201,8 @@ class BaseObject {
     //! \brief Clears all the attributes used by the SchemaParser
     void clearAttributes(void);
 
+		/*! brief Returns the cached code for the specified code type. This method returns an empty
+		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
 	public:
