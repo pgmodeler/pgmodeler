@@ -393,46 +393,66 @@ void BaseRelationship::setRelationshipAttributes(void)
 	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : "");
 }
 
+QString BaseRelationship::getCachedCode(unsigned def_type)
+{
+	if(!code_invalidated &&
+		 ((!cached_code[def_type].isEmpty()) ||
+			(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())))
+	{
+		//cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
+
+		if(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())
+			return(cached_reduced_code);
+		else
+			return(cached_code[def_type]);
+	}
+	else
+		return("");
+}
+
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
-	if(!code_invalidated && !cached_code[def_type].isEmpty())
-		return(cached_code[def_type]);
-	else
+	QString code_def=getCachedCode(def_type);
+	if(!code_def.isEmpty()) return(code_def);
+
+	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-		{
-			if(rel_type!=RELATIONSHIP_FK)
-				return("");
-			else
-			{
-				QString sql_code;
-				vector<Constraint *> fks;
-
-				dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
-
-				while(!fks.empty())
-				{
-					sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					fks.pop_back();
-				}
-
-				cached_code[def_type]=sql_code;
-				return(sql_code);
-			}
-		}
+		if(rel_type!=RELATIONSHIP_FK)
+			return("");
 		else
 		{
-			bool reduced_form;
-			setRelationshipAttributes();
-			reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
-									 attributes[ParsersAttributes::LABELS_POS].isEmpty());
-			return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+			QString sql_code;
+			vector<Constraint *> fks;
+
+			dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
+
+			while(!fks.empty())
+			{
+				sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				fks.pop_back();
+			}
+
+			cached_code[def_type]=sql_code;
+			return(sql_code);
 		}
+	}
+	else
+	{
+		bool reduced_form;
+		setRelationshipAttributes();
+		reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
+								 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+
+		if(!reduced_form)
+			cached_reduced_code.clear();
+
+		return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
 	}
 }
 
 void BaseRelationship::setPoints(const vector<QPointF> &points)
 {
+	this->setCodeInvalidated(true);
 	this->points=points;
 }
 
@@ -442,6 +462,7 @@ void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->lables_dist[label_id]=label_dist;
+	this->setCodeInvalidated(true);
 }
 
 QPointF BaseRelationship::getLabelDistance(unsigned label_id)

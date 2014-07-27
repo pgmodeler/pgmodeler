@@ -1113,8 +1113,8 @@ void MainWindow::closeModel(int model_id)
 		current_model=nullptr;
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
 		oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
-		updateToolsState(true);
 		__updateDockWidgets();
+		updateToolsState(true);
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		models_tbw->setVisible(false);

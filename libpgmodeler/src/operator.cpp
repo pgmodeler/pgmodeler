@@ -274,26 +274,29 @@ QString Operator::getCodeDefinition(unsigned def_type)
 
 QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i;
-	QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
-			atribs_ops[]={ ParsersAttributes::COMMUTATOR_OP,
+	QString type_attribs[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
+			op_attribs[]={ ParsersAttributes::COMMUTATOR_OP,
 										 ParsersAttributes::NEGATOR_OP },
 
-			atribs_funcoes[]={ParsersAttributes::OPERATOR_FUNC,
-												ParsersAttributes::JOIN_FUNC,
-												ParsersAttributes::RESTRICTION_FUNC};
+			func_attribs[]={ParsersAttributes::OPERATOR_FUNC,
+											ParsersAttributes::JOIN_FUNC,
+											ParsersAttributes::RESTRICTION_FUNC};
 
 	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
 			if(argument_types[i]!="any")
-				attributes[atribs_tipos[i]]=(*argument_types[i]);
+				attributes[type_attribs[i]]=(*argument_types[i]);
 		}
 		else
 		{
-			attributes[atribs_tipos[i]]=argument_types[i].
-																	getCodeDefinition(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
+			attributes[type_attribs[i]]=argument_types[i].
+																	getCodeDefinition(SchemaParser::XML_DEFINITION,type_attribs[i]);
 		}
 	}
 
@@ -302,11 +305,11 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(operators[i])
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[atribs_ops[i]]=operators[i]->getName(true);
+				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
-				operators[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
-				attributes[atribs_ops[i]]=operators[i]->getCodeDefinition(def_type, true);
+				operators[i]->attributes[ParsersAttributes::REF_TYPE]=op_attribs[i];
+				attributes[op_attribs[i]]=operators[i]->getCodeDefinition(def_type, true);
 			}
 		}
 	}
@@ -316,11 +319,11 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(functions[i])
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[atribs_funcoes[i]]=functions[i]->getName(true);
+				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
-				attributes[atribs_funcoes[i]]=functions[i]->getCodeDefinition(def_type, true);
+				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attribs[i]);
+				attributes[func_attribs[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}
 	}

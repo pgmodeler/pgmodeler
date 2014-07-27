@@ -373,6 +373,9 @@ Column *Sequence::getOwnerColumn(void)
 
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	QString str_aux;
 	Table *table=nullptr;
 

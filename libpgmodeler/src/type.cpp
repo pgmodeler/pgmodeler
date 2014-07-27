@@ -575,6 +575,9 @@ QString Type::getCodeDefinition(unsigned def_type)
 
 QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(config==ENUMERATION_TYPE)
 	{
 		BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="1";

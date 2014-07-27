@@ -138,10 +138,13 @@ QString Tag::getCodeDefinition(unsigned def_type)
 
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-  if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SQL_DEFINITION)
     return("");
   else
   {
+		QString code_def=getCachedCode(def_type, reduced_form);
+		if(!code_def.isEmpty()) return(code_def);
+
     try
     {
       attribs_map attribs;

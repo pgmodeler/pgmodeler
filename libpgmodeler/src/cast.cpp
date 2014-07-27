@@ -147,6 +147,9 @@ unsigned Cast::getCastType(void)
 
 QString Cast::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
 		attributes[ParsersAttributes::SOURCE_TYPE]=(*types[SRC_TYPE]);

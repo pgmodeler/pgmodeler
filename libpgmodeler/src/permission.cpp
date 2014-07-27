@@ -377,6 +377,9 @@ void Permission::generatePermissionId(void)
 
 QString Permission::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i, count;
 	ObjectType obj_type;
 	QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,

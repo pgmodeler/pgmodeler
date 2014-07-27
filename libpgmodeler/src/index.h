@@ -113,7 +113,7 @@ class Index: public TableObject{
 		unsigned getFillFactor(void);
 
 		//! \brief Returns the SQL / XML definition for the index
-		virtual QString getCodeDefinition(unsigned tipo_def) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary

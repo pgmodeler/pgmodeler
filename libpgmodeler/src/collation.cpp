@@ -104,6 +104,9 @@ QString Collation::getCodeDefinition(unsigned def_type)
 
 QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(!locale.isEmpty())
 	{
 		attributes[ParsersAttributes::LOCALE]=locale;

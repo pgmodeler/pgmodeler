@@ -356,6 +356,9 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 QString Trigger::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setBasicAttributes(def_type);
 
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
