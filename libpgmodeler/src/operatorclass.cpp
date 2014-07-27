@@ -162,6 +162,9 @@ QString OperatorClass::getCodeDefinition(unsigned def_type)
 
 QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setElementsAttribute(def_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::DEFAULT]=(is_default ? "1" : "");
@@ -172,9 +175,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::TYPE]=data_type.getCodeDefinition(def_type);
 
 	if(family)
-	{
 		attributes[ParsersAttributes::FAMILY]=family->getName(true);
-	}
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }

@@ -41,6 +41,9 @@ QString OperatorFamily::getCodeDefinition(unsigned def_type)
 
 QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	return(BaseObject::getCodeDefinition(def_type,reduced_form));
 }

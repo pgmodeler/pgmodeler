@@ -36,6 +36,9 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		return("");
 	else
 	{
+		QString code_def=getCachedCode(def_type, false);
+		if(!code_def.isEmpty()) return(code_def);
+
 		setPositionAttribute();
 
 		if(text_attributes[ITALIC_TXT])

@@ -607,6 +607,9 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	QString attrib;
 
 	attributes[ParsersAttributes::PK_CONSTR]="";

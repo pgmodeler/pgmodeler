@@ -96,6 +96,9 @@ QStringList EventTrigger::getFilter(const QString &variable)
 
 QString EventTrigger::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::EVENT]=~event;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)

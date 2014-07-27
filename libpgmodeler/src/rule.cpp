@@ -117,6 +117,9 @@ void Rule::removeCommands(void)
 
 QString Rule::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setCommandsAttribute();
 	attributes[ParsersAttributes::CONDITION]=conditional_expr;
 	attributes[ParsersAttributes::EXEC_TYPE]=(~execution_type);

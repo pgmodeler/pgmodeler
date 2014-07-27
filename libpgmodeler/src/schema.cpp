@@ -62,6 +62,9 @@ bool Schema::isRectVisible(void)
 
 QString Schema::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
 	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? "1" : "");
 	return(BaseObject::__getCodeDefinition(def_type));

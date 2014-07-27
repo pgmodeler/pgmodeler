@@ -547,6 +547,9 @@ bool View::isReferencingColumn(Column *col)
 
 QString View::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
   attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
   attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");

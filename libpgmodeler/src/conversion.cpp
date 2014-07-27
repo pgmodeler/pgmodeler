@@ -110,6 +110,9 @@ bool Conversion::isDefault(void)
 
 QString Conversion::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::DEFAULT]=(is_default ? "1" : "");
 	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SRC_ENCODING]);
 	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DST_ENCODING]);

@@ -120,7 +120,10 @@ class BaseObject {
 		the role only as a reference since it already exists on the destination server. */
 		sql_disabled,
 
-		//! brief Indicates if the cached code is invalidated
+		/*! brief Indicates if the cached code is invalidated. Some key attributes of this class and other base classes
+				automatically change the value of this attribute when the respective set[Attribute]() is called. For all the
+				rest the method setCodeInvalidated() should be explicitly called if you need to invalidate the code and
+				generate it again */
 		code_invalidated;
 
 		//! brief Stores the cached xml and sql code
@@ -197,6 +200,8 @@ class BaseObject {
 
     //! \brief Clears all the attributes used by the SchemaParser
     void clearAttributes(void);
+
+		QString getCachedCode(unsigned def_type, bool reduced_form);
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
@@ -366,6 +371,9 @@ class BaseObject {
 		bool acceptsCustomSQL(void);
 
 		/*! brief Marks the current cached code as invalid and forces its regenaration.
+				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
+				will automatically invalidate the code but for all other setters / attributes the user must call
+				this method explicitly in order to force the regeneration of the code.
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
 		void setCodeInvalidated(bool value);
 

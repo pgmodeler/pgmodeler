@@ -320,6 +320,9 @@ QString Role::getPassword(void)
 
 QString Role::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i;
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 												 ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,

@@ -108,6 +108,9 @@ PgSQLType Domain::getType(void)
 
 QString Domain::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::NOT_NULL]=(not_null ? "1" : "");
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::EXPRESSION]=expression;

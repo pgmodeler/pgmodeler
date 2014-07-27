@@ -224,6 +224,9 @@ PgSQLType Aggregate::getDataType(unsigned type_idx)
 
 QString Aggregate::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setTypesAttribute(def_type);
 
 	if(functions[TRANSITION_FUNC])

@@ -110,6 +110,9 @@ QString Language::getCodeDefinition(unsigned def_type)
 
 QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i;
 	QString attribs_func[3]={ParsersAttributes::VALIDATOR_FUNC,
 													 ParsersAttributes::HANDLER_FUNC,

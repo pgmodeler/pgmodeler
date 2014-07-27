@@ -290,9 +290,12 @@ bool Index::isReferCollation(Collation *collation)
 	return(found);
 }
 
-QString Index::getCodeDefinition(unsigned tipo_def)
+QString Index::getCodeDefinition(unsigned def_type)
 {
-	setIndexElementsAttribute(tipo_def);
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
+	setIndexElementsAttribute(def_type);
 	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? "1" : "");
 	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? "1" : "");
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
@@ -303,7 +306,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
   {
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-    if(tipo_def==SchemaParser::SQL_DEFINITION && getParentTable()->getSchema())
+		if(def_type==SchemaParser::SQL_DEFINITION && getParentTable()->getSchema())
      attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
   }
 
@@ -318,7 +321,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 		attributes[ParsersAttributes::STORAGE_PARAMS]="1";
 	}
-	else if(tipo_def==SchemaParser::XML_DEFINITION)
+	else if(def_type==SchemaParser::XML_DEFINITION)
 		attributes[ParsersAttributes::FACTOR]="0";
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
@@ -326,6 +329,6 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	if(!isReferRelationshipAddedColumn())
 		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
-	return(BaseObject::__getCodeDefinition(tipo_def));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 

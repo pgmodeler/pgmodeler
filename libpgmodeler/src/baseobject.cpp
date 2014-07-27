@@ -303,7 +303,7 @@ BaseObject *BaseObject::getDatabase(void)
 
 void BaseObject::setProtected(bool value)
 {
-	this->code_invalidated=(this->is_protected != value);
+	setCodeInvalidated(this->is_protected != value);
 	is_protected=(!system_obj ? value : true);
 }
 
@@ -330,14 +330,14 @@ void BaseObject::setName(const QString &name)
 		}
 
 		aux_name.remove('\"');
-		this->code_invalidated=(this->obj_name!=aux_name);
+		setCodeInvalidated(this->obj_name!=aux_name);
 		this->obj_name=aux_name;
 	}
 }
 
 void BaseObject::setComment(const QString &comment)
 {
-	this->code_invalidated=(this->comment!=comment);
+	setCodeInvalidated(this->comment!=comment);
 	this->comment=comment;
 }
 
@@ -427,7 +427,7 @@ void BaseObject::setSchema(BaseObject *schema)
 	else if(!acceptsSchema())
 		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->schema != schema);
+	setCodeInvalidated(this->schema != schema);
 	this->schema=schema;
 }
 
@@ -438,7 +438,7 @@ void BaseObject::setOwner(BaseObject *owner)
 	else if(!acceptsOwner())
 		throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->owner != owner);
+	setCodeInvalidated(this->owner != owner);
 	this->owner=owner;
 }
 
@@ -449,7 +449,7 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 	else if(!acceptsTablespace())
 		throw Exception(ERR_ASG_TABSPC_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->tablespace != tablespace);
+	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace=tablespace;
 }
 
@@ -460,7 +460,7 @@ void BaseObject::setCollation(BaseObject *collation)
 	if(collation && collation->getObjectType()!=OBJ_COLLATION)
 		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->collation != collation);
+	setCodeInvalidated(this->collation != collation);
 	this->collation=collation;
 }
 
@@ -469,7 +469,7 @@ void BaseObject::setAppendedSQL(const QString &sql)
 	if(!acceptsCustomSQL())
 		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->appended_sql != sql);
+	setCodeInvalidated(this->appended_sql != sql);
   this->appended_sql=sql;
 }
 
@@ -478,7 +478,7 @@ void BaseObject::setPrependedSQL(const QString &sql)
   if(!acceptsCustomSQL())
     throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->code_invalidated=(this->prepended_sql != sql);
+	setCodeInvalidated(this->prepended_sql != sql);
   this->prepended_sql=sql;
 }
 
@@ -568,7 +568,7 @@ unsigned BaseObject::getObjectId(void)
 
 void BaseObject::setSQLDisabled(bool value)
 {
-	this->code_invalidated=(this->sql_disabled != value);
+	setCodeInvalidated(this->sql_disabled != value);
 	sql_disabled=value;
 }
 
@@ -579,7 +579,7 @@ bool BaseObject::isSQLDisabled(void)
 
 void BaseObject::setSystemObject(bool value)
 {
-	this->code_invalidated=(this->system_obj != value);
+	setCodeInvalidated(this->system_obj != value);
 	system_obj=sql_disabled=is_protected=value;
 }
 
@@ -605,24 +605,24 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
 	{
 
-		if(use_cached_code)
-		{
+		//if(use_cached_code)
+		//{
 			//If the PostgreSQL version changes then the object's code needs to be invalidated
-			if(def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
-				code_invalidated=true;
+			//if(def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+				//code_invalidated=true;
 
-			if(!code_invalidated &&
+			/*if(!code_invalidated &&
 				 ((!reduced_form && !cached_code[def_type].isEmpty()) ||
 					(def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
 			{
-				//cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
+				cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
 
 				if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
 					return(cached_reduced_code);
 				else
 					return(cached_code[def_type]);
-			}
-		}
+			}*/
+		//}
 
 		//cout << "** generating code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
 		bool format;
@@ -974,5 +974,25 @@ void BaseObject::setCodeInvalidated(bool value)
 
 bool BaseObject::isCodeInvalidated(void)
 {
-	return(code_invalidated);
+	return(use_cached_code && code_invalidated);
+}
+
+QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
+{
+	if(use_cached_code && def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+		code_invalidated=true;
+
+	if(!code_invalidated &&
+		 ((!reduced_form && !cached_code[def_type].isEmpty()) ||
+			(def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
+	{
+		//cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
+
+		if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
+			return(cached_reduced_code);
+		else
+			return(cached_code[def_type]);
+	}
+	else
+		return("");
 }

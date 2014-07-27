@@ -1286,6 +1286,9 @@ void Table::updateAlterCmdsStatus(void)
 
 QString Table::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
 	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? "1" : "");

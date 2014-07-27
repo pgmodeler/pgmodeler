@@ -80,6 +80,9 @@ void Parameter::operator = (const Parameter &param)
 
 QString Parameter::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	return(this->getCodeDefinition(def_type, false));
 }
 

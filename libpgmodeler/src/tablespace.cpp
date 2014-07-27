@@ -59,6 +59,9 @@ QString Tablespace::getDirectory(void)
 
 QString Tablespace::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(directory!="")
 		attributes[ParsersAttributes::DIRECTORY]="'" + directory + "'";
 

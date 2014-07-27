@@ -81,6 +81,8 @@ class BaseRelationship: public BaseGraphicObject  {
 		//! \brief Toggles the connected flag and forces the tables/schemas/relationship update
 		void setConnected(bool value);
 
+		QString getCachedCode(unsigned def_type);
+
 	public:
 		//! \brief Constants used to assign the type to relationship
 		static const unsigned RELATIONSHIP_11=10, //! \brief One to one

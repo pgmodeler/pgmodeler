@@ -78,6 +78,9 @@ QString Extension::getVersion(unsigned ver)
 
 QString Extension::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	attributes[ParsersAttributes::NAME]=this->getName(true, false);
 	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? "1" : "");
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];

@@ -35,6 +35,9 @@ PgSQLType TypeAttribute::getType(void)
 
 QString TypeAttribute::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
 	else
