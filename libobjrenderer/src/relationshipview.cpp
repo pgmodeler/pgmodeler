@@ -518,6 +518,7 @@ void RelationshipView::configureLine(void)
 			else if(line_conn_mode==CONNECT_FK_TO_PK && rel_1n)
 			{
 				QPointF pnt;
+				QRectF rec_tab_rect, ref_tab_rect;
 				float fk_py=0, pk_py=0, fk_px=0, pk_px=0;
 				vector<Constraint *> fks;
 				Table *ref_tab=nullptr, *rec_tab=nullptr;
@@ -539,8 +540,35 @@ void RelationshipView::configureLine(void)
 				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
 				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
 
-				pk_pnt_type=(ref_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
-				fk_pnt_type=(rec_tab_view->getCenter().x() >= descriptor->pos().x() ? BaseTableView::LEFT_CONN_POINT : BaseTableView::RIGHT_CONN_POINT);
+				//Create the table's rectangles to detect where to connect the relationship
+				ref_tab_rect=QRectF(ref_tab_view->pos(), ref_tab_view->boundingRect().size());
+
+				//In this case the receiver table rect Y must be equal to reference table Y in order to do the correct comparison
+				rec_tab_rect=QRectF(QPointF(rec_tab_view->pos().x(),
+																		ref_tab_view->pos().y()), rec_tab_view->boundingRect().size());
+
+				if(ref_tab_rect.intersects(rec_tab_rect))
+				{
+					//Connects the rectangle at the same sides on both tables
+					if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
+						pk_pnt_type=fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
+					else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
+						pk_pnt_type=fk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
+				}
+				else
+				{
+					//Connecting the relationship on the opposite sides depending on the tables' position
+					if(ref_tab_rect.right() <= rec_tab_rect.left())
+					{
+						pk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
+						fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
+					}
+					else
+					{
+						pk_pnt_type=BaseTableView::LEFT_CONN_POINT;
+						fk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
+					}
+				}
 
 				for(auto constr : fks)
 				{
