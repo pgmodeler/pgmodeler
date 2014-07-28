@@ -722,6 +722,58 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
   QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")"; //"(%1)( )*(=)(\")(.)*(\")";
 
+	//Placing objects <index>, <rule>, <trigger> outside of <table>
+	if(!obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
+		 obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLE))))
+	{
+		int start_idx=-1, end_idx=-1, len=0;
+		ObjectType obj_types[3]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX  };
+		QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
+				name_attr="name=\"",
+				sch_name_attr=tag.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + " " + name_attr;
+
+		//Extracting the table's name
+		start_idx=obj_xml.indexOf(name_attr);
+		end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
+		tab_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+
+		//Extracting the table's schema name
+		start_idx=obj_xml.indexOf(sch_name_attr);
+		end_idx=obj_xml.indexOf("\"", start_idx + sch_name_attr.size());
+		sch_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(sch_name_attr);
+
+		//Configuring the table=[name] attribute to be included on rule objects
+		tab_name=QString("table=\"%1.%2\"").arg(sch_name).arg(tab_name);
+
+		for(unsigned idx=0; idx < 3; idx++)
+		{
+			curr_tag=tag.arg(BaseObject::getSchemaName(obj_types[idx]));
+			curr_end_tag=end_tag.arg(BaseObject::getSchemaName(obj_types[idx])) + ">";
+			start_idx=obj_xml.indexOf(curr_tag);
+
+			while(start_idx >=0)
+			{
+				end_idx=obj_xml.indexOf(curr_end_tag);
+				len=(end_idx - start_idx) + curr_end_tag.size();
+				def=obj_xml.mid(start_idx, len) + "\n\n";
+				obj_xml.remove(start_idx, len);
+
+				//If the object is a rule include the table attribute
+				if(def.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_RULE))))
+				{
+					start_idx=def.indexOf('>');
+					def.replace(start_idx, 1, " " + tab_name + ">");
+				}
+
+				start_idx=obj_xml.indexOf(curr_tag);
+
+				if(!def.isEmpty())
+					//Puts the object's defintion to the list in order to be evaluated in the main process
+					objs_xml.push_back(def);
+			}
+		}
+	}
+
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
 		obj_xml.remove(QRegExp(att_regexp.arg("recheck")));
