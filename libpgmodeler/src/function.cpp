@@ -417,13 +417,17 @@ void Function::createSignature(bool format, bool prepend_schema)
 		if(!parameters[i].isIn() || parameters[i].isVariadic() ||
 			 (parameters[i].isIn() && parameters[i].isOut()) ||
 			 (parameters[i].isIn() && !parameters[i].isOut()))
-		str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+		{
+			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+			parameters[i].setCodeInvalidated(true);
+		}
 	}
 
 	str_param.remove(str_param.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
 	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+	this->setCodeInvalidated(true);
 }
 
 QString Function::getCodeDefinition(unsigned def_type)

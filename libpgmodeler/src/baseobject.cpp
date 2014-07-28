@@ -604,27 +604,6 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		 (def_type==SchemaParser::XML_DEFINITION &&
 			obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
 	{
-
-		//if(use_cached_code)
-		//{
-			//If the PostgreSQL version changes then the object's code needs to be invalidated
-			//if(def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
-				//code_invalidated=true;
-
-			/*if(!code_invalidated &&
-				 ((!reduced_form && !cached_code[def_type].isEmpty()) ||
-					(def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
-			{
-				cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
-
-				if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
-					return(cached_reduced_code);
-				else
-					return(cached_code[def_type]);
-			}*/
-		//}
-
-		//cout << "** generating code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
 		bool format;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
@@ -986,8 +965,6 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 		 ((!reduced_form && !cached_code[def_type].isEmpty()) ||
 			(def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
 	{
-		//cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
-
 		if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
 			return(cached_reduced_code);
 		else

@@ -399,8 +399,6 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 		 ((!cached_code[def_type].isEmpty()) ||
 			(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())))
 	{
-		//cout << "cached code: " << (def_type==SchemaParser::SQL_DEFINITION  ? "SQL" : "XML") << " " << this->getName().toStdString() << " " << "(" << this->getTypeName().toStdString() << ")" << endl;
-
 		if(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())
 			return(cached_reduced_code);
 		else
