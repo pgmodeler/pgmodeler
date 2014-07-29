@@ -177,7 +177,7 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>Highlight graphical objects when selecting them on results</string>
+      <string>Highlight graphical objects when selecting them or their children on the result list</string>
      </property>
      <property name="text">
       <string>Highlight</string>

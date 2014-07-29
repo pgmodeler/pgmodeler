@@ -8343,6 +8343,8 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		obj_name.clear();
 	}
 
+	//Removing the duplicate items on the list
+	std::unique(list.begin(), list.end());
 	return(list);
 }
 

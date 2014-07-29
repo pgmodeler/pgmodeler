@@ -826,6 +826,8 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 
 	if(model_wgt)
 		setModel(model_wgt->db_model);
+	else
+		setModel(static_cast<DatabaseModel *>(nullptr));
 }
 
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)

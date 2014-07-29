@@ -276,7 +276,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_save_as,SIGNAL(triggered(bool)),this,SLOT(saveModel()));
 	connect(action_save_all,SIGNAL(triggered(bool)),this,SLOT(saveAllModels()));
 
-	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), this, SLOT(__updateDockWidgets(void)));
+	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), this, SLOT(updateDockWidgets(void)));
 	connect(oper_list_wgt, SIGNAL(s_operationListUpdated(void)), this, SLOT(__updateToolsState(void)));
 	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
@@ -287,36 +287,36 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
 
-	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
 	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
-	connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(role_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(textbox_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(tablespace_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(language_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(function_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(cast_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(conversion_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(domain_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(aggregate_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(sequence_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(operator_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(opfamily_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(opclass_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(type_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(view_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(column_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(constraint_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(rule_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(trigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
-	connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+	connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(role_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(textbox_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(tablespace_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(language_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(function_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(cast_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(conversion_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(domain_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(aggregate_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(sequence_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(operator_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(opfamily_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(opclass_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(type_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(view_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(column_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(constraint_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(rule_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(trigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
@@ -972,9 +972,9 @@ void MainWindow::setCurrentModel(void)
 			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(__updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(__updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(__updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)));
 
 		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
@@ -1111,10 +1111,11 @@ void MainWindow::closeModel(int model_id)
 	if(models_tbw->count()==0)
 	{
 		current_model=nullptr;
-		model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
-		oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
-		__updateDockWidgets();
-		updateToolsState(true);
+		//model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
+		//oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
+		//__updateDockWidgets();
+		//updateToolsState(true);
+		setCurrentModel();
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
 		models_tbw->setVisible(false);
@@ -1393,7 +1394,7 @@ void MainWindow::__updateToolsState(void)
 
 void MainWindow::updateToolsState(bool model_closed)
 {
-	bool enabled=!model_closed;
+	bool enabled=(!model_closed && current_model);
 
 	action_print->setEnabled(enabled);
 	action_save_as->setEnabled(enabled);
@@ -1425,15 +1426,6 @@ void MainWindow::updateToolsState(bool model_closed)
 
 void MainWindow::updateDockWidgets(void)
 {
-	if(current_model)
-	{
-		oper_list_wgt->updateOperationList();
-		__updateToolsState();
-	}
-}
-
-void MainWindow::__updateDockWidgets(void)
-{
 	oper_list_wgt->updateOperationList();
 	model_objs_wgt->updateObjectsView();
 
@@ -1441,7 +1433,7 @@ void MainWindow::__updateDockWidgets(void)
 	the finder will execute the search again */
 	model_valid_wgt->setModel(current_model);
 
-	if(obj_finder_wgt->result_tbw->rowCount() > 0)
+	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
 		obj_finder_wgt->findObjects();
 }
 

@@ -187,7 +187,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Updates the operation list and model objects dockwidgets
 		void updateDockWidgets(void);
-		void __updateDockWidgets(void);
 
 		//! \brief Updates the reference to the current model when changing the tab focus
 		void setCurrentModel(void);

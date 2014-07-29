@@ -135,6 +135,10 @@ void ObjectFinderWidget::selectObject(void)
 	{
 		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
 		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
+		TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+
+		if(tab_obj && !graph_obj)
+			graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
 		//Highlight the graphical object when the 'highlight' button is checked
 		if(graph_obj && highlight_btn->isChecked())
