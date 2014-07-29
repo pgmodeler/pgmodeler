@@ -1888,13 +1888,6 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				Constraint *pk=nullptr, *constr=nullptr;
 				unsigned i, count;
 
-				/*if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
-				{
-					i=0;
-					for(auto column : pk_columns)
-					 prev_ref_col_names[column->getObjectId()]=gen_columns[i++]->getOldName();
-				}*/
-
 				/* In case of relationship 1-1 and 1-n is necessary remove the
 				foreign key that represents the relationship furthermore columns
 				 added to primary key (in case of a identifier relationship) must be removed */

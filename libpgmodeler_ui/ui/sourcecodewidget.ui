@@ -177,7 +177,7 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QTextEdit" name="sqlcode_txt">
          <property name="font">
           <font>
@@ -195,6 +195,16 @@
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="incl_child_sql_chk">
+         <property name="text">
+          <string>Include children objects' SQL</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

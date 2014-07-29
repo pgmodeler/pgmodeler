@@ -161,6 +161,8 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		QString getRelTypeAttribute(void);
 
+		void setCodeInvalidated(bool value);
+
 		friend class DatabaseModel;
 };
 

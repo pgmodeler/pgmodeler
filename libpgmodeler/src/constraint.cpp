@@ -153,6 +153,8 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 				ref_columns.push_back(column);
 			else
 				columns.push_back(column);
+
+			setCodeInvalidated(true);
 		}
 	}
 }
@@ -323,6 +325,7 @@ void Constraint::removeColumns(void)
 {
 	columns.clear();
 	ref_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Constraint::removeColumn(const QString &name, unsigned col_type)
@@ -353,6 +356,8 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 		}
 		else itr++;
 	}
+
+	setCodeInvalidated(true);
 }
 
 DeferralType Constraint::getDeferralType(void)
@@ -487,6 +492,7 @@ void Constraint::addExcludeElement(ExcludeElement elem)
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.push_back(elem);
+	setCodeInvalidated(true);
 }
 
 void Constraint::addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
@@ -511,6 +517,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -542,6 +549,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -555,11 +563,13 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.erase(excl_elements.begin() + elem_idx);
+	setCodeInvalidated(true);
 }
 
 void Constraint::removeExcludeElements(void)
 {
 	excl_elements.clear();
+	setCodeInvalidated(true);
 }
 
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)

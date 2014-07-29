@@ -47,6 +47,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
+		connect(incl_child_sql_chk, SIGNAL(stateChanged(int)), this, SLOT(generateSourceCode(int)));
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
@@ -109,6 +110,8 @@ void SourceCodeWidget::generateSourceCode(int)
        (obj_type==BASE_RELATIONSHIP &&
         dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
 		{
+			BaseTable *table=dynamic_cast<BaseTable *>(object);
+
 			if(obj_type==OBJ_DATABASE)
 			{
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
@@ -119,9 +122,44 @@ void SourceCodeWidget::generateSourceCode(int)
 
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
 			sqlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+
+			//Generating the sql for table's children objects
+			if(table && incl_child_sql_chk->isChecked())
+			{
+				vector<BaseObject *> tab_objs=table->getObjects();
+				Constraint *constr=nullptr;
+				QString aux_def;
+
+				for(auto obj : tab_objs)
+				{
+					if(obj->getObjectType()!=OBJ_COLUMN)
+					{
+						constr=dynamic_cast<Constraint *>(obj);
+
+						if(!constr ||
+							 ((constr->getConstraintType()==ConstraintType::foreign_key) ||
+								(constr->getConstraintType()!=ConstraintType::foreign_key &&
+								 constr->getConstraintType()!=ConstraintType::primary_key &&
+								 constr->isReferRelationshipAddedColumn())))
+						{
+							aux_def+=Utf8String::create(obj->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+						}
+					}
+				}
+
+				if(!aux_def.isEmpty())
+				{
+					aux_def=trUtf8("-- NOTE: below all the code for table's children objects are attached\n\
+-- as a convinience in order to permit you to test the whole table's\n\
+-- SQL definition at once. When exporting or generating the SQL for\n\
+-- the whole database model all objects will be placed at their\n\
+-- original positions.\n\n") + aux_def;
+					sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
+				}
+			}
 		}
 
-		if(sqlcode_txt->toPlainText()=="")
+		if(sqlcode_txt->toPlainText().isEmpty())
 			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
 		xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
@@ -146,9 +184,16 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		{
 			BaseObjectWidget::setAttributes(model, object, nullptr);
 
+			bool inc_child_sql=(object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW);
+
 			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
 			this->obj_id_lbl->setVisible(false);
+
+			incl_child_sql_chk->blockSignals(true);
+			incl_child_sql_chk->setVisible(inc_child_sql);
+			incl_child_sql_chk->setChecked(inc_child_sql);
+			incl_child_sql_chk->blockSignals(false);
 
 			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
 																			BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));

@@ -377,7 +377,7 @@ class BaseObject {
 				will automatically invalidate the code but for all other setters / attributes the user must call
 				this method explicitly in order to force the regeneration of the code.
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
-		void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value);
 
 		//! brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);

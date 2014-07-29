@@ -532,3 +532,10 @@ QString BaseRelationship::getRelTypeAttribute(void)
 	}
 }
 
+void BaseRelationship::setCodeInvalidated(bool value)
+{
+	BaseObject::setCodeInvalidated(value);
+	src_table->setCodeInvalidated(value);
+	dst_table->setCodeInvalidated(value);
+}
+
