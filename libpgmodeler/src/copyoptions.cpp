@@ -97,3 +97,8 @@ QString CopyOptions::getSQLDefinition(void)
 
 	return(def);
 }
+
+bool CopyOptions::operator != (CopyOptions &cp)
+{
+	return(this->copy_mode!= cp.copy_mode && this->copy_op_ids!=cp.copy_op_ids);
+}

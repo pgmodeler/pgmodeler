@@ -53,6 +53,7 @@ class CopyOptions {
 		bool isExcluding(void);
 
 		QString getSQLDefinition(void);
+		bool operator != (CopyOptions &cp);
 };
 
 #endif

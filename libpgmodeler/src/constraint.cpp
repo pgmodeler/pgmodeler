@@ -63,20 +63,26 @@ void Constraint::setConstraintType(ConstraintType constr_type)
 void Constraint::setActionType(ActionType action_type, unsigned act_id)
 {
   if(act_id==DELETE_ACTION)
+	{
+		setCodeInvalidated(this->del_action != action_type);
     this->del_action=action_type;
+	}
 	else
+	{
+		setCodeInvalidated(this->upd_action != action_type);
     this->upd_action=action_type;
+	}
 }
 
 void Constraint::setExpression(const QString &expr)
 {
+	setCodeInvalidated(expression != expr);
   expression=expr;
 }
 
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
 {
 	vector<Column *>::iterator itr, itr_end;
-	//Column *col_aux=nullptr;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -352,12 +358,11 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 		{
 			//Remove its iterator from the list
 			cols->erase(itr);
+			setCodeInvalidated(true);
 			break;
 		}
 		else itr++;
 	}
-
-	setCodeInvalidated(true);
 }
 
 DeferralType Constraint::getDeferralType(void)

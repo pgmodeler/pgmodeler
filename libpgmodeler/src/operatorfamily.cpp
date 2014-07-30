@@ -26,6 +26,7 @@ OperatorFamily::OperatorFamily(void)
 
 void OperatorFamily::setIndexingType(IndexingType idx_type)
 {
+	setCodeInvalidated(indexing_type != idx_type);
 	indexing_type=idx_type;
 }
 

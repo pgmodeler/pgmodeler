@@ -28,8 +28,6 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::FROM_EXP]="";
 	attributes[ParsersAttributes::SIMPLE_EXP]="";
 	attributes[ParsersAttributes::CTE_EXPRESSION]="";
-	//attributes[ParsersAttributes::TRIGGERS]="";
-	//attributes[ParsersAttributes::RULES]="";
   attributes[ParsersAttributes::MATERIALIZED]="";
   attributes[ParsersAttributes::RECURSIVE]="";
   attributes[ParsersAttributes::WITH_NO_DATA]="";
@@ -93,19 +91,22 @@ void View::setProtected(bool value)
 
 void View::setMaterialized(bool value)
 {
+	setCodeInvalidated(materialized != value);
   materialized=value;
   if(materialized) recursive=false;
 }
 
 void View::setRecursive(bool value)
 {
+	setCodeInvalidated(recursive != value);
   recursive=value;
   if(recursive) materialized=false;
 }
 
 void View::setWithNoData(bool value)
 {
- with_no_data=(materialized ? value : false);
+	setCodeInvalidated(materialized && with_no_data != value);
+	with_no_data=(materialized ? value : false);
 }
 
 bool View::isMaterialized(void)
@@ -125,6 +126,7 @@ bool View::isWithNoData(void)
 
 void View::setCommomTableExpression(const QString &expr)
 {
+	setCodeInvalidated(cte_expression != expr);
 	cte_expression=expr;
 }
 
@@ -262,6 +264,8 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			 col->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 unsigned View::getReferenceCount(void)
@@ -353,6 +357,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Removes the reference from the view
 	references.erase(references.begin() + ref_id);
+	setCodeInvalidated(true);
 }
 
 void View::removeReferences(void)
@@ -361,6 +366,7 @@ void View::removeReferences(void)
 	exp_select.clear();
 	exp_from.clear();
 	exp_where.clear();
+	setCodeInvalidated(true);
 }
 
 void View::removeReference(unsigned expr_id, unsigned sql_type)
@@ -371,6 +377,7 @@ void View::removeReference(unsigned expr_id, unsigned sql_type)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vect_idref->erase(vect_idref->begin() + expr_id);
+	setCodeInvalidated(true);
 }
 
 int View::getReferenceIndex(Reference &ref, unsigned sql_type)
@@ -666,6 +673,8 @@ void View::addObject(BaseObject *obj, int obj_idx)
 				obj_list->push_back(tab_obj);
 			else
 				obj_list->insert(obj_list->begin() + obj_idx, tab_obj);
+
+			setCodeInvalidated(true);
 		}
 		catch(Exception &e)
 		{
@@ -716,6 +725,7 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 	itr=obj_list->begin() + obj_idx;
 	(*itr)->setParentTable(nullptr);
 	obj_list->erase(itr);
+	setCodeInvalidated(true);
 }
 
 void View::removeObject(BaseObject *obj)

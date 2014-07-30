@@ -45,6 +45,7 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 										.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
 										ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(functions[func_idx]!=func);
 	functions[func_idx]=func;
 }
 
@@ -84,11 +85,13 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 void Aggregate::setStateType(PgSQLType state_type)
 {
+	setCodeInvalidated(this->state_type != state_type);
 	this->state_type=state_type;
 }
 
 void Aggregate::setInitialCondition(const QString &cond)
 {
+	setCodeInvalidated(initial_condition != cond);
 	initial_condition=cond;
 }
 
@@ -114,6 +117,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 			throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
+	setCodeInvalidated(sort_operator != sort_op);
 	this->sort_operator=sort_op;
 }
 
@@ -150,6 +154,7 @@ void Aggregate::addDataType(PgSQLType type)
 										ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	data_types.push_back(type);
+	setCodeInvalidated(true);
 }
 
 void Aggregate::removeDataType(unsigned type_idx)
@@ -160,11 +165,13 @@ void Aggregate::removeDataType(unsigned type_idx)
 
 	//Removes the type at the specified position
 	data_types.erase(data_types.begin() + type_idx);
+	setCodeInvalidated(true);
 }
 
 void Aggregate::removeDataTypes(void)
 {
 	data_types.clear();
+	setCodeInvalidated(true);
 }
 
 bool Aggregate::isDataTypeExist(PgSQLType type)

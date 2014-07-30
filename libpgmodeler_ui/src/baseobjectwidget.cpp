@@ -847,7 +847,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			}
 		}
 
-		object->setCodeInvalidated(true);
+		//object->setCodeInvalidated(true);
 		this->accept();
 		parent_form->hide();
 
@@ -862,7 +862,7 @@ void BaseObjectWidget::finishConfiguration(void)
 					graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
 
 				graph_obj->setModified(true);
-				graph_obj->setCodeInvalidated(true);
+				//graph_obj->setCodeInvalidated(true);
 			}
 			else if(graph_obj)
 			{

@@ -338,23 +338,9 @@ void BaseRelationship::setRelationshipAttributes(void)
     unsigned count, i;
     QString str_aux,
             label_attribs[3]={ ParsersAttributes::SRC_LABEL,
-                               ParsersAttributes::DST_LABEL,
-												 ParsersAttributes::NAME_LABEL};
+															 ParsersAttributes::DST_LABEL,
+															 ParsersAttributes::NAME_LABEL};
 
-	/*switch(rel_type)
-	{
-		case RELATIONSHIP_11: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
-		case RELATIONSHIP_1N: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
-		case RELATIONSHIP_NN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
-		case RELATIONSHIP_GEN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
-		case RELATIONSHIP_FK: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_FK; break;
-		default:
-			if(src_table->getObjectType()==OBJ_VIEW)
-				attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;
-			else
-				attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;
-		break;
-	}*/
 
 	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
 	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? "1" : "");
@@ -535,7 +521,11 @@ QString BaseRelationship::getRelTypeAttribute(void)
 void BaseRelationship::setCodeInvalidated(bool value)
 {
 	BaseObject::setCodeInvalidated(value);
-	src_table->setCodeInvalidated(value);
-	dst_table->setCodeInvalidated(value);
+
+	if(src_table)
+		src_table->setCodeInvalidated(value);
+
+	if(dst_table)
+		dst_table->setCodeInvalidated(value);
 }
 

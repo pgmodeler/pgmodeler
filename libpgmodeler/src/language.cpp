@@ -46,6 +46,7 @@ void Language::setName(const QString &name)
 
 void Language::setTrusted(bool value)
 {
+	setCodeInvalidated(is_trusted != value);
 	is_trusted=value;
 }
 
@@ -76,6 +77,7 @@ void  Language::setFunction(Function *func, unsigned func_type)
 				func->getParameter(0).getType() == "internal" &&
 				func->getLanguage()->getName()==(~lang)) )))
 	{
+		setCodeInvalidated(functions[func_type] != func);
 		this->functions[func_type]=func;
 	}
 	//Raises an error in case the function return type doesn't matches the required by each rule

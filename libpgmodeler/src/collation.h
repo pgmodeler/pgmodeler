@@ -48,6 +48,9 @@ class Collation : public BaseObject {
 						locale;
 
 	public:
+		static const unsigned _LC_CTYPE=0,
+		_LC_COLLATE=1;
+
 		Collation(void);
 
 		/*! brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
@@ -56,7 +59,7 @@ class Collation : public BaseObject {
 		void setLocale(const QString &locale);
 
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
-		void setLocalization(int lc_id, QString lc_name);
+		void setLocalization(unsigned lc_id, QString lc_name);
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
@@ -66,7 +69,7 @@ class Collation : public BaseObject {
 		void setEncoding(EncodingType encoding);
 
 		QString getLocale(void);
-		QString getLocalization(int lc_id);
+		QString getLocalization(unsigned lc_id);
 		EncodingType getEncoding(void);
 
 		//! \brief Returns the SQL / XML definition for the collation.

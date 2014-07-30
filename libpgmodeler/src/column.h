@@ -104,6 +104,8 @@ class Column: public TableObject{
 
 		//! \brief Copies on column to other
 		void operator = (Column &col);
+
+		void setCodeInvalidated(bool value);
 };
 
 #endif

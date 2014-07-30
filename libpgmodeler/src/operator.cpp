@@ -83,13 +83,10 @@ void Operator::setName(const QString &name)
 {
 	if(name=="")
 		throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		if(!isValidName(name))
-			throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else
-			this->obj_name=name;
-	}
+	else	if(!isValidName(name))
+		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->obj_name=name;
 }
 
 void Operator::setFunction(Function *func, unsigned func_type)
@@ -150,6 +147,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		}
 	}
 
+	setCodeInvalidated(functions[func_type] != func);
 	functions[func_type]=func;
 }
 
@@ -159,6 +157,7 @@ void Operator::setArgumentType(PgSQLType arg_type, unsigned arg_id)
 	if(arg_id > RIGHT_ARG)
 		throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(argument_types[arg_id] != arg_type);
 	argument_types[arg_id]=arg_type;
 }
 
@@ -197,17 +196,20 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
+		setCodeInvalidated(operators[op_type] != oper);
 		operators[op_type]=oper;
 	}
 }
 
 void Operator::setHashes(bool value)
 {
+	setCodeInvalidated(hashes != value);
 	hashes=value;
 }
 
 void Operator::setMerges(bool value)
 {
+	setCodeInvalidated(merges != value);
 	merges=value;
 }
 

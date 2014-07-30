@@ -1405,7 +1405,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				type_attrib.setName(values[0].remove("\""));
 				type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
 				type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
-				type_attrib.setCodeInvalidated(true);
+				//type_attrib.setCodeInvalidated(true);
 
 				attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			}
@@ -1522,7 +1522,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         getDependencyObject(itr->second[ParsersAttributes::COLLATION], OBJ_COLLATION);
 
       col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
-			col.setCodeInvalidated(true);
+			//col.setCodeInvalidated(true);
 
 			attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			itr++;

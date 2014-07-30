@@ -58,18 +58,21 @@ void Column::setType(PgSQLType type)
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		this->type=type;
+
+	setCodeInvalidated(this->type != type);
+	this->type=type;
 }
 
 void Column::setDefaultValue(const QString &value)
 {
+	setCodeInvalidated(default_value != value);
 	default_value=value.trimmed();
   sequence=nullptr;
 }
 
 void Column::setNotNull(bool value)
 {
+	setCodeInvalidated(not_null != value);
 	not_null=value;
 }
 
@@ -136,6 +139,7 @@ void Column::setSequence(BaseObject *seq)
     default_value="";
   }
 
+	setCodeInvalidated(sequence != seq);
   sequence=seq;
 }
 
@@ -193,5 +197,19 @@ void Column::operator = (Column &col)
 	this->setAddedByCopy(false);
 	this->setAddedByGeneralization(false);
 	this->setAddedByLinking(false);
+	this->setCodeInvalidated(true);
 }
 
+void Column::setCodeInvalidated(bool value)
+{
+	if(code_invalidated != value)
+	{
+		if(getParentTable())
+			getParentTable()->setCodeInvalidated(value);
+
+		if(getParentRelationship())
+			getParentRelationship()->setCodeInvalidated(value);
+
+		BaseObject::setCodeInvalidated(value);
+	}
+}

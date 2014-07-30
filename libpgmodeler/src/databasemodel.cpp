@@ -52,20 +52,12 @@ void DatabaseModel::setEncoding(EncodingType encod)
 	encoding=encod;
 }
 
-void DatabaseModel::setLocalization(int localiz_id, const QString &value)
+void DatabaseModel::setLocalization(unsigned localiz_id, const QString &value)
 {
-	switch(localiz_id)
-	{
-		case LC_CTYPE:
-			localizations[0]=value;
-		break;
-		case LC_COLLATE:
-			localizations[1]=value;
-		break;
-		default:
-			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		break;
-	}
+	if(localiz_id > Collation::_LC_COLLATE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	localizations[localiz_id]=value;
 }
 
 void DatabaseModel::setConnectionLimit(int conn_lim)
@@ -658,7 +650,7 @@ unsigned DatabaseModel::getObjectCount(void)
 	return(count);
 }
 
-QString DatabaseModel::getLocalization(int localiz_id)
+QString DatabaseModel::getLocalization(unsigned localiz_id)
 {
 	switch(localiz_id)
 	{
@@ -5490,8 +5482,8 @@ Collation *DatabaseModel::createCollation(void)
 		//Creating a collation using LC_COLLATE and LC_CTYPE params
 		else
 		{
-			collation->setLocalization(LC_COLLATE, attribs[ParsersAttributes::_LC_COLLATE_]);
-			collation->setLocalization(LC_CTYPE, attribs[ParsersAttributes::_LC_CTYPE_]);
+			collation->setLocalization(Collation::_LC_COLLATE, attribs[ParsersAttributes::_LC_COLLATE_]);
+			collation->setLocalization(Collation::_LC_CTYPE, attribs[ParsersAttributes::_LC_CTYPE_]);
 		}
 	}
 	catch(Exception &e)

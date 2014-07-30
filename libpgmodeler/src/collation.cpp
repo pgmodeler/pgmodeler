@@ -31,27 +31,24 @@ Collation::Collation(void)
 
 void Collation::setLocale(const QString &locale)
 {
-	setLocalization(LC_CTYPE, locale);
-	setLocalization(LC_COLLATE, locale);
+	setLocalization(_LC_CTYPE, locale);
+	setLocalization(_LC_COLLATE, locale);
 	this->locale=locale;
 }
 
-void Collation::setLocalization(int lc_id, QString lc_name)
+void Collation::setLocalization(unsigned lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
-	{
+	{	
+		if(lc_id > _LC_COLLATE)
+			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		/* Removes encoding specification from localization e.g 'aa_BB.ENC' will
 		 turn into 'aa_BB' since the encoding is appended on code generation */
 		lc_name.remove(lc_name.indexOf('.'), lc_name.size());
 
-		switch(lc_id)
-		{
-			case LC_CTYPE: localization[0]=lc_name; break;
-			case LC_COLLATE: localization[1]=lc_name; break;
-			default:
-				throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			break;
-		}
+		setCodeInvalidated(localization[lc_id] != lc_name);
+		localization[lc_id]=lc_name;
 	}
 }
 
@@ -80,16 +77,12 @@ QString Collation::getLocale(void)
  return(locale);
 }
 
-QString Collation::getLocalization(int lc_id)
+QString Collation::getLocalization(unsigned lc_id)
 {
-	switch(lc_id)
-	{
-		case LC_CTYPE: return(localization[0]);	break;
-		case LC_COLLATE: return(localization[1]); break;
-		default:
-			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		break;
-	}
+	if(lc_id > _LC_COLLATE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(localization[lc_id]);
 }
 
 EncodingType Collation::getEncoding(void)
@@ -119,14 +112,13 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else
 	{
 		QString lc_attribs[2]={ ParsersAttributes::_LC_CTYPE_, ParsersAttributes::_LC_COLLATE_ };
-		int lc_ids[2]={ LC_CTYPE, LC_COLLATE };
 
-		if(localization[0].isEmpty() && localization[1].isEmpty())
+		if(localization[_LC_CTYPE].isEmpty() && localization[_LC_COLLATE].isEmpty())
 			throw Exception(ERR_EMPTY_LOCAL_ATTRIB_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		for(int i=0; i < 2; i++)
+		for(unsigned int i=_LC_CTYPE; i <= _LC_COLLATE; i++)
 		{
-			attributes[lc_attribs[i]]=getLocalization(lc_ids[i]);
+			attributes[lc_attribs[i]]=getLocalization(i);
 
 			if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null &&
 				 !attributes[lc_attribs[i]].isEmpty())

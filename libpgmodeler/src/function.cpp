@@ -87,7 +87,6 @@ void Function::addParameter(Parameter param)
 
 	//Inserts the parameter in the function
 	parameters.push_back(param);
-
 	createSignature();
 }
 
@@ -123,6 +122,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	p.setName(name);
 	p.setType(type);
 	ret_table_columns.push_back(p);
+	setCodeInvalidated(true);
 }
 
 void Function::setParametersAttribute(unsigned def_type)
@@ -161,11 +161,13 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 
 void Function::setExecutionCost(unsigned exec_cost)
 {
+	setCodeInvalidated(execution_cost != exec_cost);
 	execution_cost=exec_cost;
 }
 
 void Function::setRowAmount(unsigned row_amount)
 {
+	setCodeInvalidated(this->row_amount != row_amount);
 	this->row_amount=row_amount;
 }
 
@@ -176,6 +178,7 @@ void Function::setLibrary(const QString &library)
 										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->library != library);
 	this->library=library;
 }
 
@@ -186,16 +189,19 @@ void Function::setSymbol(const QString &symbol)
 										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->symbol != symbol);
 	this->symbol=symbol;
 }
 
 void Function::setReturnType(PgSQLType type)
 {
+	setCodeInvalidated(return_type != type);
 	return_type=type;
 }
 
 void Function::setFunctionType(FunctionType func_type)
 {
+	setCodeInvalidated(function_type != func_type);
 	function_type=func_type;
 }
 
@@ -208,31 +214,37 @@ void Function::setLanguage(BaseObject *language)
 	else if(language->getObjectType()!=OBJ_LANGUAGE)
 		throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->language != language);
 	this->language=language;
 }
 
 void Function::setReturnSetOf(bool value)
 {
+	setCodeInvalidated(returns_setof != value);
 	returns_setof=value;
 }
 
 void Function::setWindowFunction(bool value)
 {
+	setCodeInvalidated(is_wnd_function != value);
 	is_wnd_function=value;
 }
 
 void Function::setLeakProof(bool value)
 {
+	setCodeInvalidated(is_leakproof != value);
 	is_leakproof=value;
 }
 
 void Function::setSecurityType(SecurityType sec_type)
 {
+	setCodeInvalidated(security_type != sec_type);
 	security_type=sec_type;
 }
 
 void Function::setBehaviorType(BehaviorType behav_type)
 {
+	setCodeInvalidated(behavior_type != behav_type);
 	behavior_type=behav_type;
 }
 
@@ -243,6 +255,7 @@ void Function::setSourceCode(const QString &src_code)
 										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->source_code != src_code);
 	this->source_code=src_code;
 }
 
@@ -353,6 +366,7 @@ void Function::removeParameters(void)
 void Function::removeReturnedTableColumns(void)
 {
 	ret_table_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Function::removeParameter(const QString &name, PgSQLType type)
@@ -398,6 +412,7 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	vector<Parameter>::iterator itr;
 	itr=ret_table_columns.begin()+column_idx;
 	ret_table_columns.erase(itr);
+	setCodeInvalidated(true);
 }
 
 QString Function::getSignature(void)

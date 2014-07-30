@@ -42,6 +42,7 @@ void Schema::setName(const QString &name)
 
 void Schema::setFillColor(const QColor &color)
 {
+	setCodeInvalidated(fill_color != color);
 	this->fill_color=color;
 }
 
@@ -52,6 +53,7 @@ QColor Schema::getFillColor(void)
 
 void Schema::setRectVisible(bool value)
 {
+	setCodeInvalidated(rect_visible != value);
 	rect_visible=value;
 }
 

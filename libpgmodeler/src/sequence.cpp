@@ -222,6 +222,7 @@ void Sequence::setSchema(BaseObject *schema)
 
 void Sequence::setCycle(bool value)
 {
+	setCodeInvalidated(cycle != value);
 	cycle=value;
 }
 
@@ -256,6 +257,8 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	this->increment=inc;
 	this->cache=cache;
 	this->start=start;
+
+	setCodeInvalidated(true);
 }
 
 void Sequence::setOwnerColumn(Table *table, const QString &col_name)
@@ -291,6 +294,8 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 			 this->owner_col->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 void Sequence::setOwnerColumn(Column *column)
@@ -329,6 +334,8 @@ void Sequence::setOwnerColumn(Column *column)
 			 column->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 bool Sequence::isReferRelationshipAddedColumn(void)

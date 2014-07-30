@@ -82,20 +82,22 @@ void Conversion::setConversionFunction(Function *conv_func)
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(conversion_func != conv_func);
 	this->conversion_func=conv_func;
 }
 
 void Conversion::setDefault(bool value)
 {
+	setCodeInvalidated(is_default != value);
 	is_default=value;
 }
 
 EncodingType Conversion::getEncoding(unsigned encoding_idx)
 {
-	if(encoding_idx<=DST_ENCODING)
-		return(this->encodings[encoding_idx]);
-	else
+	if(encoding_idx > DST_ENCODING)
 		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(this->encodings[encoding_idx]);
 }
 
 Function *Conversion::getConversionFunction(void)
