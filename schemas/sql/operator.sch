@@ -7,6 +7,11 @@
 
 @{drop}
 
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
+
 [CREATE OPERATOR ] @{name} [ (]
 $br $tb [PROCEDURE = ] @{operfunc}
 
@@ -46,8 +51,12 @@ $br $tb [PROCEDURE = ] @{operfunc}
 
 %if @{owner} %then @{owner} %end
 %if @{comment} %then @{comment} %end
-%if @{appended-sql} %then @{appended-sql} %end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
+
+%if @{appended-sql} %then
+ @{appended-sql}
+ $br [-- ddl-end --] $br $br
+%end

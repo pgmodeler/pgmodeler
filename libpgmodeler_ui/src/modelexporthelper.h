@@ -124,7 +124,7 @@ class ModelExportHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd="");
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished(void);

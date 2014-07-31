@@ -199,17 +199,3 @@ void Column::operator = (Column &col)
 	this->setAddedByLinking(false);
 	this->setCodeInvalidated(true);
 }
-
-void Column::setCodeInvalidated(bool value)
-{
-	if(code_invalidated != value)
-	{
-		if(getParentTable())
-			getParentTable()->setCodeInvalidated(value);
-
-		if(getParentRelationship())
-			getParentRelationship()->setCodeInvalidated(value);
-
-		BaseObject::setCodeInvalidated(value);
-	}
-}

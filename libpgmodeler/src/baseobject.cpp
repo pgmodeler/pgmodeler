@@ -935,14 +935,14 @@ void BaseObject::operator = (BaseObject &obj)
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
   this->system_obj=obj.system_obj;
-	this->code_invalidated=use_cached_code;
+	this->setCodeInvalidated(use_cached_code);
 }
 
 void BaseObject::setCodeInvalidated(bool value)
 {
 	if(use_cached_code && value!=code_invalidated)
 	{
-		if(!value)
+		if(value)
 		{
 			cached_reduced_code.clear();
 			cached_code[0].clear();

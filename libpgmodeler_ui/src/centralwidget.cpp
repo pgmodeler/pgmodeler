@@ -24,7 +24,7 @@ CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb };
+	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb };
 	QGraphicsDropShadowEffect *shadow=nullptr;
 
 	for(auto btn : btns)

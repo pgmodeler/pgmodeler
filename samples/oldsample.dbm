@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="66,0" last-zoom="1">
 <role name="admin1"
       superuser="true"
       connlimit="500"
@@ -517,10 +517,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<opfamily name="&quot;schema_B&quot;.familia_teste"/>
 	<type name="text"/>
 	<element type="function" stg-number="1">
-		<function signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
+		<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
 	</element>
 	<element type="operator" stg-number="2">
-		<operator  signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
+		<operator ref-type="commutator-op" signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
 	</element>
 	<element type="storage">
 		<type name="integer"/>
@@ -548,7 +548,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_A1">
 	<schema name="&quot;schema_A&quot;"/>
-	<position x="121" y="827.4"/>
+	<position x="150" y="930.4"/>
 	<column name="coluna_B_">
 		<type name="serial"/>
 	</column>
@@ -577,7 +577,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_A2">
 	<schema name="&quot;schema_A&quot;"/>
-	<position x="91" y="1168.8"/>
+	<position x="90" y="1207.8"/>
 	<column name="њcoluna_Bњ">
 		<type name="serial"/>
 	</column>
@@ -599,41 +599,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
 			<expression><![CDATA[ "Ɽcoluna_B2Ɽ" > 0 ]]></expression>
 	</constraint>
-	<rule name="regra_teste" event-type="ON INSERT"
-		 exec-type="ALSO">
-		<comment><![CDATA[comentario teste  " na regra]]></comment>
-		<condition><![CDATA[bla= "ble"]]></condition>
-		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
-	</rule>
-	<rule name="regra_teste1" event-type="ON INSERT"
-		 exec-type="ALSO">
-		<comment><![CDATA[comentario teste  " na regra]]></comment>
-		<condition><![CDATA[bla= "ble"]]></condition>
-		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
-	</rule>
-	<trigger name="gatilho_teste" firing-type="BEFORE" per-line="false" constraint="false"
-		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
-	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
-		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
-		<function signature="public.funcao_teste()"/>
-	</trigger>
-	<trigger name="gatilho_teste1" firing-type="BEFORE" per-line="false" constraint="false"
-		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
-	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
-		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
-		<function signature="public.funcao_teste()"/>
-	</trigger>
-	<trigger name="gatilho_teste2" firing-type="BEFORE" per-line="false" constraint="false"
-		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
-	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
-		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
-		<function signature="public.funcao_teste()"/>
-	</trigger>
 </table>
 
 <table name="table_C1">
 	<schema name="&quot;schema_C&quot;"/>
-	<position x="1728" y="514.2"/>
+	<position x="1567" y="567.2"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -659,7 +629,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="tabela_B_4a" protected="true">
 	<schema name="public"/>
-	<position x="1052" y="770"/>
+	<position x="1021" y="949"/>
 	<column name="coluna_B" protected="true">
 		<type name="serial"/>
 	</column>
@@ -685,7 +655,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_B1">
 	<schema name="&quot;schema_B&quot;"/>
-	<position x="633.889" y="348.667"/>
+	<position x="628.889" y="549.667"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -711,7 +681,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="tabela_B_4c">
 	<schema name="public"/>
-	<position x="1062" y="1189.4"/>
+	<position x="1019" y="1231.4"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -737,7 +707,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_C2">
 	<schema name="&quot;schema_C&quot;"/>
-	<position x="1698" y="70.4"/>
+	<position x="1515" y="250.4"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -760,7 +730,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_A3">
 	<schema name="&quot;schema_A&quot;"/>
-	<position x="609" y="1024"/>
+	<position x="612" y="1033"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -789,7 +759,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_C3">
 	<schema name="&quot;schema_C&quot;"/>
-	<position x="1082" y="62"/>
+	<position x="958" y="263"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -815,7 +785,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_A4">
 	<schema name="&quot;schema_A&quot;"/>
-	<position x="637" y="828"/>
+	<position x="604" y="906"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -844,7 +814,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_C4">
 	<schema name="&quot;schema_C&quot;"/>
-	<position x="1110" y="473.8"/>
+	<position x="948" y="617.8"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -870,7 +840,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_B2">
 	<schema name="&quot;schema_B&quot;"/>
-	<position x="484.444" y="513.333"/>
+	<position x="482.444" y="722.333"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -896,7 +866,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_B4">
 	<schema name="&quot;schema_B&quot;"/>
-	<position x="99.4444" y="553.667"/>
+	<position x="108.444" y="700.667"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -922,7 +892,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table_B3">
 	<schema name="&quot;schema_B&quot;"/>
-	<position x="633.333" y="48.8888"/>
+	<position x="629.333" y="254.889"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -949,7 +919,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="tabela_B_4z" oids="true">
 	<schema name="public"/>
-	<position x="1375" y="1003.6"/>
+	<position x="1183" y="1102.6"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -973,7 +943,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <view name="view_B1">
 	<schema name="&quot;schema_B&quot;"/>
 	<comment><![CDATA[comentario na visao teste]]></comment>
-	<position x="88.3332" y="45.6667"/>
+	<position x="88.3332" y="250.667"/>
 	<reference table="&quot;schema_B&quot;.&quot;table_B3&quot;" column="coluna_B" alias="tp" column-alias="codusr"/>
 	<reference table="&quot;schema_B&quot;.&quot;table_B4&quot;" column="coluna_B3" alias="tp" column-alias="dtemiss"/>
 	<reference alias="conta">
@@ -985,28 +955,30 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </view>
 
 <relationship name="&quot;rel_visao_teste_tabela_B_4k&quot;" type="reltv"
+	 custom-color="#9fdf3a"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="&quot;rel_visao_teste_tabela_B_4j&quot;" type="reltv"
+	 custom-color="#0f30f0"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B4&quot;"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_visao_teste_tabela_B_4i" type="reltv"
+	 custom-color="#af3c3b"
 	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="366" y="252"/>
-	<position x="368" y="319"/>
-	<position x="370" y="564"/>
+		<position x="407" y="393"/>
+	<position x="410.139" y="769.033"/>
 	</line>
 </relationship>
 
 <textbox name="caixa_texto_Teste" italic="true" font-size="9">
-	<position x="340" y="240"/>
+	<position x="488" y="481"/>
 	<comment><![CDATA[Caixa X:0 Y:0]]></comment>
 </textbox>
 
@@ -1014,6 +986,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#657535"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 src-required="false" dst-required="true"/>
@@ -1022,13 +995,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#0cbc0f"
 	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="748.444" y="550.693"/>
-	<position x="748.444" y="503.333"/>
-	<position x="653.777" y="503.333"/>
+		<position x="746.444" y="759.693"/>
+	<position x="746.444" y="712.333"/>
+	<position x="651.777" y="712.333"/>
 	</line>
 </relationship>
 
@@ -1036,12 +1010,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#f91566"
 	 src-table="&quot;schema_A&quot;.&quot;table_A3&quot;"
 	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="720" y="1183"/>
-	<position x="468" y="1185"/>
+		<position x="487.85" y="1061.6"/>
+	<position x="487.85" y="1306.4"/>
 	</line>
 </relationship>
 
@@ -1049,6 +1024,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#6dbc20"
 	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 src-required="true" dst-required="false"	 identifier="true"
@@ -1058,14 +1034,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#881a4b"
 	 src-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
 	 src-required="true" dst-required="false"	 identifier="true"
 
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
 	<line>
-		<position x="1558" y="270"/>
-	<position x="1561" y="539"/>
+		<position x="1387.85" y="335"/>
+	<position x="1387.85" y="702.4"/>
 	</line>
 	<column name="coluna_Teste1">
 		<type name="integer"/>
@@ -1085,10 +1062,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#a65f9c"
 	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
 	 dst-table="public.&quot;tabela_B_4c&quot;"
 	 src-required="false" dst-required="false"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
+	<line>
+		<position x="691.35" y="1236.4"/>
+	<position x="691.35" y="1316"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="24.6257" y="36.4514"/>
+	</label>
 	<column name="coluna_B11">
 		<type name="integer"/>
 	</column>
@@ -1107,6 +1092,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#43ae98"
 	 src-table="public.&quot;tabela_B_4c&quot;"
 	 dst-table="public.&quot;tabela_B_4a&quot;"
 	 src-required="false" dst-required="false"
@@ -1116,6 +1102,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 custom-color="#f73e5c"
 	 src-table="&quot;schema_B&quot;.&quot;table_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
 	 src-required="false" dst-required="false"	 table-name="tabela_REL_NN"/>
@@ -1124,10 +1111,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
+	 custom-color="#27277e"
 	 src-table="&quot;schema_C&quot;.&quot;table_C3&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 src-required="false" dst-required="false"
-	 deferrable="true" defer-type="INITIALLY IMMEDIATE"/>
+	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
+	<line>
+		<position x="1336.85" y="291.6"/>
+	<position x="1336.85" y="349"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="-11.8743" y="-78.1485"/>
+	</label>
+</relationship>
 
 <trigger name="gatilho_restricao_teste_4c" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
@@ -1136,4 +1132,56 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<function signature="public.funcao_teste()"/>
 	<columns names="&quot;coluna_Teste2&quot;"/>
 </trigger>
+
+<rule name="regra_teste" event-type="ON INSERT" exec-type="ALSO"
+ table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[comentario teste  " na regra]]></comment>
+		<condition><![CDATA[bla= "ble"]]></condition>
+		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
+</rule>
+
+<rule name="regra_teste1" event-type="ON INSERT" exec-type="ALSO"
+ table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[comentario teste  " na regra]]></comment>
+		<condition><![CDATA[bla= "ble"]]></condition>
+		<commands><![CDATA[SELECT 1+2 AS "CONTA";SELECT (1+2 * 5) AS "CONTA1"]]></commands>
+</rule>
+
+<trigger name="gatilho_teste" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<trigger name="gatilho_teste1" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<trigger name="gatilho_teste2" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25"
+	 table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+		<comment><![CDATA[Gatilho teste na tabela teste]]></comment>
+		<function signature="public.funcao_teste()"/>
+</trigger>
+
+<textbox name="pagila_desc" font-size="11">
+	<position x="82" y="80.273"/>
+	<comment><![CDATA[This database model is here just for historical (or nostalgic) reason,
+being heavily used on initial versions of pgModeler to test the integration
+between the objects.
+
+It does not represent any specific context and export it to database will
+generate several errors since they are arbitrarily connected and, furthermore,
+some other dependency objects are purposely mal-formed to provoke SQL errors.]]></comment>
+</textbox>
+
+<textbox name="sample_text" bold="true" font-size="11">
+	<position x="82.818" y="32.455"/>
+	<comment><![CDATA[sampledb database]]></comment>
+</textbox>
+
 </dbmodel>

@@ -199,9 +199,9 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="incl_child_sql_chk">
+        <widget class="QCheckBox" name="incl_refs_sql_chk">
          <property name="text">
-          <string>Include children objects' SQL</string>
+          <string>Include key referrer objects' SQL</string>
          </property>
          <property name="checked">
           <bool>true</bool>

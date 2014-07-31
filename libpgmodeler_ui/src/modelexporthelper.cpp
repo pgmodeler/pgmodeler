@@ -449,9 +449,11 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
                                      trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_type),
 																		 obj_types[obj_id]);
 						}
-						else
+						else if(sql_cmd.trimmed()!="")
+						{
 							//General commands like alter / set aren't explicitly shown
-              emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."));
+							emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
+						}
 
 						//Executes the extracted SQL command
 						if(!sql_cmd.isEmpty())

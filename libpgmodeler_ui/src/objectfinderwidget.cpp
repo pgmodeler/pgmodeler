@@ -204,7 +204,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 			//First column: Object id
 			tab_item=new QTableWidgetItem;
-			tab_item->setFont(fnt);
+			//tab_item->setFont(fnt);
 			tab_item->setText(QString::number(objs[i]->getObjectId()));
 			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
 			tab_wgt->setItem(lin_idx, 0, tab_item);

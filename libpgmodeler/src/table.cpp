@@ -1508,3 +1508,22 @@ vector<BaseObject *> Table::getObjects(void)
 
   return(list);
 }
+
+void Table::setCodeInvalidated(bool value)
+{
+	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+											 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+	unsigned cnt=sizeof(types)/sizeof(ObjectType);
+	vector<TableObject *> *list=nullptr;
+
+	for(unsigned i=0; i < cnt; i++)
+	{
+		list=getObjectList(types[i]);
+
+		for(auto obj : *list)
+			obj->setCodeInvalidated(value);
+	}
+
+	BaseObject::setCodeInvalidated(value);
+
+}

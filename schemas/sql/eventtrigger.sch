@@ -8,7 +8,10 @@
   [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
   @{drop}
 
-  %if @{prepended-sql} %then @{prepended-sql} %end
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
 
   [CREATE EVENT TRIGGER ] @{name}
   $br $tb [ON ] @{event}
@@ -25,11 +28,15 @@
 
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
-  %if @{appended-sql} %then @{appended-sql} %end
 
   %if @{owner} %or @{comment} %or @{appended-sql} %then
     # This is a special token that pgModeler recognizes as end of DDL command
     # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
     [-- ddl-end --] $br $br
+  %end
+
+  %if @{appended-sql} %then
+   @{appended-sql}
+   $br [-- ddl-end --] $br $br
   %end
 %end

@@ -96,10 +96,13 @@ class TableObject: public BaseObject {
 		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
 		static bool isTableObject(ObjectType type);
 
+		void setCodeInvalidated(bool value);
+
 		void operator = (TableObject &object);
 
 		friend class Relationship;
 		friend class Table;
+
 };
 
 #endif

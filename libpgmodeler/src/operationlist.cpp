@@ -784,6 +784,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		{
 			if(parent_tab)
 			{
+				parent_tab->setCodeInvalidated(true);
 				parent_tab->setModified(true);
 
 				if(object->getObjectType()==OBJ_COLUMN ||
@@ -798,6 +799,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			}
 			else if(parent_rel)
 			{
+				parent_rel->setCodeInvalidated(true);
 				parent_rel->forceInvalidate();
 				model->validateRelationships();
 			}

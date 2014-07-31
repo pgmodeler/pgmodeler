@@ -27,6 +27,8 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 	for(unsigned i=0; i < 3; i++)
 		lables[i]=nullptr;
 
+	src_table=dst_table=nullptr;
+
 	(*(this))=(*rel);
 
 	custom_color=QColor(Qt::transparent);

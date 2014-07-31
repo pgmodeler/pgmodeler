@@ -39,7 +39,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		validation_helper.moveToThread(validation_thread);
 
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
-		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
 		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
@@ -235,6 +235,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				item1=new QTreeWidgetItem(item);
 				label1=new QLabel;
 				label1->setText(errors.back());
+				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				fnt=label1->font();
 				fnt.setPointSizeF(8.0f);
 				label1->setFont(fnt);
@@ -331,10 +332,10 @@ void ModelValidationWidget::applyFixes(void)
 	connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 }
 
-void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type)
+void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd)
 {
-	QTreeWidgetItem *item=nullptr;
-	QLabel *label=nullptr;
+	QTreeWidgetItem *item=nullptr, *cmd_item=nullptr;
+	QLabel *label=nullptr, *cmd_label=nullptr;
 
 	validation_prog_pb->setValue(prog);
 
@@ -376,6 +377,19 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
 		label->setText(msg);
+
+		if(!cmd.isEmpty())
+		{
+			QFont fnt=item->font(0);
+			fnt.setPointSizeF(8.0);
+			cmd_item=new QTreeWidgetItem(item);
+			cmd_label=new QLabel;
+			cmd_label->setFont(fnt);
+			cmd_label->setText(cmd);
+			cmd_label->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+			cmd_label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			output_trw->setItemWidget(cmd_item, 0, cmd_label);
+		}
 
 		output_trw->addTopLevelItem(item);
 		output_trw->setItemWidget(item, 0, label);

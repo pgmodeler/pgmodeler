@@ -7,13 +7,17 @@
 
 @{drop}
 
-%if @{prepended-sql} %then @{prepended-sql} %end
-
 [CREATE TYPE ] @{name}
 
 %if @{reduced-form} %then
-; $br
+; $br [-- ddl-end --] $br $br
 %else
+
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
+
    %if @{base} %then 
      [ (] $br 
    %else 
@@ -65,9 +69,15 @@
   $br
   %if @{owner} %then @{owner} %end
   %if @{comment} %then @{comment} %end
-  %if @{appended-sql} %then @{appended-sql} %end  
+
+  # This is a special token that pgModeler recognizes as end of DDL command
+  # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+  [-- ddl-end --] $br $br
+
+   %if @{appended-sql} %then
+    @{appended-sql}
+    $br [-- ddl-end --] $br $br
+   %end
 %end
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+
