@@ -79,7 +79,7 @@ namespace GlobalAttributes {
 
 
 	/*! \brief Variables used to reference the pgModeler directories.
-	 By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
+	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
 	 the working dir. But these values ​​can be overwritten using the
 	 environment variables:
 
@@ -87,7 +87,8 @@ namespace GlobalAttributes {
 		 PGMODELER_CONF_DIR
 		 PGMODELER_LANG_DIR
 		 PGMODELER_PLUGINS_DIR
-		 PGMODELER_TMP_DIR      */
+		 PGMODELER_TMP_DIR
+		 PGMODELER_SAMPLES_DIR*/
 
 	static const QString
 	/*! \brief According to the libxml documentation , the paths used by the parser are
@@ -101,6 +102,7 @@ namespace GlobalAttributes {
 	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
 	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
 	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
+	SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString("./samples")),
 
 	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
 	different location for pgmodeler-ch */

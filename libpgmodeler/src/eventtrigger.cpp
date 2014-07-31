@@ -29,6 +29,7 @@ EventTrigger::EventTrigger(void)
 
 void EventTrigger::setEvent(EventTriggerType evnt_type)
 {
+	setCodeInvalidated(event != evnt_type);
 	this->event=evnt_type;
 }
 
@@ -52,6 +53,7 @@ void EventTrigger::setFunction(Function *func)
 	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::sql))
 		throw Exception(ERR_ASG_EVNT_TRIG_FUNC_INV_LANG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(function != func);
 	function=func;
 }
 
@@ -61,7 +63,10 @@ void EventTrigger::setFilter(const QString &variable, const QStringList &values)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_EVENT_TRIGGER_VARIABLE).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!values.isEmpty())
+	{
 		filter[variable].append(values);
+		setCodeInvalidated(true);
+	}
 }
 
 void EventTrigger::setFilter(const QString &variable, const QString &value)
@@ -72,11 +77,13 @@ void EventTrigger::setFilter(const QString &variable, const QString &value)
 void EventTrigger::removeFilter(const QString &variable)
 {
 	filter.erase(variable);
+	setCodeInvalidated(true);
 }
 
 void EventTrigger::clearFilter(void)
 {
 	filter.clear();
+	setCodeInvalidated(true);
 }
 
 EventTriggerType EventTrigger::getEvent(void)

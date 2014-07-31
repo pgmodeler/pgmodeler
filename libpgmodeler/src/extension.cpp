@@ -60,6 +60,7 @@ void Extension::setVersion(unsigned ver, const QString &value)
 	if(ver > OLD_VERSION)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(versions[ver] != value);
 	versions[ver]=value;
 }
 

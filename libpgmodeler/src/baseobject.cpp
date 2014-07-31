@@ -604,6 +604,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		 (def_type==SchemaParser::XML_DEFINITION &&
 			obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
 	{
+		//cout << "generating code: " << (def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML") << " " << this->getName().toStdString() << " (" << this->getTypeName().toStdString() << ")" << endl;
 		bool format;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
@@ -934,13 +935,14 @@ void BaseObject::operator = (BaseObject &obj)
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
   this->system_obj=obj.system_obj;
+	this->setCodeInvalidated(use_cached_code);
 }
 
 void BaseObject::setCodeInvalidated(bool value)
 {
-	if(use_cached_code)
+	if(use_cached_code && value!=code_invalidated)
 	{
-		if(!value)
+		if(value)
 		{
 			cached_reduced_code.clear();
 			cached_code[0].clear();
@@ -965,6 +967,8 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 		 ((!reduced_form && !cached_code[def_type].isEmpty()) ||
 			(def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
 	{
+		//cout << "** cached code: " << (def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML") << " " << this->getName().toStdString() << " (" << this->getTypeName().toStdString() << ")" << endl;
+
 		if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
 			return(cached_reduced_code);
 		else

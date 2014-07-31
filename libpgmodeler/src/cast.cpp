@@ -43,7 +43,7 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
 											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		//Assign the passed type to the cast types vector on the specified index
+		setCodeInvalidated(this->types[type_idx] != type);
 		this->types[type_idx]=type;
 	}
 	else
@@ -60,11 +60,13 @@ void Cast::setCastType(unsigned cast_type)
 	if(cast_type!=ASSIGNMENT && cast_type!=IMPLICIT)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->cast_type != cast_type);
 	this->cast_type=cast_type;
 }
 
 void Cast::setInOut(bool value)
 {
+	setCodeInvalidated(is_in_out != value);
 	is_in_out=value;
 }
 
@@ -119,15 +121,16 @@ void Cast::setCastFunction(Function *cast_func)
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(cast_function != cast_func);
 	this->cast_function=cast_func;
 }
 
 PgSQLType Cast::getDataType(unsigned type_idx)
 {
-	if(type_idx<=DST_TYPE)
-		return(this->types[type_idx]);
-	else
+	if(type_idx > DST_TYPE)
 		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(this->types[type_idx]);
 }
 
 bool Cast::isInOut(void)

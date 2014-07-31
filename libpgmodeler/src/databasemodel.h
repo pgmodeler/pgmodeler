@@ -200,7 +200,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setEncoding(EncodingType encod);
 
 		//! \brief Sets the database localizations
-		void setLocalization(int localiz_id, const QString &value);
+		void setLocalization(unsigned localiz_id, const QString &value);
 
 		//! \brief Sets the connections limit
 		void setConnectionLimit(int conn_lim);
@@ -236,7 +236,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		unsigned getObjectCount(void);
 
 		//! \brief Retuns the specified localization value
-		QString getLocalization(int localiz_id);
+		QString getLocalization(unsigned localiz_id);
 
 		//! \brief Returns the connection limit
 		int getConnectionLimit(void);

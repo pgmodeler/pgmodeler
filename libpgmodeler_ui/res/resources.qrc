@@ -180,6 +180,7 @@
         <file>icones/last_session.png</file>
         <file>icones/mainmenu.png</file>
         <file>icones/random.png</file>
+        <file>icones/samples_big.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

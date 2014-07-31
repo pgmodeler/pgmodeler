@@ -103,6 +103,7 @@ void Type::addAttribute(TypeAttribute attrib)
 		throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	attributes.push_back(attrib);
+	setCodeInvalidated(true);
 }
 
 void Type::removeAttribute(unsigned attrib_idx)
@@ -112,11 +113,13 @@ void Type::removeAttribute(unsigned attrib_idx)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	attributes.erase(attributes.begin() + attrib_idx);
+	setCodeInvalidated(true);
 }
 
 void Type::removeAttributes(void)
 {
 	attributes.clear();
+	setCodeInvalidated(true);
 }
 
 bool Type::isEnumerationExists(const QString &enum_name)
@@ -149,6 +152,7 @@ void Type::addEnumeration(const QString &enum_name)
 		throw Exception(ERR_INS_DUPLIC_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	enumerations.push_back(enum_name);
+	setCodeInvalidated(true);
 }
 
 void Type::removeEnumeration(unsigned enum_idx)
@@ -157,11 +161,13 @@ void Type::removeEnumeration(unsigned enum_idx)
 		throw Exception(ERR_REF_ENUM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	enumerations.erase(enumerations.begin() + enum_idx);
+	setCodeInvalidated(true);
 }
 
 void Type::removeEnumerations(void)
 {
 	enumerations.clear();
+	setCodeInvalidated(true);
 }
 
 void Type::setConfiguration(unsigned conf)
@@ -189,6 +195,7 @@ void Type::setConfiguration(unsigned conf)
 	like_type="any";
 
 	this->config=conf;
+	setCodeInvalidated(true);
 }
 
 void Type::setFunction(unsigned func_id, Function *func)
@@ -294,6 +301,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 		func->setProtected(false);
 	}
 
+	setCodeInvalidated(functions[func_id] != func);
 	functions[func_id]=func;
 }
 
@@ -335,15 +343,19 @@ void Type::convertFunctionParameters(bool inverse_conv)
 			}
 		}
 	}
+
+	setCodeInvalidated(true);
 }
 
 void Type::setInternalLength(unsigned length)
 {
+	setCodeInvalidated(internal_len != length);
 	internal_len=length;
 }
 
 void Type::setByValue(bool value)
 {
+	setCodeInvalidated(by_value != value);
 	by_value=value;
 }
 
@@ -355,16 +367,23 @@ void Type::setAlignment(PgSQLType type)
 	if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(Utf8String::create(this->getName(true))),
 										ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(alignment != type);
+	alignment=tp;
 }
 
 void Type::setStorage(StorageType strg)
 {
+	setCodeInvalidated(storage != strg);
 	storage=strg;
 }
 
 void Type::setDefaultValue(const QString &value)
 {
-	this->default_value=value.trimmed();
+	QString def=value.trimmed();
+
+	setCodeInvalidated(default_value != def);
+	this->default_value=def;
 }
 
 void Type::setElement(PgSQLType elem)
@@ -378,11 +397,13 @@ void Type::setElement(PgSQLType elem)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(Utf8String::create(this->getName(true))),
 										ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(element != elem);
 	this->element=elem;
 }
 
 void Type::setDelimiter(char delim)
 {
+	setCodeInvalidated(delimiter != delim);
 	delimiter=delim;
 }
 
@@ -422,16 +443,19 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 
 void Type::setCategory(CategoryType categ)
 {
+	setCodeInvalidated(category != categ);
 	this->category=categ;
 }
 
 void Type::setPreferred(bool value)
 {
+	setCodeInvalidated(preferred != value);
 	this->preferred=value;
 }
 
 void Type::setCollatable(bool value)
 {
+	setCodeInvalidated(collatable != value);
 	this->collatable=value;
 }
 
@@ -441,6 +465,7 @@ void Type::setLikeType(PgSQLType like_type)
 		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->like_type != like_type);
 	this->like_type=like_type;
 }
 
@@ -450,6 +475,7 @@ void Type::setSubtype(PgSQLType subtype)
 		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->subtype != subtype);
 	this->subtype=subtype;
 }
 
@@ -461,6 +487,7 @@ void Type::setSubtypeOpClass(OperatorClass *opclass)
 										.arg(Utf8String::create(this->getTypeName())),
 										ERR_ASG_INV_OPCLASS_OBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(subtype_opclass != opclass);
 	subtype_opclass=opclass;
 }
 

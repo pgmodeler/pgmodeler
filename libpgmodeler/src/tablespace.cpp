@@ -49,6 +49,7 @@ void Tablespace::setDirectory(const QString &dir)
 	if(dir_aux=="")
 		throw Exception(ERR_ASG_EMPTY_DIR_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->directory != dir_aux);
 	this->directory=dir_aux;
 }
 

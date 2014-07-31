@@ -25,6 +25,7 @@ TypeAttribute::TypeAttribute(void)
 
 void TypeAttribute::setType(PgSQLType type)
 {
+	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 

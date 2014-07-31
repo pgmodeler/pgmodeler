@@ -56,6 +56,7 @@ void Role::setOption(unsigned op_type, bool value)
 	for(unsigned i=OP_CREATEDB; (op_type==OP_SUPERUSER && value) && i <= OP_REPLICATION; i++)
 		options[i]=false;
 
+	setCodeInvalidated(options[op_type] != value);
 	options[op_type]=(!options[OP_SUPERUSER] && value);
 }
 
@@ -134,22 +135,27 @@ void Role::addRole(unsigned role_type, Role *role)
 					ref_roles.push_back(role);
 				break;
 			}
+
+			setCodeInvalidated(true);
 		}
 	}
 }
 
 void Role::setConnectionLimit(int limit)
 {
+	setCodeInvalidated(conn_limit != limit);
 	conn_limit=limit;
 }
 
 void Role::setValidity(const QString &date)
 {
+	setCodeInvalidated(validity != date);
 	validity=date.mid(0,19);
 }
 
 void Role::setPassword(const QString &passwd)
 {
+	setCodeInvalidated(password != passwd);
 	this->password=passwd;
 }
 
@@ -207,6 +213,7 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 
 	itr=list->begin() + role_idx;
 	list->erase(itr);
+	setCodeInvalidated(true);
 }
 
 void Role::removeRoles(unsigned role_type)
@@ -225,6 +232,7 @@ void Role::removeRoles(unsigned role_type)
 	}
 
 	list->clear();
+	setCodeInvalidated(true);
 }
 
 bool Role::isRoleExists(unsigned role_type, Role *role)

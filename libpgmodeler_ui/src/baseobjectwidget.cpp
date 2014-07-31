@@ -834,7 +834,7 @@ void BaseObjectWidget::finishConfiguration(void)
 
 		if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
 			 object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-			 object->getObjectType()==OBJ_EXTENSION)
+			 object->getObjectType()==OBJ_EXTENSION || object->getObjectType()==OBJ_SEQUENCE)
 		{
 			model->getObjectReferences(object, ref_objs);
 

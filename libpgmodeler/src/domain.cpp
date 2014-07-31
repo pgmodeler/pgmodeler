@@ -58,26 +58,33 @@ void Domain::setConstraintName(const QString &constr_name)
 	if(!BaseObject::isValidName(constr_name))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(constraint_name != constr_name);
 	this->constraint_name=constr_name;
 }
 
 void Domain::setExpression(const QString &expr)
 {
+	setCodeInvalidated(expression != expr);
 	this->expression=expr;
 }
 
 void Domain::setDefaultValue(const QString &default_val)
 {
-	this->default_value=default_val.trimmed();
+	QString def=default_val.trimmed();
+
+	setCodeInvalidated(default_value != def);
+	this->default_value=def;
 }
 
 void Domain::setNotNull(bool value)
 {
+	setCodeInvalidated(not_null != value);
 	not_null=value;
 }
 
 void Domain::setType(PgSQLType type)
 {
+	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 

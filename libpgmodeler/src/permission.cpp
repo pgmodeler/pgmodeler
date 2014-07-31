@@ -141,6 +141,7 @@ void Permission::addRole(Role *role)
 		throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	roles.push_back(role);
+	setCodeInvalidated(true);
 
 	//Updates the permission Id
 	generatePermissionId();
@@ -156,6 +157,7 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 		//Raises an error if the privilege is invalid according to the object type
 		throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated((privileges[priv_id] != value) || grant_option[priv_id] != grant_op);
 	privileges[priv_id]=value;
 	this->grant_option[priv_id]=grant_op;
 	generatePermissionId();
@@ -163,11 +165,13 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 
 void Permission::setRevoke(bool value)
 {
+	setCodeInvalidated(revoke != value);
 	revoke=value;
 }
 
 void Permission::setCascade(bool value)
 {
+	setCascade(cascade != value);
 	cascade=value;
 }
 
@@ -186,13 +190,16 @@ void Permission::removeRole(unsigned role_idx)
 	if(role_idx > roles.size())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	roles.erase(roles.begin() + role_idx);
 	generatePermissionId();
+	setCodeInvalidated(true);
 }
 
 void Permission::removeRoles(void)
 {
 	roles.clear();
 	generatePermissionId();
+	setCodeInvalidated(true);
 }
 
 Role *Permission::getRole(unsigned role_idx)

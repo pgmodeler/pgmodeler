@@ -7,7 +7,10 @@
 
 @{drop}
 
-%if @{prepended-sql} %then @{prepended-sql} %end
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
 
 [CREATE ] %if @{unique} %then [UNIQUE ] %end [INDEX ]
 
@@ -56,9 +59,11 @@ $br $tb ( @{elements} $br $tb )
 
 %if @{comment} %then @{comment} %end
 
-%if @{appended-sql} %then @{appended-sql} %end
-
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
 
+%if @{appended-sql} %then
+ @{appended-sql}
+ $br [-- ddl-end --] $br $br
+%end

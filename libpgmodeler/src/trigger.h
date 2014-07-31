@@ -95,10 +95,10 @@ class Trigger: public TableObject{
 		void setReferecendTable(BaseTable *ref_table);
 
 		//! \brief Defines the deferral type
-		void setDeferralType(DeferralType tipo);
+		void setDeferralType(DeferralType type);
 
 		//! \brief Defines whether the trigger is deferrable or not
-		void setDeferrable(bool valor);
+		void setDeferrable(bool value);
 
 		//! \brief Changes the specified trigger agument replacing the current argument by the 'new_arg'
 		void editArgument(unsigned arg_idx, const QString &new_arg);

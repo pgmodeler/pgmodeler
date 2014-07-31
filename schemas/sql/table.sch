@@ -7,7 +7,10 @@
 
 @{drop}
 
-%if @{prepended-sql} %then @{prepended-sql} %end
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
 
 [CREATE]
 
@@ -49,17 +52,17 @@ $br )
   %if @{constraints} %then $br @{constraints} %end
 %end
 
-#%if @{indexes} %then @{indexes} $br %end
-#%if @{triggers} %then @{triggers} $br %end
-#%if @{rules} %then @{rules} $br %end
-
 %if @{comment} %then @{comment} %end
 %if @{cols-comment} %then @{cols-comment} %end
 %if @{owner} %then @{owner} %end
-%if @{appended-sql} %then @{appended-sql} %end
 
-%if @{comment} %or @{cols-comment} %or @{owner} %or @{appended-sql} %then
+%if @{comment} %or @{cols-comment} %or @{owner} %then
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
+%end
+
+%if @{appended-sql} %then
+ @{appended-sql}
+ $br [-- ddl-end --] $br $br
 %end

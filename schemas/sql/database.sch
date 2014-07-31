@@ -9,7 +9,10 @@
 
 @{drop}
 
-%if @{prepended-sql} %then @{prepended-sql} %end
+ %if @{prepended-sql} %then
+   @{prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
 
 [CREATE DATABASE ] @{name} $br
 
@@ -43,8 +46,11 @@
 
 ; $br
 
-%if @{appended-sql} %then @{appended-sql} %end
-
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br $br
+
+%if @{appended-sql} %then
+ @{appended-sql}
+ $br [-- ddl-end --] $br $br
+%end

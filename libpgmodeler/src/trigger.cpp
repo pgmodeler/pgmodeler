@@ -77,6 +77,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 
 void Trigger::setFiringType(FiringType firing_type)
 {
+	setCodeInvalidated(this->firing_type != firing_type);
 	this->firing_type=firing_type;
 }
 
@@ -85,6 +86,7 @@ void Trigger::setEvent(EventType event, bool value)
 	if(event==EventType::on_select)
 		throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(events[event] != value);
 	events[event]=value;
 }
 
@@ -108,12 +110,14 @@ void Trigger::setFunction(Function *func)
 											.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		setCodeInvalidated(function != func);
 		this->function=func;
 	}
 }
 
 void Trigger::setCondition(const QString &cond)
 {
+	setCodeInvalidated(condition != cond);
 	this->condition=cond;
 }
 
@@ -137,6 +141,7 @@ void Trigger::addColumn(Column *column)
 										ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	upd_columns.push_back(column);
+	setCodeInvalidated(true);
 }
 
 void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
@@ -149,10 +154,13 @@ void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 
 	itr=arguments.begin()+arg_idx;
 	(*itr)=new_arg;
+
+	setCodeInvalidated(true);
 }
 
 void Trigger::setExecutePerRow(bool value)
 {
+	setCodeInvalidated(is_exec_per_row != value);
 	is_exec_per_row=value;
 }
 
@@ -216,16 +224,19 @@ void Trigger::removeArgument(unsigned arg_idx)
 	vector<QString>::iterator itr;
 	itr=arguments.begin()+arg_idx;
 	arguments.erase(itr);
+	setCodeInvalidated(true);
 }
 
 void Trigger::removeArguments(void)
 {
 	arguments.clear();
+	setCodeInvalidated(true);
 }
 
 void Trigger::removeColumns(void)
 {
 	upd_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Trigger::setReferecendTable(BaseTable *ref_table)
@@ -234,17 +245,20 @@ void Trigger::setReferecendTable(BaseTable *ref_table)
 	if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
 		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(referenced_table != ref_table);
 	this->referenced_table=ref_table;
 }
 
-void Trigger::setDeferralType(DeferralType tipo)
+void Trigger::setDeferralType(DeferralType type)
 {
-	deferral_type=tipo;
+	setCodeInvalidated(deferral_type != type);
+	deferral_type=type;
 }
 
-void Trigger::setDeferrable(bool valor)
+void Trigger::setDeferrable(bool value)
 {
-	is_deferrable=valor;
+	setCodeInvalidated(is_deferrable != value);
+	is_deferrable=value;
 }
 
 BaseTable *Trigger::getReferencedTable(void)
@@ -264,6 +278,7 @@ bool Trigger::isDeferrable(void)
 
 void Trigger::setConstraint(bool value)
 {
+	setCodeInvalidated(is_constraint != value);
 	is_constraint=value;
 }
 

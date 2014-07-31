@@ -79,6 +79,7 @@ void Index::addIndexElement(IndexElement elem)
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.push_back(elem);
+	setCodeInvalidated(true);
 }
 
 void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
@@ -103,6 +104,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -134,6 +136,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -165,11 +168,13 @@ void Index::removeIndexElement(unsigned idx_elem)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.erase(idx_elements.begin() + idx_elem);
+	setCodeInvalidated(true);
 }
 
 void Index::removeIndexElements(void)
 {
 	idx_elements.clear();
+	setCodeInvalidated(true);
 }
 
 IndexElement Index::getIndexElement(unsigned elem_idx)
@@ -195,21 +200,25 @@ void Index::setIndexAttribute(unsigned attrib_id, bool value)
 	if(attrib_id > BUFFERING)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(index_attribs[attrib_id] != value);
 	index_attribs[attrib_id]=value;
 }
 
 void Index::setFillFactor(unsigned factor)
 {
+	setCodeInvalidated(fill_factor != factor);
 	fill_factor=factor;
 }
 
 void Index::setIndexingType(IndexingType idx_type)
 {
+	setCodeInvalidated(indexing_type != idx_type);
 	this->indexing_type=idx_type;
 }
 
 void Index::setPredicate(const QString &expr)
 {
+	setCodeInvalidated(predicate != expr);
   predicate=expr;
 }
 

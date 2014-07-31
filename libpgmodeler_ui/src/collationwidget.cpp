@@ -89,10 +89,10 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 			if(locale_cmb->currentIndex()==0)
 			{
-				idx=lcctype_cmb->findText(collation->getLocalization(LC_CTYPE));
+				idx=lcctype_cmb->findText(collation->getLocalization(Collation::_LC_CTYPE));
 				lcctype_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-				idx=lccollate_cmb->findText(collation->getLocalization(LC_COLLATE));
+				idx=lccollate_cmb->findText(collation->getLocalization(Collation::_LC_COLLATE));
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 			}
 		}

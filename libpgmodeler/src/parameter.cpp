@@ -29,17 +29,20 @@ void Parameter::setType(PgSQLType type)
 	if(!type.isArrayType() && is_variadic)
 		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 
 void Parameter::setIn(bool value)
 {
+	setCodeInvalidated(is_in != value);
 	is_in=value;
 	is_variadic=false;
 }
 
 void Parameter::setOut(bool value)
 {
+	setCodeInvalidated(is_out != value);
 	is_out=value;
 	is_variadic=false;
 }
@@ -49,6 +52,7 @@ void Parameter::setVariadic(bool value)
 	if(value && !type.isArrayType())
 		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(is_variadic != value);
 	is_variadic=value;
 	if(value)	is_in=is_out=false;
 }
@@ -76,6 +80,7 @@ void Parameter::operator = (const Parameter &param)
 	this->is_in=param.is_in;
 	this->is_out=param.is_out;
 	this->is_variadic=param.is_variadic;
+	setCodeInvalidated(true);
 }
 
 QString Parameter::getCodeDefinition(unsigned def_type)

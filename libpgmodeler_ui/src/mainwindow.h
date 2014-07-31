@@ -128,7 +128,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the actions related to recent models
 		QMenu recent_mdls_menu,
 
-		main_menu;
+		main_menu,
+
+		sample_mdls_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -149,6 +151,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! brief Creates drop shadown on a tool button that represents an QAction
 		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
+
+		void configureSamplesMenu(void);
 
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -228,7 +232,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateModelTabName(void);
 
 		//! \brief Loads a recent model. The filename is get from the action that triggered the slot
-		void loadRecentModel(void);
+		void loadModelFromAction(void);
 
 		//! \brief Clears the recent models menu/list
 		void clearRecentModelsMenu(void);

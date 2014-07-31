@@ -67,11 +67,13 @@ void Table::setSchema(BaseObject *schema)
 
 void Table::setWithOIDs(bool value)
 {
+	setCodeInvalidated(with_oid != value);
 	with_oid=value;
 }
 
 void Table::setUnlogged(bool value)
 {
+	setCodeInvalidated(unlogged != value);
 	unlogged=value;
 }
 
@@ -392,6 +394,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 				break;
 			}
 
+			setCodeInvalidated(true);
 		}
 		catch(Exception &e)
 		{
@@ -480,6 +483,7 @@ void Table::addAncestorTable(Table *tab, int idx)
 
 void Table::setCopyTable(Table *tab)
 {
+	setCodeInvalidated(copy_table != tab);
 	copy_table=tab;
 
 	if(!copy_table)
@@ -489,7 +493,10 @@ void Table::setCopyTable(Table *tab)
 void Table::setCopyTableOptions(CopyOptions like_op)
 {
 	if(copy_table)
+	{
+		setCodeInvalidated(copy_op != like_op);
 		this->copy_op=like_op;
+	}
 }
 
 Table *Table::getCopyTable(void)
@@ -596,6 +603,8 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			columns.erase(itr);
 		}
 	}
+
+	setCodeInvalidated(true);
 }
 
 void Table::removeColumn(const QString &name)
@@ -1124,6 +1133,7 @@ void Table::saveRelObjectsIndexes(ObjectType obj_type)
   }
 
   obj_idxs_map->clear();
+	setCodeInvalidated(true);
 
   if(isReferRelationshipAddedObject())
   {
@@ -1151,7 +1161,10 @@ void Table::restoreRelObjectsIndexes(void)
   restoreRelObjectsIndexes(OBJ_CONSTRAINT);
 
   if(!col_indexes.empty() || !constr_indexes.empty())
-   this->setModified(true);
+	{
+		setCodeInvalidated(true);
+		this->setModified(true);
+	}
 }
 
 void Table::restoreRelObjectsIndexes(ObjectType obj_type)
@@ -1262,6 +1275,7 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 
 void Table::setGenerateAlterCmds(bool value)
 {
+	setCodeInvalidated(gen_alter_cmds != value);
 	gen_alter_cmds=value;
 	updateAlterCmdsStatus();
 }
@@ -1399,6 +1413,8 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 
 			if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT)
 				BaseObject::swapObjectsIds(aux_obj, aux_obj1, false);
+
+			setCodeInvalidated(true);
 		}
 	}
 	catch(Exception &e)
@@ -1491,4 +1507,23 @@ vector<BaseObject *> Table::getObjects(void)
     list.insert(list.end(), getObjectList(types[i])->begin(), getObjectList(types[i])->end()) ;
 
   return(list);
+}
+
+void Table::setCodeInvalidated(bool value)
+{
+	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+											 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+	unsigned cnt=sizeof(types)/sizeof(ObjectType);
+	vector<TableObject *> *list=nullptr;
+
+	for(unsigned i=0; i < cnt; i++)
+	{
+		list=getObjectList(types[i]);
+
+		for(auto obj : *list)
+			obj->setCodeInvalidated(value);
+	}
+
+	BaseObject::setCodeInvalidated(value);
+
 }

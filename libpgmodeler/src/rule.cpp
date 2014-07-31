@@ -46,16 +46,19 @@ void Rule::setCommandsAttribute(void)
 
 void Rule::setEventType(EventType type)
 {
+	setCodeInvalidated(event_type != type);
 	event_type=type;
 }
 
 void Rule::setExecutionType(ExecutionType type)
 {
+	setCodeInvalidated(execution_type != type);
 	execution_type=type;
 }
 
 void Rule::setConditionalExpression(const QString &expr)
 {
+	setCodeInvalidated(conditional_expr != expr);
 	conditional_expr=expr;
 }
 
@@ -69,6 +72,7 @@ void Rule::addCommand(const QString &cmd)
 		QString cmd_aux=cmd;
 		cmd_aux.remove(";");
 		commands.push_back(cmd_aux);
+		setCodeInvalidated(true);
 	}
 }
 
@@ -108,11 +112,13 @@ void Rule::removeCommand(unsigned cmd_idx)
 		throw Exception(ERR_REF_RULE_CMD_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	commands.erase(commands.begin() + cmd_idx);
+	setCodeInvalidated(true);
 }
 
 void Rule::removeCommands(void)
 {
 	commands.clear();
+	setCodeInvalidated(true);
 }
 
 QString Rule::getCodeDefinition(unsigned def_type)

@@ -60,6 +60,7 @@ void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned 
   {
     validateElementId(elem_id, color_id);
     color_config[elem_id][color_id]=color;
+		setCodeInvalidated(true);
   }
   catch(Exception &e)
   {
@@ -80,6 +81,8 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
       color_config[elem_id][color_id]=QColor(color);
       color_id++;
     }
+
+		setCodeInvalidated(true);
   }
   catch(Exception &e)
   {

@@ -468,6 +468,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	saveTemporaryModels(true);
 	updateConnections();
 	updateRecentModelsMenu();
+	configureSamplesMenu();
 	applyConfigurations();
 
 	//Temporary models are saved every two minutes
@@ -751,11 +752,16 @@ void MainWindow::saveTemporaryModels(bool force)
 
 void MainWindow::updateRecentModelsMenu(void)
 {
+	QAction *act=nullptr;
 	recent_mdls_menu.clear();
 	recent_models.removeDuplicates();
 
 	for(int i=0; i < recent_models.size() && i < MAX_RECENT_MODELS; i++)
-		recent_mdls_menu.addAction(recent_models[i],this,SLOT(loadRecentModel(void)));
+	{
+		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this,SLOT(loadModelFromAction(void)));
+		act->setToolTip(recent_models[i]);
+		act->setData(recent_models[i]);
+	}
 
 	if(!recent_mdls_menu.isEmpty())
 	{
@@ -770,13 +776,13 @@ void MainWindow::updateRecentModelsMenu(void)
 	central_wgt->recent_tb->setMenu(recent_mdls_menu.isEmpty() ? nullptr : &recent_mdls_menu);
 }
 
-void MainWindow::loadRecentModel(void)
+void MainWindow::loadModelFromAction(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 
 	if(act)
 	{
-		addModel(act->text());
+		addModel(act->data().toString());
 		saveTemporaryModels(true);
 	}
 }
@@ -1548,4 +1554,23 @@ QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
 	shadow->setColor(QColor(0,0,0, 100));
 
 	return(shadow);
+}
+
+void MainWindow::configureSamplesMenu(void)
+{
+	QDir dir(GlobalAttributes::SAMPLES_DIR);
+	QStringList files=dir.entryList({"*.dbm"});
+	QAction *act=nullptr;
+	QString path;
+
+	while(!files.isEmpty())
+	{
+		act=sample_mdls_menu.addAction(files.front(),this,SLOT(loadModelFromAction(void)));
+		path=QFileInfo(GlobalAttributes::SAMPLES_DIR + GlobalAttributes::DIR_SEPARATOR + files.front()).absoluteFilePath();
+		act->setToolTip(path);
+		act->setData(path);
+		files.pop_front();
+	}
+
+	central_wgt->sample_tb->setMenu(&sample_mdls_menu);
 }

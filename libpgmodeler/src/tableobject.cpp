@@ -56,6 +56,7 @@ void TableObject::setAddedByGeneralization(bool value)
 
 void TableObject::setDeclaredInTable(bool value)
 {
+	setCodeInvalidated(decl_in_table != value);
 	decl_in_table=value;
 }
 
@@ -100,4 +101,12 @@ void TableObject::operator = (TableObject &object)
 	this->add_by_generalization=false;
 	this->add_by_linking=false;
 	this->decl_in_table=object.decl_in_table;
+}
+
+void TableObject::setCodeInvalidated(bool value)
+{
+	if(parent_table)
+		parent_table->BaseObject::setCodeInvalidated(value);
+
+	BaseObject::setCodeInvalidated(value);
 }

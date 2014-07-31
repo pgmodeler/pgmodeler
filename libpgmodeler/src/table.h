@@ -319,8 +319,11 @@ class Table: public BaseTable {
     //! brief Creates custom index from rel. created object using a name and index vectors as input.
     void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
 
+		void setCodeInvalidated(bool value);
+
 		friend class Relationship;
-    friend class OperationList;
+		friend class OperationList;
+
 };
 
 #endif

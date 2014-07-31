@@ -41,21 +41,25 @@ void OperatorClass::setDataType(PgSQLType data_type)
 	if(data_type==PgSQLType::null)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->data_type != data_type);
 	this->data_type=data_type;
 }
 
 void OperatorClass::setFamily(OperatorFamily *family)
 {
+	setCodeInvalidated(this->family != family);
 	this->family=family;
 }
 
 void OperatorClass::setIndexingType(IndexingType index_type)
 {
+	setCodeInvalidated(indexing_type != index_type);
 	this->indexing_type=index_type;
 }
 
 void OperatorClass::setDefault(bool value)
 {
+	setCodeInvalidated(is_default != value);
 	is_default=value;
 }
 
@@ -94,11 +98,13 @@ void OperatorClass::removeElement(unsigned elem_idx)
 
 	//Removes the item from the elements list
 	elements.erase(elements.begin() + elem_idx);
+	setCodeInvalidated(true);
 }
 
 void OperatorClass::removeElements(void)
 {
 	elements.clear();
+	setCodeInvalidated(true);
 }
 
 OperatorClassElement OperatorClass::getElement(unsigned elem_idx)

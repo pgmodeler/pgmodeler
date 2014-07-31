@@ -65,11 +65,11 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		if(idx < 0) idx=0;
 		encoding_cmb->setCurrentIndex(idx);
 
-		idx=lccollate_cmb->findText(model->getLocalization(LC_COLLATE));
+		idx=lccollate_cmb->findText(model->getLocalization(Collation::_LC_COLLATE));
 		if(idx < 0) idx=0;
 		lccollate_cmb->setCurrentIndex(idx);
 
-		idx=lcctype_cmb->findText(model->getLocalization(LC_CTYPE));
+		idx=lcctype_cmb->findText(model->getLocalization(Collation::_LC_CTYPE));
 		if(idx < 0) idx=0;
 		lcctype_cmb->setCurrentIndex(idx);
 
@@ -91,14 +91,14 @@ void DatabaseWidget::applyConfiguration(void)
 			model->setEncoding(EncodingType(encoding_cmb->currentText()));
 
 		if(lccollate_cmb->currentIndex() > 0)
-			model->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
+			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
 		else
-			model->setLocalization(LC_COLLATE, "");
+			model->setLocalization(Collation::_LC_COLLATE, "");
 
 		if(lcctype_cmb->currentIndex() > 0)
-			model->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
+			model->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
 		else
-			model->setLocalization(LC_CTYPE, "");
+			model->setLocalization(Collation::_LC_CTYPE, "");
 
 		finishConfiguration();
 	}
