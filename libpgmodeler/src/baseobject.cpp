@@ -729,7 +729,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			}
 			else
 			{
-        attributes[ParsersAttributes::APPENDED_SQL]="\n-- Appended SQL commands --\n" +	appended_sql + "\n---\n";
+				attributes[ParsersAttributes::APPENDED_SQL]="\n-- Appended SQL commands --\n" +	appended_sql;
 			}
 		}
 
@@ -745,7 +745,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       }
       else
       {
-        attributes[ParsersAttributes::PREPENDED_SQL]="\n-- Prepended SQL commands --\n" +	prepended_sql + "\n---\n";
+				attributes[ParsersAttributes::PREPENDED_SQL]="\n-- Prepended SQL commands --\n" +	prepended_sql;
       }
     }
 

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="322,264" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="400,945" last-zoom="1">
 <role name="teste"
       createdb="true"
       replication="true"
@@ -6501,8 +6501,6 @@ END
 
 <rule name="payment_insert_p2007_01" event-type="ON INSERT" exec-type="INSTEAD"
  table="public.payment">
-	<appended-sql><![CDATA[asdf]]></appended-sql>
-	<prepended-sql><![CDATA[fgh]]></prepended-sql>
 		<condition><![CDATA[ ((new.payment_date >= '2007-01-01 00:00:00'::timestamp without time zone) AND (new.payment_date < '2007-02-01 00:00:00'::timestamp without time zone)) ]]></condition>
 		<commands><![CDATA[INSERT INTO payment_p2007_01 (payment_id, customer_id, staff_id, rental_id, amount, payment_date)
   VALUES (DEFAULT, new.customer_id, new.staff_id, new.rental_id, new.amount, new.payment_date)]]></commands>
@@ -6597,11 +6595,9 @@ END
 		<function signature="public.last_updated()"/>
 </trigger>
 
-<trigger name="last_updated" firing-type="BEFORE" per-line="true" constraint="false"
+<trigger name="last_updated" firing-type="BEFORE" per-line="false" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="public.customer">
-	<appended-sql><![CDATA[asdf]]></appended-sql>
-	<prepended-sql><![CDATA[sdf]]></prepended-sql>
 		<function signature="public.last_updated()"/>
 </trigger>
 
