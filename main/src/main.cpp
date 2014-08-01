@@ -137,8 +137,10 @@ int main(int argc, char **argv)
       fmain.loadModels(params);
 		#endif
 
-		splash.finish(&fmain);
+		//Inducing the threads to sleep in order to give a proper time to show the splash
+		QThread::msleep(2000);
 		fmain.showMaximized();
+		splash.finish(&fmain);
 
 		return(app.exec());
 	}

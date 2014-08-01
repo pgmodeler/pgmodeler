@@ -22,9 +22,6 @@
 #include "tablewidget.h"
 #include "configurationform.h"
 
-//extern ConstraintWidget *constraint_wgt;
-//extern ColumnWidget *column_wgt;
-//extern TableWidget *table_wgt;
 extern ConfigurationForm *configuration_form;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
@@ -1091,4 +1088,3 @@ void RelationshipWidget::cancelConfiguration(void)
 	if(operation_count < op_list->getCurrentSize())
 		BaseObjectWidget::cancelConfiguration();
 }
-

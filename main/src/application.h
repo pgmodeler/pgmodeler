@@ -36,7 +36,6 @@
 
 class Application: public QApplication {
 	private:
-    Messagebox msg_box;
 
   public:
     Application(int & argc, char ** argv);

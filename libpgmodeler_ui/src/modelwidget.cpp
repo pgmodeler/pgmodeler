@@ -51,42 +51,6 @@
 #include "sqlappendwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
-#include "configurationform.h"
-
-//extern DatabaseWidget *database_wgt;
-//extern SchemaWidget *schema_wgt;
-//extern RoleWidget *role_wgt;
-//extern TablespaceWidget *tablespace_wgt;
-//extern LanguageWidget *language_wgt;
-//extern SourceCodeWidget *sourcecode_wgt;
-//extern FunctionWidget *function_wgt;
-//extern CastWidget *cast_wgt;
-//extern ConversionWidget *conversion_wgt;
-//extern DomainWidget *domain_wgt;
-//extern AggregateWidget *aggregate_wgt;
-//extern SequenceWidget *sequence_wgt;
-//extern OperatorWidget *operator_wgt;
-//extern OperatorFamilyWidget *opfamily_wgt;
-//extern OperatorClassWidget *opclass_wgt;
-//extern TypeWidget *type_wgt;
-//extern ViewWidget *view_wgt;
-//extern TextboxWidget *textbox_wgt;
-//extern ColumnWidget *column_wgt;
-//extern ConstraintWidget *constraint_wgt;
-//extern RuleWidget *rule_wgt;
-//extern TriggerWidget *trigger_wgt;
-//extern IndexWidget *index_wgt;
-//extern RelationshipWidget *relationship_wgt;
-//extern TableWidget *table_wgt;
-//extern CollationWidget *collation_wgt;
-//extern ExtensionWidget *extension_wgt;
-//extern TagWidget *tag_wgt;
-//extern TaskProgressWidget *task_prog_wgt;
-//extern ObjectDepsRefsWidget *deps_refs_wgt;
-//extern ObjectRenameWidget *objectrename_wgt;
-//extern PermissionWidget *permission_wgt;
-//extern SQLAppendWidget *sqlappend_wgt;
-//extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -240,7 +204,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
-  //action_new_object->setShortcut(QKeySequence(trUtf8("K")));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
 	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
@@ -524,19 +487,6 @@ bool ModelWidget::saveLastCanvasPosition(void)
 
   return(false);
 }
-
-/* void ModelWidget::hideEvent(QHideEvent *)
-{
-	try
-  {
-    if(!modified &&  saveLastCanvasPosition())
-      db_model->saveModel(this->filename, SchemaParser::XML_DEFINITION);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-} */
 
 void ModelWidget::restoreLastCanvasPosition(void)
 {
@@ -880,6 +830,7 @@ void ModelWidget::convertRelationshipNN(void)
 		//Converts only Many-to-Many relationship
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
+			Messagebox msg_box;
 			msg_box.show(trUtf8("Confirmation"),
 									 trUtf8("Do you really want to convert the relationship?"),
 									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
@@ -1582,6 +1533,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
@@ -1908,6 +1860,7 @@ void ModelWidget::copyObjects(void)
 	Constraint *constr=nullptr;
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
 	unsigned i, type_id, count;
+	Messagebox msg_box;
 
 	if(selected_objects.size()==1)
 	{
@@ -2266,9 +2219,12 @@ void ModelWidget::pasteObjects(void)
 
 	//If some error occur during the process show it to the user
 	if(error.getErrorType()!=ERR_CUSTOM)
+	{
+		Messagebox msg_box;
 		msg_box.show(error,
 								 trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
 								 Messagebox::ALERT_ICON);
+	}
 
 	if(!ModelWidget::cut_operation)
 	{
@@ -2318,6 +2274,8 @@ void ModelWidget::removeObjects(void)
 
 	if(!selected_objects.empty() || object)
 	{
+		Messagebox msg_box;
+
 		//If the removal is not due to a cut operation, ask for permission to remove the objects
 		if(!ModelWidget::cut_operation)
 		{

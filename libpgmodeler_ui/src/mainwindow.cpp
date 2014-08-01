@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				}
 				catch(Exception &e)
 				{
+					Messagebox msg_box;
 					msg_box.show(e);
 				}
 			}
@@ -88,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 
@@ -313,6 +315,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					if(!restoration_form->keep_models_chk->isChecked())
 						restoration_form->removeTemporaryModel(model_file);
 
+					Messagebox msg_box;
 					msg_box.show(e);
 				}
 			}
@@ -392,6 +395,7 @@ void MainWindow::restoreLastSession(void)
 		}
 		catch(Exception &e)
 		{
+			Messagebox msg_box;
 			msg_box.show(e);
 		}
 	}
@@ -474,6 +478,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(modified)
 			{
+				Messagebox msg_box;
+
 				msg_box.show(trUtf8("Save all models"),
 										 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
 										 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
@@ -600,6 +606,8 @@ void MainWindow::saveTemporaryModels(bool force)
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
+
 		tmpmodel_thread.quit();
 		msg_box.show(e);
 	}
@@ -933,6 +941,7 @@ void MainWindow::closeModel(int model_id)
 	if(tab)
 	{
 		ModelWidget *model=dynamic_cast<ModelWidget *>(tab);
+		Messagebox msg_box;
 
 		//Ask the user to save the model if its modified
 		if(model->isModified())
@@ -1052,6 +1061,8 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
+			Messagebox msg_box;
+
 			if(model->getDatabaseModel()->isInvalidated())
 			{
 				msg_box.show(trUtf8("Confirmation"),
@@ -1162,6 +1173,8 @@ void MainWindow::printModel(void)
 		//If the user confirms the printing
 		if(print_dlg->result() == QDialog::Accepted)
 		{
+			Messagebox msg_box;
+
 			//Checking If the user modified the default settings overriding the scene configurations
 			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
 			curr_orientation=print_dlg->printer()->orientation();
@@ -1203,6 +1216,7 @@ void MainWindow::loadModel(void)
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
@@ -1229,6 +1243,8 @@ void MainWindow::loadModels(const QStringList &list)
 	}
 	catch(Exception &e)
 	{	
+		Messagebox msg_box;
+
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
 													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
@@ -1319,6 +1335,8 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openWiki(void)
 {
+	Messagebox msg_box;
+
 	msg_box.show(trUtf8("Open Wiki pages"),
 							 trUtf8("This action will open a web browser window! Want to proceed?"),
 							 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);

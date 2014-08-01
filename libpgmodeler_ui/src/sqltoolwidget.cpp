@@ -19,8 +19,6 @@
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
 
-//extern TaskProgressWidget *task_prog_wgt;
-
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
   setupUi(this);
@@ -144,16 +142,11 @@ void SQLToolWidget::connectToDatabase(void)
 
 void SQLToolWidget::listObjects(void)
 {
-	//TaskProgressWidget task_prog_wgt(this);
-
 	try
   {
     if(database_cmb->currentIndex() > 0)
     {
 			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			//task_prog_wgt.setWindowTitle(trUtf8("Retrieving objects from database..."));
-			//task_prog_wgt.show();
 
 			configureImportHelper();
 			DatabaseImportForm::listObjects(import_helper, objects_trw, false, false);
@@ -164,7 +157,6 @@ void SQLToolWidget::listObjects(void)
 
 			sql_cmd_conn=(*conn);
 			sql_cmd_conn.switchToDatabase(database_cmb->currentText());
-			//task_prog_wgt.close();
     }
     else
       objects_trw->clear();
@@ -183,7 +175,6 @@ void SQLToolWidget::listObjects(void)
   }
   catch(Exception &e)
   {
-		//task_prog_wgt.close();
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
@@ -253,54 +244,54 @@ void SQLToolWidget::updateCurrentItem(void)
     else
       objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
-	configureImportHelper();
+		configureImportHelper();
 
-    //Updates the group type only
-    if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
-      gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
-    else
-     //Updates all child objcts when the selected object is a schema or table
-      gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                      BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
+		//Updates the group type only
+		if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
+			gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
+		else
+			//Updates all child objcts when the selected object is a schema or table
+			gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+																											BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
 
-    //Updating the subtree for schemas / tables
-    if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
-    {
-      for(auto item : gen_items)
-      {
-        //When the user refresh a single schema or table
-        if(obj_id > 0 || obj_type==OBJ_TABLE)
-        {
-          //Updates the table subtree
-          DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                BaseObject::getChildObjectTypes(OBJ_TABLE),
-                                                false, false, item,
-                                                item->parent()->data(DatabaseImportForm::OBJECT_SCHEMA,Qt::UserRole).toString(),
-                                                item->text(0));
-        }
-        //When the user refresh the schema group
-        else
-        {
-          //Updates the entire schema subtree
-          gen_items1= DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                BaseObject::getChildObjectTypes(OBJ_SCHEMA),
-                                                false, false, item, item->text(0));
+		//Updating the subtree for schemas / tables
+		if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+		{
+			for(auto item : gen_items)
+			{
+				//When the user refresh a single schema or table
+				if(obj_id > 0 || obj_type==OBJ_TABLE)
+				{
+					//Updates the table subtree
+					DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+																								BaseObject::getChildObjectTypes(OBJ_TABLE),
+																								false, false, item,
+																								item->parent()->data(DatabaseImportForm::OBJECT_SCHEMA,Qt::UserRole).toString(),
+																								item->text(0));
+				}
+				//When the user refresh the schema group
+				else
+				{
+					//Updates the entire schema subtree
+					gen_items1= DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+																														BaseObject::getChildObjectTypes(OBJ_SCHEMA),
+																														false, false, item, item->text(0));
 
-          //Updates the table group for the current schema
-          for(auto item1 : gen_items1)
-          {
-            DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                   BaseObject::getChildObjectTypes(OBJ_TABLE),
-                                                   false, false, item1,
-                                                   item1->parent()->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-                                                   item1->text(0));
-          }
-        }
-      }
-    }
+					//Updates the table group for the current schema
+					for(auto item1 : gen_items1)
+					{
+						DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+																									BaseObject::getChildObjectTypes(OBJ_TABLE),
+																									false, false, item1,
+																									item1->parent()->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+																									item1->text(0));
+					}
+				}
+			}
+		}
 
-	import_helper.closeConnection();
-    objects_trw->sortItems(0, Qt::AscendingOrder);
+		import_helper.closeConnection();
+		objects_trw->sortItems(0, Qt::AscendingOrder);
   }
 }
 

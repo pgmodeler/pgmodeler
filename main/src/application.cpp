@@ -88,11 +88,13 @@ bool Application::notify(QObject *receiver, QEvent *event)
   }
   catch(Exception &e)
   {
+		Messagebox msg_box;
     msg_box.show(e);
     return(false);
   }
   catch(...)
   {
+		Messagebox msg_box;
     msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
     return(false);
   }

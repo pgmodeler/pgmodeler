@@ -23,12 +23,6 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 
-//extern ConstraintWidget *constraint_wgt;
-//extern ColumnWidget *column_wgt;
-//extern RuleWidget *rule_wgt;
-//extern IndexWidget *index_wgt;
-//extern TriggerWidget *trigger_wgt;
-
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;

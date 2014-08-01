@@ -17,7 +17,6 @@
 */
 
 #include "baseform.h"
-#include "messagebox.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

@@ -36,7 +36,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 
-		Messagebox msg_box;
+		//Messagebox msg_box;
 		GeneralConfigWidget *general_conf;
 		AppearanceConfigWidget *appearance_conf;
 		ConnectionsConfigWidget *connections_conf;

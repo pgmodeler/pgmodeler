@@ -18,7 +18,6 @@
 
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
-//extern TaskProgressWidget *task_prog_wgt;
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {

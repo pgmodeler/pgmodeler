@@ -104,7 +104,10 @@ void ConfigurationForm::loadConfiguration(void)
 	catch(Exception &e)
 	{
 		if(e.getErrorType()==ERR_PLUGINS_NOT_LOADED)
+		{
+			Messagebox msg_box;
 			msg_box.show(e);
+		}
 		else
 			throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -112,6 +115,7 @@ void ConfigurationForm::loadConfiguration(void)
 
 void ConfigurationForm::restoreDefaults(void)
 {
+	Messagebox msg_box;
 	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
 									Messagebox::CONFIRM_ICON,
