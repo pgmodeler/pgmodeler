@@ -17,9 +17,6 @@
 */
 
 #include "functionwidget.h"
-//#include "parameterwidget.h"
-
-//extern ParameterWidget *parameter_wgt;
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -248,8 +245,6 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	Parameter param;
 	PgSQLType aux_type;
 
-	//connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
-
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages=model->getObjects(OBJ_LANGUAGE);
 
@@ -338,7 +333,7 @@ void FunctionWidget::hideEvent(QHideEvent *event)
 	symbol_edt->clear();
 	library_edt->clear();
 	func_config_twg->setCurrentIndex(0);
-	//disconnect(parameter_wgt,nullptr, this, nullptr);
+
 	BaseObjectWidget::hideEvent(event);
 }
 

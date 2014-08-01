@@ -19,8 +19,6 @@
 #include "operationlistwidget.h"
 #include "taskprogresswidget.h"
 
-//extern TaskProgressWidget *task_prog_wgt;
-
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);

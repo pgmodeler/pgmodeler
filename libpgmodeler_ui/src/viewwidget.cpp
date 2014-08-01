@@ -20,9 +20,6 @@
 #include "rulewidget.h"
 #include "triggerwidget.h"
 
-//extern RuleWidget *rule_wgt;
-//extern TriggerWidget *trigger_wgt;
-
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
@@ -796,9 +793,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-    //op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
-    //op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
