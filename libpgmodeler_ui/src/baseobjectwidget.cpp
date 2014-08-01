@@ -20,8 +20,8 @@
 #include "permissionwidget.h"
 #include "sqlappendwidget.h"
 
-extern PermissionWidget *permission_wgt;
-extern SQLAppendWidget *sqlappend_wgt;
+//extern PermissionWidget *permission_wgt;
+//extern SQLAppendWidget *sqlappend_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -105,8 +105,13 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
 BaseObjectWidget::~BaseObjectWidget(void)
 {
-	parent_form->generalwidget_wgt->removeWidget(this);
-	if(parent_form)	delete(parent_form);
+	if(parent_form)
+	{
+		parent_form->generalwidget_wgt->removeWidget(this);
+		this->setParent(nullptr);
+		delete(parent_form);
+		parent_form=nullptr;
+	}
 }
 
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
@@ -653,19 +658,21 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 void BaseObjectWidget::editPermissions(void)
 {
+	PermissionWidget permission_wgt(this);
 	BaseObject *parent_obj=nullptr;
 
 	if(this->relationship)
 		parent_obj=this->relationship;
 
-	permission_wgt->setAttributes(this->model, parent_obj, this->object);
-	permission_wgt->show();
+	permission_wgt.setAttributes(this->model, parent_obj, this->object);
+	permission_wgt.show();
 }
 
 void BaseObjectWidget::appendSQL(void)
 {
-	sqlappend_wgt->setAttributes(this->model, this->object);
-	sqlappend_wgt->show();
+	SQLAppendWidget sqlappend_wgt(this);
+	sqlappend_wgt.setAttributes(this->model, this->object);
+	sqlappend_wgt.show();
 }
 
 void BaseObjectWidget::applyConfiguration(void)

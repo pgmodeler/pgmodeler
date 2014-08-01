@@ -22,9 +22,9 @@
 #include "tablewidget.h"
 #include "configurationform.h"
 
-extern ConstraintWidget *constraint_wgt;
-extern ColumnWidget *column_wgt;
-extern TableWidget *table_wgt;
+//extern ConstraintWidget *constraint_wgt;
+//extern ColumnWidget *column_wgt;
+//extern TableWidget *table_wgt;
 extern ConfigurationForm *configuration_form;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
@@ -672,40 +672,42 @@ void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
 	bool prot=true;
-  Table *tab=nullptr;
+	Table *tab=nullptr;
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
+	ObjectType obj_type=object->getObjectType();
 
-	switch(object->getObjectType())
+	if(obj_type==OBJ_COLUMN)
 	{
-		case OBJ_COLUMN:
-			col=dynamic_cast<Column *>(object);
-			column_wgt->setAttributes(this->model, col->getParentTable(), this->op_list, col);
-			column_wgt->show();
-		break;
+		ColumnWidget column_wgt(this);
+		col=dynamic_cast<Column *>(object);
+		column_wgt.setAttributes(this->model, col->getParentTable(), this->op_list, col);
+		column_wgt.show();
+	}
+	else if(obj_type==OBJ_CONSTRAINT)
+	{
+		ConstraintWidget constraint_wgt(this);
+		constr=dynamic_cast<Constraint *>(object);
 
-		case OBJ_CONSTRAINT:
-			constr=dynamic_cast<Constraint *>(object);
+		if(!constr->isAddedByRelationship())
+		{
+			prot=constr->isProtected();
+			constr->setProtected(true);
+		}
 
-			if(!constr->isAddedByRelationship())
-			{
-				prot=constr->isProtected();
-				constr->setProtected(true);
-			}
-
-			constraint_wgt->setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
-			constraint_wgt->show();
-			constr->setProtected(prot);
-		break;
-
-		default:
-      tab=dynamic_cast<Table *>(object);
-      tab->setProtected(true);
-      table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-                                tab,	tab->getPosition().x(), tab->getPosition().y());
-			table_wgt->show();
-      tab->setProtected(false);
-		break;
+		constraint_wgt.setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
+		constraint_wgt.show();
+		constr->setProtected(prot);
+	}
+	else
+	{
+		TableWidget table_wgt(this);
+		tab=dynamic_cast<Table *>(object);
+		tab->setProtected(true);
+		table_wgt.setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+														 tab,	tab->getPosition().x(), tab->getPosition().y());
+		table_wgt.show();
+		tab->setProtected(false);
 	}
 }
 
@@ -728,13 +730,15 @@ void RelationshipWidget::addObject(void)
 
 		if(obj_type==OBJ_COLUMN)
 		{
-			column_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
-			column_wgt->show();
+			ColumnWidget column_wgt(this);
+			column_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
+			column_wgt.show();
 		}
 		else
 		{
-			constraint_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
-			constraint_wgt->show();
+			ConstraintWidget constraint_wgt(this);
+			constraint_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
+			constraint_wgt.show();
 		}
 
 		listObjects(obj_type);
@@ -757,17 +761,19 @@ void RelationshipWidget::editObject(int row)
 
 		if(sender()==attributes_tab)
 		{
+			ColumnWidget column_wgt(this);
 			obj_type=OBJ_COLUMN;
-			column_wgt->setAttributes(this->model, this->object, this->op_list,
+			column_wgt.setAttributes(this->model, this->object, this->op_list,
 																reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
-			column_wgt->show();
+			column_wgt.show();
 		}
 		else
 		{
+			ConstraintWidget constraint_wgt(this);
 			obj_type=OBJ_CONSTRAINT;
-			constraint_wgt->setAttributes(this->model, this->object, this->op_list,
+			constraint_wgt.setAttributes(this->model, this->object, this->op_list,
 																	 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
-			constraint_wgt->show();
+			constraint_wgt.show();
 		}
 
 		listObjects(obj_type);

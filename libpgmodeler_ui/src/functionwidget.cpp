@@ -17,9 +17,9 @@
 */
 
 #include "functionwidget.h"
-#include "parameterwidget.h"
+//#include "parameterwidget.h"
 
-extern ParameterWidget *parameter_wgt;
+//extern ParameterWidget *parameter_wgt;
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -35,6 +35,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		QFrame *frame=nullptr;
 
 		Ui_FunctionWidget::setupUi(this);
+		parameter_wgt=new ParameterWidget(this);
 
 		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

@@ -17,6 +17,7 @@
 */
 
 #include "baseform.h"
+#include <iostream>
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -30,7 +31,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 												 Qt::WindowMaximizeButtonHint);
 
 		this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
-	#endif
+#endif
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)

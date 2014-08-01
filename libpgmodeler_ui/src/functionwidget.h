@@ -30,10 +30,13 @@
 #include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 #include "codecompletionwidget.h"
+#include "parameterwidget.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
     Q_OBJECT
+
+		ParameterWidget *parameter_wgt;
 
 		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;

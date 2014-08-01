@@ -353,6 +353,9 @@ private slots:
 		void s_zoomModified(float);
 		void s_modelResized(void);
 
+		//! \brief Signal emitted whenever a object is created / edited using the form
+		void s_objectManipulated(void);
+
 		friend class MainWindow;
 		friend class ModelExportForm;
 		friend class OperationListWidget;

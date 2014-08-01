@@ -23,11 +23,11 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 
-extern ConstraintWidget *constraint_wgt;
+/*extern ConstraintWidget *constraint_wgt;
 extern ColumnWidget *column_wgt;
 extern RuleWidget *rule_wgt;
 extern IndexWidget *index_wgt;
-extern TriggerWidget *trigger_wgt;
+extern TriggerWidget *trigger_wgt;*/
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -168,33 +168,34 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 
 	table=dynamic_cast<Table *>(this->object);
 
-	switch(obj_type)
+	if(obj_type==OBJ_COLUMN)
 	{
-		case OBJ_COLUMN:
-			column_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-			column_wgt->show();
-		break;
-
-		case OBJ_CONSTRAINT:
-			constraint_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-			constraint_wgt->show();
-		break;
-
-		case OBJ_TRIGGER:
-			trigger_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-			trigger_wgt->show();
-		break;
-
-		case OBJ_INDEX:
-			index_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-			index_wgt->show();
-		break;
-
-		default:
-		case OBJ_RULE:
-			rule_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-			rule_wgt->show();
-		break;
+		ColumnWidget column_wgt(this);
+		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
+		column_wgt.show();
+	}
+	else if(obj_type==OBJ_CONSTRAINT)
+	{
+		ConstraintWidget constraint_wgt(this);
+		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
+		constraint_wgt.show();
+	}
+	else if(obj_type==OBJ_TRIGGER)
+	{
+		TriggerWidget trigger_wgt(this);
+		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
+		trigger_wgt.show();
+	}
+	else if(obj_type==OBJ_INDEX)
+	{
+		IndexWidget index_wgt(this);
+		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
+		index_wgt.show();
+	}else
+	{
+		RuleWidget rule_wgt(this);
+		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
+		rule_wgt.show();
 	}
 }
 

@@ -17,80 +17,80 @@
 */
 
 #include "mainwindow.h"
-#include "textboxwidget.h"
+//#include "textboxwidget.h"
 #include "sourcecodewidget.h"
-#include "databasewidget.h"
-#include "schemawidget.h"
-#include "rolewidget.h"
-#include "permissionwidget.h"
-#include "tablespacewidget.h"
-#include "languagewidget.h"
-#include "functionwidget.h"
-#include "parameterwidget.h"
-#include "castwidget.h"
-#include "conversionwidget.h"
-#include "domainwidget.h"
-#include "aggregatewidget.h"
-#include "sequencewidget.h"
-#include "operatorwidget.h"
-#include "operatorfamilywidget.h"
-#include "operatorclasswidget.h"
-#include "typewidget.h"
-#include "viewwidget.h"
-#include "columnwidget.h"
-#include "constraintwidget.h"
-#include "rulewidget.h"
-#include "triggerwidget.h"
-#include "indexwidget.h"
-#include "relationshipwidget.h"
-#include "tablewidget.h"
-#include "collationwidget.h"
-#include "extensionwidget.h"
-#include "tagwidget.h"
+//#include "databasewidget.h"
+//#include "schemawidget.h"
+//#include "rolewidget.h"
+//#include "permissionwidget.h"
+//#include "tablespacewidget.h"
+//#include "languagewidget.h"
+//#include "functionwidget.h"
+//#include "parameterwidget.h"
+//#include "castwidget.h"
+//#include "conversionwidget.h"
+//#include "domainwidget.h"
+//#include "aggregatewidget.h"
+//#include "sequencewidget.h"
+//#include "operatorwidget.h"
+//#include "operatorfamilywidget.h"
+//#include "operatorclasswidget.h"
+//#include "typewidget.h"
+//#include "viewwidget.h"
+//#include "columnwidget.h"
+//#include "constraintwidget.h"
+//#include "rulewidget.h"
+//#include "triggerwidget.h"
+//#include "indexwidget.h"
+//#include "relationshipwidget.h"
+//#include "tablewidget.h"
+//#include "collationwidget.h"
+//#include "extensionwidget.h"
+//#include "tagwidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
 #include "objectrenamewidget.h"
 #include "sqlappendwidget.h"
-#include "eventtriggerwidget.h"
+//#include "eventtriggerwidget.h"
 
 //Global forms and widgets
-TextboxWidget *textbox_wgt=nullptr;
+//TextboxWidget *textbox_wgt=nullptr;
 SourceCodeWidget *sourcecode_wgt=nullptr;
-DatabaseWidget *database_wgt=nullptr;
-SchemaWidget *schema_wgt=nullptr;
-RoleWidget *role_wgt=nullptr;
-PermissionWidget *permission_wgt=nullptr;
-TablespaceWidget *tablespace_wgt=nullptr;
-LanguageWidget *language_wgt=nullptr;
-ParameterWidget *parameter_wgt=nullptr;
-FunctionWidget *function_wgt=nullptr;
-CastWidget *cast_wgt=nullptr;
-ConversionWidget *conversion_wgt=nullptr;
-DomainWidget *domain_wgt=nullptr;
-AggregateWidget *aggregate_wgt=nullptr;
-SequenceWidget *sequence_wgt=nullptr;
-OperatorWidget *operator_wgt=nullptr;
-OperatorFamilyWidget *opfamily_wgt=nullptr;
-OperatorClassWidget *opclass_wgt=nullptr;
-TypeWidget *type_wgt=nullptr;
-ViewWidget *view_wgt=nullptr;
-ColumnWidget *column_wgt=nullptr;
-ConstraintWidget *constraint_wgt=nullptr;
-RuleWidget *rule_wgt=nullptr;
-TriggerWidget *trigger_wgt=nullptr;
-IndexWidget *index_wgt=nullptr;
-RelationshipWidget *relationship_wgt=nullptr;
-TableWidget *table_wgt=nullptr;
-CollationWidget *collation_wgt=nullptr;
-ExtensionWidget *extension_wgt=nullptr;
-TagWidget *tag_wgt=nullptr;
+//DatabaseWidget *database_wgt=nullptr;
+//SchemaWidget *schema_wgt=nullptr;
+//RoleWidget *role_wgt=nullptr;
+//PermissionWidget *permission_wgt=nullptr;
+//TablespaceWidget *tablespace_wgt=nullptr;
+//LanguageWidget *language_wgt=nullptr;
+//ParameterWidget *parameter_wgt=nullptr;
+//FunctionWidget *function_wgt=nullptr;
+//CastWidget *cast_wgt=nullptr;
+//ConversionWidget *conversion_wgt=nullptr;
+//DomainWidget *domain_wgt=nullptr;
+//AggregateWidget *aggregate_wgt=nullptr;
+//SequenceWidget *sequence_wgt=nullptr;
+//OperatorWidget *operator_wgt=nullptr;
+//OperatorFamilyWidget *opfamily_wgt=nullptr;
+//OperatorClassWidget *opclass_wgt=nullptr;
+//TypeWidget *type_wgt=nullptr;
+//ViewWidget *view_wgt=nullptr;
+//ColumnWidget *column_wgt=nullptr;
+//ConstraintWidget *constraint_wgt=nullptr;
+//RuleWidget *rule_wgt=nullptr;
+//TriggerWidget *trigger_wgt=nullptr;
+//IndexWidget *index_wgt=nullptr;
+//RelationshipWidget *relationship_wgt=nullptr;
+//TableWidget *table_wgt=nullptr;
+//CollationWidget *collation_wgt=nullptr;
+//ExtensionWidget *extension_wgt=nullptr;
+//TagWidget *tag_wgt=nullptr;
 TaskProgressWidget *task_prog_wgt=nullptr;
 ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
 ObjectRenameWidget *objectrename_wgt=nullptr;
 SQLAppendWidget *sqlappend_wgt=nullptr;
-EventTriggerWidget *eventtrigger_wgt=nullptr;
+//EventTriggerWidget *eventtrigger_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -194,41 +194,41 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
 
-		permission_wgt=new PermissionWidget(this);
+		//permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
-		textbox_wgt=new TextboxWidget(this);
-		database_wgt=new DatabaseWidget(this);
-		schema_wgt=new SchemaWidget(this);
-		role_wgt=new RoleWidget(this);
-		tablespace_wgt=new TablespaceWidget(this);
-		language_wgt=new LanguageWidget(this);
-		parameter_wgt=new ParameterWidget(this);
-		function_wgt=new FunctionWidget(this);
-		cast_wgt=new CastWidget(this);
-		conversion_wgt=new ConversionWidget(this);
-		domain_wgt=new DomainWidget(this);
-		aggregate_wgt=new AggregateWidget(this);
-		sequence_wgt=new SequenceWidget(this);
-		operator_wgt=new OperatorWidget(this);
-		opfamily_wgt=new OperatorFamilyWidget(this);
-		opclass_wgt=new OperatorClassWidget(this);
-		type_wgt=new TypeWidget(this);
-		view_wgt=new ViewWidget(this);
-		column_wgt=new ColumnWidget(this);
-		constraint_wgt=new ConstraintWidget(this);
-		rule_wgt=new RuleWidget(this);
-		trigger_wgt=new TriggerWidget(this);
-		index_wgt=new IndexWidget(this);
-		relationship_wgt=new RelationshipWidget(this);
-		table_wgt=new TableWidget(this);
-		collation_wgt=new CollationWidget(this);
-		extension_wgt=new ExtensionWidget(this);
-		tag_wgt=new TagWidget(this);
+		//textbox_wgt=new TextboxWidget(this);
+		//database_wgt=new DatabaseWidget(this);
+		//schema_wgt=new SchemaWidget(this);
+		//role_wgt=new RoleWidget(this);
+		//tablespace_wgt=new TablespaceWidget(this);
+		//language_wgt=new LanguageWidget(this);
+		//parameter_wgt=new ParameterWidget(this);
+		//function_wgt=new FunctionWidget(this);
+		//cast_wgt=new CastWidget(this);
+		//conversion_wgt=new ConversionWidget(this);
+		//domain_wgt=new DomainWidget(this);
+		//aggregate_wgt=new AggregateWidget(this);
+		//sequence_wgt=new SequenceWidget(this);
+		//operator_wgt=new OperatorWidget(this);
+		//opfamily_wgt=new OperatorFamilyWidget(this);
+		//opclass_wgt=new OperatorClassWidget(this);
+		//type_wgt=new TypeWidget(this);
+		//view_wgt=new ViewWidget(this);
+		//column_wgt=new ColumnWidget(this);
+		//constraint_wgt=new ConstraintWidget(this);
+		//rule_wgt=new RuleWidget(this);
+		//trigger_wgt=new TriggerWidget(this);
+		//index_wgt=new IndexWidget(this);
+		//relationship_wgt=new RelationshipWidget(this);
+		//table_wgt=new TableWidget(this);
+		//collation_wgt=new CollationWidget(this);
+		//extension_wgt=new ExtensionWidget(this);
+		//tag_wgt=new TagWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
-		deps_refs_wgt=new ObjectDepsRefsWidget(this);
-		objectrename_wgt=new ObjectRenameWidget(this);
+		//deps_refs_wgt=new ObjectDepsRefsWidget(this);
+		//objectrename_wgt=new ObjectRenameWidget(this);
 		sqlappend_wgt=new SQLAppendWidget(this);
-		eventtrigger_wgt=new EventTriggerWidget(this);
+		//eventtrigger_wgt=new EventTriggerWidget(this);
 	}
 	catch(Exception &e)
 	{
@@ -287,36 +287,36 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
 
-	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
-	connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(role_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(textbox_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(tablespace_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(language_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(function_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(cast_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(conversion_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(domain_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(aggregate_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(sequence_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(operator_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(opfamily_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(opclass_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(type_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(view_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(column_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(constraint_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(rule_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(trigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
+	//connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(role_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(textbox_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(tablespace_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(language_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(function_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(cast_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(conversion_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(domain_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(aggregate_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(sequence_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(operator_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(opfamily_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(opclass_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(type_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(view_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(column_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(constraint_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(rule_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(trigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
+	//connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
@@ -981,6 +981,8 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 
 		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));

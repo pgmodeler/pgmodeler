@@ -20,8 +20,8 @@
 #include "rulewidget.h"
 #include "triggerwidget.h"
 
-extern RuleWidget *rule_wgt;
-extern TriggerWidget *trigger_wgt;
+//extern RuleWidget *rule_wgt;
+//extern TriggerWidget *trigger_wgt;
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
@@ -185,18 +185,17 @@ void ViewWidget::showTableObjectForm(ObjectType obj_type)
 
 	view=dynamic_cast<View *>(this->object);
 
-	switch(obj_type)
+	if(obj_type==OBJ_TRIGGER)
 	{
-		case OBJ_TRIGGER:
-			trigger_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
-			trigger_wgt->show();
-		break;
-
-		default:
-		case OBJ_RULE:
-			rule_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
-			rule_wgt->show();
-		break;
+		TriggerWidget trigger_wgt(this);
+		trigger_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
+		trigger_wgt.show();
+	}
+	else
+	{
+		RuleWidget rule_wgt(this);
+		rule_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
+		rule_wgt.show();
 	}
 }
 

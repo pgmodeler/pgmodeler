@@ -171,7 +171,7 @@ void Permission::setRevoke(bool value)
 
 void Permission::setCascade(bool value)
 {
-	setCascade(cascade != value);
+	setCodeInvalidated(cascade != value);
 	cascade=value;
 }
 
