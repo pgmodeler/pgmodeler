@@ -29,12 +29,15 @@
 #include "syntaxhighlighter.h"
 #include "connection.h"
 #include "databaseimportform.h"
+#include "datamanipulationform.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
   private:
     Q_OBJECT
 
 		SchemaParser schparser;
+
+		DataManipulationForm *data_manip_frm;
 
     //! brief Syntax highlighter for sql input field
     SyntaxHighlighter *sql_cmd_hl;

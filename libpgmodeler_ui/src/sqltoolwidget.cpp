@@ -25,6 +25,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
   setupUi(this);
 
+	data_manip_frm=new DataManipulationForm(this, Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
+
   sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
@@ -81,6 +83,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(refresh_action, SIGNAL(triggered()), this, SLOT(updateCurrentItem()));
+	connect(edit_btn, SIGNAL(clicked()), data_manip_frm, SLOT(exec()));
 
   //Signal handling with C++11 lambdas Slots
   connect(clear_history_btn, &QPushButton::clicked,
@@ -699,6 +702,7 @@ void SQLToolWidget::clearAll(void)
     msgoutput_lst->clear();
     msgoutput_lst->setVisible(true);
     results_parent->setVisible(false);
+		export_tb->setEnabled(false);
   }
 }
 
@@ -767,6 +771,7 @@ void SQLToolWidget::enableSQLExecution(bool enable)
     sql_cmd_txt->setEnabled(enable);
     load_tb->setEnabled(enable);
     history_tb->setEnabled(enable);
+		edit_btn->setEnabled(enable);
 
     if(history_tb->isChecked() && !enable)
       history_tb->setChecked(false);
