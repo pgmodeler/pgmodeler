@@ -58,7 +58,7 @@
 //extern RoleWidget *role_wgt;
 //extern TablespaceWidget *tablespace_wgt;
 //extern LanguageWidget *language_wgt;
-extern SourceCodeWidget *sourcecode_wgt;
+//extern SourceCodeWidget *sourcecode_wgt;
 //extern FunctionWidget *function_wgt;
 //extern CastWidget *cast_wgt;
 //extern ConversionWidget *conversion_wgt;
@@ -81,11 +81,11 @@ extern SourceCodeWidget *sourcecode_wgt;
 //extern CollationWidget *collation_wgt;
 //extern ExtensionWidget *extension_wgt;
 //extern TagWidget *tag_wgt;
-extern TaskProgressWidget *task_prog_wgt;
-extern ObjectDepsRefsWidget *deps_refs_wgt;
-extern ObjectRenameWidget *objectrename_wgt;
+//extern TaskProgressWidget *task_prog_wgt;
+//extern ObjectDepsRefsWidget *deps_refs_wgt;
+//extern ObjectRenameWidget *objectrename_wgt;
 //extern PermissionWidget *permission_wgt;
-extern SQLAppendWidget *sqlappend_wgt;
+//extern SQLAppendWidget *sqlappend_wgt;
 //extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
@@ -1051,26 +1051,28 @@ void ModelWidget::convertRelationshipNN(void)
 
 void ModelWidget::loadModel(const QString &filename)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
-	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));	
-    task_prog_wgt->show();
+	{	
+		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Loading database model"));
+		task_prog_wgt.show();
 
     db_model->loadModel(filename);
     this->filename=filename;
     this->adjustSceneSize();
 
-		task_prog_wgt->close();
-    disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 
 		protected_model_frm->setVisible(db_model->isProtected());
     this->modified=false;
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -1255,23 +1257,27 @@ void ModelWidget::saveModel(void)
 
 void ModelWidget::saveModel(const QString &filename)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
 	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
-    task_prog_wgt->show();
+		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Saving database model"));
+		task_prog_wgt.show();
 
     saveLastCanvasPosition();
     db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
 
 		this->filename=filename;
 
-		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
 	}
 	catch(Exception &e)
 	{
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1590,8 +1596,9 @@ void ModelWidget::showDependenciesReferences(void)
 
 		if(object)
 		{
-      deps_refs_wgt->setAttributes(this, object);
-			deps_refs_wgt->show();
+			ObjectDepsRefsWidget deps_refs_wgt(this);
+			deps_refs_wgt.setAttributes(this, object);
+			deps_refs_wgt.show();
 		}
 	}
 }
@@ -1602,12 +1609,13 @@ void ModelWidget::showSourceCode(void)
 
 	if(obj_sender)
 	{
-		BaseObject *objeto=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
+		BaseObject *object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
-		if(objeto)
+		if(object)
 		{
-			sourcecode_wgt->setAttributes(this->db_model, objeto);
-			sourcecode_wgt->show();
+			SourceCodeWidget sourcecode_wgt(this);
+			sourcecode_wgt.setAttributes(this->db_model, object);
+			sourcecode_wgt.show();
 		}
 	}
 }
@@ -1636,10 +1644,11 @@ void ModelWidget::renameObject(void)
 										.arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	objectrename_wgt->setAttributes(obj, this->db_model, this->op_list);
-	objectrename_wgt->exec();
+	ObjectRenameWidget objectrename_wgt(this);
+	objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
+	objectrename_wgt.exec();
 
-	if(objectrename_wgt->result()==QDialog::Accepted)
+	if(objectrename_wgt.result()==QDialog::Accepted)
 	{
 		this->modified=true;
 		emit s_objectModified();
@@ -2010,9 +2019,10 @@ void ModelWidget::pasteObjects(void)
 	ObjectType obj_type;
 	Exception error;
   unsigned pos=0;
+	TaskProgressWidget task_prog_wgt(this);
 
-	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
-	task_prog_wgt->show();
+	task_prog_wgt.setWindowTitle(trUtf8("Pasting objects..."));
+	task_prog_wgt.show();
 
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
@@ -2033,7 +2043,7 @@ void ModelWidget::pasteObjects(void)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Validating object: %1 (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2131,7 +2141,7 @@ void ModelWidget::pasteObjects(void)
 		itr++;
 
 		pos++;
-		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Generating XML code of object: %1 (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2204,7 +2214,7 @@ void ModelWidget::pasteObjects(void)
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
 				pos++;
-				task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																			trUtf8("Pasting object: %1 (%2)").arg(object->getName())
 																			.arg(object->getTypeName()),
 																			object->getObjectType());
@@ -2252,7 +2262,7 @@ void ModelWidget::pasteObjects(void)
 	db_model->validateRelationships();
 
 	this->adjustSceneSize();
-	task_prog_wgt->close();
+	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user
 	if(error.getErrorType()!=ERR_CUSTOM)
@@ -2523,10 +2533,11 @@ void ModelWidget::appendSQL(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+	SQLAppendWidget sqlappend_wgt(this);
 
-	sqlappend_wgt->setAttributes(db_model, obj);
-	sqlappend_wgt->show();
-	this->modified=(sqlappend_wgt->result()==QDialog::Accepted);
+	sqlappend_wgt.setAttributes(db_model, obj);
+	sqlappend_wgt.show();
+	this->modified=(sqlappend_wgt.result()==QDialog::Accepted);
 }
 
 void ModelWidget::showObjectMenu(void)

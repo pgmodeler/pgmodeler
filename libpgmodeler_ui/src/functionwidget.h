@@ -36,8 +36,6 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
     Q_OBJECT
 
-		ParameterWidget *parameter_wgt;
-
 		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;
 
@@ -80,7 +78,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void showParameterForm(void);
 
 		//! \brief Shows the configured parameter on the table that called the form
-		void handleParameter(int result);
+		void handleParameter(Parameter param, int result);
 
 	public slots:
 		void applyConfiguration(void);

@@ -43,7 +43,6 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		PluginsConfigWidget *plugins_conf;
 		RelationshipConfigWidget *relationships_conf;
 
-
 	public:
 		static const int	GENERAL_CONF_WGT=0,
 											RELATIONSHIPS_CONF_WGT=1,

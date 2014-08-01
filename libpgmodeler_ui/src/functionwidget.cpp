@@ -35,7 +35,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		QFrame *frame=nullptr;
 
 		Ui_FunctionWidget::setupUi(this);
-		parameter_wgt=new ParameterWidget(this);
 
 		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
@@ -121,7 +120,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 	}
 }
 
-void FunctionWidget::handleParameter(int result)
+void FunctionWidget::handleParameter(Parameter param, int result)
 {
 	int lin_cnt, lin;
 	ObjectTableWidget *table=nullptr;
@@ -144,7 +143,7 @@ void FunctionWidget::handleParameter(int result)
 		considered in the table will always be the last recently included */
 		if(lin < 0) lin=lin_cnt-1;
 
-		showParameterData(parameter_wgt->getParameter(), table, lin);
+		showParameterData(param, table, lin);
 	}
 	else if(result==QDialog::Rejected)
 	{
@@ -160,23 +159,27 @@ void FunctionWidget::showParameterForm(void)
 	ObjectTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
+	ParameterWidget parameter_wgt(this);
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
 		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
 
-		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
-    parameter_wgt->param_variadic_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt.param_in_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt.param_out_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt.param_variadic_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt.default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->getSelectedRow();
 
 		if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
 			aux_param=getParameter(table, lin_idx);
 
-		parameter_wgt->setAttributes(aux_param, model);
-		parameter_wgt->show();
+		parameter_wgt.setAttributes(aux_param, model);
+		parameter_wgt.show();
+
+		aux_param=parameter_wgt.getParameter();
+		handleParameter(aux_param, parameter_wgt.result());
 	}
 }
 
@@ -245,7 +248,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	Parameter param;
 	PgSQLType aux_type;
 
-	connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
+	//connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
 
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages=model->getObjects(OBJ_LANGUAGE);
@@ -335,7 +338,7 @@ void FunctionWidget::hideEvent(QHideEvent *event)
 	symbol_edt->clear();
 	library_edt->clear();
 	func_config_twg->setCurrentIndex(0);
-	disconnect(parameter_wgt,nullptr, this, nullptr);
+	//disconnect(parameter_wgt,nullptr, this, nullptr);
 	BaseObjectWidget::hideEvent(event);
 }
 

@@ -48,15 +48,15 @@
 //#include "extensionwidget.h"
 //#include "tagwidget.h"
 #include "taskprogresswidget.h"
-#include "objectdepsrefswidget.h"
+//#include "objectdepsrefswidget.h"
 #include "configurationform.h"
-#include "objectrenamewidget.h"
-#include "sqlappendwidget.h"
+//#include "objectrenamewidget.h"
+//#include "sqlappendwidget.h"
 //#include "eventtriggerwidget.h"
 
 //Global forms and widgets
 //TextboxWidget *textbox_wgt=nullptr;
-SourceCodeWidget *sourcecode_wgt=nullptr;
+//SourceCodeWidget *sourcecode_wgt=nullptr;
 //DatabaseWidget *database_wgt=nullptr;
 //SchemaWidget *schema_wgt=nullptr;
 //RoleWidget *role_wgt=nullptr;
@@ -85,11 +85,11 @@ SourceCodeWidget *sourcecode_wgt=nullptr;
 //CollationWidget *collation_wgt=nullptr;
 //ExtensionWidget *extension_wgt=nullptr;
 //TagWidget *tag_wgt=nullptr;
-TaskProgressWidget *task_prog_wgt=nullptr;
-ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
+//TaskProgressWidget *task_prog_wgt=nullptr;
+//ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
-ObjectRenameWidget *objectrename_wgt=nullptr;
-SQLAppendWidget *sqlappend_wgt=nullptr;
+//ObjectRenameWidget *objectrename_wgt=nullptr;
+//SQLAppendWidget *sqlappend_wgt=nullptr;
 //EventTriggerWidget *eventtrigger_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	attribs_map attribs;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
+	//vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	central_wgt=nullptr;
 	setupUi(this);
@@ -195,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		obj_finder_wgt=new ObjectFinderWidget;
 
 		//permission_wgt=new PermissionWidget(this);
-		sourcecode_wgt=new SourceCodeWidget(this);
+		//sourcecode_wgt=new SourceCodeWidget(this);
 		//textbox_wgt=new TextboxWidget(this);
 		//database_wgt=new DatabaseWidget(this);
 		//schema_wgt=new SchemaWidget(this);
@@ -224,10 +224,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//collation_wgt=new CollationWidget(this);
 		//extension_wgt=new ExtensionWidget(this);
 		//tag_wgt=new TagWidget(this);
-		task_prog_wgt=new TaskProgressWidget();
+		//task_prog_wgt=new TaskProgressWidget();
 		//deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		//objectrename_wgt=new ObjectRenameWidget(this);
-		sqlappend_wgt=new SQLAppendWidget(this);
+		//sqlappend_wgt=new SQLAppendWidget(this);
 		//eventtrigger_wgt=new EventTriggerWidget(this);
 	}
 	catch(Exception &e)
@@ -235,11 +235,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	for(auto obj_tp : obj_types)
+	/*for(auto obj_tp : obj_types)
 		task_prog_wgt->addIcon(obj_tp,
 													 QIcon(QString(":/icones/icones/") +
 																 BaseObject::getSchemaName(obj_tp) +
-																 QString(".png")));
+																 QString(".png"))); */
 
 	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
