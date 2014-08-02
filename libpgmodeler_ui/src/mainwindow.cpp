@@ -1443,5 +1443,11 @@ void MainWindow::configureSamplesMenu(void)
 		files.pop_front();
 	}
 
+	if(sample_mdls_menu.isEmpty())
+	{
+		act=sample_mdls_menu.addAction(trUtf8("(no samples found)"));
+		act->setEnabled(false);
+	}
+
 	central_wgt->sample_tb->setMenu(&sample_mdls_menu);
 }

@@ -2276,6 +2276,13 @@ void ModelWidget::removeObjects(void)
 	{
 		Messagebox msg_box;
 
+		//Cancel the cut operation if the user try to delete an object in the middle of the process
+		if(ModelWidget::cut_operation && sender()==action_remove)
+		{
+			ModelWidget::cut_operation=false;
+			copied_objects.clear();
+		}
+
 		//If the removal is not due to a cut operation, ask for permission to remove the objects
 		if(!ModelWidget::cut_operation)
 		{

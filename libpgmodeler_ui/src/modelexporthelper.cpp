@@ -651,8 +651,8 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   QDateTime dt=QDateTime::currentDateTime();
   QCryptographicHash hash(QCryptographicHash::Md5);
   map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, "db_" },
-                                          {OBJ_ROLE, "rl_"},
-                                          {OBJ_TABLESPACE, "tb_"} };
+																					{ OBJ_ROLE, "rl_"},
+																					{ OBJ_TABLESPACE, "tb_"} };
 
   orig_obj_names.clear();
   orig_obj_names[db_model]=db_model->getName();
@@ -681,12 +681,20 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
     obj.first->setName(tmp_name.mid(0,15));
     tmp_name.clear();
   }
+
+	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
+		 renamed object correctly */
+	db_model->setCodesInvalidated();
 }
 
 void ModelExportHelper::restoreObjectNames(void)
 {
   for(auto obj : orig_obj_names)
     obj.first->setName(obj.second);
+
+	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
+		 object's with their original names */
+	db_model->setCodesInvalidated();
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
