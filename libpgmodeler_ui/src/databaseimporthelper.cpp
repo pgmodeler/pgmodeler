@@ -18,7 +18,6 @@
 
 #include "databaseimporthelper.h"
 
-const QString DatabaseImportHelper::ARRAY_PATTERN="((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$";
 const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML="\t<!--[ unknown object OID=%1 ]-->\n";
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
@@ -899,62 +898,6 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 	}
 }
 
-QStringList DatabaseImportHelper::parseDefaultValues(const QString &def_vals, const QString &str_delim, const QString &val_sep)
-{
-	int idx=0, delim_start, delim_end, sep_idx, pos=0;
-	QStringList values;
-
-	while(idx < def_vals.size())
-	{
-		//Get the index of string delimiters (default: ')
-		delim_start=def_vals.indexOf(str_delim, idx);
-		delim_end=def_vals.indexOf(str_delim, delim_start + 1);
-
-		/* Get the index of value separator on default value string
-			 (by default the pg_get_expr separates values by comma and space (, ) */
-		sep_idx=def_vals.indexOf(val_sep, idx);
-
-		/* If there is no separator on string (only one value) or the is
-			 beyond the string delimiters or even there is no string delimiter on string */
-		if(sep_idx < 0 ||
-			 (sep_idx >=0 && delim_start >= 0 && delim_end >= 0 &&
-				(sep_idx < delim_start || sep_idx > delim_end)) ||
-			 (sep_idx >=0 && (delim_start < 0 || delim_end < 0)))
-		{
-			//Extract the value from the current position
-			values.push_back(def_vals.mid(pos, sep_idx-pos).trimmed());
-
-			//If there is no separator on string indicates that it contains only one value
-			if(sep_idx < 0)
-				//Forcing the loop abort
-				idx=def_vals.size();
-			else
-			{
-				//Passing to the next value right after the separator
-				pos=sep_idx+1;
-				idx=pos;
-			}
-		}
-		/* If the separator is between a string delimitation e.g.'abc, def' it will be ignored
-		and the current postion will be moved to the first char after string delimiter */
-		else if(delim_start>=0 && delim_end >= 0 &&
-						sep_idx >= delim_start && sep_idx <=delim_end)
-		{
-			idx=delim_end+1;
-
-			/* If the index reaches the end of string but the cursor (pos) isn't at end
-			indicates that the last values wasn't retrieved, this way, the value will be
-			pushed to list of values */
-			if(idx >= def_vals.size() && pos < def_vals.size())
-				values.push_back(def_vals.mid(pos, def_vals.size()));
-		}
-		else
-			idx++;
-	}
-
-	return(values);
-}
-
 void DatabaseImportHelper::createFunction(attribs_map &attribs)
 {
 	Function *func=nullptr;
@@ -967,9 +910,9 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	try
 	{
 		param_types=getTypes(attribs[ParsersAttributes::ARG_TYPES], false);
-		param_names=parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]);
-		param_modes=parseArrayValues(attribs[ParsersAttributes::ARG_MODES]);
-		param_def_vals=parseDefaultValues(attribs[ParsersAttributes::ARG_DEFAULTS]);
+		param_names=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]);
+		param_modes=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_MODES]);
+		param_def_vals=Catalog::parseDefaultValues(attribs[ParsersAttributes::ARG_DEFAULTS]);
 
 		for(int i=0; i < param_types.size(); i++)
 		{
@@ -1143,7 +1086,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		{
 			elem_attr.clear();
 			elem_attr[ParsersAttributes::FUNCTION]="1";
-			array_vals=parseArrayValues(attribs[ParsersAttributes::FUNCTION]);
+			array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::FUNCTION]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -1159,7 +1102,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		{
 			elem_attr.clear();
 			elem_attr[ParsersAttributes::OPERATOR]="1";
-			array_vals=parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
+			array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -1315,7 +1258,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 	try
 	{
 		QStringList owner_col=attribs[ParsersAttributes::OWNER_COLUMN].split(":"),
-								seq_attribs=parseArrayValues(attribs[ParsersAttributes::ATTRIBUTE]);
+								seq_attribs=Catalog::parseArrayValues(attribs[ParsersAttributes::ATTRIBUTE]);
 		QString attr[]={ ParsersAttributes::START, ParsersAttributes::MIN_VALUE,
 										 ParsersAttributes::MAX_VALUE, ParsersAttributes::INCREMENT,
 										 ParsersAttributes::CACHE, ParsersAttributes::CYCLE };
@@ -1389,13 +1332,13 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		attribs[attribs[ParsersAttributes::CONFIGURATION]]="1";
 
 		if(!attribs[ParsersAttributes::ENUM_TYPE].isEmpty())
-			attribs[ParsersAttributes::ENUMARATIONS]=parseArrayValues(attribs[ParsersAttributes::ENUMARATIONS]).join(",");
+			attribs[ParsersAttributes::ENUMARATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMARATIONS]).join(",");
 		else if(!attribs[ParsersAttributes::COMPOSITE_TYPE].isEmpty())
 		{
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;
 
-			comp_attribs=parseArrayValues(attribs[ParsersAttributes::TYPE_ATTRIBUTE]);
+			comp_attribs=Catalog::parseArrayValues(attribs[ParsersAttributes::TYPE_ATTRIBUTE]);
 			attribs[ParsersAttributes::TYPE_ATTRIBUTE]="";
 
 			for(int i=0; i < comp_attribs.size(); i++)
@@ -1412,7 +1355,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		}
 		else if(!attribs[ParsersAttributes::RANGE_TYPE].isEmpty())
 		{
-			QStringList range_attr=parseArrayValues(attribs[ParsersAttributes::RANGE_ATTRIBS]);
+			QStringList range_attr=Catalog::parseArrayValues(attribs[ParsersAttributes::RANGE_ATTRIBS]);
 
 			attribs[ParsersAttributes::SUBTYPE]=getType(range_attr[0], true);
 			attribs[ParsersAttributes::COLLATION]=getDependencyObject(range_attr[1], OBJ_COLLATION, true);
@@ -1626,7 +1569,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	{
 		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
 		attribs[ParsersAttributes::TRIGGER_FUNC]=getDependencyObject(attribs[ParsersAttributes::TRIGGER_FUNC], OBJ_FUNCTION, true, true);
-		attribs[ParsersAttributes::ARGUMENTS]=parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(",\"\"")).join(",");
+		attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(",\"\"")).join(",");
 
 		loadObjectXML(OBJ_TRIGGER, attribs);
 		dbmodel->createTrigger();//nullptr);
@@ -1660,10 +1603,10 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 											.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE))
 											,ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		cols=parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-		exprs=parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
-		collations=parseArrayValues(attribs[ParsersAttributes::COLLATIONS]);
-		opclasses=parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
+		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
+		exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
+		collations=Catalog::parseArrayValues(attribs[ParsersAttributes::COLLATIONS]);
+		opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
 		for(i=0, id_expr=0; i < cols.size(); i++)
 		{
@@ -1731,10 +1674,10 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			attribs[ParsersAttributes::SRC_COLUMNS]="";
 			attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
 
-			cols=parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-			exprs=parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
-			opers=parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
-			opclasses=parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
+			cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
+			exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
+			opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
+			opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
 			for(int i=0, id_expr=0; i < cols.size(); i++)
 			{
@@ -1805,7 +1748,7 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 																					.arg(ParsersAttributes::FILTER)
 																					.arg(ParsersAttributes::VARIABLE).arg(ParsersAttributes::TAG.toUpper())
 																					.arg(ParsersAttributes::VALUES)
-																					.arg(parseArrayValues(attribs[ParsersAttributes::VALUES].remove("\"")).join(","));
+																					.arg(Catalog::parseArrayValues(attribs[ParsersAttributes::VALUES].remove("\"")).join(","));
 
 		loadObjectXML(OBJ_EVENT_TRIGGER, attribs);
 		dbmodel->addEventTrigger(dbmodel->createEventTrigger());
@@ -1833,7 +1776,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 		Table *table=nullptr;
 
 		//Parses the permissions vector string
-		perm_list=parseArrayValues(attribs[ParsersAttributes::PERMISSION]);
+		perm_list=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]);
 
 		if(!perm_list.isEmpty())
 		{
@@ -1924,7 +1867,7 @@ void DatabaseImportHelper::createTableInheritances()
 	{
 		//Get the list of parent table's oids
 		oid=(*itr);
-		inh_list=parseArrayValues(user_objs[oid][ParsersAttributes::PARENTS]);
+		inh_list=Catalog::parseArrayValues(user_objs[oid][ParsersAttributes::PARENTS]);
 		itr++;
 
 		if(!inh_list.isEmpty())
@@ -1956,26 +1899,6 @@ void DatabaseImportHelper::createTableInheritances()
 			}
 		}
 	}
-}
-
-QStringList DatabaseImportHelper::parseArrayValues(const QString array_val)
-{
-	QStringList list;
-
-	if(QRegExp(ARRAY_PATTERN).exactMatch(array_val))
-	{
-		//Detecting the position of { and }
-		int start=array_val.indexOf('{')+1,
-				end=array_val.lastIndexOf("}")-1;
-		QString value=array_val.mid(start, (end - start)+1);
-
-		if(value.contains("\""))
-			list=parseDefaultValues(value, "\"", ",");
-		else
-			list=value.split(',', QString::SkipEmptyParts);
-	}
-
-	return(list);
 }
 
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
@@ -2036,7 +1959,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				if(obj_type==OBJ_FUNCTION)
 				{
 					QStringList arg_types=getTypes(obj_attr[ParsersAttributes::ARG_TYPES], false),
-											arg_modes=parseArrayValues(obj_attr[ParsersAttributes::ARG_MODES]);
+											arg_modes=Catalog::parseArrayValues(obj_attr[ParsersAttributes::ARG_MODES]);
 
 					for(int i=0; i < arg_types.size(); i++)
 					{
@@ -2076,7 +1999,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 QStringList DatabaseImportHelper::getObjectNames(const QString &oid_vect, bool signature_form)
 {
-	QStringList list=parseArrayValues(oid_vect);
+	QStringList list=Catalog::parseArrayValues(oid_vect);
 
 	if(!list.isEmpty())
 	{
@@ -2114,7 +2037,7 @@ QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, con
 		if(prepend_tab_name)
 			tab_name=getObjectName(tab_oid_str) + ".";
 
-		col_ids=parseArrayValues(col_id_vect);
+		col_ids=Catalog::parseArrayValues(col_id_vect);
 
 		for(int i=0; i < col_ids.size(); i++)
 		{
@@ -2190,7 +2113,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 QStringList DatabaseImportHelper::getTypes(const QString &oid_vect, bool generate_xml)
 {
-	QStringList list=parseArrayValues(oid_vect);
+	QStringList list=Catalog::parseArrayValues(oid_vect);
 
 	for(int i=0; i < list.size(); i++)
 		list[i]=getType(list[i], generate_xml);

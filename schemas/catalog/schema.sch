@@ -12,8 +12,7 @@
 
   %if @{not-ext-object} %then
    [ AND ] ( @{not-ext-object} )
-  %end
-
+  %end  
 %else
     %if @{attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permission, nspowner AS owner, ]

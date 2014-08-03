@@ -26,16 +26,29 @@
 #define DATA_MANIPULATION_FORM_H
 
 #include "ui_datamanipulationform.h"
+#include "catalog.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 
+		Connection connection;
+
+		Catalog catalog;
+
+		void listObjects(QComboBox *combo, ObjectType obj_type, const QString &schema="");
+		QStringList retrievePKColumns(const QString &schema, const QString &table);
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
+		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table="");
+
 	public slots:
 
+	private slots:
+		void listTables(void);
+		void retrieveData(void);
 };
 
 #endif

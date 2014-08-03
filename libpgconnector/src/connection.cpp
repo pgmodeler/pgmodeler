@@ -64,7 +64,10 @@ Connection::Connection(const QString &server_fqdn, const QString &port, const QS
 Connection::~Connection(void)
 {
 	if(connection)
+	{
 		PQfinish(connection);
+		connection=nullptr;
+	}
 }
 
 void Connection::setConnectionParam(const QString &param, const QString &value)
@@ -313,5 +316,6 @@ void Connection::operator = (Connection &conn)
 
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
+	this->connection=nullptr;
 }
 

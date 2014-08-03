@@ -116,6 +116,18 @@
            <property name="editable">
             <bool>false</bool>
            </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::InsertAlphabetically</enum>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item>
@@ -124,7 +136,7 @@
             <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string>Update the objects tree.</string>
+            <string>Update the objects tree with the currently selected database</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -132,6 +144,32 @@
            <property name="icon">
             <iconset resource="../res/resources.qrc">
              <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+F5</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="drop_db_tb">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Drop the selected database</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
            </property>
            <property name="iconSize">
             <size>

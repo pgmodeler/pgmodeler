@@ -443,7 +443,8 @@ namespace ParsersAttributes {
 	CONNECTION="connection",
 	MODE="mode",
 	PATTERNS="patterns",
-	NAME_PATTERNS="name-patterns";
+	NAME_PATTERNS="name-patterns",
+	CUSTOM_FILTER="custom-filter";
 }
 
 #endif
