@@ -21,5 +21,6 @@
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
 	setupUi(this);
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
+	setWindowFlags(Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 }

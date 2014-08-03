@@ -23,9 +23,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
   setupUi(this);
 
-	data_manip_frm=new DataManipulationForm(this, Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
-
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
+	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
                                 GlobalAttributes::SQL_HIGHLIGHT_CONF +
@@ -81,7 +79,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(refresh_action, SIGNAL(triggered()), this, SLOT(updateCurrentItem()));
-	connect(edit_btn, SIGNAL(clicked()), data_manip_frm, SLOT(exec()));
+	connect(edit_btn, SIGNAL(clicked()), this, SLOT(manipulateData()));
 
   //Signal handling with C++11 lambdas Slots
   connect(clear_history_btn, &QPushButton::clicked,
@@ -422,6 +420,8 @@ void SQLToolWidget::runSQLCommand(void)
     if(cmd.isEmpty())
       cmd=sql_cmd_txt->toPlainText();
 
+		msgoutput_lst->clear();
+
     sql_cmd_conn.executeDMLCommand(cmd, res);
     registerSQLCommand(cmd);
 
@@ -433,7 +433,7 @@ void SQLToolWidget::runSQLCommand(void)
       fillResultsTable(res);
     else
     {
-      QLabel *label=new QLabel(trUtf8("SQL command successfully executed. <em>Rows affected <strong>%1</strong></em>").arg(res.getTupleCount()));
+			QLabel *label=new QLabel(trUtf8("[<strong>%1</strong>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString()).arg(res.getTupleCount()));
       QListWidgetItem *item=new QListWidgetItem;
 
       item->setIcon(QIcon(":/icones/icones/msgbox_info.png"));
@@ -750,7 +750,13 @@ void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
       handle_menu.addAction(refresh_action);
       handle_menu.exec(QCursor::pos());
     }
-  }
+	}
+}
+
+void SQLToolWidget::manipulateData(void)
+{
+	DataManipulationForm data_manip;
+	data_manip.exec();
 }
 
 void SQLToolWidget::enableSQLExecution(bool enable)
@@ -761,6 +767,9 @@ void SQLToolWidget::enableSQLExecution(bool enable)
     load_tb->setEnabled(enable);
     history_tb->setEnabled(enable);
 		edit_btn->setEnabled(enable);
+		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
+		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
+		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 
     if(history_tb->isChecked() && !enable)
       history_tb->setChecked(false);

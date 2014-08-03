@@ -18,10 +18,7 @@
 
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
-#include "sqlappendwidget.h"
-
-//extern PermissionWidget *permission_wgt;
-//extern SQLAppendWidget *sqlappend_wgt;
+#include "customsqlwidget.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -670,9 +667,9 @@ void BaseObjectWidget::editPermissions(void)
 
 void BaseObjectWidget::appendSQL(void)
 {
-	SQLAppendWidget sqlappend_wgt(this);
-	sqlappend_wgt.setAttributes(this->model, this->object);
-	sqlappend_wgt.show();
+	CustomSQLWidget customsql_wgt;
+	customsql_wgt.setAttributes(this->model, this->object);
+	customsql_wgt.show();
 }
 
 void BaseObjectWidget::applyConfiguration(void)

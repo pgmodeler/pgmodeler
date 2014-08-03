@@ -968,6 +968,20 @@
              </column>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="row_cnt_lbl">
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="rows_ret_lbl">
              <property name="sizePolicy">
@@ -986,20 +1000,6 @@
              </property>
              <property name="indent">
               <number>-1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="row_cnt_lbl">
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>0</string>
              </property>
             </widget>
            </item>

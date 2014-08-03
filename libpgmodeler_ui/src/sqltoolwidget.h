@@ -37,7 +37,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		SchemaParser schparser;
 
-		DataManipulationForm *data_manip_frm;
+		//DataManipulationForm *data_manip_frm;
 
     //! brief Syntax highlighter for sql input field
     SyntaxHighlighter *sql_cmd_hl;
@@ -130,6 +130,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     //! brief Shows the menu to drop/show data
     void handleObject(QTreeWidgetItem *item, int);
+
+		void manipulateData(void);
 
   signals:
     void s_visibilityChanged(bool);

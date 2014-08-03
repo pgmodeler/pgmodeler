@@ -380,11 +380,24 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
 					{
 						//Regexp used to extract the object being created
-						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
+						QRegExp obj_reg("(CREATE)(.)+(\n)"),
+										fk_reg("^(ALTER TABLE)(.)+(ADD CONSTRAINT)( )*");
+						int pos=fk_reg.indexIn(sql_cmd), pos1=0;
 
+						//Checking if the command is a fk creation via ALTER TABLE
+						if(pos >= 0)
+						{
+							QString constr_name;
+							pos+=fk_reg.matchedLength();
+							pos1=sql_cmd.indexOf(' ', pos);
+							constr_name=sql_cmd.mid(pos, pos1 - pos);
 
+							emit s_progressUpdated(aux_prog,
+																		 trUtf8("Creating object `%1' (%2).").arg(constr_name).arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
+																		 OBJ_CONSTRAINT, sql_cmd);
+						}
 						//Check if the regex matches the sql command
-						if(reg.exactMatch(sql_cmd))
+						else if(obj_reg.exactMatch(sql_cmd))
 						{
 							QString obj_type, obj_name;
 							QRegExp reg_aux;
@@ -396,7 +409,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 																			 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
 																			 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
 							unsigned count=sizeof(obj_types)/sizeof(ObjectType);
-							int pos=0;
 
 							//Get the fisrt line of the sql command, that contains the CREATE ... statement
 							lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
@@ -447,7 +459,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 							emit s_progressUpdated(aux_prog,
                                      trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_type),
-																		 obj_types[obj_id]);
+																		 obj_types[obj_id], sql_cmd);
 						}
 						else if(sql_cmd.trimmed()!="")
 						{

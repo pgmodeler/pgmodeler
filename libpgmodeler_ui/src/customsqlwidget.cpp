@@ -1,12 +1,12 @@
-#include "sqlappendwidget.h"
+#include "customsqlwidget.h"
 
-SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
+CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 {
 	try
 	{
 		QFont font;
 
-		Ui_SQLAppendWidget::setupUi(this);
+		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
     append_sql_hl=new SyntaxHighlighter(append_sql_txt, false);
@@ -90,7 +90,7 @@ SQLAppendWidget::SQLAppendWidget(QWidget *parent) : BaseObjectWidget(parent)
 	}
 }
 
-void SQLAppendWidget::configureMenus(void)
+void CustomSQLWidget::configureMenus(void)
 {
 	ObjectType obj_type=this->object->getObjectType();
 	QToolButton *btns[]={ insert_tb, select_tb , delete_tb, update_tb };
@@ -112,7 +112,7 @@ void SQLAppendWidget::configureMenus(void)
 	}
 }
 
-void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
+void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 {
 	if(!object)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -156,7 +156,7 @@ void SQLAppendWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 }
 
-void SQLAppendWidget::applyConfiguration(void)
+void CustomSQLWidget::applyConfiguration(void)
 {
 	if(this->object->getObjectType()==OBJ_DATABASE)
   {
@@ -170,7 +170,7 @@ void SQLAppendWidget::applyConfiguration(void)
 	this->accept();
 }
 
-void SQLAppendWidget::addCommand(void)
+void CustomSQLWidget::addCommand(void)
 {
 	Table *table=dynamic_cast<Table *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
@@ -235,7 +235,7 @@ void SQLAppendWidget::addCommand(void)
 	sqlcode_txt->insertPlainText(cmd);
 }
 
-void SQLAppendWidget::clearCode(void)
+void CustomSQLWidget::clearCode(void)
 {
   QTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 	QTextCursor tc=sqlcode_txt->textCursor();
