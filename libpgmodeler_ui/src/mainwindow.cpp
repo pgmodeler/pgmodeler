@@ -112,9 +112,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		about_wgt=new AboutWidget(this);
 		update_notifier_wgt=new UpdateNotifierWidget(this);
-		model_export_form=new ModelExportForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		model_fix_form=new ModelFixForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		db_import_form=new DatabaseImportForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
 		oper_list_wgt=new OperationListWidget;
@@ -149,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
-	connect(action_fix_model,SIGNAL(triggered(bool)),model_fix_form,SLOT(exec()));
+	connect(action_fix_model, SIGNAL(triggered(bool)), this, SLOT(fixModel()));
 
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
@@ -178,8 +175,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
-
-	connect(model_fix_form, SIGNAL(s_modelLoadRequested(QString)), this, SLOT(loadModel(QString)));
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
@@ -360,9 +355,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow(void)
 {
-	delete(model_export_form);
-	delete(model_fix_form);
-	delete(db_import_form);
 	delete(restoration_form);
 	delete(overview_wgt);
 	delete(configuration_form);
@@ -419,6 +411,23 @@ void MainWindow::stopTimers(bool value)
 		tmpmodel_save_timer.start();
 		model_save_timer.start();
 	}
+}
+
+void MainWindow::fixModel(const QString &filename)
+{
+	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+	connect(&model_fix_form, SIGNAL(s_modelLoadRequested(QString)), this, SLOT(loadModel(QString)));
+
+	if(!filename.isEmpty())
+	{
+		QFileInfo fi(filename);
+		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
+		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
+	}
+
+	model_fix_form.exec();
+	disconnect(&model_fix_form, nullptr, this, nullptr);
 }
 
 void MainWindow::showEvent(QShowEvent *)
@@ -651,6 +660,8 @@ void MainWindow::loadModelFromAction(void)
 	if(act)
 	{
 		addModel(act->data().toString());
+		recent_models.push_back(act->data().toString());
+		updateRecentModelsMenu();
 		saveTemporaryModels(true);
 	}
 }
@@ -1135,16 +1146,17 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
-	if(current_model)
-		model_export_form->show(current_model);
+	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	model_export_form.exec(current_model);
 }
 
 void MainWindow::importDatabase(void)
 {
-	db_import_form->exec();
+	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	db_import_form.exec();
 
-	if(db_import_form->result()==QDialog::Accepted && db_import_form->getModelWidget())
-		this->addModel(db_import_form->getModelWidget());
+	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
+		this->addModel(db_import_form.getModelWidget());
 }
 
 void MainWindow::printModel(void)
@@ -1258,12 +1270,7 @@ void MainWindow::loadModels(const QStringList &list)
 								 ":/icones/icones/fixobject.png", ":/icones/icones/msgbox_erro.png");
 
 		if(msg_box.result()==QDialog::Accepted)
-		{
-			QFileInfo fi(list[i]);
-			model_fix_form->input_file_edt->setText(list[i]);
-			model_fix_form->output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
-			model_fix_form->exec();
-		}
+			fixModel(list[i]);
 	}
 }
 
