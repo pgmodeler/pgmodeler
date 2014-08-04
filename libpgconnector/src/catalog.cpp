@@ -39,9 +39,10 @@ map<ObjectType, QString> Catalog::oid_fields=
 
 Catalog::Catalog(void)
 {
-	exclude_sys_objs=exclude_ext_objs=true;
-	list_only_sys_objs=false;
+	//exclude_sys_objs=exclude_ext_objs=true;
+	//list_only_sys_objs=false;
 	last_sys_oid=0;
+	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
 }
 
 void Catalog::setConnection(Connection &conn)
@@ -93,6 +94,7 @@ void Catalog::setFilter(unsigned filter)
 {
 	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
 
+	this->filter=filter;
 	list_only_sys_objs=false;
 	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
 	exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
@@ -199,6 +201,11 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+unsigned Catalog::getFilter(void)
+{
+	return(filter);
 }
 
 attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)

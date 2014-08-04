@@ -91,7 +91,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void updateConnections(map<QString, Connection *> &conns);
 
 		//! brief Fills up the results grid based upon the specified result set
-		static void fillResultsTable(ResultSet &res, QTableWidget *results_tbw);
+		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw);
 
 	public slots:
 		void hide(void);

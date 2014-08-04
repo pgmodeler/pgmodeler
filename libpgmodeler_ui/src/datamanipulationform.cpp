@@ -22,14 +22,20 @@
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
 	setupUi(this);
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	setWindowFlags(Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
-	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
-	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
+	filter_hl=new SyntaxHighlighter(filter_txt, false);
+	filter_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+															 GlobalAttributes::DIR_SEPARATOR +
+															 GlobalAttributes::SQL_HIGHLIGHT_CONF +
+															 GlobalAttributes::CONFIGURATION_EXT);
 
-	connect(table_cmb, &QComboBox::currentTextChanged,
-					[=](){ refresh_tb->setEnabled(table_cmb->currentIndex() > 0); });
+	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
+	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
+	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
+	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
+	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -38,6 +44,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	{
 		connection=conn;
 		catalog.setConnection(conn);
+
 		listObjects(schema_cmb, OBJ_SCHEMA);
 
 		schema_cmb->setCurrentText(curr_schema);
@@ -51,6 +58,8 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 
 void DataManipulationForm::listTables(void)
 {
+	table_cmb->clear();
+
 	if(schema_cmb->currentIndex() > 0)
 		listObjects(table_cmb, OBJ_TABLE, schema_cmb->currentText());
 
@@ -58,17 +67,48 @@ void DataManipulationForm::listTables(void)
 	table_cmb->setEnabled(table_cmb->count() > 0);
 }
 
+void DataManipulationForm::listColumns(void)
+{
+	filter_txt->clear();
+	column_cmb->clear();
+	order_by_lst->clear();
+
+	if(table_cmb->currentIndex() > 0)
+	{
+		QStringList col_names;
+		vector<attribs_map> cols;
+
+		cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
+
+		for(auto col : cols)
+			col_names.push_back(col[ParsersAttributes::NAME]);
+
+		col_names.sort();
+		column_cmb->addItems(col_names);
+		col_names.clear();
+	}
+
+	add_col_tb->setEnabled(column_cmb->count() > 0);
+}
+
 void DataManipulationForm::retrieveData(void)
 {
 	try
 	{
-		QString query=QString("SELECT * FROM %1").arg(table_cmb->currentText());
+		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
+		unsigned limit=limit_edt->text().toUInt();
+
+		if(!filter_txt->toPlainText().isEmpty())
+			query+=" WHERE " + filter_txt->toPlainText();
+
+		if(limit > 0)
+			query+=QString(" LIMIT %1").arg(limit);
 
 		connection.connect();
 		connection.executeDMLCommand(query, res);
 
-		SQLToolWidget::fillResultsTable(res, results_tbw);
+		SQLToolWidget::fillResultsTable(catalog, res, results_tbw);
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
 
 		connection.close();
@@ -80,6 +120,15 @@ void DataManipulationForm::retrieveData(void)
 
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void DataManipulationForm::disableControlButtons(void)
+{
+	refresh_tb->setEnabled(schema_cmb->currentIndex() > 0 && table_cmb->currentIndex() > 0);
+	results_tbw->setRowCount(0);
+	results_tbw->setColumnCount(0);
+	no_pk_alert_frm->setVisible(false);
+	add_tb->setEnabled(false);
 }
 
 void DataManipulationForm::listObjects(QComboBox *combo, ObjectType obj_type, const QString &schema)
@@ -122,25 +171,32 @@ QStringList DataManipulationForm::retrievePKColumns(const QString &schema, const
 {
 	try
 	{
-		vector<attribs_map> constraints, columns;
+		vector<attribs_map> pks, pk_cols;
 		QStringList col_names;
 
 		//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-		constraints=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, "contype='p'"}});
+		pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, "contype='p'"}});
 
-		if(!constraints.empty())
+		no_pk_alert_frm->setVisible(pks.empty());
+		add_tb->setEnabled(true);
+
+		if(!pks.empty())
 		{
-			QStringList col_str_ids=Catalog::parseArrayValues(constraints[0][ParsersAttributes::COLUMNS]);
+			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][ParsersAttributes::COLUMNS]);
 			vector<unsigned> col_ids;
 
 			for(auto id : col_str_ids)
 				col_ids.push_back(id.toUInt());
 
-			columns=catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids);
+			pk_cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids);
 
-			for(auto col : columns)
+			for(auto col : pk_cols)
 				col_names.push_back(col[ParsersAttributes::NAME]);
+
+			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked);
 		}
+		else
+			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 		return(col_names);
 	}

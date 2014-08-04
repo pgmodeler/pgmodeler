@@ -58,7 +58,9 @@ class Catalog {
 		Connection connection;
 
 		//! \brief Stores the last system object identifier. This is used to filter system objects
-		unsigned last_sys_oid;
+		unsigned last_sys_oid,
+
+		filter;
 
 		//! \brief Indicates if the catalog must filter system objects
 		bool exclude_sys_objs,
@@ -138,6 +140,8 @@ class Catalog {
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
+
+		unsigned getFilter(void);
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */

@@ -650,7 +650,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Clear sql input field and results.</string>
+             <string>Open the table data editing dialog</string>
             </property>
             <property name="text">
              <string>Edit Data</string>

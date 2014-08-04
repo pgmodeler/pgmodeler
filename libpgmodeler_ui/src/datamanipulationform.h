@@ -27,10 +27,13 @@
 
 #include "ui_datamanipulationform.h"
 #include "catalog.h"
+#include "syntaxhighlighter.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
+
+		SyntaxHighlighter *filter_hl;
 
 		Connection connection;
 
@@ -48,7 +51,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 	private slots:
 		void listTables(void);
+		void listColumns(void);
 		void retrieveData(void);
+		void disableControlButtons(void);
 };
 
 #endif

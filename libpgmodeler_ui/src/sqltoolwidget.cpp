@@ -308,12 +308,25 @@ void SQLToolWidget::enableCommandButtons(void)
 
 void SQLToolWidget::fillResultsTable(ResultSet &res)
 {
-	row_cnt_lbl->setText(QString::number(res.getTupleCount()));
-	export_tb->setEnabled(res.getTupleCount() > 0);
-	fillResultsTable(res, results_tbw);
+	try
+	{
+		Catalog catalog;
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
+							 aux_conn=(*conn);
+
+		row_cnt_lbl->setText(QString::number(res.getTupleCount()));
+		export_tb->setEnabled(res.getTupleCount() > 0);
+
+		catalog.setConnection(aux_conn);
+		fillResultsTable(catalog, res, results_tbw);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
-void SQLToolWidget::fillResultsTable(ResultSet &res, QTableWidget *results_tbw)
+void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -322,13 +335,38 @@ void SQLToolWidget::fillResultsTable(ResultSet &res, QTableWidget *results_tbw)
 	{
 		int col=0, row=0, col_cnt=res.getColumnCount();
 		QTableWidgetItem *item=nullptr;
+		vector<unsigned> type_ids;
+		vector<attribs_map> types;
+		map<unsigned, QString> type_names;
+		unsigned orig_filter=catalog.getFilter();
 
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
+		results_tbw->verticalHeader()->setVisible(true);
 
 		//Configuring the grid columns with the names of retrived table columns
 		for(col=0; col < col_cnt; col++)
+		{
+			type_ids.push_back(res.getColumnTypeId(col));
 			results_tbw->setHorizontalHeaderItem(col, new QTableWidgetItem(res.getColumnName(col)));
+		}
+
+		//Retrieving the data type names for each column
+		catalog.setFilter(Catalog::LIST_ALL_OBJS);
+		std::unique(type_ids.begin(), type_ids.end());
+		types=catalog.getObjectsAttributes(OBJ_TYPE, "", "", type_ids);
+
+		for(auto tp : types)
+			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
+
+		catalog.setFilter(orig_filter);
+
+		//Assinging the type names as tooltip on header items
+		for(col=0; col < col_cnt; col++)
+		{
+			item=results_tbw->horizontalHeaderItem(col);
+			item->setToolTip(type_names[res.getColumnTypeId(col)]);
+		}
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
