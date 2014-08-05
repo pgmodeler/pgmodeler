@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>508</height>
+    <width>640</width>
+    <height>480</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>640</width>
+    <height>480</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Data manipulation</string>
+   <string>Data Manipulation</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
@@ -149,207 +155,7 @@
        <property name="bottomMargin">
         <number>4</number>
        </property>
-       <item row="2" column="6">
-        <widget class="QToolButton" name="refresh_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Refresh listing</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="8">
-        <widget class="QToolButton" name="add_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Add data</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="9">
-        <widget class="QToolButton" name="update_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Update row</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="7">
-        <widget class="QToolButton" name="save_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Save changes</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonIconOnly</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="10">
-        <widget class="QToolButton" name="delete_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Delete rows</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="11">
-        <widget class="QTableWidget" name="results_tbw">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="sortingEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="rowCount">
-          <number>0</number>
-         </property>
-         <property name="columnCount">
-          <number>0</number>
-         </property>
-         <attribute name="horizontalHeaderHighlightSections">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>30</number>
-         </attribute>
-         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderCascadingSectionResizes">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>20</number>
-         </attribute>
-         <attribute name="verticalHeaderMinimumSectionSize">
-          <number>30</number>
-         </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="11">
+       <item row="0" column="0" colspan="10">
         <widget class="QFrame" name="no_pk_alert_frm">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -434,10 +240,48 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="6">
+       <item row="1" column="0">
+        <widget class="QLabel" name="schema_lbl">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Schema:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="schema_cmb">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maxVisibleItems">
+          <number>20</number>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAtBottom</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" colspan="8">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QLabel" name="schema_lbl">
+          <widget class="QLabel" name="label_4">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -445,56 +289,336 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Schema:</string>
+            <string>in </string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="schema_cmb">
-           <property name="maxVisibleItems">
-            <number>20</number>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::InsertAtBottom</enum>
-           </property>
-           <property name="iconSize">
+          <widget class="QLabel" name="label_5">
+           <property name="minimumSize">
             <size>
-             <width>16</width>
-             <height>16</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="table_lbl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
            </property>
            <property name="text">
-            <string>Table:</string>
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../res/resources.qrc">:/icones/icones/database.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="table_cmb">
-           <property name="maxVisibleItems">
-            <number>20</number>
+          <widget class="QLabel" name="db_name_lbl">
+           <property name="text">
+            <string/>
            </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::InsertAtBottom</enum>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
+           <property name="indent">
+            <number>5</number>
            </property>
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="table_lbl">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Table:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="table_cmb">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maxVisibleItems">
+          <number>20</number>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAtBottom</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="hide_views_chk">
+         <property name="text">
+          <string>Hide views</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QToolButton" name="refresh_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Refresh listing</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QToolButton" name="save_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Save changes</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QToolButton" name="undo_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Undo all modifications done until click &quot;Save&quot;</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/desfazer.png</normaloff>:/icones/icones/desfazer.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QToolButton" name="add_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Add data</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="7">
+        <widget class="QToolButton" name="update_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Update row</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="8">
+        <widget class="QToolButton" name="delete_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Mark the selected rows to be deleted</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="9">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="0" colspan="10">
+        <widget class="QTableWidget" name="results_tbw">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="rowCount">
+          <number>0</number>
+         </property>
+         <property name="columnCount">
+          <number>0</number>
+         </property>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>30</number>
+         </attribute>
+         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>20</number>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>30</number>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+        </widget>
        </item>
       </layout>
      </widget>

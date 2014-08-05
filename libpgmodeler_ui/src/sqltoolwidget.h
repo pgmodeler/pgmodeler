@@ -100,6 +100,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Opens a connection to the selected database
 		void connectToDatabase(void);
 
+		void disconnectFromDatabase(void);
+
 		//! brief Lists all objects for the current selected database
 		void listObjects(void);
 
@@ -134,7 +136,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void dropDatabase(void);
 
 		//! brief Show the widget to handle data in tables
-		void editData(void);
+		void openDataGrid(void);
 
 		void enableObjectTreeControls(bool enable);
 

@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class DataManipulationForm
+\class DataGridForm
 \brief Implements the operations to handle table's data
 */
 
@@ -39,7 +39,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		Catalog catalog;
 
-		void listObjects(QComboBox *combo, ObjectType obj_type, const QString &schema="");
+		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
 		QStringList retrievePKColumns(const QString &schema, const QString &table);
 
 	public:

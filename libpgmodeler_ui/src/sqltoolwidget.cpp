@@ -63,6 +63,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
+	connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromDatabase(void)));
+	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromDatabase()));
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
 	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(expandAll(void)));
@@ -79,7 +81,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(refresh_action, SIGNAL(triggered()), this, SLOT(updateCurrentItem()));
-	connect(edit_btn, SIGNAL(clicked()), this, SLOT(editData()));
+	connect(data_grid_tb, SIGNAL(clicked()), this, SLOT(openDataGrid()));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(clear_history_btn, &QPushButton::clicked,
@@ -93,9 +95,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
 					[=](){ 	objects_trw->clear();
-		enableObjectTreeControls(false);
-		refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
-		drop_db_tb->setEnabled(database_cmb->currentIndex() > 0); });
+									enableObjectTreeControls(false);
+									refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
+									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0);
+									data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
 
 	objects_trw->installEventFilter(this);
 }
@@ -128,14 +131,31 @@ void SQLToolWidget::connectToDatabase(void)
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-		if(sql_cmd_conn.isStablished())
-			sql_cmd_conn.close();
-
 		import_helper.setConnection(*conn);
 		DatabaseImportForm::listDatabases(import_helper, false, database_cmb);
 		database_cmb->setEnabled(database_cmb->count() > 1);
 		import_helper.closeConnection();
 
+		connections_cmb->setEnabled(false);
+		connect_tb->setEnabled(false);
+		disconnect_tb->setEnabled(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void SQLToolWidget::disconnectFromDatabase(void)
+{
+	try
+	{
+		database_cmb->clear();
+		connections_cmb->setEnabled(true);
+		connect_tb->setEnabled(true);
+		disconnect_tb->setEnabled(false);
+
+		enableObjectTreeControls(false);
 		enableSQLExecution(false);
 	}
 	catch(Exception &e)
@@ -836,14 +856,18 @@ void SQLToolWidget::dropDatabase(void)
 	}
 }
 
-void SQLToolWidget::editData(void)
+void SQLToolWidget::openDataGrid(void)
 {
 	Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
 						 aux_conn=(*conn);
-	DataManipulationForm data_manip;
-	aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, sql_cmd_conn.getConnectionParam(Connection::PARAM_DB_NAME));
-	data_manip.setAttributes(aux_conn);
-	data_manip.exec();
+	DataManipulationForm *data_manip=new DataManipulationForm;
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+
+	aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+	data_manip->setAttributes(aux_conn);
+	data_manip->show();
 }
 
 void SQLToolWidget::enableSQLExecution(bool enable)
@@ -853,7 +877,7 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		sql_cmd_txt->setEnabled(enable);
 		load_tb->setEnabled(enable);
 		history_tb->setEnabled(enable);
-		edit_btn->setEnabled(enable);
+		data_grid_tb->setEnabled(enable);
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
