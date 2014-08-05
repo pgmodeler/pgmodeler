@@ -57,7 +57,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	public slots:
 		void applyConfiguration(void);
 		void loadConfiguration(void);
-		void close(void);
+		void reject(void);
 
 	private slots:
 		void restoreDefaults(void);
