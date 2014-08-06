@@ -47,21 +47,12 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		Connection sql_cmd_conn;
 
 		//! brief Dialog for SQL save/load
-		QFileDialog sql_file_dlg,
-
-		//! brief Dialog for CSV save/load
-		csv_file_dlg;
-
-		//! brief Stores the results selection copy action
-		QMenu copy_menu,
+		QFileDialog sql_file_dlg;
 
 		//! brief Stores the actions to drop and show object's data
-		handle_menu;
+		QMenu handle_menu;
 
 		QAction *copy_action, *drop_action, *drop_cascade_action, *show_data_action, *refresh_action;
-
-		//! brief Generates a CSV buffer based upon the selection on the results grid
-		QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
 
 		/*! brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
@@ -93,6 +84,15 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Fills up the results grid based upon the specified result set
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw);
 
+		//! brief Copy to clipboard (in csv format) the current selected items on results grid
+		static void copySelection(QTableWidget *results_tbw);
+
+		//! brief Generates a CSV buffer based upon the selection on the results grid
+		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+
+		//! brief Exports the results to csv file
+		static void exportResults(QTableWidget *results_tbw);
+
 	public slots:
 		void hide(void);
 
@@ -120,14 +120,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Load a sql command from a file
 		void loadCommands(void);
 
-		//! brief Exports the results to csv file
-		void exportResults(void);
-
 		//! brief Clears the input field as well the results grid
 		void clearAll(void);
-
-		//! brief Copy to clipboard (in csv format) the current selected items on results grid
-		void copySelection(void);
 
 		//! brief Shows the menu to drop/show data
 		void handleObject(QTreeWidgetItem *item, int);

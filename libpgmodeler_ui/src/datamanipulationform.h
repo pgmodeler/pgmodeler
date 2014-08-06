@@ -39,7 +39,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		Catalog catalog;
 
+		QStringList col_names;
+
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
+
 		QStringList retrievePKColumns(const QString &schema, const QString &table);
 
 	public:
@@ -54,6 +57,11 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void listColumns(void);
 		void retrieveData(void);
 		void disableControlButtons(void);
+		void resetAdvancedControls(void);
+		void addColumnToList(void);
+		void removeColumnFromList(void);
+		void clearColumnList(void);
+		void changeOrderMode(QListWidgetItem *item);
 };
 
 #endif

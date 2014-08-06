@@ -201,7 +201,7 @@
             </size>
            </property>
            <property name="shortcut">
-            <string>Ctrl+F5</string>
+            <string>Shift+Del</string>
            </property>
           </widget>
          </item>
@@ -1003,16 +1003,16 @@
               <bool>true</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderCascadingSectionResizes">
               <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderDefaultSectionSize">
-              <number>20</number>
+              <number>25</number>
              </attribute>
              <attribute name="verticalHeaderMinimumSectionSize">
-              <number>30</number>
+              <number>25</number>
              </attribute>
              <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
@@ -1033,7 +1033,6 @@
             <widget class="QLabel" name="row_cnt_lbl">
              <property name="font">
               <font>
-               <pointsize>8</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -1050,11 +1049,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-              </font>
              </property>
              <property name="text">
               <string>Rows returned: </string>

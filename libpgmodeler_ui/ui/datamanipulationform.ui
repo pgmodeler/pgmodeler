@@ -230,7 +230,7 @@
              </font>
             </property>
             <property name="text">
-             <string>The current table doesn't owns a primary key, so updates and deletes will not be avaiable!</string>
+             <string>The selected table doesn't owns a primary key! Row updates and deletes are disabled.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -243,7 +243,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="schema_lbl">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -333,7 +333,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="table_lbl">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -379,6 +379,19 @@
         </widget>
        </item>
        <item row="2" column="3">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="4">
         <widget class="QToolButton" name="refresh_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -389,11 +402,16 @@
            <height>30</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Refresh listing</string>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>Refresh</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -405,9 +423,12 @@
            <height>22</height>
           </size>
          </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
         </widget>
        </item>
-       <item row="2" column="4">
+       <item row="2" column="5">
         <widget class="QToolButton" name="save_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -418,11 +439,16 @@
            <height>30</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Save changes</string>
          </property>
          <property name="text">
-          <string/>
+          <string>Save</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -439,7 +465,44 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="5">
+       <item row="2" column="6">
+        <widget class="QToolButton" name="export_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Export results to CSV file</string>
+         </property>
+         <property name="text">
+          <string>Export</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/exportdata.png</normaloff>:/icones/icones/exportdata.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="7">
         <widget class="QToolButton" name="undo_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -450,11 +513,16 @@
            <height>30</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
-          <string>Undo all modifications done until click &quot;Save&quot;</string>
+          <string>Undo all modifications done</string>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>Undo</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -466,9 +534,12 @@
            <height>22</height>
           </size>
          </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
         </widget>
        </item>
-       <item row="2" column="6">
+       <item row="2" column="8">
         <widget class="QToolButton" name="add_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -479,11 +550,16 @@
            <height>30</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Add data</string>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>Add</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -495,38 +571,12 @@
            <height>22</height>
           </size>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="7">
-        <widget class="QToolButton" name="update_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Update row</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
          </property>
         </widget>
        </item>
-       <item row="2" column="8">
+       <item row="2" column="9">
         <widget class="QToolButton" name="delete_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -537,11 +587,16 @@
            <height>30</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Mark the selected rows to be deleted</string>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>Delete</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -553,20 +608,10 @@
            <height>22</height>
           </size>
          </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
         </widget>
-       </item>
-       <item row="2" column="9">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="3" column="0" colspan="10">
         <widget class="QTableWidget" name="results_tbw">
@@ -610,21 +655,60 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>20</number>
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>30</number>
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderStretchLastSection">
           <bool>false</bool>
          </attribute>
         </widget>
        </item>
+       <item row="4" column="0" colspan="10">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="rows_ret_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Rows returned: </string>
+           </property>
+           <property name="indent">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="row_cnt_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Filter &amp;&amp; Ordering</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -640,16 +724,457 @@
         <number>4</number>
        </property>
        <item row="0" column="0">
-        <widget class="QSplitter" name="splitter">
+        <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="handleWidth">
-          <number>5</number>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="childrenCollapsible">
           <bool>false</bool>
          </property>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QGroupBox" name="order_by_grp_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title">
+            <string>Select Columns</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="0" column="0">
+               <widget class="QLabel" name="column_lbl_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Column:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QToolButton" name="clear_sel_cols_tb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Clear the selected columns list</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../res/resources.qrc">
+                  <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Del</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QToolButton" name="rem_sel_col_tb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Remove Item</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../res/resources.qrc">
+                  <normaloff>:/icones/icones/remover.png</normaloff>:/icones/icones/remover.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Del</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QToolButton" name="add_sel_col_tb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Add Item</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../res/resources.qrc">
+                  <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Ins</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" colspan="4">
+               <widget class="QComboBox" name="sel_column_cmb">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="insertPolicy">
+                 <enum>QComboBox::InsertAlphabetically</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="sel_columns_lst">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QGroupBox" name="order_by_grp">
+           <property name="title">
+            <string>Order &amp;&amp; Limit</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="column_lbl">
+              <property name="text">
+               <string>Column:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="7">
+             <widget class="QComboBox" name="ord_column_cmb">
+              <property name="insertPolicy">
+               <enum>QComboBox::InsertAlphabetically</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>72</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="2">
+             <widget class="QRadioButton" name="asc_rb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>ASC</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" colspan="2">
+             <widget class="QRadioButton" name="desc_rb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>DESC</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="5">
+             <widget class="QToolButton" name="add_ord_col_tb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Add Item</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Ins</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="6">
+             <widget class="QToolButton" name="rem_ord_col_tb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Remove Item</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/remover.png</normaloff>:/icones/icones/remover.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Del</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="7">
+             <widget class="QToolButton" name="clear_ord_cols_tb">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Clear the order by columns list</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Del</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="8">
+             <widget class="QListWidget" name="ord_columns_lst">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="limit_lbl">
+              <property name="text">
+               <string>Limit in:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="3">
+             <widget class="QLineEdit" name="limit_edt">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::ImhDigitsOnly</set>
+              </property>
+              <property name="inputMask">
+               <string>000000</string>
+              </property>
+              <property name="text">
+               <string>100</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="4" colspan="4">
+             <widget class="QLabel" name="results_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>results</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
          <widget class="QGroupBox" name="filter_grp">
           <property name="title">
            <string>Filter expression</string>
@@ -677,180 +1202,6 @@
              </property>
              <property name="acceptRichText">
               <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QGroupBox" name="order_by_grp">
-          <property name="title">
-           <string>Order by &amp;&amp; Limit</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_11">
-           <property name="leftMargin">
-            <number>4</number>
-           </property>
-           <property name="topMargin">
-            <number>4</number>
-           </property>
-           <property name="rightMargin">
-            <number>4</number>
-           </property>
-           <property name="bottomMargin">
-            <number>4</number>
-           </property>
-           <item row="0" column="0" colspan="3">
-            <layout class="QGridLayout" name="gridLayout_10">
-             <item row="0" column="0">
-              <widget class="QLabel" name="column_lbl">
-               <property name="text">
-                <string>Column:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" colspan="4">
-              <widget class="QComboBox" name="column_cmb"/>
-             </item>
-             <item row="1" column="1">
-              <widget class="QRadioButton" name="asc_rb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Ascending</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QRadioButton" name="desc_rb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Descending</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QToolButton" name="add_col_tb">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Add Item</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Ins</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="4">
-              <widget class="QToolButton" name="rem_col_tb">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Remove Item</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/remover.png</normaloff>:/icones/icones/remover.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Del</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0" colspan="3">
-            <widget class="QListWidget" name="order_by_lst"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="limit_lbl">
-             <property name="text">
-              <string>Limit in:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="limit_edt">
-             <property name="inputMethodHints">
-              <set>Qt::ImhDigitsOnly</set>
-             </property>
-             <property name="inputMask">
-              <string>000000</string>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="results_lbl">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>results</string>
              </property>
             </widget>
            </item>

@@ -39,16 +39,6 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
-	csv_file_dlg.setDefaultSuffix("csv");
-	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
-	csv_file_dlg.setWindowTitle(trUtf8("Save CSV file"));
-	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
-	csv_file_dlg.setModal(true);
-	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-
-	copy_action=new QAction(trUtf8("Copy"), &copy_menu);
-	copy_menu.addAction(copy_action);
-
 	drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
 	drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
@@ -73,9 +63,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
 	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveCommands(void)));
 	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadCommands(void)));
-	connect(export_tb, SIGNAL(clicked(void)), this, SLOT(exportResults(void)));
 	connect(history_tb, SIGNAL(toggled(bool)), cmd_history_gb, SLOT(setVisible(bool)));
-	connect(results_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(copySelection(void)));
 	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 	connect(clear_history_btn, SIGNAL(clicked(void)), cmd_history_lst, SLOT(clear(void)));
 	connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
@@ -99,6 +87,12 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 									refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
 									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0);
 									data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
+
+	connect(results_tbw, &QTableWidget::itemPressed,
+					[=](){ SQLToolWidget::copySelection(results_tbw); });
+
+	connect(export_tb, &QToolButton::clicked,
+					[=](){ SQLToolWidget::exportResults(results_tbw); });
 
 	objects_trw->installEventFilter(this);
 }
@@ -415,6 +409,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 		}
 
 		results_tbw->resizeColumnsToContents();
+		results_tbw->resizeRowsToContents();
 	}
 	catch(Exception &e)
 	{
@@ -563,8 +558,20 @@ void SQLToolWidget::loadCommands(void)
 	}
 }
 
-void SQLToolWidget::exportResults(void)
+void SQLToolWidget::exportResults(QTableWidget *results_tbw)
 {
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QFileDialog csv_file_dlg;
+
+	csv_file_dlg.setDefaultSuffix("csv");
+	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
+	csv_file_dlg.setWindowTitle(trUtf8("Save CSV file"));
+	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
+	csv_file_dlg.setModal(true);
+	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+
 	csv_file_dlg.exec();
 
 	if(csv_file_dlg.result()==QDialog::Accepted)
@@ -577,13 +584,16 @@ void SQLToolWidget::exportResults(void)
 											.arg(csv_file_dlg.selectedFiles().at(0))
 											, ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		file.write(generateCSVBuffer(0, 0, results_tbw->rowCount(), results_tbw->columnCount()));
+		file.write(generateCSVBuffer(results_tbw, 0, 0, results_tbw->rowCount(), results_tbw->columnCount()));
 		file.close();
 	}
 }
 
-QByteArray SQLToolWidget::generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt)
+QByteArray SQLToolWidget::generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
 {
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	QByteArray buf;
 
 	//If the selection interval is valid
@@ -767,10 +777,17 @@ void SQLToolWidget::clearAll(void)
 	}
 }
 
-void SQLToolWidget::copySelection(void)
+void SQLToolWidget::copySelection(QTableWidget *results_tbw)
 {
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	if(QApplication::mouseButtons()==Qt::RightButton)
 	{
+		QMenu copy_menu;
+
+		copy_menu.addAction(trUtf8("Copy selection"));
+
 		if(copy_menu.exec(QCursor::pos()))
 		{
 			QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
@@ -780,7 +797,8 @@ void SQLToolWidget::copySelection(void)
 				QTableWidgetSelectionRange selection=sel_range.at(0);
 
 				//Generates the csv buffer and assigns it to application's clipboard
-				QByteArray buf=generateCSVBuffer(selection.topRow(), selection.leftColumn(),
+				QByteArray buf=generateCSVBuffer(results_tbw,
+																				 selection.topRow(), selection.leftColumn(),
 																				 selection.rowCount(), selection.columnCount());
 				qApp->clipboard()->setText(buf);
 			}
