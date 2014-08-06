@@ -83,7 +83,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/objectfinderwidget.cpp \
 	   src/databaseimporthelper.cpp \
 	   src/databaseimportform.cpp \
-	   src/sqlappendwidget.cpp \
 	   src/codecompletionwidget.cpp \
            src/swapobjectsidswidget.cpp \
            src/sqltoolwidget.cpp \
@@ -97,7 +96,8 @@ SOURCES += src/mainwindow.cpp \
     src/modelnavigationwidget.cpp \
     src/centralwidget.cpp \
     src/relationshipconfigwidget.cpp \
-    src/datamanipulationform.cpp
+    src/datamanipulationform.cpp \
+    src/customsqlwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -160,7 +160,6 @@ HEADERS += src/mainwindow.h \
 	   src/objectfinderwidget.h \
 	   src/databaseimporthelper.h \
 	   src/databaseimportform.h \
-	   src/sqlappendwidget.h \
 	   src/codecompletionwidget.h \
            src/swapobjectsidswidget.h \
            src/sqltoolwidget.h \
@@ -174,7 +173,8 @@ HEADERS += src/mainwindow.h \
     src/modelnavigationwidget.h \
     src/centralwidget.h \
     src/relationshipconfigwidget.h \
-    src/datamanipulationform.h
+    src/datamanipulationform.h \
+    src/customsqlwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -229,7 +229,6 @@ FORMS += ui/mainwindow.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
 	 ui/databaseimportform.ui \
-	 ui/sqlappendwidget.ui \
          ui/swapobjectsidswidget.ui \
          ui/sqltoolwidget.ui \
          ui/tagwidget.ui \
@@ -242,6 +241,7 @@ FORMS += ui/mainwindow.ui \
     ui/modelnavigationwidget.ui \
     ui/centralwidget.ui \
     ui/relationshipconfigwidget.ui \
-    ui/datamanipulationform.ui
+    ui/datamanipulationform.ui \
+    ui/customsqlwidget.ui
 
 

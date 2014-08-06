@@ -66,7 +66,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
 }
 
-void ModelExportForm::show(ModelWidget *model)
+void ModelExportForm::exec(ModelWidget *model)
 {
 	if(model)
 	{
@@ -89,7 +89,7 @@ void ModelExportForm::show(ModelWidget *model)
 		}
 
 		this->hideProgress();
-		QDialog::show();
+		QDialog::exec();
 	}
 }
 

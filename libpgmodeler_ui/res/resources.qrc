@@ -182,6 +182,8 @@
         <file>icones/random.png</file>
         <file>icones/samples_big.png</file>
         <file>icones/adddata.png</file>
+        <file>icones/exportdata.png</file>
+        <file>icones/disconnect.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

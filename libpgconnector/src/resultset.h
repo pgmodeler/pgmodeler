@@ -95,6 +95,9 @@ class ResultSet {
   //! \brief Returns the name of the column specified by it's index
   QString getColumnName(int column_idx);
 
+	//! \brief Returns the type OID of the column specified by it's index
+	unsigned getColumnTypeId(int column_idx);
+
   //! \brief Returns the index of the column specified by it's name
   int getColumnIndex(const QString &column_name);
 

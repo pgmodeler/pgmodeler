@@ -22,7 +22,6 @@
 #include "taskprogresswidget.h"
 
 extern ConfigurationForm *configuration_form;
-extern TaskProgressWidget *task_prog_wgt;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -213,10 +212,6 @@ void DatabaseImportForm::listObjects(void)
 
 		if(database_cmb->currentIndex() > 0)
 		{
-			//Configuring the task progress widget to show the object retrieving progress
-      task_prog_wgt->setWindowTitle(trUtf8("Retrieving objects from database..."));
-      task_prog_wgt->show();
-
 			//Set the working database on import helper
 			import_helper.setCurrentDatabase(database_cmb->currentText());
 			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
@@ -225,9 +220,6 @@ void DatabaseImportForm::listObjects(void)
 
       //List the objects using the static helper method
       DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true);
-
-      task_prog_wgt->close();
-      //disconnect(this, nullptr, task_prog_wgt, nullptr);
 		}
 
 		//Enable the control buttons only when objects were retrieved
@@ -243,8 +235,6 @@ void DatabaseImportForm::listObjects(void)
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
-    //disconnect(this, nullptr, task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
@@ -475,7 +465,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, bool
       dbcombo->clear();
 
       if(db_attribs.empty())
-        dbcombo->addItem(QString("No databases found"));
+				dbcombo->addItem(trUtf8("No databases found"));
       else
       {
         dbcombo->blockSignals(true);
@@ -497,7 +487,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, bool
           dbcombo->setItemData(i, oids[list[i]]);
         }
 
-        dbcombo->insertItem(0, QString("Found %1 database(s)").arg(db_attribs.size()));
+				dbcombo->insertItem(0, trUtf8("Found %1 database(s)").arg(db_attribs.size()));
         dbcombo->setCurrentIndex(0);
         dbcombo->blockSignals(false);
       }
@@ -511,6 +501,8 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, bool
 
 void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps)
 {
+	TaskProgressWidget task_prog_wgt;
+
   try
   {
     if(tree_wgt)
@@ -518,8 +510,13 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
       vector<QTreeWidgetItem *> sch_items, tab_items;
       int inc=0, inc1=0;
 
+			task_prog_wgt.setWindowTitle(trUtf8("Retrieving objects from database..."));
+			task_prog_wgt.show();
+
       tree_wgt->clear();
       tree_wgt->setColumnHidden(1, true);
+
+			task_prog_wgt.updateProgress(1, trUtf8("Retrieving cluster level objects..."), OBJ_DATABASE);
 
       //Retrieving and listing the cluster scoped objects
       sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
@@ -527,13 +524,15 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       inc=40/static_cast<float>(sch_items.size());
 
+
       while(!sch_items.empty())
       {
+				task_prog_wgt.updateProgress(task_prog_wgt.progress_pb->value(), trUtf8("Retrieving objects of schema `%1'...").arg(sch_items.back()->text(0)), OBJ_SCHEMA);
+
         //Retrieving and listing the schema scoped objects
         tab_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
                                      BaseObject::getChildObjectTypes(OBJ_SCHEMA),
                                     checkable_items, disable_empty_grps, sch_items.back(), sch_items.back()->text(0));
-
 
         inc1=(60/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
 
@@ -542,26 +541,24 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
           DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
                               BaseObject::getChildObjectTypes(OBJ_TABLE), checkable_items, disable_empty_grps,
                             tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
-          tab_items.pop_back();
 
-          if(task_prog_wgt->isVisible())
-            task_prog_wgt->progress_pb->setValue(task_prog_wgt->progress_pb->value() + inc1);
-        }
+					task_prog_wgt.updateProgress(task_prog_wgt.progress_pb->value() + inc1, trUtf8("Retrieving objects of table `%1'...").arg(tab_items.back()->text(0)), OBJ_TABLE);
+					tab_items.pop_back();
+				}
 
-        if(task_prog_wgt->isVisible())
-          task_prog_wgt->progress_pb->setValue(task_prog_wgt->progress_pb->value() + inc);
-
+				task_prog_wgt.progress_pb->setValue(task_prog_wgt.progress_pb->value() + inc);
         sch_items.pop_back();
       }
 
       tree_wgt->sortItems(0, Qt::AscendingOrder);
 
-      if(task_prog_wgt->isVisible())
-        task_prog_wgt->progress_pb->setValue(100);
+			task_prog_wgt.progress_pb->setValue(100);
+			task_prog_wgt.close();
     }
   }
   catch(Exception &e)
   {
+		task_prog_wgt.close();
     tree_wgt->clear();
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
@@ -578,9 +575,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
     QFont grp_fnt=tree_wgt->font();
     attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, "1"}};
     attribs_map::iterator itr;
-    QString tooltip="OID: %1", msg=trUtf8("Retrieving `%1'...");
+		QString tooltip="OID: %1";
     bool child_checked=false;
-    int progress=0;
 
     grp_fnt.setItalic(true);
     tree_wgt->blockSignals(true);
@@ -589,12 +585,6 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
     {
       for(unsigned i=0; i < types.size(); i++)
       {
-        if(task_prog_wgt->isVisible())
-        {
-         progress=task_prog_wgt->progress_pb->value() + (i/static_cast<float>(types.size()));
-         task_prog_wgt->updateProgress(progress, msg.arg(BaseObject::getTypeName(types[i])), types[i]);
-        }
-
         //Retrieve the objects of the current type from the database
         objects=import_helper.getObjects(types[i], schema, table, extra_attribs);
 

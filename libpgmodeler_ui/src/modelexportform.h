@@ -48,12 +48,13 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
+		int exec(void){ return(QDialog::Rejected); }
 
 	public:
 		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void show(ModelWidget *model);
+		void exec(ModelWidget *model);
 		void hideEvent(QHideEvent *);
 
 	private slots:

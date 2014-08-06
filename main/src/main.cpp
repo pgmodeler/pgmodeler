@@ -137,8 +137,8 @@ int main(int argc, char **argv)
       fmain.loadModels(params);
 		#endif
 
-		splash.finish(&fmain);
 		fmain.showMaximized();
+		splash.finish(&fmain);
 
 		return(app.exec());
 	}

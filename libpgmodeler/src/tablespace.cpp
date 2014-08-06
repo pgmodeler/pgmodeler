@@ -18,7 +18,7 @@
 
 #include "tablespace.h"
 
-unsigned Tablespace::tabspace_id=10000;
+unsigned Tablespace::tabspace_id=1000;
 
 Tablespace::Tablespace(void)
 {

@@ -18,18 +18,18 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class SQLAppendWidget
+\class CustomSQLWidget
 \brief Widget that handles insertion of free SQL commands into object's definition
 */
 
-#ifndef SQL_APPEND_WIDGET_H
-#define SQL_APPEND_WIDGET_H
+#ifndef CUSTOM_SQL_WIDGET_H
+#define CUSTOM_SQL_WIDGET_H
 
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
-#include "ui_sqlappendwidget.h"
+#include "ui_customsqlwidget.h"
 
-class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
+class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 	private:
 		Q_OBJECT
 
@@ -56,7 +56,7 @@ class SQLAppendWidget: public BaseObjectWidget, public Ui::SQLAppendWidget {
 		void configureMenus(void);
 
 	public:
-		SQLAppendWidget(QWidget *parent=0);
+		CustomSQLWidget(QWidget *parent=0);
 
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		

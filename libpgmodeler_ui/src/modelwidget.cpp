@@ -48,45 +48,9 @@
 #include "permissionwidget.h"
 #include "collationwidget.h"
 #include "extensionwidget.h"
-#include "sqlappendwidget.h"
+#include "customsqlwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
-#include "configurationform.h"
-
-extern DatabaseWidget *database_wgt;
-extern SchemaWidget *schema_wgt;
-extern RoleWidget *role_wgt;
-extern TablespaceWidget *tablespace_wgt;
-extern LanguageWidget *language_wgt;
-extern SourceCodeWidget *sourcecode_wgt;
-extern FunctionWidget *function_wgt;
-extern CastWidget *cast_wgt;
-extern ConversionWidget *conversion_wgt;
-extern DomainWidget *domain_wgt;
-extern AggregateWidget *aggregate_wgt;
-extern SequenceWidget *sequence_wgt;
-extern OperatorWidget *operator_wgt;
-extern OperatorFamilyWidget *opfamily_wgt;
-extern OperatorClassWidget *opclass_wgt;
-extern TypeWidget *type_wgt;
-extern ViewWidget *view_wgt;
-extern TextboxWidget *textbox_wgt;
-extern ColumnWidget *column_wgt;
-extern ConstraintWidget *constraint_wgt;
-extern RuleWidget *rule_wgt;
-extern TriggerWidget *trigger_wgt;
-extern IndexWidget *index_wgt;
-extern RelationshipWidget *relationship_wgt;
-extern TableWidget *table_wgt;
-extern CollationWidget *collation_wgt;
-extern ExtensionWidget *extension_wgt;
-extern TagWidget *tag_wgt;
-extern TaskProgressWidget *task_prog_wgt;
-extern ObjectDepsRefsWidget *deps_refs_wgt;
-extern ObjectRenameWidget *objectrename_wgt;
-extern PermissionWidget *permission_wgt;
-extern SQLAppendWidget *sqlappend_wgt;
-extern EventTriggerWidget *eventtrigger_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -240,7 +204,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
-  //action_new_object->setShortcut(QKeySequence(trUtf8("K")));
 
 	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
 	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
@@ -524,19 +487,6 @@ bool ModelWidget::saveLastCanvasPosition(void)
 
   return(false);
 }
-
-/* void ModelWidget::hideEvent(QHideEvent *)
-{
-	try
-  {
-    if(!modified &&  saveLastCanvasPosition())
-      db_model->saveModel(this->filename, SchemaParser::XML_DEFINITION);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-} */
 
 void ModelWidget::restoreLastCanvasPosition(void)
 {
@@ -880,6 +830,7 @@ void ModelWidget::convertRelationshipNN(void)
 		//Converts only Many-to-Many relationship
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
+			Messagebox msg_box;
 			msg_box.show(trUtf8("Confirmation"),
 									 trUtf8("Do you really want to convert the relationship?"),
 									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
@@ -1051,26 +1002,28 @@ void ModelWidget::convertRelationshipNN(void)
 
 void ModelWidget::loadModel(const QString &filename)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
-	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));	
-    task_prog_wgt->show();
+	{	
+		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Loading database model"));
+		task_prog_wgt.show();
 
     db_model->loadModel(filename);
     this->filename=filename;
     this->adjustSceneSize();
 
-		task_prog_wgt->close();
-    disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 
 		protected_model_frm->setVisible(db_model->isProtected());
     this->modified=false;
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -1255,23 +1208,27 @@ void ModelWidget::saveModel(void)
 
 void ModelWidget::saveModel(const QString &filename)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
 	{
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
-    task_prog_wgt->show();
+		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Saving database model"));
+		task_prog_wgt.show();
 
     saveLastCanvasPosition();
     db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
 
 		this->filename=filename;
 
-		task_prog_wgt->close();
-		disconnect(db_model, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
 	}
 	catch(Exception &e)
 	{
+		task_prog_wgt.close();
+		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1322,230 +1279,261 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 											.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		switch(obj_type)
+		if(obj_type== OBJ_PERMISSION)
 		{
-			case OBJ_PERMISSION:
-				permission_wgt->setAttributes(db_model, nullptr, object);
-				permission_wgt->show();
-			break;
+			PermissionWidget permission_wgt;
+			permission_wgt.setAttributes(db_model, nullptr, object);
+			permission_wgt.show();
+		}
+		else if(obj_type== OBJ_SCHEMA)
+		{
+			SchemaWidget schema_wgt;
+			schema_wgt.setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
+			schema_wgt.show();
+			res=(schema_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_ROLE)
+		{
+			RoleWidget role_wgt;
+			role_wgt.setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
+			role_wgt.show();
+			res=(role_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TABLESPACE)
+		{
+			TablespaceWidget tablespace_wgt;
+			tablespace_wgt.setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
+			tablespace_wgt.show();
+			res=(tablespace_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_LANGUAGE)
+		{
+			LanguageWidget language_wgt;
+			language_wgt.setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
+			language_wgt.show();
+			res=(language_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_FUNCTION)
+		{
+			FunctionWidget function_wgt;
+			function_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
+			function_wgt.show();
+			res=(function_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_CAST)
+		{
+			CastWidget cast_wgt;
+			cast_wgt.setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
+			cast_wgt.show();
+			res=(cast_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_CONVERSION)
+		{
+			ConversionWidget conversion_wgt;
+			conversion_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
+			conversion_wgt.show();
+			res=(conversion_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_DOMAIN)
+		{
+			DomainWidget domain_wgt;
+			domain_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
+			domain_wgt.show();
+			res=(domain_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_AGGREGATE)
+		{
+			AggregateWidget aggregate_wgt;
+			aggregate_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
+			aggregate_wgt.show();
+			res=(aggregate_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_SEQUENCE)
+		{
+			SequenceWidget sequence_wgt;
+			sequence_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
+			sequence_wgt.show();
+			res=(sequence_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_OPERATOR)
+		{
+			OperatorWidget operator_wgt;
+			operator_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
+			operator_wgt.show();
+			res=(operator_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_OPFAMILY)
+		{
+			OperatorFamilyWidget opfamily_wgt;
+			opfamily_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
+			opfamily_wgt.show();
+			res=(opfamily_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_OPCLASS)
+		{
+			OperatorClassWidget opclass_wgt;
+			opclass_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
+			opclass_wgt.show();
+			res=(opclass_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TYPE)
+		{
+			TypeWidget type_wgt;
+			type_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
+			type_wgt.show();
+			res=(type_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_VIEW)
+		{
+			ViewWidget view_wgt;
+			View *view=nullptr;
+			view=dynamic_cast<View *>(object);
+			view_wgt.setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
+			view_wgt.show();
+			res=(view_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TEXTBOX)
+		{
+			TextboxWidget textbox_wgt;
+			Textbox *txtbox=nullptr;
+			txtbox=dynamic_cast<Textbox *>(object);
+			textbox_wgt.setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
+			textbox_wgt.show();
+			res=(textbox_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type==OBJ_COLUMN)
+		{
+			ColumnWidget column_wgt;
+			Column *col=nullptr;
+			col=dynamic_cast<Column *>(object);
+			column_wgt.setAttributes(db_model, parent_obj, op_list, col);
+			column_wgt.show();
+			res=(column_wgt.result()==QDialog::Accepted);
 
-			case OBJ_SCHEMA:
-				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
-				schema_wgt->show();
-				res=(schema_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_ROLE:
-				role_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
-				role_wgt->show();
-				res=(role_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_TABLESPACE:
-				tablespace_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
-				tablespace_wgt->show();
-				res=(tablespace_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_LANGUAGE:
-				language_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
-				language_wgt->show();
-				res=(language_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_FUNCTION:
-				function_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
-				function_wgt->show();
-				res=(function_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_CAST:
-				cast_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
-				cast_wgt->show();
-				res=(cast_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_CONVERSION:
-				conversion_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
-				conversion_wgt->show();
-				res=(conversion_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_DOMAIN:
-				domain_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
-				domain_wgt->show();
-				res=(domain_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_AGGREGATE:
-				aggregate_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
-				aggregate_wgt->show();
-				res=(aggregate_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_SEQUENCE:
-				sequence_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
-				sequence_wgt->show();
-				res=(sequence_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_OPERATOR:
-				operator_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
-				operator_wgt->show();
-				res=(operator_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_OPFAMILY:
-				opfamily_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
-				opfamily_wgt->show();
-				res=(opfamily_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_OPCLASS:
-				opclass_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
-				opclass_wgt->show();
-				res=(opclass_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_TYPE:
-				type_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
-				type_wgt->show();
-				res=(type_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_VIEW:
-				View *view;
-				view=dynamic_cast<View *>(object);
-				view_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
-				view_wgt->show();
-				res=(view_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_TEXTBOX:
-				Textbox *txtbox;
-				txtbox=dynamic_cast<Textbox *>(object);
-				textbox_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
-				textbox_wgt->show();
-				res=(textbox_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_COLUMN:
-				Column *col;
-				col=dynamic_cast<Column *>(object);
-				column_wgt->setAttributes(db_model, parent_obj, op_list, col);
-				column_wgt->show();
-				res=(column_wgt->result()==QDialog::Accepted);
-
-				if(res==QDialog::Accepted)
-				{
-					if(col)
-						db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
-					else
-						db_model->validateRelationships();
-				}
-			break;
-
-			case OBJ_CONSTRAINT:
-				Constraint *constr;
-				constr=dynamic_cast<Constraint *>(object);
-				constraint_wgt->setAttributes(db_model, parent_obj, op_list, constr);
-				constraint_wgt->show();
-				res=(constraint_wgt->result()==QDialog::Accepted);
-
-				if(res==QDialog::Accepted)
-				{
-					if(constr && parent_obj->getObjectType()==OBJ_TABLE)
-						db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
-					else
-						db_model->validateRelationships();
-				}
-			break;
-
-			case OBJ_RULE:
-				rule_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
-				rule_wgt->show();
-				res=(rule_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_TRIGGER:
-				trigger_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
-				trigger_wgt->show();
-				res=(trigger_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_INDEX:
-				index_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
-				index_wgt->show();
-				res=(index_wgt->result()==QDialog::Accepted);
-			break;
-
-			case BASE_RELATIONSHIP:
-			case OBJ_RELATIONSHIP:
-				if(!object && rel_type > 0 &&
-					 selected_objects.size() > 0 &&
-					 selected_objects[0]->getObjectType()==OBJ_TABLE)
-				{
-					Table *tab1=dynamic_cast<Table *>(selected_objects[0]),
-							*tab2=(selected_objects.size()==2 ?
-											 dynamic_cast<Table *>(selected_objects[1]) : tab1);
-					relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
-				}
+			if(res==QDialog::Accepted)
+			{
+				if(col)
+					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
 				else
-					relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
-
-				relationship_wgt->show();
-				scene->clearSelection();
-				res=(relationship_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_TABLE:
-				table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
-				table_wgt->show();
-				res=(table_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_COLLATION:
-				collation_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
-				collation_wgt->show();
-				res=(collation_wgt->result()==QDialog::Accepted);
-			break;
-
-			case OBJ_EXTENSION:
-				extension_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
-				extension_wgt->show();
-        res=(extension_wgt->result()==QDialog::Accepted);
-			break;
-
-      case OBJ_TAG:
-        tag_wgt->setAttributes(db_model, op_list, dynamic_cast<Tag *>(object));
-        tag_wgt->show();
-        res=(tag_wgt->result()==QDialog::Accepted);
-      break;
-
-			case OBJ_EVENT_TRIGGER:
-				eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
-				eventtrigger_wgt->show();
-				res=(eventtrigger_wgt->result()==QDialog::Accepted);
-			break;
-
-			default:
-			case OBJ_DATABASE:
-				database_wgt->setAttributes(db_model);
-				database_wgt->show();
-				res=(database_wgt->result()==QDialog::Accepted);
-			break;
+					db_model->validateRelationships();
+			}
 		}
-
-		if(!this->modified && res==QDialog::Accepted)
+		else if(obj_type== OBJ_CONSTRAINT)
 		{
-			this->modified=true;
-			this->db_model->setInvalidated(true);
+			ConstraintWidget constraint_wgt;
+			Constraint *constr=nullptr;
+			constr=dynamic_cast<Constraint *>(object);
+			constraint_wgt.setAttributes(db_model, parent_obj, op_list, constr);
+			constraint_wgt.show();
+			res=(constraint_wgt.result()==QDialog::Accepted);
+
+			if(res==QDialog::Accepted)
+			{
+				if(constr && parent_obj->getObjectType()==OBJ_TABLE)
+					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
+				else
+					db_model->validateRelationships();
+			}
+		}
+		else if(obj_type== OBJ_RULE)
+		{
+			RuleWidget rule_wgt;
+			rule_wgt.setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
+			rule_wgt.show();
+			res=(rule_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TRIGGER)
+		{
+			TriggerWidget trigger_wgt;
+			trigger_wgt.setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
+			trigger_wgt.show();
+			res=(trigger_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_INDEX)
+		{
+			IndexWidget index_wgt;
+			index_wgt.setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
+			index_wgt.show();
+			res=(index_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== BASE_RELATIONSHIP || obj_type== OBJ_RELATIONSHIP)
+		{
+			RelationshipWidget relationship_wgt;
+
+			if(!object && rel_type > 0 &&
+				 selected_objects.size() > 0 &&
+				 selected_objects[0]->getObjectType()==OBJ_TABLE)
+			{
+				Table *tab1=dynamic_cast<Table *>(selected_objects[0]),
+						*tab2=(selected_objects.size()==2 ?
+										 dynamic_cast<Table *>(selected_objects[1]) : tab1);
+				relationship_wgt.setAttributes(db_model, op_list, tab1, tab2, rel_type);
+			}
+			else
+				relationship_wgt.setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
+
+			relationship_wgt.show();
+			scene->clearSelection();
+			res=(relationship_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TABLE)
+		{
+			TableWidget table_wgt;
+			table_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
+			table_wgt.show();
+			res=(table_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_COLLATION)
+		{
+			CollationWidget collation_wgt;
+			collation_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
+			collation_wgt.show();
+			res=(collation_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_EXTENSION)
+		{
+			ExtensionWidget extension_wgt;
+			extension_wgt.setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
+			extension_wgt.show();
+			res=(extension_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_TAG)
+		{
+			TagWidget tag_wgt;
+			tag_wgt.setAttributes(db_model, op_list, dynamic_cast<Tag *>(object));
+			tag_wgt.show();
+			res=(tag_wgt.result()==QDialog::Accepted);
+		}
+		else if(obj_type== OBJ_EVENT_TRIGGER)
+		{
+			EventTriggerWidget eventtrigger_wgt;
+			eventtrigger_wgt.setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
+			eventtrigger_wgt.show();
+			res=(eventtrigger_wgt.result()==QDialog::Accepted);
+		}
+		else
+		{
+			DatabaseWidget database_wgt;
+			database_wgt.setAttributes(db_model);
+			database_wgt.show();
+			res=(database_wgt.result()==QDialog::Accepted);
 		}
 
+		if(res==QDialog::Accepted)
+		{
+			if(!this->modified)
+			{
+				this->modified=true;
+				this->db_model->setInvalidated(true);
+			}
+
+			emit s_objectManipulated();
+		}
 		this->setFocus();
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
@@ -1560,8 +1548,9 @@ void ModelWidget::showDependenciesReferences(void)
 
 		if(object)
 		{
-      deps_refs_wgt->setAttributes(this, object);
-			deps_refs_wgt->show();
+			ObjectDepsRefsWidget deps_refs_wgt(this);
+			deps_refs_wgt.setAttributes(this, object);
+			deps_refs_wgt.show();
 		}
 	}
 }
@@ -1572,12 +1561,13 @@ void ModelWidget::showSourceCode(void)
 
 	if(obj_sender)
 	{
-		BaseObject *objeto=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
+		BaseObject *object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
-		if(objeto)
+		if(object)
 		{
-			sourcecode_wgt->setAttributes(this->db_model, objeto);
-			sourcecode_wgt->show();
+			SourceCodeWidget sourcecode_wgt(this);
+			sourcecode_wgt.setAttributes(this->db_model, object);
+			sourcecode_wgt.show();
 		}
 	}
 }
@@ -1606,10 +1596,11 @@ void ModelWidget::renameObject(void)
 										.arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	objectrename_wgt->setAttributes(obj, this->db_model, this->op_list);
-	objectrename_wgt->exec();
+	ObjectRenameWidget objectrename_wgt(this);
+	objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
+	objectrename_wgt.exec();
 
-	if(objectrename_wgt->result()==QDialog::Accepted)
+	if(objectrename_wgt.result()==QDialog::Accepted)
 	{
 		this->modified=true;
 		emit s_objectModified();
@@ -1709,12 +1700,15 @@ void ModelWidget::setTag(void)
 
 void ModelWidget::editPermissions(void)
 {
+	PermissionWidget permission_wgt(this);
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-	permission_wgt->setAttributes(this->db_model, nullptr, obj);
-	permission_wgt->show();
+	permission_wgt.setAttributes(this->db_model, nullptr, obj);
+	permission_wgt.show();
 	this->setModified(true);
+
+	emit s_objectManipulated();
 }
 
 void ModelWidget::editObject(void)
@@ -1866,6 +1860,7 @@ void ModelWidget::copyObjects(void)
 	Constraint *constr=nullptr;
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
 	unsigned i, type_id, count;
+	Messagebox msg_box;
 
 	if(selected_objects.size()==1)
 	{
@@ -1977,9 +1972,10 @@ void ModelWidget::pasteObjects(void)
 	ObjectType obj_type;
 	Exception error;
   unsigned pos=0;
+	TaskProgressWidget task_prog_wgt(this);
 
-	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
-	task_prog_wgt->show();
+	task_prog_wgt.setWindowTitle(trUtf8("Pasting objects..."));
+	task_prog_wgt.show();
 
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
@@ -2000,7 +1996,7 @@ void ModelWidget::pasteObjects(void)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Validating object: %1 (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2098,7 +2094,7 @@ void ModelWidget::pasteObjects(void)
 		itr++;
 
 		pos++;
-		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Generating XML code of object: %1 (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2171,7 +2167,7 @@ void ModelWidget::pasteObjects(void)
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
 				pos++;
-				task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																			trUtf8("Pasting object: %1 (%2)").arg(object->getName())
 																			.arg(object->getTypeName()),
 																			object->getObjectType());
@@ -2219,13 +2215,16 @@ void ModelWidget::pasteObjects(void)
 	db_model->validateRelationships();
 
 	this->adjustSceneSize();
-	task_prog_wgt->close();
+	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user
 	if(error.getErrorType()!=ERR_CUSTOM)
+	{
+		Messagebox msg_box;
 		msg_box.show(error,
 								 trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
 								 Messagebox::ALERT_ICON);
+	}
 
 	if(!ModelWidget::cut_operation)
 	{
@@ -2275,6 +2274,15 @@ void ModelWidget::removeObjects(void)
 
 	if(!selected_objects.empty() || object)
 	{
+		Messagebox msg_box;
+
+		//Cancel the cut operation if the user try to delete an object in the middle of the process
+		if(ModelWidget::cut_operation && sender()==action_remove)
+		{
+			ModelWidget::cut_operation=false;
+			copied_objects.clear();
+		}
+
 		//If the removal is not due to a cut operation, ask for permission to remove the objects
 		if(!ModelWidget::cut_operation)
 		{
@@ -2490,10 +2498,11 @@ void ModelWidget::appendSQL(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+	CustomSQLWidget customsql_wgt;
 
-	sqlappend_wgt->setAttributes(db_model, obj);
-	sqlappend_wgt->show();
-	this->modified=(sqlappend_wgt->result()==QDialog::Accepted);
+	customsql_wgt.setAttributes(db_model, obj);
+	customsql_wgt.show();
+	this->modified=(customsql_wgt.result()==QDialog::Accepted);
 }
 
 void ModelWidget::showObjectMenu(void)

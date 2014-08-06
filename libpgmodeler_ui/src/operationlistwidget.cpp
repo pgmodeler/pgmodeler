@@ -19,8 +19,6 @@
 #include "operationlistwidget.h"
 #include "taskprogresswidget.h"
 
-extern TaskProgressWidget *task_prog_wgt;
-
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -154,16 +152,18 @@ void OperationListWidget::setModel(ModelWidget *model)
 
 void OperationListWidget::undoOperation(void)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Undoing operations..."));
-		task_prog_wgt->show();
+		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Undoing operations..."));
+		task_prog_wgt.show();
 
 		model_wgt->op_list->undoOperation();
 
-		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 
 		notifyUpdateOnModel();
 
@@ -171,25 +171,27 @@ void OperationListWidget::undoOperation(void)
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
+		task_prog_wgt.close();
 		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
+		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void OperationListWidget::redoOperation(void)
 {
+	TaskProgressWidget task_prog_wgt(this);
+
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt->setWindowTitle(trUtf8("Redoing operations..."));
-		task_prog_wgt->show();
+		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.setWindowTitle(trUtf8("Redoing operations..."));
+		task_prog_wgt.show();
 
 		model_wgt->op_list->redoOperation();
 
-		task_prog_wgt->close();
-		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
+		task_prog_wgt.close();
+		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 
 		notifyUpdateOnModel();
 
@@ -197,9 +199,9 @@ void OperationListWidget::redoOperation(void)
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
+		task_prog_wgt.close();
 		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, task_prog_wgt, nullptr);
+		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

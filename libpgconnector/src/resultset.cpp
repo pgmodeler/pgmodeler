@@ -94,6 +94,16 @@ QString ResultSet::getColumnName(int column_idx)
 	return(QString(PQfname(sql_result, column_idx)));
 }
 
+unsigned ResultSet::getColumnTypeId(int column_idx)
+{
+	//Throws an error in case the column index is invalid
+	if(column_idx < 0 || column_idx >= getColumnCount())
+		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	//Returns the column type id on the specified index
+	return(static_cast<unsigned>(PQftype(sql_result, column_idx)));
+}
+
 int ResultSet::getColumnIndex(const QString &column_name)
 {
 	int col_idx=-1;

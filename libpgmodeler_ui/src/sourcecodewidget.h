@@ -22,8 +22,8 @@
 \brief Implements the operation to visualize object's source code.
 */
 
-#ifndef CODIGOFONTE_WIDGET_H
-#define CODIGOFONTE_WIDGET_H
+#ifndef SOURCE_CODE_WIDGET_H
+#define SOURCE_CODE_WIDGET_H
 
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"

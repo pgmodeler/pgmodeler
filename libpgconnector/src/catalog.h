@@ -41,7 +41,10 @@ class Catalog {
 		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
 		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
-		BOOL_FIELD;     //! \brief Suffix for boolean fields.
+		BOOL_FIELD,     //! \brief Suffix for boolean fields.
+
+		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
+		ARRAY_PATTERN;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
@@ -55,7 +58,9 @@ class Catalog {
 		Connection connection;
 
 		//! \brief Stores the last system object identifier. This is used to filter system objects
-		unsigned last_sys_oid;
+		unsigned last_sys_oid,
+
+		filter;
 
 		//! \brief Indicates if the catalog must filter system objects
 		bool exclude_sys_objs,
@@ -71,7 +76,8 @@ class Catalog {
 
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
-		use them when parsing the schema file for the object */
+		use them when parsing the schema file for the object. A special extra attribute is accepted but not passed to SchemaParser:
+		ParsersAttributes::CUSTOM_FILTER that will be appended to the current filter expression */
 		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
                                  bool single_result=false, attribs_map attribs=attribs_map());
 
@@ -135,6 +141,8 @@ class Catalog {
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
+		unsigned getFilter(void);
+
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
 		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
@@ -146,6 +154,14 @@ class Catalog {
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
+
+		//! \brief Parse a PostgreSQL array value and return the elements in a string list
+		static QStringList parseArrayValues(const QString &array_val);
+
+		/*! \brief Parse a function's default value and return the elements in a string list.
+		It can be specified the string delimiter as well the value separator if the input default value
+		contains several values */
+		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 };
 
 #endif

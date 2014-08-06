@@ -455,6 +455,10 @@ class DatabaseModel:  public QObject, public BaseObject {
      graphical objects to be marked */
     void setObjectsModified(vector<ObjectType> types={});
 
+		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
+		 graphical objects to be marked */
+		void setCodesInvalidated(vector<ObjectType> types={});
+
 		/*! \brief Updates the user type names which belongs to the passed schema. This method must be executed whenever
 		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally
 		 the previous schema name must be informed in order to rename the types correctly */

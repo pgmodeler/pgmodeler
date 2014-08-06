@@ -38,6 +38,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void configureConnection(Connection *conn);
 
 		void hideEvent(QHideEvent *);
+		void destroyConnections(void);
 
 	public:
 		ConnectionsConfigWidget(QWidget * parent=0);

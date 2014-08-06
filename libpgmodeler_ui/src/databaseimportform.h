@@ -45,7 +45,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
 
-
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */
 		void setItemCheckState(QTreeWidgetItem *item, Qt::CheckState chk_state);
@@ -67,8 +66,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
     //! brief Constants used to access the tree widget items data
-		static const unsigned /*OBJECT_NAME=0,*/
-													OBJECT_ID=0,
+		static const unsigned OBJECT_ID=0,
 													OBJECT_TYPE=1,
 													OBJECT_SCHEMA=2,
 													OBJECT_TABLE=3,

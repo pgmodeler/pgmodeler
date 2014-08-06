@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class DataManipulationForm
+\class DataGridForm
 \brief Implements the operations to handle table's data
 */
 
@@ -26,16 +26,42 @@
 #define DATA_MANIPULATION_FORM_H
 
 #include "ui_datamanipulationform.h"
+#include "catalog.h"
+#include "syntaxhighlighter.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 
+		SyntaxHighlighter *filter_hl;
+
+		Connection connection;
+
+		Catalog catalog;
+
+		QStringList col_names;
+
+		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
+
+		QStringList retrievePKColumns(const QString &schema, const QString &table);
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
+		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table="");
+
 	public slots:
 
+	private slots:
+		void listTables(void);
+		void listColumns(void);
+		void retrieveData(void);
+		void disableControlButtons(void);
+		void resetAdvancedControls(void);
+		void addColumnToList(void);
+		void removeColumnFromList(void);
+		void clearColumnList(void);
+		void changeOrderMode(QListWidgetItem *item);
 };
 
 #endif

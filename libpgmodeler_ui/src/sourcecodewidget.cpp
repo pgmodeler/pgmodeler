@@ -18,7 +18,6 @@
 
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
-extern TaskProgressWidget *task_prog_wgt;
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
@@ -99,6 +98,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 void SourceCodeWidget::generateSourceCode(int)
 {
 	ObjectType obj_type;
+	TaskProgressWidget *task_prog_wgt=nullptr;
 
 	try
 	{
@@ -116,6 +116,7 @@ void SourceCodeWidget::generateSourceCode(int)
 
 			if(obj_type==OBJ_DATABASE)
 			{
+				task_prog_wgt=new TaskProgressWidget(this);
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
 				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)),
@@ -180,13 +181,22 @@ void SourceCodeWidget::generateSourceCode(int)
 		xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
 
 		setSourceCodeTab();
-		task_prog_wgt->close();
-		disconnect(this->model, nullptr, task_prog_wgt, nullptr);
+
+		if(task_prog_wgt)
+		{
+			task_prog_wgt->close();
+			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
+			delete(task_prog_wgt);
+		}
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt->close();
-		disconnect(this->model, nullptr, task_prog_wgt, nullptr);
+		if(task_prog_wgt)
+		{
+			task_prog_wgt->close();
+			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
+			delete(task_prog_wgt);
+		}
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
