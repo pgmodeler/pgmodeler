@@ -81,8 +81,9 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
-		//! brief Fills up the results grid based upon the specified result set
-		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw);
+		/*! brief Fills up the results grid based upon the specified result set.
+				The parameter store_data will make each item store the text as its data */
+		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
 		//! brief Copy to clipboard (in csv format) the current selected items on results grid
 		static void copySelection(QTableWidget *results_tbw);

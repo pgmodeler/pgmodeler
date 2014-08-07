@@ -340,7 +340,7 @@ void SQLToolWidget::fillResultsTable(ResultSet &res)
 	}
 }
 
-void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw)
+void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -357,6 +357,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
 		results_tbw->verticalHeader()->setVisible(true);
+		results_tbw->blockSignals(true);
 
 		//Configuring the grid columns with the names of retrived table columns
 		for(col=0; col < col_cnt; col++)
@@ -394,9 +395,18 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 					item=new QTableWidgetItem;
 
 					if(res.isColumnBinaryFormat(col))
+					{
+						//Binary columns can't be changed by user
+						item->setFlags(Qt::NoItemFlags);
 						item->setText(trUtf8("[binary data]"));
+					}
 					else
+					{
 						item->setText(res.getColumnValue(col));
+
+						if(store_data)
+							item->setData(Qt::UserRole, item->text());
+					}
 
 					results_tbw->setItem(row, col, item);
 				}
@@ -408,6 +418,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
 
+		results_tbw->blockSignals(false);
 		results_tbw->resizeColumnsToContents();
 		results_tbw->resizeRowsToContents();
 	}

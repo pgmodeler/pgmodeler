@@ -19,6 +19,8 @@
 #include "datamanipulationform.h"
 #include "sqltoolwidget.h"
 
+const QColor DataManipulationForm::ROW_COLORS[3]={ QColor("#C0FFC0"), QColor("#FFFFC0"), QColor("#FFC0C0")  };
+
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
 	setupUi(this);
@@ -37,18 +39,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
 	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
-	connect(add_sel_col_tb, SIGNAL(clicked()), this, SLOT(addColumnToList()));
 	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addColumnToList()));
-	connect(sel_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeColumnFromList()));
 	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeColumnFromList()));
 	connect(ord_columns_lst, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(changeOrderMode(QListWidgetItem*)));
-	connect(rem_sel_col_tb, SIGNAL(clicked()), this, SLOT(removeColumnFromList()));
 	connect(rem_ord_col_tb, SIGNAL(clicked()), this, SLOT(removeColumnFromList()));
-	connect(clear_sel_cols_tb, SIGNAL(clicked()), this, SLOT(clearColumnList()));
 	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearColumnList()));
-
-	connect(sel_columns_lst, &QListWidget::currentRowChanged,
-					[=](){ rem_sel_col_tb->setEnabled(sel_columns_lst->currentRow() >= 0); });
+	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
+	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
+	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
+	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 
 	connect(ord_columns_lst, &QListWidget::currentRowChanged,
 					[=](){ rem_ord_col_tb->setEnabled(ord_columns_lst->currentRow() >= 0); });
@@ -58,6 +57,12 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	connect(export_tb, &QToolButton::clicked,
 					[=](){ SQLToolWidget::exportResults(results_tbw); });
+
+	connect(results_tbw, &QTableWidget::itemSelectionChanged,
+					[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+									delete_tb->setEnabled(!sel_ranges.isEmpty() &&
+																				 (sel_ranges[0].leftColumn()==0 &&
+																					sel_ranges[sel_ranges.count()-1].rightColumn()==results_tbw->columnCount() - 1));	});
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -125,13 +130,9 @@ void DataManipulationForm::listColumns(void)
 		for(auto col : cols)
 			col_names.push_back(col[ParsersAttributes::NAME]);
 
-		//col_names.sort();
 		ord_column_cmb->addItems(col_names);
-		sel_column_cmb->addItems(col_names);
-		//col_names.clear();
 	}
 
-	add_sel_col_tb->setEnabled(sel_column_cmb->count() > 0);
 	add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
 }
 
@@ -139,27 +140,12 @@ void DataManipulationForm::retrieveData(void)
 {
 	try
 	{
-		QString query="SELECT ";
+		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
 		unsigned limit=limit_edt->text().toUInt();
 
-		if(sel_columns_lst->count()==0)
-			query+="*";
-		else
-		{
-			QStringList cols;
-
-			for(int idx=0; idx < sel_columns_lst->count(); idx++)
-				cols.push_back("\"" + sel_columns_lst->item(idx)->text() + "\"");
-
-			query+=cols.join(", ");
-		}
-
-		query+=QString(" FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
-
 		if(!filter_txt->toPlainText().isEmpty())
 			query+=" WHERE " + filter_txt->toPlainText();
-
 
 		if(ord_columns_lst->count() > 0)
 		{
@@ -182,7 +168,7 @@ void DataManipulationForm::retrieveData(void)
 		connection.connect();
 		connection.executeDMLCommand(query, res);
 
-		SQLToolWidget::fillResultsTable(catalog, res, results_tbw);
+		SQLToolWidget::fillResultsTable(catalog, res, results_tbw, true);
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
@@ -213,39 +199,27 @@ void DataManipulationForm::disableControlButtons(void)
 
 void DataManipulationForm::resetAdvancedControls(void)
 {
-	sel_column_cmb->clear();
 	ord_column_cmb->clear();
-	sel_columns_lst->clear();
 	ord_columns_lst->clear();
 	add_ord_col_tb->setEnabled(false);
-	add_sel_col_tb->setEnabled(false);
 	filter_txt->clear();
 	asc_rb->setChecked(true);
 	clear_ord_cols_tb->setEnabled(false);
-	clear_sel_cols_tb->setEnabled(false);
 }
 
 void DataManipulationForm::addColumnToList(void)
 {
-	bool handling_sel_cols=(sender()==add_sel_col_tb);
-	QListWidget *list=(handling_sel_cols ? sel_columns_lst : ord_columns_lst);
-	QComboBox *combo=(handling_sel_cols ? sel_column_cmb : ord_column_cmb);
-	QToolButton *clear_btn=(handling_sel_cols ? clear_sel_cols_tb : clear_ord_cols_tb),
-	*add_btn=(handling_sel_cols ? add_sel_col_tb : add_ord_col_tb);
-
-	if(combo->count() > 0)
+	if(ord_column_cmb->count() > 0)
 	{
 		QString item_text;
 
-		item_text=combo->currentText();
+		item_text=ord_column_cmb->currentText();
+		item_text+=(asc_rb->isChecked() ? " ASC" : " DESC");
 
-		if(!handling_sel_cols)
-			item_text+=(asc_rb->isChecked() ? " ASC" : " DESC");
-
-		list->addItem(item_text);
-		combo->removeItem(combo->currentIndex());
-		clear_btn->setEnabled(list->count() > 0);
-		add_btn->setEnabled(combo->count() > 0);
+		ord_columns_lst->addItem(item_text);
+		ord_column_cmb->removeItem(ord_column_cmb->currentIndex());
+		clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
+		add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
 	}
 }
 
@@ -253,41 +227,30 @@ void DataManipulationForm::removeColumnFromList(void)
 {
 	if(qApp->mouseButtons()==Qt::NoButton || qApp->mouseButtons()==Qt::LeftButton)
 	{
-		bool handling_sel_cols=(sender()==rem_sel_col_tb || sender()==sel_columns_lst);
-		QListWidget *list=(handling_sel_cols ? sel_columns_lst : ord_columns_lst);
-		QComboBox *combo=(handling_sel_cols ? sel_column_cmb : ord_column_cmb);
-		QToolButton *clear_btn=(handling_sel_cols ? clear_sel_cols_tb : clear_ord_cols_tb),
-				*add_btn=(handling_sel_cols ? add_sel_col_tb : add_ord_col_tb);
 		QStringList items=col_names;
 		int idx=0;
 
-		list->takeItem(list->currentRow());
+		ord_columns_lst->takeItem(ord_columns_lst->currentRow());
 
-		while(idx < list->count())
-			items.removeOne(list->item(idx++)->text());
+		while(idx < ord_columns_lst->count())
+			items.removeOne(ord_columns_lst->item(idx++)->text());
 
-		combo->clear();
-		combo->addItems(items);
+		ord_column_cmb->clear();
+		ord_column_cmb->addItems(items);
 
-		clear_btn->setEnabled(list->count() > 0);
-		add_btn->setEnabled(combo->count() > 0);
+		clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
+		add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
 	}
 }
 
 void DataManipulationForm::clearColumnList(void)
 {
-	bool handling_sel_cols=(sender()==clear_sel_cols_tb);
-	QListWidget *list=(handling_sel_cols ? sel_columns_lst : ord_columns_lst);
-	QComboBox *combo=(handling_sel_cols ? sel_column_cmb : ord_column_cmb);
-	QToolButton *clear_btn=(handling_sel_cols ? clear_sel_cols_tb : clear_ord_cols_tb),
-	*add_btn=(handling_sel_cols ? add_sel_col_tb : add_ord_col_tb);
+	ord_column_cmb->clear();
+	ord_column_cmb->addItems(col_names);
+	ord_columns_lst->clear();
 
-	combo->clear();
-	combo->addItems(col_names);
-	list->clear();
-
-	clear_btn->setEnabled(false);
-	add_btn->setEnabled(true);
+	clear_ord_cols_tb->setEnabled(false);
+	add_ord_col_tb->setEnabled(true);
 }
 
 void DataManipulationForm::changeOrderMode(QListWidgetItem *item)
@@ -377,7 +340,7 @@ QStringList DataManipulationForm::retrievePKColumns(const QString &schema, const
 			for(auto col : pk_cols)
 				col_names.push_back(col[ParsersAttributes::NAME]);
 
-			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked);
+			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		}
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -388,4 +351,151 @@ QStringList DataManipulationForm::retrievePKColumns(const QString &schema, const
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
+{
+	if(row < results_tbw->rowCount() &&
+		 (operation==NO_OPERATION || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OP_INSERT))
+	{
+		QTableWidgetItem *item=nullptr, *header_item=results_tbw->verticalHeaderItem(row);
+		QString tooltip=trUtf8("This row is marked to be %1");
+		QFont fnt=results_tbw->font();
+
+		if(operation==OP_DELETE)
+			tooltip=tooltip.arg(trUtf8("deleted"));
+		else if(operation==OP_UPDATE)
+			tooltip=tooltip.arg(trUtf8("updated"));
+		else if(operation==OP_INSERT)
+			tooltip=tooltip.arg(trUtf8("inserted"));
+		else
+			tooltip.clear();
+
+		results_tbw->blockSignals(true);
+
+		for(int col=0; col < results_tbw->columnCount(); col++)
+		{
+			item=results_tbw->item(row, col);			
+			item->setToolTip(tooltip);
+
+			if(operation==NO_OPERATION || operation==OP_DELETE)
+			{
+				item->setFont(fnt);
+				item->setText(item->data(Qt::UserRole).toString());
+			}
+
+			if(operation==NO_OPERATION)
+				item->setBackground(prev_row_colors[row]);
+			else
+			{
+				if(header_item->data(Qt::UserRole)!=OP_DELETE &&
+					 header_item->data(Qt::UserRole)!=OP_UPDATE)
+					prev_row_colors[row]=item->background();
+
+				item->setBackground(ROW_COLORS[operation - 1]);
+			}
+		}
+
+		if(operation==NO_OPERATION)
+			changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
+		else
+			changed_rows.push_back(row);
+
+		//results_tbw->verticalHeaderItem(row)->setData(Qt::UserRole, operation);
+		header_item->setData(Qt::UserRole, operation);
+		results_tbw->blockSignals(false);
+
+		undo_tb->setEnabled(!changed_rows.empty());
+	}
+}
+
+void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
+{
+	if(results_tbw->verticalHeaderItem(item->row())->data(Qt::UserRole)!=OP_INSERT)
+	{
+		bool items_changed=false;
+		QTableWidgetItem *aux_item=nullptr;
+		QFont fnt=item->font();
+
+		for(int col=0; col < results_tbw->columnCount(); col++)
+		{
+			aux_item=results_tbw->item(item->row(), col);
+			if(!items_changed && aux_item->text()!=aux_item->data(Qt::UserRole))
+			{
+				items_changed=true;
+				break;
+			}
+		}
+
+		fnt.setBold(items_changed);
+		item->setFont(fnt);
+		markOperationOnRow((items_changed ? OP_UPDATE : NO_OPERATION), item->row());
+	}
+}
+
+void DataManipulationForm::markDeleteOnRows(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+	QTableWidgetItem *item=nullptr;
+	vector<int> ins_rows;
+
+	for(int row=sel_ranges[0].topRow(); row <= sel_ranges[sel_ranges.count()-1].bottomRow(); row++)
+	{
+		item=results_tbw->verticalHeaderItem(row);
+
+		if(item->data(Qt::UserRole)==OP_INSERT)
+			ins_rows.push_back(row);
+		else
+			markOperationOnRow(OP_DELETE, row);
+	}
+
+	for(unsigned idx=0; idx < ins_rows.size(); idx++)
+		results_tbw->removeRow(ins_rows[0]);
+
+	results_tbw->clearSelection();
+}
+
+void DataManipulationForm::insertRow(void)
+{
+	int row=results_tbw->rowCount();
+
+	results_tbw->blockSignals(true);
+	results_tbw->insertRow(row);
+
+	for(int col=0; col < results_tbw->columnCount(); col++)
+		results_tbw->setItem(row, col, new QTableWidgetItem);
+
+	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem("*"));
+	results_tbw->blockSignals(false);
+	results_tbw->scrollToItem(results_tbw->item(row, 0));
+
+	markOperationOnRow(OP_INSERT, row);
+}
+
+void DataManipulationForm::undoOperations(void)
+{
+	QTableWidgetItem *item=nullptr;
+	vector<int> rows=changed_rows;
+
+	for(auto row : rows)
+	{
+		item=results_tbw->verticalHeaderItem(row);
+		if(item && item->data(Qt::UserRole)!=OP_INSERT)
+			markOperationOnRow(NO_OPERATION, row);
+	}
+
+	if(results_tbw->rowCount() > 0 &&
+		 results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OP_INSERT)
+	{
+		do
+		{
+			results_tbw->removeRow(results_tbw->rowCount()-1);
+			item=results_tbw->verticalHeaderItem(results_tbw->rowCount()-1);
+		}
+		while(item && item->data(Qt::UserRole)==OP_INSERT);
+	}
+
+	changed_rows.clear();
+	prev_row_colors.clear();
+	undo_tb->setEnabled(false);
 }

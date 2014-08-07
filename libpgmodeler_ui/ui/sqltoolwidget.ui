@@ -985,7 +985,7 @@
               <bool>true</bool>
              </property>
              <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
+              <enum>QAbstractItemView::ContiguousSelection</enum>
              </property>
              <property name="sortingEnabled">
               <bool>false</bool>

@@ -33,6 +33,13 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 
+		static const unsigned NO_OPERATION=0,
+													OP_INSERT=1,
+													OP_UPDATE=2,
+													OP_DELETE=3;
+
+		static const QColor ROW_COLORS[3];
+
 		SyntaxHighlighter *filter_hl;
 
 		Connection connection;
@@ -41,9 +48,14 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		QStringList col_names;
 
+		vector<int> changed_rows;
+		map<int, QBrush> prev_row_colors;
+
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
 
 		QStringList retrievePKColumns(const QString &schema, const QString &table);
+
+		void markOperationOnRow(unsigned operation, int row);
 
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -62,6 +74,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void removeColumnFromList(void);
 		void clearColumnList(void);
 		void changeOrderMode(QListWidgetItem *item);
+		void markUpdateOnRow(QTableWidgetItem *item);
+		void markDeleteOnRows(void);
+		void insertRow(void);
+		void undoOperations(void);
 };
 
 #endif
