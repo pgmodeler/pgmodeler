@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ namespace GlobalAttributes {
   PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
   PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
+	CRASH_REPORT_EMAIL="bug@pgmodeler.com.br",
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
 	MACOS_STARTUP_SCRIPT="startapp",

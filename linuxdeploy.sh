@@ -78,7 +78,7 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2014 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
