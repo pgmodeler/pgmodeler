@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>480</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>640</width>
-    <height>480</height>
+    <height>560</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -124,6 +124,9 @@
         </size>
        </property>
        <property name="autoRepeat">
+        <bool>false</bool>
+       </property>
+       <property name="autoDefault">
         <bool>false</bool>
        </property>
        <property name="flat">
@@ -423,6 +426,9 @@
            <height>22</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>F5</string>
+         </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonIconOnly</enum>
          </property>
@@ -459,6 +465,9 @@
            <width>22</width>
            <height>22</height>
           </size>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+S</string>
          </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonIconOnly</enum>
@@ -497,6 +506,9 @@
            <height>22</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>Ctrl+X</string>
+         </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonIconOnly</enum>
          </property>
@@ -519,7 +531,7 @@
           </font>
          </property>
          <property name="toolTip">
-          <string>Undo all modifications done</string>
+          <string>Undo modifications</string>
          </property>
          <property name="text">
           <string>Undo</string>
@@ -534,79 +546,8 @@
            <height>22</height>
           </size>
          </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonIconOnly</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="8">
-        <widget class="QToolButton" name="add_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Add data</string>
-         </property>
-         <property name="text">
-          <string>Add</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonIconOnly</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="9">
-        <widget class="QToolButton" name="delete_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Mark the selected rows to be deleted</string>
-         </property>
-         <property name="text">
-          <string>Delete</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
+         <property name="shortcut">
+          <string>Ctrl+Z</string>
          </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonIconOnly</enum>
@@ -619,7 +560,7 @@
           <bool>true</bool>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::AnyKeyPressed</set>
+          <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -665,6 +606,86 @@
          </attribute>
         </widget>
        </item>
+       <item row="2" column="8">
+        <widget class="QToolButton" name="add_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Add data</string>
+         </property>
+         <property name="text">
+          <string>Add</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="shortcut">
+          <string>Ins</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="9">
+        <widget class="QToolButton" name="delete_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Mark the selected rows to be deleted</string>
+         </property>
+         <property name="text">
+          <string>Delete</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="shortcut">
+          <string>Del</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="0" colspan="10">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -703,6 +724,97 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="5" column="0" colspan="10">
+        <widget class="QFrame" name="hint_frm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="minimumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::AutoText</enum>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_info.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <weight>50</weight>
+              <italic>true</italic>
+              <bold>false</bold>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="text">
+             <string>Empty values are assumed as &lt;strong&gt;DEFAULT&lt;/strong&gt;. To use special values like &lt;strong&gt;NULL&lt;/strong&gt;, a function call like &lt;strong&gt;now()&lt;/strong&gt; or a specific data escaping, enclose values in &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. To use &lt;strong&gt;&amp;lt;&lt;/strong&gt; or &lt;strong&gt;&amp;gt;&lt;/strong&gt; as part of the value prepend the backslash character, e.g., &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1012,6 +1124,29 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>filter_txt</tabstop>
+  <tabstop>schema_cmb</tabstop>
+  <tabstop>table_cmb</tabstop>
+  <tabstop>hide_views_chk</tabstop>
+  <tabstop>refresh_tb</tabstop>
+  <tabstop>save_tb</tabstop>
+  <tabstop>export_tb</tabstop>
+  <tabstop>undo_tb</tabstop>
+  <tabstop>add_tb</tabstop>
+  <tabstop>delete_tb</tabstop>
+  <tabstop>results_tbw</tabstop>
+  <tabstop>close_btn</tabstop>
+  <tabstop>ord_column_cmb</tabstop>
+  <tabstop>asc_rb</tabstop>
+  <tabstop>desc_rb</tabstop>
+  <tabstop>add_ord_col_tb</tabstop>
+  <tabstop>rem_ord_col_tb</tabstop>
+  <tabstop>clear_ord_cols_tb</tabstop>
+  <tabstop>ord_columns_lst</tabstop>
+  <tabstop>limit_edt</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

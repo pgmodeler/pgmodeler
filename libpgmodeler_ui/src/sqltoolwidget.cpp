@@ -50,6 +50,13 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
 
+	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
+	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
+	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
+	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
+	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
+	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
+
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
@@ -381,6 +388,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 		{
 			item=results_tbw->horizontalHeaderItem(col);
 			item->setToolTip(type_names[res.getColumnTypeId(col)]);
+			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
 		}
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
@@ -396,8 +404,8 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 
 					if(res.isColumnBinaryFormat(col))
 					{
-						//Binary columns can't be changed by user
-						item->setFlags(Qt::NoItemFlags);
+						//Binary columns can't be edited by user
+						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 						item->setText(trUtf8("[binary data]"));
 					}
 					else
@@ -744,32 +752,6 @@ void SQLToolWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 }
 
-void SQLToolWidget::showObjectData(QTreeWidgetItem *item)
-{
-	try
-	{
-		QString cmd;
-		ResultSet res;
-
-		cmd=QString("SELECT * FROM %1.%2;")
-				.arg(BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString()))
-				.arg(BaseObject::formatName(item->text(0)));
-
-		registerSQLCommand(sql_cmd_txt->toPlainText());
-		sql_cmd_txt->setText(cmd);
-		sql_cmd_conn.executeDMLCommand(cmd, res);
-
-		results_parent->setVisible(true);
-		msgoutput_lst->setVisible(false);
-
-		fillResultsTable(res);
-	}
-	catch(Exception &e)
-	{
-		showError(e);
-	}
-}
-
 void SQLToolWidget::clearAll(void)
 {
 	Messagebox msg_box;
@@ -843,7 +825,8 @@ void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
 				if(exec_action==drop_action || exec_action==drop_cascade_action)
 					dropObject(item,  exec_action==drop_cascade_action);
 				else if(exec_action==show_data_action)
-					showObjectData(item);
+					openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+											 item->text(0), item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
 			}
 		}
 		else
@@ -885,7 +868,7 @@ void SQLToolWidget::dropDatabase(void)
 	}
 }
 
-void SQLToolWidget::openDataGrid(void)
+void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
 	Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
 						 aux_conn=(*conn);
@@ -893,9 +876,10 @@ void SQLToolWidget::openDataGrid(void)
 
 	data_manip->setWindowModality(Qt::NonModal);
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->hide_views_chk->setChecked(hide_views);
 
 	aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-	data_manip->setAttributes(aux_conn);
+	data_manip->setAttributes(aux_conn, schema, table);
 	data_manip->show();
 }
 

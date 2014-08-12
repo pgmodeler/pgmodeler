@@ -498,7 +498,7 @@
              <string>Open the grid to visualize / edit data</string>
             </property>
             <property name="text">
-             <string>Data Grid</string>
+             <string>Data &amp;Grid</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -509,6 +509,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Alt+G</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -532,7 +535,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Load SQL script (Alt+L)</string>
+             <string>Load SQL script</string>
             </property>
             <property name="text">
              <string>&amp;Load</string>
@@ -578,7 +581,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Save SQL commands (Alt+S)</string>
+             <string>Save SQL commands</string>
             </property>
             <property name="text">
              <string>&amp;Save</string>
@@ -633,7 +636,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Run the specified SQL command (F5).</string>
+             <string>Run the specified SQL command</string>
             </property>
             <property name="text">
              <string>Run SQL</string>
@@ -673,7 +676,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Clear sql input field and results.</string>
+             <string>Clear sql input field and results</string>
             </property>
             <property name="text">
              <string>Clear All</string>
@@ -710,7 +713,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Export results to a CSV file (Alt+X).</string>
+             <string>Export results to a CSV file</string>
             </property>
             <property name="text">
              <string>E&amp;xport</string>
@@ -756,7 +759,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Shows the command history (Alt+H).</string>
+             <string>Shows the command history</string>
             </property>
             <property name="text">
              <string>&amp;History</string>

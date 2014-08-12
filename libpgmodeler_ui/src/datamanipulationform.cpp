@@ -20,6 +20,12 @@
 #include "sqltoolwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor("#C0FFC0"), QColor("#FFFFC0"), QColor("#FFC0C0")  };
+const unsigned DataManipulationForm::NO_OPERATION=0;
+const unsigned DataManipulationForm::OP_INSERT=1;
+const unsigned DataManipulationForm::OP_UPDATE=2;
+const unsigned DataManipulationForm::OP_DELETE=3;
+const QChar DataManipulationForm::UNESC_VALUE_START='<';
+const QChar	DataManipulationForm::UNESC_VALUE_END='>';
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -31,6 +37,13 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 															 GlobalAttributes::DIR_SEPARATOR +
 															 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 															 GlobalAttributes::CONFIGURATION_EXT);
+
+	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
+	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
+	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
+	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
+	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
+	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
@@ -48,6 +61,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
 	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
+	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
+
+	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
+	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(ord_columns_lst, &QListWidget::currentRowChanged,
 					[=](){ rem_ord_col_tb->setEnabled(ord_columns_lst->currentRow() >= 0); });
@@ -55,14 +72,14 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, &QTableWidget::itemPressed,
 					[=](){ SQLToolWidget::copySelection(results_tbw); });
 
+
 	connect(export_tb, &QToolButton::clicked,
 					[=](){ SQLToolWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged,
 					[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-									delete_tb->setEnabled(!sel_ranges.isEmpty() &&
-																				 (sel_ranges[0].leftColumn()==0 &&
-																					sel_ranges[sel_ranges.count()-1].rightColumn()==results_tbw->columnCount() - 1));	});
+									delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers
+																				&& !sel_ranges.isEmpty()); });
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -90,6 +107,10 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 
 		schema_cmb->setCurrentText(curr_schema);
 		table_cmb->setCurrentText(curr_table);
+		disableControlButtons();
+
+		if(!curr_table.isEmpty())
+			retrieveData();
 	}
 	catch(Exception &e)
 	{
@@ -122,7 +143,6 @@ void DataManipulationForm::listColumns(void)
 
 	if(table_cmb->currentIndex() > 0)
 	{
-		//QStringList col_names;
 		vector<attribs_map> cols;
 
 		cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
@@ -168,13 +188,20 @@ void DataManipulationForm::retrieveData(void)
 		connection.connect();
 		connection.executeDMLCommand(query, res);
 
-		SQLToolWidget::fillResultsTable(catalog, res, results_tbw, true);
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
+		SQLToolWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
 		rows_ret_lbl->setVisible(results_tbw->rowCount() > 0);
 		row_cnt_lbl->setVisible(results_tbw->rowCount() > 0);
 		row_cnt_lbl->setText(QString::number(results_tbw->rowCount()));
+
+		clearChangedRows();
+
+		if(results_tbw->rowCount()==0 && !pk_col_ids.empty())
+			insertRow();
+		else
+			results_tbw->setFocus();
 
 		connection.close();
 	}
@@ -193,8 +220,10 @@ void DataManipulationForm::disableControlButtons(void)
 	results_tbw->setRowCount(0);
 	results_tbw->setColumnCount(0);
 	no_pk_alert_frm->setVisible(false);
+	hint_frm->setVisible(false);
 	add_tb->setEnabled(false);
 	export_tb->setEnabled(false);
+	clearChangedRows();
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -314,38 +343,31 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 	}
 }
 
-QStringList DataManipulationForm::retrievePKColumns(const QString &schema, const QString &table)
+void DataManipulationForm::retrievePKColumns(const QString &schema, const QString &table)
 {
 	try
 	{
-		vector<attribs_map> pks, pk_cols;
-		QStringList col_names;
+		vector<attribs_map> pks;
 
 		//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
 		pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, "contype='p'"}});
 
 		no_pk_alert_frm->setVisible(pks.empty());
-		add_tb->setEnabled(table_cmb->currentData().toUInt()==OBJ_TABLE);
+		hint_frm->setVisible(!pks.empty());
+		add_tb->setEnabled(!pks.empty() && table_cmb->currentData().toUInt()==OBJ_TABLE);
+		pk_col_ids.clear();
 
 		if(!pks.empty())
 		{
 			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][ParsersAttributes::COLUMNS]);
-			vector<unsigned> col_ids;
 
-			for(auto id : col_str_ids)
-				col_ids.push_back(id.toUInt());
-
-			pk_cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids);
-
-			for(auto col : pk_cols)
-				col_names.push_back(col[ParsersAttributes::NAME]);
+			for(QString id : col_str_ids)
+				pk_col_ids.push_back(id.toInt() - 1);
 
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		}
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-		return(col_names);
 	}
 	catch(Exception &e)
 	{
@@ -361,6 +383,7 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 		QTableWidgetItem *item=nullptr, *header_item=results_tbw->verticalHeaderItem(row);
 		QString tooltip=trUtf8("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
+		int marked_cols=0;
 
 		if(operation==OP_DELETE)
 			tooltip=tooltip.arg(trUtf8("deleted"));
@@ -375,37 +398,52 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 
 		for(int col=0; col < results_tbw->columnCount(); col++)
 		{
-			item=results_tbw->item(row, col);			
-			item->setToolTip(tooltip);
+			item=results_tbw->item(row, col);
 
-			if(operation==NO_OPERATION || operation==OP_DELETE)
+			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
 			{
-				item->setFont(fnt);
-				item->setText(item->data(Qt::UserRole).toString());
-			}
+				item->setToolTip(tooltip);
 
-			if(operation==NO_OPERATION)
-				item->setBackground(prev_row_colors[row]);
-			else
-			{
-				if(header_item->data(Qt::UserRole)!=OP_DELETE &&
-					 header_item->data(Qt::UserRole)!=OP_UPDATE)
-					prev_row_colors[row]=item->background();
+				if(operation==NO_OPERATION || operation==OP_DELETE)
+				{
+					item->setFont(fnt);
+					item->setText(item->data(Qt::UserRole).toString());
+				}
 
-				item->setBackground(ROW_COLORS[operation - 1]);
+				if(operation==NO_OPERATION)
+					item->setBackground(prev_row_colors[row]);
+				else
+				{
+					if(header_item->data(Qt::UserRole)!=OP_DELETE &&
+						 header_item->data(Qt::UserRole)!=OP_UPDATE)
+						prev_row_colors[row]=item->background();
+
+					item->setBackground(ROW_COLORS[operation - 1]);
+				}
+
+				marked_cols++;
 			}
 		}
 
-		if(operation==NO_OPERATION)
-			changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
-		else
-			changed_rows.push_back(row);
+		if(marked_cols > 0)
+		{
+			auto itr=std::find(changed_rows.begin(), changed_rows.end(), row);
 
-		//results_tbw->verticalHeaderItem(row)->setData(Qt::UserRole, operation);
-		header_item->setData(Qt::UserRole, operation);
+			if(operation==NO_OPERATION && itr!=changed_rows.end())
+			{
+				changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
+				prev_row_colors.erase(row);
+			}
+			else if(operation!=NO_OPERATION && itr==changed_rows.end())
+				changed_rows.push_back(row);
+
+			header_item->setData(Qt::UserRole, operation);
+			undo_tb->setEnabled(!changed_rows.empty());
+			save_tb->setEnabled(!changed_rows.empty());
+			std::sort(changed_rows.begin(), changed_rows.end());
+		}
+
 		results_tbw->blockSignals(false);
-
-		undo_tb->setEnabled(!changed_rows.empty());
 	}
 }
 
@@ -449,53 +487,301 @@ void DataManipulationForm::markDeleteOnRows(void)
 			markOperationOnRow(OP_DELETE, row);
 	}
 
-	for(unsigned idx=0; idx < ins_rows.size(); idx++)
-		results_tbw->removeRow(ins_rows[0]);
-
+	removeNewRows(ins_rows);
 	results_tbw->clearSelection();
 }
 
 void DataManipulationForm::insertRow(void)
 {
 	int row=results_tbw->rowCount();
+	QTableWidgetItem *item=nullptr;
 
 	results_tbw->blockSignals(true);
 	results_tbw->insertRow(row);
 
 	for(int col=0; col < results_tbw->columnCount(); col++)
-		results_tbw->setItem(row, col, new QTableWidgetItem);
+	{
+		item=new QTableWidgetItem;
 
-	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem("*"));
+		//bytea (binary data) columns can't be handled this way the new item is disabled
+		if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)=="bytea")
+		{
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			item->setText(trUtf8("[binary data]"));
+		}
+		else
+			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+		results_tbw->setItem(row, col, item);
+	}
+
+	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 	results_tbw->blockSignals(false);
-	results_tbw->scrollToItem(results_tbw->item(row, 0));
+	results_tbw->setFocus();
 
 	markOperationOnRow(OP_INSERT, row);
+
+	results_tbw->clearSelection();
+	item=results_tbw->item(row, 0);
+	results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
+	results_tbw->editItem(item);
+	hint_frm->setVisible(true);
+}
+
+void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
+{
+	if(!ins_rows.empty())
+	{
+		unsigned idx=0, cnt=ins_rows.size();
+		int row_idx=0;
+		vector<int>::reverse_iterator itr, itr_end;
+
+		for(idx=0; idx < cnt; idx++)
+			markOperationOnRow(NO_OPERATION, ins_rows[idx]);
+
+		for(idx=0; idx < cnt; idx++)
+			results_tbw->removeRow(ins_rows[0]);
+
+		row_idx=results_tbw->rowCount() - 1;
+		itr=changed_rows.rbegin();
+		itr_end=changed_rows.rend();
+
+		while(itr!=itr_end)
+		{
+			if((*itr) > row_idx)
+			{
+				(*itr)=row_idx;
+				results_tbw->verticalHeaderItem(row_idx)->setText(QString::number(row_idx + 1));
+				row_idx--;
+			}
+			else break;
+
+			itr++;
+		}
+	}
+}
+
+void DataManipulationForm::clearChangedRows(void)
+{
+	changed_rows.clear();
+	prev_row_colors.clear();
+	undo_tb->setEnabled(false);
+	save_tb->setEnabled(false);
 }
 
 void DataManipulationForm::undoOperations(void)
 {
 	QTableWidgetItem *item=nullptr;
-	vector<int> rows=changed_rows;
+	vector<int> rows, ins_rows;
+	QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
+
+	if(!sel_range.isEmpty() &&
+		 sel_range[0].leftColumn()==0 && sel_range[0].rightColumn()==results_tbw->columnCount()-1)
+	{
+		for(int row=sel_range[0].topRow(); row <= sel_range[0].bottomRow(); row++)
+		{
+			if(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt()==OP_INSERT)
+				ins_rows.push_back(row);
+			else
+				rows.push_back(row);
+		}
+	}
+	else
+	{
+		sel_range.clear();
+		rows=changed_rows;
+	}
 
 	for(auto row : rows)
 	{
 		item=results_tbw->verticalHeaderItem(row);
-		if(item && item->data(Qt::UserRole)!=OP_INSERT)
+		if(item->data(Qt::UserRole).toUInt()!=OP_INSERT)
 			markOperationOnRow(NO_OPERATION, row);
 	}
 
-	if(results_tbw->rowCount() > 0 &&
-		 results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OP_INSERT)
+	if(sel_range.isEmpty())
 	{
-		do
+		if(results_tbw->rowCount() > 0 &&
+			 results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OP_INSERT)
 		{
-			results_tbw->removeRow(results_tbw->rowCount()-1);
-			item=results_tbw->verticalHeaderItem(results_tbw->rowCount()-1);
+			do
+			{
+				results_tbw->removeRow(results_tbw->rowCount()-1);
+				item=results_tbw->verticalHeaderItem(results_tbw->rowCount()-1);
+			}
+			while(item && item->data(Qt::UserRole)==OP_INSERT);
 		}
-		while(item && item->data(Qt::UserRole)==OP_INSERT);
+
+		clearChangedRows();
+	}
+	else
+		removeNewRows(ins_rows);
+
+
+	results_tbw->clearSelection();
+	hint_frm->setVisible(results_tbw->rowCount() > 0);
+}
+
+void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
+{
+	if(qApp->mouseButtons()==Qt::NoButton &&
+		 curr_row==0 && curr_col==0 &&
+		 prev_row==results_tbw->rowCount()-1 && prev_col==results_tbw->columnCount()-1)
+		insertRow();
+}
+
+void DataManipulationForm::saveChanges(void)
+{
+	int row=0;
+
+	try
+	{
+		QString cmd;
+		Messagebox msg_box;
+
+		msg_box.show(trUtf8("Confirmation"),
+								 trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
+								 Messagebox::ALERT_ICON,
+								 Messagebox::YES_NO_BUTTONS);
+
+		if(msg_box.result()==QDialog::Accepted)
+		{
+
+			//Forcing the cell editor to be closed by selecting an unexistent cell and clearing the selection
+			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);
+
+			connection.connect();
+			connection.executeDDLCommand("START TRANSACTION");
+
+			for(unsigned idx=0; idx < changed_rows.size(); idx++)
+			{
+				row=changed_rows[idx];
+				cmd=getDMLCommand(row);
+				connection.executeDDLCommand(cmd);
+			}
+
+			connection.executeDDLCommand("COMMIT");
+			connection.close();
+
+			retrieveData();
+			undo_tb->setEnabled(false);
+			save_tb->setEnabled(false);
+		}
+	}
+	catch(Exception &e)
+	{
+		map<unsigned, QString> op_names={{ OP_DELETE, trUtf8("delete") },
+																		 { OP_UPDATE, trUtf8("update") },
+																		 { OP_INSERT, trUtf8("insert") }};
+
+		QString tab_name=QString("%1.%2")
+										 .arg(schema_cmb->currentText())
+										 .arg(table_cmb->currentText());
+
+		unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
+
+		if(connection.isStablished())
+		{
+			connection.executeDDLCommand("ROLLBACK");
+			connection.close();
+		}
+
+		results_tbw->selectRow(row);
+		results_tbw->scrollToItem(results_tbw->item(row, 0));
+
+		throw Exception(Exception::getErrorMessage(ERR_ROW_DATA_NOT_MANIPULATED)
+										.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
+										ERR_ROW_DATA_NOT_MANIPULATED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+QString DataManipulationForm::getDMLCommand(int row)
+{
+	if(row < 0 || row >= results_tbw->rowCount())
+		return("");
+
+	QString tab_name=QString("\"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText()),
+					upd_cmd="UPDATE %1 SET %2 WHERE %3",
+					del_cmd="DELETE FROM %1 WHERE %2",
+					ins_cmd="INSERT INTO %1(%2) VALUES (%3)",
+					fmt_cmd;
+	QTableWidgetItem *item=nullptr;
+	unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
+	QStringList val_list, col_list, flt_list;
+	QString pk_col_name, col_name, value;
+
+	if(op_type==OP_DELETE || op_type==OP_UPDATE)
+	{
+		for(int pk_col_id : pk_col_ids)
+		{
+			pk_col_name=results_tbw->horizontalHeaderItem(pk_col_id)->text();
+			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col_name).arg(results_tbw->item(row, pk_col_id)->data(Qt::UserRole).toString()));
+		}
 	}
 
-	changed_rows.clear();
-	prev_row_colors.clear();
-	undo_tb->setEnabled(false);
+	if(op_type==OP_DELETE)
+	{
+		fmt_cmd=QString(del_cmd).arg(tab_name).arg(flt_list.join(" AND "));
+	}
+	else if(op_type==OP_UPDATE || op_type==OP_INSERT)
+	{
+		fmt_cmd=(op_type==OP_UPDATE ? upd_cmd : ins_cmd);
+
+		for(int col=0; col < results_tbw->columnCount(); col++)
+		{
+			item=results_tbw->item(row, col);
+
+			//bytea columns are ignored
+			if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
+			{
+				value=item->text();
+				col_name=results_tbw->horizontalHeaderItem(col)->text();
+
+				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
+				{
+					if((value.startsWith(UNESC_VALUE_START) && value.endsWith(QString("\\") + UNESC_VALUE_END)) ||
+						 (value.startsWith(UNESC_VALUE_START) && !value.endsWith(UNESC_VALUE_END)) ||
+						 (!value.startsWith(UNESC_VALUE_START) && !value.endsWith(QString("\\") + UNESC_VALUE_END) && value.endsWith(UNESC_VALUE_END)))
+						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
+														.arg(row + 1).arg(col_name),
+														ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+					col_list.push_back(QString("\"%1\"").arg(col_name));
+
+					if(value.isEmpty())
+					{
+						value="DEFAULT";
+					}
+					else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+					{
+						value.remove(0,1);
+						value.remove(value.length()-1, 1);
+					}
+					else
+					{
+						value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
+						value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+						value="'" + value + "'";
+					}
+
+					if(op_type==OP_INSERT)
+						val_list.push_back(value);
+					else
+						val_list.push_back(QString("%1=%2").arg(col_name).arg(value));
+				}
+			}
+		}
+
+		if(col_list.isEmpty())
+			return("");
+		else
+		{
+			if(op_type==OP_UPDATE)
+				fmt_cmd=fmt_cmd.arg(tab_name).arg(val_list.join(", ")).arg(flt_list.join(" AND "));
+			else
+				fmt_cmd=fmt_cmd.arg(tab_name).arg(col_list.join(", ")).arg(val_list.join(", "));
+		}
+	}
+
+	return(fmt_cmd);
 }

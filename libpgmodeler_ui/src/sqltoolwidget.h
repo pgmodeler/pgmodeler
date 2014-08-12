@@ -52,7 +52,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Stores the actions to drop and show object's data
 		QMenu handle_menu;
 
-		QAction *copy_action, *drop_action, *drop_cascade_action, *show_data_action, *refresh_action;
+		QAction *copy_action, *drop_action, *drop_cascade_action,
+						*show_data_action, *refresh_action;
 
 		/*! brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
@@ -60,9 +61,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		//! brief Drops the object represented by the specified item
 		void dropObject(QTreeWidgetItem *item, bool cascade);
-
-		//! brief Shows the data of the object represented by the specified item
-		void showObjectData(QTreeWidgetItem *item);
 
 		//! brief Stores the command on the sql command history
 		void registerSQLCommand(const QString &cmd);
@@ -131,7 +129,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void dropDatabase(void);
 
 		//! brief Show the widget to handle data in tables
-		void openDataGrid(void);
+		void openDataGrid(const QString &schema="", const QString &table="", bool hide_views=true);
 
 		void enableObjectTreeControls(bool enable);
 

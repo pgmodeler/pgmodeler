@@ -199,6 +199,8 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 		str_aux.replace(")", ")</em>");
 	}
 
+	str_aux.replace("\n", "<br/>");
+
   this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
