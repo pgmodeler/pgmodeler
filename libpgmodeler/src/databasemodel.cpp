@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "databasemodel.h"
 #include "pgmodelerns.h"
 
-unsigned DatabaseModel::dbmodel_id=20000;
+unsigned DatabaseModel::dbmodel_id=2000;
 
 DatabaseModel::DatabaseModel(void)
 {
@@ -652,17 +652,10 @@ unsigned DatabaseModel::getObjectCount(void)
 
 QString DatabaseModel::getLocalization(unsigned localiz_id)
 {
-	switch(localiz_id)
-	{
-		case LC_CTYPE:
-			return(localizations[0]);
-		break;
-		case LC_COLLATE:
-			return(localizations[1]);
-		default:
-			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		break;
-	}
+	if(localiz_id > Collation::_LC_COLLATE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(localizations[localiz_id]);
 }
 
 int DatabaseModel::getConnectionLimit(void)
@@ -8085,6 +8078,36 @@ void DatabaseModel::setObjectsModified(vector<ObjectType> types)
         itr++;
       }
     }
+	}
+}
+
+void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
+{
+	vector<ObjectType> sel_types;
+	vector<BaseObject *> *list=nullptr;
+
+	if(types.empty())
+		sel_types=BaseObject::getObjectTypes(false);
+	else
+	{
+		ObjectType tab_obj_types[]={OBJ_COLUMN, OBJ_CONSTRAINT,
+																OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX};
+		for(unsigned i=0; i < 5; i++)
+			sel_types.erase(std::find(sel_types.begin(), sel_types.end(), tab_obj_types[i]));
+
+		sel_types=types;
+	}
+
+	while(!sel_types.empty())
+	{
+		list=getObjectList(sel_types.back());
+		sel_types.pop_back();
+
+		if(list)
+		{
+			for(auto obj : *list)
+				obj->setCodeInvalidated(true);
+		}
 	}
 }
 

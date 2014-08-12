@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +64,10 @@ Connection::Connection(const QString &server_fqdn, const QString &port, const QS
 Connection::~Connection(void)
 {
 	if(connection)
+	{
 		PQfinish(connection);
+		connection=nullptr;
+	}
 }
 
 void Connection::setConnectionParam(const QString &param, const QString &value)
@@ -313,5 +316,6 @@ void Connection::operator = (Connection &conn)
 
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
+	this->connection=nullptr;
 }
 

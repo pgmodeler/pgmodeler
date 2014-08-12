@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,12 +48,13 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
+		int exec(void){ return(QDialog::Rejected); }
 
 	public:
 		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void show(ModelWidget *model);
+		void exec(ModelWidget *model);
 		void hideEvent(QHideEvent *);
 
 	private slots:

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,17 @@
 */
 
 #include "taskprogresswidget.h"
+#include "baseobject.h"
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
+
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+
+	for(auto obj_tp : obj_types)
+		addIcon(obj_tp, QIcon(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_tp) + QString(".png")));
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
@@ -45,6 +51,11 @@ void TaskProgressWidget::show(void)
 	eventLoop.exec(QEventLoop::AllEvents);
 }
 
+void TaskProgressWidget::updateProgress(int progress, unsigned icon_id)
+{
+	updateProgress(progress, "", icon_id);
+}
+
 void TaskProgressWidget::updateProgress(int progress, QString text, unsigned icon_id)
 {
 	if(progress > progress_pb->maximum())
@@ -52,11 +63,14 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 
 	progress_pb->setValue(progress);
 
-	text.replace(text.indexOf('`'), 1 ,"<strong>");
-	text.replace(text.indexOf('\''), 1,"</strong>");
-	text.replace(text.indexOf('`'), 1 ,"<em>");
-	text.replace(text.indexOf('\''), 1,"</em>");
-	text_lbl->setText(text);
+	if(!text.isEmpty())
+	{
+		text.replace(text.indexOf('`'), 1 ,"<strong>");
+		text.replace(text.indexOf('\''), 1,"</strong>");
+		text.replace(text.indexOf('`'), 1 ,"<em>");
+		text.replace(text.indexOf('\''), 1,"</em>");
+		text_lbl->setText(text);
+	}
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));

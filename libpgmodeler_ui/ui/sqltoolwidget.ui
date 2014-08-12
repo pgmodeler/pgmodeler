@@ -81,7 +81,7 @@
          <item>
           <widget class="QToolButton" name="connect_tb">
            <property name="toolTip">
-            <string>Connect to server.</string>
+            <string>Connect to server</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -89,6 +89,29 @@
            <property name="icon">
             <iconset resource="../res/resources.qrc">
              <normaloff>:/icones/icones/conexaobd.png</normaloff>:/icones/icones/conexaobd.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="disconnect_tb">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Disconnect from server</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/disconnect.png</normaloff>:/icones/icones/disconnect.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -116,6 +139,18 @@
            <property name="editable">
             <bool>false</bool>
            </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::InsertAlphabetically</enum>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item>
@@ -124,7 +159,7 @@
             <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string>Update the objects tree.</string>
+            <string>Update the objects tree with the currently selected database</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -141,6 +176,32 @@
            </property>
            <property name="shortcut">
             <string>Ctrl+F5</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="drop_db_tb">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Drop the selected database</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Shift+Del</string>
            </property>
           </widget>
          </item>
@@ -418,6 +479,46 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
+           <widget class="QToolButton" name="data_grid_tb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>27</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Open the grid to visualize / edit data</string>
+            </property>
+            <property name="text">
+             <string>Data &amp;Grid</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/result.png</normaloff>:/icones/icones/result.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Alt+G</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="load_tb">
             <property name="enabled">
              <bool>false</bool>
@@ -434,7 +535,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Load SQL script (Alt+L)</string>
+             <string>Load SQL script</string>
             </property>
             <property name="text">
              <string>&amp;Load</string>
@@ -480,7 +581,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Save SQL commands (Alt+S)</string>
+             <string>Save SQL commands</string>
             </property>
             <property name="text">
              <string>&amp;Save</string>
@@ -535,7 +636,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Run the specified SQL command (F5).</string>
+             <string>Run the specified SQL command</string>
             </property>
             <property name="text">
              <string>Run SQL</string>
@@ -575,7 +676,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Clear sql input field and results.</string>
+             <string>Clear sql input field and results</string>
             </property>
             <property name="text">
              <string>Clear All</string>
@@ -612,14 +713,14 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Export results to a CSV file (Alt+X).</string>
+             <string>Export results to a CSV file</string>
             </property>
             <property name="text">
              <string>E&amp;xport</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/result.png</normaloff>:/icones/icones/result.png</iconset>
+              <normaloff>:/icones/icones/exportdata.png</normaloff>:/icones/icones/exportdata.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -658,7 +759,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Shows the command history (Alt+H).</string>
+             <string>Shows the command history</string>
             </property>
             <property name="text">
              <string>&amp;History</string>
@@ -887,25 +988,34 @@
               <bool>true</bool>
              </property>
              <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
+              <enum>QAbstractItemView::ContiguousSelection</enum>
              </property>
              <property name="sortingEnabled">
               <bool>false</bool>
              </property>
+             <attribute name="horizontalHeaderHighlightSections">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>30</number>
+             </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
-              <bool>false</bool>
+              <bool>true</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
              </attribute>
+             <attribute name="verticalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
              <attribute name="verticalHeaderDefaultSectionSize">
-              <number>15</number>
+              <number>25</number>
              </attribute>
              <attribute name="verticalHeaderMinimumSectionSize">
-              <number>20</number>
+              <number>25</number>
              </attribute>
              <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
@@ -922,6 +1032,19 @@
              </column>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="row_cnt_lbl">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="rows_ret_lbl">
              <property name="sizePolicy">
@@ -930,30 +1053,11 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-              </font>
-             </property>
              <property name="text">
               <string>Rows returned: </string>
              </property>
              <property name="indent">
               <number>-1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="row_cnt_lbl">
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>0</string>
              </property>
             </widget>
            </item>
@@ -1002,7 +1106,6 @@
  </widget>
  <tabstops>
   <tabstop>connections_cmb</tabstop>
-  <tabstop>connect_tb</tabstop>
   <tabstop>database_cmb</tabstop>
   <tabstop>refresh_tb</tabstop>
   <tabstop>hide_sys_objs_chk</tabstop>

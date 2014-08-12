@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ void CrashHandler::generateReport(void)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-    msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file <strong>%1</strong> to <em>%2</em> in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), Messagebox::INFO_ICON);
+		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file <strong>%1</strong> to <em>%2</em> in order be debugged. Thank you for the collaboration!").arg(crash_file).arg(GlobalAttributes::CRASH_REPORT_EMAIL), Messagebox::INFO_ICON);
 		this->close();
 	}
 }

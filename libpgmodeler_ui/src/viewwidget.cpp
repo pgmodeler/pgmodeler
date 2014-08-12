@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,9 +19,6 @@
 #include "viewwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
-
-extern RuleWidget *rule_wgt;
-extern TriggerWidget *trigger_wgt;
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
@@ -185,18 +182,17 @@ void ViewWidget::showTableObjectForm(ObjectType obj_type)
 
 	view=dynamic_cast<View *>(this->object);
 
-	switch(obj_type)
+	if(obj_type==OBJ_TRIGGER)
 	{
-		case OBJ_TRIGGER:
-			trigger_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
-			trigger_wgt->show();
-		break;
-
-		default:
-		case OBJ_RULE:
-			rule_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
-			rule_wgt->show();
-		break;
+		TriggerWidget trigger_wgt(this);
+		trigger_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
+		trigger_wgt.show();
+	}
+	else
+	{
+		RuleWidget rule_wgt(this);
+		rule_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
+		rule_wgt.show();
 	}
 }
 
@@ -797,9 +793,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-    //op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
-    //op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

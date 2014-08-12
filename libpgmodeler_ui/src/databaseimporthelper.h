@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,9 +40,7 @@ class DatabaseImportHelper: public QObject {
 		//! brief Random number generator engine used to generate random colors for imported schemas
 		default_random_engine rand_num_engine;
 
-		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-    static const QString ARRAY_PATTERN,
-    UNKNOWN_OBJECT_OID_XML;
+		static const QString UNKNOWN_OBJECT_OID_XML;
 
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */
@@ -156,14 +154,6 @@ class DatabaseImportHelper: public QObject {
 		void createPermission(attribs_map &attribs);
 		void createTableInheritances(void);
 		void createEventTrigger(attribs_map &attribs);
-
-		//! \brief Parse a PostgreSQL array value and return the elements in a string list
-		QStringList parseArrayValues(const QString array_val);
-
-		/*! \brief Parse a function's default value and return the elements in a string list.
-		It can be specified the string delimiter as well the value separator if the input default value
-		contains several values */
-		QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */

@@ -266,7 +266,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Copyright 2006-2014 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:rkhaotix@gmail.com&quot;&gt;&lt;span style=&quot;color:#0057ae;&quot;&gt;rkhaotix@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;</string>
+           <string>Copyright 2006-2014 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot;color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;</string>
           </property>
           <property name="textFormat">
            <enum>Qt::AutoText</enum>

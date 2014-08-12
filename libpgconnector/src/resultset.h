@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -94,6 +94,9 @@ class ResultSet {
 
   //! \brief Returns the name of the column specified by it's index
   QString getColumnName(int column_idx);
+
+	//! \brief Returns the type OID of the column specified by it's index
+	unsigned getColumnTypeId(int column_idx);
 
   //! \brief Returns the index of the column specified by it's name
   int getColumnIndex(const QString &column_name);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 \brief Implements the operation to visualize object's source code.
 */
 
-#ifndef CODIGOFONTE_WIDGET_H
-#define CODIGOFONTE_WIDGET_H
+#ifndef SOURCE_CODE_WIDGET_H
+#define SOURCE_CODE_WIDGET_H
 
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"

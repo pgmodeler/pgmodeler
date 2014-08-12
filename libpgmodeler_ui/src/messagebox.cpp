@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -198,6 +198,8 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 		str_aux.replace("(", "<em>(");
 		str_aux.replace(")", ")</em>");
 	}
+
+	str_aux.replace("\n", "<br/>");
 
   this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }

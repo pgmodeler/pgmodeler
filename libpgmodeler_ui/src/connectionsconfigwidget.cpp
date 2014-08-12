@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,14 +47,24 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(par
 
 ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
 {
-	//Destroy all the loaded connections
-	while(connections_cmb->count() > 0)
-		this->removeConnection();
+	destroyConnections();
 }
 
 void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 {
 	this->newConnection();
+}
+
+void ConnectionsConfigWidget::destroyConnections(void)
+{
+	Connection *conn=nullptr;
+
+	while(connections_cmb->count() > 0)
+	{
+		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(0).value<void *>());
+		connections_cmb->removeItem(0);
+		delete(conn);
+	}
 }
 
 void ConnectionsConfigWidget::loadConfiguration(void)
@@ -65,9 +75,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		map<QString, attribs_map >::iterator itr, itr_end;
 		Connection *conn=nullptr;
 
-		//Destroy all the loaded connections
-		while(connections_cmb->count() > 0)
-			this->removeConnection();
+		destroyConnections();
 
 		key_attribs.push_back(ParsersAttributes::ALIAS);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);

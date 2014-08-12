@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 
 using namespace std;
 
-const int ERROR_COUNT=216;
+static const int ERROR_COUNT=218;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -266,6 +266,8 @@ enum ErrorType {
   ERR_INV_USE_TMPNAMES_EXPORT_OPT,
 	ERR_INV_CONV_INTEGER_TO_SERIAL,
 	ERR_ASG_INV_EVENT_TRIGGER_VARIABLE,
+	ERR_ROW_DATA_NOT_MANIPULATED,
+	ERR_MALFORMED_UNESCAPED_VALUE
 };
 
 class Exception {

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 #include "codecompletionwidget.h"
+#include "parameterwidget.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
@@ -77,7 +78,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void showParameterForm(void);
 
 		//! \brief Shows the configured parameter on the table that called the form
-		void handleParameter(int result);
+		void handleParameter(Parameter param, int result);
 
 	public slots:
 		void applyConfiguration(void);

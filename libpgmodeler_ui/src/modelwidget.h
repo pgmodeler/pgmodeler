@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class ModelWidget: public QWidget {
     NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Message box used to show error/confirmation/alert messages
-		Messagebox msg_box;
+		//Messagebox msg_box;
 
 		//! \brief Current zoom aplied to the scene
 		float current_zoom;
@@ -352,6 +352,9 @@ private slots:
 		void s_objectRemoved(void);
 		void s_zoomModified(float);
 		void s_modelResized(void);
+
+		//! \brief Signal emitted whenever a object is created / edited using the form
+		void s_objectManipulated(void);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

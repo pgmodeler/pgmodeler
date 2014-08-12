@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -454,6 +454,10 @@ class DatabaseModel:  public QObject, public BaseObject {
     /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
      graphical objects to be marked */
     void setObjectsModified(vector<ObjectType> types={});
+
+		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
+		 graphical objects to be marked */
+		void setCodesInvalidated(vector<ObjectType> types={});
 
 		/*! \brief Updates the user type names which belongs to the passed schema. This method must be executed whenever
 		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally

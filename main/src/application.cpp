@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,11 +88,13 @@ bool Application::notify(QObject *receiver, QEvent *event)
   }
   catch(Exception &e)
   {
+		Messagebox msg_box;
     msg_box.show(e);
     return(false);
   }
   catch(...)
   {
+		Messagebox msg_box;
     msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
     return(false);
   }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -443,7 +443,8 @@ namespace ParsersAttributes {
 	CONNECTION="connection",
 	MODE="mode",
 	PATTERNS="patterns",
-	NAME_PATTERNS="name-patterns";
+	NAME_PATTERNS="name-patterns",
+	CUSTOM_FILTER="custom-filter";
 }
 
 #endif

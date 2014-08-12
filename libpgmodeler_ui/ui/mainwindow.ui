@@ -136,6 +136,9 @@
            <pointsize>8</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Toggle the model objects widget</string>
+         </property>
          <property name="text">
           <string>O&amp;bjects</string>
          </property>
@@ -166,6 +169,9 @@
           <font>
            <pointsize>8</pointsize>
           </font>
+         </property>
+         <property name="toolTip">
+          <string>Toogle the model validation widgets</string>
          </property>
          <property name="text">
           <string>&amp;Validation</string>
@@ -198,6 +204,9 @@
            <pointsize>8</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Toggle the operation history widget</string>
+         </property>
          <property name="text">
           <string>&amp;Operations</string>
          </property>
@@ -228,6 +237,9 @@
           <font>
            <pointsize>8</pointsize>
           </font>
+         </property>
+         <property name="toolTip">
+          <string>Toggle the object finder</string>
          </property>
          <property name="text">
           <string>Find Object</string>
@@ -327,8 +339,11 @@
            <pointsize>8</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Toggle the SQL execution widget</string>
+         </property>
          <property name="text">
-          <string>SQL Tool</string>
+          <string>SQL &amp;Tool</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -341,7 +356,7 @@
           </size>
          </property>
          <property name="shortcut">
-          <string>Alt+Q</string>
+          <string>Alt+T</string>
          </property>
          <property name="checkable">
           <bool>true</bool>

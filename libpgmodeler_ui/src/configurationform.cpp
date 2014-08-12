@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,12 +56,12 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	confs_stw->widget(RELATIONSHIPS_CONF_WGT)->setLayout(layout);
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
+	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 }
 
-void ConfigurationForm::close(void)
+void ConfigurationForm::reject(void)
 {
 	try
 	{
@@ -104,7 +104,10 @@ void ConfigurationForm::loadConfiguration(void)
 	catch(Exception &e)
 	{
 		if(e.getErrorType()==ERR_PLUGINS_NOT_LOADED)
+		{
+			Messagebox msg_box;
 			msg_box.show(e);
+		}
 		else
 			throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -112,6 +115,7 @@ void ConfigurationForm::loadConfiguration(void)
 
 void ConfigurationForm::restoreDefaults(void)
 {
+	Messagebox msg_box;
 	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
 									Messagebox::CONFIRM_ICON,

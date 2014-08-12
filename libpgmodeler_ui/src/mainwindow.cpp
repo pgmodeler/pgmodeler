@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,80 +17,9 @@
 */
 
 #include "mainwindow.h"
-#include "textboxwidget.h"
-#include "sourcecodewidget.h"
-#include "databasewidget.h"
-#include "schemawidget.h"
-#include "rolewidget.h"
-#include "permissionwidget.h"
-#include "tablespacewidget.h"
-#include "languagewidget.h"
-#include "functionwidget.h"
-#include "parameterwidget.h"
-#include "castwidget.h"
-#include "conversionwidget.h"
-#include "domainwidget.h"
-#include "aggregatewidget.h"
-#include "sequencewidget.h"
-#include "operatorwidget.h"
-#include "operatorfamilywidget.h"
-#include "operatorclasswidget.h"
-#include "typewidget.h"
-#include "viewwidget.h"
-#include "columnwidget.h"
-#include "constraintwidget.h"
-#include "rulewidget.h"
-#include "triggerwidget.h"
-#include "indexwidget.h"
-#include "relationshipwidget.h"
-#include "tablewidget.h"
-#include "collationwidget.h"
-#include "extensionwidget.h"
-#include "tagwidget.h"
-#include "taskprogresswidget.h"
-#include "objectdepsrefswidget.h"
 #include "configurationform.h"
-#include "objectrenamewidget.h"
-#include "sqlappendwidget.h"
-#include "eventtriggerwidget.h"
 
-//Global forms and widgets
-TextboxWidget *textbox_wgt=nullptr;
-SourceCodeWidget *sourcecode_wgt=nullptr;
-DatabaseWidget *database_wgt=nullptr;
-SchemaWidget *schema_wgt=nullptr;
-RoleWidget *role_wgt=nullptr;
-PermissionWidget *permission_wgt=nullptr;
-TablespaceWidget *tablespace_wgt=nullptr;
-LanguageWidget *language_wgt=nullptr;
-ParameterWidget *parameter_wgt=nullptr;
-FunctionWidget *function_wgt=nullptr;
-CastWidget *cast_wgt=nullptr;
-ConversionWidget *conversion_wgt=nullptr;
-DomainWidget *domain_wgt=nullptr;
-AggregateWidget *aggregate_wgt=nullptr;
-SequenceWidget *sequence_wgt=nullptr;
-OperatorWidget *operator_wgt=nullptr;
-OperatorFamilyWidget *opfamily_wgt=nullptr;
-OperatorClassWidget *opclass_wgt=nullptr;
-TypeWidget *type_wgt=nullptr;
-ViewWidget *view_wgt=nullptr;
-ColumnWidget *column_wgt=nullptr;
-ConstraintWidget *constraint_wgt=nullptr;
-RuleWidget *rule_wgt=nullptr;
-TriggerWidget *trigger_wgt=nullptr;
-IndexWidget *index_wgt=nullptr;
-RelationshipWidget *relationship_wgt=nullptr;
-TableWidget *table_wgt=nullptr;
-CollationWidget *collation_wgt=nullptr;
-ExtensionWidget *extension_wgt=nullptr;
-TagWidget *tag_wgt=nullptr;
-TaskProgressWidget *task_prog_wgt=nullptr;
-ObjectDepsRefsWidget *deps_refs_wgt=nullptr;
 ConfigurationForm *configuration_form=nullptr;
-ObjectRenameWidget *objectrename_wgt=nullptr;
-SQLAppendWidget *sqlappend_wgt=nullptr;
-EventTriggerWidget *eventtrigger_wgt=nullptr;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -99,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	attribs_map attribs;
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
-	vector<ObjectType> obj_types=BaseObject::getObjectTypes(true);
 
 	central_wgt=nullptr;
 	setupUi(this);
@@ -111,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	try
 	{
-		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		configuration_form->loadConfiguration();
 
     plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
@@ -147,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				}
 				catch(Exception &e)
 				{
+					Messagebox msg_box;
 					msg_box.show(e);
 				}
 			}
@@ -160,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 
@@ -182,10 +112,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		about_wgt=new AboutWidget(this);
 		update_notifier_wgt=new UpdateNotifierWidget(this);
-		model_export_form=new ModelExportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		model_fix_form=new ModelFixForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		db_import_form=new DatabaseImportForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		restoration_form=new ModelRestorationForm(this, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
@@ -193,53 +120,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
 		sql_tool_wgt=new SQLToolWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
-
-		permission_wgt=new PermissionWidget(this);
-		sourcecode_wgt=new SourceCodeWidget(this);
-		textbox_wgt=new TextboxWidget(this);
-		database_wgt=new DatabaseWidget(this);
-		schema_wgt=new SchemaWidget(this);
-		role_wgt=new RoleWidget(this);
-		tablespace_wgt=new TablespaceWidget(this);
-		language_wgt=new LanguageWidget(this);
-		parameter_wgt=new ParameterWidget(this);
-		function_wgt=new FunctionWidget(this);
-		cast_wgt=new CastWidget(this);
-		conversion_wgt=new ConversionWidget(this);
-		domain_wgt=new DomainWidget(this);
-		aggregate_wgt=new AggregateWidget(this);
-		sequence_wgt=new SequenceWidget(this);
-		operator_wgt=new OperatorWidget(this);
-		opfamily_wgt=new OperatorFamilyWidget(this);
-		opclass_wgt=new OperatorClassWidget(this);
-		type_wgt=new TypeWidget(this);
-		view_wgt=new ViewWidget(this);
-		column_wgt=new ColumnWidget(this);
-		constraint_wgt=new ConstraintWidget(this);
-		rule_wgt=new RuleWidget(this);
-		trigger_wgt=new TriggerWidget(this);
-		index_wgt=new IndexWidget(this);
-		relationship_wgt=new RelationshipWidget(this);
-		table_wgt=new TableWidget(this);
-		collation_wgt=new CollationWidget(this);
-		extension_wgt=new ExtensionWidget(this);
-		tag_wgt=new TagWidget(this);
-		task_prog_wgt=new TaskProgressWidget();
-		deps_refs_wgt=new ObjectDepsRefsWidget(this);
-		objectrename_wgt=new ObjectRenameWidget(this);
-		sqlappend_wgt=new SQLAppendWidget(this);
-		eventtrigger_wgt=new EventTriggerWidget(this);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-
-	for(auto obj_tp : obj_types)
-		task_prog_wgt->addIcon(obj_tp,
-													 QIcon(QString(":/icones/icones/") +
-																 BaseObject::getSchemaName(obj_tp) +
-																 QString(".png")));
 
 	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
@@ -261,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
-	connect(action_fix_model,SIGNAL(triggered(bool)),model_fix_form,SLOT(exec()));
+	connect(action_fix_model, SIGNAL(triggered(bool)), this, SLOT(fixModel()));
 
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
@@ -287,42 +172,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
 
-	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
-	connect(schema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(role_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(textbox_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(tablespace_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(language_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(function_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(cast_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(conversion_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(domain_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(aggregate_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(sequence_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(operator_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(opfamily_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(opclass_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(type_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(view_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(column_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(constraint_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(rule_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(trigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(extension_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(tag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(permission_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-	connect(eventtrigger_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(updateDockWidgets(void)));
-
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
+	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
-
-	connect(model_fix_form, SIGNAL(s_modelLoadRequested(QString)), this, SLOT(loadModel(QString)));
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
@@ -458,6 +311,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					if(!restoration_form->keep_models_chk->isChecked())
 						restoration_form->removeTemporaryModel(model_file);
 
+					Messagebox msg_box;
 					msg_box.show(e);
 				}
 			}
@@ -502,7 +356,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow(void)
 {
-   delete(overview_wgt);
+	delete(restoration_form);
+	delete(overview_wgt);
+	delete(configuration_form);
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -537,6 +393,7 @@ void MainWindow::restoreLastSession(void)
 		}
 		catch(Exception &e)
 		{
+			Messagebox msg_box;
 			msg_box.show(e);
 		}
 	}
@@ -555,6 +412,23 @@ void MainWindow::stopTimers(bool value)
 		tmpmodel_save_timer.start();
 		model_save_timer.start();
 	}
+}
+
+void MainWindow::fixModel(const QString &filename)
+{
+	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+	connect(&model_fix_form, SIGNAL(s_modelLoadRequested(QString)), this, SLOT(loadModel(QString)));
+
+	if(!filename.isEmpty())
+	{
+		QFileInfo fi(filename);
+		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
+		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
+	}
+
+	model_fix_form.exec();
+	disconnect(&model_fix_form, nullptr, this, nullptr);
 }
 
 void MainWindow::showEvent(QShowEvent *)
@@ -619,6 +493,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			if(modified)
 			{
+				Messagebox msg_box;
+
 				msg_box.show(trUtf8("Save all models"),
 										 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
 										 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
@@ -698,6 +574,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 		}
+
+		/* Close all top level windows to avoid close the main window and left sub windows behind
+			 preventing the application to be finished */
+		qApp->closeAllWindows();
 	}
 }
 
@@ -745,6 +625,8 @@ void MainWindow::saveTemporaryModels(bool force)
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
+
 		tmpmodel_thread.quit();
 		msg_box.show(e);
 	}
@@ -783,6 +665,8 @@ void MainWindow::loadModelFromAction(void)
 	if(act)
 	{
 		addModel(act->data().toString());
+		recent_models.push_back(act->data().toString());
+		updateRecentModelsMenu();
 		saveTemporaryModels(true);
 	}
 }
@@ -981,6 +865,8 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
+		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 
 		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
@@ -1076,6 +962,7 @@ void MainWindow::closeModel(int model_id)
 	if(tab)
 	{
 		ModelWidget *model=dynamic_cast<ModelWidget *>(tab);
+		Messagebox msg_box;
 
 		//Ask the user to save the model if its modified
 		if(model->isModified())
@@ -1117,10 +1004,6 @@ void MainWindow::closeModel(int model_id)
 	if(models_tbw->count()==0)
 	{
 		current_model=nullptr;
-		//model_objs_wgt->setModel(static_cast<DatabaseModel *>(nullptr));
-		//oper_list_wgt->setModel(static_cast<ModelWidget *>(nullptr));
-		//__updateDockWidgets();
-		//updateToolsState(true);
 		setCurrentModel();
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
@@ -1199,6 +1082,8 @@ void MainWindow::saveModel(ModelWidget *model)
 
 		if(model)
 		{
+			Messagebox msg_box;
+
 			if(model->getDatabaseModel()->isInvalidated())
 			{
 				msg_box.show(trUtf8("Confirmation"),
@@ -1266,16 +1151,17 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
-	if(current_model)
-		model_export_form->show(current_model);
+	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	model_export_form.exec(current_model);
 }
 
 void MainWindow::importDatabase(void)
 {
-	db_import_form->exec();
+	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	db_import_form.exec();
 
-	if(db_import_form->result()==QDialog::Accepted && db_import_form->getModelWidget())
-		this->addModel(db_import_form->getModelWidget());
+	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
+		this->addModel(db_import_form.getModelWidget());
 }
 
 void MainWindow::printModel(void)
@@ -1309,6 +1195,8 @@ void MainWindow::printModel(void)
 		//If the user confirms the printing
 		if(print_dlg->result() == QDialog::Accepted)
 		{
+			Messagebox msg_box;
+
 			//Checking If the user modified the default settings overriding the scene configurations
 			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
 			curr_orientation=print_dlg->printer()->orientation();
@@ -1350,6 +1238,7 @@ void MainWindow::loadModel(void)
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
@@ -1376,6 +1265,8 @@ void MainWindow::loadModels(const QStringList &list)
 	}
 	catch(Exception &e)
 	{	
+		Messagebox msg_box;
+
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
 													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
@@ -1384,12 +1275,7 @@ void MainWindow::loadModels(const QStringList &list)
 								 ":/icones/icones/fixobject.png", ":/icones/icones/msgbox_erro.png");
 
 		if(msg_box.result()==QDialog::Accepted)
-		{
-			QFileInfo fi(list[i]);
-			model_fix_form->input_file_edt->setText(list[i]);
-			model_fix_form->output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
-			model_fix_form->exec();
-		}
+			fixModel(list[i]);
 	}
 }
 
@@ -1466,6 +1352,8 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openWiki(void)
 {
+	Messagebox msg_box;
+
 	msg_box.show(trUtf8("Open Wiki pages"),
 							 trUtf8("This action will open a web browser window! Want to proceed?"),
 							 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
@@ -1570,6 +1458,12 @@ void MainWindow::configureSamplesMenu(void)
 		act->setToolTip(path);
 		act->setData(path);
 		files.pop_front();
+	}
+
+	if(sample_mdls_menu.isEmpty())
+	{
+		act=sample_mdls_menu.addAction(trUtf8("(no samples found)"));
+		act->setEnabled(false);
 	}
 
 	central_wgt->sample_tb->setMenu(&sample_mdls_menu);

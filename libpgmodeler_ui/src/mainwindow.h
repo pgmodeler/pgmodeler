@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,9 +74,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
 
-		//! \brief Message box widget used to show error/confirmation messages
-		Messagebox msg_box;
-
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
 
@@ -88,15 +85,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;
-
-		//! \brief Model exportation form
-		ModelExportForm *model_export_form;
-
-    //! \brief Model fix form
-    ModelFixForm *model_fix_form;
-
-		//! \brief Database import form
-		DatabaseImportForm *db_import_form;
 
 		//! \brief Operation list dock widget
 		OperationListWidget *oper_list_wgt;
@@ -253,6 +241,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
+		void fixModel(const QString &filename="");
     void showRightWidgetsBar(void);
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);

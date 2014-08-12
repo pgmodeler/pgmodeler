@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,10 +60,10 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-   starts at 40k because the id ranges 0, 10k, 20k, 30k
+	 starts at 40k because the id ranges 0, 1k, 2k, 3k
 	 are respectively assigned to objects of classes Role, Tablespace
    DatabaseModel, Tag */
-unsigned BaseObject::global_id=40000;
+unsigned BaseObject::global_id=4000;
 
 QString BaseObject::pgsql_ver=SchemaParser::PGSQL_VERSION_94;
 bool BaseObject::use_cached_code=true;

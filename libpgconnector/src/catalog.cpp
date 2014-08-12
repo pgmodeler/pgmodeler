@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ const QString Catalog::CATALOG_SCH_DIR="catalog";
 const QString Catalog::PGSQL_TRUE="t";
 const QString Catalog::PGSQL_FALSE="f";
 const QString Catalog::BOOL_FIELD="_bool";
+const QString Catalog::ARRAY_PATTERN="((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$";
 
 map<ObjectType, QString> Catalog::oid_fields=
 { {OBJ_DATABASE, "oid"}, {OBJ_ROLE, "oid"}, {OBJ_SCHEMA,"oid"},
@@ -38,9 +39,10 @@ map<ObjectType, QString> Catalog::oid_fields=
 
 Catalog::Catalog(void)
 {
-	exclude_sys_objs=exclude_ext_objs=true;
-	list_only_sys_objs=false;
+	//exclude_sys_objs=exclude_ext_objs=true;
+	//list_only_sys_objs=false;
 	last_sys_oid=0;
+	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
 }
 
 void Catalog::setConnection(Connection &conn)
@@ -92,6 +94,7 @@ void Catalog::setFilter(unsigned filter)
 {
 	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
 
+	this->filter=filter;
 	list_only_sys_objs=false;
 	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
 	exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
@@ -123,7 +126,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 {
 	try
 	{
-		QString sql;
+		QString sql, custom_filter;
 
 		schparser.setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
 		attribs[qry_type]="1";
@@ -139,6 +142,13 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(obj_type==OBJ_TYPE && exclude_array_types)
 			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
 
+		//Checking if the custom filter expression is present
+		if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
+		{
+			custom_filter=attribs[ParsersAttributes::CUSTOM_FILTER];
+			attribs.erase(ParsersAttributes::CUSTOM_FILTER);
+		}
+
 		if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
 			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 
@@ -149,6 +159,15 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 																		CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
 																		BaseObject::getSchemaName(obj_type) + GlobalAttributes::SCHEMA_EXT,
 																		attribs).simplified();
+
+		//Appeding the custom filter to the whole catalog query
+		if(!custom_filter.isEmpty())
+		{
+			if(!sql.contains("WHERE", Qt::CaseInsensitive))
+				sql+=" WHERE ";
+			else
+				sql+=QString(" AND (%1)").arg(custom_filter);
+		}
 
 		//Append a LIMIT clause when the single_result is set
 		if(single_result)
@@ -182,6 +201,11 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+unsigned Catalog::getFilter(void)
+{
+	return(filter);
 }
 
 attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
@@ -369,4 +393,80 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 										QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
+}
+
+QStringList Catalog::parseArrayValues(const QString &array_val)
+{
+	QStringList list;
+
+	if(QRegExp(ARRAY_PATTERN).exactMatch(array_val))
+	{
+		//Detecting the position of { and }
+		int start=array_val.indexOf('{')+1,
+				end=array_val.lastIndexOf("}")-1;
+		QString value=array_val.mid(start, (end - start)+1);
+
+		if(value.contains("\""))
+			list=parseDefaultValues(value, "\"", ",");
+		else
+			list=value.split(',', QString::SkipEmptyParts);
+	}
+
+	return(list);
+}
+
+QStringList Catalog::parseDefaultValues(const QString &def_vals, const QString &str_delim, const QString &val_sep)
+{
+	int idx=0, delim_start, delim_end, sep_idx, pos=0;
+	QStringList values;
+
+	while(idx < def_vals.size())
+	{
+		//Get the index of string delimiters (default: ')
+		delim_start=def_vals.indexOf(str_delim, idx);
+		delim_end=def_vals.indexOf(str_delim, delim_start + 1);
+
+		/* Get the index of value separator on default value string
+			 (by default the pg_get_expr separates values by comma and space (, ) */
+		sep_idx=def_vals.indexOf(val_sep, idx);
+
+		/* If there is no separator on string (only one value) or the is
+			 beyond the string delimiters or even there is no string delimiter on string */
+		if(sep_idx < 0 ||
+			 (sep_idx >=0 && delim_start >= 0 && delim_end >= 0 &&
+				(sep_idx < delim_start || sep_idx > delim_end)) ||
+			 (sep_idx >=0 && (delim_start < 0 || delim_end < 0)))
+		{
+			//Extract the value from the current position
+			values.push_back(def_vals.mid(pos, sep_idx-pos).trimmed());
+
+			//If there is no separator on string indicates that it contains only one value
+			if(sep_idx < 0)
+				//Forcing the loop abort
+				idx=def_vals.size();
+			else
+			{
+				//Passing to the next value right after the separator
+				pos=sep_idx+1;
+				idx=pos;
+			}
+		}
+		/* If the separator is between a string delimitation e.g.'abc, def' it will be ignored
+		and the current postion will be moved to the first char after string delimiter */
+		else if(delim_start>=0 && delim_end >= 0 &&
+						sep_idx >= delim_start && sep_idx <=delim_end)
+		{
+			idx=delim_end+1;
+
+			/* If the index reaches the end of string but the cursor (pos) isn't at end
+			indicates that the last values wasn't retrieved, this way, the value will be
+			pushed to list of values */
+			if(idx >= def_vals.size() && pos < def_vals.size())
+				values.push_back(def_vals.mid(pos, def_vals.size()));
+		}
+		else
+			idx++;
+	}
+
+	return(values);
 }

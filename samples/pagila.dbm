@@ -3,23 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="400,945" last-zoom="1">
-<role name="teste"
-      createdb="true"
-      replication="true"
-      inherit="true"
-      login="true"
-      encrypted="true"
-      password="********">
-</role>
-
-<role name="git"
-      inherit="true"
-      login="true"
-      encrypted="true"
-      password="********">
-</role>
-
+<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="320,261" last-zoom="1">
 <database name="pagila" encoding="UTF8" lc-collate="C" lc-ctype="C">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
@@ -6717,7 +6701,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 </textbox>
 
 <textbox name="pagila_text" bold="true" font-size="11">
-	<position x="341.818" y="283.455"/>
+	<position x="340.818" y="283.455"/>
 	<comment><![CDATA[pagila sample database]]></comment>
 </textbox>
 
