@@ -84,7 +84,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
 		//! brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableWidget *results_tbw);
+		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
 
 		//! brief Generates a CSV buffer based upon the selection on the results grid
 		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
@@ -129,7 +129,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void dropDatabase(void);
 
 		//! brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="", const QString &table="", bool hide_views=true);
+		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
 		void enableObjectTreeControls(bool enable);
 

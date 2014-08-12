@@ -770,18 +770,19 @@ void SQLToolWidget::clearAll(void)
 	}
 }
 
-void SQLToolWidget::copySelection(QTableWidget *results_tbw)
+void SQLToolWidget::copySelection(QTableWidget *results_tbw, bool use_popup)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(QApplication::mouseButtons()==Qt::RightButton)
+	if(!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton))
 	{
 		QMenu copy_menu;
 
-		copy_menu.addAction(trUtf8("Copy selection"));
+		if(use_popup)
+			copy_menu.addAction(trUtf8("Copy selection"));
 
-		if(copy_menu.exec(QCursor::pos()))
+		if(!use_popup || (use_popup && copy_menu.exec(QCursor::pos())))
 		{
 			QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>667</width>
     <height>560</height>
    </rect>
   </property>
@@ -137,7 +137,7 @@
     </layout>
    </item>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tab_wgt">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -158,7 +158,7 @@
        <property name="bottomMargin">
         <number>4</number>
        </property>
-       <item row="0" column="0" colspan="10">
+       <item row="0" column="0" colspan="11">
         <widget class="QFrame" name="no_pk_alert_frm">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -278,7 +278,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2" colspan="8">
+       <item row="1" column="2" colspan="9">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
           <number>0</number>
@@ -474,7 +474,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="6">
+       <item row="2" column="7">
         <widget class="QToolButton" name="export_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -514,7 +514,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="7">
+       <item row="2" column="8">
         <widget class="QToolButton" name="undo_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -554,7 +554,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="10">
+       <item row="3" column="0" colspan="11">
         <widget class="QTableWidget" name="results_tbw">
          <property name="enabled">
           <bool>true</bool>
@@ -606,7 +606,7 @@
          </attribute>
         </widget>
        </item>
-       <item row="2" column="8">
+       <item row="2" column="9">
         <widget class="QToolButton" name="add_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -646,7 +646,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="9">
+       <item row="2" column="10">
         <widget class="QToolButton" name="delete_tb">
          <property name="enabled">
           <bool>false</bool>
@@ -686,7 +686,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="10">
+       <item row="4" column="0" colspan="11">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="rows_ret_lbl">
@@ -725,7 +725,7 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0" colspan="10">
+       <item row="5" column="0" colspan="11">
         <widget class="QFrame" name="hint_frm">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -816,6 +816,46 @@
          </layout>
         </widget>
        </item>
+       <item row="2" column="6">
+        <widget class="QToolButton" name="copy_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Copy the selection as CSV buffer</string>
+         </property>
+         <property name="text">
+          <string>Copy</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/copiar.png</normaloff>:/icones/icones/copiar.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+C</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -835,10 +875,13 @@
        <property name="bottomMargin">
         <number>4</number>
        </property>
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="childrenCollapsible">
+          <bool>false</bool>
          </property>
          <widget class="QGroupBox" name="filter_grp">
           <property name="title">
@@ -897,105 +940,50 @@
            </property>
            <item row="0" column="0">
             <widget class="QLabel" name="column_lbl">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Column:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1" colspan="7">
-            <widget class="QComboBox" name="ord_column_cmb">
-             <property name="insertPolicy">
-              <enum>QComboBox::InsertAlphabetically</enum>
+           <item row="3" column="0">
+            <widget class="QLabel" name="limit_lbl">
+             <property name="text">
+              <string>Limit in:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>72</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="2">
-            <widget class="QRadioButton" name="asc_rb">
+           <item row="3" column="1" colspan="2">
+            <widget class="QLineEdit" name="limit_edt">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text">
-              <string>ASC</string>
+             <property name="inputMethodHints">
+              <set>Qt::ImhDigitsOnly</set>
              </property>
-             <property name="checked">
-              <bool>true</bool>
+             <property name="inputMask">
+              <string>000000</string>
+             </property>
+             <property name="text">
+              <string>100</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="3" colspan="2">
-            <widget class="QRadioButton" name="desc_rb">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>DESC</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="5">
-            <widget class="QToolButton" name="add_ord_col_tb">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Add Item</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../res/resources.qrc">
-               <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="shortcut">
-              <string>Ins</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="6">
+           <item row="0" column="11">
             <widget class="QToolButton" name="rem_ord_col_tb">
              <property name="enabled">
               <bool>false</bool>
              </property>
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1027,7 +1015,100 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="7">
+           <item row="0" column="10">
+            <widget class="QToolButton" name="add_ord_col_tb">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Add Item</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="shortcut">
+              <string>Ins</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="15">
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="8">
+            <widget class="QRadioButton" name="asc_rb">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>ASC</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="9">
+            <widget class="QRadioButton" name="desc_rb">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>DESC</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3" colspan="13">
+            <widget class="QLabel" name="results_lbl">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>results</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="12">
             <widget class="QToolButton" name="clear_ord_cols_tb">
              <property name="enabled">
               <bool>false</bool>
@@ -1065,7 +1146,52 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0" colspan="8">
+           <item row="0" column="13">
+            <widget class="QToolButton" name="move_up_tb">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move selected item up</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/movercima.png</normaloff>:/icones/icones/movercima.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="shortcut">
+              <string>Del</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="7">
+            <widget class="QComboBox" name="ord_column_cmb">
+             <property name="insertPolicy">
+              <enum>QComboBox::InsertAlphabetically</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="16">
             <widget class="QListWidget" name="ord_columns_lst">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -1075,42 +1201,41 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="limit_lbl">
-             <property name="text">
-              <string>Limit in:</string>
+           <item row="0" column="14">
+            <widget class="QToolButton" name="move_down_tb">
+             <property name="enabled">
+              <bool>false</bool>
              </property>
-            </widget>
-           </item>
-           <item row="3" column="1" colspan="3">
-            <widget class="QLineEdit" name="limit_edt">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="inputMethodHints">
-              <set>Qt::ImhDigitsOnly</set>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
              </property>
-             <property name="inputMask">
-              <string>000000</string>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="4" colspan="4">
-            <widget class="QLabel" name="results_lbl">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="toolTip">
+              <string>Move selected item down</string>
              </property>
              <property name="text">
-              <string>results</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/moverbaixo.png</normaloff>:/icones/icones/moverbaixo.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="shortcut">
+              <string>Del</string>
              </property>
             </widget>
            </item>
@@ -1138,14 +1263,9 @@
   <tabstop>results_tbw</tabstop>
   <tabstop>close_btn</tabstop>
   <tabstop>ord_column_cmb</tabstop>
-  <tabstop>asc_rb</tabstop>
-  <tabstop>desc_rb</tabstop>
-  <tabstop>add_ord_col_tb</tabstop>
-  <tabstop>rem_ord_col_tb</tabstop>
-  <tabstop>clear_ord_cols_tb</tabstop>
   <tabstop>ord_columns_lst</tabstop>
   <tabstop>limit_edt</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>tab_wgt</tabstop>
  </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>

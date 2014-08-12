@@ -62,22 +62,25 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
+	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
+	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
+	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
-	connect(ord_columns_lst, &QListWidget::currentRowChanged,
-					[=](){ rem_ord_col_tb->setEnabled(ord_columns_lst->currentRow() >= 0); });
-
 	connect(results_tbw, &QTableWidget::itemPressed,
 					[=](){ SQLToolWidget::copySelection(results_tbw); });
 
+	connect(copy_tb, &QToolButton::clicked,
+					[=](){ SQLToolWidget::copySelection(results_tbw, false); });
 
 	connect(export_tb, &QToolButton::clicked,
 					[=](){ SQLToolWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged,
 					[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+									copy_tb->setEnabled(!sel_ranges.isEmpty());
 									delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers
 																				&& !sel_ranges.isEmpty()); });
 }
@@ -247,9 +250,42 @@ void DataManipulationForm::addColumnToList(void)
 
 		ord_columns_lst->addItem(item_text);
 		ord_column_cmb->removeItem(ord_column_cmb->currentIndex());
-		clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
-		add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+		enableColumnControlButtons();
 	}
+}
+
+void DataManipulationForm::enableColumnControlButtons(void)
+{
+	clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
+	add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+	rem_ord_col_tb->setEnabled(ord_columns_lst->currentRow() >= 0);
+	move_up_tb->setEnabled(ord_columns_lst->count() > 1 && ord_columns_lst->currentRow() > 0);
+	move_down_tb->setEnabled(ord_columns_lst->count() > 1 &&
+													 ord_columns_lst->currentRow() >= 0 &&
+													 ord_columns_lst->currentRow() <= ord_columns_lst->count() - 2);
+}
+
+void DataManipulationForm::swapColumns(void)
+{
+	int curr_idx=0, new_idx=0;
+	QStringList items;
+
+	curr_idx=new_idx=ord_columns_lst->currentRow();
+
+	if(sender()==move_up_tb)
+		new_idx--;
+	else
+		new_idx++;
+
+	for(int i=0; i < ord_columns_lst->count(); i++)
+		items.push_back(ord_columns_lst->item(i)->text());
+
+	items.move(curr_idx, new_idx);
+	ord_columns_lst->blockSignals(true);
+	ord_columns_lst->clear();
+	ord_columns_lst->addItems(items);
+	ord_columns_lst->blockSignals(false);
+	ord_columns_lst->setCurrentRow(new_idx);
 }
 
 void DataManipulationForm::removeColumnFromList(void)
@@ -266,9 +302,7 @@ void DataManipulationForm::removeColumnFromList(void)
 
 		ord_column_cmb->clear();
 		ord_column_cmb->addItems(items);
-
-		clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
-		add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+		enableColumnControlButtons();
 	}
 }
 
@@ -279,6 +313,8 @@ void DataManipulationForm::clearColumnList(void)
 	ord_columns_lst->clear();
 
 	clear_ord_cols_tb->setEnabled(false);
+	move_up_tb->setEnabled(false);
+	move_down_tb->setEnabled(false);
 	add_ord_col_tb->setEnabled(true);
 }
 

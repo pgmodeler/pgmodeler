@@ -84,6 +84,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void undoOperations(void);
 		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 		void saveChanges(void);
+		void enableColumnControlButtons(void);
+		void swapColumns(void);
 };
 
 #endif
