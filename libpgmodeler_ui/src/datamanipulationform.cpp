@@ -81,8 +81,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, &QTableWidget::itemSelectionChanged,
 					[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 									copy_tb->setEnabled(!sel_ranges.isEmpty());
-									delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers
-																				&& !sel_ranges.isEmpty()); });
+									delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty()); });
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -167,9 +166,11 @@ void DataManipulationForm::retrieveData(void)
 		ResultSet res;
 		unsigned limit=limit_edt->text().toUInt();
 
+		//Building the where clause
 		if(!filter_txt->toPlainText().isEmpty())
 			query+=" WHERE " + filter_txt->toPlainText();
 
+		//Building the order by clause
 		if(ord_columns_lst->count() > 0)
 		{
 			QStringList ord_cols, col;
@@ -185,6 +186,7 @@ void DataManipulationForm::retrieveData(void)
 			query+=ord_cols.join(", ");
 		}
 
+		//Building the limit clause
 		if(limit > 0)
 			query+=QString(" LIMIT %1").arg(limit);
 
@@ -199,9 +201,11 @@ void DataManipulationForm::retrieveData(void)
 		row_cnt_lbl->setVisible(results_tbw->rowCount() > 0);
 		row_cnt_lbl->setText(QString::number(results_tbw->rowCount()));
 
+		//Reset the changed rows state
 		clearChangedRows();
 
-		if(results_tbw->rowCount()==0 && !pk_col_ids.empty())
+		//If the table is empty automatically creates a new row
+		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
 			insertRow();
 		else
 			results_tbw->setFocus();
@@ -222,7 +226,7 @@ void DataManipulationForm::disableControlButtons(void)
 	refresh_tb->setEnabled(schema_cmb->currentIndex() > 0 && table_cmb->currentIndex() > 0);
 	results_tbw->setRowCount(0);
 	results_tbw->setColumnCount(0);
-	no_pk_alert_frm->setVisible(false);
+	warning_frm->setVisible(false);
 	hint_frm->setVisible(false);
 	add_tb->setEnabled(false);
 	export_tb->setEnabled(false);
@@ -384,13 +388,25 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 	try
 	{
 		vector<attribs_map> pks;
+		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-		//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-		pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, "contype='p'"}});
+		if(obj_type==OBJ_VIEW)
+		{
+			warning_frm->setVisible(true);
+			warning_lbl->setText(trUtf8("Views can't have their data handled through this grid, this way, all operations are disabled."));
+		}
+		else
+		{
+			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
+			pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, "contype='p'"}});
+			warning_frm->setVisible(pks.empty());
 
-		no_pk_alert_frm->setVisible(pks.empty());
-		hint_frm->setVisible(!pks.empty());
-		add_tb->setEnabled(!pks.empty() && table_cmb->currentData().toUInt()==OBJ_TABLE);
+			if(pks.empty())
+				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
+		}
+
+		hint_frm->setVisible(obj_type==OBJ_TABLE);
+		add_tb->setEnabled(obj_type==OBJ_TABLE);
 		pk_col_ids.clear();
 
 		if(!pks.empty())
@@ -399,9 +415,11 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 			for(QString id : col_str_ids)
 				pk_col_ids.push_back(id.toInt() - 1);
-
-			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		}
+
+		//For tables, even if there is no pk the user can manipulate data
+		if(obj_type==OBJ_TABLE)
+			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	}
@@ -440,6 +458,7 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 			{
 				item->setToolTip(tooltip);
 
+				//Restore the item's font and text when the operation is delete or none
 				if(operation==NO_OPERATION || operation==OP_DELETE)
 				{
 					item->setFont(fnt);
@@ -447,13 +466,16 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 				}
 
 				if(operation==NO_OPERATION)
+					//Restore the item's background
 					item->setBackground(prev_row_colors[row]);
 				else
 				{
+					//Saves the item's background if it isn't already marked
 					if(header_item->data(Qt::UserRole)!=OP_DELETE &&
 						 header_item->data(Qt::UserRole)!=OP_UPDATE)
 						prev_row_colors[row]=item->background();
 
+					//Changes the item's background according to the operation
 					item->setBackground(ROW_COLORS[operation - 1]);
 				}
 
@@ -491,6 +513,7 @@ void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 		QTableWidgetItem *aux_item=nullptr;
 		QFont fnt=item->font();
 
+		//Before mark the row to update it's needed to check if some item was changed
 		for(int col=0; col < results_tbw->columnCount(); col++)
 		{
 			aux_item=results_tbw->item(item->row(), col);
@@ -519,7 +542,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 
 		if(item->data(Qt::UserRole)==OP_INSERT)
 			ins_rows.push_back(row);
-		else
+		else if(!pk_col_ids.empty())
 			markOperationOnRow(OP_DELETE, row);
 	}
 
@@ -572,12 +595,15 @@ void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
 		int row_idx=0;
 		vector<int>::reverse_iterator itr, itr_end;
 
+		//Mark the rows as no-op to remove their indexes from changed rows set
 		for(idx=0; idx < cnt; idx++)
 			markOperationOnRow(NO_OPERATION, ins_rows[idx]);
 
+		//Remove the rows
 		for(idx=0; idx < cnt; idx++)
 			results_tbw->removeRow(ins_rows[0]);
 
+		//Reorganizing the changed rows vector to avoid row index out-of-bound errors
 		row_idx=results_tbw->rowCount() - 1;
 		itr=changed_rows.rbegin();
 		itr_end=changed_rows.rend();
@@ -611,8 +637,7 @@ void DataManipulationForm::undoOperations(void)
 	vector<int> rows, ins_rows;
 	QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
 
-	if(!sel_range.isEmpty() &&
-		 sel_range[0].leftColumn()==0 && sel_range[0].rightColumn()==results_tbw->columnCount()-1)
+	if(!sel_range.isEmpty())
 	{
 		for(int row=sel_range[0].topRow(); row <= sel_range[0].bottomRow(); row++)
 		{
@@ -628,6 +653,7 @@ void DataManipulationForm::undoOperations(void)
 		rows=changed_rows;
 	}
 
+	//Marking rows to be deleted/updated as no-op
 	for(auto row : rows)
 	{
 		item=results_tbw->verticalHeaderItem(row);
@@ -635,6 +661,7 @@ void DataManipulationForm::undoOperations(void)
 			markOperationOnRow(NO_OPERATION, row);
 	}
 
+	//If there is no selection, remove all new rows
 	if(sel_range.isEmpty())
 	{
 		if(results_tbw->rowCount() > 0 &&
@@ -651,6 +678,7 @@ void DataManipulationForm::undoOperations(void)
 		clearChangedRows();
 	}
 	else
+		//Removing just the selected new rows
 		removeNewRows(ins_rows);
 
 
@@ -748,7 +776,22 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 	if(op_type==OP_DELETE || op_type==OP_UPDATE)
 	{
-		for(int pk_col_id : pk_col_ids)
+		vector<int> pk_cols;
+
+		if(!pk_col_ids.empty())
+			pk_cols=pk_col_ids;
+		else
+		{
+			//Considering all columns as pk when the tables doesn't has one (except bytea columns)
+			for(int col=0; col < results_tbw->columnCount(); col++)
+			{
+				if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!="bytea")
+					pk_cols.push_back(col);
+			}
+		}
+
+		//Creating the where clause with original column's values
+		for(int pk_col_id : pk_cols)
 		{
 			pk_col_name=results_tbw->horizontalHeaderItem(pk_col_id)->text();
 			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col_name).arg(results_tbw->item(row, pk_col_id)->data(Qt::UserRole).toString()));
@@ -775,6 +818,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
+					//Checking if the value is a malformed unescaped value, e.g., <value, value>, <value\>
 					if((value.startsWith(UNESC_VALUE_START) && value.endsWith(QString("\\") + UNESC_VALUE_END)) ||
 						 (value.startsWith(UNESC_VALUE_START) && !value.endsWith(UNESC_VALUE_END)) ||
 						 (!value.startsWith(UNESC_VALUE_START) && !value.endsWith(QString("\\") + UNESC_VALUE_END) && value.endsWith(UNESC_VALUE_END)))
@@ -784,15 +828,18 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 					col_list.push_back(QString("\"%1\"").arg(col_name));
 
+					//Empty values as considered as DEFAULT
 					if(value.isEmpty())
 					{
 						value="DEFAULT";
 					}
+					//Unescaped values will not be enclosed in quotes
 					else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
 					}
+					//Quoting value
 					else
 					{
 						value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
