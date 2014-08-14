@@ -26,14 +26,18 @@ FindReplaceWidget::FindReplaceWidget(QTextEdit *txt_edit, QWidget *parent): QWid
 	setupUi(this);
 	text_edt=txt_edit;
 
+	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
+	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
+
 	connect(replace_tb, SIGNAL(clicked()), this, SLOT(replaceText()));
 	connect(replace_find_tb, SIGNAL(clicked()), this, SLOT(replaceFindText()));
+	connect(replace_all_tb, SIGNAL(clicked()), this, SLOT(replaceAll()));
 
 	connect(next_tb, &QToolButton::clicked,
-					[=]() { findText(false); });
+					[=]() { findText(false, true); });
 
 	connect(previous_tb, &QToolButton::clicked,
-					[=]() { findText(true); });
+					[=]() { findText(true, true); });
 
 	connect(find_edt, &QLineEdit::textChanged,
 					[=]() { bool enable=!find_edt->text().isEmpty();
@@ -42,6 +46,11 @@ FindReplaceWidget::FindReplaceWidget(QTextEdit *txt_edit, QWidget *parent): QWid
 									replace_tb->setEnabled(enable);
 									replace_all_tb->setEnabled(enable);
 									replace_find_tb->setEnabled(enable); });
+}
+
+void FindReplaceWidget::showEvent(QShowEvent *)
+{
+	find_edt->setFocus();
 }
 
 void FindReplaceWidget::replaceText(void)
@@ -55,16 +64,30 @@ void FindReplaceWidget::replaceText(void)
 	}
 }
 
+void FindReplaceWidget::replaceAll(void)
+{
+	QTextCursor orig_cursor, cursor=text_edt->textCursor();
+
+	orig_cursor=cursor;
+	cursor.setPosition(0);
+	text_edt->setTextCursor(cursor);
+
+	while(findText(false, false))
+		text_edt->textCursor().insertText(replace_edt->text());
+
+	text_edt->setTextCursor(orig_cursor);
+}
+
 void FindReplaceWidget::replaceFindText(void)
 {
 	if(text_edt->textCursor().hasSelection())
 	{
 		replaceText();
-		findText(false);
+		findText(false, true);
 	}
 }
 
-void FindReplaceWidget::findText(bool backward)
+bool FindReplaceWidget::findText(bool backward, bool cyclic)
 {
 	QTextDocument::FindFlags flags;
 	QTextCursor cursor;
@@ -84,7 +107,7 @@ void FindReplaceWidget::findText(bool backward)
 	else
 		found=text_edt->find(find_edt->text(), flags);
 
-	if(!found)
+	if(!found && cyclic)
 	{
 		cursor=text_edt->textCursor();
 
@@ -94,5 +117,12 @@ void FindReplaceWidget::findText(bool backward)
 			cursor.setPosition(text_edt->toPlainText().length());
 
 		text_edt->setTextCursor(cursor);
+
+		if(regexp_chk->isChecked())
+			found=text_edt->find(QRegExp(find_edt->text()), flags);
+		else
+			found=text_edt->find(find_edt->text(), flags);
 	}
+
+	return(found);
 }

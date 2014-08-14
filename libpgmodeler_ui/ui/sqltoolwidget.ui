@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>983</width>
+    <width>998</width>
     <height>631</height>
    </rect>
   </property>
@@ -636,7 +636,7 @@
              <string>Save SQL commands</string>
             </property>
             <property name="text">
-             <string>Find</string>
+             <string>&amp;Find</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -649,7 +649,7 @@
              </size>
             </property>
             <property name="shortcut">
-             <string notr="true">Alt+S</string>
+             <string>Alt+F</string>
             </property>
             <property name="checkable">
              <bool>true</bool>

@@ -978,7 +978,7 @@
     <string>About pgModeler</string>
    </property>
    <property name="shortcut">
-    <string>F3</string>
+    <string>F4</string>
    </property>
    <property name="menuRole">
     <enum>QAction::TextHeuristicRole</enum>

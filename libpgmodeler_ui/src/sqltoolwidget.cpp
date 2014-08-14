@@ -39,6 +39,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
+	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
+	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
+
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
 	hbox->setContentsMargins(0,0,0,0);

@@ -33,16 +33,20 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 
+		//! brief QTextEdit instance that the finder is attached to
 		QTextEdit *text_edt;
 
-		void findText(bool backward);
+		//! brief Find the text in a backward and/or cyclic way
+		bool findText(bool backward, bool cyclic);
+
+		void showEvent(QShowEvent *);
 
 	public:
 		FindReplaceWidget(QTextEdit *txt_edit, QWidget * parent = 0);
 
 	public slots:
 		void replaceText(void);
-		//void replaceAll(void);
+		void replaceAll(void);
 		void replaceFindText(void);
 };
 
