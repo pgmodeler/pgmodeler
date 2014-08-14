@@ -224,7 +224,6 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
-  this->adjustSize();
 
 	switch(icon_type)
 	{
@@ -257,12 +256,24 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	msg_lbl->setText(msg);
 
-	this->resize(this->minimumWidth(),this->minimumHeight());
 	this->setWindowTitle("pgModeler - " + title);
 	this->objs_group_wgt->setCurrentIndex(0);
 	this->show_errors_tb->setChecked(false);
 	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
 	showExceptionList();
+
+	this->resize(this->minimumWidth(), this->minimumHeight());
+
+	QFontMetrics fm(msg_lbl->font());
+	QString aux_msg=msg;
+	aux_msg.replace("<br/>","\n");
+	QSize size=QSize(msg_lbl->width(), fm.height() * aux_msg.count("\n") + 1);
+
+	//Resizing the message box if the text height is greater than the default size
+	if(size.height() > msg_lbl->minimumHeight())
+		this->setMinimumHeight((size.height() + (size.height() * 0.25))  + show_raw_info_tb->height() + name_lbl->height() + 30);
+
+	this->resize(this->minimumWidth(), this->minimumHeight());
 
 	QDialog::exec();
 }

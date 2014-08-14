@@ -42,9 +42,6 @@ class ModelWidget: public QWidget {
 
     NewObjectOverlayWidget *new_obj_overlay_wgt;
 
-		//! \brief Message box used to show error/confirmation/alert messages
-		//Messagebox msg_box;
-
 		//! \brief Current zoom aplied to the scene
 		float current_zoom;
 

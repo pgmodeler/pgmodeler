@@ -35,6 +35,11 @@ class CodeCompletionWidget: public QWidget
 	private:
 		Q_OBJECT
 
+		QWidget *parent_wgt;
+
+		//! brief Marks the completion widget as persistent (available only when there is no a database model assinged)
+		QCheckBox *persistent_chk;
+
 		//! \brief Input field that is associated with the code completion
 		QTextEdit *code_field_txt;
 
@@ -77,6 +82,8 @@ class CodeCompletionWidget: public QWidget
 		//! \brief Store the objects selected for each qualifying level
 		vector<BaseObject *> sel_objects;
 
+		map<QString, QPixmap> custom_items;
+
 		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 
@@ -97,6 +104,12 @@ class CodeCompletionWidget: public QWidget
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
 		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
+
+		//! brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+		void insertCustomItem(const QString &name, const QPixmap &icon);
+
+		//! brief Clear the custom added items
+		void clearCustomItems(void);
 
 	public slots:
 		//! \brief Updates the completion list based upon the typed word

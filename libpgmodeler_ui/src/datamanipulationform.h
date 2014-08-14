@@ -28,6 +28,7 @@
 #include "ui_datamanipulationform.h"
 #include "catalog.h"
 #include "syntaxhighlighter.h"
+#include "codecompletionwidget.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
@@ -43,6 +44,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
 
 		SyntaxHighlighter *filter_hl;
+
+		CodeCompletionWidget *code_compl_wgt;
 
 		Connection connection;
 

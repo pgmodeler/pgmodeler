@@ -39,6 +39,15 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
+	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
+	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
+
+	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
+	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
+	hbox->setContentsMargins(0,0,0,0);
+	hbox->addWidget(find_replace_wgt);
+	find_wgt_parent->setVisible(false);
+
 	drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
 	drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
@@ -77,6 +86,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(refresh_action, SIGNAL(triggered()), this, SLOT(updateCurrentItem()));
 	connect(data_grid_tb, SIGNAL(clicked()), this, SLOT(openDataGrid()));
+	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(clear_history_btn, &QPushButton::clicked,
@@ -895,6 +905,8 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
+		find_tb->setEnabled(enable);
+		find_wgt_parent->setEnabled(enable);
 
 		if(history_tb->isChecked() && !enable)
 			history_tb->setChecked(false);

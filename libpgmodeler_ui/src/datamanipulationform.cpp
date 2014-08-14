@@ -38,6 +38,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 															 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 															 GlobalAttributes::CONFIGURATION_EXT);
 
+	code_compl_wgt=new CodeCompletionWidget(filter_txt);
+	code_compl_wgt->configureCompletion(nullptr, filter_hl);
+
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
@@ -142,6 +145,7 @@ void DataManipulationForm::listColumns(void)
 {
 	resetAdvancedControls();
 	col_names.clear();
+	code_compl_wgt->clearCustomItems();
 
 	if(table_cmb->currentIndex() > 0)
 	{
@@ -150,7 +154,10 @@ void DataManipulationForm::listColumns(void)
 		cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
 
 		for(auto col : cols)
+		{
 			col_names.push_back(col[ParsersAttributes::NAME]);
+			code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], QPixmap(":/icones/icones/column.png"));
+		}
 
 		ord_column_cmb->addItems(col_names);
 	}

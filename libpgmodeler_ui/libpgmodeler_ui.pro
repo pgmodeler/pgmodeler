@@ -97,7 +97,8 @@ SOURCES += src/mainwindow.cpp \
     src/centralwidget.cpp \
     src/relationshipconfigwidget.cpp \
     src/datamanipulationform.cpp \
-    src/customsqlwidget.cpp
+    src/customsqlwidget.cpp \
+    src/findreplacewidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -174,7 +175,8 @@ HEADERS += src/mainwindow.h \
     src/centralwidget.h \
     src/relationshipconfigwidget.h \
     src/datamanipulationform.h \
-    src/customsqlwidget.h
+    src/customsqlwidget.h \
+    src/findreplacewidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -242,6 +244,7 @@ FORMS += ui/mainwindow.ui \
     ui/centralwidget.ui \
     ui/relationshipconfigwidget.ui \
     ui/datamanipulationform.ui \
-    ui/customsqlwidget.ui
+    ui/customsqlwidget.ui \
+    ui/findreplacewidget.ui
 
 
