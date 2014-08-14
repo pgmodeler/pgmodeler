@@ -26,13 +26,13 @@
 	    tb.reltablespace AS tablespace, tb.relacl AS permission, relhasoids AS oids_bool, ]
 
     %if @{pgsql90} %then
-     [ FALSE AS unlogged, ]
+     [ FALSE AS unlogged_bool, ]
     %else
      [ CASE relpersistence
          WHEN 'u' THEN TRUE
          ELSE FALSE
        END
-       AS unlogged, ]
+       AS unlogged_bool, ]
     %end
 
     [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid)],

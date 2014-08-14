@@ -20,7 +20,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 </sequence>
 
-<table name="actor" unlogged="true">
+<table name="actor">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4406" y="1404"/>
@@ -99,7 +99,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="category" unlogged="true">
+<table name="category">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4116" y="912"/>
@@ -125,7 +125,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="film" unlogged="true">
+<table name="film">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3510" y="1156"/>
@@ -176,7 +176,7 @@ END
 	</constraint>
 </table>
 
-<table name="film_actor" unlogged="true">
+<table name="film_actor">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4138" y="1140"/>
@@ -194,7 +194,7 @@ END
 	</constraint>
 </table>
 
-<table name="film_category" unlogged="true">
+<table name="film_category">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3670" y="898"/>
@@ -242,7 +242,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="address" unlogged="true">
+<table name="address">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2000" y="520"/>
@@ -283,7 +283,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="city" unlogged="true">
+<table name="city">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1533.33" y="300"/>
@@ -312,7 +312,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="country" unlogged="true">
+<table name="country">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2146" y="335.334"/>
@@ -338,7 +338,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="customer" unlogged="true">
+<table name="customer">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1153.14" y="1134.31"/>
@@ -431,7 +431,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="inventory" unlogged="true">
+<table name="inventory">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2993.33" y="766.667"/>
@@ -460,7 +460,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="language" unlogged="true">
+<table name="language">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4112" y="1536"/>
@@ -511,7 +511,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="payment" unlogged="true">
+<table name="payment">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="340" y="1360"/>
@@ -538,7 +538,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_01" unlogged="true">
+<table name="payment_p2007_01">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="340" y="1894.12"/>
@@ -565,7 +565,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_02" unlogged="true">
+<table name="payment_p2007_02">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="350" y="700"/>
@@ -592,7 +592,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_03" unlogged="true">
+<table name="payment_p2007_03">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2783.53" y="1558.82"/>
@@ -619,7 +619,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_04" unlogged="true">
+<table name="payment_p2007_04">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2913.92" y="1292.94"/>
@@ -646,7 +646,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_05" unlogged="true">
+<table name="payment_p2007_05">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2618.82" y="1831.76"/>
@@ -673,7 +673,7 @@ END
 	</constraint>
 </table>
 
-<table name="payment_p2007_06" unlogged="true">
+<table name="payment_p2007_06">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2421.18" y="2101.18"/>
@@ -708,7 +708,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="rental" unlogged="true">
+<table name="rental">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1160" y="740"/>
@@ -764,7 +764,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="staff" unlogged="true">
+<table name="staff">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1000" y="1920"/>
@@ -814,7 +814,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="store" unlogged="true">
+<table name="store">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2589.02" y="492.941"/>

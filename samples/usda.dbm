@@ -12,7 +12,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public" protected="true" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<table name="data_src" unlogged="true">
+<table name="data_src">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="37" y="354"/>
@@ -48,7 +48,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="datsrcln" unlogged="true">
+<table name="datsrcln">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="322" y="522"/>
@@ -66,7 +66,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="deriv_cd" unlogged="true">
+<table name="deriv_cd">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="27" y="631"/>
@@ -81,7 +81,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fd_group" unlogged="true">
+<table name="fd_group">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1020" y="597"/>
@@ -96,7 +96,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="food_des" unlogged="true">
+<table name="food_des">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1408" y="290"/>
@@ -147,7 +147,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="footnote" unlogged="true">
+<table name="footnote">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1144" y="877.2"/>
@@ -168,7 +168,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </table>
 
-<table name="nut_data" unlogged="true">
+<table name="nut_data">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="305" y="723.2"/>
@@ -228,7 +228,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="nutr_def" unlogged="true">
+<table name="nutr_def">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="711" y="921.2"/>
@@ -255,7 +255,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="src_cd" unlogged="true">
+<table name="src_cd">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="797" y="381.2"/>
@@ -270,7 +270,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="weight" unlogged="true">
+<table name="weight">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1018" y="722.2"/>
