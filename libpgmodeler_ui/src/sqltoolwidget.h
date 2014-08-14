@@ -30,6 +30,8 @@
 #include "connection.h"
 #include "databaseimportform.h"
 #include "datamanipulationform.h"
+#include "findreplacewidget.h"
+#include "codecompletionwidget.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
@@ -54,6 +56,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 						*show_data_action, *refresh_action;
+
+		FindReplaceWidget *find_replace_wgt;
+
+		CodeCompletionWidget *code_compl_wgt;
 
 		/*! brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
