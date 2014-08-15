@@ -3,10 +3,9 @@ v0.8.0-alpha1
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: August 15, 2014</em><br/>
 <em>Changes since: <strong>v0.8.0-alpha</strong></em><br/>
-<strong>Summary:</strong> dispite the designation <em>alpha1</em> this release brings important improvements on stability and speed being more reliable than the current stable release <strong>0.7.2</strong>. The key features of this version are: it's possible to handle table's data through the "data grid" feature on SQL tool, several improvements on SQL tool related to command execution, improved validation process, improved code generation speed, improved startup speed, and many others. Update is <strong>HIGHLY RECOMMENDED!</strong><br/>
+<strong>Summary:</strong> despite the designation <em>alpha1</em> this release brings important improvements on stability and speed being more reliable than the current stable release <strong>0.7.2</strong>. The key features of this version are: it's possible to handle table's data through the "data grid" feature on SQL tool, several improvements on SQL tool related to command execution, improved validation process, improved code generation speed, improved startup speed, and many others. Update is <strong>HIGHLY RECOMMENDED!</strong><br/>
 <strong>NOTE:</strong><em> models generated in previous versions will demand the use of model fix feature!</em>.
 
-<h4>Change log</h4>
 * [New] pgModeler now is capable to handle table's data through the new data manipulation form.
 * [New] The SQL tool received a basic find/replace widget.
 * [New] Created a new environment variable for samples directory, PGMODELER_SAMPLES_DIR.
