@@ -268,10 +268,13 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	QString aux_msg=msg;
 	aux_msg.replace("<br/>","\n");
 	QSize size=QSize(msg_lbl->width(), fm.height() * aux_msg.count("\n") + 1);
+	int max_h=msg_lbl->minimumHeight() * 3;
 
 	//Resizing the message box if the text height is greater than the default size
-	if(size.height() > msg_lbl->minimumHeight())
+	if(size.height() > msg_lbl->minimumHeight() && size.height() < max_h)
 		this->setMinimumHeight((size.height() + (size.height() * 0.25))  + show_raw_info_tb->height() + name_lbl->height() + 30);
+	else if(size.height() >= max_h)
+		this->setMinimumHeight(max_h);
 
 	this->resize(this->minimumWidth(), this->minimumHeight());
 
