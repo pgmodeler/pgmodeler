@@ -33,11 +33,12 @@ v0.8.0-alpha1
 * [Change] Changed the way on how the relationship connection points are determined. Now they depends on how the tables' center points are distant from each other.
 * [Change] More improvements done on database model objects classes in order to give more speed on the code generation.
 * [Change] Update for French (fr_FR) translation.
-* [Chage] Minor improvements on swap objects ids dialog.
+* [Change] Minor improvements on swap objects ids dialog.
 * [Change] Huge improvement on validation process mainly for reverse engineered models. Now pgModeler honors the imported structure and in a few cases there will be inconsistencies.
 * [Change] The objects rule, index and trigger will have the SQL/XML code generated outside of table's definition due to validation process that sometimes needs to swap id's of those objects.
 * [Change] The object selector will trigger the object selection if user click the input field.
 * [Change] Changed the 'line color' attribute of relationships to 'custom color'.
+* [Fix] Fixed a crash provoked by the constraint editing form when switching the constraint type on the second time the form is opened.
 * [Fix] Minor fix on database import process that was wrongly checking all tables as unlogged.
 * [Fix] Minor fix on sample models pagila.dbm and usda.dbm to remove the unlogged attribute.
 * [Fix] Minor fix on class CodeCompletionWidget to make it persistent as well to remove duplicate items from listing.
