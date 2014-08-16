@@ -163,11 +163,11 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 {
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
-	static QList<QTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
-																		 dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt };
-	static QList<QString> pattern_ids={ ParsersAttributes::PK_PATTERN,  ParsersAttributes::UQ_PATTERN,
-																			ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
-																			ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
+	QList<QTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
+															dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt };
+	 QList<QString> pattern_ids={ ParsersAttributes::PK_PATTERN,  ParsersAttributes::UQ_PATTERN,
+																ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
+																ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
 
 	relnn=(rel_type==ParsersAttributes::RELATIONSHIP_NN);
 	reldep=(rel_type==ParsersAttributes::RELATIONSHIP_DEP);
@@ -200,12 +200,12 @@ void RelationshipConfigWidget::updatePattern(void)
 {
 	QTextEdit *input=qobject_cast<QTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
-	static map<QTextEdit *, QString> inputs_map={ { pk_pattern_txt, ParsersAttributes::PK_PATTERN },
-																								{ uq_pattern_txt, ParsersAttributes::UQ_PATTERN },
-																								{ src_col_pattern_txt, ParsersAttributes::SRC_COL_PATTERN },
-																								{ dst_col_pattern_txt, ParsersAttributes::DST_COL_PATTERN },
-																								{ src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN },
-																								{ dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN } };
+	map<QTextEdit *, QString> inputs_map={ { pk_pattern_txt, ParsersAttributes::PK_PATTERN },
+																				 { uq_pattern_txt, ParsersAttributes::UQ_PATTERN },
+																				 { src_col_pattern_txt, ParsersAttributes::SRC_COL_PATTERN },
+																				 { dst_col_pattern_txt, ParsersAttributes::DST_COL_PATTERN },
+																				 { src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN },
+																				 { dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN } };
 
 
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();

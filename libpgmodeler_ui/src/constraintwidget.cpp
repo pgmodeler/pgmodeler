@@ -317,8 +317,8 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 
 void ConstraintWidget::selectConstraintType(void)
 {
-	static QWidget *tab=columns_tbw->widget(1);
-	static QString rot_tab=columns_tbw->tabText(1);
+	QWidget *tab=columns_tbw->widget(1);
+	QString rot_tab=columns_tbw->tabText(1);
 	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());
 
 	tablespace_lbl->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
