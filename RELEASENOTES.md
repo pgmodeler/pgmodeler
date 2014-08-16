@@ -38,6 +38,7 @@ v0.8.0-alpha1
 * [Change] The objects rule, index and trigger will have the SQL/XML code generated outside of table's definition due to validation process that sometimes needs to swap id's of those objects.
 * [Change] The object selector will trigger the object selection if user click the input field.
 * [Change] Changed the 'line color' attribute of relationships to 'custom color'.
+* [Fix] Fixed a crash provoked by the constraint editing form when switching the constraint type on the second time the form is opened.
 * [Fix] Minor fix on database import process that was wrongly checking all tables as unlogged.
 * [Fix] Minor fix on sample models pagila.dbm and usda.dbm to remove the unlogged attribute.
 * [Fix] Minor fix on class CodeCompletionWidget to make it persistent as well to remove duplicate items from listing.
