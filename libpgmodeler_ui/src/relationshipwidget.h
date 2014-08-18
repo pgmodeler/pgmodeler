@@ -36,6 +36,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		ColorPickerWidget *color_picker;
 
+		//! brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
+		QWidgetList tabs;
+
+		//! brief Stores the original labels of the tabs
+		QStringList tab_labels;
+
 		/*! \brief Operation list element count before editing the relationship. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to
 		be removed. See: cancelConfiguration() */

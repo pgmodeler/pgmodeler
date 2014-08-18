@@ -317,8 +317,6 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 
 void ConstraintWidget::selectConstraintType(void)
 {
-	QWidget *tab=columns_tbw->widget(1);
-	QString rot_tab=columns_tbw->tabText(1);
 	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());
 
 	tablespace_lbl->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
@@ -360,9 +358,13 @@ void ConstraintWidget::selectConstraintType(void)
 	indexing_cmb->setVisible(constr_type==ConstraintType::exclude);
 
 	if(constr_type!=ConstraintType::foreign_key)
-		columns_tbw->removeTab(1);
+	{
+		columns_tbw->setTabEnabled(1, false);
+		columns_tbw->setCurrentIndex(0);
+		ref_table_sel->clearSelector();
+	}
 	else
-		columns_tbw->addTab(tab, rot_tab);
+		columns_tbw->setTabEnabled(1, true);
 
 	excl_elems_grp->setVisible(constr_type==ConstraintType::exclude);
 }
