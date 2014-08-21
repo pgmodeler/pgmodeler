@@ -184,6 +184,7 @@
         <file>icones/adddata.png</file>
         <file>icones/exportdata.png</file>
         <file>icones/disconnect.png</file>
+        <file>icones/sync.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

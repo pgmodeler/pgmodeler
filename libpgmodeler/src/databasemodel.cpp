@@ -780,6 +780,11 @@ Table *DatabaseModel::getTable(unsigned obj_idx)
 	return(dynamic_cast<Table *>(getObject(obj_idx, OBJ_TABLE)));
 }
 
+Table *DatabaseModel::getTable(const QString &name)
+{
+	return(dynamic_cast<Table *>(getObject(name, OBJ_TABLE)));
+}
+
 void DatabaseModel::removeTable(Table *table, int obj_idx)
 {
 	try
@@ -812,6 +817,11 @@ Sequence *DatabaseModel::getSequence(unsigned obj_idx)
 	return(dynamic_cast<Sequence *>(getObject(obj_idx, OBJ_SEQUENCE)));
 }
 
+Sequence *DatabaseModel::getSequence(const QString &name)
+{
+	return(dynamic_cast<Sequence *>(getObject(name, OBJ_SEQUENCE)));
+}
+
 void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
 {
 	try
@@ -839,6 +849,11 @@ void DatabaseModel::addCollation(Collation *collation, int obj_idx)
 Collation *DatabaseModel::getCollation(unsigned obj_idx)
 {
 	return(dynamic_cast<Collation *>(getObject(obj_idx, OBJ_COLLATION)));
+}
+
+Collation *DatabaseModel::getCollation(const QString &name)
+{
+	return(dynamic_cast<Collation *>(getObject(name, OBJ_COLLATION)));
 }
 
 void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
@@ -870,7 +885,12 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 
 Extension *DatabaseModel::getExtension(unsigned obj_idx)
 {
-  return(dynamic_cast<Extension *>(getObject(obj_idx, OBJ_COLLATION)));
+	return(dynamic_cast<Extension *>(getObject(obj_idx, OBJ_COLLATION)));
+}
+
+Extension *DatabaseModel::getExtension(const QString &name)
+{
+	return(dynamic_cast<Extension *>(getObject(name, OBJ_EXTENSION)));
 }
 
 void DatabaseModel::addTag(Tag *tag, int obj_idx)
@@ -902,6 +922,11 @@ Tag *DatabaseModel::getTag(unsigned obj_idx)
 	return(dynamic_cast<Tag *>(getObject(obj_idx, OBJ_TAG)));
 }
 
+Tag *DatabaseModel::getTag(const QString &name)
+{
+	return(dynamic_cast<Tag *>(getObject(name, OBJ_TAG)));
+}
+
 void DatabaseModel::addEventTrigger(EventTrigger *evnttrig, int obj_idx)
 {
 	try
@@ -929,6 +954,11 @@ void DatabaseModel::removeEventTrigger(EventTrigger *evnttrig, int obj_idx)
 EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
 {
 	return(dynamic_cast<EventTrigger *>(getObject(obj_idx, OBJ_EVENT_TRIGGER)));
+}
+
+EventTrigger *DatabaseModel::getEventTrigger(const QString &name)
+{
+	return(dynamic_cast<EventTrigger *>(getObject(name, OBJ_EVENT_TRIGGER)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -966,6 +996,11 @@ void DatabaseModel::addView(View *view, int obj_idx)
 View *DatabaseModel::getView(unsigned obj_idx)
 {
 	return(dynamic_cast<View *>(getObject(obj_idx, OBJ_VIEW)));
+}
+
+View *DatabaseModel::getView(const QString &name)
+{
+	return(dynamic_cast<View *>(getObject(name, OBJ_VIEW)));
 }
 
 void DatabaseModel::removeView(View *view, int obj_idx)
@@ -1894,6 +1929,16 @@ BaseRelationship *DatabaseModel::getRelationship(unsigned obj_idx, ObjectType re
 	return(dynamic_cast<BaseRelationship *>(getObject(obj_idx, rel_type)));
 }
 
+BaseRelationship *DatabaseModel::getRelationship(const QString &name)
+{
+	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(getObject(name, BASE_RELATIONSHIP));
+
+	if(!rel)
+		rel=dynamic_cast<BaseRelationship *>(getObject(name, OBJ_RELATIONSHIP));
+
+	return(rel);
+}
+
 BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab)
 {
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -1993,6 +2038,11 @@ Textbox *DatabaseModel::getTextbox(unsigned obj_idx)
 	return(dynamic_cast<Textbox *>(getObject(obj_idx, OBJ_TEXTBOX)));
 }
 
+Textbox *DatabaseModel::getTextbox(const QString &name)
+{
+	return(dynamic_cast<Textbox *>(getObject(name, OBJ_TEXTBOX)));
+}
+
 void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 {
 	try
@@ -2008,6 +2058,11 @@ void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 Schema *DatabaseModel::getSchema(unsigned obj_idx)
 {
 	return(dynamic_cast<Schema *>(getObject(obj_idx, OBJ_SCHEMA)));
+}
+
+Schema *DatabaseModel::getSchema(const QString &name)
+{
+	return(dynamic_cast<Schema *>(getObject(name, OBJ_SCHEMA)));
 }
 
 void DatabaseModel::removeSchema(Schema *schema, int obj_idx)
@@ -2039,6 +2094,11 @@ Role *DatabaseModel::getRole(unsigned obj_idx)
 	return(dynamic_cast<Role *>(getObject(obj_idx, OBJ_ROLE)));
 }
 
+Role *DatabaseModel::getRole(const QString &name)
+{
+	return(dynamic_cast<Role *>(getObject(name, OBJ_ROLE)));
+}
+
 void DatabaseModel::removeRole(Role *role, int obj_idx)
 {
 	try
@@ -2066,6 +2126,11 @@ void DatabaseModel::addTablespace(Tablespace *tabspc, int obj_idx)
 Tablespace *DatabaseModel::getTablespace(unsigned obj_idx)
 {
 	return(dynamic_cast<Tablespace *>(getObject(obj_idx, OBJ_TABLESPACE)));
+}
+
+Tablespace *DatabaseModel::getTablespace(const QString &name)
+{
+	return(dynamic_cast<Tablespace *>(getObject(name, OBJ_TABLESPACE)));
 }
 
 void DatabaseModel::removeTablespace(Tablespace *tabspc, int obj_idx)
@@ -2109,6 +2174,11 @@ Cast *DatabaseModel::getCast(unsigned obj_idx)
 	return(dynamic_cast<Cast *>(getObject(obj_idx, OBJ_CAST)));
 }
 
+Cast *DatabaseModel::getCast(const QString &name)
+{
+	return(dynamic_cast<Cast *>(getObject(name, OBJ_CAST)));
+}
+
 void DatabaseModel::addConversion(Conversion *conv, int obj_idx)
 {
 	try
@@ -2139,6 +2209,11 @@ Conversion *DatabaseModel::getConversion(unsigned obj_idx)
 																							OBJ_CONVERSION)));
 }
 
+Conversion *DatabaseModel::getConversion(const QString &name)
+{
+	return(dynamic_cast<Conversion *>(getObject(name, OBJ_CONVERSION)));
+}
+
 void DatabaseModel::addLanguage(Language *lang, int obj_idx)
 {
 	try
@@ -2154,6 +2229,11 @@ void DatabaseModel::addLanguage(Language *lang, int obj_idx)
 Language *DatabaseModel::getLanguage(unsigned obj_idx)
 {
 	return(dynamic_cast<Language *>(getObject(obj_idx, OBJ_LANGUAGE)));
+}
+
+Language *DatabaseModel::getLanguage(const QString &name)
+{
+	return(dynamic_cast<Language *>(getObject(name, OBJ_LANGUAGE)));
 }
 
 void DatabaseModel::removeLanguage(Language *lang, int obj_idx)
@@ -2185,6 +2265,11 @@ Function *DatabaseModel::getFunction(unsigned obj_idx)
 	return(dynamic_cast<Function *>(getObject(obj_idx, OBJ_FUNCTION)));
 }
 
+Function *DatabaseModel::getFunction(const QString &signature)
+{
+	return(dynamic_cast<Function *>(getObject(signature, OBJ_FUNCTION)));
+}
+
 void DatabaseModel::removeFunction(Function *func, int obj_idx)
 {
 	try
@@ -2212,6 +2297,11 @@ void DatabaseModel::addAggregate(Aggregate *aggreg, int obj_idx)
 Aggregate *DatabaseModel::getAggregate(unsigned obj_idx)
 {
 	return(dynamic_cast<Aggregate *>(getObject(obj_idx, OBJ_AGGREGATE)));
+}
+
+Aggregate *DatabaseModel::getAggregate(const QString &name)
+{
+	return(dynamic_cast<Aggregate *>(getObject(name, OBJ_AGGREGATE)));
 }
 
 void DatabaseModel::removeAggregate(Aggregate *aggreg, int obj_idx)
@@ -2286,6 +2376,11 @@ Domain *DatabaseModel::getDomain(unsigned obj_idx)
 	return(dynamic_cast<Domain *>(getObject(obj_idx, OBJ_DOMAIN)));
 }
 
+Domain *DatabaseModel::getDomain(const QString &name)
+{
+	return(dynamic_cast<Domain *>(getObject(name, OBJ_DOMAIN)));
+}
+
 void DatabaseModel::addOperatorFamily(OperatorFamily *op_family, int obj_idx)
 {
 	try
@@ -2301,6 +2396,11 @@ void DatabaseModel::addOperatorFamily(OperatorFamily *op_family, int obj_idx)
 OperatorFamily *DatabaseModel::getOperatorFamily(unsigned obj_idx)
 {
 	return(dynamic_cast<OperatorFamily *>(getObject(obj_idx, OBJ_OPFAMILY)));
+}
+
+OperatorFamily *DatabaseModel::getOperatorFamily(const QString &name)
+{
+	return(dynamic_cast<OperatorFamily *>(getObject(name, OBJ_OPFAMILY)));
 }
 
 void DatabaseModel::removeOperatorFamily(OperatorFamily *op_family, int obj_idx)
@@ -2344,6 +2444,11 @@ OperatorClass *DatabaseModel::getOperatorClass(unsigned obj_idx)
 	return(dynamic_cast<OperatorClass *>(getObject(obj_idx, OBJ_OPCLASS)));
 }
 
+OperatorClass *DatabaseModel::getOperatorClass(const QString &name)
+{
+	return(dynamic_cast<OperatorClass *>(getObject(name, OBJ_OPCLASS)));
+}
+
 void DatabaseModel::addOperator(Operator *oper, int obj_idx)
 {
 	try
@@ -2371,6 +2476,11 @@ void DatabaseModel::removeOperator(Operator *oper, int obj_idx)
 Operator *DatabaseModel::getOperator(unsigned obj_idx)
 {
 	return(dynamic_cast<Operator *>(getObject(obj_idx, OBJ_OPERATOR)));
+}
+
+Operator *DatabaseModel::getOperator(const QString &signature)
+{
+	return(dynamic_cast<Operator *>(getObject(signature, OBJ_OPERATOR)));
 }
 
 void DatabaseModel::addType(Type *type, int obj_idx)
@@ -2430,6 +2540,11 @@ void DatabaseModel::removeType(Type *type, int obj_idx)
 Type *DatabaseModel::getType(unsigned obj_idx)
 {
 	return(dynamic_cast<Type *>(getObject(obj_idx, OBJ_TYPE)));
+}
+
+Type *DatabaseModel::getType(const QString &name)
+{
+	return(dynamic_cast<Type *>(getObject(name, OBJ_TYPE)));
 }
 
 void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)

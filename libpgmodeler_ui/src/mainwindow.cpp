@@ -941,7 +941,7 @@ void MainWindow::removeModelActions(void)
 	QList<QAction *> act_list;
 	act_list=general_tb->actions();
 
-	while(act_list.size() > 5)
+	while(act_list.size() > 6)
 	{
     general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -1293,6 +1293,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
+	action_sync->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);

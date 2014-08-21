@@ -751,6 +751,7 @@
    <addaction name="action_plugins"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
+   <addaction name="action_sync"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
@@ -1347,6 +1348,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+H</string>
+   </property>
+  </action>
+  <action name="action_sync">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/sync.png</normaloff>:/icones/icones/sync.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sync</string>
+   </property>
+   <property name="toolTip">
+    <string>Synchronize changes between model and database</string>
    </property>
   </action>
  </widget>

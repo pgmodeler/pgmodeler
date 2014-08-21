@@ -382,6 +382,10 @@ class BaseObject {
 		//! brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);
 
+		/*! brief Compares the xml code between the "this" object and another one. The user can specify which attributes
+		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
+		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
+
 		/*! brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
 				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
