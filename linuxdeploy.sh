@@ -26,10 +26,10 @@ QT_IFW_ROOT=/opt/qt-if-1.5.0
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
+NO_QT_LIBS_OPT='-no-qt-libs'
 GEN_INST_PKG=0
 DEMO_VERSION=0
 BUNDLE_QT_LIBS=1
@@ -53,8 +53,13 @@ for param in $@; do
  fi
 done
 
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-$ARCH"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
+fi
+
 PKGFILE=$PKGNAME.tar.gz
-NO_QT_LIBS_OPT='-no-qt-libs'
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz

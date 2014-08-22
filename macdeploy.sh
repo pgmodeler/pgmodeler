@@ -10,7 +10,6 @@ DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep 
 DEPLOY_VER=${DEPLOY_VER/\",/}
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 WITH_BUILD_NUM='-with-build-num'
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
@@ -25,6 +24,12 @@ for param in $@; do
    QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
  fi
 done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-macosx"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
+fi
 
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler

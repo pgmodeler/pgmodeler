@@ -17,7 +17,6 @@ DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 WITH_BUILD_NUM='-with-build-num'
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
@@ -32,6 +31,12 @@ for param in $@; do
    QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
  fi
 done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-windows"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-windows"
+fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
