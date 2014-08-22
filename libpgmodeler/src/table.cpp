@@ -304,6 +304,18 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		int idx;
 		obj_type=obj->getObjectType();
 
+		#ifdef DEMO_VERSION
+			#warning "DEMO VERSION: table children objects creation limit."
+			vector<TableObject *> *obj_list=getObjectList(obj_type);
+
+			if(obj_list && obj_list->size() >= GlobalAttributes::MAX_OBJECT_COUNT)
+			 throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type! You've reach this limit for the type: `%2'")
+											 .arg(GlobalAttributes::MAX_OBJECT_COUNT)
+											 .arg(BaseObject::getTypeName(obj_type)),
+											 ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		#endif
+
 		try
 		{
 			//Raises an error if already exists a object with the same name and type

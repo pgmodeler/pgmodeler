@@ -881,17 +881,25 @@ void SQLToolWidget::dropDatabase(void)
 
 void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
-	Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
-						 aux_conn=(*conn);
-	DataManipulationForm *data_manip=new DataManipulationForm;
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: data manipulation feature disabled warning."
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Warning"),
+								trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
+								Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+	#else
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
+							 aux_conn=(*conn);
+		DataManipulationForm *data_manip=new DataManipulationForm;
 
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
+		data_manip->setWindowModality(Qt::NonModal);
+		data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+		data_manip->hide_views_chk->setChecked(hide_views);
 
-	aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-	data_manip->setAttributes(aux_conn, schema, table);
-	data_manip->show();
+		aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+		data_manip->setAttributes(aux_conn, schema, table);
+		data_manip->show();
+	#endif
 }
 
 void SQLToolWidget::enableSQLExecution(bool enable)

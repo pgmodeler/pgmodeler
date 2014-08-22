@@ -28,7 +28,6 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
-	model_wgt=nullptr;
 	xmlparser=nullptr;
 	dbmodel=nullptr;
 }
@@ -67,15 +66,14 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 	}
 }
 
-void DatabaseImportHelper::setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
+void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
 {
 	map<ObjectType, vector<unsigned> >::iterator itr=obj_oids.begin();
 
-	if(!model_wgt)
+	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->model_wgt=model_wgt;
-	dbmodel=model_wgt->getDatabaseModel();
+	dbmodel=db_model;
 	xmlparser=dbmodel->getXMLParser();
 	object_oids=obj_oids;
 	column_oids=col_oids;
@@ -136,7 +134,6 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 
 void DatabaseImportHelper::swapSequencesTablesIds(void)
 {
-	//Schema *schema=nullptr;
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
 
@@ -245,17 +242,6 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 													 OBJ_COLUMN);
 
 		names=getObjectName(QString::number(col_itr->first)).split(".");
-    /*objects=catalog.getObjectsAttributes(OBJ_COLUMN, names[0], names[1], col_itr->second);
-		itr=objects.begin();
-
-		while(itr!=objects.end() && !import_canceled)
-		{
-			oid=itr->at(ParsersAttributes::OID).toUInt();
-			columns[col_itr->first][oid]=(*itr);
-			itr++;
-		}
-
-    objects.clear(); */
     retrieveTableColumns(names[0], names[1], col_itr->second);
 
 		progress=(i/static_cast<float>(column_oids.size()))*100;
@@ -777,7 +763,6 @@ void DatabaseImportHelper::resetImportParameters(void)
 	Connection::setPrintSQL(false);
 	import_canceled=false;
 	dbmodel=nullptr;
-	model_wgt=nullptr;
 	column_oids.clear();
 	object_oids.clear();
 	types.clear();
@@ -792,7 +777,6 @@ void DatabaseImportHelper::resetImportParameters(void)
 	obj_perms.clear();
 	col_perms.clear();
 }
-
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 {

@@ -179,8 +179,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
+	connect(action_sync, SIGNAL(triggered(bool)), this, SLOT(synchronizeDatabase(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
+
+	#ifdef DEMO_VERSION
+		window_title+=trUtf8(" (Demo)");
+	#endif
+
 	this->setWindowTitle(window_title);
 
 	current_model=nullptr;
@@ -455,6 +461,11 @@ void MainWindow::showEvent(QShowEvent *)
 	//Enabling update check at startup
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
 		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: demonstration version startup warning."
+		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
+	#endif
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)
@@ -1123,8 +1134,6 @@ void MainWindow::saveModel(ModelWidget *model)
 						model->saveModel(file_dlg.selectedFiles().at(0));
 						recent_models.push_front(file_dlg.selectedFiles().at(0));
 						updateRecentModelsMenu();
-
-						//models_tbw->setTabToolTip(models_tbw->indexOf(model), file_dlg.selectedFiles().at(0));
 						model_nav_wgt->updateModelText(models_tbw->indexOf(model), model->getDatabaseModel()->getName(), file_dlg.selectedFiles().at(0));
 					}
 				}
@@ -1157,11 +1166,27 @@ void MainWindow::exportModel(void)
 
 void MainWindow::importDatabase(void)
 {
+ #ifdef DEMO_VERSION
+	#warning "DEMO VERSION: reverse engineering feature disabled warning."
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+							 trUtf8("You're running a demonstration version! The database import (reverse engineering) feature is available only in the full version!"),
+							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+ #else
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	db_import_form.exec();
 
 	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
 		this->addModel(db_import_form.getModelWidget());
+#endif
+}
+
+void MainWindow::synchronizeDatabase(void)
+{
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+							 trUtf8("This feature is currently under development and will be available in final <strong>0.8.0</strong>!"),
+							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 }
 
 void MainWindow::printModel(void)
@@ -1468,4 +1493,12 @@ void MainWindow::configureSamplesMenu(void)
 	}
 
 	central_wgt->sample_tb->setMenu(&sample_mdls_menu);
+}
+
+void MainWindow::showDemoVersionWarning(void)
+{
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances of each type of object and some features like <strong>reverse engineering</strong> and <strong>table's data manipulation</strong> will be disabled!").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 }

@@ -29,24 +29,36 @@ BUILD_NUM=$(date '+%Y%m%d')
 PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
 GEN_INSTALLER_OPT='-gen-installer'
+DEMO_VERSION_OPT='-demo-version'
 GEN_INST_PKG=0
+DEMO_VERSION=0
+BUNDLE_QT_LIBS=1
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
-fi
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
 
-if [[ "$*" == "$GEN_INSTALLER_OPT" ]]; then
-  GEN_INST_PKG=1
-fi
+ if [[ "$param" == "$GEN_INSTALLER_OPT" ]]; then
+   GEN_INST_PKG=1
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+ 
+ if [[ "$param" == "$NO_QT_LIBS_OPT" ]]; then
+  BUNDLE_QT_LIBS=0
+ fi
+done
 
 PKGFILE=$PKGNAME.tar.gz
 NO_QT_LIBS_OPT='-no-qt-libs'
 
-if [[ "$*" == "$NO_QT_LIBS_OPT" ]]; then
+if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz
-  BUNDLE_QT_LIBS=0
 else
-  BUNDLE_QT_LIBS=1
   QT_CONF=build/qt.conf
   DEP_PLUGINS_DIR=build/qtplugins
   
@@ -132,6 +144,10 @@ fi
 
 if [ $GEN_INST_PKG = 1 ]; then
   echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
+fi
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
 
 echo "Cleaning previous compilation..."

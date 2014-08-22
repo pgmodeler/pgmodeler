@@ -12,10 +12,19 @@ BUILD_NUM=$(date '+%Y%m%d')
 
 PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 WITH_BUILD_NUM='-with-build-num'
+DEMO_VERSION_OPT='-demo-version'
+DEMO_VERSION=0
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
-fi
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+done
 
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
@@ -55,6 +64,10 @@ echo "Deploying version: $DEPLOY_VER"
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
+fi
 
 echo "Running qmake..."
 $QT_ROOT/bin/qmake $QMAKE_ARGS  >> $LOG 2>&1

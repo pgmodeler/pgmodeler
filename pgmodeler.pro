@@ -154,6 +154,9 @@ LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
 
+#Setting up the flag passed to compiler to build the demo version
+defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
+
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \
                $$PWD/libutils/src \

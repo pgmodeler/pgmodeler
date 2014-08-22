@@ -204,6 +204,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Executes the reverse engineering
 		void importDatabase(void);
 
+		//! \brief Executes the model <> database synchronization
+		void synchronizeDatabase(void);
+
 		//! \brief Updates the opened models with new configurations
 		void applyConfigurations(void);
 
@@ -248,6 +251,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
 		void removeModelActions(void);
+		void showDemoVersionWarning(void);
 };
 
 #endif

@@ -245,6 +245,7 @@ FORMS += ui/mainwindow.ui \
     ui/relationshipconfigwidget.ui \
     ui/datamanipulationform.ui \
     ui/customsqlwidget.ui \
-    ui/findreplacewidget.ui
+    ui/findreplacewidget.ui \
+    ui/modeldatabasesyncform.ui
 
 

@@ -117,6 +117,11 @@ namespace GlobalAttributes {
 		//For MacOSX the crash handler path is fixed (inside bundle)
 		CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
 	#endif
+
+	#ifdef DEMO_VERSION
+	 //Maximum object creation counter for demo version
+	 static const unsigned MAX_OBJECT_COUNT=8;
+	#endif
 }
 
 #endif
