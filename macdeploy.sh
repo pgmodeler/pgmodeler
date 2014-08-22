@@ -66,13 +66,14 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
-echo "Cleaning previous compilation..."
-rm -r build/* &> $LOG
-make distclean  >> $LOG 2>&1
 
 if [ $DEMO_VERSION = 1 ]; then
   echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
+
+echo "Cleaning previous compilation..."
+rm -r build/* &> $LOG
+make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
 $QT_ROOT/bin/qmake $QMAKE_ARGS  >> $LOG 2>&1
