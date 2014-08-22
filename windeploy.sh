@@ -110,13 +110,14 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
-echo "Cleaning previous compilation..."
-rm -r build/* > $LOG 2>&1
-$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
 
 if [ $DEMO_VERSION = 1 ]; then
   echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
+
+echo "Cleaning previous compilation..."
+rm -r build/* > $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
 
 echo "Running qmake..."
 $QMAKE_ROOT/qmake.exe $QMAKE_ARGS >> $LOG 2>&1
