@@ -1508,6 +1508,9 @@ void MainWindow::showDemoVersionWarning(void)
 	msg_box.show(trUtf8("Warning"),
 							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 											of each type of object and some features like <strong>reverse engineering</strong> and <strong>table's data manipulation</strong> \
-											will be disabled!<br/><br/>You can get a full binary copy or the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+											will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
+											<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+
+	QTimer::singleShot(300000, this, SLOT(showDemoVersionWarning()));
 }
