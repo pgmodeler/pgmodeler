@@ -690,6 +690,13 @@ void MainWindow::clearRecentModelsMenu(void)
 
 void MainWindow::addModel(const QString &filename)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: database model creation limit."
+		if(models_tbw->count()==1)
+			throw Exception(trUtf8("The demonstration version can create only `one' instance of database model!"),
+											ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	#endif
+
 	ModelWidget *model_tab=nullptr;
 	QString obj_name, tab_name, str_aux;
 	Schema *public_sch=nullptr;
@@ -1499,6 +1506,8 @@ void MainWindow::showDemoVersionWarning(void)
 {
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances of each type of object and some features like <strong>reverse engineering</strong> and <strong>table's data manipulation</strong> will be disabled!").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
+											of each type of object and some features like <strong>reverse engineering</strong> and <strong>table's data manipulation</strong> \
+											will be disabled!<br/><br/>You can get a full binary copy or the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 }

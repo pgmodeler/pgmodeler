@@ -46,12 +46,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="column1">
 		<type name="text"/>
 	</column>
-	<column name="column2" not-null="true">
-		<type name="integer"/>
-	</column>
-	<column name="column3">
-		<type name="text"/>
-	</column>
 	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table">
 		<columns names="column" ref-type="src-columns"/>
 	</constraint>
@@ -118,7 +112,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false">
 	<line>
 		<position x="318.35" y="351.6"/>
-	<position x="318.35" y="104.6"/>
+	<position x="317" y="128"/>
 	</line>
 	<label ref-type="name-label">
 		<position x="12.6257" y="16.0515"/>
@@ -127,9 +121,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="integer"/>
 	</column>
 	<column name="attribute1">
-		<type name="integer"/>
-	</column>
-	<column name="attribute2">
 		<type name="integer"/>
 	</column>
 </relationship>
