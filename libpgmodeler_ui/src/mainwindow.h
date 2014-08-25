@@ -142,6 +142,13 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void configureSamplesMenu(void);
 
+		/*! brief Stores the current checkboxes states of the main dock widgets on the set of configuration params
+				in order to save them on the main configuration file */
+		void storeDockWidgetsSettings(void);
+
+		//! brief Restore the dock widget configurations from the parameters loaded from main configuration file
+		void restoreDockWidgetsSettings(void);
+
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
