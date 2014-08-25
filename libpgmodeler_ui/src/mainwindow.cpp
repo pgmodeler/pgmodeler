@@ -454,6 +454,8 @@ void MainWindow::showEvent(QShowEvent *)
     action_main_menu->setVisible(!main_menu_mb->isVisible());
   #endif
 
+	restoreDockWidgetsSettings();
+
 	//Positioning the update notifier widget before showing it (if there is an update)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
@@ -568,6 +570,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				recent_mdls_menu.clear();
 			}
+
+			//Saving dock widgets settings
+			storeDockWidgetsSettings();
 
 			conf_wgt->saveConfiguration();
 			restoration_form->removeTemporaryModels();
@@ -1514,8 +1519,65 @@ void MainWindow::configureSamplesMenu(void)
 	central_wgt->sample_tb->setMenu(&sample_mdls_menu);
 }
 
+void MainWindow::storeDockWidgetsSettings(void)
+{
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	attribs_map params;
+
+	params[ParsersAttributes::VALIDATOR]="1";
+	params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? "1" : "");
+	params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? "1" : "");
+	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
+	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
+	params.clear();
+
+	params[ParsersAttributes::SQL_TOOL]="1";
+	params[ParsersAttributes::HIDE_EXT_OBJECTS]=(sql_tool_wgt->hide_ext_objs_chk->isChecked() ? "1" : "");
+	params[ParsersAttributes::HIDE_SYS_OBJECTS]=(sql_tool_wgt->hide_ext_objs_chk->isChecked() ? "1" : "");
+	conf_wgt->addConfigurationParam(ParsersAttributes::SQL_TOOL, params);
+	params.clear();
+
+	params[ParsersAttributes::OBJECT_FINDER]="1";
+	params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? "1" : "");
+	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? "1" : "");
+	params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? "1" : "");
+	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? "1" : "");
+	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
+	params.clear();
+}
+
+void MainWindow::restoreDockWidgetsSettings(void)
+{
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
+
+	if(confs.count(ParsersAttributes::VALIDATOR))
+	{
+		model_valid_wgt->sql_validation_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::SQL_VALIDATION]==ParsersAttributes::_TRUE_);
+		model_valid_wgt->use_tmp_names_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::USE_UNIQUE_NAMES]==ParsersAttributes::_TRUE_);
+		model_valid_wgt->version_cmb->setCurrentText(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::PGSQL_VERSION]);
+	}
+
+	if(confs.count(ParsersAttributes::OBJECT_FINDER))
+	{
+		obj_finder_wgt->highlight_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::HIGHLIGHT_OBJECTS]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::_TRUE_);
+	}
+
+	if(confs.count(ParsersAttributes::SQL_TOOL))
+	{
+		sql_tool_wgt->blockSignals(true);
+		sql_tool_wgt->hide_ext_objs_chk->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::HIDE_EXT_OBJECTS]==ParsersAttributes::_TRUE_);
+		sql_tool_wgt->hide_sys_objs_chk->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::HIDE_SYS_OBJECTS]==ParsersAttributes::_TRUE_);
+		sql_tool_wgt->blockSignals(false);
+	}
+}
+
 void MainWindow::showDemoVersionWarning(void)
 {
+ #ifdef DEMO_VERSION
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
@@ -1525,4 +1587,5 @@ void MainWindow::showDemoVersionWarning(void)
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 
 	QTimer::singleShot(300000, this, SLOT(showDemoVersionWarning()));
+ #endif
 }

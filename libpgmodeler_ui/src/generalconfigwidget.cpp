@@ -124,7 +124,7 @@ void GeneralConfigWidget::saveConfiguration()
 	try
 	{
 		map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir;
+		QString file_sch, root_dir, widget_sch;
 
 		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR;
@@ -133,6 +133,12 @@ void GeneralConfigWidget::saveConfiguration()
 						 GlobalAttributes::SCHEMAS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR +
 						 ParsersAttributes::_FILE_ +
+						 GlobalAttributes::SCHEMA_EXT;
+
+		widget_sch=root_dir +
+						 GlobalAttributes::SCHEMAS_DIR +
+						 GlobalAttributes::DIR_SEPARATOR +
+						 ParsersAttributes::WIDGET +
 						 GlobalAttributes::SCHEMA_EXT;
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
@@ -185,6 +191,15 @@ void GeneralConfigWidget::saveConfiguration()
 			{
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+			}
+			else if(itr->first==ParsersAttributes::SQL_TOOL ||
+							itr->first==ParsersAttributes::VALIDATOR ||
+							itr->first==ParsersAttributes::OBJECT_FINDER)
+			{
+				schparser.setIgnoreUnkownAttributes(true);
+				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
+					schparser.getCodeDefinition(widget_sch, itr->second);
+				schparser.setIgnoreUnkownAttributes(false);
 			}
 
 			itr++;

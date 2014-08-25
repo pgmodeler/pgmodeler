@@ -444,7 +444,19 @@ namespace ParsersAttributes {
 	MODE="mode",
 	PATTERNS="patterns",
 	NAME_PATTERNS="name-patterns",
-	CUSTOM_FILTER="custom-filter";
+	CUSTOM_FILTER="custom-filter",
+	VALIDATOR="validator",
+	SQL_VALIDATION="sql-validation",
+	USE_UNIQUE_NAMES="use-unique-names",
+	PGSQL_VERSION="pgsql-version",
+	SQL_TOOL="sqltool",
+	HIDE_EXT_OBJECTS="hide-ext-objects",
+	HIDE_SYS_OBJECTS="hide-sys-objects",
+	OBJECT_FINDER="objectfinder",
+	EXACT_MATCH="exact-match",
+	HIGHLIGHT_OBJECTS="highlight-objects",
+	DOCK_WIDGETS="dock-widgets",
+	WIDGET="widget";
 }
 
 #endif

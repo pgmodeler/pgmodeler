@@ -44,4 +44,10 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
  $sp </recent-models> $br
 %end
 
+%if @{dock-widgets} %then
+ $sp <dock-widgets> $br
+ $sp @{dock-widgets}
+ $sp </dock-widgets> $br
+%end
+
 </pgmodeler> $br
