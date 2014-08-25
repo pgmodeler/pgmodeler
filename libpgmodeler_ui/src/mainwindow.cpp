@@ -463,7 +463,7 @@ void MainWindow::showEvent(QShowEvent *)
 		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
 
 	#ifdef DEMO_VERSION
-		#warning "DEMO VERSION: demonstration version startup warning."
+		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
 	#endif
 }
@@ -605,6 +605,9 @@ void MainWindow::updateConnections(void)
 
 void MainWindow::saveTemporaryModels(bool force)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: temporary model saving disabled."
+	#else
 	try
 	{
 		ModelWidget *model=nullptr;
@@ -641,6 +644,7 @@ void MainWindow::saveTemporaryModels(bool force)
 		tmpmodel_thread.quit();
 		msg_box.show(e);
 	}
+	#endif
 }
 
 void MainWindow::updateRecentModelsMenu(void)
@@ -1094,6 +1098,13 @@ void MainWindow::saveAllModels(void)
 
 void MainWindow::saveModel(ModelWidget *model)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: model saving disabled."
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Warning"),
+								 trUtf8("You're running a demonstration version! The model saving feature is available only in the full version!"),
+								 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+	#else
 	try
 	{
 		if(!model) model=current_model;
@@ -1163,6 +1174,7 @@ void MainWindow::saveModel(ModelWidget *model)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+	#endif
 }
 
 void MainWindow::exportModel(void)
@@ -1174,7 +1186,7 @@ void MainWindow::exportModel(void)
 void MainWindow::importDatabase(void)
 {
  #ifdef DEMO_VERSION
-	#warning "DEMO VERSION: reverse engineering feature disabled warning."
+	#warning "DEMO VERSION: reverse engineering feature disabled."
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 							 trUtf8("You're running a demonstration version! The database import (reverse engineering) feature is available only in the full version!"),
@@ -1185,7 +1197,7 @@ void MainWindow::importDatabase(void)
 
 	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
 		this->addModel(db_import_form.getModelWidget());
-#endif
+ #endif
 }
 
 void MainWindow::synchronizeDatabase(void)

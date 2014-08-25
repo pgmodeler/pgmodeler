@@ -178,7 +178,12 @@ void SourceCodeWidget::generateSourceCode(int)
 		if(sqlcode_txt->toPlainText().isEmpty())
 			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
-		xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
+		#ifdef DEMO_VERSION
+			#warning "DEMO VERSION: XML code preview disabled."
+			xmlcode_txt->setPlainText(trUtf8("<!-- XML code preview disabled in demonstration version -->"));
+		#else
+			xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
+		#endif
 
 		setSourceCodeTab();
 
