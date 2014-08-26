@@ -467,6 +467,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
+		QTimer::singleShot(1800000, this, SLOT(quitDemoVersion()));
 	#endif
 }
 
@@ -488,8 +489,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
 		map<QString, attribs_map > confs;
-		bool modified=false;
-		int i=0;
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();
@@ -497,27 +496,33 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		tmpmodel_thread.quit();
 		plugins_menu->clear();
 
-		//Checking if there is modified models and ask the user to save them before close the application
-		if(models_tbw->count() > 0)
-		{
-			i=0;
-			while(i < models_tbw->count() && !modified)
-				modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
+		//If not in demo version there is no confirmation before close the software
+		#ifndef DEMO_VERSION
+			bool modified=false;
+			int i=0;
 
-			if(modified)
+			//Checking if there is modified models and ask the user to save them before close the application
+			if(models_tbw->count() > 0)
 			{
-				Messagebox msg_box;
+				i=0;
+				while(i < models_tbw->count() && !modified)
+					modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
 
-				msg_box.show(trUtf8("Save all models"),
-										 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
-										 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+				if(modified)
+				{
+					Messagebox msg_box;
 
-				/* If the user rejects the message box the close event will be aborted
-			causing pgModeler not to be finished */
-				if(msg_box.result()==QDialog::Rejected)
-					event->ignore();
+					msg_box.show(trUtf8("Save all models"),
+											 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
+											 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+
+					/* If the user rejects the message box the close event will be aborted
+				causing pgModeler not to be finished */
+					if(msg_box.result()==QDialog::Rejected)
+						event->ignore();
+				}
 			}
-		}
+		#endif
 
 		if(event->isAccepted())
 		{
@@ -991,13 +996,17 @@ void MainWindow::closeModel(int model_id)
 		ModelWidget *model=dynamic_cast<ModelWidget *>(tab);
 		Messagebox msg_box;
 
-		//Ask the user to save the model if its modified
-		if(model->isModified())
-		{
-			msg_box.show(trUtf8("Save model"),
-									 trUtf8("The model was modified! Do you really want to close without save it?"),
-									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-		}
+		#ifdef DEMO_VERSION
+			msg_box.setResult(QDialog::Accepted);
+		#else
+			//Ask the user to save the model if its modified
+			if(model->isModified())
+			{
+				msg_box.show(trUtf8("Save model"),
+										 trUtf8("The model was modified! Do you really want to close without save it?"),
+										 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+			}
+		#endif
 
 		if(!model->isModified() ||
 			 (model->isModified() && msg_box.result()==QDialog::Accepted))
@@ -1580,12 +1589,23 @@ void MainWindow::showDemoVersionWarning(void)
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
-											of each type of object and some features like <strong>reverse engineering</strong> and <strong>table's data manipulation</strong> \
-											will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
-											<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+							 trUtf8("You're running a demonstration version! There is a time limit of <strong>30 minutes</strong> per execution. Note that you'll be able to create only <strong>%1</strong> instances \
+											of each type of object and some key features will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
+											<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 
 	QTimer::singleShot(300000, this, SLOT(showDemoVersionWarning()));
+ #endif
+}
+
+void MainWindow::quitDemoVersion(void)
+{
+ #ifdef DEMO_VERSION
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+							 trUtf8("The demonstration period for this execution has finished! pgModeler will quit now!"),
+							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+
+	qApp->quit();
  #endif
 }

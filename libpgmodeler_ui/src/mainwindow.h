@@ -258,7 +258,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
 		void removeModelActions(void);
+
 		void showDemoVersionWarning(void);
+		void quitDemoVersion(void);
 };
 
 #endif
