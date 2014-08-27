@@ -197,6 +197,8 @@
         <file>imagens/crashhandler.png</file>
         <file>imagens/rel_center_pnts.png</file>
         <file>imagens/rel_fk_to_pk.png</file>
+        <file>imagens/diff2db.png</file>
+        <file>imagens/diff2sql.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>

@@ -751,7 +751,7 @@
    <addaction name="action_plugins"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
-   <addaction name="action_sync"/>
+   <addaction name="action_diff"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
@@ -1350,7 +1350,7 @@
     <string>Ctrl+Shift+H</string>
    </property>
   </action>
-  <action name="action_sync">
+  <action name="action_diff">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -1359,10 +1359,10 @@
      <normaloff>:/icones/icones/sync.png</normaloff>:/icones/icones/sync.png</iconset>
    </property>
    <property name="text">
-    <string>Sync</string>
+    <string>Diff</string>
    </property>
    <property name="toolTip">
-    <string>Synchronize changes between model and database</string>
+    <string>Determine the changes between model and database</string>
    </property>
   </action>
  </widget>

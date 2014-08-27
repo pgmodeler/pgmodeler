@@ -211,8 +211,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Executes the reverse engineering
 		void importDatabase(void);
 
-		//! \brief Executes the model <> database synchronization
-		void synchronizeDatabase(void);
+		//! \brief Executes the model <> database comparison
+		void compareModelDatabase(void);
 
 		//! \brief Updates the opened models with new configurations
 		void applyConfigurations(void);

@@ -1308,9 +1308,6 @@ void DatabaseModel::validateRelationships(void)
 				//Makes a cast to the correct object class
 				rel=dynamic_cast<Relationship *>(base_rel);
 
-        //if(!loading_model)
-        //	rel->saveObjectsIndexes();
-
 				//If the relationships is invalid
 				if(rel->isInvalidated())
 				{
@@ -1333,126 +1330,129 @@ void DatabaseModel::validateRelationships(void)
 			if(!loading_model && xml_special_objs.empty())
 				storeSpecialObjectsXML();
 
-			//Disconnects all the relationship
-			disconnectRelationships();
-
-			/* Merges the two lists (valid and invalid relationships),
-			taking care to insert the invalid ones at the end of the list */
-			rels=vet_rel;
-			rels.insert(rels.end(), vet_rel_inv.begin(), vet_rel_inv.end());
-			vet_rel.clear();
-			vet_rel_inv.clear();
-
-			//Walking through the created list connecting the relationships
-			itr=rels.begin();
-			itr_end=rels.end();
-			idx=0;
-
-			while(itr!=itr_end)
+			if(found_inval_rel)
 			{
-				rel=dynamic_cast<Relationship *>(*itr);
+				//Disconnects all the relationship
+				disconnectRelationships();
 
-				//Stores the current iterator in a auxiliary one to remove from list in case of error
-				itr_ant=itr;
-				itr++;
+				/* Merges the two lists (valid and invalid relationships),
+					 taking care to insert the invalid ones at the end of the list */
+				rels=vet_rel;
+				rels.insert(rels.end(), vet_rel_inv.begin(), vet_rel_inv.end());
+				vet_rel.clear();
+				vet_rel_inv.clear();
 
-				try
+				//Walking through the created list connecting the relationships
+				itr=rels.begin();
+				itr_end=rels.end();
+				idx=0;
+
+				while(itr!=itr_end)
 				{
-					//Try to connect the relationship
-					rel->connectRelationship();
+					rel=dynamic_cast<Relationship *>(*itr);
 
-					//Storing the schemas on a auxiliary vector to update them later
-					tab1=rel->getTable(BaseRelationship::SRC_TABLE);
-					tab2=rel->getTable(BaseRelationship::DST_TABLE);
+					//Stores the current iterator in a auxiliary one to remove from list in case of error
+					itr_ant=itr;
+					itr++;
 
-					if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
-						schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
-					else if(tab2!=tab1 &&
-									std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
-						schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
-
-					idx++;
-
-					/* Removes the relationship from the current position and inserts it
-					into the next position after the next relationship to try the reconnection */
-					rels.erase(itr_ant);
-					idx=0;
-
-					/* If the list was emptied and there is relationship that fails to validate,
-					the method will try to validate them one last time */
-					if(rels.size()==0 && !fail_rels.empty() && !valid_fail_rels)
+					try
 					{
-						rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-						//Check this flag indicates that the fail_rels list must be copied only one time
-						valid_fail_rels=true;
-					}
+						//Try to connect the relationship
+						rel->connectRelationship();
 
-					itr=rels.begin();
-					itr_end=rels.end();
-				}
-				/* Case some error is raised during the connection the relationship is
-			 permanently invalidated and need to be removed from the model */
-				catch(Exception &e)
-				{
-					/* If the relationship connection failed after 'rels_gen_pk' times at the
-						different errors or exists on the fail_rels vector (already tried to be validated)
-						it will be deleted from model */
-					if((e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk) ||
-						 (std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
-					{
-						//Removes the relationship
-						__removeObject(rel);
+						//Storing the schemas on a auxiliary vector to update them later
+						tab1=rel->getTable(BaseRelationship::SRC_TABLE);
+						tab2=rel->getTable(BaseRelationship::DST_TABLE);
 
-						//Removes the iterator that stores the relationship from the list
-						rels.erase(itr_ant);
+						if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+							schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
+						else if(tab2!=tab1 &&
+										std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+							schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
 
-						//Stores the error raised in a list
-						errors.push_back(e);
-					}
-					/* If the relationship connection fails with the ERR_LINK_TABLES_NO_PK error and
-					the connection tries exceed the size of the relationship the relationship is isolated
-					on a "failed to validate" list. This list will be appended to the main rel list when
-					there is only one relationship to be validated */
-					else if(e.getErrorType()==ERR_LINK_TABLES_NO_PK &&
-									(conn_tries[rel] > rels.size() ||
-									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
-					{
-						fail_rels.push_back(rel);
-						rels.erase(itr_ant);
-						conn_tries[rel]=0;
-
-						/* If the list was emptied and there is relationship that fails to validate,
-						the method will try to validate them one last time */
-						if(rels.size()==0 && !valid_fail_rels)
-						{
-							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
-							valid_fail_rels=true;
-						}
-					}
-					else
-					{
-						//Increments the connection tries
-						conn_tries[rel]++;
+						idx++;
 
 						/* Removes the relationship from the current position and inserts it
-						into the next position after the next relationship to try the reconnection */
+							 into the next position after the next relationship to try the reconnection */
 						rels.erase(itr_ant);
+						idx=0;
 
-						//If the next index doesn't extrapolates the list size insert it on the next position
-						if(idx+1 < rels.size())
-							rels.insert(rels.begin() + idx + 1,rel);
-						else
-							rels.push_back(rel);
+						/* If the list was emptied and there is relationship that fails to validate,
+							 the method will try to validate them one last time */
+						if(rels.size()==0 && !fail_rels.empty() && !valid_fail_rels)
+						{
+							rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
+							//Check this flag indicates that the fail_rels list must be copied only one time
+							valid_fail_rels=true;
+						}
+
+						itr=rels.begin();
+						itr_end=rels.end();
 					}
+					/* Case some error is raised during the connection the relationship is
+						 permanently invalidated and need to be removed from the model */
+					catch(Exception &e)
+					{
+						/* If the relationship connection failed after 'rels_gen_pk' times at the
+						different errors or exists on the fail_rels vector (already tried to be validated)
+						it will be deleted from model */
+						if((e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk) ||
+							 (std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
+						{
+							//Removes the relationship
+							__removeObject(rel);
 
-					/* Points the searching to the iterator immediately after the removed iterator
-				evicting to walk on the list from the first item */
-					itr_end=rels.end();
-					itr=rels.begin() + idx;
+							//Removes the iterator that stores the relationship from the list
+							rels.erase(itr_ant);
+
+							//Stores the error raised in a list
+							errors.push_back(e);
+						}
+						/* If the relationship connection fails with the ERR_LINK_TABLES_NO_PK error and
+								the connection tries exceed the size of the relationship the relationship is isolated
+								on a "failed to validate" list. This list will be appended to the main rel list when
+								there is only one relationship to be validated */
+						else if(e.getErrorType()==ERR_LINK_TABLES_NO_PK &&
+										(conn_tries[rel] > rels.size() ||
+										 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
+						{
+							fail_rels.push_back(rel);
+							rels.erase(itr_ant);
+							conn_tries[rel]=0;
+
+							/* If the list was emptied and there is relationship that fails to validate,
+								 the method will try to validate them one last time */
+							if(rels.size()==0 && !valid_fail_rels)
+							{
+								rels.insert(rels.end(), fail_rels.begin(), fail_rels.end());
+								valid_fail_rels=true;
+							}
+						}
+						else
+						{
+							//Increments the connection tries
+							conn_tries[rel]++;
+
+							/* Removes the relationship from the current position and inserts it
+								 into the next position after the next relationship to try the reconnection */
+							rels.erase(itr_ant);
+
+							//If the next index doesn't extrapolates the list size insert it on the next position
+							if(idx+1 < rels.size())
+								rels.insert(rels.begin() + idx + 1,rel);
+							else
+								rels.push_back(rel);
+						}
+
+						/* Points the searching to the iterator immediately after the removed iterator
+						evicting to walk on the list from the first item */
+						itr_end=rels.end();
+						itr=rels.begin() + idx;
+					}
 				}
-			}
 
-			itr=rels.begin();
+				itr=rels.begin();
+			}
 
 			//Recreating the special objects
 			itr1=xml_special_objs.begin();
@@ -1469,7 +1469,7 @@ void DatabaseModel::validateRelationships(void)
 						createSpecialObject(itr1->second, itr1->first);
 
 						/* If the special object is successfully created, remove the errors
-				 related to a previous attempt to create it */
+							 related to a previous attempt to create it */
 						if(error_map.count(itr1->first))
 							error_map.erase(error_map.find(itr1->first));
 
@@ -1537,17 +1537,6 @@ void DatabaseModel::validateRelationships(void)
 		//Redirects all the errors captured on the revalidation
 		throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
 	}
-
-
-  /* itr=relationships.begin();
-	itr_end=relationships.end();
-
-	while(itr!=itr_end)
-	{
-		rel=dynamic_cast<Relationship *>(*itr);
-		rel->restoreObjectsIndexes();
-		itr++;
-  } */
 
   if(!loading_model)
   {
@@ -4966,7 +4955,6 @@ Index *DatabaseModel::createIndex(void)
 		index->setIndexAttribute(Index::UNIQUE, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
 		index->setIndexAttribute(Index::FAST_UPDATE, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
 		index->setIndexAttribute(Index::BUFFERING, attribs[ParsersAttributes::BUFFERING]==ParsersAttributes::_TRUE_);
-
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
 

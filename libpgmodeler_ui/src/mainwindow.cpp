@@ -179,7 +179,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
-	connect(action_sync, SIGNAL(triggered(bool)), this, SLOT(synchronizeDatabase(void)));
+	connect(action_diff, SIGNAL(triggered(bool)), this, SLOT(compareModelDatabase(void)));
 
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 
@@ -1214,7 +1214,7 @@ void MainWindow::importDatabase(void)
  #endif
 }
 
-void MainWindow::synchronizeDatabase(void)
+void MainWindow::compareModelDatabase(void)
 {
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
@@ -1351,7 +1351,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
-	action_sync->setEnabled(enabled);
+	action_diff->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);

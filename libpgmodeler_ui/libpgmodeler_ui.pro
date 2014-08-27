@@ -246,6 +246,6 @@ FORMS += ui/mainwindow.ui \
     ui/datamanipulationform.ui \
     ui/customsqlwidget.ui \
     ui/findreplacewidget.ui \
-    ui/modeldatabasesyncform.ui
+    ui/modeldatabasediffform.ui
 
 
