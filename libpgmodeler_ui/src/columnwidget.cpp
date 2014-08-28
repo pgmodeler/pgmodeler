@@ -114,14 +114,12 @@ void ColumnWidget::applyConfiguration(void)
 
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
+		column->setType(data_type->getPgSQLType());
 
     if(expression_rb->isChecked())
       column->setDefaultValue(def_value_txt->toPlainText());
     else
       column->setSequence(sequence_sel->getSelectedObject());
-
-		column->setType(data_type->getPgSQLType());
-
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
