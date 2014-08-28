@@ -226,8 +226,8 @@ void Relationship::setIdentifier(bool value)
 void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 {
 	/* Raises an error if the user try to set columns for special primary key when the
-		relationship type is n-n or identifier or self relationship */
-	if(!cols.empty() && (isSelfRelationship() || isIdentifier() || rel_type==RELATIONSHIP_NN))
+		relationship type is identifier or self relationship */
+	if(!cols.empty() && (isSelfRelationship() || isIdentifier()))
 		throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
 										.arg(Utf8String::create(this->getName())),
 										ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1675,13 +1675,19 @@ void Relationship::addColumnsRelNn(void)
 		for(i=0; i < count; i++)
 			pk_tabnn->addColumn(gen_columns[i],Constraint::SOURCE_COLS);
 
+		for(unsigned i : column_ids_pk_rel)
+		{
+			if(i < rel_attributes.size())
+				pk_tabnn->addColumn(dynamic_cast<Column *>(rel_attributes[i]), Constraint::SOURCE_COLS);
+		}
+
 		table_relnn->addConstraint(pk_tabnn);
 
 		addAttributes(table_relnn);
 		addConstraints(table_relnn);
 
     addForeignKey(tab, table_relnn, src_del_act, src_upd_act);
-    addForeignKey(tab1, table_relnn, dst_del_act, dst_upd_act);
+		addForeignKey(tab1, table_relnn, dst_del_act, dst_upd_act);
 	}
 	catch(Exception &e)
 	{

@@ -511,7 +511,7 @@ unsigned OperationList::getChainSize(void)
 		}
 
 		//Calculates the size of chain
-		while(i>=0 && i < static_cast<int>(operations.size()) && operations[i]->chain_type!=chain_type)
+		while(i>=0 && i < static_cast<int>(operations.size()) && size < operations.size() && operations[i]->chain_type!=chain_type)
 		{
 			i+=inc;
 			size++;
@@ -596,8 +596,7 @@ void OperationList::redoOperation(void)
 		Exception error;
 		unsigned chain_size=0, pos=0;
 
-		//if(!this->signalsBlocked())
-			chain_size=getChainSize();
+		chain_size=getChainSize();
 
 		do
 		{

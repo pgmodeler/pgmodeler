@@ -360,10 +360,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		//Lists the relationship constraints
 		listObjects(OBJ_CONSTRAINT);
 
-		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
-		{
-      listSpecialPkColumns();
+		listSpecialPkColumns();
 
+		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+		{		
 			if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 			{
 				CopyOptions copy_op=aux_rel->getCopyOptions();
@@ -424,7 +424,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
 		{
-			if(i!=SPECIAL_PK_TAB || (i==SPECIAL_PK_TAB && base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
+			//if(i!=SPECIAL_PK_TAB || (i==SPECIAL_PK_TAB && base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
 			 rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 		}
 	}
@@ -920,7 +920,9 @@ void RelationshipWidget::listSpecialPkColumns(void)
     QListWidgetItem *item=nullptr;
 
     rel_columns_lst->clear();
-    cols=aux_rel->getGeneratedColumns();
+
+		if(aux_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN)
+			cols=aux_rel->getGeneratedColumns();
 
     for(auto attrib : aux_rel->getAttributes())
       cols.push_back(dynamic_cast<Column *>(attrib));
@@ -1036,18 +1038,14 @@ void RelationshipWidget::applyConfiguration(void)
         rel->setActionType((upd_action_cmb->currentIndex()!=0 ? ActionType(upd_action_cmb->currentText()) : ActionType::null), Constraint::UPDATE_ACTION);
       }
 
-
-			if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+			count=rel_columns_lst->count();
+			for(i=0; i < count; i++)
 			{
-				count=rel_columns_lst->count();
-				for(i=0; i < count; i++)
-				{
-					if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
-						col_ids.push_back(i);
-				}
-
-				rel->setSpecialPrimaryKeyCols(col_ids);
+				if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
+					col_ids.push_back(i);
 			}
+
+			rel->setSpecialPrimaryKeyCols(col_ids);
 
 			try
 			{
