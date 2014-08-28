@@ -41,6 +41,7 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
+#include "modeldatabasediffform.h"
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"

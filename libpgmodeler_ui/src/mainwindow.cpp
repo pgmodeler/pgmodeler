@@ -1216,10 +1216,8 @@ void MainWindow::importDatabase(void)
 
 void MainWindow::compareModelDatabase(void)
 {
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-							 trUtf8("This feature is currently under development and will be available in final <strong>0.8.0</strong>!"),
-							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	modeldb_diff_frm.exec();
 }
 
 void MainWindow::printModel(void)
