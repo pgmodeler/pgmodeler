@@ -141,6 +141,7 @@ class ObjectsScene: public QGraphicsScene {
 
     bool isRangeSelectionEnabled(void);
     bool isPanningRangeSelectionInverted(void);
+		bool isRelationshipLineVisible(void);
 
 	public slots:
 		void alignObjectsToGrid(void);

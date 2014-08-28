@@ -865,7 +865,12 @@ bool ObjectsScene::isRangeSelectionEnabled(void)
   return(enable_range_sel);
 }
 
-bool ObjectsScene::isPanningRangeSelectionInverted()
+bool ObjectsScene::isPanningRangeSelectionInverted(void)
 {
-  return(invert_panning_rangesel);
+	return(invert_panning_rangesel);
+}
+
+bool ObjectsScene::isRelationshipLineVisible(void)
+{
+	return(rel_line->isVisible());
 }

@@ -781,14 +781,15 @@ void ModelWidget::configureObjectSelection(void)
 			obj_type2=(count==2 ? selected_objects[1]->getObjectType() : BASE_OBJECT);
 
 			//If there is only one selected object and this is a table, activates the relationship creation
-			if(count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
+			if(!scene->isRelationshipLineVisible() &&
+				 count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
 			{
-				BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
-				BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(obj_graf->getReceiverObject());
+				BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 
 				scene->showRelationshipLine(true,
-																	 QPointF(objeto->scenePos().x() + objeto->boundingRect().width()/2,
-																					 objeto->scenePos().y() + objeto->boundingRect().height()/2));
+																	 QPointF(object->scenePos().x() + object->boundingRect().width()/2,
+																					 object->scenePos().y() + object->boundingRect().height()/2));
 			}
 			//If the user has selected object that are not tables, cancel the operation
 			else if(obj_type1!=OBJ_TABLE ||
