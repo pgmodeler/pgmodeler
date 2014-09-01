@@ -67,7 +67,7 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	else
 		color_picker->setColor(0, QColor(225,225,225));
 
-	show_rect_chk->setChecked(schema && schema->isRectVisible());
+	//show_rect_chk->setChecked(schema && schema->isRectVisible());
 }
 
 void SchemaWidget::applyConfiguration(void)

@@ -874,7 +874,7 @@ void BaseObject::updateObjectId(BaseObject *obj)
     obj->object_id=++global_id;
 }
 
-vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
+vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<ObjectType> exclude_types)
 {
   vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
 												 OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_EVENT_TRIGGER,
@@ -882,6 +882,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
                          OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
                          OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
                          OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
+	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
 	{
@@ -890,6 +891,13 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs)
 		vet_types.push_back(OBJ_TRIGGER);
 		vet_types.push_back(OBJ_RULE);
 		vet_types.push_back(OBJ_INDEX);
+	}
+
+	for(ObjectType type : exclude_types)
+	{
+		itr=std::remove(vet_types.begin(), vet_types.end(), type);
+		if(itr!=vet_types.end())
+			vet_types.erase(itr);
 	}
 
 	return(vet_types);

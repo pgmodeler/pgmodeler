@@ -160,6 +160,12 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
 		itr++;
 	}
+
+	if(conns.empty())
+	{
+		sql_validation_chk->setChecked(false);
+		sql_validation_chk->setEnabled(false);
+	}
 }
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)

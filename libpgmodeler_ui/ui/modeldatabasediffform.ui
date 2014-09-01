@@ -9,30 +9,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>510</height>
+    <width>580</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
-    <height>510</height>
+    <width>580</width>
+    <height>540</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>510</height>
+    <width>580</width>
+    <height>540</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Model Export</string>
+   <string>Database model diff</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
@@ -51,6 +51,9 @@
    <property name="bottomMargin">
     <number>4</number>
    </property>
+   <property name="verticalSpacing">
+    <number>6</number>
+   </property>
    <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
      <property name="enabled">
@@ -68,7 +71,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QGridLayout" name="gridLayout_8">
       <property name="leftMargin">
        <number>4</number>
       </property>
@@ -81,59 +84,7 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/icones/icones/sync.png</pixmap>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="title_lbl">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>13</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Generate diff from model</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
+      <item row="1" column="0" colspan="2">
        <widget class="QFrame" name="ln1_frm">
         <property name="minimumSize">
          <size>
@@ -155,7 +106,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
        <widget class="QGroupBox" name="groupBox">
         <property name="minimumSize">
          <size>
@@ -164,9 +115,9 @@
          </size>
         </property>
         <property name="title">
-         <string>Database</string>
+         <string>Import settings</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QGridLayout" name="gridLayout_7">
          <property name="leftMargin">
           <number>4</number>
          </property>
@@ -179,15 +130,15 @@
          <property name="bottomMargin">
           <number>4</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Connection:</string>
-             </property>
-            </widget>
-           </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="connection_lbl">
+           <property name="text">
+            <string>Connection:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QComboBox" name="connections_cmb">
              <property name="sizePolicy">
@@ -220,40 +171,95 @@
            </item>
           </layout>
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Input DB:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
+         <item row="1" column="0">
+          <widget class="QLabel" name="database_lbl">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Database:</string>
+           </property>
+           <property name="indent">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="database_cmb">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="2" column="1">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Options</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="import_sys_objs_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Import system objects</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ignore_errors_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Ignore import errors</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="1" column="1">
-         <widget class="QWidget" name="widget_2" native="true">
+         <widget class="QWidget" name="apply_on_server_wgt" native="true">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <layout class="QGridLayout" name="gridLayout_2">
            <property name="leftMargin">
             <number>4</number>
@@ -269,9 +275,6 @@
            </property>
            <item row="0" column="0" rowspan="2">
             <widget class="QLabel" name="modelo_sgbd">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -305,10 +308,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QCheckBox" name="ignore_dup_chk">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
+            <widget class="QCheckBox" name="trunc_tables_chk">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -321,10 +321,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QLabel" name="hint3_lbl">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
+            <widget class="QLabel" name="hint1_lbl">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -407,7 +404,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QRadioButton" name="export_to_dbms_rb">
+         <widget class="QRadioButton" name="apply_on_server_rb">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -427,7 +424,7 @@
         </item>
        </layout>
       </item>
-      <item>
+      <item row="4" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="1">
          <widget class="QLabel" name="export_to_file_lbl">
@@ -443,7 +440,10 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QWidget" name="widget" native="true">
+         <widget class="QWidget" name="store_in_file_wgt" native="true">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <layout class="QGridLayout" name="gridLayout">
            <property name="leftMargin">
             <number>4</number>
@@ -566,6 +566,9 @@
            </item>
            <item row="0" column="1">
             <widget class="QLabel" name="file_lbl">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -616,7 +619,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QRadioButton" name="export_to_file_rb">
+         <widget class="QRadioButton" name="store_in_file_rb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -633,8 +636,8 @@
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QWidget" name="widget_3" native="true">
+      <item row="5" column="0" colspan="2">
+       <widget class="QWidget" name="progress_parent_wgt" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -719,7 +722,7 @@
           </widget>
          </item>
          <item row="1" column="0" colspan="2">
-          <widget class="QLabel" name="progress_lbl_2">
+          <widget class="QLabel" name="step_lbl">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -732,7 +735,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QProgressBar" name="progress_pb_2">
+          <widget class="QProgressBar" name="step_pb">
            <property name="value">
             <number>0</number>
            </property>
@@ -752,7 +755,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="ico_lbl_2">
+          <widget class="QLabel" name="step_ico_lbl">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -804,10 +807,64 @@
         </layout>
        </widget>
       </item>
+      <item row="0" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../res/resources.qrc">:/icones/icones/sync.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="title_lbl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>13</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Generate diff from model</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
      <zorder>ln1_frm</zorder>
-     <zorder>widget_3</zorder>
+     <zorder>progress_parent_wgt</zorder>
      <zorder>groupBox</zorder>
+     <zorder></zorder>
+     <zorder>groupBox_2</zorder>
     </widget>
    </item>
    <item row="1" column="0">
@@ -836,13 +893,7 @@
    <item row="1" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
      <item>
-      <widget class="QPushButton" name="export_btn">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QPushButton" name="generate_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -910,12 +961,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>export_to_dbms_rb</tabstop>
-  <tabstop>ignore_dup_chk</tabstop>
+  <tabstop>apply_on_server_rb</tabstop>
+  <tabstop>trunc_tables_chk</tabstop>
   <tabstop>file_edt</tabstop>
   <tabstop>select_file_tb</tabstop>
   <tabstop>cancel_btn</tabstop>
-  <tabstop>export_btn</tabstop>
+  <tabstop>generate_btn</tabstop>
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>

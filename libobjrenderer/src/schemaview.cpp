@@ -49,12 +49,6 @@ SchemaView::~SchemaView()
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(event->buttons()==Qt::LeftButton)
-	{
-		//all_selected=this->isChildrenSelected();
-		//this->setFlag(QGraphicsItem::ItemIsMovable, all_selected);
-	}
-
 	//If the user press SHIFT + left-click select all the schema children
 	if(event->modifiers()==Qt::ShiftModifier &&
 		 event->buttons()==Qt::LeftButton && !all_selected)
@@ -161,7 +155,7 @@ void SchemaView::configureObject(void)
 		QColor color;
 		QRectF rect;
 		QFont font;
-		float sp_h, sp_v, txt_h;
+		float sp_h=0, sp_v=0, txt_h=0;
 		float x1=1000000, y1=1000000, x2=-1000000, y2=-1000000;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 

@@ -27,18 +27,45 @@
 
 #include "ui_modeldatabasediffform.h"
 #include "modeldatabasediffhelper.h"
+#include "databaseimporthelper.h"
+#include "modelexporthelper.h"
+#include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
-		ModelDatabaseDiffHelper modeldb_diff_helper;
+		//ModelDatabaseDiffHelper diff_helper;
+
+		DatabaseImportHelper import_helper;
+
+		//ModelExportHelper export_helper;
+
+		QThread *import_thread;
+
+		ModelWidget *dbmodel;
+
+		void showEvent(QShowEvent *);	
+		void closeEvent(QCloseEvent *event);
+		void destroyModel(void);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
 
+	private slots:
+		void hideProgress(bool hide);
+		void listDatabases(void);
+		void enableDiffMode(void);
+		void generateDiff(void);
+		void cancelOperation(void);
+		void updateProgress(int progress, QString msg, ObjectType obj_type);
+		void captureThreadError(Exception e);
+		void handleImportCanceled(void);
+		void handleImportFinished(Exception e);
+
+		void importDatabase(void);
 };
 
 #endif

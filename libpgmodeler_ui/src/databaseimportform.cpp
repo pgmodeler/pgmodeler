@@ -114,7 +114,7 @@ void DatabaseImportForm::importDatabase(void)
 		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
-		//import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
+
 		import_helper.setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 
 		timer.stop();
@@ -282,9 +282,6 @@ void DatabaseImportForm::hideProgress(bool value)
 
 void DatabaseImportForm::showEvent(QShowEvent *)
 {
-	map<QString, Connection *> connections;
-	map<QString, Connection *>::iterator itr;
-
 	debug_mode_chk->setChecked(false);
 	ignore_errors_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(true);
@@ -299,19 +296,7 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	database_cmb->setEnabled(false);
 	db_objects_tw->setEnabled(false);
 
-	//Get the current connections configured on the connections widget
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);
-
-	connections_cmb->clear();
-	itr=connections.begin();
-
-	//Add the connections to the combo
-	while(itr!=connections.end())
-	{
-		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-		itr++;
-	}
-
+	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
 	hideProgress();
 }
 

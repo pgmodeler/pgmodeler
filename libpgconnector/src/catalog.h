@@ -141,7 +141,11 @@ class Catalog {
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
+		//! brief Returns the current filter configuration for the catalog
 		unsigned getFilter(void);
+
+		//! brief Fills the specified maps with all object's oids querying the catalog with the specified filter
+		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids);
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */

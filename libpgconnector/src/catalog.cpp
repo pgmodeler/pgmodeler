@@ -208,6 +208,50 @@ unsigned Catalog::getFilter(void)
 	return(filter);
 }
 
+void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids)
+{
+	ObjectType tp;
+	try
+	{
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
+																																OBJ_TEXTBOX, OBJ_TAG, OBJ_COLUMN, OBJ_PERMISSION });
+		attribs_map attribs, col_attribs, sch_names;
+		vector<attribs_map> tab_attribs;
+		unsigned tab_oid=0;
+
+		for(ObjectType type : types)
+		{
+			tp=type;
+			attribs=getObjectsNames(type);
+
+			for(auto attr : attribs)
+			{
+				obj_oids[type].push_back(attr.first.toUInt());
+
+				//Store the schemas names in order to retrieve the tables' columns correctly
+				if(type==OBJ_SCHEMA)
+					sch_names[attr.first]=attr.second;
+				else if(type==OBJ_TABLE)
+				{
+					//Get the full set of attributes of the table
+					tab_oid=attr.first.toUInt();
+					tab_attribs=getObjectsAttributes(type, "", "", { tab_oid });
+
+					//Retrieve the oid and names of the table's columns
+					col_attribs=getObjectsNames(OBJ_COLUMN, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
+
+					for(auto col_attr : col_attribs)
+						col_oids[tab_oid].push_back(col_attr.first.toUInt());
+				}
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs)
 {
 	try

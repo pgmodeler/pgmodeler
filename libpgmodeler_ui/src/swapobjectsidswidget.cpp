@@ -5,16 +5,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true);
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX, OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
 		setupUi(this);
-
-		//Remove unused object types from vector
-		types.erase(std::find(types.begin(), types.end(), OBJ_PERMISSION));
-		types.erase(std::find(types.begin(), types.end(), OBJ_ROLE));
-		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
-		types.erase(std::find(types.begin(), types.end(), OBJ_RELATIONSHIP));
-		types.erase(std::find(types.begin(), types.end(), OBJ_COLUMN));
-		types.erase(std::find(types.begin(), types.end(), OBJ_CONSTRAINT));
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;

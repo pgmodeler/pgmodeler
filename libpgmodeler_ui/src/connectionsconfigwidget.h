@@ -50,6 +50,9 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		//! \brief Fills the passed map with all the loaded connections.
 		void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 
+		//! brief Fills the passed combobox with all the loaded connections
+		void fillConnectionsComboBox(QComboBox *combo);
+
 	public slots:
 		void restoreDefaults(void);
 

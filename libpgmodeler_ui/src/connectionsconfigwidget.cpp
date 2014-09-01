@@ -468,4 +468,18 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 	}
 }
 
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
+{
+	map<QString, Connection *> connections;
+
+	if(!combo)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->getConnections(connections);
+	combo->clear();
+
+	for(auto itr : connections)
+		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));
+}
+
 

@@ -70,24 +70,8 @@ void ModelExportForm::exec(ModelWidget *model)
 {
 	if(model)
 	{
-		map<QString, Connection *> connections;
-		map<QString, Connection *>::iterator itr;
-
 		this->model=model;
-
-		//Get the current connections configured on the connections widget
-		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);
-
-		connections_cmb->clear();
-		itr=connections.begin();
-
-		//Add the connections to the combo
-		while(itr!=connections.end())
-		{
-			connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-			itr++;
-		}
-
+		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
 		this->hideProgress();
 		QDialog::exec();
 	}

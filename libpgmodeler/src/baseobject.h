@@ -395,7 +395,7 @@ class BaseObject {
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
-    static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true, vector<ObjectType> exclude_types={});
 
     /*! \brief Returns the valid object types that are child or grouped under the specified type.
     This method works a litte different from getObjectTypes() since this latter returns all valid types

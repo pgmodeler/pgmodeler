@@ -203,7 +203,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Set the current database to work on
 		void setCurrentDatabase(const QString &dbname);
 
-		//! \brief Defines the selected object to be imported
+		//! \brief Defines the selected object to be imported. This method always expect filled maps. Hint: use the method Catalog::getObjectOIDs()
 		void setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
 		//! brief Configures the import parameters
@@ -253,6 +253,7 @@ class DatabaseImportHelper: public QObject {
 		void importDatabase(void);
 		
 	friend class DatabaseImportForm;
+	friend class ModelDatabaseDiffForm;
 };
 
 #endif
