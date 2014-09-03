@@ -35,9 +35,9 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
-		ModelsDiffHelper diff_helper;
+		ModelsDiffHelper *diff_helper;
 
-		DatabaseImportHelper import_helper;
+		DatabaseImportHelper *import_helper;
 
 		//ModelExportHelper export_helper;
 
@@ -51,6 +51,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
 		void showEvent(QShowEvent *);	
 		void closeEvent(QCloseEvent *event);
+		void createThreads(void);
+		void destroyThreads(void);
 		void destroyModel(void);
 		void clearOutput(void);
 		void resetButtons(void);
@@ -59,6 +61,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		~ModelDatabaseDiffForm(void);
 		void setDatabaseModel(DatabaseModel *model);
 
 	public slots:

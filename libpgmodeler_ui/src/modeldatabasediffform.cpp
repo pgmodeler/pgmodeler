@@ -26,13 +26,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 {
 	setupUi(this);
 
-	import_thread=new QThread(this);
-	import_helper.moveToThread(import_thread);
-
-	diff_thread=new QThread(this);
-	diff_helper.moveToThread(diff_thread);
-
+	import_helper=nullptr;
+	diff_helper=nullptr;
 	imported_model=nullptr;
+	import_thread=diff_thread=nullptr;
 	import_item=diff_item=export_item=nullptr;
 
 	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
@@ -40,29 +37,13 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 	connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 	connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
-
-	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase()));
-	//connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
-	//connect(import_thread, &QThread::started, [=](){ QTextStream(stdout) << "import_thread started!\n"; import_helper.importDatabase();  },);
-	//connect(import_thread, &QThread::finished, [=](){ QTextStream(stdout) << "import_thread finished!\n"; });
-
-	connect(diff_thread, SIGNAL(started(void)), &diff_helper, SLOT(diffDatabaseModels()));
-	//connect(diff_thread, &QThread::started, [=](){ diff_thread->setPriority(QThread::HighPriority); });
-	//connect(diff_thread, &QThread::started, [=](){ QTextStream(stdout) << "diff_thread started!\n"; diff_helper.diffDatabaseModels();  });
-	//connect(diff_thread, &QThread::finished, [=](){ QTextStream(stdout) << "diff_thread finished!\n"; });
-
-	connect(&import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(&import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
-	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-
-	connect(&diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-	connect(&diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
-	connect(&diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
-
 	connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
-	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper.cancelImport(); diff_helper.cancelDiff(); });
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+}
+
+ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
+{
+	destroyThreads();
 }
 
 void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
@@ -83,8 +64,57 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
-	if(import_thread->isRunning() || diff_thread->isRunning())
+	if((import_thread && import_thread->isRunning()) ||
+		 (diff_thread && diff_thread->isRunning()))
 		event->ignore();
+}
+
+void ModelDatabaseDiffForm::createThreads(void)
+{
+	import_thread=new QThread;
+	import_helper=new DatabaseImportHelper;
+	import_helper->moveToThread(import_thread);
+
+	diff_thread=new QThread;
+	diff_helper=new ModelsDiffHelper;
+	diff_helper->moveToThread(diff_thread);
+
+	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper->cancelImport(); diff_helper->cancelDiff(); });
+	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
+	connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffDatabaseModels()));
+
+	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
+	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
+	connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+
+	connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+	connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
+	connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
+}
+
+void ModelDatabaseDiffForm::destroyThreads(void)
+{
+	if(import_thread && import_thread->isRunning())
+	{
+		import_thread->quit();
+		import_thread->wait();
+		delete(import_thread);
+		import_thread=nullptr;
+	}
+
+	if(diff_thread && diff_thread->isRunning())
+	{
+		diff_thread->quit();
+		diff_thread->wait();
+		delete(diff_thread);
+		diff_thread=nullptr;
+	}
+
+	delete(import_helper);
+	delete(diff_helper);
+	import_helper=nullptr;
+	diff_helper=nullptr;
 }
 
 void ModelDatabaseDiffForm::destroyModel(void)
@@ -133,10 +163,10 @@ void ModelDatabaseDiffForm::listDatabases(void)
 	try
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+		DatabaseImportHelper imp_helper;
 
-		import_helper.closeConnection();
-		import_helper.setConnection(*conn);
-		DatabaseImportForm::listDatabases(import_helper, true, database_cmb);
+		imp_helper.setConnection(*conn);
+		DatabaseImportForm::listDatabases(imp_helper, true, database_cmb);
 
 		database_cmb->setEnabled(database_cmb->count() > 0);
 		database_lbl->setEnabled(database_cmb->isEnabled());
@@ -160,6 +190,7 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 void ModelDatabaseDiffForm::generateDiff(void)
 {
 	clearOutput();
+	createThreads();
 	importDatabase();
 
 	cancel_btn->setEnabled(true);
@@ -174,11 +205,12 @@ void ModelDatabaseDiffForm::importDatabase(void)
 {
 	try
 	{
-		Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+		Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>())), conn1;
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 
+		conn1=conn;
 		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
 		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/import.png")));
 
@@ -195,9 +227,10 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		imported_model=new DatabaseModel;
 		imported_model->createSystemObjects(true);	
 
-		import_helper.setSelectedOIDs(imported_model, obj_oids, col_oids);
-		import_helper.setCurrentDatabase(database_cmb->currentText());
-		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), false, true, ignore_errors_chk->isChecked(), false, false);
+		import_helper->setConnection(conn1);
+		import_helper->setSelectedOIDs(imported_model, obj_oids, col_oids);
+		import_helper->setCurrentDatabase(database_cmb->currentText());
+		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), false, true, ignore_errors_chk->isChecked(), false, false);
 
 		import_thread->start();
 	}
@@ -220,7 +253,7 @@ void ModelDatabaseDiffForm::diffModels(void)
 	if(verbose_chk->isChecked())
 		diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-	diff_helper.setDatabaseModels(source_model, imported_model);
+	diff_helper->setDatabaseModels(source_model, imported_model);
 	diff_thread->start();
 }
 
@@ -234,19 +267,7 @@ void ModelDatabaseDiffForm::resetButtons(void)
 void ModelDatabaseDiffForm::cancelOperation(void)
 {
 	destroyModel();
-
-	if(import_thread->isRunning())
-	{
-		import_thread->quit();
-		import_thread->wait();
-	}
-
-	if(diff_thread->isRunning())
-	{
-		diff_thread->quit();
-		diff_thread->wait();
-	}
-
+	destroyThreads();
 	resetButtons();
 }
 
@@ -282,7 +303,6 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
 	{
 		import_thread->quit();
 		import_thread->wait();
-
 		step_pb->setValue(30);
 		diffModels();
 	}
@@ -290,8 +310,9 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
 	{
 		diff_thread->quit();
 		diff_thread->wait();
-
 		resetButtons();
+
+		destroyThreads();
 	}
 }
 
