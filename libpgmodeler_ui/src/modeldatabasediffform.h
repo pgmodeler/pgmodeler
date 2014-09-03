@@ -26,7 +26,7 @@
 #define MODEL_DATABASE_DIFF_FORM
 
 #include "ui_modeldatabasediffform.h"
-#include "modeldatabasediffhelper.h"
+#include "modelsdiffhelper.h"
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
 #include <QThread>
@@ -35,22 +35,31 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
-		//ModelDatabaseDiffHelper diff_helper;
+		ModelsDiffHelper diff_helper;
 
 		DatabaseImportHelper import_helper;
 
 		//ModelExportHelper export_helper;
 
-		QThread *import_thread;
+		QThread *import_thread, *diff_thread;
 
-		ModelWidget *dbmodel;
+		QTreeWidgetItem *import_item, *diff_item, *export_item;
+
+		DatabaseModel *source_model,  *imported_model;
+
+		int diff_progress;
 
 		void showEvent(QShowEvent *);	
 		void closeEvent(QCloseEvent *event);
 		void destroyModel(void);
+		void clearOutput(void);
+		void resetButtons(void);
+
+		QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		void setDatabaseModel(DatabaseModel *model);
 
 	public slots:
 
@@ -62,10 +71,12 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void cancelOperation(void);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void captureThreadError(Exception e);
-		void handleImportCanceled(void);
+		void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
+		void handleOperationFinished(void);
 
 		void importDatabase(void);
+		void diffModels(void);
 };
 
 #endif

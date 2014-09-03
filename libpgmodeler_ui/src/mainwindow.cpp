@@ -1217,6 +1217,7 @@ void MainWindow::importDatabase(void)
 void MainWindow::compareModelDatabase(void)
 {
 	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	modeldb_diff_frm.setDatabaseModel(current_model->getDatabaseModel());
 	modeldb_diff_frm.exec();
 }
 

@@ -379,6 +379,8 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 		if(obj_type!=BASE_OBJECT)
 			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		else if(!cmd.isEmpty())
+			item->setIcon(0, QPixmap(QString(":/icones/icones/sqlcmd.png")));
 		else
 			item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
 

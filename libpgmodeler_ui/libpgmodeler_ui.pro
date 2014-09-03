@@ -100,7 +100,7 @@ SOURCES += src/mainwindow.cpp \
     src/customsqlwidget.cpp \
     src/findreplacewidget.cpp \
     src/modeldatabasediffform.cpp \
-    src/modeldatabasediffhelper.cpp
+    src/modelsdiffhelper.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -180,7 +180,7 @@ HEADERS += src/mainwindow.h \
     src/customsqlwidget.h \
     src/findreplacewidget.h \
     src/modeldatabasediffform.h \
-    src/modeldatabasediffhelper.h
+    src/modelsdiffhelper.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \

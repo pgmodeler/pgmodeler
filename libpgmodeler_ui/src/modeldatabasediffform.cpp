@@ -28,7 +28,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 	import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
-	dbmodel=nullptr;
+
+	diff_thread=new QThread(this);
+	diff_helper.moveToThread(diff_thread);
+
+	imported_model=nullptr;
+	import_item=diff_item=export_item=nullptr;
 
 	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
 	connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -36,59 +41,91 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 	connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
 
-	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
-	connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
+	connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase()));
+	//connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
+	//connect(import_thread, &QThread::started, [=](){ QTextStream(stdout) << "import_thread started!\n"; import_helper.importDatabase();  },);
+	//connect(import_thread, &QThread::finished, [=](){ QTextStream(stdout) << "import_thread finished!\n"; });
+
+	connect(diff_thread, SIGNAL(started(void)), &diff_helper, SLOT(diffDatabaseModels()));
+	//connect(diff_thread, &QThread::started, [=](){ diff_thread->setPriority(QThread::HighPriority); });
+	//connect(diff_thread, &QThread::started, [=](){ QTextStream(stdout) << "diff_thread started!\n"; diff_helper.diffDatabaseModels();  });
+	//connect(diff_thread, &QThread::finished, [=](){ QTextStream(stdout) << "diff_thread finished!\n"; });
 
 	connect(&import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(&import_helper, SIGNAL(s_importCanceled(void)), this, SLOT(handleImportCanceled(void)));
+	connect(&import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
 	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 
+	connect(&diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+	connect(&diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
+	connect(&diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
+
 	connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
-	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper.cancelImport(); });
+	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper.cancelImport(); diff_helper.cancelDiff(); });
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+}
+
+void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
+{
+	source_model=model;
 }
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 {
 	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
-	hideProgress(true);
+	connections_cmb->setEnabled(connections_cmb->count() > 0);
+	connection_lbl->setEnabled(connections_cmb->isEnabled());
+	connect_tb->setEnabled(connections_cmb->isEnabled());
 	enableDiffMode();
+	settings_tbw->setTabEnabled(1, false);
 }
 
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
-	if(import_thread->isRunning())
+	if(import_thread->isRunning() || diff_thread->isRunning())
 		event->ignore();
 }
 
 void ModelDatabaseDiffForm::destroyModel(void)
 {
-	if(dbmodel)
-		delete(dbmodel);
+	if(imported_model)
+		delete(imported_model);
 
-	dbmodel=nullptr;
+	imported_model=nullptr;
 }
 
-void ModelDatabaseDiffForm::hideProgress(bool hide)
+void ModelDatabaseDiffForm::clearOutput(void)
 {
-	if((hide && progress_parent_wgt->isVisible()) ||
-		 (!hide && !progress_parent_wgt->isVisible()))
-	{
-		progress_parent_wgt->setHidden(hide);
+	output_trw->clear();
+	import_item=diff_item=export_item=nullptr;
 
-		if(hide)
-			this->setMinimumHeight(this->minimumHeight() - progress_parent_wgt->height());
-		else
-			this->setMinimumHeight(this->minimumHeight() + progress_parent_wgt->height());
+	step_lbl->setText(trUtf8("Waiting process to start..."));
+	step_ico_lbl->setPixmap(QPixmap());
+	progress_lbl->setText(trUtf8("Waiting process to start..."));
+	progress_ico_lbl->setPixmap(QPixmap());
 
-		this->resize(this->minimumSize());
-	}
+	step_pb->setValue(0);
+	progress_pb->setValue(0);
+}
 
-	connections_cmb->setEnabled(connections_cmb->count() > 0);
-	connection_lbl->setEnabled(connections_cmb->isEnabled());
-	connect_tb->setEnabled(connections_cmb->isEnabled());
+QTreeWidgetItem *ModelDatabaseDiffForm::createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent)
+{
+	QTreeWidgetItem *item=nullptr;
+	QLabel *label=new QLabel;
+
+	item=new QTreeWidgetItem(parent);
+	item->setIcon(0, ico);
+	label->setText(text);
+
+	if(!parent)
+		output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
+
+	output_trw->setItemWidget(item, 0, label);
+	item->setExpanded(true);
+	output_trw->scrollToItem(item);
+
+	return(item);
 }
 
 void ModelDatabaseDiffForm::listDatabases(void)
@@ -122,14 +159,15 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
-	step_lbl->setText(trUtf8("Waiting process to start..."));
-	progress_lbl->setText(trUtf8("Waiting process to start..."));
-	step_pb->setValue(0);
-	progress_pb->setValue(0);
-
+	clearOutput();
 	importDatabase();
+
 	cancel_btn->setEnabled(true);
-	hideProgress(false);
+	generate_btn->setEnabled(false);
+
+	settings_tbw->setTabEnabled(0, false);
+	settings_tbw->setTabEnabled(1, true);
+	settings_tbw->setCurrentIndex(1);
 }
 
 void ModelDatabaseDiffForm::importDatabase(void)
@@ -144,16 +182,20 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
 		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/import.png")));
 
+		if(verbose_chk->isChecked())
+			import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+
 		conn.switchToDatabase(database_cmb->currentText());
 		catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
 		catalog.getObjectsOIDs(obj_oids, col_oids);
+		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
 
-		dbmodel=new ModelWidget;
-		dbmodel->getDatabaseModel()->createSystemObjects(true);
+		imported_model=new DatabaseModel;
+		imported_model->createSystemObjects(true);	
 
-		import_helper.setSelectedOIDs(dbmodel->getDatabaseModel(), obj_oids, col_oids);
+		import_helper.setSelectedOIDs(imported_model, obj_oids, col_oids);
 		import_helper.setCurrentDatabase(database_cmb->currentText());
 		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), false, true, ignore_errors_chk->isChecked(), false, false);
 
@@ -165,22 +207,60 @@ void ModelDatabaseDiffForm::importDatabase(void)
 	}
 }
 
+void ModelDatabaseDiffForm::diffModels(void)
+{
+	step_lbl->setText(trUtf8("Comparing the model <strong>%1</strong> and database <strong>%2</strong>...")
+										.arg(source_model->getName())
+										.arg(imported_model->getName()));
+	step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/sync.png")));
+
+	output_trw->collapseItem(import_item);
+	diff_progress=step_pb->value();
+
+	if(verbose_chk->isChecked())
+		diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+
+	diff_helper.setDatabaseModels(source_model, imported_model);
+	diff_thread->start();
+}
+
+void ModelDatabaseDiffForm::resetButtons(void)
+{
+	cancel_btn->setEnabled(false);
+	generate_btn->setEnabled(true);
+	settings_tbw->setTabEnabled(0, true);
+}
+
 void ModelDatabaseDiffForm::cancelOperation(void)
 {
 	destroyModel();
-	import_thread->quit();
-	cancel_btn->setEnabled(false);
+
+	if(import_thread->isRunning())
+	{
+		import_thread->quit();
+		import_thread->wait();
+	}
+
+	if(diff_thread->isRunning())
+	{
+		diff_thread->quit();
+		diff_thread->wait();
+	}
+
+	resetButtons();
 }
 
 void ModelDatabaseDiffForm::captureThreadError(Exception e)
 {
 	cancelOperation();
-	step_lbl->setText(trUtf8("Process aborted due to errors!"));
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
+	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+	createOutputItem(progress_lbl->text(), *progress_ico_lbl->pixmap(), nullptr);
+
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
-void ModelDatabaseDiffForm::handleImportCanceled(void)
+void ModelDatabaseDiffForm::handleOperationCanceled(void)
 {
 	cancelOperation();
 }
@@ -193,15 +273,44 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-	step_lbl->setText(trUtf8("Comparing the model and database!"));
-	step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/sync.png")));
-	import_thread->quit();
+	handleOperationFinished();
+}
+
+void ModelDatabaseDiffForm::handleOperationFinished(void)
+{
+	if(import_thread->isRunning())
+	{
+		import_thread->quit();
+		import_thread->wait();
+
+		step_pb->setValue(30);
+		diffModels();
+	}
+	else if(diff_thread->isRunning())
+	{
+		diff_thread->quit();
+		diff_thread->wait();
+
+		resetButtons();
+	}
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-	if(progress > 90 && import_thread->isRunning())
-		step_pb->setValue(step_pb->value() + 5);
+	QTreeWidgetItem *parent=nullptr;
+
+	if(import_thread->isRunning())
+	{
+		if(progress > 90)
+			step_pb->setValue(step_pb->value() + 5);
+
+		parent=import_item;
+	}
+	else if(diff_thread->isRunning())
+	{
+		step_pb->setValue(diff_progress + (progress/2));
+		parent=diff_item;
+	}
 
 	msg.replace(msg.indexOf('`'), 1 ,"<strong>");
 	msg.replace(msg.indexOf('\''), 1,"</strong>");
@@ -211,9 +320,12 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 	else
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
+	if(verbose_chk->isChecked())
+		createOutputItem(msg, *progress_ico_lbl->pixmap(), parent);
 
 	this->repaint();
 }
