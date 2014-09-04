@@ -97,6 +97,7 @@ int main(int argc, char **argv)
 		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
+		qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
 
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);

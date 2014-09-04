@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include "databasemodel.h"
+#include "objectsdiffinfo.h"
 
 class ModelsDiffHelper: public QObject {
 	private:
@@ -36,7 +37,7 @@ class ModelsDiffHelper: public QObject {
 
 		DatabaseModel *source_model, *imported_model;
 
-		vector<BaseObject *> del_objects, upd_objects, new_objects;
+		vector<ObjectsDiffInfo> diff_infos;
 
 		void diffTables(Table *src_table, Table *imp_table);
 
