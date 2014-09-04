@@ -115,6 +115,9 @@ class Trigger: public TableObject{
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
 
+		//! \brief Returns the current EXECUTE PER ROW state
+		bool isExecutePerRow(void);
+
 		//! \brief Gets one reference column by its index
 		Column *getColumn(unsigned col_idx);
 

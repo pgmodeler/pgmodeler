@@ -120,9 +120,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="attribute">
 		<type name="integer"/>
 	</column>
-	<column name="attribute1">
-		<type name="integer"/>
-	</column>
 </relationship>
 
 <view name="view">

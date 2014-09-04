@@ -67,7 +67,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	public slots:
 
 	private slots:
-		void hideProgress(bool hide);
 		void listDatabases(void);
 		void enableDiffMode(void);
 		void generateDiff(void);

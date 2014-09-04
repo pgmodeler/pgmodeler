@@ -467,7 +467,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-		QTimer::singleShot(1800000, this, SLOT(quitDemoVersion()));
+		QTimer::singleShot(1200000, this, SLOT(quitDemoVersion()));
 	#endif
 }
 
@@ -1193,6 +1193,21 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: export feature execution limit."
+		static unsigned exp_limit=0;
+		exp_limit++;
+
+		if(exp_limit > 2)
+		{
+			Messagebox msg_box;
+			msg_box.show(trUtf8("Warning"),
+									 trUtf8("You're running a demonstration version! The model export feature can be tested twice per pgModeler execution!"),
+									 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+			return;
+		}
+	#endif
+
 	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	model_export_form.exec(current_model);
 }
@@ -1216,9 +1231,17 @@ void MainWindow::importDatabase(void)
 
 void MainWindow::compareModelDatabase(void)
 {
-	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	modeldb_diff_frm.setDatabaseModel(current_model->getDatabaseModel());
-	modeldb_diff_frm.exec();
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: model diff feature disabled."
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Warning"),
+								 trUtf8("You're running a demonstration version! The model-database diff feature is under development and will be available only in the final 0.8.0 (full version)!"),
+								 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+	#else
+		ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		modeldb_diff_frm.setDatabaseModel(current_model->getDatabaseModel());
+		modeldb_diff_frm.exec();
+	#endif
 }
 
 void MainWindow::printModel(void)
@@ -1588,12 +1611,12 @@ void MainWindow::showDemoVersionWarning(void)
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("You're running a demonstration version! There is a time limit of <strong>30 minutes</strong> per execution. Note that you'll be able to create only <strong>%1</strong> instances \
+							 trUtf8("You're running a demonstration version! There is a time limit of <strong>20 minutes</strong> per execution. Note that you'll be able to create only <strong>%1</strong> instances \
 											of each type of object and some key features will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
 											<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 
-	QTimer::singleShot(300000, this, SLOT(showDemoVersionWarning()));
+	QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
  #endif
 }
 

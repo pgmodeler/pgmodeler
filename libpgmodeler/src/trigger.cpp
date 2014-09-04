@@ -172,6 +172,11 @@ bool Trigger::isExecuteOnEvent(EventType event)
 	return(events.at(!event));
 }
 
+bool Trigger::isExecutePerRow(void)
+{
+	return(is_exec_per_row);
+}
+
 QString Trigger::getArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
