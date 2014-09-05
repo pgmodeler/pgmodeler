@@ -22,7 +22,15 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	source_model=imported_model=nullptr;
+	resetDiffCounter();
+}
+
+void ModelsDiffHelper::resetDiffCounter(void)
+{
 	diff_canceled=false;
+	diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]=0;
+	diffs_counter[ObjectsDiffInfo::DROP_OBJECT]=0;
+	diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
 }
 
 void ModelsDiffHelper::setDatabaseModels(DatabaseModel *src_model, DatabaseModel *imp_model)
@@ -31,18 +39,31 @@ void ModelsDiffHelper::setDatabaseModels(DatabaseModel *src_model, DatabaseModel
 	imported_model=imp_model;
 }
 
+unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
+{
+	if(diff_type >= ObjectsDiffInfo::NO_DIFFERENCE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(diffs_counter[diff_type]);
+}
+
 void ModelsDiffHelper::diffDatabaseModels(void)
 {
 	map<unsigned, BaseObject *> obj_order;
 	BaseObject *object=nullptr;
+	ObjectType obj_type;
+	QString obj_name;
+	ObjectsDiffInfo diff_info;
 	unsigned idx=0;
 
-	diff_canceled=false;
+	resetDiffCounter();
 
 	if(!source_model || !imported_model)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+
+	QTextStream out (stdout);
 
 	//Checking the objects to be deleted
 	for(auto obj_itr : obj_order)
@@ -50,11 +71,34 @@ void ModelsDiffHelper::diffDatabaseModels(void)
 		if(diff_canceled) break;
 
 		object=obj_itr.second;
+		obj_type=object->getObjectType();
 		idx++;
 
-		emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
-													 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
-													 object->getObjectType());
+		if(obj_type!=OBJ_RELATIONSHIP && !object->isSystemObject() && !object->isSQLDisabled())
+		{
+			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+														 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+														 object->getObjectType());
+
+
+			if(obj_type==OBJ_FUNCTION)
+				obj_name=dynamic_cast<Function *>(object)->getSignature();
+			else if(obj_type==OBJ_OPERATOR)
+				obj_name=dynamic_cast<Operator *>(object)->getSignature();
+			else
+				obj_name=object->getName(true);
+
+			if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
+			{
+				if(source_model->getObjectIndex(obj_name, obj_type) < 0)
+				{
+					diff_info=ObjectsDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
+					diff_infos.push_back(diff_info);
+					diffs_counter[ObjectsDiffInfo::DROP_OBJECT]++;
+					emit s_objectsDiffInfoGenerated(diff_info);
+				}
+			}
+		}
 
 		QThread::msleep(20);
 	}

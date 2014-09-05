@@ -91,6 +91,8 @@ void ModelDatabaseDiffForm::createThreads(void)
 	connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
 	connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
+
+	connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)));
 }
 
 void ModelDatabaseDiffForm::destroyThreads(void)
@@ -137,6 +139,10 @@ void ModelDatabaseDiffForm::clearOutput(void)
 
 	step_pb->setValue(0);
 	progress_pb->setValue(0);
+
+	create_cnt_lbl->setText("0");
+	alter_cnt_lbl->setText("0");
+	drop_cnt_lbl->setText("0");
 }
 
 QTreeWidgetItem *ModelDatabaseDiffForm::createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent)
@@ -214,14 +220,14 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
 		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/import.png")));
 
-		if(verbose_chk->isChecked())
-			import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+		//if(verbose_chk->isChecked())
+		import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
 		conn.switchToDatabase(database_cmb->currentText());
 		catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
-		catalog.getObjectsOIDs(obj_oids, col_oids);
+		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, "1"}});
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
 
 		imported_model=new DatabaseModel;
@@ -250,9 +256,8 @@ void ModelDatabaseDiffForm::diffModels(void)
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
 
-	if(verbose_chk->isChecked())
-		diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
-
+	//if(verbose_chk->isChecked())
+	diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 	diff_helper->setDatabaseModels(source_model, imported_model);
 	diff_thread->start();
 }
@@ -316,6 +321,18 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
 	}
 }
 
+QString ModelDatabaseDiffForm::formatMessage(const QString &msg)
+{
+	QString fmt_msg=msg;
+
+	fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<strong>");
+	fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</strong>");
+	fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<em>");
+	fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</em>");
+
+	return(fmt_msg);
+}
+
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
 	QTreeWidgetItem *parent=nullptr;
@@ -333,10 +350,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		parent=diff_item;
 	}
 
-	msg.replace(msg.indexOf('`'), 1 ,"<strong>");
-	msg.replace(msg.indexOf('\''), 1,"</strong>");
-	msg.replace(msg.indexOf('`'), 1 ,"<em>");
-	msg.replace(msg.indexOf('\''), 1,"</em>");
+	msg=formatMessage(msg);
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
@@ -349,4 +363,22 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		createOutputItem(msg, *progress_ico_lbl->pixmap(), parent);
 
 	this->repaint();
+}
+
+void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
+{
+	map<unsigned, QLabel *> cnt_labels={ {ObjectsDiffInfo::CREATE_OBJECT, create_cnt_lbl},
+																			 {ObjectsDiffInfo::DROP_OBJECT,   drop_cnt_lbl},
+																			 {ObjectsDiffInfo::ALTER_OBJECT,  alter_cnt_lbl} };
+
+	map<unsigned, QString> icons={ {ObjectsDiffInfo::CREATE_OBJECT, "criado"},
+																 {ObjectsDiffInfo::DROP_OBJECT,   "removido"},
+																 {ObjectsDiffInfo::ALTER_OBJECT,  "modificado"} };
+
+	unsigned diff_type=diff_info.getDiffType();
+	QLabel *lbl=cnt_labels[diff_type];
+
+	createOutputItem(formatMessage(diff_info.getInfoMessage()),
+									 QPixmap(QString(":/icones/icones/%1.png").arg(icons[diff_type])) , diff_item);
+	lbl->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 }

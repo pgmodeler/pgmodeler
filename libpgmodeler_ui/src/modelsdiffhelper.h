@@ -35,6 +35,8 @@ class ModelsDiffHelper: public QObject {
 
 		bool diff_canceled;
 
+		unsigned diffs_counter[3];
+
 		DatabaseModel *source_model, *imported_model;
 
 		vector<ObjectsDiffInfo> diff_infos;
@@ -45,7 +47,9 @@ class ModelsDiffHelper: public QObject {
 		ModelsDiffHelper(void);
 
 		void setDatabaseModels(DatabaseModel *src_model, DatabaseModel *imp_model);
+		unsigned getDiffTypeCount(unsigned diff_type);
 
+		void resetDiffCounter(void);
 	public slots:
 		void diffDatabaseModels(void);
 		void cancelDiff(void);
@@ -62,6 +66,9 @@ class ModelsDiffHelper: public QObject {
 
 		//! \brief This signal is emited when the diffhas encountered a critical error (only in thread mode)
 		void s_diffAborted(Exception e);
+
+		//! \brief This signal is emitted when a diff info is generated
+		void s_objectsDiffInfoGenerated(ObjectsDiffInfo diff_info);
 };
 
 #endif

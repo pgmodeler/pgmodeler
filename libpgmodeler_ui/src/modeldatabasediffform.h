@@ -45,7 +45,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
 		QTreeWidgetItem *import_item, *diff_item, *export_item;
 
-		DatabaseModel *source_model,  *imported_model;
+		DatabaseModel *source_model, *imported_model;
 
 		int diff_progress;
 
@@ -56,6 +56,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void destroyModel(void);
 		void clearOutput(void);
 		void resetButtons(void);
+		QString formatMessage(const QString &msg);
 
 		QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent);
 
@@ -72,6 +73,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void generateDiff(void);
 		void cancelOperation(void);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
+		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
 		void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);

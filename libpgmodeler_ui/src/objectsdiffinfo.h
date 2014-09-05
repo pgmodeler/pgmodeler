@@ -37,16 +37,18 @@ class ObjectsDiffInfo {
 		BaseObject *src_object, *comp_object;
 
 	public:
-		static const unsigned CREATE_OBJECT=0,
-													DROP_OBJECT=1,
-													UPDATED_OBJECT=2,
-													NO_DIFFERENCE=3;
+		static const unsigned CREATE_OBJECT,
+													DROP_OBJECT,
+													ALTER_OBJECT,
+													NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
 		ObjectsDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *comp_object=nullptr);
 
 		//! \brief Returns the validation type
 		unsigned getDiffType(void);
+
+		QString getInfoMessage(void);
 
 		friend class ModelsDiffHelper;
 		friend class QVariant;

@@ -208,7 +208,7 @@ unsigned Catalog::getFilter(void)
 	return(filter);
 }
 
-void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids)
+void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
 {
 	ObjectType tp;
 	try
@@ -222,7 +222,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 		for(ObjectType type : types)
 		{
 			tp=type;
-			attribs=getObjectsNames(type);
+			attribs=getObjectsNames(type, "", "", extra_attribs);
 
 			for(auto attr : attribs)
 			{

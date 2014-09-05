@@ -668,7 +668,7 @@
                 <string>Verbose output</string>
                </property>
                <property name="checked">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -785,7 +785,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="create_cnt_lbl">
                 <property name="toolTip">
                  <string>Objects to be created</string>
                 </property>
@@ -836,7 +836,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="alter_cnt_lbl">
                 <property name="toolTip">
                  <string>Objects to be changed</string>
                 </property>
@@ -884,7 +884,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="drop_cnt_lbl">
                 <property name="toolTip">
                  <string>Objects to be dropped</string>
                 </property>
