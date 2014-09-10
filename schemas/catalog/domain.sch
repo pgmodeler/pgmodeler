@@ -4,28 +4,19 @@
 
 %if @{list} %then
   [SELECT dm.oid, dm.typname AS name FROM pg_type AS dm
-    INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name ]
+    INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
+   WHERE dm.typrelid=0 ]
 
   %if @{schema} %then
-    [ WHERE domain_schema=] '@{schema}'
+    [ AND domain_schema=] '@{schema}'
   %end
 
   %if @{last-sys-oid} %then
-    %if @{schema} %then
-     [ AND ]
-    %else
-     [ WHERE ]
-    %end
-     [ dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+     [ AND dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
   %end
 
   %if @{not-ext-object} %then
-    %if @{last-sys-oid} %or @{schema} %then
-      [ AND ]
-    %else
-      [ WHERE ]
-    %end
-    (  @{not-ext-object} )
+    [ AND ]( @{not-ext-object} )
   %end
 
 %else
@@ -60,12 +51,13 @@
 
       [ FROM pg_type AS dm
 	LEFT JOIN pg_constraint AS cn ON cn.contypid=dm.oid
-	LEFT JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name ]
+        LEFT JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
+        WHERE dm.typrelid=0 ]
 
       %if @{filter-oids} %or @{schema} %then
-      [ WHERE ]
+        [ AND ]
 	%if @{filter-oids} %then
-	  [ dm.oid IN (] @{filter-oids} )
+          [  dm.oid IN (] @{filter-oids} )
 
 	   %if @{schema} %then
 	     [ AND ]
@@ -78,21 +70,11 @@
       %end
 
       %if @{last-sys-oid} %then
-	%if @{filter-oids} %or @{schema} %then
-	  [ AND ]
-	%else
-	  [ WHERE ]
-	%end
-	[ dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+        [ AND dm.oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
       %if @{not-ext-object} %then
-	%if @{last-sys-oid} %or @{filter-oids} %or @{schema} %then
-	  [ AND ]
-	%else
-	  [ WHERE ]
-	%end
-	( @{not-ext-object} )
+        [ AND ]( @{not-ext-object} )
       %end
     %end
 %end
