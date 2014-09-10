@@ -234,12 +234,13 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ ] */
+			Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $] */
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
-          chr == '.' || chr == '@' || chr ==' ')
+					chr == '.' || chr == '@' || chr ==' ' ||
+				 (i > 0 && chr=='$'))
 			{
 				valid=true;
 				i++;
