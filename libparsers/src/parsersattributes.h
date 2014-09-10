@@ -456,7 +456,8 @@ namespace ParsersAttributes {
 	EXACT_MATCH="exact-match",
 	HIGHLIGHT_OBJECTS="highlight-objects",
 	DOCK_WIDGETS="dock-widgets",
-	WIDGET="widget";
+	WIDGET="widget",
+	DISABLE_SMOOTHNESS="disable-smoothness";
 }
 
 #endif
