@@ -35,10 +35,15 @@
   ( @{elements} $br $tb )
 %end
 
+%if @{pk-constr} %or @{uq-constr} %then
+  %if @{factor} %then
+    %if @{decl-in-table} %then $br $tb %end
+    [ WITH (FILLFACTOR = ] @{factor} [)]
+  %end
+%end
+
 %if @{tablespace} %then
   $br
-  %if @{decl-in-table} %then $tb %end
-  [WITH (FILLFACTOR = ] @{factor} [)] $br
   %if @{decl-in-table} %then $tb %end
   %if @{pk-constr} %or @{uq-constr} %or @{ex-constr} %then [USING INDEX TABLESPACE ] @{tablespace} %end
 %end

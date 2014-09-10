@@ -107,6 +107,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
 		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
+		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
 		parent_form->setMinimumSize(600, 640);
 
@@ -330,7 +331,10 @@ void ConstraintWidget::selectConstraintType(void)
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
 	warn_frm->setVisible(constr_type==ConstraintType::check);
 
-	fill_factor_lbl->setVisible(constr_type==ConstraintType::unique ||
+	/*fill_factor_lbl->setVisible(constr_type==ConstraintType::unique ||
+															constr_type==ConstraintType::primary_key ||
+															constr_type==ConstraintType::exclude); */
+	fill_factor_chk->setVisible(constr_type==ConstraintType::unique ||
 															constr_type==ConstraintType::primary_key ||
 															constr_type==ConstraintType::exclude);
 	fill_factor_sb->setVisible(constr_type==ConstraintType::unique ||
@@ -430,9 +434,12 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
-		fill_factor_sb->setValue(constr->getFillFactor());
 		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
 		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
+
+		fill_factor_chk->setChecked(constr->getFillFactor()!=0);
+		if(fill_factor_chk->isChecked())
+		 fill_factor_sb->setValue(constr->getFillFactor());
 
 		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
 		if(ref_table)
@@ -476,7 +483,12 @@ void ConstraintWidget::applyConfiguration(void)
 		constr=dynamic_cast<Constraint *>(this->object);
 		constr->setConstraintType(ConstraintType(constr_type_cmb->currentText()));
     constr->setExpression(expression_txt->toPlainText().toUtf8());
-		constr->setFillFactor(fill_factor_sb->value());
+
+		if(fill_factor_chk->isChecked())
+			constr->setFillFactor(fill_factor_sb->value());
+		else
+			constr->setFillFactor(0);
+
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));

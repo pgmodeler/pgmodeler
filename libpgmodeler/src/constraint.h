@@ -130,7 +130,9 @@ class Constraint: public TableObject{
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
 		void setTablespace(BaseObject *tabspc);
 
-		//! \brief Defines the constraint fill factor (only for primary keys and unique)
+		/*! \brief Defines the constraint fill factor (only for primary keys and unique).
+				Values less than 10 (except 0) or above 100 will be adjusted to accepted values. To use the default
+				settings specify 0 as fill factor */
 		void setFillFactor(unsigned factor);
 
 		//! \brief Defines if the constraints is propagated to child tables (only for exclude constraints)

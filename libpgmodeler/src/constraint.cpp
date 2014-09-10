@@ -24,7 +24,7 @@ Constraint::Constraint(void)
 	obj_type=OBJ_CONSTRAINT;
 	deferrable=false;
 	no_inherit=false;
-	fill_factor=100;
+	fill_factor=0;
 	index_type=BaseType::null;
 
 	attributes[ParsersAttributes::PK_CONSTR]="";
@@ -247,7 +247,8 @@ void Constraint::setMatchType(MatchType match_type)
 
 void Constraint::setFillFactor(unsigned factor)
 {
-	if(factor < 10) factor=10;
+	if(factor!=0 && factor < 10) factor=10;
+	else if(factor > 100) factor=100;
 	fill_factor=factor;
 }
 
@@ -689,7 +690,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
 		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
-	if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)
+	if(fill_factor!=0 && (constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique))
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 	else
 		attributes[ParsersAttributes::FACTOR]="";
