@@ -55,6 +55,9 @@
       </property>
       <item row="4" column="0">
        <widget class="QCheckBox" name="check_upd_chk">
+        <property name="toolTip">
+         <string>Check if there is a new version on server</string>
+        </property>
         <property name="text">
          <string>Check for updates at startup</string>
         </property>
@@ -65,6 +68,9 @@
       </item>
       <item row="6" column="0">
        <widget class="QCheckBox" name="hide_rel_name_chk">
+        <property name="toolTip">
+         <string>Hide the object that represents the relationship name</string>
+        </property>
         <property name="text">
          <string>Hide relationship name</string>
         </property>
@@ -108,21 +114,11 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0" colspan="3">
-       <widget class="QCheckBox" name="invert_pan_range_chk">
-        <property name="toolTip">
-         <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
-        </property>
-        <property name="text">
-         <string>Invert panning mode and range selection triggers</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="0">
        <widget class="QCheckBox" name="hide_table_tags_chk">
+        <property name="toolTip">
+         <string>Hide the object which represents the tag assigned to the table</string>
+        </property>
         <property name="text">
          <string>Hide table tags</string>
         </property>
@@ -130,6 +126,9 @@
       </item>
       <item row="6" column="1" colspan="2">
        <widget class="QCheckBox" name="hide_ext_attribs_chk">
+        <property name="toolTip">
+         <string>Hide the portion of table which represent triggers, indexes and rules</string>
+        </property>
         <property name="text">
          <string>Hide table extended attributes</string>
         </property>
@@ -148,6 +147,9 @@
           <width>160</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>The opened models will be saved periodically</string>
         </property>
         <property name="text">
          <string>Autosave interval:</string>
@@ -315,6 +317,9 @@
       </item>
       <item row="7" column="1" colspan="2">
        <widget class="QCheckBox" name="corner_move_chk">
+        <property name="toolTip">
+         <string>Start move the canvas when the cursor is on the canvas edges</string>
+        </property>
         <property name="text">
          <string>Move canvas by positioning mouse on corners</string>
         </property>
@@ -325,15 +330,41 @@
       </item>
       <item row="4" column="1" colspan="2">
        <widget class="QCheckBox" name="save_last_pos_chk">
+        <property name="toolTip">
+         <string>After loading the model the last zoom and position on canvas will be restored</string>
+        </property>
         <property name="text">
          <string>Save and restore the last canvas position and zoom</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QCheckBox" name="invert_pan_range_chk">
+        <property name="toolTip">
+         <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+        </property>
+        <property name="text">
+         <string>Invert panning mode and range selection triggers</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QCheckBox" name="disable_smooth_chk">
+        <property name="toolTip">
+         <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
+        </property>
+        <property name="text">
+         <string>Disable render smoothness</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Printing</string>
@@ -870,7 +901,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
       <string>Code font style</string>
@@ -1054,7 +1085,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

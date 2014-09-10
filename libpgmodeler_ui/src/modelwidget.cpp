@@ -51,6 +51,9 @@
 #include "customsqlwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
+#include "configurationform.h"
+
+extern ConfigurationForm *configuration_form;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -83,6 +86,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
 												BaseRelationship::RELATIONSHIP_GEN };
+	bool disable_smooth=false;
+
+
+	if(configuration_form)
+	{
+		GeneralConfigWidget *general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		map<QString, attribs_map> confs=general_conf->getConfigurationParams();
+		disable_smooth=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]==ParsersAttributes::_TRUE_;
+	}
 
 	current_zoom=1;
 	modified=false;
@@ -138,9 +150,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	viewport=new QGraphicsView(scene);
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	viewport->setRenderHint(QPainter::Antialiasing);
-	viewport->setRenderHint(QPainter::TextAntialiasing);
-	viewport->setRenderHint(QPainter::SmoothPixmapTransform);
+	viewport->setRenderHint(QPainter::Antialiasing, !disable_smooth);
+	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_smooth);
+	viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_smooth);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
