@@ -1631,11 +1631,11 @@ void MainWindow::quitDemoVersion(void)
 	msg_box.show(trUtf8("Warning"),
 							 trUtf8("The demonstration period for this execution has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
-											<strong>D3M02BR0NZ3</strong> (20% off on bronze package)<br/>\
-											<strong>D3M02S1LV3R</strong> (20% off on silver package)<br/>\
-											<strong>D3M02G0LD</strong> (15% off on gold package)<br/>\
-											<strong>D3M02PL4T1NUM</strong> (15% off on platinum package)<br/>\
-											<strong>D3M02D14M0ND</strong> (10% off on diamond package)<br/>\
+											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
+											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\
+											<strong>D3M02G0LD</strong> (Discount on gold package)<br/>\
+											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
+											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
 											<br/>Thank you for testing pgModeler!"),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
  #endif
