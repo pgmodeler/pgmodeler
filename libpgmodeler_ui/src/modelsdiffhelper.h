@@ -33,7 +33,7 @@ class ModelsDiffHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		bool diff_canceled;
+		bool diff_canceled, keep_cluster_objs;
 
 		unsigned diffs_counter[3];
 
@@ -42,16 +42,17 @@ class ModelsDiffHelper: public QObject {
 		vector<ObjectsDiffInfo> diff_infos;
 
 		void diffTables(Table *src_table, Table *imp_table);
+		void diffModels(unsigned diff_type);
 
 	public:
 		ModelsDiffHelper(void);
 
-		void setDatabaseModels(DatabaseModel *src_model, DatabaseModel *imp_model);
+		void setModels(DatabaseModel *src_model, DatabaseModel *imp_model, bool keep_cluster_objs);
 		unsigned getDiffTypeCount(unsigned diff_type);
-
 		void resetDiffCounter(void);
+
 	public slots:
-		void diffDatabaseModels(void);
+		void diffModels(void);
 		void cancelDiff(void);
 
 	signals:

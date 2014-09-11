@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>690</width>
     <height>480</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>640</width>
+    <width>690</width>
     <height>480</height>
    </size>
   </property>
@@ -541,8 +541,27 @@
             </item>
            </layout>
           </item>
+          <item row="3" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="0">
            <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -552,7 +571,7 @@
             <property name="title">
              <string>Import settings</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_7">
+            <layout class="QGridLayout" name="gridLayout_11">
              <property name="leftMargin">
               <number>4</number>
              </property>
@@ -606,19 +625,6 @@
                </item>
               </layout>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="database_lbl">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Database:</string>
-               </property>
-               <property name="indent">
-                <number>-1</number>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="1">
               <widget class="QComboBox" name="database_cmb">
                <property name="enabled">
@@ -638,15 +644,40 @@
                </property>
               </widget>
              </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="database_lbl">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Database:</string>
+               </property>
+               <property name="indent">
+                <number>-1</number>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QGroupBox" name="groupBox_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="title">
              <string>Options</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QGridLayout" name="gridLayout_7">
              <property name="leftMargin">
               <number>4</number>
              </property>
@@ -659,20 +690,7 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
-             <item>
-              <widget class="QCheckBox" name="verbose_chk">
-               <property name="toolTip">
-                <string>Display all process output when checked. Unchecking it will display only compare output.</string>
-               </property>
-               <property name="text">
-                <string>Verbose output</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
+             <item row="0" column="0">
               <widget class="QCheckBox" name="import_sys_objs_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -680,18 +698,53 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Import system (built in) objects. Use this if the import step is returning errors.</string>
+               </property>
                <property name="text">
-                <string>Import system objects</string>
+                <string>System objects</string>
                </property>
               </widget>
              </item>
-             <item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="import_ext_objs_chk">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Import extension objects. Use this if the import step is returning errors even importing built in ones.</string>
+               </property>
+               <property name="text">
+                <string>Extension objects</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="keep_cluster_objs_chk">
+               <property name="toolTip">
+                <string>Database cluster level objects like roles and tablespaces will not be dropped.</string>
+               </property>
+               <property name="text">
+                <string>Keep cluster objects</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
               <widget class="QCheckBox" name="ignore_errors_chk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
                </property>
                <property name="text">
                 <string>Ignore import errors</string>
@@ -700,19 +753,6 @@
              </item>
             </layout>
            </widget>
-          </item>
-          <item row="3" column="0">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>

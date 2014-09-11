@@ -34,7 +34,7 @@ class ObjectsDiffInfo {
 		//! \brief Difference type (see constants below)
 		unsigned diff_type;
 
-		BaseObject *src_object, *comp_object;
+		BaseObject *old_object, *new_object;
 
 	public:
 		static const unsigned CREATE_OBJECT,
@@ -43,12 +43,14 @@ class ObjectsDiffInfo {
 													NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
-		ObjectsDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *comp_object=nullptr);
+		ObjectsDiffInfo(unsigned diff_type, BaseObject *old_object, BaseObject *new_object=nullptr);
 
 		//! \brief Returns the validation type
 		unsigned getDiffType(void);
 
 		QString getInfoMessage(void);
+		BaseObject *getOldObject(void);
+		BaseObject *getNewObject(void);
 
 		friend class ModelsDiffHelper;
 		friend class QVariant;

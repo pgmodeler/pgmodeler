@@ -22,6 +22,7 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	source_model=imported_model=nullptr;
+	keep_cluster_objs=true;
 	resetDiffCounter();
 }
 
@@ -33,10 +34,11 @@ void ModelsDiffHelper::resetDiffCounter(void)
 	diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
 }
 
-void ModelsDiffHelper::setDatabaseModels(DatabaseModel *src_model, DatabaseModel *imp_model)
+void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model, bool keep_cluster_objs)
 {
 	source_model=src_model;
 	imported_model=imp_model;
+	this->keep_cluster_objs=keep_cluster_objs;
 }
 
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
@@ -47,61 +49,23 @@ unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 	return(diffs_counter[diff_type]);
 }
 
-void ModelsDiffHelper::diffDatabaseModels(void)
+void ModelsDiffHelper::diffModels(void)
 {
-	map<unsigned, BaseObject *> obj_order;
+	/*map<unsigned, BaseObject *> obj_order;
 	BaseObject *object=nullptr;
 	ObjectType obj_type;
 	QString obj_name;
 	ObjectsDiffInfo diff_info;
-	unsigned idx=0;
+	unsigned idx=0; */
 
 	resetDiffCounter();
 
 	if(!source_model || !imported_model)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
-
-	QTextStream out (stdout);
-
-	//Checking the objects to be deleted
-	for(auto obj_itr : obj_order)
-	{
-		if(diff_canceled) break;
-
-		object=obj_itr.second;
-		obj_type=object->getObjectType();
-		idx++;
-
-		if(obj_type!=OBJ_RELATIONSHIP && !object->isSystemObject() && !object->isSQLDisabled())
-		{
-			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
-														 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
-														 object->getObjectType());
-
-
-			if(obj_type==OBJ_FUNCTION)
-				obj_name=dynamic_cast<Function *>(object)->getSignature();
-			else if(obj_type==OBJ_OPERATOR)
-				obj_name=dynamic_cast<Operator *>(object)->getSignature();
-			else
-				obj_name=object->getName(true);
-
-			if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
-			{
-				if(source_model->getObjectIndex(obj_name, obj_type) < 0)
-				{
-					diff_info=ObjectsDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
-					diff_infos.push_back(diff_info);
-					diffs_counter[ObjectsDiffInfo::DROP_OBJECT]++;
-					emit s_objectsDiffInfoGenerated(diff_info);
-				}
-			}
-		}
-
-		QThread::msleep(20);
-	}
+	diffModels(ObjectsDiffInfo::DROP_OBJECT);
+	diffModels(ObjectsDiffInfo::CREATE_OBJECT);
+	diffModels(ObjectsDiffInfo::ALTER_OBJECT);
 
 	if(diff_canceled)
 		emit s_diffCanceled();
@@ -117,4 +81,77 @@ void ModelsDiffHelper::cancelDiff(void)
 void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table)
 {
 
+}
+
+void ModelsDiffHelper::diffModels(unsigned diff_type)
+{
+	map<unsigned, BaseObject *> obj_order;
+	BaseObject *object=nullptr, *aux_object=nullptr;
+	ObjectType obj_type;
+	QString obj_name;
+	ObjectsDiffInfo diff_info;
+	unsigned idx=0;
+	DatabaseModel *aux_model=nullptr;
+
+	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+	{
+		obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+		aux_model=source_model;
+	}
+	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
+					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+	{
+		obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+		aux_model=imported_model;
+	}
+
+	for(auto obj_itr : obj_order)
+	{
+		if(diff_canceled) break;
+
+		object=obj_itr.second;
+		obj_type=object->getObjectType();
+		idx++;
+
+		if(obj_type!=OBJ_RELATIONSHIP && !object->isSystemObject() && !object->isSQLDisabled() &&
+			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
+				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
+		{
+			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+														 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+														 object->getObjectType());
+
+			if(obj_type==OBJ_FUNCTION)
+				obj_name=dynamic_cast<Function *>(object)->getSignature();
+			else if(obj_type==OBJ_OPERATOR)
+				obj_name=dynamic_cast<Operator *>(object)->getSignature();
+			else
+				obj_name=object->getName(true);
+
+			if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
+			{
+				if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+				{
+					aux_object=aux_model->getObject(obj_name, obj_type);
+
+					if(aux_object && object->isCodeDiffersFrom(aux_object))
+					{
+						diff_info=ObjectsDiffInfo(diff_type, object, aux_object);
+						diff_infos.push_back(diff_info);
+						diffs_counter[diff_type]++;
+						emit s_objectsDiffInfoGenerated(diff_info);
+					}
+				}
+				else if(aux_model->getObjectIndex(obj_name, obj_type) < 0)
+				{
+					diff_info=ObjectsDiffInfo(diff_type, object);
+					diff_infos.push_back(diff_info);
+					diffs_counter[diff_type]++;
+					emit s_objectsDiffInfoGenerated(diff_info);
+				}
+			}
+		}
+
+		QThread::msleep(20);
+	}
 }

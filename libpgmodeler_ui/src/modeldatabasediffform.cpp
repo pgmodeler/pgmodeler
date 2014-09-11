@@ -81,7 +81,7 @@ void ModelDatabaseDiffForm::createThreads(void)
 
 	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper->cancelImport(); diff_helper->cancelDiff(); });
 	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
-	connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffDatabaseModels()));
+	connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
 
 	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
@@ -220,7 +220,6 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
 		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/import.png")));
 
-		//if(verbose_chk->isChecked())
 		import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
 		conn.switchToDatabase(database_cmb->currentText());
@@ -236,7 +235,7 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		import_helper->setConnection(conn1);
 		import_helper->setSelectedOIDs(imported_model, obj_oids, col_oids);
 		import_helper->setCurrentDatabase(database_cmb->currentText());
-		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), false, true, ignore_errors_chk->isChecked(), false, false);
+		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true, ignore_errors_chk->isChecked(), false, false);
 
 		import_thread->start();
 	}
@@ -256,9 +255,8 @@ void ModelDatabaseDiffForm::diffModels(void)
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
 
-	//if(verbose_chk->isChecked())
 	diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
-	diff_helper->setDatabaseModels(source_model, imported_model);
+	diff_helper->setModels(source_model, imported_model, keep_cluster_objs_chk->isChecked());
 	diff_thread->start();
 }
 
@@ -359,9 +357,6 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	else
 		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
-	if(verbose_chk->isChecked())
-		createOutputItem(msg, *progress_ico_lbl->pixmap(), parent);
-
 	this->repaint();
 }
 
@@ -371,14 +366,10 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 																			 {ObjectsDiffInfo::DROP_OBJECT,   drop_cnt_lbl},
 																			 {ObjectsDiffInfo::ALTER_OBJECT,  alter_cnt_lbl} };
 
-	map<unsigned, QString> icons={ {ObjectsDiffInfo::CREATE_OBJECT, "criado"},
-																 {ObjectsDiffInfo::DROP_OBJECT,   "removido"},
-																 {ObjectsDiffInfo::ALTER_OBJECT,  "modificado"} };
-
 	unsigned diff_type=diff_info.getDiffType();
 	QLabel *lbl=cnt_labels[diff_type];
 
 	createOutputItem(formatMessage(diff_info.getInfoMessage()),
-									 QPixmap(QString(":/icones/icones/%1.png").arg(icons[diff_type])) , diff_item);
+									 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getOldObject()->getSchemaName())) , diff_item);
 	lbl->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 }

@@ -25,15 +25,15 @@ const unsigned ObjectsDiffInfo::NO_DIFFERENCE=3;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
-	src_object=comp_object=nullptr;
+	old_object=new_object=nullptr;
 	diff_type=NO_DIFFERENCE;
 }
 
 ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *comp_object)
 {
 	this->diff_type=diff_type;
-	this->src_object=src_object;
-	this->comp_object=comp_object;
+	this->old_object=src_object;
+	this->new_object=comp_object;
 }
 
 unsigned ObjectsDiffInfo::getDiffType(void)
@@ -43,12 +43,36 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
+	QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be %3");
 
 	if(diff_type==DROP_OBJECT)
 	{
-		QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be dropped.");
-		return(msg.arg(src_object->getName()).arg(src_object->getTypeName()));
+		return(msg.arg(old_object->getName(true))
+							.arg(old_object->getTypeName())
+							.arg("<font color='#e00000'><strong>dropped</strong></font>"));
+	}
+	else if(diff_type==CREATE_OBJECT)
+	{
+		return(msg.arg(old_object->getName(true))
+							.arg(old_object->getTypeName())
+							.arg("<font color='#008000'><strong>created</strong></font>"));
+	}
+	else if(diff_type==ALTER_OBJECT)
+	{
+		return(msg.arg(old_object->getName(true))
+							.arg(old_object->getTypeName())
+							.arg("<font color='#ff8000'><strong>changed</strong></font>"));
 	}
 
 	return("");
+}
+
+BaseObject *ObjectsDiffInfo::getOldObject(void)
+{
+	return(old_object);
+}
+
+BaseObject *ObjectsDiffInfo::getNewObject(void)
+{
+	return(new_object);
 }
