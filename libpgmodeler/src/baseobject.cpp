@@ -1013,7 +1013,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 			for(QString tag : ignored_tags)
 				xml.remove(QRegExp(tag_regex.arg(tag)));
 
-			xml_defs[i]=xml;
+			xml_defs[i]=xml.simplified();
 		}
 
 		return(xml_defs[0]!=xml_defs[1]);

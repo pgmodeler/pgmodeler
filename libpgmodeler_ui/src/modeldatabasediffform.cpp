@@ -91,6 +91,7 @@ void ModelDatabaseDiffForm::createThreads(void)
 	connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
 	connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
+	connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 
 	connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)));
 }
@@ -370,6 +371,6 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 	QLabel *lbl=cnt_labels[diff_type];
 
 	createOutputItem(formatMessage(diff_info.getInfoMessage()),
-									 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getOldObject()->getSchemaName())) , diff_item);
+									 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())) , diff_item);
 	lbl->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 }

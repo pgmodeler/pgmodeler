@@ -51,26 +51,25 @@ unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 
 void ModelsDiffHelper::diffModels(void)
 {
-	/*map<unsigned, BaseObject *> obj_order;
-	BaseObject *object=nullptr;
-	ObjectType obj_type;
-	QString obj_name;
-	ObjectsDiffInfo diff_info;
-	unsigned idx=0; */
+	try
+	{
+		resetDiffCounter();
 
-	resetDiffCounter();
+		if(!source_model || !imported_model)
+			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!source_model || !imported_model)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		diffModels(ObjectsDiffInfo::DROP_OBJECT);
+		diffModels(ObjectsDiffInfo::CREATE_OBJECT);
 
-	diffModels(ObjectsDiffInfo::DROP_OBJECT);
-	diffModels(ObjectsDiffInfo::CREATE_OBJECT);
-	diffModels(ObjectsDiffInfo::ALTER_OBJECT);
-
-	if(diff_canceled)
-		emit s_diffCanceled();
-	else
-		emit s_diffFinished();
+		if(diff_canceled)
+			emit s_diffCanceled();
+		else
+			emit s_diffFinished();
+	}
+	catch(Exception &e)
+	{
+		emit s_diffAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
+	}
 }
 
 void ModelsDiffHelper::cancelDiff(void)
@@ -78,9 +77,48 @@ void ModelsDiffHelper::cancelDiff(void)
 	diff_canceled=true;
 }
 
-void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table)
+void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned diff_type)
 {
+	ObjectType types[2]={ OBJ_COLUMN, OBJ_CONSTRAINT };
+	vector<TableObject *> *tab_objs=nullptr;
+	Constraint *constr=nullptr;
+	Table *ref_tab=nullptr, *comp_tab=nullptr;
+	BaseObject *aux_obj=nullptr;
 
+	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+	{
+		ref_tab=imp_table;
+		comp_tab=src_table;
+	}
+	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
+					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+	{
+		ref_tab=src_table;
+		comp_tab=imp_table;
+	}
+
+	for(unsigned i=0; i < 2; i++)
+	{
+		tab_objs=ref_tab->getObjectList(types[i]);
+
+		for(auto tab_obj : *tab_objs)
+		{
+			aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
+			constr=dynamic_cast<Constraint *>(tab_obj);
+
+			if(!tab_obj->isAddedByGeneralization() &&
+				 (!constr || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
+			{
+				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_obj)
+				{
+					if(tab_obj->isCodeDiffersFrom(aux_obj))
+						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj);
+				}
+				else if(!aux_obj)
+					generateDiffInfo(diff_type, tab_obj);
+			}
+		}
+	}
 }
 
 void ModelsDiffHelper::diffModels(unsigned diff_type)
@@ -89,9 +127,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	BaseObject *object=nullptr, *aux_object=nullptr;
 	ObjectType obj_type;
 	QString obj_name;
-	ObjectsDiffInfo diff_info;
 	unsigned idx=0;
 	DatabaseModel *aux_model=nullptr;
+	bool xml_differs=false;
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
@@ -130,28 +168,90 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 			if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
 			{
-				if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
-				{
-					aux_object=aux_model->getObject(obj_name, obj_type);
+				aux_object=aux_model->getObject(obj_name, obj_type);
 
-					if(aux_object && object->isCodeDiffersFrom(aux_object))
+				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
+				{
+					if(aux_object)
+						xml_differs=object->isCodeDiffersFrom(aux_object,
+																									{ ParsersAttributes::PROTECTED,
+																										ParsersAttributes::SQL_DISABLED },
+																									{ ParsersAttributes::POSITION,
+																										ParsersAttributes::APPENDED_SQL,
+																										ParsersAttributes::PREPENDED_SQL,
+																										ParsersAttributes::COLUMN,
+																										ParsersAttributes::CONSTRAINT });
+					if(xml_differs)
 					{
-						diff_info=ObjectsDiffInfo(diff_type, object, aux_object);
-						diff_infos.push_back(diff_info);
-						diffs_counter[diff_type]++;
-						emit s_objectsDiffInfoGenerated(diff_info);
+						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object);
+						xml_differs=false;
+					}
+
+					if(object->getObjectType()==OBJ_TABLE)
+					{
+						Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
+						diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
+						diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
 					}
 				}
-				else if(aux_model->getObjectIndex(obj_name, obj_type) < 0)
-				{
-					diff_info=ObjectsDiffInfo(diff_type, object);
-					diff_infos.push_back(diff_info);
-					diffs_counter[diff_type]++;
-					emit s_objectsDiffInfoGenerated(diff_info);
-				}
+				else if(!aux_object)
+					generateDiffInfo(diff_type, object);
+			}
+			//Comparison for constraints (fks), triggers, rules, indexes
+			else if(TableObject::isTableObject(obj_type))
+			{
+				diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::DROP_OBJECT);
+				diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::CREATE_OBJECT);
+			}
+			//Comparison between model db and the imported db
+			else
+			{
+
 			}
 		}
 
 		QThread::msleep(20);
 	}
+}
+
+void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
+{
+	BaseTable *base_tab=nullptr, *aux_base_tab=nullptr;
+	ObjectType obj_type=tab_obj->getObjectType();
+	QString obj_name=tab_obj->getName(true);
+	BaseObject *aux_tab_obj=nullptr;
+
+	base_tab=tab_obj->getParentTable();
+
+	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+		aux_base_tab=dynamic_cast<BaseTable *>(source_model->getObject(base_tab->getName(true), base_tab->getObjectType()));
+	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
+					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+		aux_base_tab=dynamic_cast<BaseTable *>(imported_model->getObject(base_tab->getName(true), base_tab->getObjectType()));
+
+	if(obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT)
+	{
+		Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
+		if(aux_table)
+			aux_tab_obj=aux_table->getObject(obj_name, obj_type);
+	}
+	else
+	{
+		if(aux_base_tab)
+			aux_tab_obj=aux_base_tab->getObject(obj_name, obj_type);
+	}
+
+	if(!aux_tab_obj)
+		generateDiffInfo(diff_type, tab_obj);
+	else if(tab_obj->isCodeDiffersFrom(aux_tab_obj))
+		generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj);
+}
+
+void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *src_object)
+{
+	ObjectsDiffInfo diff_info;
+	diff_info=ObjectsDiffInfo(diff_type, src_object);
+	diff_infos.push_back(diff_info);
+	diffs_counter[diff_type]++;
+	emit s_objectsDiffInfoGenerated(diff_info);
 }

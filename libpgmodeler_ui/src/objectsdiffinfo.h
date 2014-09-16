@@ -27,14 +27,14 @@ are emitted during the diff process on ModelsDiffHelper class.
 #define OBJECTS_DIFF_INFO_H
 
 #include <QString>
-#include "baseobject.h"
+#include "tableobject.h"
 
 class ObjectsDiffInfo {
 	private:
 		//! \brief Difference type (see constants below)
 		unsigned diff_type;
 
-		BaseObject *old_object, *new_object;
+		BaseObject *object;
 
 	public:
 		static const unsigned CREATE_OBJECT,
@@ -43,13 +43,13 @@ class ObjectsDiffInfo {
 													NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
-		ObjectsDiffInfo(unsigned diff_type, BaseObject *old_object, BaseObject *new_object=nullptr);
+		ObjectsDiffInfo(unsigned diff_type, BaseObject *object);
 
 		//! \brief Returns the validation type
 		unsigned getDiffType(void);
 
 		QString getInfoMessage(void);
-		BaseObject *getOldObject(void);
+		BaseObject *getObject(void);
 		BaseObject *getNewObject(void);
 
 		friend class ModelsDiffHelper;

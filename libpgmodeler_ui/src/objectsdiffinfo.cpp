@@ -25,15 +25,14 @@ const unsigned ObjectsDiffInfo::NO_DIFFERENCE=3;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
-	old_object=new_object=nullptr;
+	object=nullptr;
 	diff_type=NO_DIFFERENCE;
 }
 
-ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *comp_object)
+ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object)
 {
 	this->diff_type=diff_type;
-	this->old_object=src_object;
-	this->new_object=comp_object;
+	this->object=object;
 }
 
 unsigned ObjectsDiffInfo::getDiffType(void)
@@ -43,36 +42,37 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-	QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be %3");
+	QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be %3"), obj_name;
+	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
+
+	if(tab_obj)
+	 obj_name=tab_obj->getParentTable()->getName(true) + "." + tab_obj->getName(true);
+	else
+	 obj_name=object->getName(true);
 
 	if(diff_type==DROP_OBJECT)
 	{
-		return(msg.arg(old_object->getName(true))
-							.arg(old_object->getTypeName())
+		return(msg.arg(obj_name)
+							.arg(object->getTypeName())
 							.arg("<font color='#e00000'><strong>dropped</strong></font>"));
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
-		return(msg.arg(old_object->getName(true))
-							.arg(old_object->getTypeName())
+		return(msg.arg(obj_name)
+							.arg(object->getTypeName())
 							.arg("<font color='#008000'><strong>created</strong></font>"));
 	}
 	else if(diff_type==ALTER_OBJECT)
 	{
-		return(msg.arg(old_object->getName(true))
-							.arg(old_object->getTypeName())
+		return(msg.arg(obj_name)
+							.arg(object->getTypeName())
 							.arg("<font color='#ff8000'><strong>changed</strong></font>"));
 	}
 
 	return("");
 }
 
-BaseObject *ObjectsDiffInfo::getOldObject(void)
+BaseObject *ObjectsDiffInfo::getObject(void)
 {
-	return(old_object);
-}
-
-BaseObject *ObjectsDiffInfo::getNewObject(void)
-{
-	return(new_object);
+	return(object);
 }
