@@ -69,6 +69,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				}
 		};
 
+		static QFont default_font;
+
     //! brief Stores the parent text edit in order to handle text pasting on eventFilter
     QTextEdit *parent_txt;
 
@@ -166,6 +168,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
+
+		static void setDefaultFont(const QFont &fnt);
 
 	public slots:
 		//! \brief Rehighlight all the document

@@ -51,14 +51,13 @@
 #include "customsqlwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
-#include "configurationform.h"
-
-extern ConfigurationForm *configuration_form;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
 bool ModelWidget::cut_operation=false;
 bool ModelWidget::save_restore_pos=true;
+bool ModelWidget::disable_render_smooth=false;
+bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 
 const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
@@ -86,20 +85,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 												BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
 												BaseRelationship::RELATIONSHIP_GEN };
-	bool disable_smooth=false;
-
-
-	if(configuration_form)
-	{
-		GeneralConfigWidget *general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-		map<QString, attribs_map> confs=general_conf->getConfigurationParams();
-		disable_smooth=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]==ParsersAttributes::_TRUE_;
-	}
 
 	current_zoom=1;
 	modified=false;
 	new_obj_type=BASE_OBJECT;
-
 
 	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
@@ -150,9 +139,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	viewport=new QGraphicsView(scene);
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	viewport->setRenderHint(QPainter::Antialiasing, !disable_smooth);
-	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_smooth);
-	viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_smooth);
+	viewport->setRenderHint(QPainter::Antialiasing, !disable_render_smooth);
+	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_render_smooth);
+	viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -628,10 +617,15 @@ void ModelWidget::addNewObject(void)
       }
       else
       {
-        //For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-        viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
-        this->new_obj_type=obj_type;
-        this->enableModelActions(false);
+				if(simple_obj_creation)
+					this->showObjectForm(obj_type, nullptr, parent_obj, viewport->mapToScene(viewport->rect().center()));
+				else
+				{
+					//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
+					viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
+					this->new_obj_type=obj_type;
+					this->enableModelActions(false);
+				}
       }
 		}
 	}
@@ -1061,15 +1055,12 @@ void ModelWidget::loadModel(const QString &filename)
     this->adjustSceneSize();
 
 		task_prog_wgt.close();
-		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
-
 		protected_model_frm->setVisible(db_model->isProtected());
     this->modified=false;
 	}
 	catch(Exception &e)
 	{
 		task_prog_wgt.close();
-		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -3043,9 +3034,19 @@ OperationList *ModelWidget::getOperationList(void)
   return(op_list);
 }
 
-void ModelWidget::saveLastCanvasPosition(bool value)
+void ModelWidget::setSaveLastCanvasPosition(bool value)
 {
-  ModelWidget::save_restore_pos=value;
+	ModelWidget::save_restore_pos=value;
+}
+
+void ModelWidget::setRenderSmoothnessDisabled(bool value)
+{
+	ModelWidget::disable_render_smooth=value;
+}
+
+void ModelWidget::setSimplifiedObjectCreation(bool value)
+{
+	ModelWidget::simple_obj_creation=value;
 }
 
 void ModelWidget::highlightObject(void)

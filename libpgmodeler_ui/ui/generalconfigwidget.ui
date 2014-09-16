@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>611</height>
+    <width>566</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -66,16 +66,6 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
-       <widget class="QCheckBox" name="hide_rel_name_chk">
-        <property name="toolTip">
-         <string>Hide the object that represents the relationship name</string>
-        </property>
-        <property name="text">
-         <string>Hide relationship name</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="grid_size_lbl">
         <property name="sizePolicy">
@@ -111,26 +101,6 @@
         </property>
         <property name="text">
          <string>Operation history:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QCheckBox" name="hide_table_tags_chk">
-        <property name="toolTip">
-         <string>Hide the object which represents the tag assigned to the table</string>
-        </property>
-        <property name="text">
-         <string>Hide table tags</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1" colspan="2">
-       <widget class="QCheckBox" name="hide_ext_attribs_chk">
-        <property name="toolTip">
-         <string>Hide the portion of table which represent triggers, indexes and rules</string>
-        </property>
-        <property name="text">
-         <string>Hide table extended attributes</string>
         </property>
        </widget>
       </item>
@@ -314,52 +284,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="7" column="1" colspan="2">
-       <widget class="QCheckBox" name="corner_move_chk">
-        <property name="toolTip">
-         <string>Start move the canvas when the cursor is on the canvas edges</string>
-        </property>
-        <property name="text">
-         <string>Move canvas by positioning mouse on corners</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QCheckBox" name="save_last_pos_chk">
-        <property name="toolTip">
-         <string>After loading the model the last zoom and position on canvas will be restored</string>
-        </property>
-        <property name="text">
-         <string>Save and restore the last canvas position and zoom</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="QCheckBox" name="invert_pan_range_chk">
-        <property name="toolTip">
-         <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
-        </property>
-        <property name="text">
-         <string>Invert panning mode and range selection triggers</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QCheckBox" name="disable_smooth_chk">
-        <property name="toolTip">
-         <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
-        </property>
-        <property name="text">
-         <string>Disable render smoothness</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -1098,6 +1022,164 @@
      </property>
     </spacer>
    </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Design</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="simple_obj_creation_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
+        </property>
+        <property name="text">
+         <string>Simplify creation of graphical objects</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="hide_rel_name_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Hide the object that represents the relationship name</string>
+        </property>
+        <property name="text">
+         <string>Hide relationship name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="disable_smooth_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
+        </property>
+        <property name="text">
+         <string>Disable render smoothness</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="hide_ext_attribs_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Hide the portion of table which represent triggers, indexes and rules</string>
+        </property>
+        <property name="text">
+         <string>Hide table extended attributes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="hide_table_tags_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Hide the object which represents the tag assigned to the table</string>
+        </property>
+        <property name="text">
+         <string>Hide table tags</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="save_last_pos_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>After loading the model the last zoom and position on canvas will be restored</string>
+        </property>
+        <property name="text">
+         <string>Save and restore the last position and zoom</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="corner_move_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Start move the canvas when the cursor is on the canvas edges</string>
+        </property>
+        <property name="text">
+         <string>Move canvas by positioning mouse on corners</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="invert_pan_range_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+        </property>
+        <property name="text">
+         <string>Invert panning and range selection triggers</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -1105,10 +1187,6 @@
   <tabstop>oplist_size_spb</tabstop>
   <tabstop>autosave_interv_chk</tabstop>
   <tabstop>autosave_interv_spb</tabstop>
-  <tabstop>hide_rel_name_chk</tabstop>
-  <tabstop>hide_ext_attribs_chk</tabstop>
-  <tabstop>hide_table_tags_chk</tabstop>
-  <tabstop>corner_move_chk</tabstop>
   <tabstop>print_grid_chk</tabstop>
   <tabstop>print_pg_num_chk</tabstop>
   <tabstop>paper_cmb</tabstop>

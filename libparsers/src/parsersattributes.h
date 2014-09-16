@@ -457,7 +457,8 @@ namespace ParsersAttributes {
 	HIGHLIGHT_OBJECTS="highlight-objects",
 	DOCK_WIDGETS="dock-widgets",
 	WIDGET="widget",
-	DISABLE_SMOOTHNESS="disable-smoothness";
+	DISABLE_SMOOTHNESS="disable-smoothness",
+	SIMPLIFIED_OBJ_CREATION="simplified-obj-creation";
 }
 
 #endif
