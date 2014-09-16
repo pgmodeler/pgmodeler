@@ -55,7 +55,13 @@ class ModelWidget: public QWidget {
 		the way the methods copyObjects() and removeObject() works. */
 		static bool cut_operation;
 
-    static bool save_restore_pos;
+		//! brief Indicates if the last position and zoom must be saved/restored
+		static bool save_restore_pos,
+
+		//! brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
+		simple_obj_creation,
+
+		disable_render_smooth;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -167,7 +173,6 @@ class ModelWidget: public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
-		//void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
@@ -223,7 +228,13 @@ class ModelWidget: public QWidget {
 		OperationList *getOperationList(void);
 
     //! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
-    static void saveLastCanvasPosition(bool value);
+		static void setSaveLastCanvasPosition(bool value);
+
+		//! brief Defines if any instance of the class must disable rendering smoothness improving performance
+		static void setRenderSmoothnessDisabled(bool value);
+
+		//! brief Defines if any instance of the class must simiplify the graphical object's creation
+		static void setSimplifiedObjectCreation(bool value);
 
     //! brief Restore the last editing position on canvas as well the zoom factor
     void restoreLastCanvasPosition(void);

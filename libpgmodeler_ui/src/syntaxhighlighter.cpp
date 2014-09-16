@@ -17,31 +17,13 @@
 */
 
 #include "syntaxhighlighter.h"
-#include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
+QFont SyntaxHighlighter::default_font;
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
-  GeneralConfigWidget *general_conf=nullptr;
-  map<QString, attribs_map> confs;
-
-  if(configuration_form)
-  {
-    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-    confs=general_conf->getConfigurationParams();
-  }
-
 	parent->setAcceptRichText(true);
-
-  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
-  {
-    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
-    if(size < 5.0f) size=5.0f;
-
-    parent->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
-    parent->setFontPointSize(size);
-  }
+	parent->setFont(default_font);
 
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
@@ -714,3 +696,7 @@ QChar SyntaxHighlighter::getCompletionTrigger(void)
 	return(completion_trigger);
 }
 
+void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
+{
+	SyntaxHighlighter::default_font=fnt;
+}
