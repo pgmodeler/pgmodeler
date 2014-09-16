@@ -190,8 +190,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					if(object->getObjectType()==OBJ_TABLE)
 					{
 						Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
-						diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
-						diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
+						diffTables(tab, aux_tab, diff_type);
+						//diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
+						//diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
 					}
 				}
 				else if(!aux_object)
@@ -200,8 +201,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			//Comparison for constraints (fks), triggers, rules, indexes
 			else if(TableObject::isTableObject(obj_type))
 			{
-				diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::DROP_OBJECT);
-				diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::CREATE_OBJECT);
+				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
+				//diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::CREATE_OBJECT);
 			}
 			//Comparison between model db and the imported db
 			else
@@ -209,8 +210,14 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 			}
 		}
+		else
+		{
+			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+														 trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+														 object->getObjectType());
+		}
 
-		QThread::msleep(20);
+		QThread::msleep(10);
 	}
 }
 
@@ -243,7 +250,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 	if(!aux_tab_obj)
 		generateDiffInfo(diff_type, tab_obj);
-	else if(tab_obj->isCodeDiffersFrom(aux_tab_obj))
+	else if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && tab_obj->isCodeDiffersFrom(aux_tab_obj))
 		generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj);
 }
 
