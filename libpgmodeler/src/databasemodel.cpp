@@ -449,7 +449,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 
 			//Get the table references
 			if(check_refs)
-				getObjectReferences(object, refs, true);
+				getObjectReferences(object, refs, true, true);
 
 			//If there are objects referencing the table
 			if(!refs.empty())
@@ -501,9 +501,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 		}
 
 		object->setDatabase(nullptr);
-
-		//if(!signalsBlocked())
-			emit s_objectRemoved(object);
+		emit s_objectRemoved(object);
 	}
 }
 
@@ -7073,7 +7071,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 	}
 }
 
-void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode)
+void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode, bool exclude_perms)
 {
 	refs.clear();
 
@@ -7084,19 +7082,22 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		bool refer=false;
 		Permission *perm=nullptr;
 
-		//Get the permissions thata references the object
-		itr_perm=permissions.begin();
-		itr_perm_end=permissions.end();
-
-		while(itr_perm!=itr_perm_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		if(!exclude_perms)
 		{
-			perm=dynamic_cast<Permission *>(*itr_perm);
-			if(perm->getObject()==object)
+			//Get the permissions thata references the object
+			itr_perm=permissions.begin();
+			itr_perm_end=permissions.end();
+
+			while(itr_perm!=itr_perm_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				refer=true;
-				refs.push_back(perm);
+				perm=dynamic_cast<Permission *>(*itr_perm);
+				if(perm->getObject()==object)
+				{
+					refer=true;
+					refs.push_back(perm);
+				}
+				itr_perm++;
 			}
-			itr_perm++;
 		}
 
 		if(obj_type==OBJ_VIEW && (!exclusion_mode || (exclusion_mode && !refer)))

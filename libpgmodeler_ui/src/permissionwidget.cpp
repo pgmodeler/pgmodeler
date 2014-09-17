@@ -185,7 +185,9 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		}
 
 		listPermissions();
+		permissions_tab->blockSignals(true);
 		permissions_tab->clearSelection();
+		permissions_tab->blockSignals(false);
     updateCodePreview();
 	}
 }
@@ -261,6 +263,8 @@ void PermissionWidget::listPermissions(void)
 			permissions_tab->setCellText(str_aux,i,1);
 			str_aux.clear();
 		}
+
+		permission=nullptr;
 	}
 }
 
@@ -415,9 +419,8 @@ void PermissionWidget::editPermission(void)
 	}
 }
 
-void PermissionWidget::removePermission(int perm_id)
+void PermissionWidget::removePermission(int)
 { 
-  selectPermission(perm_id);
 	model->removePermission(permission);
 	cancelOperation();
 	permission=nullptr;

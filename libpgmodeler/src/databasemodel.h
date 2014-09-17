@@ -468,10 +468,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-		/*! \brief Returns all the objects that references the passed object. The boolean paramenter is used to performance purpose,
+		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first
-		 reference is found */
-		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
+		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
+		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
 
     /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
      graphical objects to be marked */
