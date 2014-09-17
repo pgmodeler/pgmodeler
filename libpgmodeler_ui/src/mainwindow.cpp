@@ -32,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	central_wgt=nullptr;
 	setupUi(this);
 	models_tbw->tabBar()->setVisible(false);
-	print_dlg=new QPrintDialog(this);
 
 	central_wgt=new CentralWidget(models_tbw_parent);
 	general_tb->layout()->setContentsMargins(0,0,0,0);
@@ -1252,6 +1251,7 @@ void MainWindow::printModel(void)
 {
 	if(current_model)
 	{
+		QPrintDialog print_dlg;
 		QPrinter *printer=nullptr;
 		QPrinter::PageSize paper_size, curr_paper_size;
 		QPrinter::Orientation orientation, curr_orientation;
@@ -1260,31 +1260,31 @@ void MainWindow::printModel(void)
 		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 
-		print_dlg->setOption(QAbstractPrintDialog::PrintCurrentPage, false);
-		print_dlg->setWindowTitle(trUtf8("Database model printing"));
+		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
+		print_dlg.setWindowTitle(trUtf8("Database model printing"));
 
 		//Get the page configuration of the scene
 		ObjectsScene::getPaperConfiguration(paper_size, orientation, margins, custom_size);
 
 		//Get a reference to the printer
-		printer=print_dlg->printer();
+		printer=print_dlg.printer();
 
 		//Sets the printer options based upon the configurations from the scene
 		ObjectsScene::configurePrinter(printer);
 
 		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
 
-		print_dlg->exec();
+		print_dlg.exec();
 
 		//If the user confirms the printing
-		if(print_dlg->result() == QDialog::Accepted)
+		if(print_dlg.result() == QDialog::Accepted)
 		{
 			Messagebox msg_box;
 
 			//Checking If the user modified the default settings overriding the scene configurations
 			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
-			curr_orientation=print_dlg->printer()->orientation();
-			curr_paper_size=print_dlg->printer()->paperSize();
+			curr_orientation=print_dlg.printer()->orientation();
+			curr_paper_size=print_dlg.printer()->paperSize();
 
 			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 				 orientation!=curr_orientation || curr_paper_size!=paper_size)

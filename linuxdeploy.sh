@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.3.2/5.3/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.3.2/5.3/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
