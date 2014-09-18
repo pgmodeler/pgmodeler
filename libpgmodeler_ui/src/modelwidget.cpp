@@ -446,7 +446,7 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	{
 		/* If the user is adding a graphical object, the left click will set the initial position and
 		show the editing form related to the object type */
-		if(new_obj_type==OBJ_TABLE || new_obj_type==OBJ_TEXTBOX || new_obj_type==OBJ_VIEW)
+    if(!simple_obj_creation && (new_obj_type==OBJ_TABLE || new_obj_type==OBJ_TEXTBOX || new_obj_type==OBJ_VIEW))
 		{
       this->scene->enableRangeSelection(false);
 			this->showObjectForm(new_obj_type, nullptr, nullptr, viewport->mapToScene(event->pos()));
@@ -617,7 +617,9 @@ void ModelWidget::addNewObject(void)
       }
       else
       {
-				if(simple_obj_creation)
+        //Simple table|view|textbox creation
+        if(simple_obj_creation &&
+           (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_TEXTBOX))
 					this->showObjectForm(obj_type, nullptr, parent_obj, viewport->mapToScene(viewport->rect().center()));
 				else
 				{

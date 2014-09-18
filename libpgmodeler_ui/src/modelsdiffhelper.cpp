@@ -191,8 +191,6 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					{
 						Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
 						diffTables(tab, aux_tab, diff_type);
-						//diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
-						//diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
 					}
 				}
 				else if(!aux_object)
@@ -200,10 +198,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			}
 			//Comparison for constraints (fks), triggers, rules, indexes
 			else if(TableObject::isTableObject(obj_type))
-			{
 				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
-				//diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::CREATE_OBJECT);
-			}
 			//Comparison between model db and the imported db
 			else
 			{
