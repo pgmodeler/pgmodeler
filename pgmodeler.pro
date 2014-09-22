@@ -26,8 +26,9 @@ macx {
 windows {
  PGSQL_LIB = C:/PostgreSQL/9.3/bin/libpq.dll
  PGSQL_INC = C:/PostgreSQL/9.3/include
- XML_INC = C:/Qt/Qt5.3.0/5.3/mingw482_32/include
- XML_LIB = C:/Qt/Qt5.3.0/5.3/mingw482_32/bin/libxml2-2.dll
+ XML_INC = C:/Qt/Qt5.3.2/5.3/mingw482_32/include
+ XML_LIB = C:/Qt/Qt5.3.2/5.3/mingw482_32/bin/libxml2-2.dll
+ QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 }
 
 macx | windows {
