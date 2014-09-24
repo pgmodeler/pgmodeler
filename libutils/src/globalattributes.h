@@ -34,14 +34,14 @@
 
 namespace GlobalAttributes {
 	static const QString
-	PGMODELER_VERSION="0.8.0-alpha1",
+    PGMODELER_VERSION="0.8.0-alpha2",
 	PGMODELER_VER_CODENAME="Faithful Elephant",
-  PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
-  PGMODELER_SITE="http://www.pgmodeler.com.br",
-  PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
-  PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
-  PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
-  PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
+    PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
+    PGMODELER_SITE="http://www.pgmodeler.com.br",
+    PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
+    PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
+    PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
+    PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
 	CRASH_REPORT_EMAIL="bug@pgmodeler.com.br",
 	CRASH_REPORT_FILE="pgmodeler%1.crash",
