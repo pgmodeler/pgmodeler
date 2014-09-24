@@ -1647,6 +1647,11 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 		//If the table oid is 0 indicates that the constraint is part of a data type like domains
 		if(!table_oid.isEmpty() && table_oid!="0")
 		{
+      QStringList factor=Catalog::parseArrayValues(attribs[ParsersAttributes::FACTOR]);
+
+      if(!factor.isEmpty() && factor[0].startsWith("fillfactor="))
+        attribs[ParsersAttributes::FACTOR]=factor[0].remove("fillfactor=");
+
 			attribs[attribs[ParsersAttributes::TYPE]]="1";
 			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 

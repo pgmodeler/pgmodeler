@@ -4594,7 +4594,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		//If the constraint parent is allocated
+    //If the constraint parent is allocated
 		if(parent_obj)
 		{
 			obj_type=parent_obj->getObjectType();
@@ -6485,8 +6485,6 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
   for(auto obj : tables)
   {
     table=dynamic_cast<Table *>(obj);
-		//itr++;
-
     count=table->getConstraintCount();
     for(i=0; i < count; i++)
     {
@@ -6506,9 +6504,6 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
     for(i=0; i < count; i++)
     {
 			trigger=table->getTrigger(i);
-
-			//if(trigger->isReferRelationshipAddedColumn())
-			//  objects_map[trigger->getObjectId()]=trigger;
 			objects_map[trigger->getObjectId()]=trigger;
     }
 
@@ -6516,9 +6511,6 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
     for(i=0; i < count; i++)
     {
 			index=table->getIndex(i);
-
-			//if(index->isReferRelationshipAddedColumn())
-			// objects_map[index->getObjectId()]=index;
 			objects_map[index->getObjectId()]=index;
     }
 
@@ -6526,9 +6518,6 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
 		for(i=0; i < count; i++)
 		{
 			rule=table->getRule(i);
-
-			//if(index->isReferRelationshipAddedColumn())
-			// objects_map[index->getObjectId()]=index;
 			objects_map[rule->getObjectId()]=rule;
 		}
   }
@@ -6556,10 +6545,10 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
 
   /* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
 
-     This generations is made in the following way:
+     This generation is made in the following way:
      1) Based on the relationship list, participant tables comes before the relationship itself.
      2) Other tables came after the objects on the step 1.
-     3) The sequences must have its code generated after the tables
+     3) The sequences must have their code generated after the tables
      4) View are the last objects in the list avoiding table/column reference breaking */
   if(def_type==SchemaParser::SQL_DEFINITION)
   {

@@ -39,7 +39,7 @@
 	     cs.conkey AS src_columns, cs.confkey AS dst_columns, cs.consrc AS expression,
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
-	     am.amname AS index_type, ]
+             am.amname AS index_type, cl.reloptions AS factor,  ]
 
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,

@@ -151,7 +151,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		obj_type=object->getObjectType();
 		idx++;
 
-		if(obj_type!=OBJ_RELATIONSHIP && !object->isSystemObject() && !object->isSQLDisabled() &&
+    if(/*obj_type!=OBJ_RELATIONSHIP &&*/ !object->isSystemObject() && !object->isSQLDisabled() &&
 			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
@@ -159,15 +159,34 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 														 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
 														 object->getObjectType());
 
-			if(obj_type==OBJ_FUNCTION)
-				obj_name=dynamic_cast<Function *>(object)->getSignature();
-			else if(obj_type==OBJ_OPERATOR)
-				obj_name=dynamic_cast<Operator *>(object)->getSignature();
-			else
-				obj_name=object->getName(true);
+      if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && obj_type==OBJ_RELATIONSHIP)
+      {
+        Relationship *rel=dynamic_cast<Relationship *>(object);
 
-			if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
+        if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+        {
+          Table *ref_tab=nullptr, *rec_tab=nullptr;
+
+          ref_tab=imported_model->getTable(rel->getReferenceTable()->getName(true));
+          rec_tab=imported_model->getTable(rel->getReceiverTable()->getName(true));
+
+          if(rec_tab &&
+             !imported_model->getRelationship(ref_tab, rec_tab))
+          {
+            //Check if the generalization is new but the tables already exists.
+            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, rec_tab);
+          }
+        }
+      }
+      else if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
 			{
+        if(obj_type==OBJ_FUNCTION)
+          obj_name=dynamic_cast<Function *>(object)->getSignature();
+        else if(obj_type==OBJ_OPERATOR)
+          obj_name=dynamic_cast<Operator *>(object)->getSignature();
+        else
+          obj_name=object->getName(true);
+
 				aux_object=aux_model->getObject(obj_name, obj_type);
 
 				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
@@ -191,8 +210,6 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					{
 						Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
 						diffTables(tab, aux_tab, diff_type);
-						//diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
-						//diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
 					}
 				}
 				else if(!aux_object)
@@ -200,10 +217,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			}
 			//Comparison for constraints (fks), triggers, rules, indexes
 			else if(TableObject::isTableObject(obj_type))
-			{
 				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
-				//diffTableObject(dynamic_cast<TableObject *>(object), ObjectsDiffInfo::CREATE_OBJECT);
-			}
 			//Comparison between model db and the imported db
 			else
 			{
