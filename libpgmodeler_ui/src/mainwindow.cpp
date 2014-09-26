@@ -129,9 +129,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
 
-	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
-
 	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
 	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
 	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
@@ -356,11 +353,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     main_menu.addAction(action_show_main_menu);
     action_main_menu->setMenu(&main_menu);
     dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_main_menu))->setPopupMode(QToolButton::InstantPopup);
+
+    connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
+    connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
   #endif
 }
 
 MainWindow::~MainWindow(void)
 {
+  //This fix the crash on exit at Mac OSX system (but not sure why) (???)
+  file_menu->clear();
+
 	delete(restoration_form);
 	delete(overview_wgt);
 	delete(configuration_form);
