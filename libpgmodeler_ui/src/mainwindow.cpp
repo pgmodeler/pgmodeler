@@ -598,10 +598,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 		}
-
-		/* Close all top level windows to avoid close the main window and left sub windows behind
-			 preventing the application to be finished */
-		qApp->closeAllWindows();
 	}
 }
 
