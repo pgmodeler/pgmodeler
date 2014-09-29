@@ -45,6 +45,7 @@ for param in $@; do
 
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
+   GEN_INST_PKG=1
    QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
  fi
  
@@ -148,7 +149,7 @@ if [ $BUNDLE_QT_LIBS = 0 ]; then
 fi
 
 if [ $GEN_INST_PKG = 1 ]; then
-  echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
+  echo "The installer will be generated. (Found $GEN_INSTALLER_OPT)"
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -230,25 +231,26 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-echo "Generating tarball..."
-rm -r $PKGNAME  >> $LOG 2>&1
-mkdir $PKGNAME  >> $LOG 2>&1
-cp -r build/* $PKGNAME  >> $LOG 2>&1
-tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
-rm -r $PKGNAME  >> $LOG 2>&1
+if [ $DEMO_VERSION = 0 ]; then
+  echo "Generating tarball..."
+  rm -r $PKGNAME  >> $LOG 2>&1
+  mkdir $PKGNAME  >> $LOG 2>&1
+  cp -r build/* $PKGNAME  >> $LOG 2>&1
+  tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
+  rm -r $PKGNAME  >> $LOG 2>&1
 
-if [ $? -ne 0 ]; then
-  echo
-  echo "** Failed to create package!"
-  echo
-  exit 1
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create package!"
+    echo
+    exit 1
+  fi
+
+  echo "File created: $PKGFILE"
 fi
-
-echo "File created: $PKGFILE"
 
 
 if [ $GEN_INST_PKG = 1 ]; then
-
   echo "Generating installer..."
   $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
 
