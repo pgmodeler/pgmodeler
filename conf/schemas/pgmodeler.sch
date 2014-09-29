@@ -31,7 +31,8 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [               save-last-position="] %if @{save-last-position} %then true %else false %end ["] $br
 [               show-main-menu="] %if @{show-main-menu} %then true %else false %end ["] $br
 [               disable-smoothness="] %if @{disable-smoothness} %then true %else false %end ["] $br
-[               simplified-obj-creation="] %if @{simplified-obj-creation} %then true %else false %end ["]
+[               simplified-obj-creation="] %if @{simplified-obj-creation} %then true %else false %end ["] $br
+[               confirm-validation="] %if @{confirm-validation} %then true %else false %end ["]
 [/>] $br
 
 %if @{file} %then

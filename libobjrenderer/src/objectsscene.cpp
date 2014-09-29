@@ -100,12 +100,12 @@ ObjectsScene::~ObjectsScene(void)
 	}
 }
 
-void ObjectsScene::enableCornerMove(bool enable)
+void ObjectsScene::setEnableCornerMove(bool enable)
 {
   ObjectsScene::corner_move=enable;
 }
 
-void ObjectsScene::invertPanningRangeSelection(bool invert)
+void ObjectsScene::setInvertPanningRangeSelection(bool invert)
 {
   ObjectsScene::invert_panning_rangesel=invert;
 }

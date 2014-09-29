@@ -211,3 +211,7 @@ void RelationshipConfigWidget::updatePattern(void)
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();
 }
 
+void RelationshipConfigWidget::hideEvent(QHideEvent *)
+{
+  settings_twg->setCurrentIndex(0);
+}

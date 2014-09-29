@@ -574,6 +574,7 @@ void ModelValidationHelper::cancelValidation(void)
 
 void ModelValidationHelper::captureThreadError(Exception e)
 {
+  ValidationInfo val_info(e);
 	export_thread->quit();
 	warn_count++;
 
@@ -581,13 +582,16 @@ void ModelValidationHelper::captureThreadError(Exception e)
 	sql errors are ignored since validator cannot fix SQL related problems */
 	db_model->setInvalidated(error_count > 0);
 
-	emit s_validationInfoGenerated(ValidationInfo(e));
+  emit s_validationInfoGenerated(val_info);
+
+  if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+    emit s_validationFinished();
 }
 
 void ModelValidationHelper::emitValidationCanceled(void)
 {
+  db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
-	db_model->setInvalidated(error_count > 0);
 	emit s_validationCanceled();
 	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
 }

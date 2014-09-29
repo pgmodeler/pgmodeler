@@ -1356,7 +1356,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/sync.png</normaloff>:/icones/icones/sync.png</iconset>
+     <normaloff>:/icones/icones/diff.png</normaloff>:/icones/icones/diff.png</iconset>
    </property>
    <property name="text">
     <string>Diff</string>
