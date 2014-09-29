@@ -69,11 +69,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
             [=](){ emit s_validationCanceled(); });
 
-    connect(&validation_helper, &ModelValidationHelper::s_validationFinished,
-            [=](){
-      emit s_validationFinished(validation_helper.getErrorCount() != 0);
-    });
-
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
@@ -174,7 +169,19 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 	{
 		sql_validation_chk->setChecked(false);
 		sql_validation_chk->setEnabled(false);
-	}
+  }
+}
+
+void ModelValidationWidget::insertInfoMessage(const QString &msg)
+{
+  QTreeWidgetItem *item=new QTreeWidgetItem;
+  QLabel *label=new QLabel;
+
+  item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
+  label->setText(msg);
+
+  output_trw->addTopLevelItem(item);
+  output_trw->setItemWidget(item, 0, label);
 }
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
@@ -329,6 +336,9 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	error_count_lbl->setText(QString("%1").arg(validation_helper.getErrorCount()));
 	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
+
+  if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+    emit s_validationFinished(validation_helper.getErrorCount() != 0);
 }
 
 void ModelValidationWidget::validateModel(void)
@@ -357,17 +367,15 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	if(prog >= 100 &&
 		 validation_helper.getErrorCount()==0 && validation_helper.getWarningCount()==0)
 	{
-		item=new QTreeWidgetItem;
-		label=new QLabel;
-
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
-		label->setText(trUtf8("Database model sucessfully validated."));
+    insertInfoMessage(trUtf8("Database model sucessfully validated."));
 
 		warn_count_lbl->setText(QString("%1").arg(0));
 		error_count_lbl->setText(QString("%1").arg(0));
 		fix_btn->setEnabled(false);
 		output_trw->addTopLevelItem(item);
 		output_trw->setItemWidget(item, 0, label);
+
+    emit s_validationFinished(validation_helper.getErrorCount() != 0);
 	}
 	else if(!msg.isEmpty())
 	{

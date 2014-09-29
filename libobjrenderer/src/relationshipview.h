@@ -141,7 +141,7 @@ class RelationshipView: public BaseObjectView {
 		void disconnectTables(void);
 
 		//! \brief Hides the relationship's name label. This applies to all relationship instances
-		static void hideNameLabel(bool value);
+		static void setHideNameLabel(bool value);
 
 		//! \brief Returns the current visibility state of name label
 		static bool isNameLabelHidden(void);

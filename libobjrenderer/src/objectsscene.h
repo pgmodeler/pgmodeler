@@ -118,8 +118,8 @@ class ObjectsScene: public QGraphicsScene {
 		ObjectsScene(void);
 		~ObjectsScene(void);
 
-    static void enableCornerMove(bool enable);
-    static void invertPanningRangeSelection(bool invert);
+    static void setEnableCornerMove(bool enable);
+    static void setInvertPanningRangeSelection(bool invert);
     static bool isCornerMoveEnabled(void);
 
     static void setGridSize(unsigned size);

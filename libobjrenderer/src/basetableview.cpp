@@ -73,12 +73,12 @@ BaseTableView::~BaseTableView(void)
   delete(tag_body);
 }
 
-void BaseTableView::hideExtAttributes(bool value)
+void BaseTableView::setHideExtAttributes(bool value)
 {
   hide_ext_attribs=value;
 }
 
-void BaseTableView::hideTags(bool value)
+void BaseTableView::setHideTags(bool value)
 {
   hide_tags=value;
 }

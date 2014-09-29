@@ -106,7 +106,7 @@ RelationshipView::~RelationshipView(void)
 	delete(descriptor);
 }
 
-void RelationshipView::hideNameLabel(bool value)
+void RelationshipView::setHideNameLabel(bool value)
 {
 	hide_name_label=value;
 }

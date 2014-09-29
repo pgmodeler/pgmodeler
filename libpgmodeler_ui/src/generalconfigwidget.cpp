@@ -21,6 +21,7 @@
 #include "modelwidget.h"
 #include "operationlist.h"
 #include "syntaxhighlighter.h"
+#include "mainwindow.h"
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 {
@@ -65,6 +66,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]="";
 
 	selectPaperSize();
 }
@@ -93,6 +95,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		save_last_pos_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]==ParsersAttributes::_TRUE_);
 		disable_smooth_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]==ParsersAttributes::_TRUE_);
 		simple_obj_creation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]==ParsersAttributes::_TRUE_);
+    confirm_validation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]==ParsersAttributes::_TRUE_);
 
 		print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 		print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -160,6 +163,7 @@ void GeneralConfigWidget::saveConfiguration()
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? "1" : "");
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? "1" : "");
 
 		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -239,16 +243,17 @@ void GeneralConfigWidget::applyConfiguration(void)
 																		 QSizeF(width_spb->value(), height_spb->value()));
 	unity_cmb->setCurrentIndex(unit);
 
-  ObjectsScene::enableCornerMove(corner_move_chk->isChecked());
-  ObjectsScene::invertPanningRangeSelection(invert_pan_range_chk->isChecked());
+  ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
+  ObjectsScene::setInvertPanningRangeSelection(invert_pan_range_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	OperationList::setMaximumSize(oplist_size_spb->value());
-	BaseTableView::hideExtAttributes(hide_ext_attribs_chk->isChecked());
-  BaseTableView::hideTags(hide_table_tags_chk->isChecked());
-	RelationshipView::hideNameLabel(hide_rel_name_chk->isChecked());
+  BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
+  BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
+  RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
+  MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);

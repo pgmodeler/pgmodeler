@@ -207,7 +207,7 @@
                </font>
               </property>
               <property name="text">
-               <string>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact place where the relationship occurs.</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This mode is available only for &lt;span style=&quot; font-weight:600;&quot;&gt;one-to-one&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;one-to-many&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;fk relationships&lt;/span&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="textFormat">
                <enum>Qt::AutoText</enum>
@@ -348,7 +348,7 @@
                </font>
               </property>
               <property name="text">
-               <string>This mode is the classical mode. It connects the relationship to tables through their central points.</string>
+               <string>This mode is the classical one. It connects the relationship to tables through their central points.</string>
               </property>
               <property name="textFormat">
                <enum>Qt::AutoText</enum>

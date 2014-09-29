@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>564</width>
+    <width>601</width>
     <height>363</height>
    </rect>
   </property>
@@ -81,14 +81,14 @@
           <item row="3" column="0">
            <widget class="QCheckBox" name="autosave_interv_chk">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>160</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -103,14 +103,14 @@
           <item row="2" column="0">
            <widget class="QLabel" name="oplist_size_lbl">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>120</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -294,14 +294,14 @@
           <item row="1" column="0">
            <widget class="QLabel" name="grid_size_lbl">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>120</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -331,36 +331,26 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="dont_ask_valid_chk">
-            <property name="toolTip">
-             <string>Operations like save, export and diff will be executed without asking user to validate the model</string>
-            </property>
-            <property name="text">
-             <string>Do not ask to validate models</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="simple_obj_creation_chk">
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="invert_pan_range_chk">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
+             <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
             </property>
             <property name="text">
-             <string>Simplify creation of graphical objects</string>
+             <string>Invert panning and range selection triggers</string>
             </property>
             <property name="checked">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="QCheckBox" name="hide_ext_attribs_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -376,7 +366,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QCheckBox" name="hide_table_tags_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -392,39 +382,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="disable_smooth_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
-            </property>
-            <property name="text">
-             <string>Disable render smoothness</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="hide_rel_name_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Hide the object that represents the relationship name</string>
-            </property>
-            <property name="text">
-             <string>Hide relationship name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QCheckBox" name="save_last_pos_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -440,7 +398,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="corner_move_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -459,8 +417,8 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="invert_pan_range_chk">
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="disable_smooth_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -468,10 +426,55 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+             <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
             </property>
             <property name="text">
-             <string>Invert panning and range selection triggers</string>
+             <string>Disable render smoothness</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="hide_rel_name_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Hide the object that represents the relationship name</string>
+            </property>
+            <property name="text">
+             <string>Hide relationship name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="confirm_validation_chk">
+            <property name="toolTip">
+             <string>Operations like save, export and diff will be executed without asking user to validate the model</string>
+            </property>
+            <property name="text">
+             <string>Confirm validation before save, export or diff</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="simple_obj_creation_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
+            </property>
+            <property name="text">
+             <string>Simplify creation of graphical objects</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -495,17 +498,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>general_gb</zorder>
-      <zorder>verticalSpacer</zorder>
-      <zorder>grid_size_lbl</zorder>
-      <zorder></zorder>
-      <zorder>oplist_size_lbl</zorder>
-      <zorder></zorder>
-      <zorder>autosave_interv_chk</zorder>
-      <zorder></zorder>
-      <zorder>check_upd_chk</zorder>
-      <zorder>items_lbl</zorder>
-      <zorder>design_gb</zorder>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">

@@ -20,6 +20,7 @@
 #include "configurationform.h"
 
 ConfigurationForm *configuration_form=nullptr;
+bool MainWindow::confirm_validation=true;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -1134,7 +1135,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			Messagebox msg_box;
       DatabaseModel *db_model=model->getDatabaseModel();
 
-      if(db_model->isInvalidated())
+      if(confirm_validation && db_model->isInvalidated())
 			{
 				msg_box.show(trUtf8("Confirmation"),
                      trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
@@ -1153,17 +1154,17 @@ void MainWindow::saveModel(ModelWidget *model)
         else if(msg_box.result()==QDialog::Rejected)
         {
           validation_btn->setChecked(true);
-          this->pending_op=PENDING_SAVE_OPER;
+          this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
           model_valid_wgt->validateModel();
         }
 			}
 
-      if((!db_model->isInvalidated() ||
-          (db_model->isInvalidated() && msg_box.result()==QDialog::Accepted))
-				 && (model->isModified() || sender()==action_save_as))
+      if((!confirm_validation ||
+         (!db_model->isInvalidated() || (confirm_validation && db_model->isInvalidated() && msg_box.result()==QDialog::Accepted)))
+         && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
-				if(sender()==action_save_as || model->filename.isEmpty())
+        if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PENDING_SAVE_AS_OPER)
 				{
 					QFileDialog file_dlg;
 
@@ -1218,7 +1219,7 @@ void MainWindow::exportModel(void)
   Messagebox msg_box;
   DatabaseModel *db_model=current_model->getDatabaseModel();
 
-  if(db_model->isInvalidated())
+  if(confirm_validation && db_model->isInvalidated())
   {
     msg_box.show(trUtf8("Confirmation"),
                  trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
@@ -1234,8 +1235,8 @@ void MainWindow::exportModel(void)
     }
   }
 
-  if(!db_model->isInvalidated() ||
-     (msg_box.result()==QDialog::Accepted))
+  if(!confirm_validation ||
+     (!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
     model_export_form.exec(current_model);
 }
 
@@ -1269,7 +1270,7 @@ void MainWindow::compareModelDatabase(void)
     Messagebox msg_box;
     DatabaseModel *db_model=current_model->getDatabaseModel();
 
-    if(db_model->isInvalidated())
+    if(confirm_validation && db_model->isInvalidated())
     {
       msg_box.show(trUtf8("Confirmation"),
                    trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
@@ -1285,8 +1286,8 @@ void MainWindow::compareModelDatabase(void)
       }
     }
 
-    if(!db_model->isInvalidated() ||
-       (msg_box.result()==QDialog::Accepted))
+    if(!confirm_validation ||
+       (!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
     {
       modeldb_diff_frm.setDatabaseModel(db_model);
       modeldb_diff_frm.exec();
@@ -1407,7 +1408,12 @@ void MainWindow::loadModels(const QStringList &list)
 
 		if(msg_box.result()==QDialog::Accepted)
 			fixModel(list[i]);
-	}
+  }
+}
+
+void MainWindow::setConfirmValidation(bool value)
+{
+  confirm_validation=value;
 }
 
 void MainWindow::__updateToolsState(void)
@@ -1692,7 +1698,11 @@ void MainWindow::executePendingOperation(bool valid_error)
 {
   if(!valid_error && pending_op!=NO_PENDING_OPER)
   {
-    if(pending_op==PENDING_SAVE_OPER)
+    static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
+                                      QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
+    model_valid_wgt->insertInfoMessage(trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
+
+    if(pending_op==PENDING_SAVE_OPER || pending_op==PENDING_SAVE_AS_OPER)
       saveModel();
     else if(pending_op==PENDING_EXPORT_OPER)
       exportModel();

@@ -57,15 +57,18 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
+    static bool confirm_validation;
+
     //! \brief Constants used to mark a pending operation to be executed after validate model
     const static unsigned NO_PENDING_OPER=0,
-    PENDING_EXPORT_OPER=1,
-    PENDING_DIFF_OPER=2,
-    PENDING_SAVE_OPER=3;
+    PENDING_SAVE_OPER=1,
+    PENDING_SAVE_AS_OPER=2,
+    PENDING_EXPORT_OPER=3,
+    PENDING_DIFF_OPER=4;
 
     unsigned pending_op;
 
-		AboutWidget *about_wgt;
+    AboutWidget *about_wgt;
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -161,6 +164,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
+
+    //! brief Indicates if model must be validated before save, diff or export
+    static void setConfirmValidation(bool value);
 
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
