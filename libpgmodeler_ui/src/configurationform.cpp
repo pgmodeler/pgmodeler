@@ -31,27 +31,27 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	relationships_conf=new RelationshipConfigWidget(this);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
+  layout->setContentsMargins(2,0,0,0);
 	layout->addWidget(general_conf);
 	confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
+  layout->setContentsMargins(2,0,0,0);
 	layout->addWidget(appearance_conf);
 	confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
+  layout->setContentsMargins(2,0,0,0);
 	layout->addWidget(connections_conf);
 	confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
+  layout->setContentsMargins(2,0,0,0);
 	layout->addWidget(plugins_conf);
 	confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
 
 	layout=new QGridLayout;
-	layout->setContentsMargins(4,4,4,4);
+  layout->setContentsMargins(2,0,0,0);
 	layout->addWidget(relationships_conf);
 	confs_stw->widget(RELATIONSHIPS_CONF_WGT)->setLayout(layout);
 

@@ -1,57 +1,44 @@
 v0.8.0-alpha1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: August 15, 2014</em><br/>
-<em>Changes since: <strong>v0.8.0-alpha</strong></em><br/>
-<strong>Summary:</strong> despite the designation <em>alpha1</em> this release brings important improvements on stability and speed being more reliable than the current stable release <strong>0.7.2</strong>. The key features of this version are: it's possible to handle table's data through the "data grid" feature on SQL tool, several improvements on SQL tool related to command execution, improved validation process, improved code generation speed, improved startup speed, and many others. Update is <strong>HIGHLY RECOMMENDED!</strong><br/>
-<strong>NOTE:</strong><em> models generated in previous versions will demand the use of model fix feature!</em>.
+<em>Release date: September 30, 2014</em><br/>
+<em>Changes since: <strong>v0.8.0-alpha1</strong></em><br/>
+<strong>Summary: this release brings important fixes that improved stability as well small features as a preparation for model-database diff scheduled to the first beta. The key feature for this release is that the code is able to be compiled using the lastest Qt version (5.3.2) without issues or crashes. All binaries releases are now aligned to the same Qt version.
 
-* [New] pgModeler now is capable to handle table's data through the new data manipulation form.
-* [New] The SQL tool received a basic find/replace widget.
-* [New] Created a new environment variable for samples directory, PGMODELER_SAMPLES_DIR.
-* [New] Source code dialog now optionally appends the SQL of permissions for the current object.
-* [New] Added an option to the source code privew dialog to include table's children objects' SQL.
-* [New] Added a field on all object's editing form to expose the object's internal id.
-* [New] Added an option on the database import process to generate random colors for relationships.
-* [New] The model objects widget gained a filtering field that is capable to list objects by their name or internal id.
-* [New] Added support to custom SQL for rules, indexes and triggers.
-* [New] Added two new sample models.
-* [Change] Changed the shortcut for "About pgModeler" to F4 key.
-* [Change] Minor update on shortcuts and tooltips of buttons on bottom control bar at main window.
-* [Change] Minor improvement on model validation. Now the DDL executed for any object is shown on the output field.
-* [Change] Minor change on object's id interval generation.
-* [Change] Minor adjust on model export process to force the code cache invalidation when using the unique name generation option.
-* [Change] Message box objects are now used on demand and no more as class attributes.
-* [Change] The software startup was hugely improved by removing singleton dialogs from main window's constructor, now they are used on demand.
-* [Change] Minor update on sql-highlight.conf file.
-* [Change] Sample models can be now loaded direclty from the main windows's central widget.
-* [Change] Enhancement on the messages of model validation output.
-* [Change] Minor fix on object's schema files to correctly generate the appended/prepended SQL code.
-* [Change] Major improvement on all core classes (resposible to represent database objects) in order to keep their cache syncronized with the current configuration.
-* [Change] Object finder now highlights the parent table if the user selects a child object of the first.
-* [Change] Minor improvement on CLI. Added a routine to change a table structure, moving the tags rule, index and trigger to outside of it.
-* [Change] Changed the way on how the relationship connection points are determined. Now they depends on how the tables' center points are distant from each other.
-* [Change] More improvements done on database model objects classes in order to give more speed on the code generation.
-* [Change] Update for French (fr_FR) translation.
-* [Change] Minor improvements on swap objects ids dialog.
-* [Change] Huge improvement on validation process mainly for reverse engineered models. Now pgModeler honors the imported structure and in a few cases there will be inconsistencies.
-* [Change] The objects rule, index and trigger will have the SQL/XML code generated outside of table's definition due to validation process that sometimes needs to swap id's of those objects.
-* [Change] The object selector will trigger the object selection if user click the input field.
-* [Change] Changed the 'line color' attribute of relationships to 'custom color'.
-* [Fix] Fixed a crash provoked by the constraint editing form when switching the constraint type on the second time the form is opened.
-* [Fix] Minor fix on database import process that was wrongly checking all tables as unlogged.
-* [Fix] Minor fix on sample models pagila.dbm and usda.dbm to remove the unlogged attribute.
-* [Fix] Minor fix on class CodeCompletionWidget to make it persistent as well to remove duplicate items from listing.
-* [Fix] Minor fix on message box instances to resize according to the height of the current message.
-* [Fix] Fixed a crash whenever the user cancelled the changes on settings and tried to connect to a server using the SQL tool.
-* [Fix] Minor fix on SQLToolWidget to disable controls in some situations.
-* [Fix] Minor fix on BaseRelationship and Relationship classes to correctly invalidate envolved object's when connecting or disconnecting.
-* [Fix] Fixed a crash when closing the last model and the object finder was visible with result list filled.
-* [Fix] Object finder now doesn't show duplicated items.
-* [Fix] Minor fix on model objects widget when assigning a null model.
-* [Fix] Fixed the problem with function parameter name not being generated due to cached code.
-* [Fix] Minor fix on index editing form layout.
-* [Fix] Fixed the import of rule object on DatabaseImportHelper class.
-* [Fix] Fixed a bug when displaying the cardinalities for fk relationships.
-* [Fix] Fixed a bug on the reverse engineering process that was wrongly migrating 'timestamp with time zone' data type as 'timestamp' only.
-* [Fix] Fixed a bug on the reverse engineering process that was preventing the migration of operator classes / indexes that contains duplicated elements.
+* [New] Added an option on general settings to disable ask to validate model before save, export and diff.
+* [New] If the user try to save, export or diff a model and it is invalidated, pgModeler will first validate and then proceed with the pending operation.
+* [New] Added an entry on general settings to control how graphical objects are created.
+* [New] Added an option to disable render smoothness to improve performance on large models.
+* [New] Added the method Catalog::getObjectsOIDs in order to retrieve all database objects oid and store them in maps. This method is used as an auxiliary for model-database diff process.
+* [New] Added the method ConnectionsConfigWidget::fillConnectionsComboBox() in order to reuse the code that fills up a combobox with configured connections.
+* [New] Added the ability to create special primary key on many-to-many relationships.
+* [New] Added the ability to save the dock widgets configuration on the main configuration file.
+* [New] Added methods to retrieve objects by their names on DatabaseModel class.
+* [Change] The configuration form was reestrucured decreasing the size occupied on the screen.
+* [Change] Minor improvement on model fix dialog.
+* [Change] Minor improvement on constraint import. Fillfactor attribute now is correcly retrieved.
+* [Change] Removed extern directives referencing configurations from SyntaxHighlighter and ModelWidget converting the used attributes to static ones.
+* [Change] Changed the way threads are created, as well the import and diff helpers instances to avoid race conditions and crashes.
+* [Change] Schemas by default will be created to show the bounding rectangle.
+* [Change] Minor improvement on BaseObject::getTypes() in order to exclude some types from the resulting vector.
+* [Change] Minor widgets adjustment on modeldatabasediffform.ui, modelexportform.ui and databaseimportform.ui.
+* [Change] Updates on several resource images.
+* [Change] Minor change on example.dbm file.
+* [Change] Minor change on DatabaseImportHelper to accept a DatabaseModel instance instead of ModelWidget.
+* [Change] Minor adjustments on deployment scripts.
+* [Fix] Fixed a crash whenever user quit the application on Mac OSX.
+* [Fix] Minor fixes in order to compile using Qt 5.3.2.
+* [Fix] Fixed a bug when starting the creation process of relationships on model widget.
+* [Fix] Fixed a bug related to individual permission exclusion and object removal error when there are permissions attached to it.
+* [Fix] Fixed typos on demo version warning messages.
+* [Fix] Fixed a bug that was not generating FILLFACTOR attribute for constraints.
+* [Fix] Minor fix on object naming rules. Now the dollar sign ($) is accepted in the middle of object's name.
+* [Fix] Fixed a bug when import domains which have the same name as some tables.
+* [Fix] Fixed a bug on trigger class and editing form that was preventing the "FOR EACH ROW" attribute to be saved.
+* [Fix] Fixed a infinite loop on operation list class when calculating the chain size.
+* [Fix] Fixed a crash when creating relationships. Apparently this crash was caused by a faulty access on some threads right after close the relationship dialog.
+* [Fix] Fixed the bug that was preventing a sequence to be assinged to a column.
+* [Fix] Fixed a bug on relationship validation process that was causing errors mainly related to generalization relationships.
+* [Fix] Fixed a bug on xml parser when reading DTD files from paths that contains accentuated chars.
+* [Fix] Minor fix on Messagebox class when replacing <br> tags on message text.
+* [Fix] Minor fix on conditional compilation macros entries for demo version.

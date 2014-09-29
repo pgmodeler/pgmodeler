@@ -37,6 +37,8 @@ class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, publi
 													UNIT_INCHS=2,
 													UNIT_CENTIMETERS=3;
 
+    void hideEvent(QHideEvent *);
+
 
 	public:
 		GeneralConfigWidget(QWidget * parent=0);

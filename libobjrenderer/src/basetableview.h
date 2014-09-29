@@ -84,10 +84,10 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
-		static void hideExtAttributes(bool value);
+    static void setHideExtAttributes(bool value);
 
     //! \brief Hides the table tags. This applies to all table instances
-    static void hideTags(bool value);
+    static void setHideTags(bool value);
 
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);

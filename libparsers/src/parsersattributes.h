@@ -458,7 +458,8 @@ namespace ParsersAttributes {
 	DOCK_WIDGETS="dock-widgets",
 	WIDGET="widget",
 	DISABLE_SMOOTHNESS="disable-smoothness",
-	SIMPLIFIED_OBJ_CREATION="simplified-obj-creation";
+  SIMPLIFIED_OBJ_CREATION="simplified-obj-creation",
+  CONFIRM_VALIDATION="confirm-validation";
 }
 
 #endif
