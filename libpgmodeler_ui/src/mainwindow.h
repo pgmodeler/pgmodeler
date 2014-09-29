@@ -57,6 +57,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
+    //! \brief Constants used to mark a pending operation to be executed after validate model
+    const static unsigned NO_PENDING_OPER=0,
+    PENDING_EXPORT_OPER=1,
+    PENDING_DIFF_OPER=2,
+    PENDING_SAVE_OPER=3;
+
+    unsigned pending_op;
+
 		AboutWidget *about_wgt;
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
@@ -259,6 +267,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void showDemoVersionWarning(void);
 		void quitDemoVersion(void);
+
+    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
+    void executePendingOperation(bool valid_error);
 };
 
 #endif

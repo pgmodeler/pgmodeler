@@ -465,3 +465,8 @@ void GeneralConfigWidget::selectPaperSize()
 	width_spb->setVisible(visible);
 	height_spb->setVisible(visible);
 }
+
+void GeneralConfigWidget::hideEvent(QHideEvent *)
+{
+  settings_twg->setCurrentIndex(0);
+}

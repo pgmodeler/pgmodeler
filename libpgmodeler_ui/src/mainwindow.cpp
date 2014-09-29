@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 
+  pending_op=NO_PENDING_OPER;
 	central_wgt=nullptr;
 	setupUi(this);
 	models_tbw->tabBar()->setVisible(false);
@@ -267,6 +268,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
+
+  connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; });
+  connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
@@ -1128,11 +1132,12 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(model)
 		{
 			Messagebox msg_box;
+      DatabaseModel *db_model=model->getDatabaseModel();
 
-			if(model->getDatabaseModel()->isInvalidated())
+      if(db_model->isInvalidated())
 			{
 				msg_box.show(trUtf8("Confirmation"),
-										 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated and it's extremely recommended that it be validated before save. Ignoring this situation can generate a broken model that will need manual fixes to be loadable again!").arg(model->getDatabaseModel()->getName()),
+                     trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 										 trUtf8("Save anyway"), trUtf8("Validate"), "",
 										 ":/icones/icones/salvar.png", ":/icones/icones/validation.png");
@@ -1145,10 +1150,16 @@ void MainWindow::saveModel(ModelWidget *model)
 					//The autosave timer will be reactivated in 5 minutes
 					QTimer::singleShot(300000, &model_save_timer, SLOT(start()));
 				}
+        else if(msg_box.result()==QDialog::Rejected)
+        {
+          validation_btn->setChecked(true);
+          this->pending_op=PENDING_SAVE_OPER;
+          model_valid_wgt->validateModel();
+        }
 			}
 
-			if((!model->getDatabaseModel()->isInvalidated() ||
-					(model->getDatabaseModel()->isInvalidated() && msg_box.result()==QDialog::Accepted))
+      if((!db_model->isInvalidated() ||
+          (db_model->isInvalidated() && msg_box.result()==QDialog::Accepted))
 				 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
@@ -1177,13 +1188,6 @@ void MainWindow::saveModel(ModelWidget *model)
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
 			}
-			//When the user click "Validate" on the message box the validation will be executed
-			else if(model->getDatabaseModel()->isInvalidated() &&
-							msg_box.result()==QDialog::Rejected && !msg_box.isCancelled())
-			{
-				validation_btn->setChecked(true);
-				model_valid_wgt->validate_btn->click();
-			}
 		}
 	}
 	catch(Exception &e)
@@ -1211,7 +1215,28 @@ void MainWindow::exportModel(void)
 	#endif
 
 	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	model_export_form.exec(current_model);
+  Messagebox msg_box;
+  DatabaseModel *db_model=current_model->getDatabaseModel();
+
+  if(db_model->isInvalidated())
+  {
+    msg_box.show(trUtf8("Confirmation"),
+                 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
+                 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                 trUtf8("Export anyway"), trUtf8("Validate"), "",
+                 ":/icones/icones/exportar.png", ":/icones/icones/validation.png");
+
+    if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
+    {
+      validation_btn->setChecked(true);
+      this->pending_op=PENDING_EXPORT_OPER;
+      model_valid_wgt->validateModel();
+    }
+  }
+
+  if(!db_model->isInvalidated() ||
+     (msg_box.result()==QDialog::Accepted))
+    model_export_form.exec(current_model);
 }
 
 void MainWindow::importDatabase(void)
@@ -1241,8 +1266,31 @@ void MainWindow::compareModelDatabase(void)
 								 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 	#else
 		ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		modeldb_diff_frm.setDatabaseModel(current_model->getDatabaseModel());
-		modeldb_diff_frm.exec();
+    Messagebox msg_box;
+    DatabaseModel *db_model=current_model->getDatabaseModel();
+
+    if(db_model->isInvalidated())
+    {
+      msg_box.show(trUtf8("Confirmation"),
+                   trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
+                   Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                   trUtf8("Diff anyway"), trUtf8("Validate"), "",
+                   ":/icones/icones/diff.png", ":/icones/icones/validation.png");
+
+      if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
+      {
+        validation_btn->setChecked(true);
+        this->pending_op=PENDING_DIFF_OPER;
+        model_valid_wgt->validateModel();
+      }
+    }
+
+    if(!db_model->isInvalidated() ||
+       (msg_box.result()==QDialog::Accepted))
+    {
+      modeldb_diff_frm.setDatabaseModel(db_model);
+      modeldb_diff_frm.exec();
+    }
 	#endif
 }
 
@@ -1637,5 +1685,20 @@ void MainWindow::quitDemoVersion(void)
 											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
 											<br/>Thank you for testing pgModeler!"),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
- #endif
+    #endif
+}
+
+void MainWindow::executePendingOperation(bool valid_error)
+{
+  if(!valid_error && pending_op!=NO_PENDING_OPER)
+  {
+    if(pending_op==PENDING_SAVE_OPER)
+      saveModel();
+    else if(pending_op==PENDING_EXPORT_OPER)
+      exportModel();
+    else if(pending_op==PENDING_DIFF_OPER)
+      compareModelDatabase();
+
+    pending_op=NO_PENDING_OPER;
+  }
 }

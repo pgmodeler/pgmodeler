@@ -40,7 +40,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
-		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
+		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));    
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -65,6 +65,15 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+
+    connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
+            [=](){ emit s_validationCanceled(); });
+
+    connect(&validation_helper, &ModelValidationHelper::s_validationFinished,
+            [=](){
+      emit s_validationFinished(validation_helper.getErrorCount() != 0);
+    });
+
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
@@ -219,7 +228,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	}
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
-		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model thus you can save it without any problem.</em>"));
+    label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
 	else
 		label->setText(val_info.getErrors().at(0));
 
@@ -439,5 +448,5 @@ void ModelValidationWidget::configureValidation(void)
 void ModelValidationWidget::swapObjectsIds(void)
 {
 	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
-	swapobjectsids_wgt->show();
+  swapobjectsids_wgt->show();
 }

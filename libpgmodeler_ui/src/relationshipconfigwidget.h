@@ -37,7 +37,9 @@ class RelationshipConfigWidget: public QWidget, public Ui::RelationshipConfigWid
 
 		map<QString, attribs_map> patterns;
 
-	public:
+    void hideEvent(QHideEvent *);
+
+public:
 		RelationshipConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);

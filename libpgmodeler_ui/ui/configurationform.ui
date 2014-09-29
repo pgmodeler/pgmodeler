@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>740</width>
-    <height>680</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>740</width>
-    <height>660</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
