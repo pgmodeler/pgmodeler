@@ -1,4 +1,4 @@
-v0.8.0-alpha1
+v0.8.0-alpha2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: September 30, 2014</em><br/>
