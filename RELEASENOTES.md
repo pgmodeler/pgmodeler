@@ -3,7 +3,7 @@ v0.8.0-alpha2
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: September 30, 2014</em><br/>
 <em>Changes since: <strong>v0.8.0-alpha1</strong></em><br/>
-<strong>Summary: this release brings important fixes that improved stability as well small features as a preparation for model-database diff scheduled to the first beta. The key feature for this release is that the code is able to be compiled using the lastest Qt version (5.3.2) without issues or crashes. All binaries releases are now aligned to the same Qt version.
+<strong>Summary:</strong> this release brings important fixes that improved stability as well small features as a preparation for model-database diff scheduled to the first beta. The key feature for this release is that the code is able to be compiled using the lastest Qt version (5.3.2) without issues or crashes. All binaries releases are now aligned to the same Qt version.
 
 * [New] Added an option on general settings to disable ask to validate model before save, export and diff.
 * [New] If the user try to save, export or diff a model and it is invalidated, pgModeler will first validate and then proceed with the pending operation.
