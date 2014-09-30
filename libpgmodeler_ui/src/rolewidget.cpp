@@ -103,7 +103,6 @@ void RoleWidget::uncheckOptions(void)
 	create_role_chk->setEnabled(!superusr_chk->isChecked());
 }
 
-
 void RoleWidget::configureRoleSelection(void)
 {
 	unsigned i;
