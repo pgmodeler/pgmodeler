@@ -27,6 +27,8 @@ v0.8.0-alpha2
 * [Change] Minor change on example.dbm file.
 * [Change] Minor change on DatabaseImportHelper to accept a DatabaseModel instance instead of ModelWidget.
 * [Change] Minor adjustments on deployment scripts.
+* [Fix] Fixed issue with Inno Setup invalid bitmap error (Windows).
+* [Fix] Fixed a bug that was preventing encrypted password to be configured for roles.
 * [Fix] Fixed a crash whenever user quit the application on Mac OSX.
 * [Fix] Minor fixes in order to compile using Qt 5.3.2.
 * [Fix] Fixed a bug when starting the creation process of relationships on model widget.
