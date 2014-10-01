@@ -179,6 +179,7 @@ void ModelValidationWidget::insertInfoMessage(const QString &msg)
 
   item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
   label->setText(msg);
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   output_trw->addTopLevelItem(item);
   output_trw->setItemWidget(item, 0, label);
@@ -193,6 +194,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
 
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 									.arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
@@ -256,6 +258,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			{
 				item1=new QTreeWidgetItem(item);
 				label1=new QLabel;
+        label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				label1->setText(errors.back());
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				fnt=label1->font();
@@ -276,6 +279,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		{
 			item1=new QTreeWidgetItem(item);
 			label1=new QLabel;
+      label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
 
 			tab_obj=dynamic_cast<TableObject *>(refs.back());
@@ -294,6 +298,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 						QPalette pal;
 						item2=new QTreeWidgetItem(item1);
 						label2=new QLabel;
+            label2->setTextInteractionFlags(Qt::TextSelectableByMouse);
 						pal.setColor(QPalette::Text, QColor(255,0,0));
 						label2->setPalette(pal);
 						label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
@@ -385,6 +390,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		int idx=msg.indexOf('`');
 		item=new QTreeWidgetItem;
 		label=new QLabel;
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		if(idx > 0)
 		{
