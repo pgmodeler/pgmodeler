@@ -57,6 +57,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
+    const static int WELCOME_VIEW=0,
+    DESIGN_VIEW=1,
+    MANAGE_VIEW=2;
+
     static bool confirm_validation;
 
     //! \brief Constants used to mark a pending operation to be executed after validate model
@@ -276,6 +280,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
     //! \brief Executes one of the pending operations (save, export, diff) after validate the model
     void executePendingOperation(bool valid_error);
+
+    void changeCurrentView(bool checked);
 };
 
 #endif

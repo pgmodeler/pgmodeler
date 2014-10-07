@@ -98,9 +98,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
-	public slots:
-		void hide(void);
-
 	private slots:
 		//! brief Opens a connection to the selected database
 		void connectToDatabase(void);
@@ -140,7 +137,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void enableObjectTreeControls(bool enable);
 
 	signals:
-		void s_visibilityChanged(bool);
 };
 
 #endif

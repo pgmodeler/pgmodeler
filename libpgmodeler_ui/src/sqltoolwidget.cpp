@@ -66,7 +66,6 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 
-	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
 	connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromDatabase(void)));
@@ -128,12 +127,6 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
 
 	connect_tb->setEnabled(connections_cmb->count() > 0);
 	enableSQLExecution(false);
-}
-
-void SQLToolWidget::hide(void)
-{
-	QWidget::hide();
-	emit s_visibilityChanged(false);
 }
 
 void SQLToolWidget::connectToDatabase(void)
