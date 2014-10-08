@@ -110,7 +110,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../res/resources.qrc">:/icones/icones/sync.png</pixmap>
+           <pixmap resource="../res/resources.qrc">:/icones/icones/diff.png</pixmap>
           </property>
          </widget>
         </item>
@@ -1180,7 +1180,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/sync.png</normaloff>:/icones/icones/sync.png</iconset>
+         <normaloff>:/icones/icones/diff.png</normaloff>:/icones/icones/diff.png</iconset>
        </property>
        <property name="iconSize">
         <size>

@@ -660,6 +660,7 @@
     </property>
     <addaction name="action_show_grid"/>
     <addaction name="action_show_delimiters"/>
+    <addaction name="action_alin_objs_grade"/>
     <addaction name="separator"/>
     <addaction name="action_normal_zoom"/>
     <addaction name="action_inc_zoom"/>

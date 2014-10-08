@@ -59,7 +59,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
 
-	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
+  run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
@@ -320,7 +320,7 @@ void SQLToolWidget::updateCurrentItem(void)
 
 		import_helper.closeConnection();
 		objects_trw->sortItems(0, Qt::AscendingOrder);
-	}
+  }
 }
 
 void SQLToolWidget::enableCommandButtons(void)
@@ -820,7 +820,9 @@ void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
 
 			handle_menu.addAction(drop_action);
 			handle_menu.addAction(drop_cascade_action);
-			handle_menu.addAction(refresh_action);
+
+      if(obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA)
+        handle_menu.addAction(refresh_action);
 
 			if(!handle_menu.actions().isEmpty())
 			{

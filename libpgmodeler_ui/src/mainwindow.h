@@ -141,12 +141,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-		/*! brief This event filter controls the position of central widget putting it on top or base
-		of it's parent's stack whenever the widgets model_valid_parent, obj_finder_parent or sql_tool_parent
-		colides or not with the central_wgt in order to avoid this latter to be on top of them causing an
-		undesired overlay */
-		bool eventFilter(QObject *object, QEvent *event);
-
 		//! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
