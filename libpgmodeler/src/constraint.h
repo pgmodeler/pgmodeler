@@ -242,6 +242,9 @@ class Constraint: public TableObject{
 
 		//! \brief Remove all exclude elements from the constraint
 		void removeExcludeElements(void);
+
+    //! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
+    void setColumnsNotNull(bool value);
 };
 
 #endif

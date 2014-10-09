@@ -389,7 +389,12 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					}
 
 					if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
+          {
 						updateAlterCmdsStatus();
+
+            if(obj_type==OBJ_CONSTRAINT)
+              dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
+          }
 				break;
 
 				case OBJ_TABLE:
@@ -586,6 +591,9 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			 tab_obj->setParentTable(nullptr);
 
 			obj_list->erase(itr);
+
+      if(obj_type==OBJ_CONSTRAINT)
+        dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
 		}
 		else
 		{
