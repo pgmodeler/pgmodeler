@@ -22,9 +22,7 @@
   [ last-zoom=] "@{last-zoom}"
  %end
 
- %if @{default-schema} %or @{default-owner} %or
-     @{default-collation} %or @{default-tablespace} %then
-
+ %if @{default-schema} %or @{default-owner}  %then
     $br $tb
 
     %if @{default-schema} %then
@@ -34,6 +32,10 @@
     %if @{default-owner} %then
       [ default-owner=] "@{default-owner}"
     %end
+ %end
+
+ %if @{default-collation} %or @{default-tablespace} %then
+    $br $tb
 
     %if @{default-collation} %then
       [ default-collation=] "@{default-collation}"

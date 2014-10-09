@@ -836,20 +836,15 @@ void BaseObjectWidget::finishConfiguration(void)
         this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 		}
 
-		if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-			 object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-			 object->getObjectType()==OBJ_EXTENSION || object->getObjectType()==OBJ_SEQUENCE)
-		{
-			model->getObjectReferences(object, ref_objs);
 
-			for(auto obj : ref_objs)
-			{
-				obj->setCodeInvalidated(true);
+    model->getObjectReferences(object, ref_objs);
+    for(auto obj : ref_objs)
+    {
+      obj->setCodeInvalidated(true);
 
-				if(obj->getObjectType()==OBJ_COLUMN)
-					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
-			}
-		}
+      if(obj->getObjectType()==OBJ_COLUMN)
+        dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+    }
 
 		object->setCodeInvalidated(true);
 		this->accept();

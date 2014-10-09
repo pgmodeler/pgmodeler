@@ -12,7 +12,3 @@
 <!ATTLIST database sql-disabled (false|true) "false">
 <!ATTLIST database append-at-eod (false|true) "false">
 <!ATTLIST database prepend-at-bod (false|true) "false">
-<!ATTLIST database default-schema CDATA #IMPLIED>
-<!ATTLIST database default-owner CDATA #IMPLIED>
-<!ATTLIST database default-collation CDATA #IMPLIED>
-<!ATTLIST database default-tablespace CDATA #IMPLIED>

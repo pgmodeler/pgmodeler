@@ -29,8 +29,10 @@ DatabaseModel::DatabaseModel(void)
 	encoding=BaseType::null;
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
-  setDefaultObject("public", OBJ_SCHEMA);
-  setDefaultObject("postgres", OBJ_ROLE);
+  default_objs[OBJ_SCHEMA]=nullptr;
+  default_objs[OBJ_ROLE]=nullptr;
+  default_objs[OBJ_TABLESPACE]=nullptr;
+  default_objs[OBJ_COLLATION]=nullptr;
 
 	conn_limit=-1;
   last_zoom=1;
@@ -685,10 +687,9 @@ EncodingType DatabaseModel::getEncoding(void)
   return(encoding);
 }
 
-QString DatabaseModel::getDefaultObject(ObjectType obj_type)
+BaseObject *DatabaseModel::getDefaultObject(ObjectType obj_type)
 {
-  if(obj_type!=OBJ_COLLATION && obj_type!=OBJ_SCHEMA &&
-     obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+  if(default_objs.count(obj_type)==0)
     throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   return(default_objs[obj_type]);
@@ -2829,6 +2830,7 @@ void DatabaseModel::loadModel(const QString &filename)
     BaseObject *object=nullptr;
     bool protected_model=false;
     QStringList pos_str;
+    map<ObjectType, QString> def_objs;
 
     //Configuring the path to the base path for objects DTD
     dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
@@ -2865,6 +2867,11 @@ void DatabaseModel::loadModel(const QString &filename)
       if(this->last_zoom <= 0) this->last_zoom=1;
 
       protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+
+      def_objs[OBJ_SCHEMA]=attribs[ParsersAttributes::DEFAULT_SCHEMA];
+      def_objs[OBJ_ROLE]=attribs[ParsersAttributes::DEFAULT_OWNER];
+      def_objs[OBJ_COLLATION]=attribs[ParsersAttributes::DEFAULT_COLLATION];
+      def_objs[OBJ_TABLESPACE]=attribs[ParsersAttributes::DEFAULT_TABLESPACE];
 
 			if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
       {
@@ -2916,6 +2923,25 @@ void DatabaseModel::loadModel(const QString &filename)
       }
 
       this->BaseObject::setProtected(protected_model);
+
+      //Validating default objects
+      for(auto itr : def_objs)
+      {
+        if(!itr.second.isEmpty())
+        {
+          object=this->getObject(itr.second, itr.first);
+
+          if(!object)
+            throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+                      .arg(Utf8String::create(this->getName()))
+                      .arg(this->getTypeName())
+                      .arg(itr.second)
+                      .arg(BaseObject::getTypeName(itr.first)),
+                      ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+          this->setDefaultObject(object);
+        }
+      }
 
       loading_model=false;
 
@@ -6385,10 +6411,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
       attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
       attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
-      attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=default_objs[OBJ_SCHEMA];
-      attribs_aux[ParsersAttributes::DEFAULT_OWNER]=default_objs[OBJ_ROLE];
-      attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=default_objs[OBJ_TABLESPACE];
-      attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=default_objs[OBJ_COLLATION];
+      attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[OBJ_SCHEMA] ? default_objs[OBJ_SCHEMA]->getName(true) : "");
+      attribs_aux[ParsersAttributes::DEFAULT_OWNER]=(default_objs[OBJ_ROLE] ? default_objs[OBJ_ROLE]->getName(true) : "");
+      attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[OBJ_TABLESPACE] ? default_objs[OBJ_TABLESPACE]->getName(true) : "");
+      attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[OBJ_COLLATION] ? default_objs[OBJ_COLLATION]->getName(true) : "");
     }
     else
     {
@@ -7104,6 +7130,12 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				itr_perm++;
 			}
 		}
+
+    if(default_objs.count(obj_type) && default_objs[obj_type]==object && (!exclusion_mode || (exclusion_mode && !refer)))
+    {
+      refer=true;
+      refs.push_back(this);
+    }
 
 		if(obj_type==OBJ_VIEW && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
@@ -8377,6 +8409,9 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	postgres->setOption(Role::OP_SUPERUSER, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
+
+  setDefaultObject(postgres);
+  setDefaultObject(getObject("public", OBJ_SCHEMA), OBJ_SCHEMA);
 }
 
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)
@@ -8503,13 +8538,16 @@ void DatabaseModel::setPrependAtBOD(bool value)
   prepend_at_bod=value;
 }
 
-void DatabaseModel::setDefaultObject(const QString &obj_name, ObjectType obj_type)
+void DatabaseModel::setDefaultObject(BaseObject *object, ObjectType obj_type)
 {
-  if(obj_type!=OBJ_COLLATION && obj_type!=OBJ_SCHEMA &&
-     obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+  if((!object && default_objs.count(obj_type)==0) ||
+     (object && default_objs.count(object->getObjectType())==0))
     throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  default_objs[obj_type]=obj_name;
+  if(!object)
+    default_objs[obj_type]=nullptr;
+  else
+    default_objs[object->getObjectType()]=object;
 }
 
 bool  DatabaseModel::isAppendAtEOD(void)

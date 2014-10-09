@@ -57,6 +57,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
+    const static int GENERAL_ACTIONS_COUNT=9;
+
     const static int WELCOME_VIEW=0,
     DESIGN_VIEW=1,
     MANAGE_VIEW=2;

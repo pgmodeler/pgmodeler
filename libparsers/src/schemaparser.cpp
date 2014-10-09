@@ -583,6 +583,8 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 		//Checks if the current line is a comment start tag
 		if(!in_comment)
 			in_comment=(lin.indexOf("<!--") >= 0);
+    else if(in_comment && lin.indexOf("-->") >=0)
+      in_comment=false;
 
 		//Case the line is empty, is a xml header or a comment line and does not treat XML entities on it
 		if(lin.isEmpty() || xml_header || in_comment)

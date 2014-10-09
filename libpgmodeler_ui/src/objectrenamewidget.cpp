@@ -160,25 +160,21 @@ void ObjectRenameWidget::applyRenaming(void)
 				dynamic_cast<Schema *>(object)->setModified(true);
 			}
 
-      if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-         object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-				 object->getObjectType()==OBJ_EXTENSION || object->getObjectType()==OBJ_SEQUENCE)
-      {
-				Column *col=nullptr;
-        model->getObjectReferences(object, ref_objs);
+      Column *col=nullptr;
+      model->getObjectReferences(object, ref_objs);
 
-        for(auto obj : ref_objs)
+      for(auto obj : ref_objs)
+      {
+        if(obj->getObjectType()==OBJ_COLUMN)
         {
-          if(obj->getObjectType()==OBJ_COLUMN)
-					{
-					 col=dynamic_cast<Column *>(obj);
-					 col->getParentTable()->setModified(true);
-					 col->setCodeInvalidated(true);
-					}
-					else
-						obj->setCodeInvalidated(true);
+          col=dynamic_cast<Column *>(obj);
+          col->getParentTable()->setModified(true);
+          col->setCodeInvalidated(true);
         }
+        else
+          obj->setCodeInvalidated(true);
       }
+
 
 			accept();
 		}

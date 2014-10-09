@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>355</width>
-    <height>156</height>
+    <height>162</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -281,7 +281,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Defaults</string>
+       <string>Default Objects</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
