@@ -459,7 +459,11 @@ namespace ParsersAttributes {
 	WIDGET="widget",
 	DISABLE_SMOOTHNESS="disable-smoothness",
   SIMPLIFIED_OBJ_CREATION="simplified-obj-creation",
-  CONFIRM_VALIDATION="confirm-validation";
+  CONFIRM_VALIDATION="confirm-validation",
+  DEFAULT_SCHEMA="default-schema",
+  DEFAULT_OWNER="default-owner",
+  DEFAULT_TABLESPACE="default-tablespace",
+  DEFAULT_COLLATION="default-collation";
 }
 
 #endif

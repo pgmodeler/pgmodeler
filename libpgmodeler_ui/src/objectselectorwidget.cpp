@@ -93,43 +93,75 @@ ObjectSelectorWidget::~ObjectSelectorWidget(void)
 
 BaseObject *ObjectSelectorWidget::getSelectedObject(void)
 {
-	return(selected_obj);
+  return(selected_obj);
+}
+
+QString ObjectSelectorWidget::formatObjectName(BaseObject *object)
+{
+  ObjectType obj_type;
+  QString obj_name;
+
+  if(object)
+  {
+    obj_type=object->getObjectType();
+
+    if(obj_type==OBJ_FUNCTION)
+      obj_name=dynamic_cast<Function *>(object)->getSignature();
+    else if(obj_type==OBJ_OPERATOR)
+      obj_name=dynamic_cast<Operator *>(object)->getSignature();
+    else if(TableObject::isTableObject(obj_type))
+    {
+      BaseObject *tab_pai=dynamic_cast<TableObject *>(object)->getParentTable();
+      if(tab_pai)
+        obj_name+=tab_pai->getName(true) + ".";
+
+      obj_name+=object->getName();
+    }
+    else
+      obj_name=object->getName(true);
+  }
+
+  return(obj_name);
+}
+
+QString ObjectSelectorWidget::getSelectedObjectName(void)
+{
+  return(formatObjectName(selected_obj));
 }
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 {
 	ObjectType obj_type;
-	QString obj_name;
 
 	if(object)
-	{
 		obj_type=object->getObjectType();
 
-		if(obj_type==OBJ_FUNCTION)
-			obj_name=dynamic_cast<Function *>(object)->getSignature();
-		else if(obj_type==OBJ_OPERATOR)
-			obj_name=dynamic_cast<Operator *>(object)->getSignature();
-		else if(TableObject::isTableObject(obj_type))
-		{
-			BaseObject *tab_pai=dynamic_cast<TableObject *>(object)->getParentTable();
-			if(tab_pai)
-				obj_name+=tab_pai->getName(true) + ".";
-
-			obj_name+=object->getName();
-		}
-		else
-			obj_name=object->getName(true);
-	}
-
 	if(object && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
-	{
-		obj_name_txt->setPlainText(Utf8String::create(obj_name));
+	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
+    obj_name_txt->setPlainText(Utf8String::create(formatObjectName(selected_obj)));
 		emit s_objectSelected();
 	}
 	else
-		clearSelector();
+    clearSelector();
+}
+
+void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType obj_type)
+{
+  try
+  {
+    BaseObject *object=nullptr;
+
+    if(model && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
+      object=model->getObject(obj_name, obj_type);
+
+    setSelectedObject(object);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void ObjectSelectorWidget::setModel(DatabaseModel *modelo)

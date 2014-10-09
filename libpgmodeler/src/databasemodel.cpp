@@ -29,6 +29,9 @@ DatabaseModel::DatabaseModel(void)
 	encoding=BaseType::null;
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
+  setDefaultObject("public", OBJ_SCHEMA);
+  setDefaultObject("postgres", OBJ_ROLE);
+
 	conn_limit=-1;
   last_zoom=1;
   loading_model=invalidated=append_at_eod=prepend_at_bod=false;
@@ -679,7 +682,16 @@ QString DatabaseModel::getTemplateDB(void)
 
 EncodingType DatabaseModel::getEncoding(void)
 {
-	return(encoding);
+  return(encoding);
+}
+
+QString DatabaseModel::getDefaultObject(ObjectType obj_type)
+{
+  if(obj_type!=OBJ_COLLATION && obj_type!=OBJ_SCHEMA &&
+     obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+    throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  return(default_objs[obj_type]);
 }
 
 QString DatabaseModel::getAuthor(void)
@@ -6373,6 +6385,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
       attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
       attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
+      attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=default_objs[OBJ_SCHEMA];
+      attribs_aux[ParsersAttributes::DEFAULT_OWNER]=default_objs[OBJ_ROLE];
+      attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=default_objs[OBJ_TABLESPACE];
+      attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=default_objs[OBJ_COLLATION];
     }
     else
     {
@@ -8485,6 +8501,15 @@ void  DatabaseModel::setAppendAtEOD(bool value)
 void DatabaseModel::setPrependAtBOD(bool value)
 {
   prepend_at_bod=value;
+}
+
+void DatabaseModel::setDefaultObject(const QString &obj_name, ObjectType obj_type)
+{
+  if(obj_type!=OBJ_COLLATION && obj_type!=OBJ_SCHEMA &&
+     obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+    throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  default_objs[obj_type]=obj_name;
 }
 
 bool  DatabaseModel::isAppendAtEOD(void)

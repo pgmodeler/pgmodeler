@@ -22,6 +22,29 @@
   [ last-zoom=] "@{last-zoom}"
  %end
 
+ %if @{default-schema} %or @{default-owner} %or
+     @{default-collation} %or @{default-tablespace} %then
+
+    $br $tb
+
+    %if @{default-schema} %then
+      [ default-schema=] "@{default-schema}"
+    %end
+
+    %if @{default-owner} %then
+      [ default-owner=] "@{default-owner}"
+    %end
+
+    %if @{default-collation} %then
+      [ default-collation=] "@{default-collation}"
+    %end
+
+    %if @{default-tablespace} %then
+      [ default-tablespace=] "@{default-tablespace}"
+    %end
+
+ %end
+
  > $br
  %if @{objects} %then @{objects} %end
  %if @{permission} %then @{permission} %end

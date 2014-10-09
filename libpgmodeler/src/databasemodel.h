@@ -69,10 +69,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Template database
 		QString template_db,
+
 						//! \brief Model's author
-						author,
+            author,
+
 						//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
-						localizations[2];
+            localizations[2];
+
+    map<ObjectType, QString> default_objs;
 
 		//! \brief Maximum number of connections
 		int conn_limit;
@@ -220,6 +224,8 @@ class DatabaseModel:  public QObject, public BaseObject {
     //! \brief Sets the sql prepeding at beginning of entire model definition
     void setPrependAtBOD(bool value);
 
+    void setDefaultObject(const QString &obj_name, ObjectType obj_type);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
 
@@ -249,6 +255,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the database enconding
 		EncodingType getEncoding(void);
+
+    QString getDefaultObject(ObjectType obj_type);
 
 		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
 		bool isInvalidated(void);

@@ -100,9 +100,16 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
       lcctype_cmb->setCurrentText(model->getLocalization(Collation::_LC_CTYPE));
 
     def_schema_sel->setModel(model);
+    def_schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA), OBJ_SCHEMA);
+
     def_collation_sel->setModel(model);
+    def_collation_sel->setSelectedObject(model->getDefaultObject(OBJ_COLLATION), OBJ_COLLATION);
+
     def_owner_sel->setModel(model);
+    def_owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE), OBJ_ROLE);
+
     def_tablespace_sel->setModel(model);
+    def_tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE), OBJ_TABLESPACE);
 
 		BaseObjectWidget::setAttributes(model, model, nullptr);
 	}
@@ -126,6 +133,11 @@ void DatabaseWidget::applyConfiguration(void)
 
     if(lcctype_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
+
+    model->setDefaultObject(def_schema_sel->getSelectedObjectName(), OBJ_SCHEMA);
+    model->setDefaultObject(def_owner_sel->getSelectedObjectName(), OBJ_ROLE);
+    model->setDefaultObject(def_collation_sel->getSelectedObjectName(), OBJ_COLLATION);
+    model->setDefaultObject(def_tablespace_sel->getSelectedObjectName(), OBJ_TABLESPACE);
 
 		finishConfiguration();
 	}
