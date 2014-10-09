@@ -59,14 +59,13 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
 
-	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
+  run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 
-	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
 	connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromDatabase(void)));
@@ -128,12 +127,6 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
 
 	connect_tb->setEnabled(connections_cmb->count() > 0);
 	enableSQLExecution(false);
-}
-
-void SQLToolWidget::hide(void)
-{
-	QWidget::hide();
-	emit s_visibilityChanged(false);
 }
 
 void SQLToolWidget::connectToDatabase(void)
@@ -327,7 +320,7 @@ void SQLToolWidget::updateCurrentItem(void)
 
 		import_helper.closeConnection();
 		objects_trw->sortItems(0, Qt::AscendingOrder);
-	}
+  }
 }
 
 void SQLToolWidget::enableCommandButtons(void)
@@ -827,7 +820,9 @@ void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
 
 			handle_menu.addAction(drop_action);
 			handle_menu.addAction(drop_cascade_action);
-			handle_menu.addAction(refresh_action);
+
+      if(obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA)
+        handle_menu.addAction(refresh_action);
 
 			if(!handle_menu.actions().isEmpty())
 			{

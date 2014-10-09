@@ -134,7 +134,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
 		obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
-		aux_model=source_model;
+    aux_model=source_model;
 	}
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
@@ -206,14 +206,15 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						xml_differs=false;
 					}
 
-					if(object->getObjectType()==OBJ_TABLE)
-					{
-						Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
-						diffTables(tab, aux_tab, diff_type);
-					}
+          if(object->getObjectType()==OBJ_TABLE)
+          {
+            Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
+            diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
+            diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
+          }
 				}
 				else if(!aux_object)
-					generateDiffInfo(diff_type, object);
+          generateDiffInfo(diff_type, object);
 			}
 			//Comparison for constraints (fks), triggers, rules, indexes
 			else if(TableObject::isTableObject(obj_type))

@@ -157,8 +157,11 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 		{
 			if(col_type==REFERENCED_COLS)
 				ref_columns.push_back(column);
-			else
-				columns.push_back(column);
+      else
+      {
+        columns.push_back(column);
+        setColumnsNotNull(true);
+      }
 
 			setCodeInvalidated(true);
 		}
@@ -330,6 +333,7 @@ unsigned Constraint::getColumnCount(unsigned col_type)
 
 void Constraint::removeColumns(void)
 {
+  setColumnsNotNull(false);
 	columns.clear();
 	ref_columns.clear();
 	setCodeInvalidated(true);
@@ -356,7 +360,10 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 
 		//Case the column is found
 		if(col->getName()==name)
-		{
+    {
+      if(constr_type==ConstraintType::primary_key)
+        col->setNotNull(false);
+
 			//Remove its iterator from the list
 			cols->erase(itr);
 			setCodeInvalidated(true);
@@ -575,7 +582,16 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 void Constraint::removeExcludeElements(void)
 {
 	excl_elements.clear();
-	setCodeInvalidated(true);
+  setCodeInvalidated(true);
+}
+
+void Constraint::setColumnsNotNull(bool value)
+{
+  if(constr_type==ConstraintType::primary_key)
+  {
+    for(auto col : columns)
+      col->setNotNull(value);
+  }
 }
 
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
@@ -697,4 +713,3 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
-

@@ -57,6 +57,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
+    const static int WELCOME_VIEW=0,
+    DESIGN_VIEW=1,
+    MANAGE_VIEW=2;
+
     static bool confirm_validation;
 
     //! \brief Constants used to mark a pending operation to be executed after validate model
@@ -136,12 +140,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void showEvent(QShowEvent *);
 
 		void resizeEvent(QResizeEvent *);
-
-		/*! brief This event filter controls the position of central widget putting it on top or base
-		of it's parent's stack whenever the widgets model_valid_parent, obj_finder_parent or sql_tool_parent
-		colides or not with the central_wgt in order to avoid this latter to be on top of them causing an
-		undesired overlay */
-		bool eventFilter(QObject *object, QEvent *event);
 
 		//! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
@@ -276,6 +274,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
     //! \brief Executes one of the pending operations (save, export, diff) after validate the model
     void executePendingOperation(bool valid_error);
+
+    void changeCurrentView(bool checked);
 };
 
 #endif
