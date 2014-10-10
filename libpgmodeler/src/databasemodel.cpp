@@ -2941,6 +2941,8 @@ void DatabaseModel::loadModel(const QString &filename)
 
           this->setDefaultObject(object);
         }
+        else
+          this->setDefaultObject(nullptr, itr.first);
       }
 
       loading_model=false;
