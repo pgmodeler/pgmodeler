@@ -296,6 +296,10 @@ void ModelValidationHelper::validateModel(void)
 					{
 						db_model->getObjectReferences(object, refs);
 
+            /*if(obj_type==OBJ_SCHEMA || obj_type==OBJ_COLLATION ||
+               obj_type==OBJ_ROLE || obj_type==OBJ_C)
+             std::remove(refs.begin(), refs.end(), db_model); */
+
 						while(!refs.empty() && !valid_canceled)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered

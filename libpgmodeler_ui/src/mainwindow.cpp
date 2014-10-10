@@ -1287,8 +1287,8 @@ void MainWindow::importDatabase(void)
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	db_import_form.exec();
 
-	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
-		this->addModel(db_import_form.getModelWidget());
+  if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
+    this->addModel(db_import_form.getModelWidget());
  #endif
 }
 

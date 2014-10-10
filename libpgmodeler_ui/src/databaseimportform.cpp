@@ -404,6 +404,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 	model_wgt->rearrangeSchemas(QPointF(origin_sb->value(), origin_sb->value()),
 															tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+  model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));

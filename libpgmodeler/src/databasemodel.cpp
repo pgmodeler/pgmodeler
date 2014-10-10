@@ -7133,7 +7133,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-    if(default_objs.count(obj_type) && default_objs[obj_type]==object && (!exclusion_mode || (exclusion_mode && !refer)))
+    if(exclusion_mode && !refer && default_objs.count(obj_type) && default_objs[obj_type]==object)
     {
       refer=true;
       refs.push_back(this);
