@@ -20,6 +20,7 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "taskprogresswidget.h"
+#include "hinttextwidget.h"
 
 extern ConfigurationForm *configuration_form;
 
@@ -30,6 +31,13 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
   import_thread=new QThread(this);
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
+
+  new HintTextWidget(rand_rel_color_chk, rand_color_hint, this);
+  new HintTextWidget(resolve_deps_chk, auto_res_deps_hint, this);
+  new HintTextWidget(import_sys_objs_chk, imp_sys_objs_hint, this);
+  new HintTextWidget(import_ext_objs_chk, imp_ext_objs_hint, this);
+  new HintTextWidget(debug_mode_chk, debug_mode_hint, this);
+  new HintTextWidget(ignore_errors_chk, ignore_errors_hint, this);
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
