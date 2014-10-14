@@ -248,6 +248,9 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		rel=new Relationship(rel_type, src_tab, dst_tab);
 
+    color_picker->generateRandomColors();
+    rel->setCustomColor(color_picker->getColor(0));
+
 		this->new_object=true;
 		this->setAttributes(model, op_list, rel);
 
@@ -264,11 +267,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	/*QWidget *tabs[]={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
-														 rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
-	QString tab_labels[]={ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
-														 rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)}; */
-	unsigned rel_type, i;
+  unsigned rel_type, i;
 	Relationship *aux_rel=nullptr;
 	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
 
