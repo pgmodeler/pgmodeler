@@ -51,7 +51,7 @@ HintTextWidget::HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *
 
   QFontMetrics f(text_lbl->font());
   QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, text_lbl->text());
-  this->setMinimumSize(ret.size());
+  this->setMinimumSize(QSize(ret.size().width(), ret.size().height() + text_lbl->margin()));
   this->setVisible(false);
 
   text_lbl->installEventFilter(this);
@@ -61,7 +61,10 @@ HintTextWidget::HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *
 void HintTextWidget::setVisible(bool value)
 {
   if(value)
+  {
     setWidgetPosition();
+    text_lbl->setFocus();
+  }
 
   QWidget::setVisible(value);
 }
@@ -78,7 +81,7 @@ void HintTextWidget::setWidgetPosition(void)
 
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 {
-  if(object==text_lbl && event->type()==QEvent::MouseButtonPress)
+  if(object==text_lbl && (event->type()==QEvent::MouseButtonPress || event->type()==QEvent::FocusOut))
   {
     hint_tb->setChecked(false);
     return(true);
