@@ -233,13 +233,11 @@ void RelationshipWidget::showEvent(QShowEvent *)
   if(rel_fk_rb->isChecked() ||
      (rel_dep_rb->isChecked() &&
       this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-		parent_form->setMinimumSize(640, 490);
+    parent_form->setMinimumSize(640, 320);
   else if(rel_gen_rb->isChecked())
-		parent_form->setMinimumSize(640, 590);
-  else if(rel_nn_rb->isChecked())
-		parent_form->setMinimumSize(640, 690);
+    parent_form->setMinimumSize(640, 510);
   else
-		parent_form->setMinimumSize(640, 710);
+    parent_form->setMinimumSize(640, 650);
 
   parent_form->resize(parent_form->minimumSize());
 }
