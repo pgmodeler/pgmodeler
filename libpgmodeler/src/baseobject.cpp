@@ -604,9 +604,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		 (def_type==SchemaParser::XML_DEFINITION &&
 			obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
-	{
-		//cout << "generating code: " << (def_type==SchemaParser::SQL_DEFINITION ? "SQL" : "XML") << " " << this->getName().toStdString() << " (" << this->getTypeName().toStdString() << ")" << endl;
-		bool format;
+	{	
+    bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
 		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
@@ -684,14 +683,16 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				/** Only tablespaces and database do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
 				 with just a command line isolated from the others **/
-				if((def_type==SchemaParser::SQL_DEFINITION &&
+        /*if((def_type==SchemaParser::SQL_DEFINITION &&
 						obj_type!=OBJ_TABLESPACE &&
 						obj_type!=OBJ_DATABASE) ||
-					 def_type==SchemaParser::XML_DEFINITION)
+           def_type==SchemaParser::XML_DEFINITION)*/
+        if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_DATABASE)
 				{
-					schparser.setIgnoreUnkownAttributes(true);
-					attributes[ParsersAttributes::OWNER]=
-							schparser.getCodeDefinition(ParsersAttributes::OWNER, attributes, def_type);
+          //schparser.setIgnoreUnkownAttributes(true);
+          //attributes[ParsersAttributes::OWNER]=
+          //		schparser.getCodeDefinition(ParsersAttributes::OWNER, attributes, def_type);
+          attributes[ParsersAttributes::OWNER]=getAlterDefinition(OBJ_ROLE);
 				}
 			}
 			else
@@ -716,7 +717,6 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 						schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 			}
 		}
-
 
     if(!appended_sql.isEmpty())
 		{
@@ -752,10 +752,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
-			schparser.setIgnoreUnkownAttributes(true);
-			schparser.setIgnoreEmptyAttributes(true);
-      attributes[ParsersAttributes::DROP]=
-					schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
+      //schparser.setIgnoreUnkownAttributes(true);
+      //schparser.setIgnoreEmptyAttributes(true);
+      attributes[ParsersAttributes::DROP]=getDropDefinition();
+          //schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
     }
 
 		if(reduced_form)
@@ -810,7 +810,12 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return(code_def);
+  return(code_def);
+}
+
+QString BaseObject::getAlterDefinition(BaseObject *object)
+{
+  return("");
 }
 
 void BaseObject::setAttribute(const QString &attrib, const QString &value)
@@ -1039,5 +1044,41 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 			return(cached_code[def_type]);
 	}
 	else
-		return("");
+    return("");
+}
+
+QString BaseObject::getDropDefinition(void)
+{
+  try
+  {
+    schparser.setIgnoreUnkownAttributes(true);
+    schparser.setIgnoreEmptyAttributes(true);
+    return(schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, SchemaParser::SQL_DEFINITION));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}
+
+QString BaseObject::getAlterDefinition(ObjectType obj_type)
+{
+  try
+  {
+    QString filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+                     GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + "%1" +
+                     GlobalAttributes::SCHEMA_EXT;
+
+    if(obj_type==OBJ_ROLE && this->acceptsOwner())
+    {
+      schparser.setIgnoreUnkownAttributes(true);
+      return(schparser.getCodeDefinition(filename.arg(ParsersAttributes::OWNER), attributes));
+    }
+    else
+      return("");
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }

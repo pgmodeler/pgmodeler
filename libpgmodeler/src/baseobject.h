@@ -205,6 +205,13 @@ class BaseObject {
 		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
+    //!brief Returns the DROP statement for the object
+    QString getDropDefinition(void);
+
+    /*! brief Returns the ALTER statement for the object. One of the three types (OBJ_ROLE, OBJ_SCHEMA or OBJ_TABLESPACE)
+    must be used to return the alter command for the specified attribute (owner, schema or tablespace) */
+    QString getAlterDefinition(ObjectType obj_type);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
@@ -341,6 +348,10 @@ class BaseObject {
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
     virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
+
+    /*! \brief Forcing the class to be virtual. This means that derivated classes may
+     override this method in order to be possible its instatiation. */
+    virtual QString getAlterDefinition(BaseObject *object);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

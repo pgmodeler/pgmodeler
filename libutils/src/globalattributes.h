@@ -53,6 +53,7 @@ namespace GlobalAttributes {
 	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
 	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
+  ALTER_SCHEMA_DIR="alter", //! \brief Default name for the alter schemas directory
 	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
 	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
