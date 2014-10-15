@@ -29,6 +29,7 @@
 #include "schemaparser.h"
 #include "modelwidget.h"
 #include "modelexporthelper.h"
+#include "hinttextwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
@@ -42,6 +43,8 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 		//! \brief Thread used to manage the export helper when dealing with dbms export
 		QThread *export_thread;
+
+    HintTextWidget *pgsqlvers_ht, *drop_db_ht, *ignore_dup_ht, *page_by_page_ht;
 
 		QTimer timer;
 
