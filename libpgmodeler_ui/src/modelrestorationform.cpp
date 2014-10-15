@@ -21,6 +21,10 @@
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+
+  keep_models_ht=new HintTextWidget(keep_models_hint, this);
+  keep_models_ht->setText(keep_models_chk->statusTip());
+
 	connect(restore_btn, SIGNAL(clicked(void)), this, SLOT(accept(void)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 	connect(tmp_files_lst, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration(void)));

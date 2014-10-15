@@ -30,12 +30,15 @@
 #include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "relationshipview.h"
+#include "hinttextwidget.h"
 
 class RelationshipConfigWidget: public QWidget, public Ui::RelationshipConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
 
 		map<QString, attribs_map> patterns;
+
+    HintTextWidget *fk_to_pk_ht, *center_pnts_ht;
 
     void hideEvent(QHideEvent *);
 

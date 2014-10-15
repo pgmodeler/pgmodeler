@@ -20,9 +20,9 @@
 #include <QHBoxLayout>
 #include <QGraphicsDropShadowEffect>
 
-HintTextWidget::HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *parent): QWidget(parent)
+HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(parent)
 {
-  if(!hint_wgt || !btn_parent)
+  if(!btn_parent)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   QHBoxLayout *layout=new QHBoxLayout(btn_parent);
@@ -31,13 +31,10 @@ HintTextWidget::HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *
   Ui_HintTextWidget::setupUi(this);
 
   this->setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
-  text_lbl->setText(hint_wgt->statusTip());
 
   hint_tb=new QToolButton(this);
   hint_tb->setCheckable(true);
   hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  hint_tb->setMaximumSize(22,22);
-  hint_tb->setIconSize(QSize(16,16));
   hint_tb->setIcon(QPixmap(":/icones/icones/help.png"));
 
   shadow=new QGraphicsDropShadowEffect(this);
@@ -49,12 +46,11 @@ HintTextWidget::HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *
   layout->addWidget(hint_tb);
   btn_parent->setLayout(layout);
 
-  QFontMetrics f(text_lbl->font());
-  QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, text_lbl->text());
-  this->setMinimumSize(QSize(ret.size().width(), ret.size().height() + text_lbl->margin()));
   this->setVisible(false);
-
   text_lbl->installEventFilter(this);
+  parent->installEventFilter(this);
+
+  setIconSize(SMALL_ICON);
   connect(hint_tb, SIGNAL(toggled(bool)), this, SLOT(setVisible(bool)));
 }
 
@@ -72,20 +68,57 @@ void HintTextWidget::setVisible(bool value)
 void HintTextWidget::setWidgetPosition(void)
 {
   QPoint pos=hint_tb->mapToGlobal(hint_tb->pos()), new_pos;
+  QWidget *parent_wgt=qobject_cast<QWidget *>(this->parent());
+  int right_pos=0, bottom_pos=0;
 
   pos.setX(pos.x() - 5);
   pos.setY(pos.y() + hint_tb->height() - 2);
-  new_pos=qobject_cast<QWidget *>(this->parent())->mapFromGlobal(pos);
+  new_pos=parent_wgt->mapFromGlobal(pos);
+
+  //Adjusting the hint position if the current pos extrapolates the parent's rect
+  right_pos=new_pos.x() + this->width();
+  if(right_pos > parent_wgt->width())
+    new_pos.setX(new_pos.x() - (right_pos - parent_wgt->width()) - (hint_tb->width()/2));
+
+  bottom_pos=new_pos.y() + this->height();
+  if(bottom_pos > parent_wgt->height())
+    new_pos.setY(new_pos.y() - (hint_tb->height() + this->height()));
+
   this->move(new_pos);
+}
+
+void HintTextWidget::setText(const QString &text)
+{
+  QFontMetrics f(text_lbl->font());
+  QString txt=text;
+  QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt.remove(QRegExp("(<)(/)?([a-z]|[A-Z])+(>)")));
+
+  text_lbl->setText(text);
+  this->setMinimumSize(QSize(ret.size().width(), ret.size().height() + (text_lbl->margin() * 1.5)));
+}
+
+void HintTextWidget::setIconSize(unsigned icon_sz)
+{
+  if(icon_sz==0)
+    icon_sz=SMALL_ICON;
+  else if(icon_sz > LARGE_ICON)
+    icon_sz=LARGE_ICON;
+
+  hint_tb->setMaximumSize(icon_sz + 8, icon_sz + 8);
+  hint_tb->setIconSize(QSize(icon_sz, icon_sz));
 }
 
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 {
+  //Close the hint when it text lost its focus
   if(object==text_lbl && (event->type()==QEvent::MouseButtonPress || event->type()==QEvent::FocusOut))
   {
     hint_tb->setChecked(false);
     return(true);
   }
+  //Reconfigures the popup position when the parent is resized
+  else if(object==this->parent() && event->type()==QEvent::Resize)
+    setWidgetPosition();
 
   return(QWidget::eventFilter(object, event));
 }

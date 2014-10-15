@@ -98,13 +98,13 @@
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
         <property name="textFormat">
          <enum>Qt::AutoText</enum>
         </property>
         <property name="alignment">
-         <set>Qt::AlignJustify|Qt::AlignTop</set>
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

@@ -19,7 +19,8 @@
 /**
 \ingroup libpgmodeler_ui
 \class HintTextWidget
-\brief
+\brief Styled "what's this" widget. Since QWhatsThis can't be handled with style sheets this widget comes
+       as a substitute to it.
 */
 
 #ifndef HINT_TEXT_WIDGET_H
@@ -35,16 +36,23 @@ class HintTextWidget: public QWidget, public Ui::HintTextWidget {
 	private:
 		Q_OBJECT
 
+    //! brief Tool button installed on the parent in order to trigger the hint popup
     QToolButton *hint_tb;
 
     bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-    HintTextWidget(QWidget *hint_wgt, QWidget *btn_parent, QWidget *parent);
+    const static unsigned SMALL_ICON=16,
+    MEDIUM_ICON=24,
+    LARGE_ICON=32;
+
+    HintTextWidget(QWidget *btn_parent, QWidget *parent);
 
 	public slots:
     void setVisible(bool value);
     void setWidgetPosition(void);
+    void setText(const QString &text);
+    void setIconSize(unsigned icon_sz);
 };
 
 #endif

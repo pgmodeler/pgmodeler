@@ -518,6 +518,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_8">
                <item>
                 <widget class="QCheckBox" name="rand_rel_color_chk">
+                 <property name="statusTip">
+                  <string>Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.</string>
+                 </property>
                  <property name="text">
                   <string>Random colors for relationships</string>
                  </property>
