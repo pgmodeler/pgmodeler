@@ -31,6 +31,24 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
 
+  rand_color_ht=new HintTextWidget(rand_color_hint, this);
+  rand_color_ht->setText(rand_rel_color_chk->statusTip());
+
+  auto_res_deps_ht=new HintTextWidget(auto_res_deps_hint, this);
+  auto_res_deps_ht->setText(resolve_deps_chk->statusTip());
+
+  imp_sys_objs_ht=new HintTextWidget(imp_sys_objs_hint, this);
+  imp_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
+
+  imp_ext_objs_ht=new HintTextWidget(imp_ext_objs_hint, this);
+  imp_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
+
+  debug_mode_ht=new HintTextWidget(debug_mode_hint, this);
+  debug_mode_ht->setText(debug_mode_chk->statusTip());
+
+  ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
+  ignore_errors_ht->setText(ignore_errors_chk->statusTip());
+
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));

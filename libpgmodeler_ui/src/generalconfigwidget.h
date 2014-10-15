@@ -28,14 +28,20 @@
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "messagebox.h"
+#include "hinttextwidget.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
+
 		static const unsigned UNIT_MILIMETERS=0,
                           UNIT_POINT=1,
 													UNIT_INCHS=2,
 													UNIT_CENTIMETERS=3;
+
+    HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
+    *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
+    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht;
 
     void hideEvent(QHideEvent *);
 

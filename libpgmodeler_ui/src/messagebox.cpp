@@ -262,10 +262,10 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
 	showExceptionList();
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
+  this->resize(this->minimumWidth(), this->minimumHeight());
 
-	QFontMetrics fm(msg_lbl->font());
-	QString aux_msg=msg;
+  QFontMetrics fm(msg_lbl->font());
+  QString aux_msg=msg;
 	aux_msg.replace(QRegExp("(<)(br)(/)?(>)", Qt::CaseInsensitive),"\n");
 	QSize size=QSize(msg_lbl->width(), fm.height() * (aux_msg.count("\n") + 1));
 	int max_h=msg_lbl->minimumHeight() * 3;
@@ -276,7 +276,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		this->setMinimumHeight(max_h);
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
+  this->resize(this->minimumWidth(), this->minimumHeight());
 
 	QDialog::exec();
 }

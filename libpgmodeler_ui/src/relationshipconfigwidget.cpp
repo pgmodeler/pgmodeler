@@ -42,10 +42,14 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
+  fk_to_pk_ht=new HintTextWidget(fk_to_pk_hint, this);
+  fk_to_pk_ht->setText(fk_to_pk_chk->statusTip());
+
+  center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
+  center_pnts_ht->setText(center_pnts_chk->statusTip());
+
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
-	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), hint2_lbl, SLOT(setDisabled(bool)));
 	connect(center_pnts_chk, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
-	connect(center_pnts_chk, SIGNAL(toggled(bool)), hint1_lbl, SLOT(setDisabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));

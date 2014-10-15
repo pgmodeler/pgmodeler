@@ -30,6 +30,18 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_thread=new QThread(this);
 	export_hlp.moveToThread(export_thread);
 
+  pgsqlvers_ht=new HintTextWidget(pgsqlvers_hint, this);
+  pgsqlvers_ht->setText(pgsqlvers_chk->statusTip());
+
+  drop_db_ht=new HintTextWidget(drop_db_hint, this);
+  drop_db_ht->setText(drop_db_chk->statusTip());
+
+  ignore_dup_ht=new HintTextWidget(ignore_dup_hint, this);
+  ignore_dup_ht->setText(ignore_dup_chk->statusTip());
+
+  page_by_page_ht=new HintTextWidget(page_by_page_hint, this);
+  page_by_page_ht->setText(page_by_page_chk->statusTip());
+
 	connect(export_to_file_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
 	connect(export_to_dbms_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
 	connect(export_to_img_rb, SIGNAL(toggled(bool)), this, SLOT(enableExportMode(void)));
@@ -72,7 +84,8 @@ void ModelExportForm::exec(ModelWidget *model)
 	{
 		this->model=model;
 		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
-		this->hideProgress();
+    hideProgress();
+    enableExportMode();
 		QDialog::exec();
 	}
 }
@@ -100,7 +113,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	pgsqlvers_chk->setChecked(false);
 	ignore_dup_chk->setChecked(false);
 	drop_db_chk->setChecked(false);
-	export_to_file_rb->setChecked(true);
+  export_to_file_rb->setChecked(false);
 	export_btn->setEnabled(false);
 	export_to_dbms_rb->setChecked(true);
 	pgsqlvers1_cmb->setCurrentIndex(0);
@@ -162,13 +175,9 @@ void ModelExportForm::exportModel(void)
 }
 
 void ModelExportForm::hideProgress(bool value)
-{
-	ln2_frm->setHidden(value);
-	progress_lbl->setHidden(value);
-	progress_pb->setHidden(value);
-	cancel_btn->setHidden(value);
+{	
+  progress_wgt->setHidden(value);
 	progress_pb->setValue(0);
-	ico_lbl->setHidden(value);
 
 	if(value)
 		this->resize(this->minimumSize());
@@ -176,42 +185,18 @@ void ModelExportForm::hideProgress(bool value)
 
 void ModelExportForm::enableExportMode(void)
 {
-	bool exp_file=(sender()==export_to_file_rb), exp_png=(sender()==export_to_img_rb);
+  bool exp_file=(export_to_file_rb->isChecked()),
+       exp_png=(export_to_img_rb->isChecked()),
+       exp_dbms=(!exp_file && !exp_png);
 
-	model_sql_lbl->setEnabled(exp_file);
-	file_lbl->setEnabled(exp_file);
-	file_edt->setEnabled(exp_file);
-	select_file_tb->setEnabled(exp_file);
-	pgsql_lbl->setEnabled(exp_file);
-	pgsqlvers_cmb->setEnabled(exp_file);
-	hint_lbl->setEnabled(exp_file);
+  export_to_dbms_wgt->setEnabled(exp_dbms);
+  export_to_file_wgt->setEnabled(exp_file);
+  export_to_img_wgt->setEnabled(exp_png);
 
-	model_png_lbl->setEnabled(exp_png);
-	image_lbl->setEnabled(exp_png);
-	image_edt->setEnabled(exp_png);
-	select_img_tb->setEnabled(exp_png);
-	hint1_lbl->setEnabled(exp_png);
-	show_grid_chk->setEnabled(exp_png);
-	show_delim_chk->setEnabled(exp_png);
-  page_by_page_chk->setEnabled(exp_png);
-	options_lbl->setEnabled(exp_png);
-	zoom_cmb->setEnabled(exp_png);
-	zoom_lbl->setEnabled(exp_png);
-
-	modelo_sgbd->setEnabled(!exp_file && !exp_png);
-	connections_lbl->setEnabled(!exp_file && !exp_png);
-	connections_cmb->setEnabled(!exp_file && !exp_png);
-	pgsqlvers_chk->setEnabled(!exp_file && !exp_png );
-	pgsqlvers1_cmb->setEnabled(!exp_file && !exp_png && pgsqlvers_chk->isChecked());
-	hint2_lbl->setEnabled(!exp_file && !exp_png);
-	hint3_lbl->setEnabled(!exp_file && !exp_png);
-	hint4_lbl->setEnabled(!exp_file && !exp_png);
-	ignore_dup_chk->setEnabled(!exp_file && !exp_png);
-	drop_db_chk->setEnabled(!exp_file && !exp_png);
-
-	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->count() > 0) ||
-													 (export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-													 (export_to_img_rb->isChecked() && !image_edt->text().isEmpty()));
+  pgsqlvers1_cmb->setEnabled(exp_dbms && pgsqlvers_chk->isChecked());
+  export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->count() > 0) ||
+                           (export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
+                           (export_to_img_rb->isChecked() && !image_edt->text().isEmpty()));
 }
 
 void ModelExportForm::selectOutputFile(void)

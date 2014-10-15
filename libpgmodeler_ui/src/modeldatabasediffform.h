@@ -29,15 +29,20 @@
 #include "modelsdiffhelper.h"
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
+#include "hinttextwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
+    HintTextWidget *apply_on_server_ht, *store_in_file_ht,
+    *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
+    *trunc_tables_ht, *ignore_errors_ht;
+
 		ModelsDiffHelper *diff_helper;
 
-		DatabaseImportHelper *import_helper;
+		DatabaseImportHelper *import_helper;  
 
 		//ModelExportHelper export_helper;
 

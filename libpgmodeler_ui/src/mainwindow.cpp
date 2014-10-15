@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   try
   {
-    //central_wgt=new CentralWidget(models_tbw_parent);
     models_tbw->tabBar()->setVisible(false);
     general_tb->layout()->setContentsMargins(0,0,0,0);
 
@@ -335,7 +334,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 
 	//If a previous session was restored save the temp models
-	saveTemporaryModels(true);
+  saveTemporaryModels();
 	updateConnections();
 	updateRecentModelsMenu();
 	configureSamplesMenu();
@@ -410,7 +409,7 @@ void MainWindow::restoreLastSession(void)
 				prev_session_files.pop_front();
 			}
 
-			saveTemporaryModels(true);
+      saveTemporaryModels();
 			action_restore_session->setEnabled(false);
 			central_wgt->last_session_tb->setEnabled(false);
 		}
@@ -630,7 +629,7 @@ void MainWindow::updateConnections(void)
 	sql_tool_wgt->updateConnections(connections);
 }
 
-void MainWindow::saveTemporaryModels(bool force)
+void MainWindow::saveTemporaryModels(void)//(bool force)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: temporary model saving disabled."
@@ -640,7 +639,7 @@ void MainWindow::saveTemporaryModels(bool force)
 		ModelWidget *model=nullptr;
 		int count=models_tbw->count();
 
-		if(count > 0 && (force || this->isActiveWindow()))
+    if(count > 0)// && (force || this->isActiveWindow()))
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -652,7 +651,7 @@ void MainWindow::saveTemporaryModels(bool force)
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-				if(model->isModified())
+        if(model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
 
 				QThread::msleep(200);
@@ -709,7 +708,7 @@ void MainWindow::loadModelFromAction(void)
 		addModel(act->data().toString());
 		recent_models.push_back(act->data().toString());
 		updateRecentModelsMenu();
-		saveTemporaryModels(true);
+    saveTemporaryModels();
 	}
 }
 
@@ -1430,7 +1429,7 @@ void MainWindow::loadModels(const QStringList &list)
 		}
 
 		updateRecentModelsMenu();
-		saveTemporaryModels(true);
+    saveTemporaryModels();
 	}
 	catch(Exception &e)
 	{	

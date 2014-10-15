@@ -32,6 +32,27 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 	import_thread=diff_thread=nullptr;
 	import_item=diff_item=export_item=nullptr;
 
+  apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
+  apply_on_server_ht->setText(apply_on_server_rb->statusTip());
+
+  store_in_file_ht=new HintTextWidget(store_in_file_hint, this);
+  store_in_file_ht->setText(store_in_file_rb->statusTip());
+
+  import_sys_objs_ht=new HintTextWidget(import_sys_objs_hint, this);
+  import_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
+
+  import_ext_objs_ht=new HintTextWidget(import_ext_objs_hint, this);
+  import_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
+
+  keep_cluster_objs_ht=new HintTextWidget(keep_cluster_objs_hint, this);
+  keep_cluster_objs_ht->setText(keep_cluster_objs_chk->statusTip());
+
+  trunc_tables_ht=new HintTextWidget(trunc_tables_hint, this);
+  trunc_tables_ht->setText(trunc_tables_chk->statusTip());
+
+  ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
+  ignore_errors_ht->setText(ignore_errors_chk->statusTip());
+
 	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
 	connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 	connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -187,9 +208,8 @@ void ModelDatabaseDiffForm::listDatabases(void)
 void ModelDatabaseDiffForm::enableDiffMode(void)
 {
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
-	apply_on_server_wgt->setEnabled(apply_on_server_rb->isChecked());
 
-	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
+  generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
 													 ((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
 														(apply_on_server_rb->isChecked())));
 }

@@ -68,6 +68,33 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]="";
 
+  simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
+  simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
+
+  confirm_validation_ht=new HintTextWidget(confirm_validation_hint, this);
+  confirm_validation_ht->setText(confirm_validation_chk->statusTip());
+
+  corner_move_ht=new HintTextWidget(corner_move_hint, this);
+  corner_move_ht->setText(corner_move_chk->statusTip());
+
+  save_last_pos_ht=new HintTextWidget(save_last_pos_hint, this);
+  save_last_pos_ht->setText(save_last_pos_chk->statusTip());
+
+  invert_pan_range_ht=new HintTextWidget(invert_pan_range_hint, this);
+  invert_pan_range_ht->setText(invert_pan_range_chk->statusTip());
+
+  disable_smooth_ht=new HintTextWidget(disable_smooth_hint, this);
+  disable_smooth_ht->setText(disable_smooth_chk->statusTip());
+
+  hide_ext_attribs_ht=new HintTextWidget(hide_ext_attribs_hint, this);
+  hide_ext_attribs_ht->setText(hide_ext_attribs_chk->statusTip());
+
+  hide_table_tags_ht=new HintTextWidget(hide_table_tags_hint, this);
+  hide_table_tags_ht->setText(hide_table_tags_chk->statusTip());
+
+  hide_rel_name_ht=new HintTextWidget(hide_rel_name_hint, this);
+  hide_rel_name_ht->setText(hide_rel_name_chk->statusTip());
+
 	selectPaperSize();
 }
 

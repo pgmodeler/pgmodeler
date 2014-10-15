@@ -254,7 +254,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateConnections(void);
 
 		//! \brief Save the temp files for all opened models
-		void saveTemporaryModels(bool force=false);
+    void saveTemporaryModels(void);//(bool force=false);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
