@@ -41,6 +41,12 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		operation_count=0;
 
+    gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
+    gen_tab_name_ht->setText(relnn_tab_name_edt->statusTip());
+
+    ref_table_ht=new HintTextWidget(ref_table_hint, this);
+    recv_table_ht=new HintTextWidget(recv_table_hint, this);
+
 		table1_hl=new SyntaxHighlighter(ref_table_txt, false);
 		table1_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																		 GlobalAttributes::DIR_SEPARATOR +
@@ -146,7 +152,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
     del_action_cmb->addItems(list);
     upd_action_cmb->addItems(list);
 
-
 		tabs={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
 										rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
 
@@ -215,7 +220,6 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	attributes_tab->blockSignals(false);
 	constraints_tab->blockSignals(false);
 
-  ref_tab_hint_lbl->setVisible(true);
 	rel_columns_lst->clear();
 
 	if(rel && !rel->isModified())
@@ -300,14 +304,14 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
     if(base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK)
     {
       ref_table_lbl->setText(trUtf8("Referer View:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
+      ref_table_ht->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
+      recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
     }
     else
     {
       ref_table_lbl->setText(trUtf8("Referer Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
+      ref_table_ht->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
+      recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
     }
 
     recv_table_lbl->setText(trUtf8("Referenced Table:"));
@@ -320,10 +324,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
     if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
     {
       ref_table_lbl->setText(trUtf8("Reference Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
+      ref_table_ht->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
 
       recv_table_lbl->setText(trUtf8("Receiver Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
+      recv_table_ht->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
 
       ref_table_txt->setPlainText(Utf8String::create(aux_rel->getReferenceTable()->getName(true)));
       recv_table_txt->setPlainText(Utf8String::create(aux_rel->getReceiverTable()->getName(true)));
@@ -331,10 +335,9 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
     else
     {
       ref_table_lbl->setText(trUtf8("Reference Table:"));
-      ref_tab_hint_lbl->setVisible(false);
+      ref_table_ht->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
       recv_table_lbl->setText(trUtf8("Reference Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
-
+      recv_table_ht->setText(ref_table_ht->getText());
       ref_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
       recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
     }
@@ -415,6 +418,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
+  gen_tab_name_hint->setVisible(relnn);
 
 	for(i=ATTRIBUTES_TAB; i <= ADVANCED_TAB; i++)
 		rel_attribs_tbw->removeTab(1);

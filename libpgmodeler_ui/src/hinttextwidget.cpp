@@ -108,6 +108,11 @@ void HintTextWidget::setIconSize(unsigned icon_sz)
   hint_tb->setIconSize(QSize(icon_sz, icon_sz));
 }
 
+QString HintTextWidget::getText(void)
+{
+  return(text_lbl->text());
+}
+
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 {
   //Close the hint when it text lost its focus

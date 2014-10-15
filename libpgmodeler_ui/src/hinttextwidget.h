@@ -52,7 +52,8 @@ class HintTextWidget: public QWidget, public Ui::HintTextWidget {
     void setVisible(bool value);
     void setWidgetPosition(void);
     void setText(const QString &text);
-    void setIconSize(unsigned icon_sz);
+    void setIconSize(unsigned icon_sz);    
+    QString getText(void);
 };
 
 #endif
