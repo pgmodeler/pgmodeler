@@ -89,10 +89,7 @@ void DomainWidget::applyConfiguration(void)
 		domain->setType(data_type->getPgSQLType());
 		domain->setDefaultValue(def_value_edt->text());
 		domain->setExpression(check_expr_txt->toPlainText());
-
-		if(!constr_name_edt->text().isEmpty())
-			domain->setConstraintName(constr_name_edt->text());
-
+    domain->setConstraintName(constr_name_edt->text());
 		domain->setNotNull(not_null_chk->isChecked());
 
 		BaseObjectWidget::applyConfiguration();
