@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>360</height>
+    <width>627</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1001,6 +1001,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -1021,6 +1027,12 @@
             </property>
             <attribute name="headerVisible">
              <bool>false</bool>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>100</number>
+            </attribute>
+            <attribute name="headerStretchLastSection">
+             <bool>true</bool>
             </attribute>
             <column>
              <property name="text">
