@@ -28,20 +28,26 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 
 	box=new QGraphicsPolygonItem;
 	box->setZValue(0);
+  sql_disabled_view=dynamic_cast<TextboxView *>(createSQLDisabledItem());
 
 	this->addToGroup(box);
 	this->addToGroup(schema_name);
 	this->addToGroup(obj_name);
+  this->addToGroup(sql_disabled_view);
 }
 
 TableTitleView::~TableTitleView(void)
 {
+  this->removeFromGroup(sql_disabled_view);
 	this->removeFromGroup(schema_name);
 	this->removeFromGroup(obj_name);
 	this->removeFromGroup(box);
 	delete(schema_name);
 	delete(obj_name);
 	delete(box);
+
+  delete(sql_disabled_view->getSourceObject());
+  delete(sql_disabled_view);
 }
 
 void TableTitleView::configureObject(BaseGraphicObject *object)
@@ -61,6 +67,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 					object->getObjectType()!=OBJ_VIEW)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+  sql_disabled_view->setVisible(object->isSQLDisabled());
+
   if(object->getObjectType()==OBJ_VIEW && !tag)
 	{
 		name_attrib=ParsersAttributes::VIEW_NAME;
@@ -75,9 +83,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 
 	//Strike out the table name when its sql is disabled
-	fmt=font_config[schema_name_attrib];
-	font=fmt.font();
-  font.setStrikeOut(object->isSQLDisabled() && !schema->isRectVisible());
+  fmt=font_config[schema_name_attrib];
+  font=fmt.font();
+  //font.setStrikeOut(object->isSQLDisabled() && !schema->isRectVisible());
 
   schema_name->setFont(font);
 
@@ -91,11 +99,11 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	else
 		schema_name->setText(Utf8String::create(schema->getName() + "."));
 
-	fmt=font_config[name_attrib];
-	font=fmt.font();
-	font.setStrikeOut(object->isSQLDisabled());
+  fmt=font_config[name_attrib];
+  font=fmt.font();
+  //font.setStrikeOut(object->isSQLDisabled());
 
-	obj_name->setFont(font);
+  obj_name->setFont(font);
 	obj_name->setText(Utf8String::create(object->getName()));
 
   if(!tag)
@@ -154,5 +162,8 @@ void TableTitleView::resizeTitle(float width, float height)
 
 	this->bounding_rect.setTopLeft(this->pos());
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
+
+  sql_disabled_view->setPos(bounding_rect.width() - sql_disabled_view->boundingRect().width(),
+                            -(sql_disabled_view->boundingRect().height()/2));
 }
 

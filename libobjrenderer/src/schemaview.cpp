@@ -20,21 +20,25 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
+  QTextCharFormat char_fmt;
+
 	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
 	sch_name=new QGraphicsSimpleTextItem;
-	sch_name->setZValue(1);
+  sch_name->setZValue(1);
 
 	box=new QGraphicsPolygonItem;
 	box->setZValue(0);
+  sql_disabled_view=dynamic_cast<TextboxView *>(createSQLDisabledItem());
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-	this->setZValue(-10);
+  this->addToGroup(sql_disabled_view);
+  this->setZValue(-10);
 
-	//Shadow objects are not used in this type of object
-	delete(this->obj_shadow);
-	this->obj_shadow=nullptr;
+  //Shadow objects are not used in this type of object
+  delete(this->obj_shadow);
+  this->obj_shadow=nullptr;
 
 	this->configureObject();
 	all_selected=false;
@@ -45,6 +49,9 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 SchemaView::~SchemaView()
 {
 	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
+
+  this->removeFromGroup(sql_disabled_view);
+  delete(sql_disabled_view->getSourceObject());
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -179,14 +186,14 @@ void SchemaView::configureObject(void)
 		}
 
 		//Configures the schema name at the top
-		sch_name->setText(Utf8String::create(schema->getName()));
+    sch_name->setText(Utf8String::create(schema->getName()));
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
-		font.setStrikeOut(!schema->isSystemObject() && schema->isSQLDisabled());
+    //font.setStrikeOut(!schema->isSystemObject() && schema->isSQLDisabled());
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
 		sch_name->setFont(font);
-		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
+    sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
 		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
 
 		//Configures the box with the points calculated above
@@ -205,10 +212,10 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(80);
+    color.setAlpha(80);
 		box->setBrush(color);
 
-		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
+    color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
 		box->setPen(QPen(color, 1, Qt::DashLine));
 
 		rect.setTopLeft(pol.at(0));
@@ -219,15 +226,20 @@ void SchemaView::configureObject(void)
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-		this->configureObjectSelection();
-		this->configureProtectedIcon();
-		this->configurePositionInfo(this->pos());
-
 		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
 		sch_name->setToolTip(this->toolTip());
 
-		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-																					sch_name->pos().y() + VERT_SPACING ));
+    this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
+                                          sch_name->pos().y() + VERT_SPACING ));
+
+    sql_disabled_view->setPos(bounding_rect.width() - sql_disabled_view->boundingRect().width(),
+                              -(sql_disabled_view->boundingRect().height()/2));
+
+    sql_disabled_view->setVisible(schema->isRectVisible() && schema->isSQLDisabled());
+
+    this->configureObjectSelection();
+    this->configureProtectedIcon();
+    this->configurePositionInfo(this->pos());
 	}
 	else
 		this->setVisible(false);

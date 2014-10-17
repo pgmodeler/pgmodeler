@@ -28,11 +28,14 @@
 #include "schema.h"
 #include "databasemodel.h"
 #include "baseobjectview.h"
+#include "textboxview.h"
 
 class SchemaView: public BaseObjectView
 {
 	private:
 		Q_OBJECT
+
+    TextboxView *sql_disabled_view;
 
 		QGraphicsSimpleTextItem *sch_name;
 

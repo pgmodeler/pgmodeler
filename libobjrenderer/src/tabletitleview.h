@@ -28,6 +28,7 @@
 #include "view.h"
 #include "table.h"
 #include "baseobjectview.h"
+#include "textboxview.h"
 
 class TableTitleView: public BaseObjectView
 {
@@ -36,6 +37,8 @@ class TableTitleView: public BaseObjectView
 
     //! \brief Polygonal object that defines the title border
     QGraphicsPolygonItem *box;
+
+    TextboxView *sql_disabled_view;
 
     //! \brief Graphical texts that is used to store the object name and schema name
 		QGraphicsSimpleTextItem *obj_name,

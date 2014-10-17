@@ -26,8 +26,8 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 	text=new QGraphicsSimpleTextItem;
 
 	this->override_style=override_style;
-	this->addToGroup(text);
-	this->addToGroup(box);
+  this->addToGroup(text);
+  this->addToGroup(box);
 	this->configureObject();
 }
 
@@ -48,7 +48,6 @@ void TextboxView::setColorStyle(const QBrush &fill_style, const QPen &border_sty
 		box->setPen(border_style);
 	}
 }
-
 
 void TextboxView::setFontStyle(const QTextCharFormat &fmt)
 {
@@ -72,15 +71,15 @@ void TextboxView::configureObject(void)
 	polygon.append(QPointF(0.0f,1.0f));
 
 	//The textbox view must be at the bottom of objects stack (Z = 0)
-	box->setZValue(0);
+  box->setZValue(0);
 	text->setZValue(1);
 
 	if(!override_style)
 	{
-		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
-		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+    box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+    box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
 
-		font=fmt.font();
+    font=fmt.font();
 		font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
@@ -92,19 +91,21 @@ void TextboxView::configureObject(void)
 
 	text->setText(Utf8String::create(txtbox->getComment()));
 	text->setPos(HORIZ_SPACING, VERT_SPACING);
+
 	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2 * HORIZ_SPACING)),
 											roundf(text->boundingRect().height() + (2* VERT_SPACING)));
-	box->setPos(0,0);
-	box->setPolygon(polygon);
 
-	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
-												 box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
+  box->setPos(0,0);
+  box->setPolygon(polygon);
+
+  protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
+                         box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
 
 	this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());
 
-	BaseObjectView::__configureObject();
-	BaseObjectView::configureObjectShadow();
-	BaseObjectView::configureObjectSelection();
+  BaseObjectView::__configureObject();
+  BaseObjectView::configureObjectShadow();
+  BaseObjectView::configureObjectSelection();
 }
 

@@ -656,7 +656,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         //Get the schema object
         Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
 
-        if(!schema->isSystemObject())
+        if(!schema->isProtected())
         {
           //Get the table-table and table-view relationships
           rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);

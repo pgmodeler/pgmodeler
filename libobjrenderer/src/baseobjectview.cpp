@@ -17,6 +17,7 @@
 */
 
 #include "baseobjectview.h"
+#include "textboxview.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, QColor *> BaseObjectView::color_config;
@@ -113,22 +114,22 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 		if(!protected_icon)
 		{
 			protected_icon=new QGraphicsItemGroup;
-			protected_icon->setVisible(graph_obj->isProtected());
+      protected_icon->setVisible(graph_obj->isProtected());
 			protected_icon->setZValue(3);
 
 			pol_item=new QGraphicsPolygonItem;
-			protected_icon->addToGroup(pol_item);
+      protected_icon->addToGroup(pol_item);
 
 			pol_item=new QGraphicsPolygonItem;
-			protected_icon->addToGroup(pol_item);
+      protected_icon->addToGroup(pol_item);
 
-			this->addToGroup(protected_icon);
+      this->addToGroup(protected_icon);
 		}
 
 		if(!obj_selection)
 		{
 			obj_selection=new QGraphicsPolygonItem;
-			this->addToGroup(obj_selection);
+      this->addToGroup(obj_selection);
 		}
 
 		obj_selection->setVisible(false);
@@ -136,9 +137,9 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
 		if(!obj_shadow)
 		{
-			obj_shadow=new QGraphicsPolygonItem;
-			obj_shadow->setZValue(-1);
-			this->addToGroup(obj_shadow);
+      obj_shadow=new QGraphicsPolygonItem;
+      obj_shadow->setZValue(-1);
+      this->addToGroup(obj_shadow);
 		}
 
 		if(!pos_info_txt)
@@ -147,8 +148,8 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			pos_info_txt=new QGraphicsSimpleTextItem;
 			pos_info_pol->setZValue(9);
 			pos_info_txt->setZValue(10);
-			this->addToGroup(pos_info_pol);
-			this->addToGroup(pos_info_txt);
+      this->addToGroup(pos_info_pol);
+      this->addToGroup(pos_info_txt);
 		}
 
 		pos_info_pol->setVisible(false);
@@ -392,7 +393,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 													value.toBool());
 	}
 
-	return(value);
+  return(value);
 }
 
 void BaseObjectView::setSelectionOrder(bool selected)
@@ -400,7 +401,30 @@ void BaseObjectView::setSelectionOrder(bool selected)
 	if(this->sel_order==0 && selected)
 		this->sel_order=++BaseObjectView::global_sel_order;
 	else if(!selected)
-		this->sel_order=0;
+    this->sel_order=0;
+}
+
+BaseObjectView *BaseObjectView::createSQLDisabledItem(void)
+{
+  Textbox *sql_disabled_txt=nullptr;
+  TextboxView *sql_disabled_view=nullptr;
+  QTextCharFormat char_fmt;
+
+  sql_disabled_txt=new Textbox;
+  sql_disabled_txt->setComment(trUtf8("SQL disabled"));
+
+  sql_disabled_view=new TextboxView(sql_disabled_txt, true);
+  sql_disabled_view->setPos(-1000,-1000);
+
+  char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::TAG);
+  char_fmt.setFontPointSize(sql_disabled_txt->getFontSize() * 0.75);
+
+  sql_disabled_view->setFontStyle(char_fmt);
+  sql_disabled_view->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::TAG),
+                                   BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
+  sql_disabled_txt->setModified(true);
+
+  return(sql_disabled_view);
 }
 
 QRectF BaseObjectView::boundingRect(void) const
@@ -436,10 +460,8 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 		pol.append(pos_info_txt->boundingRect().bottomRight());
 		pol.append(pos_info_txt->boundingRect().bottomLeft());
 		pos_info_pol->setPolygon(pol);
-		pos_info_txt->setPos(0,
-												 - pos_info_txt->boundingRect().height());
-		pos_info_pol->setPos(0,
-												 - pos_info_pol->boundingRect().height());
+    pos_info_txt->setPos(0, -pos_info_txt->boundingRect().height());
+    pos_info_pol->setPos(0, -pos_info_pol->boundingRect().height());
 	}
 }
 
@@ -458,9 +480,9 @@ void BaseObjectView::configureObjectShadow(void)
 		pol.append(QPointF(ret.left()+7.5f, ret.bottom()-1));
 		pol.append(QPointF(ret.right()-1, ret.bottom()-1));
 		obj_shadow->setPolygon(pol);
-		obj_shadow->setPos(0,0);
+    obj_shadow->setPos(0,0);
 		obj_shadow->setPen(Qt::NoPen);
-		obj_shadow->setBrush(QColor(50,50,50,60));
+    obj_shadow->setBrush(QColor(50,50,50,60));
 	}
 }
 
