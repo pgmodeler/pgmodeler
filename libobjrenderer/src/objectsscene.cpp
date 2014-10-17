@@ -636,12 +636,47 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
      event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
   {
     unsigned i, count;
-    QList<QGraphicsItem *> items=this->selectedItems();
+    QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
     float x1,y1,x2,y2, dx, dy;
     QRectF rect;
-    RelationshipView *rel=nullptr;
+    SchemaView *sch_view=nullptr;
     vector<QPointF> points;
     vector<QPointF>::iterator itr;
+    vector<BaseObject *> rels, base_rels;
+    BaseRelationship *base_rel=nullptr;
+    RelationshipView *rel=nullptr;
+
+    //Gathering the relationships inside the selected schemsa in order to move their points too
+    for(auto item : items)
+    {
+      sch_view=dynamic_cast<SchemaView *>(item);
+
+      if(sch_view)
+      {
+        //Get the schema object
+        Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+
+        if(!schema->isSystemObject())
+        {
+          //Get the table-table and table-view relationships
+          rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
+          base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
+          rels.insert(rels.end(), base_rels.begin(), base_rels.end());
+
+          for(auto rel : rels)
+          {
+            base_rel=dynamic_cast<BaseRelationship *>(rel);
+
+            /* If the relationship contains points it will be included on the list in order to
+             move their custom line points */
+            if(!base_rel->getPoints().empty())
+              rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+          }
+        }
+      }
+    }
+
+    items.append(rel_list);
 
     /* Get the extreme points of the scene to check if some objects are out the area
      forcing the scene to be resized */

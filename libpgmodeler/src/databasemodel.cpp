@@ -514,6 +514,7 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 {
 	vector<BaseObject *> *obj_list=nullptr, sel_list;
 	vector<BaseObject *>::iterator itr, itr_end;
+  BaseRelationship *rel=nullptr;
 
 	obj_list=getObjectList(obj_type);
 
@@ -525,8 +526,13 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 
 	while(itr!=itr_end)
 	{
-		if((*itr)->getSchema()==schema)
+    rel=dynamic_cast<BaseRelationship *>(*itr);
+
+    if((!rel && (*itr)->getSchema()==schema) ||
+       (rel && (rel->getTable(BaseRelationship::SRC_TABLE)->getSchema()==schema ||
+                rel->getTable(BaseRelationship::DST_TABLE)->getSchema()==schema)))
 			sel_list.push_back(*itr);
+
 		itr++;
 	}
 
