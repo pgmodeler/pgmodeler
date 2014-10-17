@@ -46,6 +46,14 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 SchemaView::~SchemaView()
 {
+  this->removeFromGroup(box);
+  this->removeFromGroup(sch_name);
+  this->removeFromGroup(sql_disabled_view);
+
+  delete(box);
+  delete(sch_name);
+  delete(sql_disabled_view);
+
 	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 

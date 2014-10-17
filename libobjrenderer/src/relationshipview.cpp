@@ -44,6 +44,9 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	sel_object_idx=-1;
 	configuring_line=false;
 
+  sql_disabled_view=createSQLDisabledItem();
+  this->addToGroup(sql_disabled_view);
+
 	descriptor=new QGraphicsPolygonItem;
 	descriptor->setZValue(0);
 	this->addToGroup(descriptor);
@@ -104,6 +107,9 @@ RelationshipView::~RelationshipView(void)
 
 	this->removeFromGroup(descriptor);
 	delete(descriptor);
+
+  this->removeFromGroup(sql_disabled_view);
+  delete(sql_disabled_view);
 }
 
 void RelationshipView::setHideNameLabel(bool value)
@@ -906,6 +912,9 @@ void RelationshipView::configureDescriptor(void)
 	obj_shadow->setPos(x + 2.5f, y + 3.5f);
 	obj_shadow->setPen(Qt::NoPen);
 	obj_shadow->setBrush(QColor(50,50,50,60));
+
+  sql_disabled_view->setPos(x + (sql_disabled_view->boundingRect().width()/2), y);
+  sql_disabled_view->setVisible(base_rel->isSQLDisabled());
 
 	this->configureAttributes();
 	this->configurePositionInfo();
