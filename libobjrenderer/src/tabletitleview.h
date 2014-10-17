@@ -38,7 +38,7 @@ class TableTitleView: public BaseObjectView
     //! \brief Polygonal object that defines the title border
     QGraphicsPolygonItem *box;
 
-    TextboxView *sql_disabled_view;
+    QGraphicsItemGroup *sql_disabled_view;
 
     //! \brief Graphical texts that is used to store the object name and schema name
 		QGraphicsSimpleTextItem *obj_name,

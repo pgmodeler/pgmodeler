@@ -35,7 +35,7 @@ class SchemaView: public BaseObjectView
 	private:
 		Q_OBJECT
 
-    TextboxView *sql_disabled_view;
+    QGraphicsItemGroup *sql_disabled_view;
 
 		QGraphicsSimpleTextItem *sch_name;
 

@@ -87,7 +87,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void setSelectionOrder(bool selected);
 
-    BaseObjectView *createSQLDisabledItem(void);
+    //! brief Create a group of items to denote the SQL disabled status
+    QGraphicsItemGroup *createSQLDisabledItem(void);
 
 	public:
     static constexpr float VERT_SPACING=2.0f,

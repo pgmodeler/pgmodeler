@@ -28,7 +28,7 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 
 	box=new QGraphicsPolygonItem;
 	box->setZValue(0);
-  sql_disabled_view=dynamic_cast<TextboxView *>(createSQLDisabledItem());
+  sql_disabled_view=createSQLDisabledItem();
 
 	this->addToGroup(box);
 	this->addToGroup(schema_name);
@@ -45,8 +45,6 @@ TableTitleView::~TableTitleView(void)
 	delete(schema_name);
 	delete(obj_name);
 	delete(box);
-
-  delete(sql_disabled_view->getSourceObject());
   delete(sql_disabled_view);
 }
 
@@ -163,7 +161,7 @@ void TableTitleView::resizeTitle(float width, float height)
 	this->bounding_rect.setTopLeft(this->pos());
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
 
-  sql_disabled_view->setPos(bounding_rect.width() - sql_disabled_view->boundingRect().width(),
+  sql_disabled_view->setPos(bounding_rect.width() - (sql_disabled_view->boundingRect().width()/2),
                             -(sql_disabled_view->boundingRect().height()/2));
 }
 

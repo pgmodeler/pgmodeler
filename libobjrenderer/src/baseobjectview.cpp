@@ -404,27 +404,33 @@ void BaseObjectView::setSelectionOrder(bool selected)
     this->sel_order=0;
 }
 
-BaseObjectView *BaseObjectView::createSQLDisabledItem(void)
+QGraphicsItemGroup *BaseObjectView::createSQLDisabledItem(void)
 {
-  Textbox *sql_disabled_txt=nullptr;
-  TextboxView *sql_disabled_view=nullptr;
   QTextCharFormat char_fmt;
+  QGraphicsRectItem *box=new QGraphicsRectItem;
+  QGraphicsItemGroup *sql_disabled_grp=new QGraphicsItemGroup;
+  QGraphicsSimpleTextItem *text=new QGraphicsSimpleTextItem;
 
-  sql_disabled_txt=new Textbox;
-  sql_disabled_txt->setComment(trUtf8("SQL disabled"));
+  char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
+  char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.85);
+  text->setFont(char_fmt.font());
+  text->setText(trUtf8("SQL off"));
+  text->setBrush(char_fmt.foreground());
+  text->setZValue(1);
+  text->setPos(HORIZ_SPACING, VERT_SPACING);
 
-  sql_disabled_view=new TextboxView(sql_disabled_txt, true);
-  sql_disabled_view->setPos(-1000,-1000);
+  box->setRect(QRectF(QPointF(0,0), text->boundingRect().size() + QSizeF(2 * HORIZ_SPACING, 2 * VERT_SPACING)));
+  box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+  box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+  box->setZValue(1);
 
-  char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::TAG);
-  char_fmt.setFontPointSize(sql_disabled_txt->getFontSize() * 0.75);
+  sql_disabled_grp->addToGroup(box);
+  sql_disabled_grp->addToGroup(text);
+  sql_disabled_grp->setToolTip(trUtf8("The SQL definition for this object is disabled."));
+  sql_disabled_grp->setZValue(99);
+  sql_disabled_grp->setPos(-1000, -1000);
 
-  sql_disabled_view->setFontStyle(char_fmt);
-  sql_disabled_view->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::TAG),
-                                   BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
-  sql_disabled_txt->setModified(true);
-
-  return(sql_disabled_view);
+  return(sql_disabled_grp);
 }
 
 QRectF BaseObjectView::boundingRect(void) const
@@ -448,13 +454,16 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 	if(this->isSelected())
 	{
 		QPolygonF pol;
+    QFont fnt=font_config[ParsersAttributes::POSITION_INFO].font();
 
 		pos_info_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
 		pos_info_pol->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
-		pos_info_txt->setFont(font_config[ParsersAttributes::POSITION_INFO].font());
+
+    fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
+    pos_info_txt->setFont(fnt);
 		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
 
-		pos_info_txt->setText(QString(" x=%1 y=%2 ").arg(pos.x()).arg(pos.y()));
+    pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(pos.x()).arg(pos.y()));
 		pol.append(pos_info_txt->boundingRect().topLeft());
 		pol.append(pos_info_txt->boundingRect().topRight());
 		pol.append(pos_info_txt->boundingRect().bottomRight());
