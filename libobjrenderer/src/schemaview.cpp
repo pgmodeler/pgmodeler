@@ -34,6 +34,8 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
   this->addToGroup(sql_disabled_view);
   this->setZValue(-10);
 
+  sql_disabled_view->setPos(0,0);
+
   //Shadow objects are not used in this type of object
   delete(this->obj_shadow);
   this->obj_shadow=nullptr;

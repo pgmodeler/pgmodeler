@@ -29,6 +29,7 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	box=new QGraphicsPolygonItem;
 	box->setZValue(0);
   sql_disabled_view=createSQLDisabledItem();
+  sql_disabled_view->setPos(10,10);
 
 	this->addToGroup(box);
 	this->addToGroup(schema_name);

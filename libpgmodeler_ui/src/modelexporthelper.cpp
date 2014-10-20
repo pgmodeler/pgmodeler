@@ -46,7 +46,6 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-    //QRectF ret=scene->itemsBoundingRect();
 		bool shw_grd, shw_dlm, align_objs;
 		QGraphicsView viewp(scene);
 		QRect retv;
@@ -103,9 +102,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		viewp.setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
 		//Apply the zoom factor on the viewport
-		viewp.resetTransform();
-		viewp.centerOn(0,0);
-		viewp.scale(zoom, zoom);
+    viewp.resetTransform();
+    viewp.centerOn(0,0);
+    viewp.scale(zoom, zoom);
 
     QPainter painter;
     vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();

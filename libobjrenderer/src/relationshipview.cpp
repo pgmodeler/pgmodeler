@@ -45,6 +45,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
   sql_disabled_view=createSQLDisabledItem();
   this->addToGroup(sql_disabled_view);
+  sql_disabled_view->setPos(0,0);
 
 	descriptor=new QGraphicsPolygonItem;
 	descriptor->setZValue(0);

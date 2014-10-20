@@ -429,6 +429,7 @@ QGraphicsItemGroup *BaseObjectView::createSQLDisabledItem(void)
   sql_disabled_grp->setToolTip(trUtf8("The SQL definition for this object is disabled."));
   sql_disabled_grp->setZValue(99);
   sql_disabled_grp->setPos(-1000, -1000);
+  sql_disabled_grp->setVisible(false);
 
   return(sql_disabled_grp);
 }
