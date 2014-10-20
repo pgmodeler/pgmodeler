@@ -1081,12 +1081,12 @@ void RelationshipView::configureLabels(void)
 				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
 					 (rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.45 : 0.75);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.80 : 0.55);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 				else
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.50 : 0.25);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.05 : 0.45);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 
