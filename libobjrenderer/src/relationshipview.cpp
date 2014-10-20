@@ -1064,7 +1064,7 @@ void RelationshipView::configureLabels(void)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-		float dl, da, factor;
+    float dl, da, factor, v_space=VERT_SPACING * 2.5, h_space=HORIZ_SPACING * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
@@ -1081,12 +1081,12 @@ void RelationshipView::configureLabels(void)
 				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
 					 (rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.45 : 0.75);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.80 : 0.55);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 				else
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.50 : 0.25);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.05 : 0.45);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 
@@ -1141,8 +1141,8 @@ void RelationshipView::configureLabels(void)
 					pf=lins[idx].p1();
 				}
 
-				dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
-				da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
+        dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
+        da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
 
 				x=pi.x() - dl;
 				y=pi.y() - da;
@@ -1154,24 +1154,24 @@ void RelationshipView::configureLabels(void)
 				rect.setSize(labels[idx]->boundingRect().size());
 
 				if(rect.contains(tab_rect.bottomRight()))
-				{ x+=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+        { x+=dl + h_space; y+=da + v_space; }
 				else if(rect.contains(tab_rect.bottomLeft()))
-				{ x-=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+        { x-=dl + h_space; y+=da + v_space; }
 				else if(rect.contains(tab_rect.topLeft()))
-				{ x-=dl + HORIZ_SPACING; y-=da + VERT_SPACING; }
+        { x-=dl + h_space; y-=da + v_space; }
 				else if(rect.contains(tab_rect.topRight()))
-				{ x+=dl + HORIZ_SPACING;  y-=da + VERT_SPACING; }
+        { x+=dl + h_space; y-=da + v_space; }
 				else
 				{
 					if(tab_rect.contains(rect.bottomLeft()) && tab_rect.contains(rect.bottomRight()))
-						y-=da + VERT_SPACING;
+            y-=da + v_space;
 					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.topRight()))
-						y+=da + VERT_SPACING;
+            y+=da + v_space;
 
 					if(tab_rect.contains(rect.topRight()) && tab_rect.contains(rect.bottomRight()))
-						x-=dl + HORIZ_SPACING;
+            x-=dl + h_space;
 					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.bottomLeft()))
-						x+=dl + HORIZ_SPACING;
+            x+=dl + h_space;
 				}
 
 				configureLabelPosition(label_ids[idx], x, y);
