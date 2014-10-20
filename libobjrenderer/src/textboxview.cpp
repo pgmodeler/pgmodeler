@@ -62,7 +62,6 @@ void TextboxView::configureObject(void)
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
 	QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
-	QFont font;
 	QPolygonF polygon;
 
 	polygon.append(QPointF(0.0f,0.0f));
@@ -76,6 +75,7 @@ void TextboxView::configureObject(void)
 
 	if(!override_style)
 	{
+    QFont font;
     box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
     box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
 
@@ -90,10 +90,14 @@ void TextboxView::configureObject(void)
 	}
 
 	text->setText(Utf8String::create(txtbox->getComment()));
-	text->setPos(HORIZ_SPACING, VERT_SPACING);
 
-	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2 * HORIZ_SPACING)),
-											roundf(text->boundingRect().height() + (2* VERT_SPACING)));
+  if(text->font().italic())
+    text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);
+  else
+    text->setPos(HORIZ_SPACING, VERT_SPACING);
+
+  this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HORIZ_SPACING)),
+                      roundf(text->boundingRect().height() + (1.5 * VERT_SPACING)));
 
   box->setPos(0,0);
   box->setPolygon(polygon);

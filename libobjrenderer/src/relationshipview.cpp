@@ -30,8 +30,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 			i <= BaseRelationship::REL_NAME_LABEL; i++)
 	{
 		if(rel->getLabel(i))
-		{
-			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
+		{      
 			labels[i]=new TextboxView(rel->getLabel(i), true);
       labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 0 : 1);
 			this->addToGroup(labels[i]);
@@ -635,8 +634,8 @@ void RelationshipView::configureLine(void)
 				else
 					pol=graph_points[i];
 
-				pol->setPos(QPointF(points[i].x()-GRAPHIC_PNT_RADIUS,
-														points[i].y()-GRAPHIC_PNT_RADIUS));
+        pol->setPos(points[i]);
+        pol->moveBy(-GRAPHIC_PNT_RADIUS/2.5, -GRAPHIC_PNT_RADIUS/2.5);
 				pol->setVisible(this->isSelected());
 			}
 
@@ -1045,12 +1044,6 @@ void RelationshipView::configureLabels(void)
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
-	/*if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-	{
-		base_rel->setMandatoryTable(BaseRelationship::SRC_TABLE, true);
-		base_rel->setMandatoryTable(BaseRelationship::DST_TABLE, true);
-	}*/
-
 	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
 
 	pnt=descriptor->pos();
@@ -1195,6 +1188,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 	if(labels[label_id])
 	{
 		BaseRelationship *base_rel=this->getSourceObject();
+    QTextCharFormat char_fmt;
 		QPointF label_dist;
 
 		labels_ini_pos[label_id]=QPointF(x,y);
@@ -1208,7 +1202,10 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 
 		labels[label_id]->setPos(x,y);
 		labels[label_id]->setToolTip(this->toolTip());
-		labels[label_id]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+
+    char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::LABEL);
+    char_fmt.setFontPointSize(char_fmt.fontPointSize() * 0.90);
+    labels[label_id]->setFontStyle(char_fmt);
 		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
 																		BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
 		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
