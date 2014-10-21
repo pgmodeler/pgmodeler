@@ -57,8 +57,6 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the graphical representation for the participant tables
 		BaseTableView *tables[2];
 
-    QGraphicsItemGroup *sql_disabled_view;
-
 		/*! brief Stores the points on tables where the relationship line is connected.
 		This attribute is updated every time the configureLine() method is called.
 		When the relationship uses the classical link mode (center points) this attribute

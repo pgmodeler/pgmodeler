@@ -35,8 +35,6 @@ class SchemaView: public BaseObjectView
 	private:
 		Q_OBJECT
 
-    QGraphicsItemGroup *sql_disabled_view;
-
 		QGraphicsSimpleTextItem *sch_name;
 
 		QGraphicsPolygonItem *box;

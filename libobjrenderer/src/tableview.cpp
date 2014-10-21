@@ -244,6 +244,7 @@ void TableView::configureObject(void)
 	this->setToolTip(this->table_tooltip);
 
   configureTag();
+  configureSQLDisabledInfo();
 
 	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
 		 (old_height!=0 && this->bounding_rect.height()!=old_height))

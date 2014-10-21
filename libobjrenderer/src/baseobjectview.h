@@ -64,6 +64,12 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Graphical object that represents the current object shadow
 		QGraphicsPolygonItem *obj_shadow;
 
+    //! \brief Graphical object of the sql disabled info
+    QGraphicsRectItem *sql_disabled_box;
+
+    //! \brief Graphical text for the sql disabled info
+    QGraphicsSimpleTextItem *sql_disabled_txt;
+
 		//! \brief Stores the object font configuration
 		static map<QString, QTextCharFormat> font_config;
 
@@ -82,13 +88,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Configures the polygons used to show the current object position
 		void configurePositionInfo(QPointF pos);
 
+    //! \brief Configures the rectangle used to show the sql disabled status
+    void configureSQLDisabledInfo(void);
+
 		//! \brief Configures the icon that denotes the object's protection
 		void configureProtectedIcon(void);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void setSelectionOrder(bool selected);
-
-    //! brief Create a group of items to denote the SQL disabled status
-    QGraphicsItemGroup *createSQLDisabledItem(void);
 
 	public:
     static constexpr float VERT_SPACING=2.0f,

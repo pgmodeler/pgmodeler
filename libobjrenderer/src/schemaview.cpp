@@ -27,18 +27,10 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	box=new QGraphicsPolygonItem;
 	box->setZValue(0);
-  sql_disabled_view=createSQLDisabledItem();
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-  this->addToGroup(sql_disabled_view);
   this->setZValue(-10);
-
-  sql_disabled_view->setPos(0,0);
-
-  //Shadow objects are not used in this type of object
-  delete(this->obj_shadow);
-  this->obj_shadow=nullptr;
 
 	this->configureObject();
 	all_selected=false;
@@ -50,11 +42,9 @@ SchemaView::~SchemaView()
 {
   this->removeFromGroup(box);
   this->removeFromGroup(sch_name);
-  this->removeFromGroup(sql_disabled_view);
 
   delete(box);
   delete(sch_name);
-  delete(sql_disabled_view);
 
 	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
@@ -195,8 +185,8 @@ void SchemaView::configureObject(void)
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
-    //font.setStrikeOut(!schema->isSystemObject() && schema->isSQLDisabled());
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
+
 		sch_name->setFont(font);
     sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
 		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
@@ -242,14 +232,10 @@ void SchemaView::configureObject(void)
     this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
                                           sch_name->pos().y() + VERT_SPACING ));
 
-    sql_disabled_view->setPos(bounding_rect.width() - sql_disabled_view->boundingRect().width(),
-                              -(sql_disabled_view->boundingRect().height()/2));
-
-    sql_disabled_view->setVisible(schema->isRectVisible() && schema->isSQLDisabled());
-
     this->configureObjectSelection();
     this->configureProtectedIcon();
     this->configurePositionInfo(this->pos());
+    this->configureSQLDisabledInfo();
 	}
 	else
 		this->setVisible(false);

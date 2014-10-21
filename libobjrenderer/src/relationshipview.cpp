@@ -43,10 +43,6 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	sel_object_idx=-1;
 	configuring_line=false;
 
-  sql_disabled_view=createSQLDisabledItem();
-  this->addToGroup(sql_disabled_view);
-  sql_disabled_view->setPos(0,0);
-
 	descriptor=new QGraphicsPolygonItem;
 	descriptor->setZValue(0);
 	this->addToGroup(descriptor);
@@ -107,9 +103,6 @@ RelationshipView::~RelationshipView(void)
 
 	this->removeFromGroup(descriptor);
 	delete(descriptor);
-
-  this->removeFromGroup(sql_disabled_view);
-  delete(sql_disabled_view);
 }
 
 void RelationshipView::setHideNameLabel(bool value)
@@ -779,11 +772,11 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-
-		this->configureDescriptor();
+    this->configureDescriptor();
 		this->configureLabels();
 		this->configureProtectedIcon();
-		configuring_line=false;
+
+    configuring_line=false;
 
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
@@ -814,7 +807,7 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-	float x, y, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+  float x, y, x1, y1, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -891,11 +884,17 @@ void RelationshipView::configureDescriptor(void)
 		obj_shadow->setRotation(-lin.angle());
 	}
 
-	x=pnt.x() - (pol.boundingRect().width()/2.0f);
-	y=pnt.y() - (pol.boundingRect().height()/2.0f);
+  x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
+  y=y1=pnt.y() - (pol.boundingRect().height()/2.0f);
 
 	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
 												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
+
+  configureSQLDisabledInfo();
+  x1+=6 * HORIZ_SPACING;
+  y1-=3 * VERT_SPACING;
+  sql_disabled_box->setPos(x1, y1);
+  sql_disabled_txt->setPos(x1 + HORIZ_SPACING, y1 + VERT_SPACING);
 
 	descriptor->setPolygon(pol);
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());
@@ -912,9 +911,6 @@ void RelationshipView::configureDescriptor(void)
 	obj_shadow->setPos(x + 2.5f, y + 3.5f);
 	obj_shadow->setPen(Qt::NoPen);
 	obj_shadow->setBrush(QColor(50,50,50,60));
-
-  sql_disabled_view->setPos(x + (sql_disabled_view->boundingRect().width()/2), y);
-  sql_disabled_view->setVisible(base_rel->isSQLDisabled());
 
 	this->configureAttributes();
 	this->configurePositionInfo();

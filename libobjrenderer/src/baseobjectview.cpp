@@ -31,6 +31,8 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	obj_selection=nullptr;
 	pos_info_pol=nullptr;
 	pos_info_txt=nullptr;
+  sql_disabled_txt=nullptr;
+  sql_disabled_box=nullptr;
 	setSourceObject(object);
 }
 
@@ -97,6 +99,17 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			delete(pos_info_pol);
 			pos_info_pol=nullptr;
 		}
+
+    if(sql_disabled_box)
+    {
+      this->removeFromGroup(sql_disabled_txt);
+      delete(sql_disabled_txt);
+      sql_disabled_txt=nullptr;
+
+      this->removeFromGroup(sql_disabled_box);
+      delete(sql_disabled_box);
+      sql_disabled_box=nullptr;
+    }
 	}
 	else
 	{
@@ -135,7 +148,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 		obj_selection->setVisible(false);
 		obj_selection->setZValue(4);
 
-		if(!obj_shadow)
+    if(!obj_shadow && object->getObjectType()!=OBJ_SCHEMA)
 		{
       obj_shadow=new QGraphicsPolygonItem;
       obj_shadow->setZValue(-1);
@@ -150,11 +163,18 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			pos_info_txt->setZValue(10);
       this->addToGroup(pos_info_pol);
       this->addToGroup(pos_info_txt);
-		}
+      pos_info_pol->setVisible(false);
+      pos_info_txt->setVisible(false);
+    }
 
-		pos_info_pol->setVisible(false);
-		pos_info_txt->setVisible(false);
-	}
+    if(!sql_disabled_box && object->getObjectType()!=OBJ_TEXTBOX)
+    {
+      sql_disabled_txt=new QGraphicsSimpleTextItem;
+      sql_disabled_box=new QGraphicsRectItem;
+      sql_disabled_txt->setZValue(100);
+      sql_disabled_box->setZValue(99);
+    }
+  }
 }
 
 BaseObject *BaseObjectView::getSourceObject(void)
@@ -384,11 +404,11 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 	else if(change==ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
-		pos_info_pol->setVisible(value.toBool());
-		pos_info_txt->setVisible(value.toBool());
-		obj_selection->setVisible(value.toBool());
-		this->configurePositionInfo(this->pos());
+    pos_info_pol->setVisible(value.toBool());
+    pos_info_txt->setVisible(value.toBool());
+    obj_selection->setVisible(value.toBool());
 
+    this->configurePositionInfo(this->pos());
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
 													value.toBool());
 	}
@@ -402,36 +422,6 @@ void BaseObjectView::setSelectionOrder(bool selected)
 		this->sel_order=++BaseObjectView::global_sel_order;
 	else if(!selected)
     this->sel_order=0;
-}
-
-QGraphicsItemGroup *BaseObjectView::createSQLDisabledItem(void)
-{
-  QTextCharFormat char_fmt;
-  QGraphicsRectItem *box=new QGraphicsRectItem;
-  QGraphicsItemGroup *sql_disabled_grp=new QGraphicsItemGroup;
-  QGraphicsSimpleTextItem *text=new QGraphicsSimpleTextItem;
-
-  char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
-  char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.85);
-  text->setFont(char_fmt.font());
-  text->setText(trUtf8("SQL off"));
-  text->setBrush(char_fmt.foreground());
-  text->setZValue(1);
-  text->setPos(HORIZ_SPACING, VERT_SPACING);
-
-  box->setRect(QRectF(QPointF(0,0), text->boundingRect().size() + QSizeF(2 * HORIZ_SPACING, 2 * VERT_SPACING)));
-  box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
-  box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
-  box->setZValue(1);
-
-  sql_disabled_grp->addToGroup(box);
-  sql_disabled_grp->addToGroup(text);
-  sql_disabled_grp->setToolTip(trUtf8("The SQL definition for this object is disabled."));
-  sql_disabled_grp->setZValue(99);
-  sql_disabled_grp->setPos(-1000, -1000);
-  sql_disabled_grp->setVisible(false);
-
-  return(sql_disabled_grp);
 }
 
 QRectF BaseObjectView::boundingRect(void) const
@@ -452,7 +442,7 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 
 void BaseObjectView::configurePositionInfo(QPointF pos)
 {
-	if(this->isSelected())
+  if(this->isSelected())
 	{
 		QPolygonF pol;
     QFont fnt=font_config[ParsersAttributes::POSITION_INFO].font();
@@ -472,7 +462,47 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 		pos_info_pol->setPolygon(pol);
     pos_info_txt->setPos(0, -pos_info_txt->boundingRect().height());
     pos_info_pol->setPos(0, -pos_info_pol->boundingRect().height());
-	}
+  }
+}
+
+void BaseObjectView::configureSQLDisabledInfo(void)
+{
+  if(sql_disabled_box)
+  {
+    float px=0, py=0;
+
+    if(this->getSourceObject()->isSQLDisabled())
+    {
+      if(!sql_disabled_box->parentItem())
+      {
+        this->addToGroup(sql_disabled_box);
+        this->addToGroup(sql_disabled_txt);
+      }
+
+      QTextCharFormat char_fmt;
+      char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
+      char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
+
+      sql_disabled_txt->setFont(char_fmt.font());
+      sql_disabled_txt->setText(trUtf8("SQL off"));
+      sql_disabled_txt->setBrush(char_fmt.foreground());
+
+      sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HORIZ_SPACING, 1.5 * VERT_SPACING)));
+      sql_disabled_box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+      sql_disabled_box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+
+      px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HORIZ_SPACING),
+      py=-(sql_disabled_box->boundingRect().height()/2);
+
+      sql_disabled_txt->setPos(px + (HORIZ_SPACING * 0.75), py + (VERT_SPACING * 0.75));
+      sql_disabled_box->setPos(px, py);
+    }
+    else if(sql_disabled_box->parentItem())
+    {
+      this->removeFromGroup(sql_disabled_box);
+      this->removeFromGroup(sql_disabled_txt);
+    }
+  }
 }
 
 void BaseObjectView::configureObjectShadow(void)
