@@ -44,7 +44,8 @@ void GraphicalView::configureObject(void)
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
+  QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
+  //RoundedRectItem *bodies[]={ body, ext_attribs_body };
   QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
           tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	float width, type_width=0, px=0;
@@ -205,7 +206,8 @@ void GraphicalView::configureObject(void)
 	for(int idx=0; idx < 2; idx++)
 	{
 		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
-		bodies[idx]->setPolygon(pol);
+    bodies[idx]->setPolygon(pol);
+    //bodies[idx]->setRect(pol.boundingRect());
 
     pen=this->getBorderStyle(attribs[idx]);
     pen.setStyle(Qt::DashLine);

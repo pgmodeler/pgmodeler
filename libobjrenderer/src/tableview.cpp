@@ -41,7 +41,8 @@ void TableView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-	QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
+  QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
+  //RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
   Tag *tag=table->getTag();
@@ -173,7 +174,8 @@ void TableView::configureObject(void)
 	{
 		this->resizePolygon(pol, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING));
 
-		bodies[obj_idx]->setPolygon(pol);
+    bodies[obj_idx]->setPolygon(pol);
+    //bodies[obj_idx]->setRect(pol.boundingRect());
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
     if(!tag)

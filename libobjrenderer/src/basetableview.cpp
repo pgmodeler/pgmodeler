@@ -26,10 +26,12 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	if(!base_tab)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	body=new QGraphicsPolygonItem;
+  body=new QGraphicsPolygonItem;
+  //body=new RoundedRectItem;
 	title=new TableTitleView;
 
   ext_attribs_body=new QGraphicsPolygonItem;
+  //ext_attribs_body=new RoundedRectItem;
 	ext_attribs=new QGraphicsItemGroup;
   ext_attribs->setZValue(1);
 
