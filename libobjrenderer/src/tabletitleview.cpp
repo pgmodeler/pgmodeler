@@ -26,7 +26,9 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	obj_name=new QGraphicsSimpleTextItem;
 	obj_name->setZValue(1);
 
-	box=new QGraphicsPolygonItem;
+  //box=new QGraphicsPolygonItem;
+  box=new RoundedRectItem;
+  box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
 	box->setZValue(0);
 
 	this->addToGroup(box);
@@ -126,7 +128,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 void TableTitleView::resizeTitle(float width, float height)
 {
-	QPolygonF pol;
+  /*QPolygonF pol;
 	pol=box->polygon();
 
 	if(pol.isEmpty())
@@ -138,7 +140,8 @@ void TableTitleView::resizeTitle(float width, float height)
 	}
 
 	this->resizePolygon(pol, width, height);
-	box->setPolygon(pol);
+  box->setPolygon(pol); */
+  box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==" ")
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);

@@ -56,7 +56,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		QRectF bounding_rect;
 
 		//! \brief Graphical object that represents the object selection
-		QGraphicsPolygonItem *obj_selection;
+    QGraphicsPolygonItem *obj_selection;
 
 		//! \brief Icon that represent the object protection
 		QGraphicsItemGroup *protected_icon;

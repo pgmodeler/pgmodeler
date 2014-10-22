@@ -29,6 +29,7 @@
 #include "basetable.h"
 #include "tabletitleview.h"
 #include "tableobjectview.h"
+#include "roundedrectitem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -45,8 +46,10 @@ class BaseTableView: public BaseObjectView {
 
     static bool hide_ext_attribs, hide_tags;
 
+    //RoundedRectItem *body, *ext_attribs_body;
+
 		//! \brief Polygonal object that defines the table body
-		QGraphicsPolygonItem *body,
+    QGraphicsPolygonItem *body,
 
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
     *ext_attribs_body,
