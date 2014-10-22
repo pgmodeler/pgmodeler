@@ -17,6 +17,7 @@
 */
 
 #include "textboxview.h"
+#include "roundedrectitem.h"
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {
@@ -24,6 +25,17 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 
 	box=new QGraphicsPolygonItem;
 	text=new QGraphicsSimpleTextItem;
+
+  obj_shadow=new RoundedRectItem;
+  obj_shadow->setZValue(-1);
+  dynamic_cast<RoundedRectItem *>(obj_shadow)->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+  this->addToGroup(obj_shadow);
+
+  obj_selection=new RoundedRectItem;
+  obj_selection->setVisible(false);
+  obj_selection->setZValue(4);
+  dynamic_cast<RoundedRectItem *>(obj_selection)->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+  this->addToGroup(obj_selection);
 
 	this->override_style=override_style;
   this->addToGroup(text);

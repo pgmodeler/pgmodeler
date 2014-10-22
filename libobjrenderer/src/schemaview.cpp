@@ -28,6 +28,11 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
   box=new RoundedRectItem;
 	box->setZValue(0);
 
+  obj_selection=new RoundedRectItem;
+  obj_selection->setVisible(false);
+  obj_selection->setZValue(4);
+  this->addToGroup(obj_selection);
+
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
   this->setZValue(-10);
@@ -196,8 +201,8 @@ void SchemaView::configureObject(void)
       width=sch_name->boundingRect().width();
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HORIZ_SPACING);
-		sp_v=(3 * VERT_SPACING) + txt_h;
+    sp_h=(3 * HORIZ_SPACING);
+    sp_v=(3 * VERT_SPACING) + txt_h;
 
     rect.setTopLeft(QPointF(-sp_h, 0));
     rect.setTopRight(QPointF(width + sp_h, 0));

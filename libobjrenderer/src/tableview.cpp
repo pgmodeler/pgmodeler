@@ -32,7 +32,6 @@ TableView::~TableView(void)
 void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
-	QPolygonF pol;
 	int i, count, obj_idx;
 	float width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
 	QPen pen;
@@ -41,8 +40,7 @@ void TableView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-  QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
-  //RoundedRectItem *bodies[]={ body, ext_attribs_body };
+  RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
   Tag *tag=table->getTag();
@@ -163,19 +161,10 @@ void TableView::configureObject(void)
 	//Resizes the title using the new width
 	title->resizeTitle(width, title->boundingRect().height());
 
-	pol.clear();
-	pol.append(QPointF(0.0f,0.0f));
-	pol.append(QPointF(1.0f,0.0f));
-	pol.append(QPointF(1.0f,1.0f));
-	pol.append(QPointF(0.0f,1.0f));
-
 	//Resizes the columns/extended attributes using the new width
 	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
-		this->resizePolygon(pol, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING));
-
-    bodies[obj_idx]->setPolygon(pol);
-    //bodies[obj_idx]->setRect(pol.boundingRect());
+    bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
     if(!tag)
@@ -225,12 +214,18 @@ void TableView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	if(!ext_attribs->isVisible())
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() - 1);
+    body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+  }
 	else
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() +
 																	ext_attribs_body->boundingRect().height() -2);
+    body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+  }
 
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();

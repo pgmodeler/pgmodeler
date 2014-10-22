@@ -46,15 +46,13 @@ class BaseTableView: public BaseObjectView {
 
     static bool hide_ext_attribs, hide_tags;
 
-    //RoundedRectItem *body, *ext_attribs_body;
+    //! \brief Polygonal object that defines the table body
+    RoundedRectItem *body,
 
-		//! \brief Polygonal object that defines the table body
-    QGraphicsPolygonItem *body,
+    //! \brief Extended table attributes (indexes, rules, triggers) section body
+    *ext_attribs_body;
 
-		//! \brief Extended table attributes (indexes, rules, triggers) section body
-    *ext_attribs_body,
-
-    *tag_body;
+    QGraphicsPolygonItem *tag_body;
 
     QGraphicsSimpleTextItem *tag_name;
 

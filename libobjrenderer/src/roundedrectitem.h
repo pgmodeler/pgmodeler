@@ -22,13 +22,13 @@
 \brief Represents a rounded rectangle item
 */
 
-#ifndef ROUNDED_RECTITEM_H
-#define ROUNDED_RECTITEM_H
+#ifndef ROUNDED_RECT_ITEM_H
+#define ROUNDED_RECT_ITEM_H
 
 #include <QGraphicsRectItem>
 #include <QPainter>
 
-class RoundedRectItem : public QGraphicsRectItem {
+class RoundedRectItem: public QGraphicsRectItem {
   private:
     float radius;
 

@@ -44,8 +44,7 @@ void GraphicalView::configureObject(void)
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-  QGraphicsPolygonItem *bodies[]={ body, ext_attribs_body };
-  //RoundedRectItem *bodies[]={ body, ext_attribs_body };
+  RoundedRectItem *bodies[]={ body, ext_attribs_body };
   QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
           tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	float width, type_width=0, px=0;
@@ -196,18 +195,10 @@ void GraphicalView::configureObject(void)
 	//Resizes the title using the new width
 	title->resizeTitle(width, title->boundingRect().height());
 
-	pol.clear();
-	pol.append(QPointF(0.0f,0.0f));
-	pol.append(QPointF(1.0f,0.0f));
-	pol.append(QPointF(1.0f,1.0f));
-	pol.append(QPointF(0.0f,1.0f));
-
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		this->resizePolygon(pol, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING));
-    bodies[idx]->setPolygon(pol);
-    //bodies[idx]->setRect(pol.boundingRect());
+    bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING)));
 
     pen=this->getBorderStyle(attribs[idx]);
     pen.setStyle(Qt::DashLine);
