@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="320,261" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-beta" last-position="319,260" last-zoom="1">
 <database name="pagila" encoding="UTF8" lc-collate="C" lc-ctype="C">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
@@ -6690,19 +6690,16 @@ END
 </relationship>
 
 <textbox name="pagila_desc" font-size="11">
-	<position x="340" y="327.273"/>
-	<comment><![CDATA[Pagila is a port of the Sakila example database available for MySQL, which was
+	<position x="341" y="284.273"/>
+	<comment><![CDATA[[ pagila sample database ]
+
+Pagila is a port of the Sakila example database available for MySQL, which was
 originally developed by Mike Hillyer of the MySQL AB documentation team.
 It is intended to provide a standard schema that can be used for examples in 
 books, tutorials, articles, samples, etc.
 
 This model was reverse engineered from the original database available
 on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
-</textbox>
-
-<textbox name="pagila_text" bold="true" font-size="11">
-	<position x="340.818" y="283.455"/>
-	<comment><![CDATA[pagila sample database]]></comment>
 </textbox>
 
 <constraint name="film_language_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
