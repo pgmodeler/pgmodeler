@@ -103,7 +103,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 	try
 	{
 		RelationshipView *rel=nullptr;
-		TextboxView *txtbox=nullptr;
+    StyledTextboxView *txtbox=nullptr;
 		TableView *tab=nullptr;
 		GraphicalView *view=nullptr;
 		unsigned count, i;
@@ -146,7 +146,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 			count=model->getObjectCount(OBJ_TEXTBOX);
 			for(i=0; i < count; i++)
 			{
-				txtbox=new TextboxView(model->getTextbox(i));
+        txtbox=new StyledTextboxView(model->getTextbox(i));
 				txtbox->setSelected(i==0);
 				scene->addItem(txtbox);
 			}

@@ -28,7 +28,8 @@ HEADERS +=  src/baseobjectview.h \
 	    src/basetableview.h \
 	    src/objectsscene.h \
 	    src/schemaview.h \
-    src/roundedrectitem.h
+    src/roundedrectitem.h \
+    src/styledtextboxview.h
 
 SOURCES +=  src/baseobjectview.cpp \
 	    src/textboxview.cpp \
@@ -40,4 +41,5 @@ SOURCES +=  src/baseobjectview.cpp \
 	    src/basetableview.cpp \
 	    src/objectsscene.cpp \
 	    src/schemaview.cpp \
-    src/roundedrectitem.cpp
+    src/roundedrectitem.cpp \
+    src/styledtextboxview.cpp

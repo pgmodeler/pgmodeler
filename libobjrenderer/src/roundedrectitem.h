@@ -30,14 +30,23 @@
 
 class RoundedRectItem: public QGraphicsRectItem {
   private:
+    //! brief Rect border radius
     float radius;
 
+    //! brief Polygon used to simulate the rounded rectangle with custom rounded corners
     QPolygonF polygon;
 
+    //! brief Stores which corners of the rectangle must be rounded
     unsigned corners;
 
+    //! brief Creates the polygon that represents the rounded rectangle
     void createPolygon(void);
 
+    /*! brief Calculates the points to simulate the rounded border. It must be informed
+        the starting point and start/end angles. Based upon those parameters a line
+        is configured and rotated from start_angle to end_angle and its final point
+        (the rounded border point) is detected. The method returns all the calculated
+        points which forms the rounded border. */
     QVector<QPointF> calculatePoints(QPointF start_pnt, float start_angle, float end_angle);
 
   public:
@@ -66,6 +75,8 @@ class RoundedRectItem: public QGraphicsRectItem {
 
     void setRoundedCorners(unsigned corners);
     unsigned getRoundedCorners(void);
+
+    //! brief Test if a corners is configured to be rounded
     bool isCornerRounded(unsigned corner);
 
     void setRect(const QRectF &rect);

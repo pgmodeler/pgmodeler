@@ -556,7 +556,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			default:
-				item=new TextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+        item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
 			break;
 		}
 

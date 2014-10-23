@@ -87,6 +87,7 @@ ObjectsScene::~ObjectsScene(void)
 			if(item && !item->parentItem() &&
 				 ((dynamic_cast<RelationshipView *>(item) && obj_types[i]==OBJ_RELATIONSHIP) ||
 					(dynamic_cast<TextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
+          (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
 					(dynamic_cast<GraphicalView *>(item) && obj_types[i]==OBJ_VIEW) ||
 					(dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE) ||
 					(dynamic_cast<SchemaView *>(item) && obj_types[i]==OBJ_SCHEMA)))

@@ -505,6 +505,7 @@ void BaseObjectView::configureObjectSelection(void)
     rect_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 	}
 }
+
 void BaseObjectView::configureProtectedIcon(void)
 {
 	if(protected_icon)
