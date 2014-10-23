@@ -12,7 +12,7 @@ StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : Tex
   this->addToGroup(fold);
   fold->setPolygon(pol);
 
-  txtbox->setModified(true);
+  this->configureObject();
 }
 
 StyledTextboxView::~StyledTextboxView(void)

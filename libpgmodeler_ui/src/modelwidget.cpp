@@ -552,7 +552,11 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			case OBJ_SCHEMA:
-				item=new SchemaView(dynamic_cast<Schema *>(graph_obj)); break;
+        if(!graph_obj->isSystemObject() ||
+           (graph_obj->isSystemObject() && graph_obj->getName()=="public"))
+        {
+          item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
+        }
 			break;
 
 			default:
@@ -560,10 +564,12 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 		}
 
-		scene->addItem(item);
+    if(item)
+    {
+      scene->addItem(item);
+      this->modified=true;
+    }
 	}
-
-	this->modified=true;
 }
 
 void ModelWidget::addNewObject(void)
@@ -1311,9 +1317,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
 			pos=dynamic_cast<BaseGraphicObject *>(object)->getPosition();
 
-		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
+    /* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
 		that can be edited only on its fill color an rectangle attributes */
-		if(object && object->isSystemObject() && object->getName()!="public")
+    if(object && object->isSystemObject() && object->getName()!="public")
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
 											.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1664,7 +1670,7 @@ void ModelWidget::moveToSchema(void)
       SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
       QPointF p;
 
-      if(dst_schema->isVisible())
+      if(dst_schema && dst_schema->isVisible())
       {
         p.setX(dst_schema->pos().x());
         p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);

@@ -91,7 +91,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
     }
     else
     {
-      pages.push_back(scene->itemsBoundingRect());
+      pages.push_back(scene->itemsBoundingRect(true));
       file=filename;
     }
 

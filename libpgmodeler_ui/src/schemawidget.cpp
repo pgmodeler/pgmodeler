@@ -52,7 +52,9 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	edt_perms_tb->setEnabled(enable);
 	name_edt->setEnabled(enable);
 	comment_edt->setEnabled(enable);
-	owner_sel->setEnabled(enable);
+  owner_sel->setEnabled(enable);
+  disable_sql_chk->setEnabled(enable);
+  append_sql_tb->setEnabled(enable);
 
 	if(schema)
 	{
@@ -77,7 +79,7 @@ void SchemaWidget::applyConfiguration(void)
 
 		startConfiguration<Schema>();
 		schema=dynamic_cast<Schema *>(this->object);
-		BaseObjectWidget::applyConfiguration();
+    BaseObjectWidget::applyConfiguration();
 
 		schema->setRectVisible(show_rect_chk->isChecked());
 		schema->setFillColor(color_picker->getColor(0));

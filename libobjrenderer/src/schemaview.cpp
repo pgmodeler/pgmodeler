@@ -145,7 +145,7 @@ unsigned SchemaView::getChildrenCount()
 
 QList<BaseObjectView *> SchemaView::getChildren(void)
 {
-	return(children);
+  return(children);
 }
 
 void SchemaView::configureObject(void)
@@ -238,5 +238,5 @@ void SchemaView::configureObject(void)
     this->configureSQLDisabledInfo();
 	}
 	else
-		this->setVisible(false);
+    this->setVisible(false);
 }

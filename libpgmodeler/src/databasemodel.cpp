@@ -8360,22 +8360,22 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };
 
-	/* The particular case is for public schema that is created only when the flag
+  /* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
 	a system object. This strategy permits the user controls the schema rectangle behavior */
-	if(create_public && getObjectIndex("public", OBJ_SCHEMA) < 0)
+  if(create_public && getObjectIndex("public", OBJ_SCHEMA) < 0)
 	{
 		public_sch=new Schema;
 		public_sch->setName("public");
-		public_sch->setSystemObject(true);
+    public_sch->setSystemObject(true);
 		addSchema(public_sch);
-	}
+  }
 
-	//Create the pg_catalog schema in order to insert default collations in
-	pg_catalog=new Schema;
-	pg_catalog->BaseObject::setName("pg_catalog");
-	pg_catalog->setSystemObject(true);
-	addSchema(pg_catalog);
+  //Create the pg_catalog schema in order to insert default collations in
+  pg_catalog=new Schema;
+  pg_catalog->BaseObject::setName("pg_catalog");
+  pg_catalog->setSystemObject(true);
+  addSchema(pg_catalog);
 
 	//Creating default collations
 	for(unsigned i=0; i < 3; i++)
