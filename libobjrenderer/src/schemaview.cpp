@@ -25,8 +25,13 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	sch_name=new QGraphicsSimpleTextItem;
   sch_name->setZValue(1);
 
-	box=new QGraphicsPolygonItem;
+  box=new RoundedRectItem;
 	box->setZValue(0);
+
+  obj_selection=new RoundedRectItem;
+  obj_selection->setVisible(false);
+  obj_selection->setZValue(4);
+  this->addToGroup(obj_selection);
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
@@ -153,7 +158,6 @@ void SchemaView::configureObject(void)
 		children objects. Otherwise the schema view is hidden */
 	if(schema->isRectVisible() && !children.isEmpty())
 	{
-		QPolygonF pol;
 		QColor color;
 		QRectF rect;
 		QFont font;
@@ -197,13 +201,14 @@ void SchemaView::configureObject(void)
       width=sch_name->boundingRect().width();
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HORIZ_SPACING);
-		sp_v=(3 * VERT_SPACING) + txt_h;
-		pol.append(QPointF(-sp_h, 0));
-    pol.append(QPointF(width + sp_h, 0));
-    pol.append(QPointF(width + sp_h, y2-y1 + sp_v));
-		pol.append(QPointF(-sp_h, y2-y1 + sp_v));
-		box->setPolygon(pol);
+    sp_h=(3 * HORIZ_SPACING);
+    sp_v=(3 * VERT_SPACING) + txt_h;
+
+    rect.setTopLeft(QPointF(-sp_h, 0));
+    rect.setTopRight(QPointF(width + sp_h, 0));
+    rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
+    rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
+    box->setRect(rect);
 
 		//Sets the schema view position
 		this->setFlag(ItemSendsGeometryChanges, false);
@@ -217,11 +222,6 @@ void SchemaView::configureObject(void)
 
     color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
 		box->setPen(QPen(color, 1, Qt::DashLine));
-
-		rect.setTopLeft(pol.at(0));
-		rect.setTopRight(pol.at(1));
-		rect.setBottomRight(pol.at(2));
-		rect.setBottomLeft(pol.at(3));
 
 		this->bounding_rect=rect;
 		this->setVisible(true);

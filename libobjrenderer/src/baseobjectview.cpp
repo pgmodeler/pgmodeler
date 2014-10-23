@@ -18,6 +18,7 @@
 
 #include "baseobjectview.h"
 #include "textboxview.h"
+#include "roundedrectitem.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, QColor *> BaseObjectView::color_config;
@@ -29,7 +30,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	protected_icon=nullptr;
 	obj_shadow=nullptr;
 	obj_selection=nullptr;
-	pos_info_pol=nullptr;
+  pos_info_rect=nullptr;
 	pos_info_txt=nullptr;
   sql_disabled_txt=nullptr;
   sql_disabled_box=nullptr;
@@ -68,19 +69,19 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
 	if(!graph_obj)
 	{
-		if(obj_selection)
+    if(obj_selection)
 		{
 			this->removeFromGroup(obj_selection);
 			delete(obj_selection);
 			obj_selection=nullptr;
-		}
+    }
 
-		if(obj_shadow)
+    if(obj_shadow)
 		{
 			this->removeFromGroup(obj_shadow);
 			delete(obj_shadow);
 			obj_shadow=nullptr;
-		}
+    }
 
 		if(protected_icon)
 		{
@@ -95,9 +96,9 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			delete(pos_info_txt);
 			pos_info_txt=nullptr;
 
-			this->removeFromGroup(pos_info_pol);
-			delete(pos_info_pol);
-			pos_info_pol=nullptr;
+      this->removeFromGroup(pos_info_rect);
+      delete(pos_info_rect);
+      pos_info_rect=nullptr;
 		}
 
     if(sql_disabled_box)
@@ -139,32 +140,15 @@ void BaseObjectView::setSourceObject(BaseObject *object)
       this->addToGroup(protected_icon);
 		}
 
-		if(!obj_selection)
-		{
-			obj_selection=new QGraphicsPolygonItem;
-      this->addToGroup(obj_selection);
-		}
-
-		obj_selection->setVisible(false);
-		obj_selection->setZValue(4);
-
-    if(!obj_shadow && object->getObjectType()!=OBJ_SCHEMA)
-		{
-      obj_shadow=new QGraphicsPolygonItem;
-      obj_shadow->setZValue(-1);
-      this->addToGroup(obj_shadow);
-		}
-
 		if(!pos_info_txt)
 		{
-			pos_info_pol=new QGraphicsPolygonItem;
+      pos_info_rect=new QGraphicsRectItem;
 			pos_info_txt=new QGraphicsSimpleTextItem;
-			pos_info_pol->setZValue(9);
-			pos_info_txt->setZValue(10);
-      this->addToGroup(pos_info_pol);
+      pos_info_rect->setZValue(9);
+			pos_info_txt->setZValue(10);      
+
+      this->addToGroup(pos_info_rect);
       this->addToGroup(pos_info_txt);
-      pos_info_pol->setVisible(false);
-      pos_info_txt->setVisible(false);
     }
 
     if(!sql_disabled_box && object->getObjectType()!=OBJ_TEXTBOX)
@@ -173,6 +157,9 @@ void BaseObjectView::setSourceObject(BaseObject *object)
       sql_disabled_box=new QGraphicsRectItem;
       sql_disabled_txt->setZValue(100);
       sql_disabled_box->setZValue(99);
+
+      this->addToGroup(sql_disabled_box);
+      this->addToGroup(sql_disabled_txt);
     }
   }
 }
@@ -404,7 +391,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 	else if(change==ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
-    pos_info_pol->setVisible(value.toBool());
+    pos_info_rect->setVisible(value.toBool());
     pos_info_txt->setVisible(value.toBool());
     obj_selection->setVisible(value.toBool());
 
@@ -443,25 +430,20 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 void BaseObjectView::configurePositionInfo(QPointF pos)
 {
   if(this->isSelected())
-	{
-		QPolygonF pol;
+	{		
     QFont fnt=font_config[ParsersAttributes::POSITION_INFO].font();
 
-		pos_info_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
-		pos_info_pol->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+    pos_info_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+    pos_info_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
 
     fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
     pos_info_txt->setFont(fnt);
 		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
 
     pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(pos.x()).arg(pos.y()));
-		pol.append(pos_info_txt->boundingRect().topLeft());
-		pol.append(pos_info_txt->boundingRect().topRight());
-		pol.append(pos_info_txt->boundingRect().bottomRight());
-		pol.append(pos_info_txt->boundingRect().bottomLeft());
-		pos_info_pol->setPolygon(pol);
-    pos_info_txt->setPos(0, -pos_info_txt->boundingRect().height());
-    pos_info_pol->setPos(0, -pos_info_pol->boundingRect().height());
+    pos_info_rect->setRect(pos_info_txt->boundingRect());
+    pos_info_txt->setPos(-0.5, -pos_info_txt->boundingRect().height()/2);
+    pos_info_rect->setPos(-0.5, -pos_info_rect->boundingRect().height()/2);
   }
 }
 
@@ -471,14 +453,11 @@ void BaseObjectView::configureSQLDisabledInfo(void)
   {
     float px=0, py=0;
 
-    if(this->getSourceObject()->isSQLDisabled())
-    {
-      if(!sql_disabled_box->parentItem())
-      {
-        this->addToGroup(sql_disabled_box);
-        this->addToGroup(sql_disabled_txt);
-      }
+    sql_disabled_txt->setVisible(this->getSourceObject()->isSQLDisabled());
+    sql_disabled_box->setVisible(this->getSourceObject()->isSQLDisabled());
 
+    if(this->getSourceObject()->isSQLDisabled())
+    {    
       QTextCharFormat char_fmt;
       char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
       char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
@@ -497,53 +476,36 @@ void BaseObjectView::configureSQLDisabledInfo(void)
       sql_disabled_txt->setPos(px + (HORIZ_SPACING * 0.75), py + (VERT_SPACING * 0.75));
       sql_disabled_box->setPos(px, py);
     }
-    else if(sql_disabled_box->parentItem())
-    {
-      this->removeFromGroup(sql_disabled_box);
-      this->removeFromGroup(sql_disabled_txt);
-    }
   }
 }
 
 void BaseObjectView::configureObjectShadow(void)
 {
-	if(obj_shadow)
-	{
-		QRectF ret;
-		QPolygonF pol;
+  RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
 
-		ret=this->boundingRect();
-		pol.append(QPointF(ret.right()-1, ret.top()+7.5));
-		pol.append(QPointF(ret.right()+3.5f, ret.top()+7.5f));
-		pol.append(QPointF(ret.right()+3.5f, ret.bottom()+3.5f));
-		pol.append(QPointF(ret.left()+7.5f, ret.bottom()+3.5f));
-		pol.append(QPointF(ret.left()+7.5f, ret.bottom()-1));
-		pol.append(QPointF(ret.right()-1, ret.bottom()-1));
-		obj_shadow->setPolygon(pol);
-    obj_shadow->setPos(0,0);
-		obj_shadow->setPen(Qt::NoPen);
-    obj_shadow->setBrush(QColor(50,50,50,60));
+  if(rect_item)
+	{
+    rect_item->setPen(Qt::NoPen);
+    rect_item->setBrush(QColor(50,50,50,60));
+    rect_item->setRect(this->boundingRect());
+    rect_item->setPos(3.5,3.5);
 	}
 }
 
 void BaseObjectView::configureObjectSelection(void)
 {
-	if(obj_selection)
-	{
-		QRectF ret;
-		QPolygonF pol;
+  RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
 
-		ret=this->boundingRect();
-		pol.append(ret.topLeft());
-		pol.append(ret.topRight());
-		pol.append(ret.bottomRight());
-		pol.append(ret.bottomLeft());
-		obj_selection->setPolygon(pol);
-		obj_selection->setPos(0,0);
-		obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-		obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+  if(rect_item)
+	{
+    rect_item->setRect(this->boundingRect());
+    rect_item->setPos(0,0);
+    rect_item->setBorderRadius(5);
+    rect_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+    rect_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 	}
 }
+
 void BaseObjectView::configureProtectedIcon(void)
 {
 	if(protected_icon)

@@ -31,6 +31,7 @@
 #include "graphicalview.h"
 #include "tableview.h"
 #include "schemaview.h"
+#include "styledtextboxview.h"
 
 class ObjectsScene: public QGraphicsScene {
 	private:

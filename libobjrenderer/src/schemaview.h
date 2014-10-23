@@ -29,6 +29,7 @@
 #include "databasemodel.h"
 #include "baseobjectview.h"
 #include "textboxview.h"
+#include "roundedrectitem.h"
 
 class SchemaView: public BaseObjectView
 {
@@ -37,7 +38,7 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsSimpleTextItem *sch_name;
 
-		QGraphicsPolygonItem *box;
+    RoundedRectItem *box;
 
 		QPointF last_pos;
 

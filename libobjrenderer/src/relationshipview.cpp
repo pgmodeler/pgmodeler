@@ -47,6 +47,15 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	descriptor->setZValue(0);
 	this->addToGroup(descriptor);
 
+  obj_shadow=new QGraphicsPolygonItem;
+  obj_shadow->setZValue(-1);
+  this->addToGroup(obj_shadow);
+
+  obj_selection=new QGraphicsPolygonItem;
+  obj_selection->setZValue(4);
+  obj_selection->setVisible(false);
+  this->addToGroup(obj_selection);
+
 	tables[0]=tables[1]=nullptr;
 
 	//Relationship has the minor Z, being on the bottom of scene object's stack
@@ -163,7 +172,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
-		pos_info_pol->setVisible(value.toBool());
+    pos_info_rect->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool());
 		this->configurePositionInfo();
@@ -426,8 +435,8 @@ void RelationshipView::configurePositionInfo(void)
 		BaseObjectView::configurePositionInfo(descriptor->pos());
 		pos_info_txt->setPos(descriptor->pos().x(),
 												 descriptor->pos().y() - pos_info_txt->boundingRect().height());
-		pos_info_pol->setPos(descriptor->pos().x(),
-												 descriptor->pos().y() - pos_info_pol->boundingRect().height());
+    pos_info_rect->setPos(descriptor->pos().x(),
+                         descriptor->pos().y() - pos_info_rect->boundingRect().height());
 	}
 }
 
@@ -812,6 +821,7 @@ void RelationshipView::configureDescriptor(void)
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
 	QColor line_color=base_rel->getCustomColor();
+  QGraphicsPolygonItem *pol_item=nullptr;
 
 	//Configuring the relationship descriptor color
 	if(base_rel->getCustomColor()!=Qt::transparent)
@@ -900,17 +910,19 @@ void RelationshipView::configureDescriptor(void)
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());
 	descriptor->setPos(x, y);
 
-	obj_selection->setPolygon(pol);
-	obj_selection->setTransformOriginPoint(obj_selection->boundingRect().center());
-	obj_selection->setPos(x,y);
-	obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+  pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_selection);
+  pol_item->setPolygon(pol);
+  pol_item->setTransformOriginPoint(obj_selection->boundingRect().center());
+  pol_item->setPos(x,y);
+  pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+  pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 
-	obj_shadow->setPolygon(pol);
-	obj_shadow->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	obj_shadow->setPos(x + 2.5f, y + 3.5f);
-	obj_shadow->setPen(Qt::NoPen);
-	obj_shadow->setBrush(QColor(50,50,50,60));
+  pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
+  pol_item->setPolygon(pol);
+  pol_item->setTransformOriginPoint(obj_shadow->boundingRect().center());
+  pol_item->setPos(x + 2.5f, y + 3.5f);
+  pol_item->setPen(Qt::NoPen);
+  pol_item->setBrush(QColor(50,50,50,60));
 
 	this->configureAttributes();
 	this->configurePositionInfo();
