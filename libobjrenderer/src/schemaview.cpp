@@ -214,6 +214,7 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, false);
 		this->moveBy(-this->pos().x(),-this->pos().y());
 		this->setPos(QPointF(x1, y1 - txt_h));
+    schema->setPosition(this->mapToScene(rect.topLeft()));
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
