@@ -751,12 +751,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     }
 
     if(def_type==SchemaParser::SQL_DEFINITION)
-    {
-      //schparser.setIgnoreUnkownAttributes(true);
-      //schparser.setIgnoreEmptyAttributes(true);
       attributes[ParsersAttributes::DROP]=getDropDefinition();
-          //schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, def_type);
-    }
 
 		if(reduced_form)
 			attributes[ParsersAttributes::REDUCED_FORM]="1";
@@ -815,7 +810,50 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
 {
-  return("");
+  if(!object)
+   return("");
+  else
+  {
+    attribs_map attribs;
+    QString alter;
+    QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+                          GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+                          "%1" + GlobalAttributes::SCHEMA_EXT;
+
+
+    if(object->obj_type!=this->obj_type)
+      throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    try
+    {
+      if(acceptsOwner() && object->getOwner())
+      {
+        attribs[ParsersAttributes::OWNER]=object->getOwner()->getName(true);
+        alter=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::OWNER), attribs);
+        attribs.clear();
+      }
+
+      if(acceptsSchema() && object->getSchema())
+      {
+        attribs[ParsersAttributes::SCHEMA]=object->getSchema()->getName(true);
+        alter+=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::SCHEMA), attribs);
+        attribs.clear();
+      }
+
+      if(acceptsTablespace() && object->acceptsTablespace())
+      {
+        attribs[ParsersAttributes::TABLESPACE]=object->getTablespace()->getName(true);
+        alter=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::TABLESPACE), attribs);
+        attribs.clear();
+      }
+    }
+    catch(Exception &e)
+    {
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    }
+
+    return(alter);
+  }
 }
 
 void BaseObject::setAttribute(const QString &attrib, const QString &value)
