@@ -130,10 +130,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	map<unsigned, BaseObject *> obj_order;
 	BaseObject *object=nullptr, *aux_object=nullptr;
 	ObjectType obj_type;
-	QString obj_name;
+  QString obj_name;
 	unsigned idx=0;
 	DatabaseModel *aux_model=nullptr;
-	bool xml_differs=false;
+  bool objs_differs=false;
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
@@ -196,19 +196,27 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
 				{
 					if(aux_object)
-						xml_differs=object->isCodeDiffersFrom(aux_object,
-																									{ ParsersAttributes::PROTECTED,
-																										ParsersAttributes::SQL_DISABLED },
-																									{ ParsersAttributes::POSITION,
-																										ParsersAttributes::APPENDED_SQL,
-																										ParsersAttributes::PREPENDED_SQL,
-																										ParsersAttributes::COLUMN,
-																										ParsersAttributes::CONSTRAINT });
-					if(xml_differs)
+          {
+            objs_differs=!aux_object->getAlterDefinition(object).isEmpty();
+
+            /*if(!objs_differs)
+              objs_differs=object->isCodeDiffersFrom(aux_object,
+                                                    { ParsersAttributes::PROTECTED,
+                                                      ParsersAttributes::SQL_DISABLED,
+                                                      ParsersAttributes::RECT_VISIBLE,
+                                                      ParsersAttributes::FILL_COLOR },
+                                                    { ParsersAttributes::POSITION,
+                                                      ParsersAttributes::APPENDED_SQL,
+                                                      ParsersAttributes::PREPENDED_SQL,
+                                                      ParsersAttributes::COLUMN,
+                                                      ParsersAttributes::CONSTRAINT }); */
+          }
+
+          if(objs_differs)
 					{
             generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
-						xml_differs=false;
-					}
+            objs_differs=false;
+          }
 
           if(object->getObjectType()==OBJ_TABLE)
           {
@@ -273,10 +281,10 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
     generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
 }
 
-void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *new_object)
+void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
 	ObjectsDiffInfo diff_info;
-  diff_info=ObjectsDiffInfo(diff_type, src_object, new_object);
+  diff_info=ObjectsDiffInfo(diff_type, object, old_object);
 	diff_infos.push_back(diff_info);
 	diffs_counter[diff_type]++;
   emit s_objectsDiffInfoGenerated(diff_info);
@@ -284,9 +292,33 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *src_obje
 
 void ModelsDiffHelper::processDiffInfos(void)
 {
+  QTextStream out(stdout);
+  BaseObject *object=nullptr;
+  TableObject *tab_obj=nullptr;
+  bool gen_alter=false;
+
   for(ObjectsDiffInfo diff : diff_infos)
   {
+    object=diff.getObject();
+    tab_obj=dynamic_cast<TableObject *>(object);
+
     if(diff.getDiffType()==ObjectsDiffInfo::ALTER_OBJECT)
-      diff.getObject()->getAlterDefinition(diff.getNewObject());
+      out << diff.getOldObject()->getAlterDefinition(object);
+    else if(diff.getDiffType()==ObjectsDiffInfo::DROP_OBJECT)
+      out << diff.getObject()->getDropDefinition();
+    else
+    {
+      if(tab_obj && (tab_obj->getObjectType()==OBJ_COLUMN || tab_obj->getObjectType()==OBJ_CONSTRAINT))
+      {
+        Table *tab=dynamic_cast<Table *>(tab_obj->getParentTable());
+        gen_alter=tab->isGenerateAlterCmds();
+
+        tab->setGenerateAlterCmds(true);
+        out << tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+        tab->setGenerateAlterCmds(gen_alter);
+      }
+      else
+        out << object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+    }
   }
 }

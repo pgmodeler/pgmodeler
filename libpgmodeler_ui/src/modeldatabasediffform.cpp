@@ -53,6 +53,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
   ignore_errors_ht->setText(ignore_errors_chk->statusTip());
 
+  force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
+  force_recreation_ht->setText(force_recreation_chk->statusTip());
+
 	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
 	connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 	connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));

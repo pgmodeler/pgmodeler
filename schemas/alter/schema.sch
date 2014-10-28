@@ -13,4 +13,6 @@
 %else
  @{name}
 %end
-[ SET SCHEMA ] @{schema}; $br 
+[ SET SCHEMA ] @{schema};
+
+$br [-- ddl-end --] $br

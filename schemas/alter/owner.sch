@@ -13,4 +13,6 @@
 %else
  @{name}
 %end
-[ OWNER TO ] @{owner}; $br
+[ OWNER TO ] @{owner};
+
+$br [-- ddl-end --] $br

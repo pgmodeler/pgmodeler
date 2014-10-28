@@ -4,7 +4,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [-- object: cast] ( @{source-type} [,] @{destiny-type} )  [ | type: ] @{sql-object} [ --] $br
-@{drop}
+[-- ] @{drop}
 
 %if @{prepended-sql} %then
  @{prepended-sql}

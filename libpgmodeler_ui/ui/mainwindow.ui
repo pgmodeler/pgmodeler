@@ -722,12 +722,12 @@
    <addaction name="action_welcome"/>
    <addaction name="action_design"/>
    <addaction name="action_manage"/>
-   <addaction name="action_wiki"/>
-   <addaction name="action_configuration"/>
-   <addaction name="action_plugins"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
+   <addaction name="action_plugins"/>
+   <addaction name="action_configuration"/>
+   <addaction name="action_wiki"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">

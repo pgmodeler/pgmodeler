@@ -33,7 +33,7 @@ ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObj
 {
 	this->diff_type=diff_type;
 	this->object=object;
-  this->new_object=new_object;
+  this->old_object=new_object;
 }
 
 unsigned ObjectsDiffInfo::getDiffType(void)
@@ -78,7 +78,7 @@ BaseObject *ObjectsDiffInfo::getObject(void)
   return(object);
 }
 
-BaseObject *ObjectsDiffInfo::getNewObject(void)
+BaseObject *ObjectsDiffInfo::getOldObject(void)
 {
-  return(new_object);
+  return(old_object);
 }

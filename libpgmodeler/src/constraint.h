@@ -81,6 +81,8 @@ class Constraint: public TableObject{
 		//! \brief Formats the exclude elements string used by the SchemaParser
 		void setExcludeElementsAttribute(unsigned def_type);
 
+    void setDeclInTableAttribute(void);
+
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
@@ -214,6 +216,8 @@ class Constraint: public TableObject{
 		/*! \brief Returns the SQL / XML definition for the constraint. The boolean parameter indicates
 		 whether the columns added by relationship must appear on the code definition */
 		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
+
+    virtual QString getDropDefinition(void) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);

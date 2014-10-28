@@ -637,6 +637,14 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 	return(getCodeDefinition(def_type, false));
 }
 
+void Constraint::setDeclInTableAttribute()
+{
+  if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
+    attributes[ParsersAttributes::DECL_IN_TABLE]="";
+  else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
+    attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+}
+
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
@@ -701,15 +709,18 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
-		attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
-		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+  setDeclInTableAttribute();
 
 	if(fill_factor!=0 && (constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique))
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 	else
 		attributes[ParsersAttributes::FACTOR]="";
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Constraint::getDropDefinition(void)
+{
+  setDeclInTableAttribute();
+  return(TableObject::getDropDefinition());
 }

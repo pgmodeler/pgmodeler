@@ -994,9 +994,9 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 			{
 				do
 				{
-					regexp=QRegExp(attr_regex.arg(attr));
+          regexp=QRegExp(attr_regex.arg(attr));
 					tag_end=xml.indexOf(QRegExp("(\\\\)?(>)"));
-					start=regexp.indexIn(xml, start);
+          start=regexp.indexIn(xml);//, start);
 					end=xml.indexOf("\"", start + regexp.matchedLength());
 
 					if(end > tag_end)
@@ -1093,24 +1093,20 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
 
     try
     {
-      schparser.setIgnoreUnkownAttributes(true);
+      QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
+      bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
+      BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
+                 *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
-      if(acceptsOwner() && object->getOwner() && this->getOwner()!=object->getOwner())
+      for(unsigned i=0; i < 3; i++)
       {
-        attributes[ParsersAttributes::OWNER]=object->getOwner()->getName(true);
-        alter=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::OWNER), attributes);
-      }
-
-      if(acceptsSchema() && object->getSchema() && this->getSchema()!=object->getSchema())
-      {
-        attributes[ParsersAttributes::SCHEMA]=object->getSchema()->getName(true);
-        alter+=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::SCHEMA), attributes);
-      }
-
-      if(acceptsTablespace() && object->getTablespace() && this->getTablespace()!=object->getTablespace())
-      {
-        attributes[ParsersAttributes::TABLESPACE]=object->getTablespace()->getName(true);
-        alter=schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::TABLESPACE), attributes);
+        if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
+           dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
+        {
+          attributes[attribs[i]]=aux_dep_objs[i]->getName(true);
+          schparser.setIgnoreUnkownAttributes(true);
+          alter+=schparser.getCodeDefinition(alter_sch_dir.arg(attribs[i]), attributes);
+        }
       }
     }
     catch(Exception &e)

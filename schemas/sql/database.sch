@@ -7,7 +7,7 @@
 
 %if @{comment} %then [-- ] @{comment} [ --] $br %end
 
-@{drop}
+[-- ] @{drop}
 
  %if @{prepended-sql} %then
    @{prepended-sql}

@@ -1555,8 +1555,6 @@ QString Table::getAlterDefinition(BaseObject *object)
     Table *tab=dynamic_cast<Table *>(object);
     QString tab_name;
 
-    attributes[ParsersAttributes::NAME]=this->getName(true);
-
     //Generating ALTER for WITH/WITHOUT OIDS attribute
     if(this->with_oid!=tab->with_oid)
     {

@@ -3,10 +3,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{with-oids} %or @{without-oids} %then
+%if @{oids} %or @{without-oids} %then
   [ALTER TABLE ] @{name} [ SET ]
   
-  %if @{with-oids} %then
+  %if @{oids} %then
     WITH
   %else
     WITHOUT
