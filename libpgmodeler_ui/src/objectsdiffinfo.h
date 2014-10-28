@@ -34,7 +34,7 @@ class ObjectsDiffInfo {
 		//! \brief Difference type (see constants below)
 		unsigned diff_type;
 
-		BaseObject *object;
+    BaseObject *object, *new_object;
 
 	public:
 		static const unsigned CREATE_OBJECT,
@@ -43,7 +43,7 @@ class ObjectsDiffInfo {
 													NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
-		ObjectsDiffInfo(unsigned diff_type, BaseObject *object);
+    ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *new_object);
 
 		//! \brief Returns the validation type
 		unsigned getDiffType(void);

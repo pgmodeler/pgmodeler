@@ -29,10 +29,11 @@ ObjectsDiffInfo::ObjectsDiffInfo(void)
 	diff_type=NO_DIFFERENCE;
 }
 
-ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object)
+ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *new_object)
 {
 	this->diff_type=diff_type;
 	this->object=object;
+  this->new_object=new_object;
 }
 
 unsigned ObjectsDiffInfo::getDiffType(void)
@@ -74,5 +75,10 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 
 BaseObject *ObjectsDiffInfo::getObject(void)
 {
-	return(object);
+  return(object);
+}
+
+BaseObject *ObjectsDiffInfo::getNewObject(void)
+{
+  return(new_object);
 }

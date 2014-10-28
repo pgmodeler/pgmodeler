@@ -205,14 +205,13 @@ class BaseObject {
 		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
-    //!brief Returns the DROP statement for the object
-    QString getDropDefinition(void);
+    /*! brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
+        ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
+    void setBasicAttributes(bool format_name);
 
-    /*! brief Returns the ALTER statement for the object. One of the three types (OBJ_ROLE, OBJ_SCHEMA or OBJ_TABLESPACE)
-    must be used to return the alter command for the specified attribute (owner, schema or tablespace) */
-    QString getAlterDefinition(ObjectType obj_type);
+    QString getAlterDefinition(ObjectType obj_type, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
-	public:
+  public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
 
@@ -349,9 +348,11 @@ class BaseObject {
 		 of the object. See schema file for: functions, schemas, domains, types. */
     virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-    /*! \brief Forcing the class to be virtual. This means that derivated classes may
-     override this method in order to be possible its instatiation. */
+    //! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
     virtual QString getAlterDefinition(BaseObject *object);
+
+    //!brief Returns the DROP statement for the object
+    virtual QString getDropDefinition(void);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

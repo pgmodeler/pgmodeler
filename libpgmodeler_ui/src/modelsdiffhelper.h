@@ -44,7 +44,8 @@ class ModelsDiffHelper: public QObject {
 		void diffTables(Table *src_table, Table *imp_table, unsigned diff_type);
 		void diffModels(unsigned diff_type);
 		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
-		void generateDiffInfo(unsigned diff_type, BaseObject *src_object);
+    void generateDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *new_object=nullptr);
+    void processDiffInfos(void);
 
 	public:
 		ModelsDiffHelper(void);

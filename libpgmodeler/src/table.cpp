@@ -1545,5 +1545,51 @@ void Table::setCodeInvalidated(bool value)
 	}
 
 	BaseObject::setCodeInvalidated(value);
+}
 
+QString Table::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    QString alter_def=BaseObject::getAlterDefinition(object);
+    Table *tab=dynamic_cast<Table *>(object);
+    QString tab_name;
+
+    attributes[ParsersAttributes::NAME]=this->getName(true);
+
+    //Generating ALTER for WITH/WITHOUT OIDS attribute
+    if(this->with_oid!=tab->with_oid)
+    {
+      attributes[ParsersAttributes::OIDS]=(tab->with_oid ? "1" : "");
+      attributes[ParsersAttributes::WITHOUT_OIDS]=(!tab->with_oid ? "1" : "");
+      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+    }
+
+    attributes.erase(ParsersAttributes::OIDS);
+    attributes.erase(ParsersAttributes::WITHOUT_OIDS);
+
+    //Generating ALTER for INHERIT/NO INHERIT attribute
+    for(auto ancestor : this->ancestor_tables)
+    {
+      attributes[ParsersAttributes::INHERIT]="";
+      attributes[ParsersAttributes::NO_INHERIT]="";
+
+      tab_name=ancestor->getName(true);
+      attributes[ParsersAttributes::ANCESTOR_TABLE]=tab_name;
+
+      if(!tab->getAncestorTable(tab_name))
+        attributes[ParsersAttributes::NO_INHERIT]="1";
+      else
+        attributes[ParsersAttributes::INHERIT]="1";
+
+      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+    }
+
+    clearAttributes();
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

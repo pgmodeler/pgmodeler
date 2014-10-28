@@ -64,7 +64,11 @@ void ModelsDiffHelper::diffModels(void)
 		if(diff_canceled)
 			emit s_diffCanceled();
 		else
+    {
 			emit s_diffFinished();
+
+      processDiffInfos();
+    }
 	}
 	catch(Exception &e)
 	{
@@ -112,7 +116,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_obj)
 				{
 					if(tab_obj->isCodeDiffersFrom(aux_obj))
-						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj);
+            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
 				}
 				else if(!aux_obj)
 					generateDiffInfo(diff_type, tab_obj);
@@ -202,7 +206,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 																										ParsersAttributes::CONSTRAINT });
 					if(xml_differs)
 					{
-						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object);
+            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 						xml_differs=false;
 					}
 
@@ -266,14 +270,23 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	if(!aux_tab_obj)
 		generateDiffInfo(diff_type, tab_obj);
 	else if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && tab_obj->isCodeDiffersFrom(aux_tab_obj))
-		generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj);
+    generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
 }
 
-void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *src_object)
+void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *src_object, BaseObject *new_object)
 {
 	ObjectsDiffInfo diff_info;
-	diff_info=ObjectsDiffInfo(diff_type, src_object);
+  diff_info=ObjectsDiffInfo(diff_type, src_object, new_object);
 	diff_infos.push_back(diff_info);
 	diffs_counter[diff_type]++;
-	emit s_objectsDiffInfoGenerated(diff_info);
+  emit s_objectsDiffInfoGenerated(diff_info);
+}
+
+void ModelsDiffHelper::processDiffInfos(void)
+{
+  for(ObjectsDiffInfo diff : diff_infos)
+  {
+    if(diff.getDiffType()==ObjectsDiffInfo::ALTER_OBJECT)
+      diff.getObject()->getAlterDefinition(diff.getNewObject());
+  }
 }
