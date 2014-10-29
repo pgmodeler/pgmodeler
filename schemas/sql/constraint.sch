@@ -8,7 +8,7 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
   %if @{table} %then
-   @{drop}
+   [-- ] @{drop}
    [ALTER TABLE ] @{table} [ ADD ]
   %end
 %end

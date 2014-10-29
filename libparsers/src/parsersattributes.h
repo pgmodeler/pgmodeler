@@ -105,7 +105,7 @@ namespace ParsersAttributes {
 	FUNCTION="function",
 	TRIGGER_FUNC="trigger-func",
 	TRIGGERS="triggers",
-	HASHES="hashes",
+  HASHES="hashes",
 	INHERIT="inherit",
 	INCREMENT="increment",
 	INDEXES="indexes",
@@ -463,7 +463,9 @@ namespace ParsersAttributes {
   DEFAULT_SCHEMA="default-schema",
   DEFAULT_OWNER="default-owner",
   DEFAULT_TABLESPACE="default-tablespace",
-  DEFAULT_COLLATION="default-collation";
+  DEFAULT_COLLATION="default-collation",
+  WITHOUT_OIDS="without-oids";
+
 }
 
 #endif

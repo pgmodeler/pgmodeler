@@ -55,7 +55,7 @@ void Domain::setSchema(BaseObject *schema)
 void Domain::setConstraintName(const QString &constr_name)
 {
 	//Raises an error if the constraint name is invalid
-	if(!BaseObject::isValidName(constr_name))
+  if(!constr_name.isEmpty() && !BaseObject::isValidName(constr_name))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(constraint_name != constr_name);

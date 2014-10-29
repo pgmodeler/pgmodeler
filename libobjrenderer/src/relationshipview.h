@@ -34,7 +34,7 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-    static constexpr float GRAPHIC_PNT_RADIUS=2.5f;
+    static constexpr float GRAPHIC_PNT_RADIUS=6.0f;
 
 		//! brief Length of the lines linked to fk/pk columns
 		static constexpr float CONN_LINE_LENGTH=20.0f;

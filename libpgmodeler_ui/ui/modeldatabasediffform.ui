@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>360</height>
+    <width>627</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -391,6 +391,51 @@
               </layout>
              </item>
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="QCheckBox" name="ignore_errors_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
+                 </property>
+                 <property name="text">
+                  <string>Ignore import errors</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="ignore_errors_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_12">
                <item>
                 <widget class="QCheckBox" name="keep_cluster_objs_chk">
@@ -433,25 +478,28 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QCheckBox" name="trunc_tables_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <widget class="QCheckBox" name="drop_cascade_chk">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Clears the data of all modified tables before apply a change. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</string>
+                  <string>Objects that depends on an object marked to be dropped will be removed as well. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can drop more objects than listed in the output.</string>
                  </property>
                  <property name="text">
-                  <string>Trucate tables before apply diff</string>
+                  <string>Drop objects in cascade mode</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="trunc_tables_hint" native="true">
+                <widget class="QWidget" name="drop_cascade_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -475,28 +523,70 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
                <item>
-                <widget class="QCheckBox" name="ignore_errors_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <widget class="QCheckBox" name="force_recreation_chk">
+                 <property name="enabled">
+                  <bool>true</bool>
                  </property>
                  <property name="toolTip">
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
+                  <string>Instead of use ALTER commands to modify objects use a DROP and CREATE commands to do a fully modification.</string>
                  </property>
                  <property name="text">
-                  <string>Ignore import errors</string>
+                  <string>Force recreation of objects</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="ignore_errors_hint" native="true">
+                <widget class="QWidget" name="force_recreation_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QCheckBox" name="trunc_tables_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="statusTip">
+                  <string>Clears the data of all modified tables before apply a change. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</string>
+                 </property>
+                 <property name="text">
+                  <string>Trucate tables before apply diff</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="trunc_tables_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1001,6 +1091,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -1021,6 +1117,12 @@
             </property>
             <attribute name="headerVisible">
              <bool>false</bool>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>100</number>
+            </attribute>
+            <attribute name="headerStretchLastSection">
+             <bool>true</bool>
             </attribute>
             <column>
              <property name="text">

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-beta" last-position="0,0" last-zoom="1">
 <database name="usda" encoding="UTF8" lc-collate="C" lc-ctype="C">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
@@ -352,8 +352,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </index>
 
 <textbox name="usda_desc" font-size="11">
-	<position x="17" y="48.273"/>
-	<comment><![CDATA[The USDA Food Database is published by the US Department of Agriculture.
+	<position x="21" y="15.273"/>
+	<comment><![CDATA[[ usda sample database ]
+
+The USDA Food Database is published by the US Department of Agriculture.
 
 Citation:
 
@@ -364,11 +366,6 @@ USDA food composition data is in the public domain and there is no copyright. Th
 them as the source of the data and when possible they would like to see the product which uses the data or be notified of its use.
 
 This model was reverse engineered from the original database available on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
-</textbox>
-
-<textbox name="usda_text" bold="true" font-size="11">
-	<position x="16.818" y="11.455"/>
-	<comment><![CDATA[usda sample database]]></comment>
 </textbox>
 
 <constraint name="datsrcln_datasrc_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"

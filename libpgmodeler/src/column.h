@@ -83,7 +83,7 @@ class Column: public TableObject{
 		QString getDefaultValue(void);
 
 		//! \brief Returns the SQL/XML code definition for the column
-		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type); 
 
 		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */

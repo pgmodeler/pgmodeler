@@ -31,6 +31,7 @@
 #include "graphicalview.h"
 #include "tableview.h"
 #include "schemaview.h"
+#include "styledtextboxview.h"
 
 class ObjectsScene: public QGraphicsScene {
 	private:
@@ -136,6 +137,12 @@ class ObjectsScene: public QGraphicsScene {
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
 
+    /*! brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
+        If the parameter seek_only_db_objs is true the returned rect will have the origin point calculated based upon the
+        visible objects that inherits BaseObjectView and are database model objects (tables, views, textboxes, schemas and relationships).
+        Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
+    QRectF itemsBoundingRect(bool seek_only_db_objs=false);
+
     //! \brief Returns a vector containing all the page rects.
     vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
@@ -145,6 +152,7 @@ class ObjectsScene: public QGraphicsScene {
 
 	public slots:
 		void alignObjectsToGrid(void);
+
 		void update(void);
 
     //! brief Toggles the object range selection

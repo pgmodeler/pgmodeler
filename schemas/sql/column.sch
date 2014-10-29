@@ -7,6 +7,7 @@
  $tb
 %else
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
+[-- ] @{drop}
  %if @{table} %then
   [ALTER TABLE ] @{table} [ ADD COLUMN ]
   %end

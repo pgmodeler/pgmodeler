@@ -5,18 +5,18 @@
 
 %if @{constraint} %or @{column} %and %not @{trigger} %then
  %if %not @{decl-in-table} %then
-  [-- ALTER TABLE ] @{table} $sp DROP $sp @{sql-object} $sp
+  [ALTER TABLE ] @{table} $sp DROP $sp @{sql-object} $sp
  %end
 %else
- [-- DROP] $sp @{sql-object} $sp
+ [DROP ] @{sql-object} $sp
 %end
 
 %if %not @{dif-sql} %then
  @{name}
 %else
-    %if @{cast} %or @{extension} %or @{index} %or @{operator} %or
-        @{rule} %or @{trigger} %or @{aggregate} %or @{opclass} %or
-        @{opfamily} %or @{constraint} %or @{function} %then
+    #%if @{cast} %or @{extension} %or @{index} %or @{operator} %or
+    #    @{rule} %or @{trigger} %or @{aggregate} %or @{opclass} %or
+    #    @{opfamily} %or @{constraint} %or @{function} %or @{column} %then
 
         %if @{cast} %then [(] @{source-type} [ AS ] @{destiny-type} [)] %end
         %if @{extension} %then @{name} $sp CASCADE %end
@@ -27,11 +27,15 @@
       %if @{aggregate} %or @{opclass} %or @{opfamily} %then
           @{name}
       %else
-          %if @{constraint} %and %not @{decl-in-table} %then
+          %if @{column} %or @{constraint} %and %not @{decl-in-table} %then
              @{name}
           %end
       %end
-    %end
+    #%end
+%end
+
+%if @{cascade} %and %not @{database} %and %not @{tablespace} %and %not @{role} %then
+[ CASCADE]
 %end
 
 ; $br

@@ -23,18 +23,19 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
 	sch_name=new QGraphicsSimpleTextItem;
-	sch_name->setZValue(1);
+  sch_name->setZValue(1);
 
-	box=new QGraphicsPolygonItem;
+  box=new RoundedRectItem;
 	box->setZValue(0);
+
+  obj_selection=new RoundedRectItem;
+  obj_selection->setVisible(false);
+  obj_selection->setZValue(4);
+  this->addToGroup(obj_selection);
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-	this->setZValue(-10);
-
-	//Shadow objects are not used in this type of object
-	delete(this->obj_shadow);
-	this->obj_shadow=nullptr;
+  this->setZValue(-10);
 
 	this->configureObject();
 	all_selected=false;
@@ -44,6 +45,12 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 SchemaView::~SchemaView()
 {
+  this->removeFromGroup(box);
+  this->removeFromGroup(sch_name);
+
+  delete(box);
+  delete(sch_name);
+
 	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 
@@ -138,7 +145,7 @@ unsigned SchemaView::getChildrenCount()
 
 QList<BaseObjectView *> SchemaView::getChildren(void)
 {
-	return(children);
+  return(children);
 }
 
 void SchemaView::configureObject(void)
@@ -151,12 +158,11 @@ void SchemaView::configureObject(void)
 		children objects. Otherwise the schema view is hidden */
 	if(schema->isRectVisible() && !children.isEmpty())
 	{
-		QPolygonF pol;
 		QColor color;
 		QRectF rect;
 		QFont font;
 		float sp_h=0, sp_v=0, txt_h=0;
-		float x1=1000000, y1=1000000, x2=-1000000, y2=-1000000;
+    float x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 
 		//Configures the bounding rect based upon the children dimension
@@ -178,57 +184,60 @@ void SchemaView::configureObject(void)
 			itr++;
 		}
 
-		//Configures the schema name at the top
-		sch_name->setText(Utf8String::create(schema->getName()));
+    //Configures the schema name at the top
+    sch_name->setText(Utf8String::create(schema->getName()));
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
-		font.setStrikeOut(!schema->isSystemObject() && schema->isSQLDisabled());
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
+
 		sch_name->setFont(font);
-		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
+    sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
 		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
 
+    if(rect.width() > sch_name->boundingRect().width())
+      width=(x2-x1)+1;
+    else
+      width=sch_name->boundingRect().width();
+
 		//Configures the box with the points calculated above
-		sp_h=(3 * HORIZ_SPACING);
-		sp_v=(3 * VERT_SPACING) + txt_h;
-		pol.append(QPointF(-sp_h, 0));
-		pol.append(QPointF(x2-x1 + sp_h, 0));
-		pol.append(QPointF(x2-x1 + sp_h, y2-y1 + sp_v));
-		pol.append(QPointF(-sp_h, y2-y1 + sp_v));
-		box->setPolygon(pol);
+    sp_h=(3 * HORIZ_SPACING);
+    sp_v=(3 * VERT_SPACING) + txt_h;
+
+    rect.setTopLeft(QPointF(-sp_h, 0));
+    rect.setTopRight(QPointF(width + sp_h, 0));
+    rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
+    rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
+    box->setRect(rect);
 
 		//Sets the schema view position
 		this->setFlag(ItemSendsGeometryChanges, false);
 		this->moveBy(-this->pos().x(),-this->pos().y());
 		this->setPos(QPointF(x1, y1 - txt_h));
+    schema->setPosition(this->mapToScene(rect.topLeft()));
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(80);
+    color.setAlpha(80);
 		box->setBrush(color);
 
-		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
+    color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
 		box->setPen(QPen(color, 1, Qt::DashLine));
-
-		rect.setTopLeft(pol.at(0));
-		rect.setTopRight(pol.at(1));
-		rect.setBottomRight(pol.at(2));
-		rect.setBottomLeft(pol.at(3));
 
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-		this->configureObjectSelection();
-		this->configureProtectedIcon();
-		this->configurePositionInfo(this->pos());
-
 		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
 		sch_name->setToolTip(this->toolTip());
 
-		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-																					sch_name->pos().y() + VERT_SPACING ));
+    this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
+                                          sch_name->pos().y() + VERT_SPACING ));
+
+    this->configureObjectSelection();
+    this->configureProtectedIcon();
+    this->configurePositionInfo(this->pos());
+    this->configureSQLDisabledInfo();
 	}
 	else
-		this->setVisible(false);
+    this->setVisible(false);
 }

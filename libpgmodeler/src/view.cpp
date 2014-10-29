@@ -142,7 +142,12 @@ bool View::hasDefinitionExpression(void)
 		itr++;
 	}
 
-	return(found);
+  return(found);
+}
+
+QString View::getAlterDefinition(BaseObject *object)
+{
+  return("");
 }
 
 QString View::getCommomTableExpression(void)

@@ -18,40 +18,28 @@
 
 /**
 \ingroup libobjrenderer
-\class TableTitleView
-\brief Implements the graphical representation for table title
+\class StyledTextboxView
+\brief This class is only a styled representation of the TextboxView class
 */
 
-#ifndef TABLE_TITLE_VIEW_H
-#define TABLE_TITLE_VIEW_H
+#ifndef STYLED_TEXTBOX_VIEW_H
+#define STYLED_TEXTBOX_VIEW_H
 
-#include "view.h"
-#include "table.h"
-#include "baseobjectview.h"
 #include "textboxview.h"
-#include "roundedrectitem.h"
 
-class TableTitleView: public BaseObjectView
-{
-	private:
-		Q_OBJECT
+class StyledTextboxView: public TextboxView {
+  private:
+    Q_OBJECT
 
-    //! \brief Polygonal object that defines the title border
-    //QGraphicsPolygonItem *box;
-    RoundedRectItem *box;
+    //! brief Fold indicator appended at bottom-right corner of the object
+    QGraphicsPolygonItem *fold;
 
-    //! \brief Graphical texts that is used to store the object name and schema name
-		QGraphicsSimpleTextItem *obj_name,
-    *schema_name;
+  public:
+    StyledTextboxView(Textbox *txtbox, bool override_style=false);
+    ~StyledTextboxView(void);
 
-		void configureObject(void){}
-
-	public:
-		TableTitleView(void);
-		~TableTitleView(void);
-
-		void configureObject(BaseGraphicObject *object);
-		void resizeTitle(float width, float height);
+  protected slots:
+    void configureObject(void);
 };
 
 #endif

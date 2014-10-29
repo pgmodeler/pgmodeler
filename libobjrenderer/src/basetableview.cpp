@@ -26,11 +26,13 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	if(!base_tab)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	body=new QGraphicsPolygonItem;
-	title=new TableTitleView;
+  body=new RoundedRectItem;
+  title=new TableTitleView;
 
-  ext_attribs_body=new QGraphicsPolygonItem;
-	ext_attribs=new QGraphicsItemGroup;
+  ext_attribs_body=new RoundedRectItem;
+  ext_attribs_body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+
+  ext_attribs=new QGraphicsItemGroup;
   ext_attribs->setZValue(1);
 
   columns=new QGraphicsItemGroup;
@@ -42,6 +44,15 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
   tag_body=new QGraphicsPolygonItem;
   tag_body->setZValue(2);
 
+  obj_shadow=new RoundedRectItem;
+  obj_shadow->setZValue(-1);
+
+  obj_selection=new RoundedRectItem;
+  obj_selection->setVisible(false);
+  obj_selection->setZValue(4);
+
+  this->addToGroup(obj_selection);
+  this->addToGroup(obj_shadow);
   this->addToGroup(columns);
 	this->addToGroup(body);
 	this->addToGroup(title);
@@ -168,19 +179,16 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-			QPolygonF pol;
+      //QPolygonF pol;
 			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
 
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
 			{
-				pol.append(QPointF(0.0f,0.0f));
-				pol.append(QPointF(1.0f,0.0f));
-				pol.append(QPointF(1.0f,1.0f));
-				pol.append(QPointF(0.0f,1.0f));
-				this->resizePolygon(pol, title->boundingRect().width() - (2.5 * HORIZ_SPACING),
-														item->boundingRect().height());
-				obj_selection->setPolygon(pol);
+        dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+        dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
+                                                                       title->boundingRect().width() - (2.5 * HORIZ_SPACING),
+                                                                       item->boundingRect().height()));
 			}
 
 			//Sets the selection position as same as item's position

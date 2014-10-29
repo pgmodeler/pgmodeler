@@ -53,6 +53,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
   ignore_errors_ht->setText(ignore_errors_chk->statusTip());
 
+  force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
+  force_recreation_ht->setText(force_recreation_chk->statusTip());
+
+  drop_cascade_ht=new HintTextWidget(drop_cascade_hint, this);
+  drop_cascade_ht->setText(drop_cascade_chk->statusTip());
+
 	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
 	connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 	connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -277,7 +283,9 @@ void ModelDatabaseDiffForm::diffModels(void)
 	diff_progress=step_pb->value();
 
 	diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
-	diff_helper->setModels(source_model, imported_model, keep_cluster_objs_chk->isChecked());
+  diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(), drop_cascade_chk->isChecked(),
+                              force_recreation_chk->isChecked(), trunc_tables_chk->isChecked());
+  diff_helper->setModels(source_model, imported_model);
 	diff_thread->start();
 }
 

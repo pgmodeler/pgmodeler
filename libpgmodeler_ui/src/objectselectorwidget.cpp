@@ -80,7 +80,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(evnt->type()==QEvent::MouseButtonPress && obj==obj_name_txt)
+  if(this->isEnabled() && evnt->type()==QEvent::MouseButtonPress && obj==obj_name_txt)
 		showObjectView();
 
 	return(QWidget::eventFilter(obj, evnt));
