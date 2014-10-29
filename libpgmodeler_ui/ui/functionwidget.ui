@@ -639,7 +639,11 @@
            </spacer>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="QTextEdit" name="source_code_txt"/>
+           <widget class="QTextEdit" name="source_code_txt">
+            <property name="lineWrapMode">
+             <enum>QTextEdit::NoWrap</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

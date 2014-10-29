@@ -49,9 +49,9 @@ $tb [AS ]
  %end
 
 %else
-[$$]
+[$$] $br
  @{definition}
-[$$]
+$br [$$]
 %end
 
 ; $br
