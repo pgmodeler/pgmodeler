@@ -379,7 +379,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object)
 
   for(auto obj : ref_objs)
   {
-    if(obj->getObjectType()!=BASE_RELATIONSHIP)
+    if(obj->getObjectType()!=BASE_RELATIONSHIP &&
+       obj->getObjectType()!=OBJ_RELATIONSHIP)
     {
       generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
       generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
