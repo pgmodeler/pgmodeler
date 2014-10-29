@@ -124,7 +124,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_obj)
 				{
 					if(tab_obj->isCodeDiffersFrom(aux_obj))
-            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
+          {
+            if(!force_recreation)
+              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
+            else
+              recreateObject(tab_obj);
+          }
 				}
 				else if(!aux_obj)
 					generateDiffInfo(diff_type, tab_obj);
@@ -237,22 +242,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
               }
             }
             else
-            {
-              vector<BaseObject *> ref_objs;
-              source_model->getObjectReferences(object, ref_objs, false, true);
-
-              generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
-              generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
-
-              for(auto obj : ref_objs)
-              {
-                if(obj->getObjectType()!=BASE_RELATIONSHIP)
-                {
-                  generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
-                  generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
-                }
-              }
-            }
+              recreateObject(object);
           }
 				}
 				else if(!aux_object)
@@ -308,26 +298,17 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	if(!aux_tab_obj)
 		generateDiffInfo(diff_type, tab_obj);
 	else if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && tab_obj->isCodeDiffersFrom(aux_tab_obj))
-    generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
+  {
+    if(!force_recreation)
+      generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
+    else
+      recreateObject(tab_obj);
+  }
 }
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
-  bool found_diff=false;
-
-  /* Searching for other alter or create diff entries for the same object.
-     Only one of these two types can exist in the same list for the same object. */
-  if(diff_type==ObjectsDiffInfo::ALTER_OBJECT ||
-     diff_type==ObjectsDiffInfo::CREATE_OBJECT)
-  {
-    for(ObjectsDiffInfo diff : diff_infos)
-    {
-      found_diff=(diff.getDiffType()!=ObjectsDiffInfo::DROP_OBJECT && diff.getObject()==object);
-      if(found_diff) break;
-    }
-  }
-
-  if(!found_diff)
+  if(!force_recreation ||(force_recreation && !isDiffInfoExists(diff_type, object)))
   {
     ObjectsDiffInfo diff_info;
     diff_info=ObjectsDiffInfo(diff_type, object, old_object);
@@ -335,6 +316,22 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
     diffs_counter[diff_type]++;
     emit s_objectsDiffInfoGenerated(diff_info);
   }
+}
+
+bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject * object)
+{
+  bool found_diff=false;
+
+  for(ObjectsDiffInfo diff : diff_infos)
+  {
+    found_diff=(diff.getObject()==object &&
+                ((diff_type==ObjectsDiffInfo::DROP_OBJECT && diff.getDiffType()==diff_type) ||
+                 (diff_type!=ObjectsDiffInfo::DROP_OBJECT && diff.getDiffType()!=ObjectsDiffInfo::DROP_OBJECT)));
+
+    if(found_diff) break;
+  }
+
+  return(found_diff);
 }
 
 void ModelsDiffHelper::processDiffInfos(void)
@@ -369,5 +366,23 @@ void ModelsDiffHelper::processDiffInfos(void)
     }
 
     out << "\n\n";
+  }
+}
+
+void ModelsDiffHelper::recreateObject(BaseObject *object)
+{
+  vector<BaseObject *> ref_objs;
+  source_model->getObjectReferences(object, ref_objs, false, true);
+
+  generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
+  generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
+
+  for(auto obj : ref_objs)
+  {
+    if(obj->getObjectType()!=BASE_RELATIONSHIP)
+    {
+      generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
+      generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
+    }
   }
 }
