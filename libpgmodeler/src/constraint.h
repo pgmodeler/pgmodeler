@@ -217,7 +217,7 @@ class Constraint: public TableObject{
 		 whether the columns added by relationship must appear on the code definition */
 		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
 
-    virtual QString getDropDefinition(void) final;
+    virtual QString getDropDefinition(bool cascade) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);

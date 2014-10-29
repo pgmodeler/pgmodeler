@@ -352,7 +352,7 @@ class BaseObject {
     virtual QString getAlterDefinition(BaseObject *object);
 
     //!brief Returns the DROP statement for the object
-    virtual QString getDropDefinition(void);
+    virtual QString getDropDefinition(bool cascade);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);

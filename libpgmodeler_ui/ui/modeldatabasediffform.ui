@@ -391,6 +391,51 @@
               </layout>
              </item>
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="QCheckBox" name="ignore_errors_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
+                 </property>
+                 <property name="text">
+                  <string>Ignore import errors</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="ignore_errors_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_12">
                <item>
                 <widget class="QCheckBox" name="keep_cluster_objs_chk">
@@ -410,6 +455,51 @@
                </item>
                <item>
                 <widget class="QWidget" name="keep_cluster_objs_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QCheckBox" name="drop_cascade_chk">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Objects that depends on an object marked to be dropped will be removed as well. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can drop more objects than listed in the output.</string>
+                 </property>
+                 <property name="text">
+                  <string>Drop objects in cascade mode</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="drop_cascade_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -497,51 +587,6 @@
                </item>
                <item>
                 <widget class="QWidget" name="trunc_tables_hint" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
-               <item>
-                <widget class="QCheckBox" name="ignore_errors_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="statusTip">
-                  <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
-                 </property>
-                 <property name="text">
-                  <string>Ignore import errors</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="ignore_errors_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

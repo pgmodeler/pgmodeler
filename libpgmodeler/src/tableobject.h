@@ -78,7 +78,7 @@ class TableObject: public BaseObject {
 	not instantiable */
 		virtual QString getCodeDefinition(unsigned def_type)=0;
 
-    virtual QString getDropDefinition(void);
+    virtual QString getDropDefinition(bool cascade);
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking(void);

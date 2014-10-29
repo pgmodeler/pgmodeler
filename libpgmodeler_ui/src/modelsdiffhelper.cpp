@@ -22,23 +22,29 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	source_model=imported_model=nullptr;
-	keep_cluster_objs=true;
-	resetDiffCounter();
+  resetDiffCounter();
+  setDiffOptions(true, true, false, false);
+}
+
+void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool drop_cascade, bool force_recreation, bool truncate_tables)
+{
+  this->keep_cluster_objs=keep_cluster_objs;
+  this->drop_cascade=drop_cascade;
+  this->force_recreation=force_recreation;
+  this->trucante_tables=truncate_tables;
 }
 
 void ModelsDiffHelper::resetDiffCounter(void)
 {
-	diff_canceled=false;
 	diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]=0;
 	diffs_counter[ObjectsDiffInfo::DROP_OBJECT]=0;
 	diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
 }
 
-void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model, bool keep_cluster_objs)
+void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model)
 {
 	source_model=src_model;
 	imported_model=imp_model;
-	this->keep_cluster_objs=keep_cluster_objs;
 }
 
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
@@ -69,6 +75,8 @@ void ModelsDiffHelper::diffModels(void)
 
       processDiffInfos();
     }
+
+    setDiffOptions(true, true, false, false);
 	}
 	catch(Exception &e)
 	{
@@ -212,17 +220,39 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                                                       ParsersAttributes::CONSTRAINT }); */
           }
 
+
           if(objs_differs)
 					{
-            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
             objs_differs=false;
-          }
 
-          if(object->getObjectType()==OBJ_TABLE)
-          {
-            Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
-            diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
-            diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
+            if(!force_recreation)
+            {
+              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
+
+              if(object->getObjectType()==OBJ_TABLE)
+              {
+                Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
+                diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
+                diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
+              }
+            }
+            else
+            {
+              vector<BaseObject *> ref_objs;
+              source_model->getObjectReferences(object, ref_objs, false, true);
+
+              generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
+              generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
+
+              for(auto obj : ref_objs)
+              {
+                if(obj->getObjectType()!=BASE_RELATIONSHIP)
+                {
+                  generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
+                  generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
+                }
+              }
+            }
           }
 				}
 				else if(!aux_object)
@@ -283,11 +313,28 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
-	ObjectsDiffInfo diff_info;
-  diff_info=ObjectsDiffInfo(diff_type, object, old_object);
-	diff_infos.push_back(diff_info);
-	diffs_counter[diff_type]++;
-  emit s_objectsDiffInfoGenerated(diff_info);
+  bool found_diff=false;
+
+  /* Searching for other alter or create diff entries for the same object.
+     Only one of these two types can exist in the same list for the same object. */
+  if(diff_type==ObjectsDiffInfo::ALTER_OBJECT ||
+     diff_type==ObjectsDiffInfo::CREATE_OBJECT)
+  {
+    for(ObjectsDiffInfo diff : diff_infos)
+    {
+      found_diff=(diff.getDiffType()!=ObjectsDiffInfo::DROP_OBJECT && diff.getObject()==object);
+      if(found_diff) break;
+    }
+  }
+
+  if(!found_diff)
+  {
+    ObjectsDiffInfo diff_info;
+    diff_info=ObjectsDiffInfo(diff_type, object, old_object);
+    diff_infos.push_back(diff_info);
+    diffs_counter[diff_type]++;
+    emit s_objectsDiffInfoGenerated(diff_info);
+  }
 }
 
 void ModelsDiffHelper::processDiffInfos(void)
@@ -305,7 +352,7 @@ void ModelsDiffHelper::processDiffInfos(void)
     if(diff.getDiffType()==ObjectsDiffInfo::ALTER_OBJECT)
       out << diff.getOldObject()->getAlterDefinition(object);
     else if(diff.getDiffType()==ObjectsDiffInfo::DROP_OBJECT)
-      out << diff.getObject()->getDropDefinition();
+      out << diff.getObject()->getDropDefinition(drop_cascade);
     else
     {
       if(tab_obj && (tab_obj->getObjectType()==OBJ_COLUMN || tab_obj->getObjectType()==OBJ_CONSTRAINT))
@@ -320,5 +367,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       else
         out << object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
     }
+
+    out << "\n\n";
   }
 }

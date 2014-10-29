@@ -111,10 +111,10 @@ void TableObject::setCodeInvalidated(bool value)
 	BaseObject::setCodeInvalidated(value);
 }
 
-QString TableObject::getDropDefinition(void)
+QString TableObject::getDropDefinition(bool cascade)
 {
   if(getParentTable())
     attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-  return(BaseObject::getDropDefinition());
+  return(BaseObject::getDropDefinition(cascade));
 }

@@ -755,7 +755,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     }
 
     if(def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::DROP]=getDropDefinition();
+      attributes[ParsersAttributes::DROP]=getDropDefinition(false);
 
 		if(reduced_form)
 			attributes[ParsersAttributes::REDUCED_FORM]="1";
@@ -1041,14 +1041,21 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
     return("");
 }
 
-QString BaseObject::getDropDefinition(void)
+QString BaseObject::getDropDefinition(bool cascade)
 {
   try
   {
+    attribs_map attribs;
+
     setBasicAttributes(true);
+    schparser.setPgSQLVersion(BaseObject::pgsql_ver);
     schparser.setIgnoreUnkownAttributes(true);
     schparser.setIgnoreEmptyAttributes(true);
-    return(schparser.getCodeDefinition(ParsersAttributes::DROP, attributes, SchemaParser::SQL_DEFINITION));
+
+    attribs=attributes;
+    attribs[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+
+    return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
   }
   catch(Exception &e)
   {
@@ -1065,6 +1072,7 @@ QString BaseObject::getAlterDefinition(ObjectType obj_type, bool ignore_ukn_attr
                           GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
                           "%1" + GlobalAttributes::SCHEMA_EXT;
 
+    schparser.setPgSQLVersion(BaseObject::pgsql_ver);
     schparser.setIgnoreEmptyAttributes(ignore_empty_attribs);
     schparser.setIgnoreUnkownAttributes(ignore_ukn_attribs);
     return(schparser.getCodeDefinition(alter_sch_dir.arg(BaseObject::objs_schemas[obj_type]), attributes));
@@ -1098,12 +1106,14 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
       BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
                  *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
+      schparser.setPgSQLVersion(BaseObject::pgsql_ver);
+
       for(unsigned i=0; i < 3; i++)
       {
         if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
            dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
         {
-          attributes[attribs[i]]=aux_dep_objs[i]->getName(true);
+          attributes[attribs[i]]=aux_dep_objs[i]->getName(true);          
           schparser.setIgnoreUnkownAttributes(true);
           alter+=schparser.getCodeDefinition(alter_sch_dir.arg(attribs[i]), attributes);
         }

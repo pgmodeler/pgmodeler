@@ -34,4 +34,8 @@
     #%end
 %end
 
+%if @{cascade} %and %not @{database} %and %not @{tablespace} %and %not @{role} %then
+[ CASCADE]
+%end
+
 ; $br

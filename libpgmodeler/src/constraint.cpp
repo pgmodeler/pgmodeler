@@ -719,8 +719,8 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
   return(BaseObject::__getCodeDefinition(def_type));
 }
 
-QString Constraint::getDropDefinition(void)
+QString Constraint::getDropDefinition(bool cascade)
 {
   setDeclInTableAttribute();
-  return(TableObject::getDropDefinition());
+  return(TableObject::getDropDefinition(cascade));
 }
