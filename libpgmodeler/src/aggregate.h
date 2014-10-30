@@ -103,6 +103,10 @@ class Aggregate: public BaseObject {
 
 		//! \brief Returns the SQL / XML code definition for the aggregate
 		virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getDropDefinition(bool cascade) final;
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

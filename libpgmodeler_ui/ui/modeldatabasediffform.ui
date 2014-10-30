@@ -533,7 +533,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Instead of use ALTER commands to modify objects use a DROP and CREATE commands to do a fully modification.</string>
+                  <string>Except for database object, instead of use ALTER commands to modify objects a DROP and CREATE commands are used in order to do a fully modification.</string>
                  </property>
                  <property name="text">
                   <string>Force recreation of objects</string>

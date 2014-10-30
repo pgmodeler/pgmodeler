@@ -135,3 +135,9 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
+
+QString EventTrigger::getAlterDefinition(BaseObject *object)
+{
+  attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+  return(BaseObject::getAlterDefinition(OBJ_EVENT_TRIGGER, false, false));
+}

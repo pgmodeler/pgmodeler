@@ -464,8 +464,8 @@ namespace ParsersAttributes {
   DEFAULT_OWNER="default-owner",
   DEFAULT_TABLESPACE="default-tablespace",
   DEFAULT_COLLATION="default-collation",
-  WITHOUT_OIDS="without-oids";
-
+  WITHOUT_OIDS="without-oids",
+  ALTER_CMDS="alter-cmds";
 }
 
 #endif

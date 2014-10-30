@@ -75,6 +75,8 @@ class Collation : public BaseObject {
 		//! \brief Returns the SQL / XML definition for the collation.
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
+
+    virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

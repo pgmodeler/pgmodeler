@@ -254,7 +254,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			//Comparison between model db and the imported db
 			else
 			{
-
+        if(!source_model->getAlterDefinition(imported_model).isEmpty())
+         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
 			}
 		}
 		else
@@ -371,19 +372,28 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 void ModelsDiffHelper::recreateObject(BaseObject *object)
 {
-  vector<BaseObject *> ref_objs;
-  source_model->getObjectReferences(object, ref_objs, false, true);
-
-  generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
-  generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
-
-  for(auto obj : ref_objs)
+  if(object &&
+     object->getObjectType()!=BASE_RELATIONSHIP &&
+     object->getObjectType()!=OBJ_RELATIONSHIP)
   {
-    if(obj->getObjectType()!=BASE_RELATIONSHIP &&
-       obj->getObjectType()!=OBJ_RELATIONSHIP)
+    vector<BaseObject *> ref_objs;
+    source_model->getObjectReferences(object, ref_objs, false, true);
+
+    generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
+    generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
+
+    for(auto obj : ref_objs)
+      recreateObject(obj);
+
+/*    for(auto obj : ref_objs)
     {
-      generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
-      generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
+      if(obj->getObjectType()!=BASE_RELATIONSHIP &&
+         obj->getObjectType()!=OBJ_RELATIONSHIP)
+      {
+        generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, obj);
+        generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, obj);
+      }
     }
+*/
   }
 }

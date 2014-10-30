@@ -127,5 +127,11 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 
 	attributes[ParsersAttributes::ENCODING]=~encoding;
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+  return(BaseObject::getCodeDefinition(def_type, reduced_form));
+}
+
+QString Collation::getAlterDefinition(BaseObject *object)
+{
+  attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+  return(BaseObject::getAlterDefinition(OBJ_COLLATION, false, false));
 }

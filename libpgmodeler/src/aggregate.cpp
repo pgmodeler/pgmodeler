@@ -123,7 +123,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 
 void Aggregate::setTypesAttribute(unsigned def_type)
 {
-	QString str_types;
+  QString str_types;
 	unsigned i, count;
 
 	count=data_types.size();
@@ -131,17 +131,18 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			str_types+=*(data_types[i]);
+      //str_types+=*(data_types[i]);
+      str_types+=~data_types[i];
 			if(i < (count-1)) str_types+=",";
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
-	}
+  }
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(str_types.isEmpty()) str_types="*";
+  if(str_types.isEmpty()) str_types="*";
 
-	attributes[ParsersAttributes::TYPES]=str_types;
+  attributes[ParsersAttributes::TYPES]=str_types;
 }
 
 void Aggregate::addDataType(PgSQLType type)
@@ -188,7 +189,7 @@ bool Aggregate::isDataTypeExist(PgSQLType type)
 		itr++;
 	}
 
-	return(enc);
+  return(enc);
 }
 
 unsigned Aggregate::getDataTypeCount(void)
@@ -276,6 +277,18 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	else
 		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Aggregate::getDropDefinition(bool cascade)
+{
+  setTypesAttribute(SchemaParser::SQL_DEFINITION);
+  return(BaseObject::getDropDefinition(cascade));
+}
+
+QString Aggregate::getAlterDefinition(BaseObject *object)
+{
+  setTypesAttribute(SchemaParser::SQL_DEFINITION);
+  return(BaseObject::getAlterDefinition(object));
 }
 
