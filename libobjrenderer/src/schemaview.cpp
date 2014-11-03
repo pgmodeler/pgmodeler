@@ -195,14 +195,14 @@ void SchemaView::configureObject(void)
     sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
 		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
 
-    if(rect.width() > sch_name->boundingRect().width())
-      width=(x2-x1)+1;
-    else
-      width=sch_name->boundingRect().width();
-
 		//Configures the box with the points calculated above
     sp_h=(3 * HORIZ_SPACING);
     sp_v=(3 * VERT_SPACING) + txt_h;
+
+    width=(x2-x1) + 1;
+
+    if(width < sch_name->boundingRect().width())
+      width=sch_name->boundingRect().width();
 
     rect.setTopLeft(QPointF(-sp_h, 0));
     rect.setTopRight(QPointF(width + sp_h, 0));
