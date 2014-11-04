@@ -107,6 +107,8 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::UQ_PATTERN]="";
 	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
 	attributes[ParsersAttributes::DST_FK_PATTERN]="";
+  attributes[ParsersAttributes::PK_COL_PATTERN]="";
+  attributes[ParsersAttributes::SINGLE_PK_COLUMN]="";
   attributes[ParsersAttributes::UPD_ACTION]="";
   attributes[ParsersAttributes::DEL_ACTION]="";
 	attributes[ParsersAttributes::CUSTOM_COLOR]="";

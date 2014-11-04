@@ -29,7 +29,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 	SyntaxHighlighter *pattern_hl=nullptr;
 	QList<QTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																			src_fk_pattern_txt, dst_fk_pattern_txt,
-																			pk_pattern_txt, uq_pattern_txt };
+                                      pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
@@ -168,10 +168,13 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
 	QList<QTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
-															dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt };
+                              dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
+                              pk_col_pattern_txt };
+
 	 QList<QString> pattern_ids={ ParsersAttributes::PK_PATTERN,  ParsersAttributes::UQ_PATTERN,
 																ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
-																ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
+                                ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
+                                ParsersAttributes::PK_COL_PATTERN };
 
 	relnn=(rel_type==ParsersAttributes::RELATIONSHIP_NN);
 	reldep=(rel_type==ParsersAttributes::RELATIONSHIP_DEP);
@@ -182,12 +185,14 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	src_col_pattern_txt->setEnabled(!relgen && !reldep);
 	src_fk_pattern_txt->setEnabled(!relgen && !reldep);
 	uq_pattern_txt->setEnabled(!relgen && !reldep);
+  pk_col_pattern_txt->setEnabled(relnn);
 
 	dst_col_pattern_lbl->setEnabled(relnn);
 	dst_fk_pattern_lbl->setEnabled(relnn);
 	src_col_pattern_lbl->setEnabled(!relgen && !reldep);
 	src_fk_pattern_lbl->setEnabled(!relgen && !reldep);
 	uq_pattern_lbl->setEnabled(!relgen && !reldep);
+  pk_col_pattern_lbl->setEnabled(relnn);
 
 	for(int i=0; i < inputs.size(); i++)
 	{
@@ -208,8 +213,9 @@ void RelationshipConfigWidget::updatePattern(void)
 																				 { uq_pattern_txt, ParsersAttributes::UQ_PATTERN },
 																				 { src_col_pattern_txt, ParsersAttributes::SRC_COL_PATTERN },
 																				 { dst_col_pattern_txt, ParsersAttributes::DST_COL_PATTERN },
-																				 { src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN },
-																				 { dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN } };
+                                         { src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN   },
+                                         { dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN   },
+                                         { pk_col_pattern_txt, ParsersAttributes::PK_COL_PATTERN   } };
 
 
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();

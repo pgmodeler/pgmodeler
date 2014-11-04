@@ -5752,7 +5752,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
-    bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled;
+    bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col;
 	DeferralType defer_type;
   ActionType del_action, upd_action;
 	unsigned rel_type=0, i;
@@ -5848,11 +5848,13 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		{
       QString pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
 															ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
-															ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN };
+                              ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN,
+                              ParsersAttributes::PK_COL_PATTERN };
 
       unsigned 	pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
-													Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
-													Relationship::PK_PATTERN, Relationship::UQ_PATTERN },
+                                Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
+                                Relationship::PK_PATTERN, Relationship::UQ_PATTERN,
+                                Relationship::PK_COL_PATTERN },
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
       sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -5863,6 +5865,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);      
       del_action=ActionType(attribs[ParsersAttributes::DEL_ACTION]);
       upd_action=ActionType(attribs[ParsersAttributes::UPD_ACTION]);
+      single_pk_col=(attribs[ParsersAttributes::SINGLE_PK_COLUMN]==ParsersAttributes::_TRUE_);
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
 				rel_type=BaseRelationship::RELATIONSHIP_11;
@@ -5884,6 +5887,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
 
       rel->setSQLDisabled(sql_disabled);
+      rel->setSiglePKColumn(single_pk_col);
 
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
