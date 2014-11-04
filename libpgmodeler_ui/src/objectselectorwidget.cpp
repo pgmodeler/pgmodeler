@@ -96,7 +96,7 @@ BaseObject *ObjectSelectorWidget::getSelectedObject(void)
   return(selected_obj);
 }
 
-QString ObjectSelectorWidget::formatObjectName(BaseObject *object)
+/*QString ObjectSelectorWidget::formatObjectName(BaseObject *object)
 {
   ObjectType obj_type;
   QString obj_name;
@@ -122,11 +122,12 @@ QString ObjectSelectorWidget::formatObjectName(BaseObject *object)
   }
 
   return(obj_name);
-}
+} */
 
 QString ObjectSelectorWidget::getSelectedObjectName(void)
 {
-  return(formatObjectName(selected_obj));
+  //return(formatObjectName(selected_obj));
+  return(selected_obj->getSignature());
 }
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
@@ -140,7 +141,8 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
-    obj_name_txt->setPlainText(Utf8String::create(formatObjectName(selected_obj)));
+    //obj_name_txt->setPlainText(Utf8String::create(formatObjectName(selected_obj)));
+    obj_name_txt->setPlainText(Utf8String::create(selected_obj->getSignature()));
 		emit s_objectSelected();
 	}
 	else

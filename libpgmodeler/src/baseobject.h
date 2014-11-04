@@ -299,6 +299,9 @@ class BaseObject {
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
     virtual QString getName(bool format=false, bool prepend_schema=true);
 
+    //! brief Returns the name of the object with schema name (when available) prepended by default
+    virtual QString getSignature(bool format=true);
+
 		//! \brief Retorns the object's comment
 		QString getComment(void);
 

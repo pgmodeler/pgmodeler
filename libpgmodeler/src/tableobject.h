@@ -80,6 +80,8 @@ class TableObject: public BaseObject {
 
     virtual QString getDropDefinition(bool cascade);
 
+    virtual QString getSignature(bool format = true);
+
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking(void);
 

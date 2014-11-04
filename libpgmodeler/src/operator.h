@@ -96,7 +96,7 @@ class Operator: public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the operator signature
-		QString getSignature(bool format_name=true);
+    virtual QString getSignature(bool format_name=true);
 };
 
 #endif

@@ -47,7 +47,7 @@ class ModelsDiffHelper: public QObject {
     void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
     void processDiffInfos(void);
     void recreateObject(BaseObject *object);
-    bool isDiffInfoExists(unsigned diff_type, BaseObject * object);
+    bool isDiffInfoExists(unsigned diff_type, QString signature, ObjectType obj_type);
 
 	public:
 		ModelsDiffHelper(void);

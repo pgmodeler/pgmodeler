@@ -118,3 +118,11 @@ QString TableObject::getDropDefinition(bool cascade)
 
   return(BaseObject::getDropDefinition(cascade));
 }
+
+QString TableObject::getSignature(bool format)
+{
+  if(!parent_table)
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
+}

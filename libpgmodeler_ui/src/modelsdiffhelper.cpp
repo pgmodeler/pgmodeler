@@ -197,13 +197,14 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
       }
       else if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
 			{
-        if(obj_type==OBJ_FUNCTION)
+        /*if(obj_type==OBJ_FUNCTION)
           obj_name=dynamic_cast<Function *>(object)->getSignature();
         else if(obj_type==OBJ_OPERATOR)
           obj_name=dynamic_cast<Operator *>(object)->getSignature();
         else
-          obj_name=object->getName(true);
+          obj_name=object->getName(true);*/
 
+        obj_name=object->getSignature();
 				aux_object=aux_model->getObject(obj_name, obj_type);
 
 				if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
@@ -224,7 +225,6 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                                                       ParsersAttributes::COLUMN,
                                                       ParsersAttributes::CONSTRAINT }); */
           }
-
 
           if(objs_differs)
 					{
@@ -309,7 +309,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
-  if(!force_recreation ||(force_recreation && !isDiffInfoExists(diff_type, object)))
+  if(!force_recreation ||(force_recreation && !isDiffInfoExists(diff_type, object->getSignature(), object->getObjectType())))
   {
     ObjectsDiffInfo diff_info;
     diff_info=ObjectsDiffInfo(diff_type, object, old_object);
@@ -319,13 +319,13 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
   }
 }
 
-bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject * object)
+bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, QString signature, ObjectType obj_type)
 {
   bool found_diff=false;
 
   for(ObjectsDiffInfo diff : diff_infos)
   {
-    found_diff=(diff.getObject()==object &&
+    found_diff=(diff.getObject()->getSignature()==signature && diff.getObject()->getObjectType()==obj_type &&
                 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && diff.getDiffType()==diff_type) ||
                  (diff_type!=ObjectsDiffInfo::DROP_OBJECT && diff.getDiffType()!=ObjectsDiffInfo::DROP_OBJECT)));
 
@@ -377,9 +377,26 @@ void ModelsDiffHelper::recreateObject(BaseObject *object)
      object->getObjectType()!=OBJ_RELATIONSHIP)
   {
     vector<BaseObject *> ref_objs;
-    source_model->getObjectReferences(object, ref_objs, false, true);
+    BaseObject *aux_obj=nullptr;
 
-    generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, object);
+    if(!TableObject::isTableObject(object->getObjectType()))
+      aux_obj=imported_model->getObject(object->getSignature(), object->getObjectType());
+    else
+    {
+      TableObject *tab_obj=dynamic_cast<TableObject *>(object);
+
+      if(tab_obj->getParentTable())
+      {
+        BaseTable *tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_obj->getParentTable()->getSignature(), tab_obj->getParentTable()->getObjectType()));
+        aux_obj=tab->getObject(tab_obj->getName(true), tab_obj->getObjectType());
+      }
+    }
+    //source_model->getObjectReferences(object, ref_objs, false, true);
+    imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
+
+    if(aux_obj)
+      generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, aux_obj);
+
     generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object);
 
     for(auto obj : ref_objs)

@@ -499,7 +499,12 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 			return(this->obj_name);
 	}
 	else
-		return(this->obj_name);
+    return(this->obj_name);
+}
+
+QString BaseObject::getSignature(bool format)
+{
+  return(this->getName(format, true));
 }
 
 QString BaseObject::getComment(void)

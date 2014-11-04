@@ -211,7 +211,7 @@ class Function: public BaseObject {
 		void removeReturnedTableColumns(void);
 
 		//! \brief Returns the complete function signature
-		QString getSignature(void);
+    virtual QString getSignature(bool=true);
 
 		/*! \brief Generates the function's signature. The 'format' parameter is used
 		 to adequately format the function and parameters names. By default

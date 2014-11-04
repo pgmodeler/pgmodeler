@@ -44,12 +44,14 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
 	QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be %3"), obj_name;
-	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
+  //TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
-	if(tab_obj)
+  /*if(tab_obj)
 	 obj_name=tab_obj->getParentTable()->getName(true) + "." + tab_obj->getName(true);
 	else
-	 obj_name=object->getName(true);
+   obj_name=object->getName(true);*/
+
+  obj_name=object->getSignature();
 
 	if(diff_type==DROP_OBJECT)
 	{

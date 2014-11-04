@@ -415,7 +415,7 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	setCodeInvalidated(true);
 }
 
-QString Function::getSignature(void)
+QString Function::getSignature(bool)
 {
 	return(signature);
 }

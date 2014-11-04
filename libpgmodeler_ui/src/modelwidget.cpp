@@ -2063,7 +2063,7 @@ void ModelWidget::pasteObjects(void)
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
 
-			if(obj_type==OBJ_FUNCTION)
+      /*if(obj_type==OBJ_FUNCTION)
 			{
 				dynamic_cast<Function *>(object)->createSignature(true);
 				aux_name=dynamic_cast<Function *>(object)->getSignature();
@@ -2071,7 +2071,14 @@ void ModelWidget::pasteObjects(void)
 			else if(obj_type==OBJ_OPERATOR)
 				aux_name=dynamic_cast<Operator *>(object)->getSignature();
 			else
-				aux_name=object->getName(true);
+        aux_name=object->getName(true); */
+
+      if(obj_type==OBJ_FUNCTION)
+        dynamic_cast<Function *>(object)->createSignature(true);
+      else if(tab_obj)
+        aux_name=tab_obj->getName(true);
+      else
+        aux_name=object->getSignature();
 
 			if(!tab_obj)
 				//Try to find the object on the model
@@ -3286,7 +3293,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 		schema->setModified(true);
 
 		//The schema is processed only there are tables inside of it
-		if(sch_view->getChildrenCount() > 0)
+    if(sch_view && sch_view->getChildrenCount() > 0)
 		{
 			//Organizing the tables inside the schema
 			rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);

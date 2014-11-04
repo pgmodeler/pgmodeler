@@ -741,12 +741,13 @@ void BaseObjectWidget::applyConfiguration(void)
 					else if(!aux_obj && obj_type==OBJ_VIEW)
 						aux_obj=model->getObject(obj_name, OBJ_TABLE);
 
-					if(obj_type==OBJ_FUNCTION)
+          /*if(obj_type==OBJ_FUNCTION)
 						aux_obj1=model->getObject(dynamic_cast<Function *>(object)->getSignature(),obj_type);
 					else if(obj_type==OBJ_OPERATOR)
 						aux_obj1=model->getObject(dynamic_cast<Operator *>(object)->getSignature(),obj_type);
 					else
-						aux_obj1=model->getObject(object->getName(true),obj_type);
+            aux_obj1=model->getObject(object->getName(true),obj_type);*/
+          aux_obj1=model->getObject(object->getSignature(), obj_type);
 
 					new_obj=(!aux_obj && !aux_obj1);
 				}
