@@ -24,48 +24,57 @@ extern ConfigurationForm *configuration_form;
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	setupUi(this);
+  try
+  {
+    setupUi(this);
 
-	import_helper=nullptr;
-	diff_helper=nullptr;
-	imported_model=nullptr;
-	import_thread=diff_thread=nullptr;
-	import_item=diff_item=export_item=nullptr;
+    import_helper=nullptr;
+    diff_helper=nullptr;
+    imported_model=nullptr;
+    import_thread=diff_thread=nullptr;
+    import_item=diff_item=export_item=nullptr;
 
-  apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
-  apply_on_server_ht->setText(apply_on_server_rb->statusTip());
+    apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
+    apply_on_server_ht->setText(apply_on_server_rb->statusTip());
 
-  store_in_file_ht=new HintTextWidget(store_in_file_hint, this);
-  store_in_file_ht->setText(store_in_file_rb->statusTip());
+    store_in_file_ht=new HintTextWidget(store_in_file_hint, this);
+    store_in_file_ht->setText(store_in_file_rb->statusTip());
 
-  import_sys_objs_ht=new HintTextWidget(import_sys_objs_hint, this);
-  import_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
+    import_sys_objs_ht=new HintTextWidget(import_sys_objs_hint, this);
+    import_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
 
-  import_ext_objs_ht=new HintTextWidget(import_ext_objs_hint, this);
-  import_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
+    import_ext_objs_ht=new HintTextWidget(import_ext_objs_hint, this);
+    import_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
 
-  keep_cluster_objs_ht=new HintTextWidget(keep_cluster_objs_hint, this);
-  keep_cluster_objs_ht->setText(keep_cluster_objs_chk->statusTip());
+    keep_cluster_objs_ht=new HintTextWidget(keep_cluster_objs_hint, this);
+    keep_cluster_objs_ht->setText(keep_cluster_objs_chk->statusTip());
 
-  trunc_tables_ht=new HintTextWidget(trunc_tables_hint, this);
-  trunc_tables_ht->setText(trunc_tables_chk->statusTip());
+    trunc_tables_ht=new HintTextWidget(trunc_tables_hint, this);
+    trunc_tables_ht->setText(trunc_tables_chk->statusTip());
 
-  ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
-  ignore_errors_ht->setText(ignore_errors_chk->statusTip());
+    ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
+    ignore_errors_ht->setText(ignore_errors_chk->statusTip());
 
-  force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
-  force_recreation_ht->setText(force_recreation_chk->statusTip());
+    force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
+    force_recreation_ht->setText(force_recreation_chk->statusTip());
 
-  drop_cascade_ht=new HintTextWidget(drop_cascade_hint, this);
-  drop_cascade_ht->setText(drop_cascade_chk->statusTip());
+    drop_cascade_ht=new HintTextWidget(drop_cascade_hint, this);
+    drop_cascade_ht->setText(drop_cascade_chk->statusTip());
 
-	connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
-	connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
-	connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
-	connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
-	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
-	connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
-	connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+    sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
+
+    connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
+    connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
+    connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
+    connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+    connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
+    connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
+    connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
@@ -229,8 +238,10 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	cancel_btn->setEnabled(true);
 	generate_btn->setEnabled(false);
 
-	settings_tbw->setTabEnabled(0, false);
+  alert_frm->setVisible(!force_recreation_chk->isChecked());
+	settings_tbw->setTabEnabled(0, false);  
 	settings_tbw->setTabEnabled(1, true);
+  settings_tbw->setTabEnabled(2, false);
 	settings_tbw->setCurrentIndex(1);
 }
 
@@ -277,7 +288,7 @@ void ModelDatabaseDiffForm::diffModels(void)
 	step_lbl->setText(trUtf8("Comparing the model <strong>%1</strong> and database <strong>%2</strong>...")
 										.arg(source_model->getName())
 										.arg(imported_model->getName()));
-	step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/sync.png")));
+  step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/diff.png")));
 
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();

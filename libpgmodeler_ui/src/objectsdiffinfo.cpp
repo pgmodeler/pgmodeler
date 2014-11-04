@@ -43,7 +43,7 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-	QString msg=QT_TR_NOOP("Object `%1' `(%2)' will be %3"), obj_name;
+  QString msg=QT_TR_NOOP("%1 `%2' `(%3)'"), obj_name;
   //TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
   /*if(tab_obj)
@@ -55,21 +55,22 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 
 	if(diff_type==DROP_OBJECT)
 	{
-		return(msg.arg(obj_name)
-							.arg(object->getTypeName())
-							.arg("<font color='#e00000'><strong>dropped</strong></font>"));
+    return(msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
+              .arg(obj_name)
+              .arg(object->getTypeName()));
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
-		return(msg.arg(obj_name)
-							.arg(object->getTypeName())
-							.arg("<font color='#008000'><strong>created</strong></font>"));
+    return(msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
+              .arg(obj_name)
+              .arg(object->getTypeName()));
 	}
 	else if(diff_type==ALTER_OBJECT)
 	{
-		return(msg.arg(obj_name)
-							.arg(object->getTypeName())
-							.arg("<font color='#ff8000'><strong>changed</strong></font>"));
+    return(msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
+              .arg(obj_name)
+              .arg(object->getTypeName()));
+
 	}
 
 	return("");

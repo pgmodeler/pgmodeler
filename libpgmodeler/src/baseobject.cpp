@@ -1020,7 +1020,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 			xml_defs[i]=xml.simplified();
 		}
 
-		return(xml_defs[0]!=xml_defs[1]);
+    return(xml_defs[0]!=xml_defs[1]);
 	}
 	catch(Exception &e)
 	{

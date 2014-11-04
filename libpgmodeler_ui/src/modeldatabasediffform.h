@@ -30,6 +30,7 @@
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
+#include "syntaxhighlighter.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
@@ -39,6 +40,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht, *drop_cascade_ht;
+
+    SyntaxHighlighter *sqlcode_hl;
 
 		ModelsDiffHelper *diff_helper;
 

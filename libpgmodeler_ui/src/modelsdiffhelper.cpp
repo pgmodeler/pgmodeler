@@ -146,7 +146,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
   QString obj_name;
 	unsigned idx=0;
 	DatabaseModel *aux_model=nullptr;
-  bool objs_differs=false;
+  bool objs_differs=false, xml_differs=false;
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
@@ -213,26 +213,30 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
           {
             objs_differs=!aux_object->getAlterDefinition(object).isEmpty();
 
-            /*if(!objs_differs)
-              objs_differs=object->isCodeDiffersFrom(aux_object,
+            if(!objs_differs)
+              xml_differs=object->isCodeDiffersFrom(aux_object,
                                                     { ParsersAttributes::PROTECTED,
                                                       ParsersAttributes::SQL_DISABLED,
                                                       ParsersAttributes::RECT_VISIBLE,
                                                       ParsersAttributes::FILL_COLOR },
-                                                    { ParsersAttributes::POSITION,
+                                                    { ParsersAttributes::ROLE,
+                                                      ParsersAttributes::TABLESPACE,
+                                                      ParsersAttributes::COLLATION,
+                                                      ParsersAttributes::POSITION,
                                                       ParsersAttributes::APPENDED_SQL,
-                                                      ParsersAttributes::PREPENDED_SQL,
-                                                      ParsersAttributes::COLUMN,
-                                                      ParsersAttributes::CONSTRAINT }); */
+                                                      ParsersAttributes::PREPENDED_SQL//,
+                                                      /* ParsersAttributes::COLUMN,
+                                                      ParsersAttributes::CONSTRAINT */ });
           }
 
-          if(objs_differs)
+          if(objs_differs || xml_differs)
 					{
-            objs_differs=false;
+            objs_differs=xml_differs=false;
 
             if(!force_recreation)
             {
-              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
+              if(objs_differs || (xml_differs && object->getObjectType()!=OBJ_TABLE))
+                generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 
               if(object->getObjectType()==OBJ_TABLE)
               {
@@ -368,6 +372,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
     out << "\n\n";
   }
+
+  if(!diff_infos.empty())
+    emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
 }
 
 void ModelsDiffHelper::recreateObject(BaseObject *object)
