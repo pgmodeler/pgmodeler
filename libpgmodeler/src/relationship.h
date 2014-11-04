@@ -119,7 +119,11 @@ class Relationship: public BaseRelationship {
 	private:
 		/*! \brief Indicates that the relationship invalid because one or more critical attributes
 		 where modified needing to be revalidated */
-		bool invalidated;
+    bool invalidated,
+
+    /*! brief Indicates that the generated table primary key must have only a single column instead
+        of the two from the foreign keys (only for n-n relationships) */
+    single_pk_column;
 
 		/*! \brief Stores the number of columns which were rejected at the time of relationship
 		 connection. This is used only for generalization relationships because, according
@@ -286,7 +290,8 @@ class Relationship: public BaseRelationship {
 		PK_PATTERN,
 		UQ_PATTERN,
 		SRC_FK_PATTERN,
-		DST_FK_PATTERN;
+    DST_FK_PATTERN,
+    PK_COL_PATTERN;
 
 		Relationship(Relationship *rel);
 
@@ -458,6 +463,9 @@ class Relationship: public BaseRelationship {
 		 For n-n relationships this method returns nullptr as this type of relationship
 		 has 2 reference tables, which may be obtained by the method BaseRelationship::getTable() */
 		Table *getReferenceTable(void);
+
+    void setSiglePKColumn(bool value);
+    bool isSiglePKColumn(void);
 
 		//! \brief Returns SQL / XML definition for the relationship.
 		virtual QString getCodeDefinition(unsigned def_type) final;

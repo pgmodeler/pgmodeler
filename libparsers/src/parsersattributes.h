@@ -378,6 +378,7 @@ namespace ParsersAttributes {
 	UQ_PATTERN="uq-pattern",
 	SRC_FK_PATTERN="src-fk-pattern",
 	DST_FK_PATTERN="dst-fk-pattern",
+  PK_COL_PATTERN="pk-col-pattern",
 	COL_INDEXES="col-indexes",
 	CONSTR_INDEXES="constr-indexes",
 	ICON="icon",
@@ -465,7 +466,8 @@ namespace ParsersAttributes {
   DEFAULT_TABLESPACE="default-tablespace",
   DEFAULT_COLLATION="default-collation",
   WITHOUT_OIDS="without-oids",
-  ALTER_CMDS="alter-cmds";
+  ALTER_CMDS="alter-cmds",
+  SINGLE_PK_COLUMN="single-pk-col";
 }
 
 #endif

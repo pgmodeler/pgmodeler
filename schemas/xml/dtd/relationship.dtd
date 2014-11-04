@@ -23,9 +23,11 @@
 <!ATTLIST relationship uq-pattern CDATA #IMPLIED>
 <!ATTLIST relationship src-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
+<!ATTLIST relationship pk-col-pattern CDATA #IMPLIED>
 <!ATTLIST relationship upd-action CDATA #IMPLIED>
 <!ATTLIST relationship del-action CDATA #IMPLIED>
 <!ATTLIST relationship custom-color CDATA #IMPLIED>
+<!ATTLIST relationship single-pk-col CDATA #IMPLIED>
 
 <!ELEMENT line (position+)>
 
