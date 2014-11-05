@@ -38,7 +38,12 @@ void ModelsDiffHelper::resetDiffCounter(void)
 {
 	diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]=0;
 	diffs_counter[ObjectsDiffInfo::DROP_OBJECT]=0;
-	diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
+  diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
+}
+
+QString ModelsDiffHelper::getDiffDefinition(void)
+{
+  return(diff_def);
 }
 
 void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model)
@@ -71,9 +76,8 @@ void ModelsDiffHelper::diffModels(void)
 			emit s_diffCanceled();
 		else
     {
-			emit s_diffFinished();
-
       processDiffInfos();
+      emit s_diffFinished();
     }
 
     setDiffOptions(true, true, false, false);
@@ -347,6 +351,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   vector<BaseObject *> drop_vect, create_vect;
   unsigned diff_type;
   ObjectType obj_type;
+  map<unsigned, QString>::reverse_iterator ritr, ritr_end;
 
   if(!diff_infos.empty())
     emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
@@ -380,6 +385,22 @@ void ModelsDiffHelper::processDiffInfos(void)
         alter_objs[object->getObjectId()]=object->getAlterDefinition(diff.getOldObject());
     }
   }
+
+  diff_def.clear();
+  ritr=drop_objs.rbegin();
+  ritr_end=drop_objs.rend();
+
+  while(ritr!=ritr_end)
+  {
+    diff_def+=ritr->second;
+    ritr++;
+  }
+
+  for(auto itr : create_objs)
+    diff_def+=itr.second;
+
+  for(auto itr : alter_objs)
+    diff_def+=itr.second;
 }
 
 QString ModelsDiffHelper::getCodeDefinition(BaseObject *object)

@@ -62,6 +62,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     drop_cascade_ht->setText(drop_cascade_chk->statusTip());
 
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
+    sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                  GlobalAttributes::DIR_SEPARATOR +
+                                  GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                  GlobalAttributes::CONFIGURATION_EXT);
 
     connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
     connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -352,10 +356,12 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
 	}
 	else if(diff_thread->isRunning())
 	{
+    sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
+    settings_tbw->setTabEnabled(2, true);
+
 		diff_thread->quit();
 		diff_thread->wait();
 		resetButtons();
-
 		destroyThreads();
 	}
 }
