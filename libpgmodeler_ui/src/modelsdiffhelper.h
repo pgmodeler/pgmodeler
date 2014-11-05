@@ -46,7 +46,7 @@ class ModelsDiffHelper: public QObject {
 		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
     void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
     void processDiffInfos(void);
-    void recreateObject(BaseObject *object);
+    void recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs);
     bool isDiffInfoExists(unsigned diff_type, QString signature, ObjectType obj_type);
 
 	public:
@@ -58,7 +58,9 @@ class ModelsDiffHelper: public QObject {
 		unsigned getDiffTypeCount(unsigned diff_type);
 		void resetDiffCounter(void);
 
-	public slots:
+    QString getCodeDefinition(BaseObject *object);
+
+  public slots:
 		void diffModels(void);
 		void cancelDiff(void);
 

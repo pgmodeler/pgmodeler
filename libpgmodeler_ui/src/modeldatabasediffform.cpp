@@ -95,6 +95,7 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 	connect_tb->setEnabled(connections_cmb->isEnabled());
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
+  settings_tbw->setTabEnabled(2, false);
 }
 
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)

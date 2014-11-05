@@ -25,7 +25,7 @@ const unsigned ObjectsDiffInfo::NO_DIFFERENCE=3;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
-	object=nullptr;
+  object=old_object=nullptr;
 	diff_type=NO_DIFFERENCE;
 }
 
@@ -43,7 +43,7 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-  QString msg=QT_TR_NOOP("%1 `%2' `(%3)'"), obj_name;
+  QString msg=QT_TR_NOOP("%1 `%2' `(%3)' [id: %4]"), obj_name;
   //TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
   /*if(tab_obj)
@@ -57,19 +57,22 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	{
     return(msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName()));
+              .arg(object->getTypeName())
+              .arg(object->getObjectId()));
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
     return(msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName()));
+              .arg(object->getTypeName())
+              .arg(object->getObjectId()));
 	}
 	else if(diff_type==ALTER_OBJECT)
 	{
     return(msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName()));
+              .arg(object->getTypeName())
+              .arg(object->getObjectId()));
 
 	}
 
