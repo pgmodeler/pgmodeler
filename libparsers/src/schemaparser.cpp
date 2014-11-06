@@ -29,6 +29,9 @@ const char SchemaParser::CHR_INI_CONDITIONAL='%';
 const char SchemaParser::CHR_INI_METACHAR='$';
 const char SchemaParser::CHR_INI_PURETEXT='[';
 const char SchemaParser::CHR_END_PURETEXT=']';
+const char SchemaParser::CHR_INI_CEXPR='(';
+const char SchemaParser::CHR_END_CEXPR=')';
+const char SchemaParser::CHR_VAL_DELIM='"';
 
 const QString SchemaParser::TOKEN_IF="if";
 const QString SchemaParser::TOKEN_THEN="then";
@@ -43,6 +46,13 @@ const QString SchemaParser::TOKEN_META_BR="br";
 const QString SchemaParser::TOKEN_META_TB="tb";
 const QString SchemaParser::TOKEN_META_OB="ob";
 const QString SchemaParser::TOKEN_META_CB="cb";
+
+const QString SchemaParser::TOKEN_EQ_OP="==";
+const QString SchemaParser::TOKEN_NE_OP="!=";
+const QString SchemaParser::TOKEN_GT_OP=">";
+const QString SchemaParser::TOKEN_LT_OP="<";
+const QString SchemaParser::TOKEN_GT_EQ_OP=">=";
+const QString SchemaParser::TOKEN_LT_EQ_OP="<=";
 
 const QString SchemaParser::PGSQL_VERSION_90="9.0";
 const QString SchemaParser::PGSQL_VERSION_91="9.1";
@@ -382,10 +392,137 @@ bool SchemaParser::isSpecialCharacter(char chr)
 				 chr==CHR_END_PURETEXT);
 }
 
+bool SchemaParser::evaluateComparisonExpr(void)
+{
+  QString curr_line, attrib, value, oper, valid_op_chrs="=!<>";
+  bool error=false, end_eval=false, expr_is_true=true;
+  static QStringList opers = { TOKEN_EQ_OP, TOKEN_NE_OP, TOKEN_GT_OP,
+                               TOKEN_LT_OP, TOKEN_GT_EQ_OP, TOKEN_LT_EQ_OP };
+
+  try
+  {
+    curr_line=buffer[line];
+    column++;
+
+    while(!end_eval && !error)
+    {
+      ignoreBlankChars(curr_line);
+
+      /* If the scan reached the end of the line and the expression was not closed raises an syntax error
+         Comparison expr must start and end in the same line */
+      if(curr_line[column]==CHR_LINE_END && !end_eval)
+         error=true;
+
+      switch(curr_line[column].toLatin1())
+      {
+        case CHR_INI_ATTRIB:
+          /* Extract the attribute (the first element in the expression) only
+             if the comparison operator and values aren't extracted */
+          if(attrib.isEmpty() && oper.isEmpty() && value.isEmpty())
+            attrib=getAttribute();
+          else
+            error=true;
+        break;
+
+        case CHR_VAL_DELIM:
+          /* Extract the value (the last element in the expression) only
+             if the attribute and operator were extracted */
+          if(value.isEmpty() && !attrib.isEmpty() && !oper.isEmpty())
+          {
+            value+=curr_line[column++];
+
+            while(column < static_cast<unsigned>(curr_line.size()))
+            {
+              value+=curr_line[column++];
+
+              if(curr_line[column]==CHR_VAL_DELIM)
+              {
+                value+=CHR_VAL_DELIM;
+                column++;
+                break;
+              }
+            }
+          }
+          else
+            error=true;
+
+        break;
+
+        case CHR_END_CEXPR:
+          column++;
+
+          //If one of the elements are missing, raise an syntax error
+          if(attrib.isEmpty() || oper.isEmpty() || value.isEmpty())
+            error=true;
+          else if(!opers.contains(oper))
+          {
+            throw Exception(QString(Exception::getErrorMessage(ERR_INV_OPERATOR_IN_EXPR))
+                            .arg(oper).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                            ERR_INV_OPERATOR_IN_EXPR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          }
+          else if(attributes.count(attrib)==0 && !ignore_unk_atribs)
+          {
+            throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+                            .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                            ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          }
+          else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
+          {
+            throw Exception(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE)
+                            .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                            ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          }
+          else
+          {
+            value.remove(CHR_VAL_DELIM);
+
+            //Evaluating the attribute value against the one captured on the expression
+            expr_is_true=((oper==TOKEN_EQ_OP && (attributes[attrib] == value)) ||
+                          (oper==TOKEN_NE_OP && (attributes[attrib] != value)) ||
+                          (oper==TOKEN_GT_OP && (attributes[attrib] > value)) ||
+                          (oper==TOKEN_LT_OP && (attributes[attrib] < value)) ||
+                          (oper==TOKEN_GT_EQ_OP && (attributes[attrib] >= value)) ||
+                          (oper==TOKEN_LT_EQ_OP && (attributes[attrib] <= value)));
+
+            end_eval=true;
+          }
+        break;
+
+        default:
+          /* Extract the operator (the second element in the expression) only
+             if the attribute was extracted and the value not */
+          if(oper.size() <= 2 && !attrib.isEmpty() && value.isEmpty())
+          {
+            //If the current char is a valid operator capture it otherwise raise an error
+            if(valid_op_chrs.indexOf(curr_line[column]) >= 0)
+              oper+=curr_line[column++];
+            else
+              error=true;
+          }
+          else
+            error=true;
+
+        break;
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  if(error)
+    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  return(expr_is_true);
+}
+
 bool SchemaParser::evaluateExpression(void)
 {
 	QString current_line, cond, attrib, prev_cond;
-	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true;
+  bool error=false, end_eval=false, expr_is_true=true, attrib_true=true, comp_true=true;
 	unsigned attrib_count=0, and_or_count=0;
 
 	try
@@ -481,6 +618,26 @@ bool SchemaParser::evaluateExpression(void)
 						prev_cond.clear();
 					}
 				break;
+
+        case CHR_INI_CEXPR:
+          comp_true=evaluateComparisonExpr();
+
+          //Appliyng the NOT operator if found
+          if(cond==TOKEN_NOT) comp_true=!comp_true;
+
+          //Executing the AND operation if the token is found
+          if(cond==TOKEN_AND || prev_cond==TOKEN_AND)
+            expr_is_true=(expr_is_true && comp_true);
+          else if(cond==TOKEN_OR || prev_cond==TOKEN_OR)
+            expr_is_true=(expr_is_true || comp_true);
+          else
+            expr_is_true=comp_true;
+
+          //Consider the comparison expression as an attribute evaluation
+          attrib_count++;
+          cond.clear();
+          prev_cond.clear();
+        break;
 
 				default:
 					error=true;
