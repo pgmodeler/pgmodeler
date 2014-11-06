@@ -209,19 +209,22 @@ bool Connection::isStablished(void)
 	return(connection!=nullptr);
 }
 
-QString  Connection::getPgSQLVersion(void)
+QString  Connection::getPgSQLVersion(bool major_only)
 {
-	QString version;
+  QString raw_ver, fmt_ver;
 
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	version=QString("%1").arg(PQserverVersion(connection));
+  raw_ver=QString("%1").arg(PQserverVersion(connection));
+  fmt_ver=QString("%1.%2")
+          .arg(raw_ver.mid(0,2).toInt()/10)
+          .arg(raw_ver.mid(2,2).toInt()/10);
 
-	return(QString("%1.%2.%3")
-				 .arg(version.mid(0,2).toInt()/10)
-				 .arg(version.mid(2,2).toInt()/10)
-				 .arg(version.mid(4,1).toInt()));
+  if(major_only)
+    return(fmt_ver);
+  else
+    return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1).toInt()));
 }
 
 void Connection::executeDMLCommand(const QString &sql, ResultSet &result)

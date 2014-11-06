@@ -467,6 +467,11 @@ namespace ParsersAttributes {
   DEFAULT_COLLATION="default-collation",
   WITHOUT_OIDS="without-oids",
   ALTER_CMDS="alter-cmds",
+  DROP_CMDS="drop-cmds",
+  CREATE_CMDS="create-cmds",
+  CREATE="create",
+  CHANGE="change",
+  DIFF="diff",
   SINGLE_PK_COLUMN="single-pk-col";
 }
 

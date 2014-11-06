@@ -5,14 +5,7 @@
 
 [-- Database generated with pgModeler (PostgreSQL Database Modeler).] $br
 [-- pgModeler  version: ] @{pgmodeler-ver} $br
-[-- PostgreSQL version: ]
-%if @{pgsql90} %then @{pgsql90} %end
-%if @{pgsql91} %then @{pgsql91} %end
-%if @{pgsql92} %then @{pgsql92} %end
-%if @{pgsql93} %then @{pgsql93} %end
-%if @{pgsql94} %then @{pgsql94} %end
-$br
-
+[-- PostgreSQL version: ] @{pgsql-version} $br
 [-- Project Site: pgmodeler.com.br] $br
 [-- Model Author: ]
 

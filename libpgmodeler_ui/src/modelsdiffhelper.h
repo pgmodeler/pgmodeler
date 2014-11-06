@@ -33,7 +33,7 @@ class ModelsDiffHelper: public QObject {
 	private:
 		Q_OBJECT
 
-    QString diff_def;
+    QString diff_def, pgsql_version;
 
     bool diff_canceled, keep_cluster_objs, drop_cascade, force_recreation, trucante_tables;
 
@@ -57,6 +57,7 @@ class ModelsDiffHelper: public QObject {
 
     void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
     void setDiffOptions(bool keep_cluster_objs, bool drop_cascade, bool force_recreation, bool truncate_tables);
+    void setPgSQLVersion(const QString pgsql_ver);
 
 		unsigned getDiffTypeCount(unsigned diff_type);
 		void resetDiffCounter(void);

@@ -224,7 +224,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 		//Retrive the DBMS version in order to generate the correct code
     conn.connect();
-    version=(conn.getPgSQLVersion()).mid(0,3);
+    version=conn.getPgSQLVersion(true);
 
     emit s_progressUpdated(progress, trUtf8("Starting export to DBMS."));
 

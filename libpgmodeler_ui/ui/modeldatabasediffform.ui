@@ -285,7 +285,7 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>Options</string>
+             <string> Options</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <property name="leftMargin">
@@ -533,13 +533,13 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Except for database object, instead of use ALTER commands to modify objects a DROP and CREATE commands are used in order to do a fully modification.</string>
+                  <string>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects database objects.</string>
                  </property>
                  <property name="text">
                   <string>Force recreation of objects</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -649,6 +649,65 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_17">
+               <item>
+                <widget class="QCheckBox" name="pgsql_ver_chk">
+                 <property name="statusTip">
+                  <string>Override the PostgreSQL version when generating the diff. The default is to use the same version as the input database.</string>
+                 </property>
+                 <property name="text">
+                  <string>Use PostgreSQL:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="pgsql_ver_cmb">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="statusTip">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="pgsql_ver_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_8">
                <item>
@@ -1355,7 +1414,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Objects marked with an &lt;strong&gt;ALTER&lt;/strong&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands. The final result will be available on the diff preview tab.</string>
+                <string>Objects marked with an &lt;strong&gt;ALTER&lt;/strong&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise the object will be dropped and created again (if the force recreation is checked).</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>

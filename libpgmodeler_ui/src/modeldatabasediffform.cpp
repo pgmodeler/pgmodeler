@@ -61,12 +61,18 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     drop_cascade_ht=new HintTextWidget(drop_cascade_hint, this);
     drop_cascade_ht->setText(drop_cascade_chk->statusTip());
 
+    pgsql_ver_ht=new HintTextWidget(pgsql_ver_hint, this);
+    pgsql_ver_ht->setText(pgsql_ver_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                   GlobalAttributes::DIR_SEPARATOR +
                                   GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                   GlobalAttributes::CONFIGURATION_EXT);
 
+    pgsql_ver_cmb->addItems(SchemaParser::getPgSQLVersions());
+
+    connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
     connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
     connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
     connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -243,7 +249,7 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	cancel_btn->setEnabled(true);
 	generate_btn->setEnabled(false);
 
-  alert_frm->setVisible(!force_recreation_chk->isChecked());
+  //alert_frm->setVisible(!force_recreation_chk->isChecked());
 	settings_tbw->setTabEnabled(0, false);  
 	settings_tbw->setTabEnabled(1, true);
   settings_tbw->setTabEnabled(2, false);
@@ -266,6 +272,8 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
 		conn.switchToDatabase(database_cmb->currentText());
+    conn_pgsql_ver=conn.getPgSQLVersion(true);
+
 		catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
@@ -302,6 +310,12 @@ void ModelDatabaseDiffForm::diffModels(void)
   diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(), drop_cascade_chk->isChecked(),
                               force_recreation_chk->isChecked(), trunc_tables_chk->isChecked());
   diff_helper->setModels(source_model, imported_model);
+
+  if(pgsql_ver_chk->isChecked())
+    diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
+  else
+    diff_helper->setPgSQLVersion(conn_pgsql_ver);
+
 	diff_thread->start();
 }
 

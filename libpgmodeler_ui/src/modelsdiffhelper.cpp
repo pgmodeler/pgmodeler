@@ -21,6 +21,7 @@
 
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
+  pgsql_version=SchemaParser::PGSQL_VERSION_94;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
   setDiffOptions(true, true, false, false);
@@ -32,6 +33,11 @@ void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool drop_cascade,
   this->drop_cascade=drop_cascade;
   this->force_recreation=force_recreation;
   this->trucante_tables=truncate_tables;
+}
+
+void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
+{
+  this->pgsql_version=pgsql_ver;
 }
 
 void ModelsDiffHelper::resetDiffCounter(void)
@@ -346,82 +352,112 @@ bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, QString signature, O
 
 void ModelsDiffHelper::processDiffInfos(void)
 {
-  BaseObject *object=nullptr;
-  map<unsigned, QString> drop_objs, create_objs, alter_objs;
-  vector<BaseObject *> drop_vect, create_vect;
-  unsigned diff_type;
-  ObjectType obj_type;
-  map<unsigned, QString>::reverse_iterator ritr, ritr_end;
-
-  if(!diff_infos.empty())
-    emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
-
-  for(ObjectsDiffInfo diff : diff_infos)
+  try
   {
-    diff_type=diff.getDiffType();
-    object=diff.getObject();
-    obj_type=object->getObjectType();
+    BaseObject *object=nullptr;
+    map<unsigned, QString> drop_objs, create_objs, alter_objs;
+    vector<BaseObject *> drop_vect, create_vect;
+    unsigned diff_type;
+    ObjectType obj_type;
+    map<unsigned, QString>::reverse_iterator ritr, ritr_end;
+    attribs_map attribs;
+    SchemaParser schparser;
 
-    if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
-      drop_objs[object->getObjectId()]=object->getDropDefinition(drop_cascade);
-    else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
-      create_objs[object->getObjectId()]=getCodeDefinition(object);
-    else
+    if(!diff_infos.empty())
+      emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
+
+    for(ObjectsDiffInfo diff : diff_infos)
     {
-      if((force_recreation && obj_type!=OBJ_DATABASE) || (obj_type==OBJ_CONSTRAINT))
-      {
-        recreateObject(object, drop_vect, create_vect);
+      diff_type=diff.getDiffType();
+      object=diff.getObject();
+      obj_type=object->getObjectType();
 
-        for(auto obj : drop_vect)
-          drop_objs[obj->getObjectId()]=obj->getDropDefinition(drop_cascade);
-
-        for(auto obj : create_vect)
-          create_objs[obj->getObjectId()]=getCodeDefinition(obj);
-
-        drop_vect.clear();
-        create_vect.clear();
-      }
+      if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+        drop_objs[object->getObjectId()]=object->getDropDefinition(drop_cascade);
+      else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
+        create_objs[object->getObjectId()]=getCodeDefinition(object);
       else
-        alter_objs[object->getObjectId()]=object->getAlterDefinition(diff.getOldObject());
+      {
+        if((force_recreation && obj_type!=OBJ_DATABASE) || (obj_type==OBJ_CONSTRAINT))
+        {
+          recreateObject(object, drop_vect, create_vect);
+
+          for(auto obj : drop_vect)
+            drop_objs[obj->getObjectId()]=obj->getDropDefinition(drop_cascade);
+
+          for(auto obj : create_vect)
+            create_objs[obj->getObjectId()]=getCodeDefinition(obj);
+
+          drop_vect.clear();
+          create_vect.clear();
+        }
+        else
+          alter_objs[object->getObjectId()]=object->getAlterDefinition(diff.getOldObject());
+      }
     }
+
+    diff_def.clear();
+    attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
+    attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
+    attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
+    attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
+    attribs[ParsersAttributes::ALTER_CMDS]="";
+    attribs[ParsersAttributes::DROP_CMDS]="";
+    attribs[ParsersAttributes::CREATE_CMDS]="";
+
+    ritr=drop_objs.rbegin();
+    ritr_end=drop_objs.rend();
+
+    while(ritr!=ritr_end)
+    {
+      attribs[ParsersAttributes::DROP_CMDS]+=ritr->second;
+      ritr++;
+    }
+
+    for(auto itr : create_objs)
+      attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
+
+    for(auto itr : alter_objs)
+      attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;
+
+    schparser.setPgSQLVersion(pgsql_version);
+    diff_def=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                         GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                         ParsersAttributes::DIFF + GlobalAttributes::SCHEMA_EXT, attribs);
   }
-
-  diff_def.clear();
-  ritr=drop_objs.rbegin();
-  ritr_end=drop_objs.rend();
-
-  while(ritr!=ritr_end)
+  catch(Exception &e)
   {
-    diff_def+=ritr->second;
-    ritr++;
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
-
-  for(auto itr : create_objs)
-    diff_def+=itr.second;
-
-  for(auto itr : alter_objs)
-    diff_def+=itr.second;
 }
 
 QString ModelsDiffHelper::getCodeDefinition(BaseObject *object)
 {
-  TableObject *tab_obj=dynamic_cast<TableObject *>(object);
-
-  if(tab_obj && (tab_obj->getObjectType()==OBJ_COLUMN || tab_obj->getObjectType()==OBJ_CONSTRAINT))
+  try
   {
-    QString alter;
-    bool gen_alter=false;
-    Table *table=dynamic_cast<Table *>(tab_obj->getParentTable());
+    TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
-    gen_alter=table->isGenerateAlterCmds();
-    table->setGenerateAlterCmds(true);
-    alter=tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-    table->setGenerateAlterCmds(gen_alter);
+    if(tab_obj && (tab_obj->getObjectType()==OBJ_COLUMN || tab_obj->getObjectType()==OBJ_CONSTRAINT))
+    {
+      QString alter;
+      bool gen_alter=false;
+      Table *table=dynamic_cast<Table *>(tab_obj->getParentTable());
 
-    return(alter);
+      gen_alter=table->isGenerateAlterCmds();
+      table->setGenerateAlterCmds(true);
+      alter=tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+      table->setGenerateAlterCmds(gen_alter);
+
+      return(alter);
+    }
+    else
+      return(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+
   }
-  else
-    return(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs)

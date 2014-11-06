@@ -50,17 +50,6 @@ const QString SchemaParser::PGSQL_VERSION_92="9.2";
 const QString SchemaParser::PGSQL_VERSION_93="9.3";
 const QString SchemaParser::PGSQL_VERSION_94="9.4";
 
-/*vector<QString> SchemaParser::buffer;
-attribs_map SchemaParser::attributes;
-QString SchemaParser::filename="";
-unsigned SchemaParser::line=0;
-unsigned SchemaParser::column=0;
-unsigned SchemaParser::comment_count=0;
-bool SchemaParser::ignore_unk_atribs=false;
-bool SchemaParser::ignore_empty_atribs=false;
-
-QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_94; */
-
 SchemaParser::SchemaParser(void)
 {
 	line=column=comment_count=0;
@@ -660,6 +649,8 @@ void SchemaParser::storePgSQLVersion(attribs_map &attribs)
 		attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
 		vers.pop_back();
 	}
+
+  attribs["pgsql-version"]=pgsql_version;
 }
 
 QString SchemaParser::getCodeDefinition(attribs_map &attribs)

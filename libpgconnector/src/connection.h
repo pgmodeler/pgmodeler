@@ -122,8 +122,9 @@ class Connection {
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
 
-		//! \brief Returns the DBMS version in format XX.YY.ZZ
-		QString getPgSQLVersion(void);
+    /*! \brief Returns the DBMS version in format XX.YY[.ZZ]
+        If major_only is true only XX.YY portion is returned */
+    QString getPgSQLVersion(bool major_only=false);
 
 		/*! \brief Change the current database to the specified db name using the parameters from the current
 		stablished connection causing the connection to be reset and moved to the new database.

@@ -128,7 +128,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	{
 		QString sql, custom_filter;
 
-		schparser.setPgSQLVersion(connection.getPgSQLVersion().mid(0,3));
+    schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
 		attribs[qry_type]="1";
 
 		if(exclude_sys_objs || list_only_sys_objs)

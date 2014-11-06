@@ -39,7 +39,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
-    *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht, *drop_cascade_ht;
+    *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
+    *drop_cascade_ht, *pgsql_ver_ht;
 
     SyntaxHighlighter *sqlcode_hl;
 
@@ -56,6 +57,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		DatabaseModel *source_model, *imported_model;
 
 		int diff_progress;
+
+    QString conn_pgsql_ver;
 
 		void showEvent(QShowEvent *);	
 		void closeEvent(QCloseEvent *event);
