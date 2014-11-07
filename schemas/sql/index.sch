@@ -41,7 +41,7 @@ $br $tb ( @{elements} $br $tb )
   [FASTUPDATE = ON]
  %end
 
- %if @{buffering} %and %not @{pgsql90} %and %not @{pgsql91} %then
+ %if @{buffering} %and (@{pgsql-ver} >= "9.2") %then
   [BUFFERING = ON]
  %end
 

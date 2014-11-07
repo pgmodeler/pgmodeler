@@ -33,7 +33,7 @@
 
    [ (id.indisprimary IS FALSE ]
 
-   %if %not @{pgsql90} %then
+   %if (@{pgsql-ver} != "9.0") %then
      [ AND id.indisexclusion IS FALSE ]
    %end
 
@@ -45,7 +45,7 @@
 	      am.amname AS index_type, id.indrelid AS table,
 	      id.indisunique AS unique_bool, ]
 
-      %if @{pgsql90} %then
+      %if (@{pgsql-ver} == "9.0") %then
        [ NULL AS collations, ]
       %else
        [ indcollation::oid] $ob $cb [ AS collations, ]
@@ -98,7 +98,7 @@
 
      [ (id.indisprimary IS FALSE ]
 
-     %if %not @{pgsql90} %then
+     %if (@{pgsql-ver} != "9.0") %then
        [ AND id.indisexclusion IS FALSE ]
      %end
 

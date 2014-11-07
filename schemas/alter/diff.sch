@@ -5,7 +5,7 @@
 
 [-- Database diff generated with pgModeler (PostgreSQL Database Modeler).] $br
 [-- pgModeler  version: ] @{pgmodeler-ver} $br
-[-- PostgreSQL version: ] @{pgsql-version} $br
+[-- PostgreSQL version: ] @{pgsql-ver} $br
 
 $br
 [-- ] $ob Diff $sp summary $cb $br

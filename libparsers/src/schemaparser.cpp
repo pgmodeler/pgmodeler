@@ -17,6 +17,7 @@
 */
 
 #include "schemaparser.h"
+#include "parsersattributes.h"
 
 const char SchemaParser::CHR_COMMENT='#';
 const char SchemaParser::CHR_LINE_END='\n';
@@ -679,7 +680,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
 
-			storePgSQLVersion(attribs);
+      attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
 			return(getCodeDefinition(filename, attribs));
@@ -794,20 +795,6 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 	}
 
 	return(buf_aux);
-}
-
-void SchemaParser::storePgSQLVersion(attribs_map &attribs)
-{
-	QStringList vers=getPgSQLVersions();
-
-	while(!vers.isEmpty())
-	{
-		//Setting the @{pgsql[VERSION]} attribute in other to know which version is being used
-		attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
-		vers.pop_back();
-	}
-
-  attribs["pgsql-version"]=pgsql_version;
 }
 
 QString SchemaParser::getCodeDefinition(attribs_map &attribs)
@@ -1213,7 +1200,7 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	try
 	{
 		loadFile(filename);
-		storePgSQLVersion(attribs);
+    attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
 		return(getCodeDefinition(attribs));
 	}
 	catch(Exception &e)

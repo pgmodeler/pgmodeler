@@ -32,7 +32,7 @@
      %if @{enumerations} %then [ ENUM ] (@{enumerations}); %end
    %end
 
-   %if %not @{pgsql90} %and %not @{pgsql91} %and @{range} %then
+   %if (@{pgsql-ver} >= "9.2") %and @{range} %then
     [RANGE (] $br
     [SUBTYPE = ] @{subtype}
     

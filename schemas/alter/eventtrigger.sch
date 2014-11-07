@@ -3,6 +3,6 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+%if (@{pgsql-ver} >= "9.3") %then
  @{alter-cmds}
 %end
