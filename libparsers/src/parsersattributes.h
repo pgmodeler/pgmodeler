@@ -449,7 +449,7 @@ namespace ParsersAttributes {
 	VALIDATOR="validator",
 	SQL_VALIDATION="sql-validation",
 	USE_UNIQUE_NAMES="use-unique-names",
-	PGSQL_VERSION="pgsql-version",
+  PGSQL_VERSION="pgsql-ver",
 	SQL_TOOL="sqltool",
 	HIDE_EXT_OBJECTS="hide-ext-objects",
 	HIDE_SYS_OBJECTS="hide-sys-objects",

@@ -54,7 +54,10 @@ class SchemaParser {
 											CHR_INI_CONDITIONAL,//! \brief Character that starts a conditional instruction
 											CHR_INI_METACHAR,   //! \brief Character that starts a metacharacter
 											CHR_INI_PURETEXT,   //! \brief Character that starts a puretext
-											CHR_END_PURETEXT;   //! \brief Character that ends a puretext
+                      CHR_END_PURETEXT,   //! \brief Character that ends a puretext
+                      CHR_INI_CEXPR,      //!brief Character that starts a comparison expression
+                      CHR_END_CEXPR,      //!brief Character that ends a comparison expression
+                      CHR_VAL_DELIM;      //!brief Character that delimiters a value (string)
 
 		//! \brief Tokens related to conditional instructions
 		static const QString	TOKEN_IF,  // %if
@@ -71,6 +74,14 @@ class SchemaParser {
 													TOKEN_META_TB,// $tb (tabulation)
 													TOKEN_META_OB,// $ob (open bracket '[')
 													TOKEN_META_CB;// $cb (close bracket ']')
+
+    //! \brief Tokens related to comparison expressions
+    static const QString	TOKEN_EQ_OP,// == (equal)
+                          TOKEN_NE_OP,// != (not equal)
+                          TOKEN_GT_OP,// > (greater than)
+                          TOKEN_LT_OP,// < (less than)
+                          TOKEN_GT_EQ_OP,// >= (greater or equal to)
+                          TOKEN_LT_EQ_OP;// <= (less or equal to)
 
 
 		//! \brief Get an attribute name from the buffer on the current position
@@ -96,6 +107,21 @@ class SchemaParser {
 				%if @{a1} %and @{a3} %then --> FALSE
 		*/
 		bool evaluateExpression(void);
+
+    /*! \brief Returns the result (true|false) of a comparison expression. A comparison expression
+        have the form: ( @{attribute} [operator] "value" ), where:
+
+        (            --> Starts the expression
+        @{attribute} --> Is the attribute to be compared to a value
+        [operator]   --> A valid comparison operator:
+                         == (equal), != (not equal), < (less than), > (greater than)
+                         <= (less or equal to), >= (greater or equal to)
+        )            --> Closes the expression
+
+        The parenthesis are mandatory otherwise the parser will not recognize the expression
+        and raise an exception. Multiple expressions combined with logical operators
+        %not %and %or in the same () are not supported. */
+    bool evaluateComparisonExpr(void);
 
     //! brief Increments the column counter while blank chars (space and tabs) are found on the line
 		void ignoreBlankChars(const QString &line);
@@ -129,10 +155,6 @@ class SchemaParser {
 
 		//! \brief PostgreSQL version currently used by the parser
 		QString pgsql_version;
-
-		/*! \brief Creates an special attribute indicating which version of PostgreSQL the
-		parser is configured */
-		void storePgSQLVersion(attribs_map &attribs);
 
 	public:
 

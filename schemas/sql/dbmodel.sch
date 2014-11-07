@@ -5,7 +5,7 @@
 
 [-- Database generated with pgModeler (PostgreSQL Database Modeler).] $br
 [-- pgModeler  version: ] @{pgmodeler-ver} $br
-[-- PostgreSQL version: ] @{pgsql-version} $br
+[-- PostgreSQL version: ] @{pgsql-ver} $br
 [-- Project Site: pgmodeler.com.br] $br
 [-- Model Author: ]
 

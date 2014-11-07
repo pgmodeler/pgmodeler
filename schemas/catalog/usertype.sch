@@ -35,14 +35,15 @@
 %else
     %if @{attribs} %then
     [SELECT tp.oid, replace(tp.oid::regtype::text, ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
-    %if @{pgsql90} %or @{pgsql91} %then
+    %if (@{pgsql-ver} <= "9.1") %then
       [ NULL AS permission, ]
     %else
       [ tp.typacl AS permission,]
     %end
 
-    %if @{pgsql90} %then
+    %if (@{pgsql-ver} == "9.0") %then
      [ NULL AS collations, ]
     %else
      [ tp.typcollation AS collation, ]
@@ -70,13 +71,13 @@
 		FROM pg_namespace AS ns
 		LEFT JOIN pg_type AS _tp ON _tp.oid=at.atttypid
 		WHERE ns.oid=_tp.typnamespace )
-		|| format_type(atttypid,atttypmod) || ':'|| ] %if @{pgsql90} %then '0' %else attcollation %end [)]
+                || format_type(atttypid,atttypmod) || ':'|| ] %if (@{pgsql-ver} == "9.0") %then '0' %else attcollation %end [)]
      [ FROM pg_attribute AS at
        WHERE attrelid=(SELECT oid FROM pg_class WHERE reltype=tp.oid))
        END AS typeattrib, ]
 
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
-    %if %not @{pgsql90} %and %not @{pgsql91} %then
+    %if (@{pgsql-ver} >= "9.2") %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
 					   rngcanonical::oid||':'||rngsubdiff::oid, ':')
                                     FROM pg_range WHERE rngtypid=tp.oid)
@@ -105,7 +106,7 @@
      tp.typdelim AS delimiter, tp.typispreferred AS preferred_bool,
      tp.typcategory AS category, ]
 
-     %if @{pgsql90} %then
+     %if (@{pgsql-ver} == "9.0") %then
       [ FALSE AS collatable_bool, ]
      %else
       [ CASE WHEN tp.typcollation <> 0 THEN TRUE

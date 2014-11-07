@@ -13,7 +13,7 @@
     %if @{attribs} %then
 	[SELECT oid, spcname AS name, spcacl AS permission, spcowner AS owner, ]
 
-	%if %not @{pgsql90} %and %not @{pgsql91} %then
+        %if (@{pgsql-ver} >= "9.2") %then
 	  [ pg_tablespace_location(oid) AS directory, ]
 	%else
 	  [ spclocation AS directory, ]

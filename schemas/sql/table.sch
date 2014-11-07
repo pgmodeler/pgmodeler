@@ -14,7 +14,7 @@
 
 [CREATE]
 
-%if %not @{pgsql90} %and @{unlogged} %then
+%if (@{pgsql-ver} != "9.0") %and @{unlogged} %then
   [ UNLOGGED]
 %end
 

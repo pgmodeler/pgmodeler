@@ -3,7 +3,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{collation} %and %not @{pgsql90} %or %not @{collation} %then
+%if @{collation} %and (@{pgsql-ver} != "9.0") %or %not @{collation} %then
 
  %if @{constraint} %or @{column} %and %not @{trigger} %then
     %if %not @{decl-in-table} %then

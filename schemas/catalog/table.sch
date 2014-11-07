@@ -25,7 +25,7 @@
     [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner,
 	    tb.reltablespace AS tablespace, tb.relacl AS permission, relhasoids AS oids_bool, ]
 
-    %if @{pgsql90} %then
+    %if (@{pgsql-ver} == "9.0") %then
      [ FALSE AS unlogged_bool, ]
     %else
      [ CASE relpersistence

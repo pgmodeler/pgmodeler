@@ -20,7 +20,7 @@
 	   ELSE rolvaliduntil
 	  END AS validity, ]
 
-	%if %not @{pgsql90} %then
+        %if (@{pgsql-ver} != "9.0") %then
 	  [ rolreplication AS replication_bool, ]
 	%else
 	  [ NULL AS replication_bool, ]

@@ -64,7 +64,7 @@
 		   ELSE 'CALLED ON NULL INPUT'
 		END AS behavior_type, ]
 
-		%if @{pgsql90} %or @{pgsql91} %then
+                %if (@{pgsql-ver} <= "9.1") %then
 		 [ NULL AS leakproof_bool, ]
 		%else
 		 [ pr.proleakproof AS leakproof_bool, ]
