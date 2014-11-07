@@ -115,6 +115,8 @@ class Index: public TableObject{
 		//! \brief Returns the SQL / XML definition for the index
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
+    virtual QString getDropDefinition(bool cascade) final;
+
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
 		 to control which index reference columns added by the
@@ -129,7 +131,7 @@ class Index: public TableObject{
     vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if some index element is referencing the specified collation
-		bool isReferCollation(Collation *collation);
+    bool isReferCollation(Collation *collation);
 };
 
 #endif

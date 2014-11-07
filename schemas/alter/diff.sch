@@ -8,7 +8,7 @@
 [-- PostgreSQL version: ] @{pgsql-ver} $br
 
 $br
-[-- ] $ob Diff $sp summary $cb $br
+[-- ] $ob [ Diff summary ] $cb $br
 [-- Dropped objects: ] @{drop} $br
 [-- Created objects: ] @{create} $br
 [-- Changed objects: ] @{change} $br
@@ -19,21 +19,19 @@ $br
 
 %if @{drop-cmds} %then
   $br
-  [-- Dropped objects -- ] $br
+  [-- ] $ob [ Dropped objects ] $cb [ --] $br
   @{drop-cmds}
   [-- ddl-end --] $br
 %end
 
 %if @{create-cmds} %then
   $br
-  [-- Created objects -- ] $br
+  [-- ] $ob [ Created objects ] $cb [ --] $br
   @{create-cmds}
-  [-- ddl-end --] $br
 %end
 
 %if @{alter-cmds} %then
   $br
-  [-- Changed objects -- ] $br
+  [-- ] $ob [ Changed objects ] $cb [ --] $br
   @{alter-cmds}
-  [-- ddl-end --] $br
 %end

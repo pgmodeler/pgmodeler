@@ -447,7 +447,7 @@ void Function::createSignature(bool format, bool prepend_schema)
 
 QString Function::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+  return(this->getCodeDefinition(def_type, false));
 }
 
 QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
@@ -494,3 +494,8 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+QString Function::getDropDefinition(bool cascade)
+{
+  attributes[ParsersAttributes::SIGNATURE]=signature;
+  return(BaseObject::getDropDefinition(cascade));
+}

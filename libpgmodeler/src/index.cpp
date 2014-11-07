@@ -341,3 +341,10 @@ QString Index::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Index::getDropDefinition(bool cascade)
+{
+  if(getParentTable())
+     attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
+
+  return(BaseObject::getDropDefinition(cascade));
+}

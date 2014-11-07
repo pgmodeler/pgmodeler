@@ -221,6 +221,7 @@ class Function: public BaseObject {
 		//! \brief Returns the SQL / XML code definition for the function
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 		virtual QString getCodeDefinition(unsigned def_type) final;
+    virtual QString getDropDefinition(bool cascade) final;
 };
 
 #endif

@@ -80,6 +80,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
     connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
     connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+    connect(store_in_file_rb, SIGNAL(clicked(bool)), store_in_file_wgt, SLOT(setEnabled(bool)));
+    connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+    connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
   }
   catch(Exception &e)
   {
@@ -193,23 +196,32 @@ void ModelDatabaseDiffForm::clearOutput(void)
 	drop_cnt_lbl->setText("0");
 }
 
-QTreeWidgetItem *ModelDatabaseDiffForm::createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent)
+QTreeWidgetItem *ModelDatabaseDiffForm::createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap)
 {
 	QTreeWidgetItem *item=nullptr;
 	QLabel *label=new QLabel;
 
 	item=new QTreeWidgetItem(parent);
 	item->setIcon(0, ico);
-	label->setText(text);
+  label->setText(text);
+  label->setWordWrap(word_wrap);
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-	if(!parent)
+  if(word_wrap)
+  {
+    label->setMinimumHeight(output_trw->iconSize().height());
+    label->setMaximumHeight(output_trw->iconSize().height() * 2);
+  }
+
+  if(!parent)
 		output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 
-	output_trw->setItemWidget(item, 0, label);
-	item->setExpanded(true);
+  output_trw->setItemWidget(item, 0, label);
+
+  item->setExpanded(true);
 	output_trw->scrollToItem(item);
 
-	return(item);
+  return(item);
 }
 
 void ModelDatabaseDiffForm::listDatabases(void)
@@ -249,7 +261,6 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	cancel_btn->setEnabled(true);
 	generate_btn->setEnabled(false);
 
-  //alert_frm->setVisible(!force_recreation_chk->isChecked());
 	settings_tbw->setTabEnabled(0, false);  
 	settings_tbw->setTabEnabled(1, true);
   settings_tbw->setTabEnabled(2, false);
@@ -323,7 +334,30 @@ void ModelDatabaseDiffForm::resetButtons(void)
 {
 	cancel_btn->setEnabled(false);
 	generate_btn->setEnabled(true);
-	settings_tbw->setTabEnabled(0, true);
+  settings_tbw->setTabEnabled(0, true);
+}
+
+void ModelDatabaseDiffForm::saveDiffToFile(void)
+{
+  if(!sqlcode_txt->toPlainText().isEmpty())
+  {
+    QFile output;
+
+    step_lbl->setText(trUtf8("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
+    step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/salvar.png")));
+    import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+    step_pb->setValue(90);
+    progress_pb->setValue(100);
+
+    output.setFileName(file_edt->text());
+
+    if(!output.open(QFile::WriteOnly))
+      captureThreadError(Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(file_edt->text()),
+                                   ERR_FILE_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+
+    output.write(sqlcode_txt->toPlainText().toUtf8());
+    output.close();
+  }
 }
 
 void ModelDatabaseDiffForm::cancelOperation(void)
@@ -335,12 +369,15 @@ void ModelDatabaseDiffForm::cancelOperation(void)
 
 void ModelDatabaseDiffForm::captureThreadError(Exception e)
 {
+  QTreeWidgetItem *item=nullptr;
+
 	cancelOperation();
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-	createOutputItem(progress_lbl->text(), *progress_ico_lbl->pixmap(), nullptr);
+  item=createOutputItem(progress_lbl->text(), *progress_ico_lbl->pixmap(), nullptr);
+  createOutputItem(e.getErrorMessage(), *progress_ico_lbl->pixmap(), item, true);
 
-	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
 void ModelDatabaseDiffForm::handleOperationCanceled(void)
@@ -377,6 +414,21 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
 		diff_thread->wait();
 		resetButtons();
 		destroyThreads();
+
+    if(store_in_file_rb->isChecked())
+      saveDiffToFile();
+    else
+    {
+
+    }
+
+    step_lbl->setText(trUtf8("Diff process sucessfully end."));
+    progress_lbl->setText(trUtf8("No operations left."));
+
+    step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+    import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+    step_pb->setValue(100);
+    progress_pb->setValue(100);
 	}
 }
 
@@ -434,3 +486,26 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 									 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())) , diff_item);
 	lbl->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 }
+
+void ModelDatabaseDiffForm::selectOutputFile(void)
+{
+  QFileDialog file_dlg;
+
+  file_dlg.setWindowTitle(trUtf8("Save diff as..."));
+  file_dlg.setFileMode(QFileDialog::AnyFile);
+  file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+  file_dlg.setModal(true);
+  file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+  file_dlg.selectFile(source_model->getName() + "-diff.sql");
+
+  if(file_dlg.exec()==QFileDialog::Accepted)
+  {
+    QString file;
+
+    if(!file_dlg.selectedFiles().isEmpty())
+      file = file_dlg.selectedFiles().at(0);
+
+    file_edt->setText(file);
+  }
+}
+

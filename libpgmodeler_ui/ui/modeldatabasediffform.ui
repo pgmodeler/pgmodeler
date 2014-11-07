@@ -145,7 +145,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -842,7 +842,7 @@
              <item>
               <widget class="QWidget" name="store_in_file_wgt" native="true">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -866,7 +866,7 @@
                 <item row="0" column="0">
                  <widget class="QLabel" name="file_lbl">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -888,7 +888,7 @@
                 <item row="0" column="2">
                  <widget class="QToolButton" name="select_file_tb">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="minimumSize">
                    <size>
@@ -897,7 +897,7 @@
                    </size>
                   </property>
                   <property name="toolTip">
-                   <string>Select target file</string>
+                   <string>Select output file</string>
                   </property>
                   <property name="text">
                    <string>...</string>
@@ -917,13 +917,13 @@
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="file_edt">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="dragEnabled">
                    <bool>false</bool>
                   </property>
                   <property name="readOnly">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -1154,7 +1154,10 @@
              <enum>Qt::ScrollBarAsNeeded</enum>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+             <enum>QAbstractScrollArea::AdjustToContents</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
@@ -1174,8 +1177,14 @@
             <property name="uniformRowHeights">
              <bool>false</bool>
             </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
             <attribute name="headerVisible">
              <bool>false</bool>
+            </attribute>
+            <attribute name="headerCascadingSectionResizes">
+             <bool>true</bool>
             </attribute>
             <attribute name="headerDefaultSectionSize">
              <number>100</number>
@@ -1218,7 +1227,7 @@
               <number>0</number>
              </property>
              <item row="3" column="0">
-              <widget class="QLabel" name="progress_ico_lbl">
+              <widget class="QLabel" name="step_ico_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1269,6 +1278,13 @@
               </widget>
              </item>
              <item row="3" column="1">
+              <widget class="QProgressBar" name="step_pb">
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
               <widget class="QProgressBar" name="progress_pb">
                <property name="value">
                 <number>0</number>
@@ -1276,26 +1292,6 @@
               </widget>
              </item>
              <item row="0" column="0" colspan="2">
-              <widget class="QLabel" name="step_lbl">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Step label...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QProgressBar" name="step_pb">
-               <property name="value">
-                <number>0</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" colspan="2">
               <widget class="QLabel" name="progress_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1309,7 +1305,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="step_ico_lbl">
+              <widget class="QLabel" name="progress_ico_lbl">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1333,6 +1329,19 @@
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="step_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Step label...</string>
                </property>
               </widget>
              </item>

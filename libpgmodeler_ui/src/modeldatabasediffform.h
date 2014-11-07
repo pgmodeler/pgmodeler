@@ -67,18 +67,17 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void destroyModel(void);
 		void clearOutput(void);
 		void resetButtons(void);
+    void saveDiffToFile(void);
 		QString formatMessage(const QString &msg);
 
-		QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent);
+    QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);
 		void setDatabaseModel(DatabaseModel *model);
 
-	public slots:
-
-	private slots:
+  private slots:
 		void listDatabases(void);
 		void enableDiffMode(void);
 		void generateDiff(void);
@@ -89,7 +88,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
 		void handleOperationFinished(void);
-
+    void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);
 };
