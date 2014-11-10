@@ -180,6 +180,8 @@ class Trigger: public TableObject{
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
 		void validateTrigger(void);
+
+    virtual QString getSignature(bool format=true) final;
 };
 
 #endif

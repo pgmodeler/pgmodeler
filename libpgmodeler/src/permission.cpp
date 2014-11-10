@@ -400,11 +400,6 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::REVOKE]=(revoke ? "1" : "");
 	attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
-
-  /*if(obj_type==OBJ_FUNCTION)
-		attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(object)->getSignature();
-	else
-    attributes[ParsersAttributes::OBJECT]=object->getName(true); */
   attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)

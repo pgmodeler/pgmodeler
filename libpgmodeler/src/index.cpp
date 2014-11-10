@@ -348,3 +348,11 @@ QString Index::getDropDefinition(bool cascade)
 
   return(BaseObject::getDropDefinition(cascade));
 }
+
+QString Index::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format)));
+}

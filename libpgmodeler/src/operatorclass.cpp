@@ -186,3 +186,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+QString OperatorClass::getSignature(bool format)
+{
+  return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+}
