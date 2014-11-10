@@ -146,3 +146,44 @@ void Domain::operator = (Domain &domain)
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
+QString Domain::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    QString alter_def=BaseObject::getAlterDefinition(object);
+    Domain *domain=dynamic_cast<Domain *>(object);
+
+    attributes[ParsersAttributes::DEFAULT_VALUE]="";
+    attributes[ParsersAttributes::NOT_NULL]="";
+    attributes[ParsersAttributes::CONSTRAINT]="";
+    attributes[ParsersAttributes::EXPRESSION]="";
+    attributes[ParsersAttributes::OLD_NAME]="";
+    attributes[ParsersAttributes::NEW_NAME]="";
+
+    if(this->default_value!=domain->default_value)
+      attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
+
+    if(this->not_null!=domain->not_null)
+      attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+    if(this->expression!=domain->expression)
+    {
+      attributes[ParsersAttributes::CONSTRAINT]=domain->constraint_name;
+      attributes[ParsersAttributes::EXPRESSION]=(!domain->expression.isEmpty() ? domain->expression : ParsersAttributes::UNSET);
+    }
+
+    if(!this->constraint_name.isEmpty() && !domain->constraint_name.isEmpty() &&
+       this->constraint_name!=domain->constraint_name)
+    {
+      attributes[ParsersAttributes::OLD_NAME]=this->constraint_name;
+      attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
+    }
+
+    alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

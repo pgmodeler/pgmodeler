@@ -4939,7 +4939,28 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 XMLParser *DatabaseModel::getXMLParser(void)
 {
-	return(&xmlparser);
+  return(&xmlparser);
+}
+
+QString DatabaseModel::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    QString alter_def=BaseObject::getAlterDefinition(object);
+    DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
+
+    if(this->conn_limit!=db_aux->conn_limit)
+    {
+      attributes[ParsersAttributes::CONN_LIMIT]=QString::number(db_aux->conn_limit);
+      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
+    }
+
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 Index *DatabaseModel::createIndex(void)

@@ -124,6 +124,7 @@ void DatabaseWidget::applyConfiguration(void)
 
 		model->setAuthor(author_edt->text().toUtf8());
 		model->setTemplateDB(templatedb_edt->text());
+    model->setConnectionLimit(connlim_sb->value());
 
 		if(encoding_cmb->currentIndex() > 0)
 			model->setEncoding(EncodingType(encoding_cmb->currentText()));

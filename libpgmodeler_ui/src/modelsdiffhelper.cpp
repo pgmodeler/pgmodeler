@@ -266,10 +266,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			else if(TableObject::isTableObject(obj_type))
 				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
 			//Comparison between model db and the imported db
-			else
+      else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-        if(!source_model->getAlterDefinition(imported_model).isEmpty())
-         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
+        if(!imported_model->getAlterDefinition(source_model).isEmpty())
+         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, imported_model, source_model);
 			}
 		}
 		else

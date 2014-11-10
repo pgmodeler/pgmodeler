@@ -45,13 +45,22 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 {
   QString msg=QT_TR_NOOP("%1 `%2' `(%3)' [id: %4]"), obj_name;
   //TableObject *tab_obj=dynamic_cast<TableObject *>(object);
+  ObjectType obj_type=object->getObjectType();
 
   /*if(tab_obj)
 	 obj_name=tab_obj->getParentTable()->getName(true) + "." + tab_obj->getName(true);
 	else
    obj_name=object->getName(true);*/
 
-  obj_name=object->getSignature();
+  /* Forcing the usage of BaseObject::getSignature for the following object,
+     since the custom getSignature for those types return some undesired
+     SQL keywords for this context */
+  if(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
+    obj_name=dynamic_cast<TableObject *>(object)->TableObject::getSignature();
+  else if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+    obj_name=object->BaseObject::getSignature();
+  else
+    obj_name=object->getSignature();
 
 	if(diff_type==DROP_OBJECT)
 	{

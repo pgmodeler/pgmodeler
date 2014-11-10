@@ -516,6 +516,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		\note: This is not the better approach and certainly will be changed in future releases */
 		XMLParser *getXMLParser(void);
 
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);

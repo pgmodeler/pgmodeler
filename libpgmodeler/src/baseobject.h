@@ -209,7 +209,7 @@ class BaseObject {
         ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
     void setBasicAttributes(bool format_name);
 
-    QString getAlterDefinition(ObjectType obj_type, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
+    static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
   public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have

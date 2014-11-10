@@ -1560,7 +1560,8 @@ QString Table::getAlterDefinition(BaseObject *object)
     {
       attributes[ParsersAttributes::OIDS]=(tab->with_oid ? "1" : "");
       attributes[ParsersAttributes::WITHOUT_OIDS]=(!tab->with_oid ? "1" : "");
-      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
+          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
     }
 
     attributes.erase(ParsersAttributes::OIDS);
@@ -1580,7 +1581,8 @@ QString Table::getAlterDefinition(BaseObject *object)
       else
         attributes[ParsersAttributes::INHERIT]="1";
 
-      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
+          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
     }
 
     clearAttributes();

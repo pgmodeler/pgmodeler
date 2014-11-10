@@ -472,7 +472,10 @@ namespace ParsersAttributes {
   CHANGE="change",
   DIFF="diff",
   SINGLE_PK_COLUMN="single-pk-col",
-  NEW_NAME="new-name";
+  NEW_NAME="new-name",
+  OLD_NAME="old-name",
+  RENAME="rename",
+  UNSET="unset";
 }
 
 #endif
