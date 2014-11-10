@@ -724,3 +724,11 @@ QString Constraint::getDropDefinition(bool cascade)
   setDeclInTableAttribute();
   return(TableObject::getDropDefinition(cascade));
 }
+
+QString Constraint::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+}

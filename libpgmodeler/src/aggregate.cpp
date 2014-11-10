@@ -292,3 +292,18 @@ QString Aggregate::getAlterDefinition(BaseObject *object)
   return(BaseObject::getAlterDefinition(object));
 }
 
+QString Aggregate::getSignature(bool format)
+{
+  QStringList types;
+
+  if(data_types.empty())
+    types.push_back("*");
+  else
+  {
+    for(auto tp : data_types)
+      types.push_back(~tp);
+  }
+
+  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(",")));
+}
+

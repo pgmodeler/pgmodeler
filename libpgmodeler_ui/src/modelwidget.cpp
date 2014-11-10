@@ -2063,16 +2063,6 @@ void ModelWidget::pasteObjects(void)
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
 
-      /*if(obj_type==OBJ_FUNCTION)
-			{
-				dynamic_cast<Function *>(object)->createSignature(true);
-				aux_name=dynamic_cast<Function *>(object)->getSignature();
-			}
-			else if(obj_type==OBJ_OPERATOR)
-				aux_name=dynamic_cast<Operator *>(object)->getSignature();
-			else
-        aux_name=object->getName(true); */
-
       if(obj_type==OBJ_FUNCTION)
         dynamic_cast<Function *>(object)->createSignature(true);
       else if(tab_obj)

@@ -26,9 +26,9 @@ Cast::Cast(void)
 	is_in_out=false;
 	attributes[ParsersAttributes::SOURCE_TYPE]="";
 	attributes[ParsersAttributes::DEST_TYPE]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
 	attributes[ParsersAttributes::CAST_TYPE]="";
 	attributes[ParsersAttributes::IO_CAST]="";
+  attributes[ParsersAttributes::FUNCTION]="";
 }
 
 void Cast::setDataType(unsigned type_idx, PgSQLType type)
@@ -167,9 +167,9 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	if(!is_in_out && cast_function)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::SIGNATURE]=cast_function->getSignature();
+      attributes[ParsersAttributes::FUNCTION]=cast_function->getSignature();
 		else
-			attributes[ParsersAttributes::SIGNATURE]=cast_function->getCodeDefinition(def_type, true);
+      attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
 		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? "1" : "");
@@ -184,6 +184,12 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Cast::getSignature(bool)
+{
+  attributes[ParsersAttributes::SIGNATURE]=this->getName().remove("cast");
+  return(BaseObject::getSignature(false));
 }
 

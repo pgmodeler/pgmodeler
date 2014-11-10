@@ -132,6 +132,8 @@ class Index: public TableObject{
 
 		//! \brief Returns if some index element is referencing the specified collation
     bool isReferCollation(Collation *collation);
+
+    QString getSignature(bool format=true);
 };
 
 #endif

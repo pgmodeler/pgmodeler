@@ -384,11 +384,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	if((obj_type==OBJ_VIEW &&	(getObject(object->getName(true), obj_type, idx) ||
 														 getObject(object->getName(true), OBJ_TABLE, idx))) ||
 		 (obj_type==OBJ_TABLE && (getObject(object->getName(true), obj_type, idx) ||
-															getObject(object->getName(true), OBJ_VIEW, idx))) ||
-     /*(obj_type==OBJ_FUNCTION &&	getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)) ||
-		 (obj_type==OBJ_OPERATOR &&	getObject(dynamic_cast<Operator *>(object)->getSignature(), obj_type, idx)) ||
-     (obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)))*/
-
+                              getObject(object->getName(true), OBJ_VIEW, idx))) ||
      (getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
@@ -491,15 +487,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 
 			if(obj_idx < 0)
-			{
-        /*if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
-					getObject(object->getName(true), obj_type, obj_idx);
-				else if(obj_type==OBJ_FUNCTION)
-					getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, obj_idx);
-				else
-          getObject(dynamic_cast<Operator *>(object)->getSignature(), obj_type, obj_idx);*/
          getObject(object->getSignature(), obj_type, obj_idx);
-			}
 
 			if(obj_idx >= 0)
 			{
@@ -574,7 +562,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
 	bool found=false; //, formatted=false;
-	QString aux_name, aux_name1;
+  QString /*aux_name,*/ aux_name1;
 
 	obj_list=getObjectList(obj_type);
 
@@ -584,45 +572,21 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	{
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
-		obj_idx=-1;
-
-		//formatted=name.contains("\"") || name.contains(".");
+		obj_idx=-1;		
 		aux_name1=QString(name).remove("\"");
-
-    /* if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
-		{
-			//if(!formatted)
-			//	aux_name1=BaseObject::formatName(aux_name1);
-			while(itr!=itr_end && !found)
-			{
-				aux_name=(*itr)->getName(true).remove("\"");
-				found=(aux_name==aux_name1);
-				if(!found) itr++;
-			}
-		}
-		else
-		{
-			QString signature;
-
-			while(itr!=itr_end && !found)
-			{
-        //Special case for functions/operators: to check duplicity the signature must be
-       ///compared and not only the name
-				if(obj_type==OBJ_FUNCTION)
-					signature=dynamic_cast<Function *>(*itr)->getSignature().remove("\"");
-				else
-					signature=dynamic_cast<Operator *>(*itr)->getSignature().remove("\"");
-
-				found=(signature==aux_name1);
-				if(!found) itr++;
-			}
-    } */
 
     QString signature;
 
     while(itr!=itr_end && !found)
     {
       signature=(*itr)->getSignature().remove("\"");
+
+      /* Special case for operator class and operator family.
+         Their signature comes with a "USING index_mode" string
+         that must be removed */
+      if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+        signature.remove(QRegExp("( )+(USING)(.)+"));
+
       found=(signature==aux_name1);
       if(!found) itr++;
     }
