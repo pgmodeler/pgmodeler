@@ -475,7 +475,8 @@ namespace ParsersAttributes {
   NEW_NAME="new-name",
   OLD_NAME="old-name",
   RENAME="rename",
-  UNSET="unset";
+  UNSET="unset",
+  HAS_CHANGES="has-changes";
 }
 
 #endif

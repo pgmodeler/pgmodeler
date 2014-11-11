@@ -499,8 +499,39 @@ QString Function::getAlterDefinition(BaseObject *object)
   try
   {
     Function *func=dynamic_cast<Function *>(object);
+    attribs_map attribs;
 
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if(this->execution_cost!=func->execution_cost)
+      attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
+
+    if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+    {
+      attribs[ParsersAttributes::RETURNS_SETOF]="1";
+      attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+    }
+
+    if(this->function_type!=func->function_type)
+      attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+
+    if(this->is_leakproof!=func->is_leakproof)
+      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? "1" : ParsersAttributes::UNSET);
+
+    if(this->security_type!=func->security_type)
+      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
+
+    if(this->behavior_type!=func->behavior_type)
+      attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+
+    if(!attribs.empty())
+    {
+      attributes[ParsersAttributes::HAS_CHANGES]="1";
+      for(auto itr : attribs)
+       attributes[itr.first]=itr.second;
+    }
+    else
+      attributes[ParsersAttributes::HAS_CHANGES]="";
 
     return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
   }
