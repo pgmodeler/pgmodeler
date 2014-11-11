@@ -90,15 +90,36 @@ QString Extension::getCodeDefinition(unsigned def_type)
   return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Extension::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Extension *ext=dynamic_cast<Extension *>(object);
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+    attributes[ParsersAttributes::NEW_VERSION]="";
+
+    if(!this->versions[CUR_VERSION].isEmpty() && !ext->versions[CUR_VERSION].isEmpty() &&
+       this->versions[CUR_VERSION].isEmpty() < ext->versions[CUR_VERSION].isEmpty())
+      attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CUR_VERSION];
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
 void Extension::operator = (Extension &ext)
 {
-	QString prev_name=this->getName(true);
+  QString prev_name=this->getName(true);
 
-	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
-	this->versions[CUR_VERSION]=ext.versions[CUR_VERSION];
-	this->versions[OLD_VERSION]=ext.versions[OLD_VERSION];
-	this->handles_type=ext.handles_type;
+  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
+  this->versions[CUR_VERSION]=ext.versions[CUR_VERSION];
+  this->versions[OLD_VERSION]=ext.versions[OLD_VERSION];
+  this->handles_type=ext.handles_type;
 
-	if(this->handles_type)
-		PgSQLType::renameUserType(prev_name, this, this->getName(true));
+  if(this->handles_type)
+    PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }

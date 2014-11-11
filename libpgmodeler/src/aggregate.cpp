@@ -288,7 +288,29 @@ QString Aggregate::getDropDefinition(bool cascade)
 
 QString Aggregate::getAlterDefinition(BaseObject *object)
 {
-  setTypesAttribute(SchemaParser::SQL_DEFINITION);
-  return(BaseObject::getAlterDefinition(object));
+  try
+  {
+    setTypesAttribute(SchemaParser::SQL_DEFINITION);
+    return(BaseObject::getAlterDefinition(object));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+QString Aggregate::getSignature(bool format)
+{
+  QStringList types;
+
+  if(data_types.empty())
+    types.push_back("*");
+  else
+  {
+    for(auto tp : data_types)
+      types.push_back(~tp);
+  }
+
+  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(",")));
 }
 

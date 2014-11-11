@@ -80,7 +80,9 @@ class Domain: public BaseObject{
 		//! \brief Returns the SQL / XML code definition for the domain
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-		void operator = (Domain &domain);
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
+    void operator = (Domain &domain);
 };
 
 #endif

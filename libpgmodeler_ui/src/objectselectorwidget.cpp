@@ -141,7 +141,6 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
-    //obj_name_txt->setPlainText(Utf8String::create(formatObjectName(selected_obj)));
     obj_name_txt->setPlainText(Utf8String::create(selected_obj->getSignature()));
 		emit s_objectSelected();
 	}

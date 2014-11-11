@@ -116,12 +116,12 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-    attribs[ParsersAttributes::DIF_SQL]="1";
+    attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
-		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
-		attribs[ParsersAttributes::TABLE]=this->getName(true);
-		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
+    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
+    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
+    attribs[ParsersAttributes::TABLE]=this->getName(true);
+    attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
 		schparser.setIgnoreUnkownAttributes(true);
@@ -1560,7 +1560,8 @@ QString Table::getAlterDefinition(BaseObject *object)
     {
       attributes[ParsersAttributes::OIDS]=(tab->with_oid ? "1" : "");
       attributes[ParsersAttributes::WITHOUT_OIDS]=(!tab->with_oid ? "1" : "");
-      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
+          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
     }
 
     attributes.erase(ParsersAttributes::OIDS);
@@ -1580,7 +1581,8 @@ QString Table::getAlterDefinition(BaseObject *object)
       else
         attributes[ParsersAttributes::INHERIT]="1";
 
-      alter_def+=BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
+          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
     }
 
     clearAttributes();

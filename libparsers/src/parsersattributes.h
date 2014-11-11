@@ -49,7 +49,6 @@ namespace ParsersAttributes {
 	COLUMNS="columns",
 	COLUMN="column",
 	COMMANDS="commands",
-	DIF_SQL="dif-sql",
 	COMMENT="comment",
 	INTERNAL_LENGHT="internal-length",
 	LENGTH="length",
@@ -472,7 +471,12 @@ namespace ParsersAttributes {
   CREATE="create",
   CHANGE="change",
   DIFF="diff",
-  SINGLE_PK_COLUMN="single-pk-col";
+  SINGLE_PK_COLUMN="single-pk-col",
+  NEW_NAME="new-name",
+  OLD_NAME="old-name",
+  RENAME="rename",
+  UNSET="unset",
+  HAS_CHANGES="has-changes";
 }
 
 #endif

@@ -49,3 +49,7 @@ QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type,reduced_form));
 }
 
+QString OperatorFamily::getSignature(bool format)
+{
+  return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+}

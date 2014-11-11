@@ -21,7 +21,6 @@ $br
   $br
   [-- ] $ob [ Dropped objects ] $cb [ --] $br
   @{drop-cmds}
-  [-- ddl-end --] $br
 %end
 
 %if @{create-cmds} %then

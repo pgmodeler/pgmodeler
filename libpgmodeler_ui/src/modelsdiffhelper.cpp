@@ -201,7 +201,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
              !imported_model->getRelationship(ref_tab, rec_tab))
           {
             //Check if the generalization is new but the tables already exists.
-            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, rec_tab);
+            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, rec_tab, ref_tab);
           }
         }
       }
@@ -221,9 +221,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 				{
 					if(aux_object)
           {
-            objs_differs=!aux_object->getAlterDefinition(object).isEmpty();
+            QString alter_def=aux_object->getAlterDefinition(object);
+            objs_differs=!alter_def.isEmpty();
 
-            if(!objs_differs)
+            if(!objs_differs && object->getObjectType()==OBJ_TABLE)
               xml_differs=object->isCodeDiffersFrom(aux_object,
                                                     { ParsersAttributes::PROTECTED,
                                                       ParsersAttributes::SQL_DISABLED,
@@ -241,12 +242,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
           if(objs_differs || xml_differs)
 					{
-            objs_differs=xml_differs=false;
-
             /* if(!force_recreation)
             {*/
-              if(objs_differs || (xml_differs && object->getObjectType()!=OBJ_TABLE))
-                generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
+              //if(objs_differs || (xml_differs && object->getObjectType()!=OBJ_TABLE))
+              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 
               if(object->getObjectType()==OBJ_TABLE)
               {
@@ -257,6 +256,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
             /*}
             else
               recreateObject(object); */
+
+            objs_differs=xml_differs=false;
           }
 				}
 				else if(!aux_object)
@@ -266,10 +267,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			else if(TableObject::isTableObject(obj_type))
 				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
 			//Comparison between model db and the imported db
-			else
+      else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-        if(!source_model->getAlterDefinition(imported_model).isEmpty())
-         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
+        if(!imported_model->getAlterDefinition(source_model).isEmpty())
+         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, imported_model, source_model);
 			}
 		}
 		else
@@ -392,7 +393,7 @@ void ModelsDiffHelper::processDiffInfos(void)
           create_vect.clear();
         }
         else
-          alter_objs[object->getObjectId()]=object->getAlterDefinition(diff.getOldObject());
+          alter_objs[object->getObjectId()]=diff.getOldObject()->getAlterDefinition(object);
       }
     }
 
