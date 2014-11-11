@@ -115,7 +115,9 @@ class Index: public TableObject{
 		//! \brief Returns the SQL / XML definition for the index
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getDropDefinition(bool cascade) final;
+    virtual QString getSignature(bool format=true) final ;
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
@@ -132,8 +134,6 @@ class Index: public TableObject{
 
 		//! \brief Returns if some index element is referencing the specified collation
     bool isReferCollation(Collation *collation);
-
-    QString getSignature(bool format=true);
 };
 
 #endif

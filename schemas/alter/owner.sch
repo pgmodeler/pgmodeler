@@ -1,4 +1,4 @@
-# SQL definition for owner attribute change
+# SQL definition for object's owner attribute change
 # PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.

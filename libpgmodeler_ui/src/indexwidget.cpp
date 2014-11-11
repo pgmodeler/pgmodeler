@@ -84,7 +84,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 void IndexWidget::selectIndexingType(void)
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
-	fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+  //fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 }

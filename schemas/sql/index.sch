@@ -38,10 +38,12 @@ $br $tb ( @{elements} $br $tb )
  %end
 
  %if @{fast-update} %then
+  %if @{factor} %then [, ] %end
   [FASTUPDATE = ON]
  %end
 
  %if @{buffering} %and (@{pgsql-ver} >= "9.2") %then
+  %if @{factor} %then [, ] %end
   [BUFFERING = ON]
  %end
 
@@ -57,13 +59,15 @@ $br $tb ( @{elements} $br $tb )
 %end
 ; $br
 
-%if @{comment} %then @{comment} %end
-
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+[-- ddl-end --] $br
+
+%if @{comment} %then @{comment} %end
 
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
+
+$br

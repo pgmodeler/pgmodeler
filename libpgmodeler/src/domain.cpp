@@ -179,7 +179,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
       attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
     }
 
-    alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
+    alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
     return(alter_def);
   }
   catch(Exception &e)

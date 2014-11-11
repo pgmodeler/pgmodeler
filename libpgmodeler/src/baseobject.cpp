@@ -1076,9 +1076,6 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
   else
   {
     QString alter;
-   /* QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-                          GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-                          "%1" + GlobalAttributes::SCHEMA_EXT; */
 
     if(object->obj_type!=this->obj_type)
       throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1092,26 +1089,27 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
       BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
                  *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
-      //schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-
       for(unsigned i=0; i < 3; i++)
       {
         if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
            dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
         {
           attributes[attribs[i]]=aux_dep_objs[i]->getName(true);          
-          //schparser.setIgnoreUnkownAttributes(true);
           alter+=BaseObject::getAlterDefinition(attribs[i], attributes, true);
-              //schparser.getCodeDefinition(alter_sch_dir.arg(attribs[i]), attributes);
         }
       }
 
       if(this->getName()!=object->getName())
       {
         attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
-        //schparser.setIgnoreUnkownAttributes(true);
-        alter+=alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
-            //schparser.getCodeDefinition(alter_sch_dir.arg(ParsersAttributes::RENAME), attributes);
+        alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
+      }
+
+      if(this->getComment()!=object->getComment())
+      {
+        attributes[ParsersAttributes::COMMENT]=object->getComment();
+        schparser.setIgnoreUnkownAttributes(true);
+        alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
       }
     }
     catch(Exception &e)
