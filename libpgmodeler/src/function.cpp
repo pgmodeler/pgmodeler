@@ -494,8 +494,18 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
-QString Function::getDropDefinition(bool cascade)
+QString Function::getAlterDefinition(BaseObject *object)
 {
-  attributes[ParsersAttributes::SIGNATURE]=signature;
-  return(BaseObject::getDropDefinition(cascade));
+  try
+  {
+    Function *func=dynamic_cast<Function *>(object);
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

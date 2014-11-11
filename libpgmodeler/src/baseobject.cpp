@@ -1076,9 +1076,9 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
   else
   {
     QString alter;
-    QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+   /* QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
                           GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-                          "%1" + GlobalAttributes::SCHEMA_EXT;
+                          "%1" + GlobalAttributes::SCHEMA_EXT; */
 
     if(object->obj_type!=this->obj_type)
       throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);

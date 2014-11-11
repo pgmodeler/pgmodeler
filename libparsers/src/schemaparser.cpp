@@ -467,12 +467,6 @@ bool SchemaParser::evaluateComparisonExpr(void)
                             .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
                             ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
           }
-          else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
-          {
-            throw Exception(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE)
-                            .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
-                            ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-          }
           else
           {
             value.remove(CHR_VAL_DELIM);
@@ -1001,7 +995,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						//If the parser is in 'if / else' and one 'then' token is found
 						else if(cond==TOKEN_THEN && if_level>=0)
 						{
-							//Marks the then thoke flag of the current 'if'
+              //Marks the then token flag of the current 'if'
 							vet_tk_then[if_level]=true;
 
 							/* Clears the  expression extracted flag from the 'if - then',

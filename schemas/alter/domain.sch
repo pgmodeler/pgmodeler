@@ -16,7 +16,7 @@
   [-- ddl-end --] $br
 %end
 
-#Changin NOT NULL constraint
+#Changing NOT NULL constraint
 %if @{not-null} %then
   [ALTER ] @{sql-object} $sp @{signature} 
 

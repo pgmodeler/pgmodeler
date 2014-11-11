@@ -795,6 +795,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				parent_tab->setCodeInvalidated(true);
 				parent_tab->setModified(true);
 
+        if(parent_tab->getSchema())
+          dynamic_cast<Schema *>(parent_tab->getSchema())->setModified(true);
+
 				if(object->getObjectType()==OBJ_COLUMN ||
 					 object->getObjectType()==OBJ_CONSTRAINT)
 				{

@@ -22,16 +22,19 @@
  $br $tb [DEFAULT ] @{default-value}
 %end
 
-%if @{constraint} %then
- $br $tb [CONSTRAINT ] @{constraint}
-%end
-
 %if @{not-null} %then
  $br $tb [NOT NULL]
 %end
 
 %if @{expression} %then
- $br $tb [CHECK ] (@{expression})
+
+ $br $tb
+
+ %if @{constraint} %then
+   [CONSTRAINT ] @{constraint} $sp
+ %end
+
+ [CHECK ] (@{expression})
 %end
 
 ;$br

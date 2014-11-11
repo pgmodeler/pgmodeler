@@ -2469,6 +2469,7 @@ void ModelWidget::removeObjects(void)
 									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);
+                dynamic_cast<Schema *>(table->getSchema())->setModified(true);
 
 								if(aux_table)
 									db_model->validateRelationships(tab_obj, aux_table);
