@@ -351,7 +351,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;
 
-	attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
+  //attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
 
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
@@ -359,3 +359,44 @@ QString Role::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Role::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Role *role=dynamic_cast<Role *>(object);
+    attribs_map attribs;
+    QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+                           ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+                           ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+                           ParsersAttributes::REPLICATION };
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if(this->password!=role->password)
+      attribs[ParsersAttributes::PASSWORD]=role->password;
+
+    if(this->validity!=role->validity)
+      attribs[ParsersAttributes::VALIDITY]=role->validity;
+
+    for(unsigned i=0; i <= OP_REPLICATION; i++)
+    {
+      if(this->options[i]!=role->options[i])
+        attribs[op_attribs[i]]=(role->options[i] ? "1" : "");
+    }
+
+    if(!attribs.empty())
+    {
+      attributes[ParsersAttributes::HAS_CHANGES]="1";
+      for(auto itr : attribs)
+        attributes[itr.first]=itr.second;
+    }
+    else
+      attributes[ParsersAttributes::HAS_CHANGES]="";
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

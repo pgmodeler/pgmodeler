@@ -118,7 +118,9 @@ class Role: public BaseObject {
 		QString getPassword(void);
 
 		//! \brief Returns the SQL / XML definition for the role
-		virtual QString getCodeDefinition(unsigned def_type) final;
+    virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif
