@@ -519,19 +519,15 @@ QString Function::getAlterDefinition(BaseObject *object)
       attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? "1" : ParsersAttributes::UNSET);
 
     if(this->security_type!=func->security_type)
-      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
+      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type; 
 
-    if(this->behavior_type!=func->behavior_type)
+    if((this->behavior_type!=func->behavior_type) &&
+       ((this->behavior_type==BehaviorType::called_on_null_input) ||
+        ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
+         func->function_type==BehaviorType::called_on_null_input)))
       attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
 
-    if(!attribs.empty())
-    {
-      attributes[ParsersAttributes::HAS_CHANGES]="1";
-      for(auto itr : attribs)
-       attributes[itr.first]=itr.second;
-    }
-    else
-      attributes[ParsersAttributes::HAS_CHANGES]="";
+    copyAttributes(attribs);
 
     return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
   }

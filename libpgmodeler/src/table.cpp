@@ -1551,42 +1551,40 @@ QString Table::getAlterDefinition(BaseObject *object)
 {
   try
   {
-    QString alter_def=BaseObject::getAlterDefinition(object);
     Table *tab=dynamic_cast<Table *>(object);
     QString tab_name;
+    attribs_map attribs;
+    QStringList inherits, no_inherits;
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
     //Generating ALTER for WITH/WITHOUT OIDS attribute
     if(this->with_oid!=tab->with_oid)
-    {
-      attributes[ParsersAttributes::OIDS]=(tab->with_oid ? "1" : "");
-      attributes[ParsersAttributes::WITHOUT_OIDS]=(!tab->with_oid ? "1" : "");
-      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
-          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
-    }
-
-    attributes.erase(ParsersAttributes::OIDS);
-    attributes.erase(ParsersAttributes::WITHOUT_OIDS);
+      attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
     //Generating ALTER for INHERIT/NO INHERIT attribute
     for(auto ancestor : this->ancestor_tables)
     {
-      attributes[ParsersAttributes::INHERIT]="";
-      attributes[ParsersAttributes::NO_INHERIT]="";
-
       tab_name=ancestor->getName(true);
-      attributes[ParsersAttributes::ANCESTOR_TABLE]=tab_name;
 
       if(!tab->getAncestorTable(tab_name))
-        attributes[ParsersAttributes::NO_INHERIT]="1";
+        no_inherits.push_back(tab_name);
       else
-        attributes[ParsersAttributes::INHERIT]="1";
-
-      alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, false);
-          //BaseObject::getAlterDefinition(OBJ_TABLE, true, false);
+        inherits.push_back(tab_name);
     }
 
-    clearAttributes();
-    return(alter_def);
+    attributes[ParsersAttributes::INHERIT]="";
+    attributes[ParsersAttributes::NO_INHERIT]="";
+
+    if(!inherits.isEmpty())
+      attribs[ParsersAttributes::INHERIT]=inherits.join(",");
+
+    if(!no_inherits.isEmpty())
+      attribs[ParsersAttributes::NO_INHERIT]=no_inherits.join(",");
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
   }
   catch(Exception &e)
   {

@@ -1069,6 +1069,18 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
   }
 }
 
+void BaseObject::copyAttributes(attribs_map &attribs)
+{
+  if(!attribs.empty())
+  {
+    attributes[ParsersAttributes::HAS_CHANGES]="1";
+    for(auto itr : attribs)
+     attributes[itr.first]=itr.second;
+  }
+  else
+    attributes[ParsersAttributes::HAS_CHANGES]="";
+}
+
 QString BaseObject::getAlterDefinition(BaseObject *object)
 {
   if(!object)

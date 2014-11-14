@@ -9,27 +9,57 @@
   [ALTER ] @{sql-object} $sp @{signature} 
   
   %if @{superuser} %then
-    $br $sp SUPERUSER
-  %else
-    %if @{createdb} %then $br $sp CREATEDB %end
-    %if @{createrole} %then $br $sp CREATEROLE %end
-    %if @{inherit} %then $br $sp INHERIT %end
-    %if @{login} %then $br $sp LOGIN %end
-    %if @{replication} %and (@{pgsql-ver} != "9.0") %then $br $sp REPLICATION %end
+    $br $tb    
+    %if (@{superuser}=="unset") %then NO %end
+    SUPERUSER
   %end
 
+  %if @{createdb} %then 
+    $br $tb 
+    %if (@{createdb}=="unset") %then NO %end
+    CREATEDB 
+  %end
+  
+  %if @{createrole} %then 
+    $br $tb 
+    %if (@{createrole}=="unset") %then NO %end
+    CREATEROLE 
+  %end
+  
+  %if @{inherit} %then 
+    $br $tb 
+    %if (@{inherit}=="unset") %then NO %end
+    INHERIT 
+  %end
+  
+  %if @{login} %then 
+    $br $tb 
+    %if (@{login}=="unset") %then NO %end
+    LOGIN 
+  %end
+  
+  %if @{replication} %and (@{pgsql-ver} != "9.0") %then 
+    $br $tb 
+    %if (@{replication}=="unset") %then NO %end
+    REPLICATION 
+  %end
+  
   %if @{password} %then
-   $br $sp
+   $br $tb
+   
    %if @{encrypted} %then
-     ENCRYPTED
-   %else
-     UNENCRYPTED
+     %if (@{encrypted}=="unset") %then 
+       [UNENCRYPTED ]
+     %else
+       [ENCRYPTED ]
+     %end    
    %end
-   [ PASSWORD ] '@{password}'
+   
+   [PASSWORD ] '@{password}'
   %end
 
-  %if @{connlimit} %then $br $sp [CONNECTION LIMIT ] @{connlimit} %end
-  %if @{validity} %then $br $sp [VALID UNTIL ] '@{validity}' %end
+  %if @{connlimit} %then $br $tb [CONNECTION LIMIT ] @{connlimit} %end
+  %if @{validity} %then $br $tb [VALID UNTIL ] '@{validity}' %end
   
   $br [-- ddl-end --] $br
 %end

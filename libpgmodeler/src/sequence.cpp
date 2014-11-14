@@ -383,17 +383,15 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	QString str_aux;
-	Table *table=nullptr;
+  Table *table=nullptr;
 
 	if(owner_col)
 	{
-		table=dynamic_cast<Table *>(owner_col->getParentTable());
-		str_aux=table->getName(true) + "." + owner_col->getName(true);
+    attributes[ParsersAttributes::OWNER_COLUMN]=owner_col->getSignature();
+    table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
-	attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
-	attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
+  attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
 	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : "");
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
@@ -404,6 +402,61 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::CYCLE]=(cycle ? "1" : "");
 
 	return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Sequence::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Sequence *seq=dynamic_cast<Sequence *>(object);
+    Table *table=nullptr;
+    attribs_map attribs;
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if((this->owner_col && !seq->owner_col) ||
+       (!this->owner_col && seq->owner_col) ||
+       (this->owner_col && seq->owner_col &&
+        this->owner_col->getSignature()!=seq->owner_col->getSignature()))
+    {
+      if(seq->owner_col)
+      {
+        attribs[ParsersAttributes::OWNER_COLUMN]=seq->owner_col->getSignature();
+        table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
+      }
+      else
+        attribs[ParsersAttributes::OWNER_COLUMN]=ParsersAttributes::UNSET;
+    }
+
+    attribs[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
+    attribs[ParsersAttributes::COLUMN]=(seq->owner_col ? seq->owner_col->getName(true) : "");
+
+    if(this->increment!=seq->increment)
+      attribs[ParsersAttributes::INCREMENT]=seq->increment;
+
+    if(this->min_value!=seq->min_value)
+      attribs[ParsersAttributes::MIN_VALUE]=seq->min_value;
+
+    if(this->max_value!=seq->max_value)
+      attribs[ParsersAttributes::MAX_VALUE]=seq->max_value;
+
+    if(this->start!=seq->start)
+      attribs[ParsersAttributes::START]=seq->start;
+
+    if(this->cache!=seq->cache)
+      attribs[ParsersAttributes::CACHE]=seq->cache;
+
+    if(this->cycle!=seq->cycle)
+      attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Sequence::operator = (Sequence &seq)

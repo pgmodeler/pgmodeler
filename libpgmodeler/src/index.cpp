@@ -371,14 +371,7 @@ QString Index::getAlterDefinition(BaseObject *object)
          this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
         attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-      if(!attribs.empty())
-      {
-        attributes[ParsersAttributes::HAS_CHANGES]="1";
-        for(auto itr : attribs)
-          attributes[itr.first]=itr.second;
-      }
-      else
-        attributes[ParsersAttributes::HAS_CHANGES]="";
+      copyAttributes(attribs);
     }
 
     return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

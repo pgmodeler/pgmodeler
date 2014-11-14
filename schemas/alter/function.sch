@@ -9,29 +9,29 @@
  [ALTER ] @{sql-object} $sp @{signature} 
 
   %if @{function-type} %then
-    $br $sp @{function-type}
+    $br $tb @{function-type}
   %end
   
   %if (@{pgsql-ver} >= "9.2") %and @{leakproof} %then
-    $br $sp
+    $br $tb
     %if (@{leakproof} == "unset") %then [ NOT ] %end 
     LEAKPROOF
   %end
 
   %if @{behavior-type} %then
-    $br $sp @{behavior-type}
+    $br $tb @{behavior-type}
   %end
 
   %if @{security-type} %then
-    $br $sp @{security-type}
+    $br $tb @{security-type}
   %end
 
   %if @{execution-cost} %then
-    $br [ COST ] @{execution-cost}
+    $br $tb [COST ] @{execution-cost}
   %end
 
   %if @{returns-setof} %and @{row-amount} %then
-    $br [ ROWS ] @{row-amount}
+    $br $tb [ROWS ] @{row-amount}
   %end
 
   ; $br

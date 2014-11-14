@@ -380,18 +380,11 @@ QString Role::getAlterDefinition(BaseObject *object)
 
     for(unsigned i=0; i <= OP_REPLICATION; i++)
     {
-      if(this->options[i]!=role->options[i])
-        attribs[op_attribs[i]]=(role->options[i] ? "1" : "");
+      if(i==OP_ENCRYPTED || this->options[i]!=role->options[i])
+        attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
     }
 
-    if(!attribs.empty())
-    {
-      attributes[ParsersAttributes::HAS_CHANGES]="1";
-      for(auto itr : attribs)
-        attributes[itr.first]=itr.second;
-    }
-    else
-      attributes[ParsersAttributes::HAS_CHANGES]="";
+    copyAttributes(attribs);
 
     return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
   }

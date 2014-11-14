@@ -211,6 +211,12 @@ class BaseObject {
 
     static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
+    /*! brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
+        as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
+        attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
+        products of comparison */
+    void copyAttributes(attribs_map &attribs);
+
   public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;

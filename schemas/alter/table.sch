@@ -3,26 +3,35 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{oids} %or @{without-oids} %then
-  [ALTER TABLE ] @{name} [ SET ]
+@{alter-cmds}
+
+%if @{has-changes} %then
+  ALTER $sp @{sql-object} $sp @{signature}
   
   %if @{oids} %then
-    WITH
-  %else
-    WITHOUT
-  %end
+    $br $tb [SET ]
   
-  [ OIDS];
-  $br [-- ddl-end --] $br
-%end
+    %if (@{oids}=="unset") %then
+      WITHOUT
+    %else
+      WITH
+    %end
+  
+    [ OIDS]
+  %end
 
-%if @{inherit} %or @{no-inherit} %then
-  [ALTER TABLE ] @{name} 
-  
-  %if @{inherit} %then
-   [ NO ]
+  %if @{inherit} %or @{no-inherit} %then
+
+    %if @{no-inherit} %then
+     $br $tb [NO INHERIT ] @{no-inherit}
+    %end
+    
+    %if @{inherit} %then
+     $br $tb  [INHERIT ] @{no-inherit}
+    %end
+    
   %end
   
-  [INHERIT ] @{ancestor-table};
-  $br [-- ddl-end --] $br
+  ; $br
+  [-- ddl-end --] $br
 %end

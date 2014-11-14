@@ -205,7 +205,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
           }
         }
       }
-      else if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
+      else if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type) &&
+              obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
 			{
         /*if(obj_type==OBJ_FUNCTION)
           obj_name=dynamic_cast<Function *>(object)->getSignature();
