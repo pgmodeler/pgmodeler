@@ -18,19 +18,18 @@
 
 #include "syntaxhighlighter.h"
 
-QFont SyntaxHighlighter::default_font;
+QFont SyntaxHighlighter::default_font=QFont("DejaVu Sans Mono", 9);
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
-	parent->setAcceptRichText(true);
-	parent->setFont(default_font);
+  if(!parent)
+    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	parent->setAcceptRichText(true);
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
-
   parent->installEventFilter(this);
-  parent_txt=parent;
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -65,7 +64,6 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 
 void SyntaxHighlighter::configureAttributes(void)
 {
-
 	conf_loaded=false;
 	current_block=-1;
 	curr_blk_info_count=0;
@@ -592,6 +590,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
 									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
 
+                format.setFontFamily(default_font.family());
+                format.setFontPointSize(default_font.pointSizeF());
 								format.setFontItalic(italic);
 								format.setFontUnderline(underline);
 

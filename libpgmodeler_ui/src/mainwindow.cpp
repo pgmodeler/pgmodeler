@@ -52,15 +52,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     action_design->setData(DESIGN_VIEW);
     action_manage->setData(MANAGE_VIEW);
 
+    configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    configuration_form->loadConfiguration();
+
     sql_tool_wgt=new SQLToolWidget;
     grid=new QGridLayout;
     grid->setContentsMargins(0,0,0,0);
     grid->setSpacing(0);
     grid->addWidget(sql_tool_wgt, 0, 0);
     stacked_wgt->widget(MANAGE_VIEW)->setLayout(grid);
-
-		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-		configuration_form->loadConfiguration();
 
     plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));

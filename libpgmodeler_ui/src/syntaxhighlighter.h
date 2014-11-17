@@ -71,9 +71,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		static QFont default_font;
 
-    //! brief Stores the parent text edit in order to handle text pasting on eventFilter
-    QTextEdit *parent_txt;
-
 		/*! \brief Stores the multiline infos and is used to check if the text being typed
 		by the user is on a multiline block */
 		vector<MultiLineInfo *> multi_line_infos;

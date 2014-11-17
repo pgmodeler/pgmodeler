@@ -23,13 +23,13 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
-	sql_cmd_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
+  sql_cmd_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																GlobalAttributes::DIR_SEPARATOR +
 																GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																GlobalAttributes::CONFIGURATION_EXT);
+                                GlobalAttributes::CONFIGURATION_EXT);
 
-	h_splitter->setSizes({0, 10000});
+  h_splitter->setSizes({0, 10000});
 	h_splitter1->setSizes({1000, 250});
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
@@ -504,10 +504,12 @@ void SQLToolWidget::runSQLCommand(void)
 	try
 	{
 		ResultSet res;
-		QString cmd=sql_cmd_txt->textCursor().selectedText().simplified();
+    QString cmd=sql_cmd_txt->textCursor().selectedText();
 
 		if(cmd.isEmpty())
 			cmd=sql_cmd_txt->toPlainText();
+    else
+      cmd.replace(QChar::ParagraphSeparator, '\n');
 
 		msgoutput_lst->clear();
 
