@@ -351,8 +351,6 @@ QString Role::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;
 
-  //attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
-
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
 
