@@ -21,7 +21,8 @@
 const unsigned ObjectsDiffInfo::CREATE_OBJECT=0;
 const unsigned ObjectsDiffInfo::DROP_OBJECT=1;
 const unsigned ObjectsDiffInfo::ALTER_OBJECT=2;
-const unsigned ObjectsDiffInfo::NO_DIFFERENCE=3;
+const unsigned ObjectsDiffInfo::IGNORE_OBJECT=3;
+const unsigned ObjectsDiffInfo::NO_DIFFERENCE=4;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
@@ -44,48 +45,58 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
   QString msg=QT_TR_NOOP("%1 `%2' `(%3)' [id: %4]"), obj_name;
-  //TableObject *tab_obj=dynamic_cast<TableObject *>(object);
-  ObjectType obj_type=object->getObjectType();
+  BaseObject *ref_obj=nullptr;
+  ObjectType obj_type=BASE_OBJECT;
 
-  /*if(tab_obj)
-	 obj_name=tab_obj->getParentTable()->getName(true) + "." + tab_obj->getName(true);
-	else
-   obj_name=object->getName(true);*/
+  if(diff_type==ALTER_OBJECT && old_object)
+    ref_obj=old_object;
+  else
+    ref_obj=object;
+
+  obj_type=ref_obj->getObjectType();
 
   /* Forcing the usage of BaseObject::getSignature for the following object,
      since the custom getSignature for those types return some undesired
      SQL keywords for this context */
   if(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
-    obj_name=dynamic_cast<TableObject *>(object)->TableObject::getSignature();
+    obj_name=dynamic_cast<TableObject *>(ref_obj)->TableObject::getSignature();
   else if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
-    obj_name=object->BaseObject::getSignature();
+    obj_name=ref_obj->BaseObject::getSignature();
   else
-    obj_name=object->getSignature();
+    obj_name=ref_obj->getSignature();
 
 	if(diff_type==DROP_OBJECT)
 	{
     return(msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName())
-              .arg(object->getObjectId()));
+              .arg(ref_obj->getTypeName())
+              .arg(ref_obj->getObjectId()));
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
     return(msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName())
-              .arg(object->getObjectId()));
+              .arg(ref_obj->getTypeName())
+              .arg(ref_obj->getObjectId()));
 	}
 	else if(diff_type==ALTER_OBJECT)
-	{
+	{   
     return(msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
               .arg(obj_name)
-              .arg(object->getTypeName())
-              .arg(object->getObjectId()));
+              .arg(ref_obj->getTypeName())
+              .arg(ref_obj->getObjectId()));
 
 	}
+  else if(diff_type==IGNORE_OBJECT)
+  {
+    return(msg.arg("<font color=\"#606060\"><strong>IGNORE</strong></font>")
+              .arg(obj_name)
+              .arg(ref_obj->getTypeName())
+              .arg(ref_obj->getObjectId()));
 
-	return("");
+  }
+
+  return("");
 }
 
 BaseObject *ObjectsDiffInfo::getObject(void)

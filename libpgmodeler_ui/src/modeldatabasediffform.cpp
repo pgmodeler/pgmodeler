@@ -139,11 +139,16 @@ void ModelDatabaseDiffForm::createThreads(void)
 	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 
 	connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-	connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleOperationFinished()));
+  connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
 	connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
 	connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 
 	connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)));
+
+  connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+  connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+  connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+  connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 }
 
 void ModelDatabaseDiffForm::destroyThreads(void)
@@ -191,9 +196,10 @@ void ModelDatabaseDiffForm::clearOutput(void)
 	step_pb->setValue(0);
 	progress_pb->setValue(0);
 
-	create_cnt_lbl->setText("0");
-	alter_cnt_lbl->setText("0");
-	drop_cnt_lbl->setText("0");
+  create_tb->setText("0");
+  alter_tb->setText("0");
+  drop_tb->setText("0");
+  ignore_tb->setText("0");
 }
 
 QTreeWidgetItem *ModelDatabaseDiffForm::createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap)
@@ -232,7 +238,7 @@ void ModelDatabaseDiffForm::listDatabases(void)
 		DatabaseImportHelper imp_helper;
 
 		imp_helper.setConnection(*conn);
-		DatabaseImportForm::listDatabases(imp_helper, true, database_cmb);
+    DatabaseImportForm::listDatabases(imp_helper, database_cmb);
 
 		database_cmb->setEnabled(database_cmb->count() > 0);
 		database_lbl->setEnabled(database_cmb->isEnabled());
@@ -258,6 +264,7 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	createThreads();
 	importDatabase();
 
+  buttons_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
 	generate_btn->setEnabled(false);
 
@@ -327,11 +334,29 @@ void ModelDatabaseDiffForm::diffModels(void)
   else
     diff_helper->setPgSQLVersion(conn_pgsql_ver);
 
-	diff_thread->start();
+  diff_thread->start();
+}
+
+void ModelDatabaseDiffForm::filterDiffInfos(void)
+{
+  QToolButton *btn=dynamic_cast<QToolButton *>(sender());
+  map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CREATE_OBJECT},
+                                            {drop_tb, ObjectsDiffInfo::DROP_OBJECT},
+                                            {alter_tb, ObjectsDiffInfo::ALTER_OBJECT},
+                                            {ignore_tb, ObjectsDiffInfo::IGNORE_OBJECT}};
+
+
+  for(int i=0; i < diff_item->childCount(); i++)
+  {
+    if(diff_item->child(i)->data(0, Qt::UserRole).toUInt()==diff_types[btn])
+      output_trw->setItemHidden(diff_item->child(i), !btn->isChecked());
+  }
+
 }
 
 void ModelDatabaseDiffForm::resetButtons(void)
 {
+  buttons_wgt->setEnabled(true);
 	cancel_btn->setEnabled(false);
 	generate_btn->setEnabled(true);
   settings_tbw->setTabEnabled(0, true);
@@ -393,10 +418,39 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-	handleOperationFinished();
+  import_thread->quit();
+  import_thread->wait();
+  step_pb->setValue(30);
+  diffModels();
 }
 
-void ModelDatabaseDiffForm::handleOperationFinished(void)
+void ModelDatabaseDiffForm::handleDiffFinished(void)
+{
+  sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
+  settings_tbw->setTabEnabled(2, true);
+
+  diff_thread->quit();
+  diff_thread->wait();
+  resetButtons();
+  destroyThreads();
+
+  if(store_in_file_rb->isChecked())
+    saveDiffToFile();
+  else
+  {
+
+  }
+
+  step_lbl->setText(trUtf8("Diff process sucessfully end."));
+  progress_lbl->setText(trUtf8("No operations left."));
+
+  step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+  import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+  step_pb->setValue(100);
+  progress_pb->setValue(100);
+}
+
+/*void ModelDatabaseDiffForm::handleOperationFinished(void)
 {
 	if(import_thread->isRunning())
 	{
@@ -430,7 +484,7 @@ void ModelDatabaseDiffForm::handleOperationFinished(void)
     step_pb->setValue(100);
     progress_pb->setValue(100);
 	}
-}
+} */
 
 QString ModelDatabaseDiffForm::formatMessage(const QString &msg)
 {
@@ -475,16 +529,21 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 {
-	map<unsigned, QLabel *> cnt_labels={ {ObjectsDiffInfo::CREATE_OBJECT, create_cnt_lbl},
-																			 {ObjectsDiffInfo::DROP_OBJECT,   drop_cnt_lbl},
-																			 {ObjectsDiffInfo::ALTER_OBJECT,  alter_cnt_lbl} };
+  map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CREATE_OBJECT, create_tb},
+                                         {ObjectsDiffInfo::DROP_OBJECT,   drop_tb},
+                                         {ObjectsDiffInfo::ALTER_OBJECT,  alter_tb},
+                                         {ObjectsDiffInfo::IGNORE_OBJECT, ignore_tb} };
 
 	unsigned diff_type=diff_info.getDiffType();
-	QLabel *lbl=cnt_labels[diff_type];
+  QToolButton *btn=buttons[diff_type];
+  QTreeWidgetItem *item=nullptr;
 
-	createOutputItem(formatMessage(diff_info.getInfoMessage()),
-									 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())) , diff_item);
-	lbl->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
+  item=createOutputItem(formatMessage(diff_info.getInfoMessage()),
+                                      QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())), diff_item);
+  item->setData(0, Qt::UserRole, diff_info.getDiffType());
+  btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
+
+  output_trw->setItemHidden(item, !btn->isChecked());
 }
 
 void ModelDatabaseDiffForm::selectOutputFile(void)

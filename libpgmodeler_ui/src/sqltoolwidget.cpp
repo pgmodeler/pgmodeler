@@ -136,7 +136,7 @@ void SQLToolWidget::connectToDatabase(void)
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
 		import_helper.setConnection(*conn);
-		DatabaseImportForm::listDatabases(import_helper, false, database_cmb);
+    DatabaseImportForm::listDatabases(import_helper, database_cmb);
 		database_cmb->setEnabled(database_cmb->count() > 1);
 		import_helper.closeConnection();
 

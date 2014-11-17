@@ -39,11 +39,12 @@ class ObjectsDiffInfo {
 	public:
 		static const unsigned CREATE_OBJECT,
 													DROP_OBJECT,
-													ALTER_OBJECT,
-													NO_DIFFERENCE;
+                          ALTER_OBJECT,
+                          IGNORE_OBJECT,
+                          NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
-    ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object);
+    ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
 
 		//! \brief Returns the validation type
 		unsigned getDiffType(void);

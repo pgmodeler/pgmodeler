@@ -87,10 +87,12 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void captureThreadError(Exception e);
 		void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
-		void handleOperationFinished(void);
+    void handleDiffFinished(void);
+    //void handleOperationFinished(void);
     void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);
+    void filterDiffInfos(void);
 };
 
 #endif

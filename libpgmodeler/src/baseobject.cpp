@@ -1101,6 +1101,14 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
       BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
                  *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
+      if(this->getName()!=object->getName())
+      {
+        attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
+        alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
+        attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
+        attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
+      }
+
       for(unsigned i=0; i < 3; i++)
       {
         if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
@@ -1111,16 +1119,15 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
         }
       }
 
-      if(this->getName()!=object->getName())
-      {
-        attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
-        alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
-      }
-
       if(this->getComment()!=object->getComment())
       {
-        attributes[ParsersAttributes::COMMENT]=object->getComment();
+        if(object->getComment().isEmpty())
+          attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
+        else
+          attributes[ParsersAttributes::COMMENT]=object->getComment();
+
         schparser.setIgnoreUnkownAttributes(true);
+        schparser.setIgnoreEmptyAttributes(true);
         alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
       }
     }

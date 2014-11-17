@@ -45,6 +45,7 @@ void ModelsDiffHelper::resetDiffCounter(void)
 	diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]=0;
 	diffs_counter[ObjectsDiffInfo::DROP_OBJECT]=0;
   diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
+  diffs_counter[ObjectsDiffInfo::IGNORE_OBJECT]=0;
 }
 
 QString ModelsDiffHelper::getDiffDefinition(void)
@@ -270,12 +271,13 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			//Comparison between model db and the imported db
       else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-        if(!imported_model->getAlterDefinition(source_model).isEmpty())
-         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, imported_model, source_model);
+        if(!source_model->getAlterDefinition(imported_model).isEmpty())
+         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
 			}
 		}
 		else
 		{
+      generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
 			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
 														 trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
 														 object->getObjectType());
@@ -378,7 +380,7 @@ void ModelsDiffHelper::processDiffInfos(void)
         drop_objs[object->getObjectId()]=object->getDropDefinition(drop_cascade);
       else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
         create_objs[object->getObjectId()]=getCodeDefinition(object);
-      else
+      else if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
       {
         if((force_recreation && obj_type!=OBJ_DATABASE) || (obj_type==OBJ_CONSTRAINT))
         {
@@ -393,6 +395,10 @@ void ModelsDiffHelper::processDiffInfos(void)
           drop_vect.clear();
           create_vect.clear();
         }
+        /* else if(obj_type==OBJ_DATABASE)
+        {
+          alter_objs[object->getObjectId()]=object->getAlterDefinition(diff.getOldObject());
+        } */
         else
           alter_objs[object->getObjectId()]=diff.getOldObject()->getAlterDefinition(object);
       }
