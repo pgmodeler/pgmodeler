@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 		QSplashScreen splash;
 		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
+    splash.setMask(pix.mask());
 
 		#ifndef Q_OS_MAC
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
       splash.showMaximized();
     #endif
 
-		app.processEvents();
+    app.processEvents();
 
 		//Creates the main form
 		MainWindow fmain;

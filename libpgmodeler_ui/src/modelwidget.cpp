@@ -1670,6 +1670,8 @@ void ModelWidget::moveToSchema(void)
 	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
 			*prev_schema=dynamic_cast<Schema *>(selected_objects[0]->getSchema());
 	BaseGraphicObject *obj_graph=nullptr;
+  vector<BaseObject *> ref_objs;
+  vector<BaseRelationship *>rels;
 
 	try
 	{
@@ -1693,6 +1695,40 @@ void ModelWidget::moveToSchema(void)
       schema->setModified(true);
       prev_schema->setModified(true);
 		}
+
+    //Invalidating the code of the object's references
+    db_model->getObjectReferences(selected_objects[0], ref_objs);
+    for(auto obj : ref_objs)
+    {
+      obj->setCodeInvalidated(true);
+
+      //If the ref object is an table child object
+      if(TableObject::isTableObject(obj->getObjectType()))
+      {
+        //Updates the parent table instead of the object
+        obj_graph=dynamic_cast<BaseGraphicObject *>(dynamic_cast<TableObject *>(obj)->getParentTable());
+
+        //Get the relationships that the table participate
+        rels=db_model->getRelationships(dynamic_cast<BaseTable *>(obj_graph));
+
+        obj_graph->setModified(true);
+
+        if(!rels.empty())
+        {
+          //Updating the tables from relationships
+          for(auto rel : rels)
+          {
+            if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
+              rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
+
+            if(rel->getTable(BaseRelationship::DST_TABLE)!=obj_graph)
+              rel->getTable(BaseRelationship::DST_TABLE)->setModified(true);
+          }
+        }
+      }
+      else
+       dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+    }
 
 		emit s_objectModified();
 	}

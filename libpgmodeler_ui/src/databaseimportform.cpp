@@ -328,9 +328,9 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 	{
 		if(!model_wgt)
 			this->setResult(QDialog::Rejected);
-	}
 
-  import_helper.closeConnection();
+    import_helper.closeConnection();
+	}
 }
 
 void DatabaseImportForm::captureThreadError(Exception e)
@@ -429,6 +429,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
   import_helper.closeConnection();
   import_thread->quit();
+  import_thread->wait();
   timer.stop();
 
 	this->accept();

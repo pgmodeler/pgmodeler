@@ -3,34 +3,36 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[-- Database diff generated with pgModeler (PostgreSQL Database Modeler).] $br
-[-- pgModeler  version: ] @{pgmodeler-ver} $br
-[-- PostgreSQL version: ] @{pgsql-ver} $br
+%if @{has-changes} %then
+  [-- Database diff generated with pgModeler (PostgreSQL Database Modeler).] $br
+  [-- pgModeler  version: ] @{pgmodeler-ver} $br
+  [-- PostgreSQL version: ] @{pgsql-ver} $br
 
-$br
-[-- ] $ob [ Diff summary ] $cb $br
-[-- Dropped objects: ] @{drop} $br
-[-- Created objects: ] @{create} $br
-[-- Changed objects: ] @{change} $br
-
-$br
-[SET check_function_bodies = false;] $br
-[-- ddl-end --] $br
-
-%if @{drop-cmds} %then
   $br
-  [-- ] $ob [ Dropped objects ] $cb [ --] $br
-  @{drop-cmds}
-%end
+  [-- ] $ob [ Diff summary ] $cb $br
+  [-- Dropped objects: ] @{drop} $br
+  [-- Created objects: ] @{create} $br
+  [-- Changed objects: ] @{change} $br
 
-%if @{create-cmds} %then
   $br
-  [-- ] $ob [ Created objects ] $cb [ --] $br
-  @{create-cmds}
-%end
+  [SET check_function_bodies = false;] $br
+  [-- ddl-end --] $br
 
-%if @{alter-cmds} %then
-  $br
-  [-- ] $ob [ Changed objects ] $cb [ --] $br
-  @{alter-cmds}
+  %if @{drop-cmds} %then
+    $br
+    [-- ] $ob [ Dropped objects ] $cb [ --] $br
+    @{drop-cmds}
+  %end
+
+  %if @{create-cmds} %then
+    $br
+    [-- ] $ob [ Created objects ] $cb [ --] $br
+    @{create-cmds}
+  %end
+
+  %if @{alter-cmds} %then
+    $br
+    [-- ] $ob [ Changed objects ] $cb [ --] $br
+    @{alter-cmds}
+  %end
 %end

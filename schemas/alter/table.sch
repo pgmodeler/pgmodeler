@@ -27,7 +27,7 @@
     %end
     
     %if @{inherit} %then
-     $br $tb  [INHERIT ] @{no-inherit}
+     $br $tb  [INHERIT ] @{inherit}
     %end
     
   %end

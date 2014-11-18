@@ -1083,6 +1083,11 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
 {
+  return(getAlterDefinition(object, false));
+}
+
+QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
+{
   if(!object)
    return("");
   else
@@ -1101,7 +1106,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
       BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
                  *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
-      if(this->getName()!=object->getName())
+      if(!ignore_name_diff && this->getName()!=object->getName())
       {
         attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
         alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);

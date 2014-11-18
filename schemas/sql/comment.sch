@@ -9,7 +9,7 @@
  %if (@{comment}=="unset") %then
   ''
  %else
-  @{comment}
+  '@{comment}'
  %end
 
  ; $br

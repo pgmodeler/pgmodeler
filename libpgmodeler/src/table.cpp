@@ -404,6 +404,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						ancestor_tables.push_back(tab);
 					else
 						ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
+
+          /* Updating the storage parameter WITH OIDS depending on the ancestors.
+             According to the docs, the child table will inherit WITH OID status from the parents */
+          with_oid=(with_oid || tab->isWithOIDs());
 				break;
 
 				default:
@@ -567,9 +571,22 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
 	{
 		vector<Table *>::iterator itr;
+    Table *tab=nullptr;
 
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
+    with_oid=false;
+
+    for(auto obj : ancestor_tables)
+    {
+      tab=dynamic_cast<Table *>(obj);
+
+      if(!with_oid && tab->isWithOIDs())
+      {
+        with_oid=true;
+        break;
+      }
+    }
 	}
 	else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
 	{
@@ -1552,39 +1569,48 @@ QString Table::getAlterDefinition(BaseObject *object)
   try
   {
     Table *tab=dynamic_cast<Table *>(object);
-    QString tab_name;
-    attribs_map attribs;
-    QStringList inherits, no_inherits;
+    QString alter_def;
 
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+    attributes[ParsersAttributes::OIDS]="";
+    attributes[ParsersAttributes::INHERIT]="";
+    attributes[ParsersAttributes::NO_INHERIT]="";
+    attributes[ParsersAttributes::HAS_CHANGES]="";
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
     //Generating ALTER for WITH/WITHOUT OIDS attribute
-    if(this->with_oid!=tab->with_oid)
-      attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+    if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
+    {
+      attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+      attributes[ParsersAttributes::HAS_CHANGES]="1";
+    }
+
+    alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+    attributes[ParsersAttributes::OIDS]="";
 
     //Generating ALTER for INHERIT/NO INHERIT attribute
     for(auto ancestor : this->ancestor_tables)
     {
-      tab_name=ancestor->getName(true);
-
-      if(!tab->getAncestorTable(tab_name))
-        no_inherits.push_back(tab_name);
-      else
-        inherits.push_back(tab_name);
+      if(!tab->getAncestorTable(ancestor->getName(true)))
+      {
+        attributes[ParsersAttributes::HAS_CHANGES]="1";
+        attributes[ParsersAttributes::NO_INHERIT]=ancestor->getName(true);
+        alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+        attributes[ParsersAttributes::NO_INHERIT]="";
+      }
     }
 
-    attributes[ParsersAttributes::INHERIT]="";
-    attributes[ParsersAttributes::NO_INHERIT]="";
+    for(auto ancestor : tab->ancestor_tables)
+    {
+      if(!this->getAncestorTable(ancestor->getName(true)))
+      {
+        attributes[ParsersAttributes::HAS_CHANGES]="1";
+        attributes[ParsersAttributes::INHERIT]=ancestor->getName(true);
+        alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+        attributes[ParsersAttributes::INHERIT]="";
+      }
+    }
 
-    if(!inherits.isEmpty())
-      attribs[ParsersAttributes::INHERIT]=inherits.join(",");
-
-    if(!no_inherits.isEmpty())
-      attribs[ParsersAttributes::NO_INHERIT]=no_inherits.join(",");
-
-    copyAttributes(attribs);
-
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+    return(alter_def);
   }
   catch(Exception &e)
   {

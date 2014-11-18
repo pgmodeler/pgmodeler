@@ -1417,6 +1417,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
       column->setDefaultValue("");
+      column->setComment("");
 
 			prev_name=prev_ref_col_names[column_aux->getObjectId()];
 

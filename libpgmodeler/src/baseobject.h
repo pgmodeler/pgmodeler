@@ -357,8 +357,15 @@ class BaseObject {
 		 of the object. See schema file for: functions, schemas, domains, types. */
     virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-    //! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+        This form do the camparison considering the difference on the objects' names (ignore_name_diff=false). This method
+        is used in cases when the objects' name differences are important and can't be discarded */
     virtual QString getAlterDefinition(BaseObject *object);
+
+    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+        The paramenter ignore_name_diff when true will cause the method to not generate a ALTER ... RENAME TO when the name of
+        objects differs. */
+    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff);
 
     //!brief Returns the DROP statement for the object
     virtual QString getDropDefinition(bool cascade);

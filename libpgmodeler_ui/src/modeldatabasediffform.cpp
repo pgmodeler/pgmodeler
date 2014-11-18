@@ -426,7 +426,7 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 
 void ModelDatabaseDiffForm::handleDiffFinished(void)
 {
-  sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
+  sqlcode_txt->setPlainText(diff_helper->getDiffDefinition()); 
   settings_tbw->setTabEnabled(2, true);
 
   diff_thread->quit();
@@ -441,6 +441,9 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
 
   }
 
+  if(sqlcode_txt->toPlainText().isEmpty())
+    sqlcode_txt->setText(trUtf8("-- No differences were detected between model and database. --"));
+
   step_lbl->setText(trUtf8("Diff process sucessfully end."));
   progress_lbl->setText(trUtf8("No operations left."));
 
@@ -449,42 +452,6 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
   step_pb->setValue(100);
   progress_pb->setValue(100);
 }
-
-/*void ModelDatabaseDiffForm::handleOperationFinished(void)
-{
-	if(import_thread->isRunning())
-	{
-		import_thread->quit();
-		import_thread->wait();
-		step_pb->setValue(30);
-		diffModels();
-	}
-	else if(diff_thread->isRunning())
-	{
-    sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
-    settings_tbw->setTabEnabled(2, true);
-
-		diff_thread->quit();
-		diff_thread->wait();
-		resetButtons();
-		destroyThreads();
-
-    if(store_in_file_rb->isChecked())
-      saveDiffToFile();
-    else
-    {
-
-    }
-
-    step_lbl->setText(trUtf8("Diff process sucessfully end."));
-    progress_lbl->setText(trUtf8("No operations left."));
-
-    step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-    import_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
-    step_pb->setValue(100);
-    progress_pb->setValue(100);
-	}
-} */
 
 QString ModelDatabaseDiffForm::formatMessage(const QString &msg)
 {

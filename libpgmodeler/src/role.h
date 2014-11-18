@@ -120,7 +120,7 @@ class Role: public BaseObject {
 		//! \brief Returns the SQL / XML definition for the role
     virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff=false) final;
 };
 
 #endif

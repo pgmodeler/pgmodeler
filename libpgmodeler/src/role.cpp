@@ -357,7 +357,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
-QString Role::getAlterDefinition(BaseObject *object)
+QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
   try
   {
@@ -368,7 +368,7 @@ QString Role::getAlterDefinition(BaseObject *object)
                            ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
                            ParsersAttributes::REPLICATION };
 
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
     if(this->password!=role->password)
       attribs[ParsersAttributes::PASSWORD]=role->password;

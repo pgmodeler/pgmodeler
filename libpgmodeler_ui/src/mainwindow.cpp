@@ -819,6 +819,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     setCurrentModel();
+    models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
   }
   catch(Exception &e)
   {
