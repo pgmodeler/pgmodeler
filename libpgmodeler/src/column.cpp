@@ -153,10 +153,10 @@ QString Column::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+  if(getParentTable())
+    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+  attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 
   attributes[ParsersAttributes::DEFAULT_VALUE]="";
 
@@ -171,10 +171,40 @@ QString Column::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
 
-	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
-	attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
+  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
+  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
 
   return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Column::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Column *col=dynamic_cast<Column *>(object);
+    attribs_map attribs;
+
+    BaseObject::setBasicAttributes(true);
+
+    if(getParentTable())
+      attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+
+    if(this->type!=col->type)
+      attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+    if(this->default_value!=col->default_value)
+      attribs[ParsersAttributes::DEFAULT_VALUE]=(col->default_value.isEmpty() ? ParsersAttributes::UNSET : col->default_value);
+
+    if(this->not_null!=col->not_null)
+      attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+
+    copyAttributes(attribs);
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Column::operator = (Column &col)

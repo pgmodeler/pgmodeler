@@ -4,21 +4,43 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{has-changes} %then
-  %define @{alter-table} [ALTER TABLE ] @{table} $sp
+  %define @{alter-table} [ALTER TABLE ] @{table} [ ALTER COLUMN ] @{name}
+  %define @{ddl-end} [;] $br [-- ddl-end --] $br
 
   %if @{type} %then
    @{alter-table}
-   ALTER [ COLUMN ] column_name [ SET DATA ] TYPE data_type [ COLLATE collation ] [ USING expression ]
+   [ TYPE ] @{type}
+
+   %if @{collation} %and (@{pgsql-ver} != "9.0") %then
+    [ COLLATE ] @{collation}
+   %end
+
+   @{ddl-end}
   %end
   
-  %if @{default} %then
+  %if @{default-value} %then
     @{alter-table}
-    ALTER [ COLUMN ] column_name SET DEFAULT expression
-    ALTER [ COLUMN ] column_name DROP DEFAULT
+
+    %if (@{default-value}=="unset") %then
+        [ DROP DEFAULT]
+    %else
+        [ SET DEFAULT ] @{default-value}
+    %end
+
+    @{ddl-end}
   %end
   
   %if @{not-null} %then
     @{alter-table}
-    ALTER [ COLUMN ] column_name { SET | DROP } NOT NULL
+
+    %if (@{not-null}=="unset") %then
+        [ DROP ]
+    %else
+        [ SET ]
+    %end
+
+    [NOT NULL]
+
+    @{ddl-end}
   %end
 %end

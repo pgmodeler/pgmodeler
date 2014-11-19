@@ -54,8 +54,8 @@ class Column: public TableObject{
     /*! \brief Stores a reference to the sequence used to generate the default value.
     This attribute is used only the data type is integer, smallint or bigint */
     BaseObject *sequence;
-
-	public:
+    
+  public:
 		Column(void);
 
 		//! \brief Defines if the column accepts null values or not
@@ -84,6 +84,8 @@ class Column: public TableObject{
 
 		//! \brief Returns the SQL/XML code definition for the column
 		virtual QString getCodeDefinition(unsigned def_type); 
+
+    virtual QString getAlterDefinition(BaseObject *object);
 
 		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */
