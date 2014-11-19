@@ -3,10 +3,9 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%define(alter-table, [ALTER TABLE ] @{table} $sp)
-
 %if @{has-changes} %then
- 
+  %define @{alter-table} [ALTER TABLE ] @{table} $sp
+
   %if @{type} %then
    @{alter-table}
    ALTER [ COLUMN ] column_name [ SET DATA ] TYPE data_type [ COLLATE collation ] [ USING expression ]

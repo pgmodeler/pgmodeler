@@ -59,14 +59,16 @@ class SchemaParser {
                       CHR_END_CEXPR,      //!brief Character that ends a comparison expression
                       CHR_VAL_DELIM;      //!brief Character that delimiters a value (string)
 
-		//! \brief Tokens related to conditional instructions
+    //! \brief Tokens related to conditional instructions and operators
 		static const QString	TOKEN_IF,  // %if
 													TOKEN_THEN,// %then
 													TOKEN_ELSE,// %else
 													TOKEN_END, // %end
 													TOKEN_OR,  // %or
 													TOKEN_NOT, // %not
-													TOKEN_AND; // %and
+                          TOKEN_AND, // %and
+                          TOKEN_DEFINE; //%define
+
 
 		//! \brief Tokens related to metacharacters
 		static const QString	TOKEN_META_SP,// $sp (space)
@@ -123,8 +125,15 @@ class SchemaParser {
         %not %and %or in the same () are not supported. */
     bool evaluateComparisonExpr(void);
 
+    /*! brief Creates a new attribute when finding  %define @{attrib-name} [expr], where [expr]
+        can be pure texts, meta chars or other attributes exists overwrite its value */
+    void defineAttribute(void);
+
     //! brief Increments the column counter while blank chars (space and tabs) are found on the line
 		void ignoreBlankChars(const QString &line);
+
+    //! brief Translates the meta char token to the real character
+    char translateMetaCharacter(const QString &meta);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
