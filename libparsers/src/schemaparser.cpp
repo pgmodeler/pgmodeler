@@ -41,6 +41,7 @@ const QString SchemaParser::TOKEN_END="end";
 const QString SchemaParser::TOKEN_OR="or";
 const QString SchemaParser::TOKEN_AND="and";
 const QString SchemaParser::TOKEN_NOT="not";
+const QString SchemaParser::TOKEN_DEFINE="define";
 
 const QString SchemaParser::TOKEN_META_SP="sp";
 const QString SchemaParser::TOKEN_META_BR="br";
@@ -272,7 +273,7 @@ QString SchemaParser::getPureText(void)
 
 		/* Extracts the text while the end of pure text (]), end of buffer or
 		 beginning of other pure text ([) is reached */
-		while(current_line[column]!=CHR_END_PURETEXT &&
+    while(current_line[column]!=CHR_END_PURETEXT &&
 					line < buffer.size() &&
 					current_line[column]!=CHR_INI_PURETEXT)
 		{
@@ -286,7 +287,9 @@ QString SchemaParser::getPureText(void)
 				//Step to the next line
 				line++;
 				column=0;
-				current_line=buffer[line];
+
+        if(line < buffer.size())
+          current_line=buffer[line];
 			}
 			else column++;
 		}
@@ -514,6 +517,87 @@ bool SchemaParser::evaluateComparisonExpr(void)
   return(expr_is_true);
 }
 
+void SchemaParser::defineAttribute(void)
+{
+  QString curr_line, attrib, value, new_attrib;
+  bool error=false, end_def=false;
+
+  try
+  {
+    curr_line=buffer[line];
+
+    while(!end_def && !error)
+    {
+      ignoreBlankChars(curr_line);
+
+      switch(curr_line[column].toLatin1())
+      {
+        case CHR_LINE_END:
+          end_def=true;
+        break;
+
+        case CHR_INI_CONDITIONAL:
+          error=true;
+        break;
+
+        case CHR_INI_ATTRIB:
+          if(new_attrib.isEmpty())
+            new_attrib=getAttribute();
+          else
+          {
+            //Get the attribute in the middle of the value
+            attrib=getAttribute();
+
+            if(attributes.count(attrib)==0 && !ignore_unk_atribs)
+            {
+              throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+                              .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                              ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+            else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
+            {
+              throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+                              .arg(attrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+                              ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+
+            value+=attributes[attrib];
+          }
+        break;
+
+        case CHR_INI_PURETEXT:
+          value+=getPureText();
+        break;
+
+        case CHR_INI_METACHAR:
+          value+=translateMetaCharacter(getMetaCharacter());
+        break;
+
+        default:
+          value+=getWord();
+        break;
+      }
+
+      //If the attribute name was not extracted yet returns a error
+      if(new_attrib.isEmpty())
+        error=true;
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  if(!error)
+    /* Creates the attribute in the attribute map of the schema, making the attribute
+       available on the rest of the script being parsed */
+    attributes[new_attrib]=value;
+  else
+    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+}
+
 bool SchemaParser::evaluateExpression(void)
 {
 	QString current_line, cond, attrib, prev_cond;
@@ -660,6 +744,24 @@ void SchemaParser::ignoreBlankChars(const QString &line)
   while(column < static_cast<unsigned>(line.size()) &&
         (line[column]==CHR_SPACE ||
          line[column]==CHR_TABULATION)) column++;
+}
+
+char SchemaParser::translateMetaCharacter(const QString &meta)
+{
+  if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
+     meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
+     meta!=TOKEN_META_CB)
+  {
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
+                    .arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1),
+                    ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
+
+  if(meta==TOKEN_META_SP) return(CHR_SPACE);
+  else if(meta==TOKEN_META_TB) return(CHR_TABULATION);
+  else if(meta==TOKEN_META_OB) return(CHR_INI_PURETEXT); //Currently this constant is used since it returns '[' (open bracket)
+  else if(meta==TOKEN_META_CB) return(CHR_END_PURETEXT); //Currently this constant is used since it returns ']' (close bracket)
+  else return(CHR_LINE_END);
 }
 
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
@@ -837,19 +939,8 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 				case CHR_INI_METACHAR:
 					meta=getMetaCharacter();
 
-					//Checks whether the extracted token is valid metacharacter
-					if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
-						 meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
-						 meta!=TOKEN_META_CB)
-					{
-						str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
-										.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
-
-
-						throw Exception(str_aux,ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					}
 					//Checks whether the metacharacter is part of the  'if' expression (this is an error)
-					else if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
+          if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
 					{
 						str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
 										.arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -859,12 +950,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					else
 					{
 						//Converting the metacharacter drawn to the character that represents this
-						if(meta==TOKEN_META_SP) chr=CHR_SPACE;
-						else if(meta==TOKEN_META_TB) chr=CHR_TABULATION;
-						else if(meta==TOKEN_META_OB) chr=CHR_INI_PURETEXT; //Currently this constant is used since it returns '[' (open bracket)
-						else if(meta==TOKEN_META_CB) chr=CHR_END_PURETEXT; //Currently this constant is used since it returns ']' (close bracket)
-						else chr=CHR_LINE_END;
-
+            chr=translateMetaCharacter(meta);
 						meta="";
 						meta+=chr;
 
@@ -898,7 +984,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					atrib=getAttribute();
 
 					//Checks if the attribute extracted belongs to the passed list of attributes
-					if(attribs.count(atrib)==0)
+          if(attributes.count(atrib)==0)
 					{
 						if(!ignore_unk_atribs)
 						{
@@ -907,7 +993,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 							throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
-							attribs[atrib]="";
+              attributes[atrib]="";
 					}
 
 					//If the parser is inside an 'if / else' extracting tokens
@@ -938,7 +1024,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						/* If the attribute has no value set and parser must not ignore empty values
 						raises an exception */
-						if(attribs[atrib]=="" && !ignore_empty_atribs)
+            if(attributes[atrib]=="" && !ignore_empty_atribs)
 						{
 							str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
 											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -948,7 +1034,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 						/* If the parser is not in an if / else, concatenates the value of the attribute
 							directly in definition in sql */
-						object_def+=attribs[atrib];
+            object_def+=attributes[atrib];
 					}
 				break;
 
@@ -961,12 +1047,16 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
 						 cond!=TOKEN_THEN && cond!=TOKEN_END &&
 						 cond!=TOKEN_OR && cond!=TOKEN_NOT &&
-						 cond!=TOKEN_AND)
+             cond!=TOKEN_AND && cond!=TOKEN_DEFINE)
 					{
 						str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
 										.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
 						throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
+          else if(cond==TOKEN_DEFINE)
+          {
+            defineAttribute();
+          }
 					else
 					{
 						//If the toke is an 'if'
@@ -1042,9 +1132,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 								itr=if_map[if_level].begin();
 								itr_end=if_map[if_level].end();
 							}
-							/* Caso a parte else do if atual exista
-								 então o parser varrerá a lista de palavras da parte else
-								 do if atual */
 
 							/* If there is a 'else' part on the current 'if'
 								 then the parser will scan the list of words on the 'else' part */
@@ -1073,7 +1160,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 										/* If its an attribute, extracts the name and checks if the same
 										has empty value */
 										atrib=word.mid(2,word.size()-3);
-										word=attribs[atrib];
+                    word=attributes[atrib];
 
 										/* If the attribute has no value set and parser must not ignore empty values
 										raises an exception */
@@ -1181,7 +1268,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 			throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
-
 
 	restartParser();
 	ignore_unk_atribs=false;
