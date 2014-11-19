@@ -1617,3 +1617,17 @@ QString Table::getAlterDefinition(BaseObject *object)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
+
+QString Table::getTruncateDefinition(bool cascade)
+{
+  try
+  {
+    BaseObject::setBasicAttributes(true);
+    attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+    return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

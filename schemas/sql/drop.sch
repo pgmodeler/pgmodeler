@@ -7,10 +7,10 @@
 
  %if @{constraint} %or @{column} %then
     %if %not @{decl-in-table} %then
-      [ALTER TABLE ] @{table} $sp DROP $sp @{sql-object} $sp
+      [ALTER TABLE ] @{table} [ DROP ] @{sql-object} [ IF EXISTS ]
     %end
  %else
-    [DROP ] @{sql-object} $sp
+    [DROP ] @{sql-object} [ IF EXISTS ]
  %end
 
 %if @{column} %or @{constraint} %and %not @{decl-in-table} %then

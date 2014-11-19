@@ -322,7 +322,9 @@ class Table: public BaseTable {
     //! brief Invalidates the cached code forcing the generation of both SQL and XML
 		void setCodeInvalidated(bool value);
 
-    QString getAlterDefinition(BaseObject *object);
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
+    QString getTruncateDefinition(bool cascade);
 
 		friend class Relationship;
 		friend class OperationList;

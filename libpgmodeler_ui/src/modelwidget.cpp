@@ -1730,6 +1730,7 @@ void ModelWidget::moveToSchema(void)
        dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
     }
 
+    this->setModified(true);
 		emit s_objectModified();
 	}
 	catch(Exception &e)

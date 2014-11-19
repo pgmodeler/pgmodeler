@@ -44,7 +44,7 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-  QString msg=QT_TR_NOOP("%1 `%2' `(%3)' [id: %4]"), obj_name;
+  QString msg="%1 `%2' `(%3)'", obj_name;
   BaseObject *ref_obj=nullptr;
   ObjectType obj_type=BASE_OBJECT;
 
@@ -65,38 +65,36 @@ QString ObjectsDiffInfo::getInfoMessage(void)
   else
     obj_name=ref_obj->getSignature();
 
-	if(diff_type==DROP_OBJECT)
+  if(diff_type==NO_DIFFERENCE)
+    return("");
+  else if(diff_type==DROP_OBJECT)
 	{
-    return(msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
-              .arg(obj_name)
-              .arg(ref_obj->getTypeName())
-              .arg(ref_obj->getObjectId()));
+    msg=msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
+           .arg(obj_name)
+           .arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
-    return(msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
-              .arg(obj_name)
-              .arg(ref_obj->getTypeName())
-              .arg(ref_obj->getObjectId()));
+    msg=msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
+           .arg(obj_name)
+           .arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==ALTER_OBJECT)
 	{   
-    return(msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
-              .arg(obj_name)
-              .arg(ref_obj->getTypeName())
-              .arg(ref_obj->getObjectId()));
+    msg=msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
+           .arg(obj_name)
+           .arg(ref_obj->getTypeName());
 
 	}
   else if(diff_type==IGNORE_OBJECT)
   {
-    return(msg.arg("<font color=\"#606060\"><strong>IGNORE</strong></font>")
-              .arg(obj_name)
-              .arg(ref_obj->getTypeName())
-              .arg(ref_obj->getObjectId()));
+    msg=msg.arg("<font color=\"#606060\"><strong>IGNORE</strong></font>")
+           .arg(obj_name)
+           .arg(ref_obj->getTypeName());
 
   }
 
-  return("");
+  return(msg);
 }
 
 BaseObject *ObjectsDiffInfo::getObject(void)

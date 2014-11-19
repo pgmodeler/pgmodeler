@@ -467,6 +467,7 @@ namespace ParsersAttributes {
   ALTER_CMDS="alter-cmds",
   DROP_CMDS="drop-cmds",
   CREATE_CMDS="create-cmds",
+  TRUNCATE_CMDS="truncate-cmds",
   CREATE="create",
   CHANGE="change",
   DIFF="diff",

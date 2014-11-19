@@ -153,7 +153,7 @@ void ModelDatabaseDiffForm::createThreads(void)
 
 void ModelDatabaseDiffForm::destroyThreads(void)
 {
-	if(import_thread && import_thread->isRunning())
+  if(import_thread)
 	{
 		import_thread->quit();
 		import_thread->wait();
@@ -161,7 +161,7 @@ void ModelDatabaseDiffForm::destroyThreads(void)
 		import_thread=nullptr;
 	}
 
-	if(diff_thread && diff_thread->isRunning())
+  if(diff_thread)
 	{
 		diff_thread->quit();
 		diff_thread->wait();
@@ -418,8 +418,8 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-  import_thread->quit();
-  import_thread->wait();
+  //import_thread->quit();
+  //import_thread->wait();
   step_pb->setValue(30);
   diffModels();
 }
@@ -429,10 +429,12 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
   sqlcode_txt->setPlainText(diff_helper->getDiffDefinition()); 
   settings_tbw->setTabEnabled(2, true);
 
-  diff_thread->quit();
-  diff_thread->wait();
-  resetButtons();
-  destroyThreads();
+  //diff_thread->quit();
+  //diff_thread->wait();
+ // destroyModel();
+ // destroyThreads();
+ // resetButtons();
+  cancelOperation();
 
   if(store_in_file_rb->isChecked())
     saveDiffToFile();

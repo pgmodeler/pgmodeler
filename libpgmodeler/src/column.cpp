@@ -180,7 +180,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 void Column::operator = (Column &col)
 {
 	this->comment=col.comment;
-	this->object_id=col.object_id;
+  //this->object_id=col.object_id;
 	this->is_protected=col.is_protected;
 
 	this->obj_name=col.obj_name;

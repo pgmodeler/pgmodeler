@@ -30,6 +30,12 @@
     @{create-cmds}
   %end
 
+  %if @{truncate-cmds} %then
+    $br
+    [-- ] $ob [ Truncated tables ] $cb [ --] $br
+    @{truncate-cmds}
+  %end
+
   %if @{alter-cmds} %then
     $br
     [-- ] $ob [ Changed objects ] $cb [ --] $br

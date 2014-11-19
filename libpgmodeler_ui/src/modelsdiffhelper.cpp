@@ -129,14 +129,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
       aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
       constr=dynamic_cast<Constraint *>(tab_obj);
 
-      if((tab_obj->isAddedByGeneralization()) ||
-         (constr && constr->getConstraintType()!=ConstraintType::foreign_key))
+      if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
+         ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+          (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
       {
-        if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_obj)
-        {
-          if(tab_obj->isCodeDiffersFrom(aux_obj))
-            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
-        }
+        if(tab_obj->isCodeDiffersFrom(aux_obj))
+          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
       }
       else if(!aux_obj)
         generateDiffInfo(diff_type, tab_obj);
@@ -233,7 +231,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					{
             generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 
-            if(object->getObjectType()==OBJ_TABLE)
+            if(!force_recreation && object->getObjectType()==OBJ_TABLE)
             {
               Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
               diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
@@ -307,7 +305,10 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
   {
     ObjectsDiffInfo diff_info;
 
-    if(diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
+    /* If the info is for ALTER and there is a DROP info on the list,
+       the object will be recreated instead of dropped */
+    if(!force_recreation &&
+       diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
        isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object->getSignature(), old_object->getObjectType()))
     {
       diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr);
@@ -316,13 +317,14 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
       emit s_objectsDiffInfoGenerated(diff_info);
     }
 
-
     diff_info=ObjectsDiffInfo(diff_type, object, old_object);
     diff_infos.push_back(diff_info);
     diffs_counter[diff_type]++;
     emit s_objectsDiffInfoGenerated(diff_info);
 
-    if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+    /* If the info is for DROP, generate the drop for referer objects of the
+       one marked to be dropped */
+    if(!force_recreation && diff_type==ObjectsDiffInfo::DROP_OBJECT)
     {
       vector<BaseObject *> ref_objs;
       Relationship *rel=nullptr;
@@ -363,7 +365,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   try
   {
     BaseObject *object=nullptr;
-    map<unsigned, QString> drop_objs, create_objs, alter_objs;
+    map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
     vector<BaseObject *> drop_vect, create_vect;
     unsigned diff_type;
     ObjectType obj_type;
@@ -405,7 +407,22 @@ void ModelsDiffHelper::processDiffInfos(void)
           alter_def=diff.getOldObject()->getAlterDefinition(object);
 
           if(!alter_def.isEmpty())
+          {
             alter_objs[object->getObjectId()]=alter_def;
+
+            /* If the object is a column checks if the types of the columns are differents,
+               generating a TRUNCATE TABLE for the parent table */
+            if(obj_type==OBJ_COLUMN && trucante_tables)
+            {
+              Column *src_col=dynamic_cast<Column *>(object),
+                     *imp_col=dynamic_cast<Column *>(diff.getOldObject());
+              Table *tab=dynamic_cast<Table *>(src_col->getParentTable());
+
+              //If the truncate was not generated previously
+              if(src_col->getType()!=imp_col->getType() && truncate_tabs.count(tab->getObjectId())==0)
+                truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(drop_cascade);
+            }
+          }
         }
       }
     }
@@ -422,6 +439,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::ALTER_CMDS]="";
       attribs[ParsersAttributes::DROP_CMDS]="";
       attribs[ParsersAttributes::CREATE_CMDS]="";
+      attribs[ParsersAttributes::TRUNCATE_CMDS]="";
 
       ritr=drop_objs.rbegin();
       ritr_end=drop_objs.rend();
@@ -434,6 +452,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
       for(auto itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
+
+      for(auto itr : truncate_tabs)
+        attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
 
       for(auto itr : alter_objs)
         attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;

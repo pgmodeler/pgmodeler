@@ -488,7 +488,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Objects that depends on an object marked to be dropped will be removed as well. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can drop more objects than listed in the output.</string>
+                  <string>Objects that depends on an object marked to be dropped will be removed as well. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can drop more objects than listed in the output or diff preview.</string>
                  </property>
                  <property name="text">
                   <string>Drop objects in cascade mode</string>
@@ -539,7 +539,7 @@
                   <string>Force recreation of objects</string>
                  </property>
                  <property name="checkable">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
@@ -581,7 +581,7 @@
                   </sizepolicy>
                  </property>
                  <property name="statusTip">
-                  <string>Clears the data of all modified tables before apply a change. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</string>
+                  <string>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</string>
                  </property>
                  <property name="text">
                   <string>Trucate tables before apply diff</string>
@@ -1262,7 +1262,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Objects marked with an &lt;strong&gt;ALTER&lt;/strong&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise the object will be dropped and created again (if the force recreation is checked).</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
