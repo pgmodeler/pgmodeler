@@ -410,12 +410,26 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 				 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER &&
 				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
          obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
-				 obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
+         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
+}
+
+bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
+{
+  return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
+         obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
+         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER &&
+         obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=OBJ_TAG  &&
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
 {
-	return(BaseObject::acceptsCustomSQL(this->obj_type));
+  return(BaseObject::acceptsCustomSQL(this->obj_type));
+}
+
+bool BaseObject::acceptsAlterCommand(void)
+{
+  return(BaseObject::acceptsAlterCommand(this->obj_type));
 }
 
 void BaseObject::setSchema(BaseObject *schema)

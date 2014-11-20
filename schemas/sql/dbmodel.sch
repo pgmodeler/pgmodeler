@@ -16,8 +16,10 @@
 %end
 $br $br
 
-[SET check_function_bodies = false;] $br
-[-- ddl-end --] $br $br
+%if @{function} %then
+ [SET check_function_bodies = false;] $br
+ [-- ddl-end --] $br $br
+%end
 
 %if @{export-to-file} %then
 

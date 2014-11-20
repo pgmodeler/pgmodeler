@@ -106,3 +106,10 @@ BaseObject *ObjectsDiffInfo::getOldObject(void)
 {
   return(old_object);
 }
+
+bool ObjectsDiffInfo::operator == (ObjectsDiffInfo &info)
+{
+  return(this->diff_type==info.diff_type &&
+         this->object==info.object &&
+         this->old_object==info.old_object);
+}

@@ -14,30 +14,32 @@
   [-- Created objects: ] @{create} $br
   [-- Changed objects: ] @{change} $br
 
-  $br
-  [SET check_function_bodies = false;] $br
-  [-- ddl-end --] $br
+  %if @{function} %then
+    $br
+    [SET check_function_bodies = false;] $br
+    [-- ddl-end --] $br
+  %end
 
   %if @{drop-cmds} %then
-    $br
+    $br $br
     [-- ] $ob [ Dropped objects ] $cb [ --] $br
     @{drop-cmds}
   %end
 
   %if @{create-cmds} %then
-    $br
+    $br $br
     [-- ] $ob [ Created objects ] $cb [ --] $br
     @{create-cmds}
   %end
 
   %if @{truncate-cmds} %then
-    $br
+    $br $br
     [-- ] $ob [ Truncated tables ] $cb [ --] $br
     @{truncate-cmds}
   %end
 
   %if @{alter-cmds} %then
-    $br
+    $br $br
     [-- ] $ob [ Changed objects ] $cb [ --] $br
     @{alter-cmds}
   %end

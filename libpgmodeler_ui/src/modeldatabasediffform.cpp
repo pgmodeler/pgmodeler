@@ -58,8 +58,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
     force_recreation_ht->setText(force_recreation_chk->statusTip());
 
-    drop_cascade_ht=new HintTextWidget(drop_cascade_hint, this);
-    drop_cascade_ht->setText(drop_cascade_chk->statusTip());
+    recreate_unmod_ht=new HintTextWidget(recreate_unmod_hint, this);
+    recreate_unmod_ht->setText(recreate_unmod_chk->statusTip());
+
+    cascade_mode_ht=new HintTextWidget(drop_cascade_hint, this);
+    cascade_mode_ht->setText(cascade_mode_chk->statusTip());
 
     pgsql_ver_ht=new HintTextWidget(pgsql_ver_hint, this);
     pgsql_ver_ht->setText(pgsql_ver_chk->statusTip());
@@ -83,6 +86,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     connect(store_in_file_rb, SIGNAL(clicked(bool)), store_in_file_wgt, SLOT(setEnabled(bool)));
     connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
     connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+    connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
   }
   catch(Exception &e)
   {
@@ -325,8 +329,11 @@ void ModelDatabaseDiffForm::diffModels(void)
 	diff_progress=step_pb->value();
 
 	diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
-  diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(), drop_cascade_chk->isChecked(),
-                              force_recreation_chk->isChecked(), trunc_tables_chk->isChecked());
+  diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(),
+                              cascade_mode_chk->isChecked(),
+                              trunc_tables_chk->isChecked(),
+                              force_recreation_chk->isChecked(),
+                              recreate_unmod_chk->isChecked());
   diff_helper->setModels(source_model, imported_model);
 
   if(pgsql_ver_chk->isChecked())

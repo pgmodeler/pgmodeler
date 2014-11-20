@@ -1572,12 +1572,9 @@ QString Table::getAlterDefinition(BaseObject *object)
     QString alter_def;
 
     attributes[ParsersAttributes::OIDS]="";
-    attributes[ParsersAttributes::INHERIT]="";
-    attributes[ParsersAttributes::NO_INHERIT]="";
     attributes[ParsersAttributes::HAS_CHANGES]="";
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
-    //Generating ALTER for WITH/WITHOUT OIDS attribute
     if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
     {
       attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
@@ -1586,29 +1583,6 @@ QString Table::getAlterDefinition(BaseObject *object)
 
     alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
     attributes[ParsersAttributes::OIDS]="";
-
-    //Generating ALTER for INHERIT/NO INHERIT attribute
-    for(auto ancestor : this->ancestor_tables)
-    {
-      if(!tab->getAncestorTable(ancestor->getName(true)))
-      {
-        attributes[ParsersAttributes::HAS_CHANGES]="1";
-        attributes[ParsersAttributes::NO_INHERIT]=ancestor->getName(true);
-        alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-        attributes[ParsersAttributes::NO_INHERIT]="";
-      }
-    }
-
-    for(auto ancestor : tab->ancestor_tables)
-    {
-      if(!this->getAncestorTable(ancestor->getName(true)))
-      {
-        attributes[ParsersAttributes::HAS_CHANGES]="1";
-        attributes[ParsersAttributes::INHERIT]=ancestor->getName(true);
-        alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-        attributes[ParsersAttributes::INHERIT]="";
-      }
-    }
 
     return(alter_def);
   }

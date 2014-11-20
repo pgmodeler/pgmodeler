@@ -83,6 +83,8 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		QString getCachedCode(unsigned def_type);
 
+    virtual QString getDropDefinition(bool) final { return(""); }
+
 	public:
 		//! \brief Constants used to assign the type to relationship
 		static const unsigned RELATIONSHIP_11=10, //! \brief One to one
@@ -162,6 +164,8 @@ class BaseRelationship: public BaseGraphicObject  {
 		QString getRelTypeAttribute(void);
 
     virtual void setCodeInvalidated(bool value);
+
+    virtual QString getAlterDefinition(BaseObject *) { return(""); }
 
 		friend class DatabaseModel;
 };

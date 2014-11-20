@@ -9,7 +9,7 @@
   ALTER $sp @{sql-object} $sp @{signature}
   
   %if @{oids} %then
-    $br $tb [SET ]
+    [ SET ]
   
     %if (@{oids}=="unset") %then
       WITHOUT
@@ -20,18 +20,6 @@
     [ OIDS]
   %end
 
-  %if @{inherit} %or @{no-inherit} %then
-
-    %if @{no-inherit} %then
-     $br $tb [NO INHERIT ] @{no-inherit}
-    %end
-    
-    %if @{inherit} %then
-     $br $tb  [INHERIT ] @{inherit}
-    %end
-    
-  %end
-  
   ; $br
   [-- ddl-end --] $br
 %end

@@ -6305,6 +6305,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
+      attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? "1" : "");
+
       for(auto type : types)
       {
         usr_type=dynamic_cast<Type *>(type);

@@ -2463,3 +2463,15 @@ void Relationship::operator = (Relationship &rel)
   this->single_pk_column=rel.single_pk_column;
 }
 
+QString Relationship::getInheritDefinition(bool undo_inherit)
+{
+  if(rel_type!=RELATIONSHIP_GEN)
+    return("");
+
+  attributes[ParsersAttributes::INHERIT]=(undo_inherit ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+  attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
+
+  return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
+}
+

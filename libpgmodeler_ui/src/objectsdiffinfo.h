@@ -53,6 +53,8 @@ class ObjectsDiffInfo {
 		BaseObject *getObject(void);
     BaseObject *getOldObject(void);
 
+    bool operator == (ObjectsDiffInfo &info);
+
 		friend class ModelsDiffHelper;
 		friend class QVariant;
 };

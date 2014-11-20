@@ -473,6 +473,8 @@ class Relationship: public BaseRelationship {
 		//! \brief Copies the attributes from one relationship to another
 		void operator = (Relationship &rel);
 
+    QString getInheritDefinition(bool undo_inherit);
+
 		friend class DatabaseModel;
 		friend class ModelWidget;
 		friend class RelationshipWidget;
