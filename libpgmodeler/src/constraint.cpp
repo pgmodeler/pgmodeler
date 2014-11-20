@@ -721,7 +721,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 QString Constraint::getDropDefinition(bool cascade)
 {
-  setDeclInTableAttribute();
+  attributes[ParsersAttributes::DECL_IN_TABLE]="";
   return(TableObject::getDropDefinition(cascade));
 }
 
