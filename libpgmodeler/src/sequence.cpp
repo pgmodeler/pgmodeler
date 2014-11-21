@@ -423,13 +423,16 @@ QString Sequence::getAlterDefinition(BaseObject *object)
       {
         attribs[ParsersAttributes::OWNER_COLUMN]=seq->owner_col->getSignature();
         table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
+
+        if(table)
+        {
+          attribs[ParsersAttributes::TABLE]=table->getName(true);
+          attribs[ParsersAttributes::COLUMN]=seq->owner_col->getName(true);
+        }
       }
       else
         attribs[ParsersAttributes::OWNER_COLUMN]=ParsersAttributes::UNSET;
     }
-
-    attribs[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
-    attribs[ParsersAttributes::COLUMN]=(seq->owner_col ? seq->owner_col->getName(true) : "");
 
     if(this->increment!=seq->increment)
       attribs[ParsersAttributes::INCREMENT]=seq->increment;
@@ -450,7 +453,6 @@ QString Sequence::getAlterDefinition(BaseObject *object)
       attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
     copyAttributes(attribs);
-
     return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
   }
   catch(Exception &e)

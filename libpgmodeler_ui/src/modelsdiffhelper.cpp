@@ -171,7 +171,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		obj_type=object->getObjectType();
 		idx++;
 
-    if(!object->isSystemObject() && !object->isSQLDisabled() &&
+    if(obj_type!=BASE_RELATIONSHIP &&
+       !object->isSystemObject() && !object->isSQLDisabled() &&
 			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
@@ -325,7 +326,10 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
       imported_model->getObjectReferences(object, ref_objs);
 
       for(auto obj : ref_objs)
-        generateDiffInfo(diff_type, obj);
+      {
+        if(obj->getObjectType()!=BASE_RELATIONSHIP)
+          generateDiffInfo(diff_type, obj);
+      }
     }
   }
 }
