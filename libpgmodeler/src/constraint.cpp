@@ -637,7 +637,7 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 	return(getCodeDefinition(def_type, false));
 }
 
-void Constraint::setDeclInTableAttribute()
+void Constraint::setDeclInTableAttribute(void)
 {
   if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
     attributes[ParsersAttributes::DECL_IN_TABLE]="";
@@ -721,7 +721,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 QString Constraint::getDropDefinition(bool cascade)
 {
-  attributes[ParsersAttributes::DECL_IN_TABLE]="";
+  setDeclInTableAttribute();
   return(TableObject::getDropDefinition(cascade));
 }
 

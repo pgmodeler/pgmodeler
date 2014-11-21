@@ -914,14 +914,13 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 				//Create the type
 				param_types[i].remove("[]");
-				type=PgSQLType::parseString(param_types[i]);//PgSQLType(param_types[i]);
+        type=PgSQLType::parseString(param_types[i]);
 				type.setDimension(dim);
 			}
 
 			//Alocates a new parameter
 			param=Parameter();
 			param.setType(type);
-			//param.setIn(true);
 
 			if(param_names.isEmpty())
 				param.setName(QString("_param%1").arg(i+1));
@@ -1390,8 +1389,9 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	try
 	{
     unsigned tab_oid=attribs[ParsersAttributes::OID].toUInt(), type_oid=0;
+    bool is_type_registered=false;
 		Column col;
-    QString type_def, unknown_obj_xml;
+    QString type_def, unknown_obj_xml, type_name;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, "0" },
 														{ ParsersAttributes::Y_POS, "0" }};
@@ -1399,7 +1399,6 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 		attribs[ParsersAttributes::COLUMNS]="";
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
-
 
     //Retrieving columns if they were not retrieved yet
     if(columns[attribs[ParsersAttributes::OID].toUInt()].empty() && auto_resolve_deps)
@@ -1425,10 +1424,27 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				col_perms[tab_oid].push_back(itr->second[ParsersAttributes::OID].toUInt());
 
 			col.setName(itr->second[ParsersAttributes::NAME]);
-
-      //Checking if the type used by the column exists, if not it'll be created when auto_resolve_deps is checked
       type_oid=itr->second[ParsersAttributes::TYPE_OID].toUInt();
-      if(auto_resolve_deps && types.count(type_oid)==0)
+
+      /* If the type has an entry on the types map and its OID is greater than system object oids,
+         means that it's a user defined type, thus, there is the need to check if the type
+         is registered. */
+      if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+      {
+        /* Building the type name prepending the schema name in order to search it on
+           the user defined types list at PgSQLType class */
+        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], OBJ_SCHEMA);
+        type_name+="." + types[type_oid][ParsersAttributes::NAME];
+        is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
+      }
+      else
+      {
+        is_type_registered=(types.count(type_oid)!=0);
+        type_name=itr->second[ParsersAttributes::TYPE];
+      }
+
+      //Checking if the type used by the column exists (is registered), if not it'll be created when auto_resolve_deps is checked
+      if(auto_resolve_deps && !is_type_registered)
       {
         type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
         unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
@@ -1439,7 +1455,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
           type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_DOMAIN);
       }
 
-      col.setType(PgSQLType::parseString(itr->second[ParsersAttributes::TYPE]));
+      col.setType(PgSQLType::parseString(type_name));
       col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
@@ -1449,9 +1465,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         getDependencyObject(itr->second[ParsersAttributes::COLLATION], OBJ_COLLATION);
 
       col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
-			//col.setCodeInvalidated(true);
-
-			attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
+      attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			itr++;
 		}
 
@@ -1499,9 +1513,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	Rule *rule=nullptr;
-	//BaseTable *table=nullptr;
-	QString /*tab_name=getObjectName(attribs[ParsersAttributes::TABLE]),*/
-					cmds=attribs[ParsersAttributes::COMMANDS];
+  QString cmds=attribs[ParsersAttributes::COMMANDS];
 	int start=-1, end=-1;
 	QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+"), cond_regexp("(WHERE)(.)+(DO)");
 	QStringList commands;
@@ -1520,24 +1532,8 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		commands=cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts);
 		attribs[ParsersAttributes::COMMANDS]=commands.join(";");
 		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
-
-		//Check if the table exists
-		//table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
-
-		//If the table doesn't exists will check if a view exists instead
-		/*if(!table)
-			table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
-
-		if(!table)
-			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-											.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_RULE))
-											.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
-											ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__); */
-
 		loadObjectXML(OBJ_RULE, attribs);
-		rule=dbmodel->createRule();//nullptr);
-		//table->addObject(rule);
-		//table->setModified(true);
+    rule=dbmodel->createRule();
 	}
 	catch(Exception &e)
 	{
@@ -1556,7 +1552,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(",\"\"")).join(",");
 
 		loadObjectXML(OBJ_TRIGGER, attribs);
-		dbmodel->createTrigger();//nullptr);
+    dbmodel->createTrigger();
 	}
 	catch(Exception &e)
 	{

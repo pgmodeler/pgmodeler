@@ -410,6 +410,10 @@ class PgSQLType: public BaseType{
 		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
+    /*! brief Returns if the type is registered in the list of valid types (built-in one and user defined).
+        The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
+    static bool isRegistered(const QString &type, void *pmodel=nullptr);
+
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
 		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
 		static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);

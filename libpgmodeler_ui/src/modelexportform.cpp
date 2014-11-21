@@ -152,13 +152,13 @@ void ModelExportForm::exportModel(void)
 			else
 			{
 				QString version;
-				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+        Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())
 					version=pgsqlvers1_cmb->currentText();
 
-				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(), drop_db_chk->isChecked());
+        export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(), drop_db_chk->isChecked());
 				export_thread->start();
 				enableExportModes(false);
 				cancel_btn->setEnabled(true);

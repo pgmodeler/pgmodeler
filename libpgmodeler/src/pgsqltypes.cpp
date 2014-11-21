@@ -851,7 +851,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			//Creates the type based on the extracted values
 			type=PgSQLType(type_str);
 		}
-		catch(Exception &)
+    catch(Exception &)
 		{
 			/* In case of error (specially with PostGiS types) split the string to remove
 				the schema name and try to create the type once more */
@@ -859,6 +859,12 @@ PgSQLType PgSQLType::parseString(const QString &str)
 
 			if(typname.size()==2)
 				type=PgSQLType(typname[1]);
+      else
+      {
+        /* One last try it to check if the type has an entry on user defined types
+           as pg_catalog.[type name] */
+        type=PgSQLType("pg_catalog." + type_str);
+      }
 		}
 
 		type.setWithTimezone(with_tz);
@@ -965,6 +971,14 @@ QString PgSQLType::getTypeName(void)
 QString PgSQLType::getSQLTypeName(void)
 {
   return(*(*this));
+}
+
+bool PgSQLType::isRegistered(const QString &type, void *pmodel)
+{
+  if(getBaseTypeIndex(type)!=BaseType::null)
+    return(true);
+  else
+    return(getUserTypeIndex(type, nullptr, pmodel)!=BaseType::null);
 }
 
 bool PgSQLType::operator == (unsigned type_id)
