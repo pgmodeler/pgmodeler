@@ -39,7 +39,7 @@ class Type: public BaseObject {
 		unsigned config;
 
 		//! \brief Attributes for composite type
-		vector<TypeAttribute> attributes;
+    vector<TypeAttribute> type_attribs;
 
 		//! \brief Enumerations of enumeration type
 		vector<QString> enumerations;
@@ -87,7 +87,7 @@ class Type: public BaseObject {
 		OperatorClass *subtype_opclass;
 
 		//! \brief Checks if the named attribute exists
-		bool isAttributeExists(const QString &attrib_name);
+    int getAttributeIndex(const QString &attrib_name);
 
 		//! \brief Checks if the named enumeration exists
 		bool isEnumerationExists(const QString &enum_name);
@@ -222,10 +222,12 @@ class Type: public BaseObject {
 		//! \brief Returns the SQL / XML definition for the type
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);
 
-		friend class DatabaseModel;
+    friend class DatabaseModel;
 };
 
 #endif

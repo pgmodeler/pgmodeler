@@ -50,8 +50,8 @@ class ModelsDiffHelper: public QObject {
     void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
     void processDiffInfos(void);
     void recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs);
-    bool isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object);
-    QString getCodeDefinition(BaseObject *object);
+    bool isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
+    QString getCodeDefinition(BaseObject *object, bool drop_cmd);
 
   public:
 		ModelsDiffHelper(void);
