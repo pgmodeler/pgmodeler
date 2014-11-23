@@ -561,8 +561,8 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	BaseObject *object=nullptr;
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
-	bool found=false; //, formatted=false;
-  QString /*aux_name,*/ aux_name1;
+  bool found=false;
+  QString aux_name1;
 
 	obj_list=getObjectList(obj_type);
 
@@ -2736,7 +2736,7 @@ int DatabaseModel::getPermissionIndex(Permission *perm)
 		}
 	}
 
-	return(perm_idx);
+  return(perm_idx);
 }
 
 BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type)

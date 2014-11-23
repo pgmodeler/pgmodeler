@@ -447,5 +447,49 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Permission::getSignature(bool format)
+{
+  QStringList rol_names;
+  QString signature;
+
+  for(Role *role : roles)
+    rol_names.push_back(role->getName(format));
+
+  rol_names.sort();
+  signature="=" + getPermissionString();
+
+  if(roles.empty())
+    signature="PUBLIC" + signature;
+  else
+    signature=rol_names.join(",") + signature;
+
+  if(revoke)
+    signature="revoke:" + signature;
+  else
+    signature="grant:" + signature;
+
+  return(signature);
+}
+
+QString Permission::getDropDefinition(bool cascade)
+{
+  try
+  {
+    QString def;
+
+    this->setRevoke(!revoke);
+    this->setCascade(cascade);
+    def=this->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+    this->setRevoke(revoke);
+    this->setCascade(this->cascade);
+
+    return(def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

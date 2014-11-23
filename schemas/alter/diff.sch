@@ -13,6 +13,7 @@
   [-- Dropped objects: ] @{drop} $br
   [-- Created objects: ] @{create} $br
   [-- Changed objects: ] @{change} $br
+  [-- Truncated tables: ] @{truncate} $br
 
   %if @{function} %then
     $br
@@ -42,5 +43,11 @@
     $br $br
     [-- ] $ob [ Changed objects ] $cb [ --] $br
     @{alter-cmds}
+  %end
+
+  %if @{permissions} %then
+    $br $br
+    [-- ] $ob [ Permissions changes ] $cb [ --] $br
+    @{permissions}
   %end
 %end

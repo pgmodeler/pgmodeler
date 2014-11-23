@@ -388,6 +388,9 @@ class BaseObject {
     //! \brief Returns if the specified type accepts the use of ALTER commands to have its attributes changed
     static bool acceptsAlterCommand(ObjectType obj_type);
 
+    //! \brief Returns if the specified type accepts the use of DROP commands
+    static bool acceptsDropCommand(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
 
@@ -405,6 +408,9 @@ class BaseObject {
 
     //! \brief Returns if the object accepts the use of ALTER commands to have its attributes changed
     bool acceptsAlterCommand(void);
+
+    //! \brief Returns if the object accepts the use of DROP commands
+    bool acceptsDropCommand(void);
 
 		/*! brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship

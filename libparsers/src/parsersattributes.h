@@ -478,7 +478,9 @@ namespace ParsersAttributes {
   UNSET="unset",
   HAS_CHANGES="has-changes",
   EXISTING_VALUE="existing-value",
-  BEFORE="before";
+  BEFORE="before",
+  PERMISSIONS="permissions",
+  TRUNCATE="truncate";
 }
 
 #endif

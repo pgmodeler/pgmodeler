@@ -422,6 +422,15 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
          obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE);
 }
 
+bool BaseObject::acceptsDropCommand(ObjectType obj_type)
+{
+  return(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_RELATIONSHIP &&
+         obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
+         obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
+         obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
+         obj_type!=BASE_TABLE);
+}
+
 bool BaseObject::acceptsCustomSQL(void)
 {
   return(BaseObject::acceptsCustomSQL(this->obj_type));
@@ -430,6 +439,11 @@ bool BaseObject::acceptsCustomSQL(void)
 bool BaseObject::acceptsAlterCommand(void)
 {
   return(BaseObject::acceptsAlterCommand(this->obj_type));
+}
+
+bool BaseObject::acceptsDropCommand(void)
+{
+  return(BaseObject::acceptsDropCommand(this->obj_type));
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -751,7 +765,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       }
     }
 
-    if(def_type==SchemaParser::SQL_DEFINITION)
+    if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
     {
       attributes[ParsersAttributes::DROP]=getDropDefinition(false);
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
@@ -1045,17 +1059,22 @@ QString BaseObject::getDropDefinition(bool cascade)
 {
   try
   {
-    attribs_map attribs;
+    if(acceptsDropCommand())
+    {
+      attribs_map attribs;
 
-    setBasicAttributes(true);
-    schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-    schparser.setIgnoreUnkownAttributes(true);
-    schparser.setIgnoreEmptyAttributes(true);
+      setBasicAttributes(true);
+      schparser.setPgSQLVersion(BaseObject::pgsql_ver);
+      schparser.setIgnoreUnkownAttributes(true);
+      schparser.setIgnoreEmptyAttributes(true);
 
-    attribs=attributes;
-    attribs[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+      attribs=attributes;
+      attribs[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
 
-    return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
+      return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
+    }
+    else
+      return("");
   }
   catch(Exception &e)
   {
