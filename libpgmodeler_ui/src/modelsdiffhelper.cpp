@@ -366,7 +366,7 @@ void ModelsDiffHelper::processDiffInfos(void)
     ObjectType obj_type;
     map<unsigned, QString>::reverse_iterator ritr, ritr_end;
     attribs_map attribs;
-    QString alter_def, no_inherit_def, inherit_def, perms_def;
+    QString alter_def, no_inherit_def, inherit_def, set_perms, unset_perms;
     SchemaParser schparser;
 
     if(!diff_infos.empty())
@@ -384,7 +384,7 @@ void ModelsDiffHelper::processDiffInfos(void)
         if(rel)
           no_inherit_def+=rel->getInheritDefinition(true);
         else if(obj_type==OBJ_PERMISSION)
-          perms_def+=object->getDropDefinition(cascade_mode);
+          unset_perms+=object->getDropDefinition(cascade_mode);
         else
           drop_objs[object->getObjectId()]=getCodeDefinition(object, true);
       }
@@ -393,7 +393,7 @@ void ModelsDiffHelper::processDiffInfos(void)
         if(rel)
           inherit_def+=rel->getInheritDefinition(false);
         else if(obj_type==OBJ_PERMISSION)
-          perms_def+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+          set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
         else
           create_objs[object->getObjectId()]=getCodeDefinition(object, false);
       }
@@ -456,7 +456,8 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::DROP_CMDS]="";
       attribs[ParsersAttributes::CREATE_CMDS]="";
       attribs[ParsersAttributes::TRUNCATE_CMDS]="";
-      attribs[ParsersAttributes::PERMISSIONS]=perms_def;
+      attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
+      attribs[ParsersAttributes::SET_PERMS]=set_perms;
       attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? "1" : "");
 
       ritr=drop_objs.rbegin();

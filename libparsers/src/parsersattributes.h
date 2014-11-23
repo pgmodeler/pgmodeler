@@ -479,7 +479,8 @@ namespace ParsersAttributes {
   HAS_CHANGES="has-changes",
   EXISTING_VALUE="existing-value",
   BEFORE="before",
-  PERMISSIONS="permissions",
+  UNSET_PERMS="unset-perms",
+  SET_PERMS="set-perms",
   TRUNCATE="truncate";
 }
 

@@ -21,6 +21,12 @@
     [-- ddl-end --] $br
   %end
 
+  %if @{unset-perms} %then
+    $br $br
+    [-- ] $ob [ Undone permissions ] $cb [ --] $br
+    @{unset-perms}
+  %end
+
   %if @{drop-cmds} %then
     $br $br
     [-- ] $ob [ Dropped objects ] $cb [ --] $br
@@ -45,9 +51,9 @@
     @{alter-cmds}
   %end
 
-  %if @{permissions} %then
+  %if @{set-perms} %then
     $br $br
-    [-- ] $ob [ Permissions changes ] $cb [ --] $br
-    @{permissions}
+    [-- ] $ob [ Created permissions ] $cb [ --] $br
+    @{set-perms}
   %end
 %end
