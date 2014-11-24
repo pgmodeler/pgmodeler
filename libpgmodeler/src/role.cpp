@@ -378,7 +378,8 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 
     for(unsigned i=0; i <= OP_REPLICATION; i++)
     {
-      if(i==OP_ENCRYPTED || this->options[i]!=role->options[i])
+      if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
+         this->options[i]!=role->options[i])
         attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
     }
 
