@@ -72,7 +72,7 @@ class BaseTable: public BaseGraphicObject {
 
     virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
-    virtual QString getAlterDefinition(BaseObject *object)=0;
+    virtual QString getAlterDefinition(BaseObject *object);
 
     //! \brief Copy the attributes between two tables
     void operator = (BaseTable &tab);

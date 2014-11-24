@@ -1365,7 +1365,7 @@ PgSQLType PgSQLType::getAliasType(void)
 	else if(type_list[this->type_idx]=="smallserial")
 		return(PgSQLType("smallint"));
 	else if(type_list[this->type_idx]=="bigserial")
-		return(PgSQLType("bigint"));
+		return(PgSQLType("bigint")); 
 	else
 		return(PgSQLType(type_list[this->type_idx]));
 }

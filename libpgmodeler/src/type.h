@@ -228,6 +228,7 @@ class Type: public BaseObject {
 		void operator = (Type &tipo);
 
     friend class DatabaseModel;
+    friend class ModelsDiffHelper;
 };
 
 #endif

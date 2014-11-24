@@ -67,6 +67,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     pgsql_ver_ht=new HintTextWidget(pgsql_ver_hint, this);
     pgsql_ver_ht->setText(pgsql_ver_chk->statusTip());
 
+    keep_obj_perms_ht=new HintTextWidget(keep_obj_perms_hint, this);
+    keep_obj_perms_ht->setText(keep_obj_perms_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                   GlobalAttributes::DIR_SEPARATOR +
@@ -329,11 +332,14 @@ void ModelDatabaseDiffForm::diffModels(void)
 	diff_progress=step_pb->value();
 
 	diff_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+
   diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(),
                               cascade_mode_chk->isChecked(),
                               trunc_tables_chk->isChecked(),
                               force_recreation_chk->isChecked(),
-                              recreate_unmod_chk->isChecked());
+                              recreate_unmod_chk->isChecked(),
+                              keep_obj_perms_chk->isChecked());
+
   diff_helper->setModels(source_model, imported_model);
 
   if(pgsql_ver_chk->isChecked())

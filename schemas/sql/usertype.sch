@@ -10,7 +10,7 @@
 [CREATE TYPE ] @{name}
 
 %if @{reduced-form} %then
-; $br [-- ddl-end --] $br
+; $br [-- ddl-end --] $br $br
 %else
 
  %if @{prepended-sql} %then

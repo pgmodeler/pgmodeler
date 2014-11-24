@@ -28,7 +28,9 @@
   %if @{roles} %then
     @{roles}
 
-    %if @{cascade} %then [ CASCADE] %end
+    %if @{revoke} %and @{cascade} %then
+     [ CASCADE]
+    %end
   %else
     PUBLIC
   %end

@@ -9,7 +9,7 @@
 
   %if @{value} %then
     @{alter-type} 
-    [ ADD VALUE ] @{value} 
+    [ ADD VALUE ] '@{value}'
     
     %if @{before} %then 
       [ BEFORE ]
@@ -17,7 +17,7 @@
       [ AFTER ]
     %end
     
-    @{existing-value}
+    '@{existing-value}'
     
     @{ddl-end}
   %end

@@ -40,7 +40,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
-    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht;
+    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht, *keep_obj_perms_ht;
 
     SyntaxHighlighter *sqlcode_hl;
 

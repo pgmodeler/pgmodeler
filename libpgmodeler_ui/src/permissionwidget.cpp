@@ -220,7 +220,7 @@ void PermissionWidget::disableGrantOptions(void)
 			check->setChecked(false);
 	}
 
-	cascade_chk->setEnabled(roles_tab->getRowCount() > 0);
+  cascade_chk->setEnabled(revoke_rb->isChecked() && roles_tab->getRowCount() > 0);
 
 	if(!cascade_chk->isEnabled())
 		cascade_chk->setChecked(false);

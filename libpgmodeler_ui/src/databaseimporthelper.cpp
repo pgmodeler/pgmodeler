@@ -1328,12 +1328,13 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			{
 				values=comp_attribs[i].split(":");
 
-				type_attrib.setName(values[0].remove("\""));
-				type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
-				type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
-				//type_attrib.setCodeInvalidated(true);
-
-				attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        if(values.size() >= 2)
+        {
+          type_attrib.setName(values[0].remove("\""));
+          type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
+          type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
+          attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        }
 			}
 		}
 		else if(!attribs[ParsersAttributes::RANGE_TYPE].isEmpty())

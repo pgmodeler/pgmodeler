@@ -24,16 +24,17 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   pgsql_version=SchemaParser::PGSQL_VERSION_94;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
-  setDiffOptions(true, true, false, false, false);
+  setDiffOptions(true, true, false, false, false, true);
 }
 
-void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble)
+void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms)
 {
   this->keep_cluster_objs=keep_cluster_objs;
   this->cascade_mode=cascade_mode;
   this->force_recreation=force_recreation;
   this->trucante_tables=truncate_tables;
   this->recreate_unchangeble=(force_recreation && recreate_unchangeble);
+  this->keep_obj_perms=keep_obj_perms;
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -176,13 +177,17 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
-			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
-														 trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
-														 object->getObjectType());
+      emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+                             trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+                             object->getObjectType());
 
       if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type) && obj_type!=BASE_RELATIONSHIP)
-			{
-        if(obj_type==OBJ_RELATIONSHIP)
+      {
+        if(obj_type==OBJ_PERMISSION &&
+           ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !keep_obj_perms))
+          generateDiffInfo(diff_type, object);
+
+        else if(obj_type==OBJ_RELATIONSHIP)
         {
           Relationship *rel=dynamic_cast<Relationship *>(object);
 
@@ -197,7 +202,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
               generateDiffInfo(diff_type, rel);
           }
         }
-        else
+        else if(obj_type!=OBJ_PERMISSION)
         {
           obj_name=object->getSignature();
           aux_object=aux_model->getObject(obj_name, obj_type);
@@ -238,24 +243,24 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
           else if(!aux_object)
             generateDiffInfo(diff_type, object);
         }
-			}
-			//Comparison for constraints (fks), triggers, rules, indexes
-			else if(TableObject::isTableObject(obj_type))
-				diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
-			//Comparison between model db and the imported db
+      }
+      //Comparison for constraints (fks), triggers, rules, indexes
+      else if(TableObject::isTableObject(obj_type))
+        diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
+      //Comparison between model db and the imported db
       else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
-			{
+      {
         if(!source_model->getAlterDefinition(imported_model).isEmpty())
          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
-			}
-		}
-		else
-		{
+      }
+    }
+    else
+    {
       generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
-			emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
-														 trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
-														 object->getObjectType());
-		}
+      emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+                             trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+                             object->getObjectType());
+    }
 
 		QThread::msleep(10);
 	}
@@ -356,21 +361,36 @@ bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject *object, 
 
 void ModelsDiffHelper::processDiffInfos(void)
 {
+  BaseObject *object=nullptr;
+  Relationship *rel=nullptr;
+  map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
+  vector<BaseObject *> drop_vect, create_vect;
+  unsigned diff_type, schema_id=0;
+  ObjectType obj_type;
+  map<unsigned, QString>::reverse_iterator ritr, ritr_end;
+  attribs_map attribs;
+  QString alter_def, no_inherit_def, inherit_def, set_perms, unset_perms;
+  SchemaParser schparser;
+  Type *type=nullptr;
+  vector<Type *> types;
+
   try
   {
-    BaseObject *object=nullptr;
-    Relationship *rel=nullptr;
-    map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
-    vector<BaseObject *> drop_vect, create_vect;
-    unsigned diff_type;
-    ObjectType obj_type;
-    map<unsigned, QString>::reverse_iterator ritr, ritr_end;
-    attribs_map attribs;
-    QString alter_def, no_inherit_def, inherit_def, set_perms, unset_perms;
-    SchemaParser schparser;
-
     if(!diff_infos.empty())
       emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
+
+    //Separating the base types
+    for(ObjectsDiffInfo diff : diff_infos)
+    {
+      type=dynamic_cast<Type *>(diff.getObject());
+
+      if(type && type->getConfiguration()==Type::BASE_TYPE)
+      {
+        type->convertFunctionParameters();
+        types.push_back(type);
+      }
+    }
+
 
     for(ObjectsDiffInfo diff : diff_infos)
     {
@@ -442,6 +462,19 @@ void ModelsDiffHelper::processDiffInfos(void)
       }
     }
 
+    //Creating the shell types declaration right below on the DDL that creates their schemas
+    for(Type *type : types)
+    {
+      schema_id=type->getSchema()->getObjectId();
+
+      if(create_objs.count(schema_id)!=0)
+       create_objs[schema_id]+=type->getCodeDefinition(SchemaParser::SQL_DEFINITION, true);
+      else
+       attribs[ParsersAttributes::CREATE_CMDS]+=type->getCodeDefinition(SchemaParser::SQL_DEFINITION, true);
+
+      type->convertFunctionParameters(true);
+    }
+
     diff_def.clear();
 
     if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty())
@@ -472,6 +505,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 
       for(auto itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
+
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
 
       for(auto itr : truncate_tabs)
@@ -488,6 +522,9 @@ void ModelsDiffHelper::processDiffInfos(void)
   }
   catch(Exception &e)
   {
+    for(Type *type : types)
+     type->convertFunctionParameters(true);
+
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
