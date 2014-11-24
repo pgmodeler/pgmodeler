@@ -909,7 +909,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 	//In case the file was successfuly loaded
 	if(buffer.size() > 0)
-	{
+  {
 		//Init the control variables
 		attributes=attribs;
 		error=if_expr=false;

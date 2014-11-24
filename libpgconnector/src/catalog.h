@@ -54,6 +54,12 @@ class Catalog {
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
 
+    //! brief Indicates is the use of cached catalog queries is enabled
+    static bool use_cached_queries;
+
+    //! brief Store the cached catalog queries (only when use_cached_queries=true)
+    static attribs_map catalog_queries;
+
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
 
@@ -74,12 +80,16 @@ class Catalog {
 		//! \brief Indicates if the catalog must list only system objects
 		list_only_sys_objs;
 
+    /*! brief Load the schema parser buffer with the catalog query using identified by qry_id.
+        The method will cache the catalog query if it's not cached yet (only when use_cached_queries=true) */
+    void loadCatalogQuery(const QString &qry_id);
+
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object. A special extra attribute is accepted but not passed to SchemaParser:
 		ParsersAttributes::CUSTOM_FILTER that will be appended to the current filter expression */
 		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
-                                 bool single_result=false, attribs_map attribs=attribs_map());
+                             bool single_result=false, attribs_map attribs=attribs_map());
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
 		underscores have this char replaced by dashes. Another special operation made is to replace
@@ -166,6 +176,13 @@ class Catalog {
 		It can be specified the string delimiter as well the value separator if the input default value
 		contains several values */
 		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
+
+    /*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
+        so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
+    static void enableCachedQueries(bool value);
+
+    //! brief Returns the current status of cached catalog queries
+    static bool isCachedQueriesEnabled(void);
 };
 
 #endif
