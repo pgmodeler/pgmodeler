@@ -181,14 +181,14 @@ void ModelExportHelper::sleepThread(unsigned msecs)
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_tmp_names)
 {
 	int type_id;
-	QString  version, sql_buf, sql_cmd, lin;
+  QString  version/*, sql_buf*/, sql_cmd; //, lin;
 	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
 	vector<Exception> errors;
-	QTextStream ts;
-	bool ddl_tk_found=false;
+  //QTextStream ts;
+  //bool ddl_tk_found=false;
 
 	/* Error codes treated in this method
 			42P04 	duplicate_database
@@ -352,153 +352,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 			new_db_conn.connect();
 			progress=30;
-			//Creating the other object types
+
+      //Creating the other object types
       emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'.").arg(Utf8String::create(db_model->getName())));
 
-			//Generates the sql from entire model
-			sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
-
-			/* Extract each SQL command from the buffer and execute them separately. This is done
-			 to permit the user, in case of error, identify what object is wrongly configured. */
-			ts.setString(&sql_buf);
-			unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
-
-			progress+=(sql_gen_progress/progress);
-			sql_cmd.clear();
-
-			while(!ts.atEnd() && !export_canceled)
-			{
-				try
-				{
-					//Cleanup single line comments
-					lin=ts.readLine();
-					curr_size+=lin.size();
-					aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
-
-					ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
-					lin.remove(QRegExp("^(--)+(.)+$"));
-
-					//If the line isn't empty after cleanup it will be included on sql command
-					if(!lin.isEmpty())
-						sql_cmd += lin + "\n";
-
-					//If the ddl end token is found
-					if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
-					{
-						//Regexp used to extract the object being created
-						QRegExp obj_reg("(CREATE)(.)+(\n)"),
-										fk_reg("^(ALTER TABLE)(.)+(ADD CONSTRAINT)( )*");
-						int pos=fk_reg.indexIn(sql_cmd), pos1=0;
-
-						//Checking if the command is a fk creation via ALTER TABLE
-						if(pos >= 0)
-						{
-							QString constr_name;
-							pos+=fk_reg.matchedLength();
-							pos1=sql_cmd.indexOf(' ', pos);
-							constr_name=sql_cmd.mid(pos, pos1 - pos);
-
-							emit s_progressUpdated(aux_prog,
-																		 trUtf8("Creating object `%1' (%2).").arg(constr_name).arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
-																		 OBJ_CONSTRAINT, sql_cmd);
-						}
-						//Check if the regex matches the sql command
-						else if(obj_reg.exactMatch(sql_cmd))
-						{
-							QString obj_type, obj_name;
-							QRegExp reg_aux;
-							unsigned obj_id;
-							ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
-																			 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
-																			 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
-																			 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
-																			 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
-																			 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
-							unsigned count=sizeof(obj_types)/sizeof(ObjectType);
-
-							//Get the fisrt line of the sql command, that contains the CREATE ... statement
-							lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
-
-							for(obj_id=0; obj_id < count; obj_id++)
-							{
-								//Check if the keyword for the current object exists on string
-								reg_aux.setPattern(QString("(CREATE)(.)*(%1)%2")
-																	 .arg(BaseObject::getSQLName(obj_types[obj_id]))
-																	 .arg(obj_types[obj_id]==OBJ_INDEX ? "( )*(CONCURRENTLY)?" : ""));
-								pos=reg_aux.indexIn(lin);
-
-								if(pos >= 0)
-								{
-									//Extracts from the line the string starting with the object's name
-                  lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
-
-									//Stores the object type name
-									obj_type=BaseObject::getTypeName(obj_types[obj_id]);
-
-									if(obj_types[obj_id]!=OBJ_CAST)
-									{
-                    int last_quote_idx=lin.lastIndexOf('"'),
-                        first_quote_idx=lin.indexOf('"'),
-                        spc_idx=lin.indexOf(' ');
-
-                    if(spc_idx >=0 && spc_idx < first_quote_idx)
-                      //Getting the name at the first space before the first quote
-                      obj_name=lin.split(' ').at(0);
-                    else if(last_quote_idx >=0)
-                      //Getting the name until the last quote
-                      obj_name=lin.mid(0, last_quote_idx +1);
-                    else
-                      //Gettring the name until the first space or end of string
-                      obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
-
-                    obj_name.remove('(');
-									}
-									else
-									{
-										obj_name="cast" + lin.replace(" AS ",",");
-									}
-
-									obj_name.remove(';');
-									break;
-								}
-							}
-
-							emit s_progressUpdated(aux_prog,
-                                     trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_type),
-																		 obj_types[obj_id], sql_cmd);
-						}
-						else if(sql_cmd.trimmed()!="")
-						{
-							//General commands like alter / set aren't explicitly shown
-							emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
-						}
-
-						//Executes the extracted SQL command
-						if(!sql_cmd.isEmpty())
-							new_db_conn.executeDDLCommand(sql_cmd);
-
-						sql_cmd.clear();
-						ddl_tk_found=false;
-					}
-				}
-				catch(Exception &e)
-				{
-					if(ddl_tk_found) ddl_tk_found=false;
-
-					if(!ignore_dup ||
-						 (ignore_dup &&
-							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-						throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
-														ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-					else
-					{
-						sql_cmd.clear();
-						errors.push_back(e);
-						sleepThread(10);
-					}
-				}
-			}
-		}
+      //Exporting the database model definition using the opened connection
+      exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn);
+    }
 
 		disconnect(db_model, nullptr, this, nullptr);
 
@@ -712,7 +572,183 @@ void ModelExportHelper::restoreObjectNames(void)
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
 		 object's with their original names */
-	db_model->setCodesInvalidated();
+  db_model->setCodesInvalidated();
+}
+
+bool ModelExportHelper::isExportError(const QString &error_code)
+{
+  /* Error codes treated in this method
+      42P04 	duplicate_database
+      42723 	duplicate_function
+      42P06 	duplicate_schema
+      42P07 	duplicate_table
+      42710 	duplicate_object
+      42701   duplicate_column
+      42P16   invalid_table_definition
+
+     Reference:
+      http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
+  static vector<QString> err_codes_vect={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
+  return(std::find(err_codes_vect.begin(), err_codes_vect.end(), error_code)==err_codes_vect.end());
+}
+
+void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn)
+{
+  QString sql_buf=buffer, sql_cmd, lin, msg,
+          obj_name, obj_tp_name, tab_name, alter_tab="ALTER TABLE";
+  vector<Exception> errors;
+  QTextStream ts;
+  ObjectType obj_type;
+  bool ddl_tk_found=false, is_create=false, is_drop=false;
+  unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
+  int pos=0, pos1=0;
+
+  //Regexp used to extract the object being created
+  QRegExp obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
+          tab_obj_reg(QString("^(%1)(.)+(ADD)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
+          reg_aux;
+
+  vector<ObjectType> obj_types={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+                                 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
+                                 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
+                                 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
+                                 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
+                                 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
+
+  /* Extract each SQL command from the buffer and execute them separately. This is done
+   to permit the user, in case of error, identify what object is wrongly configured. */
+  ts.setString(&sql_buf);
+
+  while(!ts.atEnd() && !export_canceled)
+  {
+    try
+    {
+      //Cleanup single line comments
+      lin=ts.readLine();
+      curr_size+=lin.size();
+      aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
+
+      ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+      lin.remove(QRegExp("^(--)+(.)+$"));
+
+      //If the line isn't empty after cleanup it will be included on sql command
+      if(!lin.isEmpty())
+        sql_cmd += lin + "\n";
+
+      //If the ddl end token is found
+      if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
+      {
+        //Checking if the command is a col or constraint creation via ALTER TABLE
+        pos=tab_obj_reg.indexIn(sql_cmd);
+
+        if(pos >= 0)
+        {
+          sql_cmd.remove("\"");
+          obj_type=(sql_cmd.contains("COLUMN") ? OBJ_COLUMN : OBJ_CONSTRAINT);
+
+          pos+=tab_obj_reg.matchedLength();
+          pos1=sql_cmd.indexOf(' ', pos);
+          obj_name=sql_cmd.mid(pos, pos1 - pos);
+
+          //Extracting the table name
+          pos=sql_cmd.indexOf(alter_tab) + alter_tab.size();
+          pos1=sql_cmd.indexOf("ADD");
+          tab_name=sql_cmd.mid(pos, pos1 - pos).simplified();
+
+          obj_name=tab_name + "." + obj_name;
+
+          emit s_progressUpdated(aux_prog,
+                                 trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
+                                 obj_type, sql_cmd);
+        }
+        //Check if the regex matches the sql command
+        else if(obj_reg.exactMatch(sql_cmd))
+        {
+          //Get the fisrt line of the sql command, that contains the CREATE/DROP/ALTER ... statement
+          lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
+
+          for(ObjectType obj_tp : obj_types)
+          {
+            if(export_canceled) break;
+
+            obj_type=obj_tp;
+
+            //Check if the keyword for the current object exists on string
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)(.)*(%1)%2")
+                               .arg(BaseObject::getSQLName(obj_tp))
+                               .arg(lin.startsWith("CREATE") && obj_tp==OBJ_INDEX ? "( )*(CONCURRENTLY)?" : ""));
+            pos=reg_aux.indexIn(lin);
+
+            if(pos >= 0)
+            {
+              is_create=lin.startsWith("CREATE");
+              is_drop=(!is_create && lin.startsWith("DROP"));
+
+              //Extracts from the line the string starting with the object's name
+              lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+              lin.remove("\"");
+
+              if(obj_tp!=OBJ_CAST)
+              {
+                int spc_idx=lin.indexOf(' ');
+                obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+                obj_name=obj_name.remove('(').simplified();
+              }
+              else
+              {
+                obj_name="cast" + lin.replace(" AS ",",");
+              }
+
+              //Stores the object type name
+              obj_tp_name=BaseObject::getTypeName(obj_tp);
+              obj_name.remove(';');
+
+              if(is_create)
+                msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+              else if(is_drop)
+                msg=trUtf8("Dropping object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+              else
+                msg=trUtf8("Changing object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+
+              break;
+            }
+          }
+
+          emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+          is_create=is_drop=false;
+          msg.clear();
+        }
+        else if(sql_cmd.trimmed()!="")
+        {
+          //General commands like grant, revoke or set aren't explicitly shown
+          emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
+        }
+
+        //Executes the extracted SQL command
+        if(!sql_cmd.isEmpty())
+          conn.executeDDLCommand(sql_cmd);
+
+        sql_cmd.clear();
+        ddl_tk_found=false;
+        sleepThread(20);
+      }
+    }
+    catch(Exception &e)
+    {
+      if(ddl_tk_found) ddl_tk_found=false;
+
+      if(!ignore_dup ||
+         (ignore_dup && isExportError(e.getExtraInfo())))
+        throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
+                        ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+      else
+      {
+        sql_cmd.clear();
+        errors.push_back(e);
+        sleepThread(20);
+      }
+    }
+  }
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)

@@ -95,7 +95,13 @@ class ModelExportHelper: public QObject {
     //! brief Restore the original name of the database, roles and tablespaces
     void restoreObjectNames(void);
 
-	protected:
+    //! brief Exports the contents of the buffer to a previously opened connection
+    void exportBufferToDBMS(const QString &buffer, Connection &conn);
+
+    //! brief Returns if the error code is one of the treated by the export process
+    bool isExportError(const QString &error_code);
+
+  protected:
 		//! \brief Configures the DBMS export params before start the export thread (only in thread mode)
     void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
                                bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
