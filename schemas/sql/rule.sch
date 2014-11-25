@@ -12,7 +12,7 @@
    $br [-- ddl-end --] $br $br
  %end
 
-[CREATE OR REPLACE RULE ] @{name} [ AS ] @{event-type} $br
+[CREATE RULE ] @{name} [ AS ] @{event-type} $br
 $tb [TO ] @{table} $br
 
 %if @{condition} %then

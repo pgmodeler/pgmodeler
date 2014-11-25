@@ -44,7 +44,7 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-  QString msg="%1 `%2' `(%3)'", obj_name;
+  QString msg="%1 `%2' (%3)", obj_name;
   BaseObject *ref_obj=nullptr;
   ObjectType obj_type=BASE_OBJECT;
 

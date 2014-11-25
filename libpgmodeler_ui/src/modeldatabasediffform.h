@@ -48,13 +48,15 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
 		DatabaseImportHelper *import_helper;  
 
-		//ModelExportHelper export_helper;
+    ModelExportHelper *export_helper;
 
-		QThread *import_thread, *diff_thread;
+    QThread *import_thread, *diff_thread, *export_thread;
 
 		QTreeWidgetItem *import_item, *diff_item, *export_item;
 
 		DatabaseModel *source_model, *imported_model;
+
+    Connection *export_conn;
 
 		int diff_progress;
 
@@ -68,6 +70,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void clearOutput(void);
 		void resetButtons(void);
     void saveDiffToFile(void);
+    void finishDiff(void);
 		QString formatMessage(const QString &msg);
 
     QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
@@ -88,10 +91,11 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
     void handleDiffFinished(void);
-    //void handleOperationFinished(void);
+    void handleExportFinished(void);
     void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);
+    void exportDiff(void);
     void filterDiffInfos(void);
 };
 

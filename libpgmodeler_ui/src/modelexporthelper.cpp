@@ -594,7 +594,7 @@ bool ModelExportHelper::isExportError(const QString &error_code)
 
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn)
 {
-  QString sql_buf=buffer, sql_cmd, lin, msg,
+  QString sql_buf=buffer, sql_cmd, lin, msg, token1, token2,
           obj_name, obj_tp_name, tab_name, alter_tab="ALTER TABLE";
   vector<Exception> errors;
   QTextStream ts;
@@ -608,7 +608,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           tab_obj_reg(QString("^(%1)(.)+(ADD)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
           reg_aux;
 
-  vector<ObjectType> obj_types={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+  vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
                                  OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
                                  OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
                                  OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
@@ -618,6 +618,14 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   /* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
   ts.setString(&sql_buf);
+
+  if(!conn.isStablished())
+  {
+    if(!db_name.isEmpty())
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
+
+    conn.connect();
+  }
 
   while(!ts.atEnd() && !export_canceled)
   {
@@ -673,10 +681,26 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
             obj_type=obj_tp;
 
+            //Appeding special tokens when the object is an index or view
+            if(lin.startsWith("CREATE"))
+            {
+              token1.clear();
+              token2.clear();
+
+              if(obj_tp==OBJ_INDEX)
+              {
+                token1="(UNIQUE)?( )*";
+                token2="( )*(CONCURRENTLY)?";
+              }
+              else if(obj_tp==OBJ_VIEW)
+                token1="(MATERIALIZED|RECURSIVE)?( )*";
+            }
+
             //Check if the keyword for the current object exists on string
-            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)(.)*(%1)%2")
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )%1(%2)%3")
+                               .arg(token1)
                                .arg(BaseObject::getSQLName(obj_tp))
-                               .arg(lin.startsWith("CREATE") && obj_tp==OBJ_INDEX ? "( )*(CONCURRENTLY)?" : ""));
+                               .arg(token2));
             pos=reg_aux.indexIn(lin);
 
             if(pos >= 0)
@@ -749,6 +773,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       }
     }
   }
+
+  if(!db_name.isEmpty())
+    emit s_exportFinished();
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
@@ -768,12 +795,44 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 	this->simulate=simulate;
 	this->drop_db=drop_db;
   this->use_tmp_names=use_rand_names;
+  this->sql_buffer.clear();
+  this->db_name.clear();
+}
+
+void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name)
+{
+  this->sql_buffer=sql_buffer;
+  this->connection=conn;
+  this->db_name=db_name;
+  this->ignore_dup=false;
+  this->simulate=false;
+  this->drop_db=false;
+  this->use_tmp_names=false;
 }
 
 void ModelExportHelper::exportToDBMS(void)
 {
 	if(connection)
-    exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names);
+  {
+    if(sql_buffer.isEmpty())
+     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names);
+    else
+    {
+      try
+      {
+        exportBufferToDBMS(sql_buffer, *connection);
+      }
+      catch(Exception &e)
+      {
+        /* When running in a separated thread (other than the main application thread)
+        redirects the error in form of signal */
+        if(this->thread() && this->thread()!=qApp->thread())
+          emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+        else
+          throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+      }
+    }
+  }
 }
 
 void ModelExportHelper::cancelExport(void)
