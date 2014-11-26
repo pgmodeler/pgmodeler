@@ -111,7 +111,7 @@ class ModelExportHelper: public QObject {
 
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
         This form receive a previously generated sql buffer to be exported the the helper */
-    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name);
+    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);

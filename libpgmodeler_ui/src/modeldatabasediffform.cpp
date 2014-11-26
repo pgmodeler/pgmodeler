@@ -71,6 +71,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     keep_obj_perms_ht=new HintTextWidget(keep_obj_perms_hint, this);
     keep_obj_perms_ht->setText(keep_obj_perms_chk->statusTip());
 
+    ignore_duplic_ht=new HintTextWidget(ignore_duplic_hint, this);
+    ignore_duplic_ht->setText(ignore_duplic_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                   GlobalAttributes::DIR_SEPARATOR +
@@ -123,7 +126,8 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
 	if((import_thread && import_thread->isRunning()) ||
-		 (diff_thread && diff_thread->isRunning()))
+     (diff_thread && diff_thread->isRunning()) ||
+     (export_thread && export_thread->isRunning()))
 		event->ignore();
 }
 
@@ -141,7 +145,15 @@ void ModelDatabaseDiffForm::createThreads(void)
   export_helper=new ModelExportHelper;
   export_helper->moveToThread(export_thread);
 
-	connect(cancel_btn, &QToolButton::clicked, [=](){ import_helper->cancelImport(); diff_helper->cancelDiff(); });
+  connect(apply_on_server_btn, &QPushButton::clicked,
+          [=](){ apply_on_server_btn->setEnabled(false);
+                 exportDiff(false); });
+
+  connect(cancel_btn, &QToolButton::clicked,
+          [=](){ import_helper->cancelImport();
+                 diff_helper->cancelDiff();
+                 export_helper->cancelExport(); });
+
 	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 	connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
   connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
@@ -161,7 +173,6 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(export_helper, SIGNAL(s_exportCanceled()), this, SLOT(handleOperationCanceled()));
   connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
   connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-
 
   connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
   connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
@@ -377,20 +388,42 @@ void ModelDatabaseDiffForm::diffModels(void)
   diff_thread->start();
 }
 
-void ModelDatabaseDiffForm::exportDiff(void)
+void ModelDatabaseDiffForm::exportDiff(bool confirm)
 {
-  step_lbl->setText(trUtf8("Exporting diff to database <strong>%1</strong>...")
-                    .arg(imported_model->getName()));
-  step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/exportar.png")));
+  Messagebox msg_box;
 
-  output_trw->collapseItem(diff_item);
-  diff_progress=step_pb->value();
-  export_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+  if(confirm)
+    msg_box.show(trUtf8("Confirmation"),
+                 trUtf8(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
+                 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+                 trUtf8("Apply diff"), trUtf8("Preview diff"), "",
+                 ":/icones/icones/diff.png", ":/icones/icones/codigosql.png");
 
-  export_conn=new Connection;
-  *export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-  export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn, database_cmb->currentText());
-  export_thread->start();
+  if(!confirm || msg_box.result()==QDialog::Accepted)
+  {
+    settings_tbw->setCurrentIndex(1);
+
+    step_lbl->setText(trUtf8("Exporting diff to database <strong>%1</strong>...")
+                      .arg(imported_model->getName()));
+    step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/exportar.png")));
+
+    output_trw->collapseItem(diff_item);
+    diff_progress=step_pb->value();
+    export_item=createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+
+    export_conn=new Connection;
+    *export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+    export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
+                                         database_cmb->currentText(), ignore_duplic_chk->isChecked());
+    export_thread->start();
+  }
+  else if(msg_box.isCancelled())
+    cancelOperation(true);
+  else
+  {
+    settings_tbw->setCurrentIndex(2);
+    apply_on_server_btn->setVisible(true);
+  }
 }
 
 void ModelDatabaseDiffForm::filterDiffInfos(void)
@@ -400,7 +433,6 @@ void ModelDatabaseDiffForm::filterDiffInfos(void)
                                             {drop_tb, ObjectsDiffInfo::DROP_OBJECT},
                                             {alter_tb, ObjectsDiffInfo::ALTER_OBJECT},
                                             {ignore_tb, ObjectsDiffInfo::IGNORE_OBJECT}};
-
 
   for(int i=0; i < diff_item->childCount(); i++)
   {
@@ -416,6 +448,7 @@ void ModelDatabaseDiffForm::resetButtons(void)
 	cancel_btn->setEnabled(false);
 	generate_btn->setEnabled(true);
   settings_tbw->setTabEnabled(0, true);
+  apply_on_server_btn->setVisible(false);
 }
 
 void ModelDatabaseDiffForm::saveDiffToFile(void)
@@ -439,11 +472,14 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
     output.write(sqlcode_txt->toPlainText().toUtf8());
     output.close();
   }
+
+  finishDiff();
 }
 
 void ModelDatabaseDiffForm::finishDiff(void)
 {
-  cancelOperation();
+  database_cmb->clear();
+  cancelOperation(false);
   step_lbl->setText(trUtf8("Diff process sucessfully end."));
   progress_lbl->setText(trUtf8("No operations left."));
 
@@ -455,9 +491,20 @@ void ModelDatabaseDiffForm::finishDiff(void)
   progress_pb->setValue(100);
 }
 
-void ModelDatabaseDiffForm::cancelOperation(void)
+void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 {
-	destroyModel();
+  if(cancel_by_user)
+  {
+    step_lbl->setText(trUtf8("Operation cancelled by the user."));
+    progress_lbl->setText(trUtf8("No operations left."));
+
+    step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+    progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+
+    createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+  }
+
+  destroyModel();
 	destroyThreads();
 	resetButtons();
 }
@@ -466,7 +513,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 {
   QTreeWidgetItem *item=nullptr;
 
-	cancelOperation();
+  cancelOperation(false);
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
   item=createOutputItem(progress_lbl->text(), *progress_ico_lbl->pixmap(), nullptr);
@@ -477,7 +524,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 
 void ModelDatabaseDiffForm::handleOperationCanceled(void)
 {
-	cancelOperation();
+  cancelOperation(true);
 }
 
 void ModelDatabaseDiffForm::handleImportFinished(Exception e)
@@ -525,37 +572,41 @@ QString ModelDatabaseDiffForm::formatMessage(const QString &msg)
 
 	fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<strong>");
 	fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</strong>");
-  fmt_msg.replace(fmt_msg.indexOf('('), 1 ,"<em>(");
-  fmt_msg.replace(fmt_msg.indexOf(')'), 1,")</em>");
+  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<em>");
+  fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</em>");
 
 	return(fmt_msg);
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
+  msg=formatMessage(msg);
 
 	if(import_thread->isRunning())
 	{
 		if(progress > 90)
 			step_pb->setValue(step_pb->value() + 5);
+
+    createOutputItem(msg,
+                     QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
+                     import_item);
 	}
 	else if(diff_thread->isRunning())
-		step_pb->setValue(diff_progress + (progress/2));
+    step_pb->setValue(diff_progress + (progress/3));
   else if(export_thread->isRunning())
   {
     QPixmap ico;
-    step_pb->setValue(diff_progress + (progress/2));
+    step_pb->setValue(diff_progress + (progress/3));
 
     if(obj_type==BASE_OBJECT)
       ico=QPixmap(QString(":/icones/icones/codigosql.png"));
     else
       ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
-    createOutputItem(formatMessage(msg), ico, export_item);
+    createOutputItem(msg, ico, export_item);
   }
 
-	msg=formatMessage(msg);
-	progress_lbl->setText(msg);
+  progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)

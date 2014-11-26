@@ -43,7 +43,7 @@ void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
 }
 
 void ModelsDiffHelper::resetDiffCounter(void)
-{
+{  
 	diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]=0;
 	diffs_counter[ObjectsDiffInfo::DROP_OBJECT]=0;
   diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]=0;
@@ -148,7 +148,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	BaseObject *object=nullptr, *aux_object=nullptr;
 	ObjectType obj_type;
   QString obj_name;
-	unsigned idx=0;
+  unsigned idx=0, factor=0, prog=0;
 	DatabaseModel *aux_model=nullptr;
   bool objs_differs=false, xml_differs=false;
 
@@ -156,12 +156,15 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	{
 		obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
     aux_model=source_model;
+    factor=25;
 	}
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
 	{
 		obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
 		aux_model=imported_model;
+    factor=50;
+    prog=50;
 	}
 
 	for(auto obj_itr : obj_order)
@@ -177,7 +180,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
-      emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+      emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
                              trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
 
@@ -257,7 +260,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     else
     {
       generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
-      emit s_progressUpdated((idx/static_cast<float>(obj_order.size())) * 100,
+      emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
                              trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
     }
@@ -391,7 +394,6 @@ void ModelsDiffHelper::processDiffInfos(void)
       }
     }
 
-
     for(ObjectsDiffInfo diff : diff_infos)
     {
       diff_type=diff.getDiffType();
@@ -519,6 +521,8 @@ void ModelsDiffHelper::processDiffInfos(void)
                                            GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
                                            ParsersAttributes::DIFF + GlobalAttributes::SCHEMA_EXT, attribs);
     }
+
+    emit s_progressUpdated(100, trUtf8("Comparison between model and database finished."));
   }
   catch(Exception &e)
   {

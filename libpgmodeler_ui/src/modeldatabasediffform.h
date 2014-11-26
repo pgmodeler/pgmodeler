@@ -40,7 +40,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
-    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht, *keep_obj_perms_ht;
+    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
+    *keep_obj_perms_ht, *ignore_duplic_ht;
 
     SyntaxHighlighter *sqlcode_hl;
 
@@ -84,7 +85,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void listDatabases(void);
 		void enableDiffMode(void);
 		void generateDiff(void);
-		void cancelOperation(void);
+    void cancelOperation(bool cancel_by_user);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
@@ -95,7 +96,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);
-    void exportDiff(void);
+    void exportDiff(bool confirm=true);
     void filterDiffInfos(void);
 };
 

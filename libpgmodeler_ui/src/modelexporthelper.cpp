@@ -594,13 +594,16 @@ bool ModelExportHelper::isExportError(const QString &error_code)
 
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn)
 {
-  QString sql_buf=buffer, sql_cmd, lin, msg, token1, token2,
+  Connection aux_conn;
+  QString sql_buf=buffer, sql_cmd, lin, msg,
           obj_name, obj_tp_name, tab_name, alter_tab="ALTER TABLE";
   vector<Exception> errors;
+  vector<QString> db_sql_cmds;
   QTextStream ts;
   ObjectType obj_type;
   bool ddl_tk_found=false, is_create=false, is_drop=false;
-  unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
+  unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
+           factor=(db_name.isEmpty() ? 70 : 100);
   int pos=0, pos1=0;
 
   //Regexp used to extract the object being created
@@ -613,7 +616,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
                                  OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
                                  OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
                                  OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
-                                 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
+                                 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE,
+                                 OBJ_DATABASE };
 
   /* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -621,6 +625,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
   if(!conn.isStablished())
   {
+    aux_conn=conn;
+
     if(!db_name.isEmpty())
       conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
 
@@ -634,7 +640,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       //Cleanup single line comments
       lin=ts.readLine();
       curr_size+=lin.size();
-      aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
+      aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * factor);
 
       ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
       lin.remove(QRegExp("^(--)+(.)+$"));
@@ -684,23 +690,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             //Appeding special tokens when the object is an index or view
             if(lin.startsWith("CREATE"))
             {
-              token1.clear();
-              token2.clear();
-
               if(obj_tp==OBJ_INDEX)
               {
-                token1="(UNIQUE)?( )*";
-                token2="( )*(CONCURRENTLY)?";
+                lin.remove("UNIQUE");
+                lin.remove("CONCURRENTLY");
               }
               else if(obj_tp==OBJ_VIEW)
-                token1="(MATERIALIZED|RECURSIVE)?( )*";
+              {
+                lin.remove("MATERIALIZED");
+                lin.remove("RECURSIVE");
+              }
             }
+            else if(lin.startsWith("DROP"))
+              lin.remove("IF EXISTS");
+
+            lin=lin.simplified();
 
             //Check if the keyword for the current object exists on string
-            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )%1(%2)%3")
-                               .arg(token1)
-                               .arg(BaseObject::getSQLName(obj_tp))
-                               .arg(token2));
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)")
+                               .arg(BaseObject::getSQLName(obj_tp)));
             pos=reg_aux.indexIn(lin);
 
             if(pos >= 0)
@@ -728,11 +736,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               obj_name.remove(';');
 
               if(is_create)
-                msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Creating object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
               else if(is_drop)
-                msg=trUtf8("Dropping object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Dropping object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
               else
-                msg=trUtf8("Changing object `%1' (%2).").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Changing object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
 
               break;
             }
@@ -750,11 +758,24 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
         //Executes the extracted SQL command
         if(!sql_cmd.isEmpty())
-          conn.executeDDLCommand(sql_cmd);
+        {
+          if(obj_type!=OBJ_DATABASE)
+            conn.executeDDLCommand(sql_cmd);
+          else
+            db_sql_cmds.push_back(sql_cmd);
+        }
 
         sql_cmd.clear();
         ddl_tk_found=false;
-        sleepThread(20);
+        sleepThread(20);    
+      }
+
+      if(ts.atEnd() && !db_sql_cmds.empty())
+      {
+        conn.close();
+        aux_conn.connect();
+        for(QString cmd : db_sql_cmds)
+          aux_conn.executeDDLCommand(cmd);
       }
     }
     catch(Exception &e)
@@ -799,12 +820,12 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
   this->db_name.clear();
 }
 
-void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name)
+void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
 {
   this->sql_buffer=sql_buffer;
   this->connection=conn;
   this->db_name=db_name;
-  this->ignore_dup=false;
+  this->ignore_dup=ignore_dup;
   this->simulate=false;
   this->drop_db=false;
   this->use_tmp_names=false;
