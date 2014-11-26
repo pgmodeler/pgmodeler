@@ -47,9 +47,8 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 
 void DatabaseImportHelper::closeConnection(void)
 {
-  if(connection.isStablished())
-    connection.close();
-
+  //if(connection.isStablished())
+  connection.close();
   catalog.closeConnection();
 }
 
@@ -777,9 +776,8 @@ void DatabaseImportHelper::resetImportParameters(void)
 	obj_perms.clear();
 	col_perms.clear();
 
-  if(connection.isStablished())
-    connection.close();
-
+  //if(connection.isStablished())
+  connection.close();
   catalog.closeConnection();
 }
 

@@ -58,7 +58,10 @@ class Connection {
 		static bool notice_enabled,
 
 		//! \brief Indicates if executed sql must be printed (stdout) [default is false]
-		print_sql;
+    print_sql,
+
+    //! \brief Indicates if error silence is enabled
+    silence_conn_err;
 
 	public:
 		//! \brief Constants used to reference the connections parameters
@@ -99,6 +102,14 @@ class Connection {
 
 		//! \brief Returns the current state for sql output
 		static bool isSQLPrinted(void);
+
+    /*! \brief When calling this method with a true parameter any try to connect when the connection is already
+        opened will raise exceptions. If calling the method using false the issue mentioned will be reported on
+        stderr */
+    static void setSilenceConnError(bool value);
+
+    //! \brief Returns the current state for silence connection errors
+    static bool isConnErrorSilenced(void);
 
 		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */
@@ -145,7 +156,7 @@ class Connection {
 		void executeDDLCommand(const QString &sql);
 
 		//! \brief Makes an copy between two connections
-		void operator = (Connection &conn);
+    void operator = (const Connection &conn);
 };
 
 #endif

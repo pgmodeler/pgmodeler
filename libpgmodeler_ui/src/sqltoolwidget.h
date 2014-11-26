@@ -68,6 +68,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 	public:
 		SQLToolWidget(QWidget * parent = 0);
+    ~SQLToolWidget(void);
 
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
@@ -114,6 +115,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     //! brief Open the current database in a database explorer instance
     void browseDatabase(void);
+
+    void closeDatabaseExplorer(int idx);
+
+    void setCurrentDatabase(int idx);
 };
 
 #endif

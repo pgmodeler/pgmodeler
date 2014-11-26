@@ -221,9 +221,8 @@ void DataManipulationForm::retrieveData(void)
 	}
 	catch(Exception &e)
 	{
-		if(connection.isStablished())
-			connection.close();
-
+    //if(connection.isStablished())
+    connection.close();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
