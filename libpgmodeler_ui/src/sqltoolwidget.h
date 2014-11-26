@@ -51,12 +51,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
-		//! brief Stores the actions to drop and show object's data
-		QMenu handle_menu;
-
-		QAction *copy_action, *drop_action, *drop_cascade_action,
-            *show_data_action, *refresh_action;
-
 		FindReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
@@ -65,17 +59,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
 
-		//! brief Drops the object represented by the specified item
-		void dropObject(QTreeWidgetItem *item, bool cascade);
-
 		//! brief Stores the command on the sql command history
 		void registerSQLCommand(const QString &cmd);
 
 		void showError(Exception &e);
-
-		bool eventFilter(QObject *object, QEvent *event);
-
-		void configureImportHelper(void);
 
 		void fillResultsTable(ResultSet &res);
 
@@ -104,12 +91,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		void disconnectFromDatabase(void);
 
-		//! brief Lists all objects for the current selected database
-		void listObjects(void);
-
-		//! brief Updates on the tree under the current selected object
-		void updateCurrentItem(void);
-
 		//! brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);
 
@@ -125,18 +106,14 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Clears the input field as well the results grid
 		void clearAll(void);
 
-		//! brief Shows the menu to drop/show data
-		void handleObject(QTreeWidgetItem *item, int);
-
 		//! brief Drop the current selected database
 		void dropDatabase(void);
 
 		//! brief Show the widget to handle data in tables
 		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
-		void enableObjectTreeControls(bool enable);
-
-	signals:
+    //! brief Open the current database in a database explorer instance
+    void browseDatabase(void);
 };
 
 #endif
