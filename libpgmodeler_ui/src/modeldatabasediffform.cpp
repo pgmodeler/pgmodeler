@@ -128,7 +128,7 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 	if((import_thread && import_thread->isRunning()) ||
      (diff_thread && diff_thread->isRunning()) ||
      (export_thread && export_thread->isRunning()))
-		event->ignore();
+    event->ignore();
 }
 
 void ModelDatabaseDiffForm::createThreads(void)
@@ -159,14 +159,14 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
 
 	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
-	connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
+  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 
 	connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
   connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
-	connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
-	connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
+  connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)));
 
   connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
@@ -402,6 +402,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
   if(!confirm || msg_box.result()==QDialog::Accepted)
   {
     settings_tbw->setCurrentIndex(1);
+    apply_on_server_btn->setEnabled(true);
 
     step_lbl->setText(trUtf8("Exporting diff to database <strong>%1</strong>...")
                       .arg(imported_model->getName()));
@@ -446,7 +447,6 @@ void ModelDatabaseDiffForm::resetButtons(void)
 {
   buttons_wgt->setEnabled(true);
 	cancel_btn->setEnabled(false);
-	generate_btn->setEnabled(true);
   settings_tbw->setTabEnabled(0, true);
   apply_on_server_btn->setVisible(false);
 }
@@ -478,8 +478,8 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 
 void ModelDatabaseDiffForm::finishDiff(void)
 {
-  database_cmb->clear();
   cancelOperation(false);
+
   step_lbl->setText(trUtf8("Diff process sucessfully end."));
   progress_lbl->setText(trUtf8("No operations left."));
 
@@ -563,6 +563,7 @@ void ModelDatabaseDiffForm::handleExportFinished(void)
 {
   export_thread->quit();
   export_thread->wait();
+  listDatabases();
   finishDiff();
 }
 

@@ -445,6 +445,12 @@ class PgSQLType: public BaseType{
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
+    /*! brief Returns if the "this" type is equivalent to the specified type.
+        In order to be compatible the "this" and "type" must be an alias from each other,
+        for instance, "varchar" is compatible with "character varying" and vice-versa,
+        smallint is compatible with int2, and so on. */
+    bool isEquivalentTo(PgSQLType type);
+
 		PgSQLType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type="");
 		QString operator ~ (void);
