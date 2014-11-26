@@ -26,8 +26,8 @@
  > $br
 
  @{schema}
- %if @{tablespace} %and @{materialized} %then @{tablespace} %end
  %if @{owner} %then @{owner} %end
+ %if @{tablespace} %and @{materialized} %then @{tablespace} %end
  %if @{comment} %then @{comment} %end
  %if @{tag} %then @{tag} %end
  %if @{appended-sql} %then @{appended-sql} %end
