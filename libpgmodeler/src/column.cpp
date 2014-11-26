@@ -189,7 +189,7 @@ QString Column::getAlterDefinition(BaseObject *object)
     if(getParentTable())
       attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-    if((*this->type)!=(*col->type))
+    if(!this->type.isEquivalentTo(col->type))
       attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     if(this->default_value!=col->default_value)

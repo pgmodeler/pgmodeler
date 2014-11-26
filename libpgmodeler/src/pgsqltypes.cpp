@@ -1355,7 +1355,41 @@ bool PgSQLType::hasVariableLength(void)
 
 bool PgSQLType::acceptsPrecision(void)
 {
-	return(isNumericType() || (type_list[this->type_idx]!="date" && isDateTimeType()));
+  return(isNumericType() || (type_list[this->type_idx]!="date" && isDateTimeType()));
+}
+
+bool PgSQLType::isEquivalentTo(PgSQLType type)
+{
+  unsigned this_idx=0, type_idx=0;
+  static vector<QStringList> types={ {"int2","smallint"},
+                                     {"int4","integer"},
+                                     {"int8","bigint"},
+                                     {"decimal","numeric"},
+                                     {"character varying","varchar"},
+                                     {"character", "char"},
+                                     {"bit varying","varbit"} };
+
+  //If the types are equal there is no need to perform further operations
+  if(*this==type)
+    return(true);
+
+  //Getting the index which the this type is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~(*this))) break;
+    this_idx++;
+  }
+
+  //Getting the index which 'type' is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~type)) break;
+    type_idx++;
+  }
+
+  return(this_idx < types.size() && type_idx < types.size() &&
+         this_idx==type_idx &&
+         this->isArrayType()==type.isArrayType());
 }
 
 PgSQLType PgSQLType::getAliasType(void)

@@ -775,7 +775,8 @@ QString Type::getAlterDefinition(BaseObject *object)
           else
           {
             attribs[ParsersAttributes::CHANGE]="1";
-            if(*type_attribs[attrib_idx].getType() != *attrib.getType())
+
+            if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
             {
               attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
               attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);

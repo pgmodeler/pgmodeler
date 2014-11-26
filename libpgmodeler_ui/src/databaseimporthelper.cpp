@@ -776,6 +776,11 @@ void DatabaseImportHelper::resetImportParameters(void)
 	constr_creation_order.clear();
 	obj_perms.clear();
 	col_perms.clear();
+
+  if(connection.isStablished())
+    connection.close();
+
+  catalog.closeConnection();
 }
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)

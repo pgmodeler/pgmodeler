@@ -40,7 +40,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
-    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht, *keep_obj_perms_ht;
+    *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
+    *keep_obj_perms_ht, *ignore_duplic_ht;
 
     SyntaxHighlighter *sqlcode_hl;
 
@@ -48,13 +49,15 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
 		DatabaseImportHelper *import_helper;  
 
-		//ModelExportHelper export_helper;
+    ModelExportHelper *export_helper;
 
-		QThread *import_thread, *diff_thread;
+    QThread *import_thread, *diff_thread, *export_thread;
 
 		QTreeWidgetItem *import_item, *diff_item, *export_item;
 
 		DatabaseModel *source_model, *imported_model;
+
+    Connection *export_conn;
 
 		int diff_progress;
 
@@ -68,6 +71,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void clearOutput(void);
 		void resetButtons(void);
     void saveDiffToFile(void);
+    void finishDiff(void);
 		QString formatMessage(const QString &msg);
 
     QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
@@ -81,17 +85,18 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void listDatabases(void);
 		void enableDiffMode(void);
 		void generateDiff(void);
-		void cancelOperation(void);
+    void cancelOperation(bool cancel_by_user);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
-		void handleOperationCanceled(void);
+    void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
     void handleDiffFinished(void);
-    //void handleOperationFinished(void);
+    void handleExportFinished(void);
     void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);
+    void exportDiff(bool confirm=true);
     void filterDiffInfos(void);
 };
 
