@@ -603,7 +603,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   vector<Exception> errors;
   vector<QString> db_sql_cmds;
   QTextStream ts;
-  ObjectType obj_type;
+  ObjectType obj_type=BASE_OBJECT;
   bool ddl_tk_found=false, is_create=false, is_drop=false;
   unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
            factor=(db_name.isEmpty() ? 70 : 100);
