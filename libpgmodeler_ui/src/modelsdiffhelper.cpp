@@ -21,6 +21,7 @@
 
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
+  diff_canceled=false;
   pgsql_version=SchemaParser::PGSQL_VERSION_94;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
@@ -78,7 +79,9 @@ void ModelsDiffHelper::diffModels(void)
 		if(!source_model || !imported_model)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+    //First, we need to detect the objects to be dropped
 		diffModels(ObjectsDiffInfo::DROP_OBJECT);
+    //Second, we will check the objects to be created or modified
 		diffModels(ObjectsDiffInfo::CREATE_OBJECT);
 
 		if(diff_canceled)
@@ -110,6 +113,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 
   if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
   {
+    /* In case of DROP, the reference table is the one from the database
+       and the compared table is the one from model */
     ref_tab=imp_table;
     comp_tab=src_table;
   }
@@ -120,25 +125,34 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
     comp_tab=imp_table;
   }
 
-  for(unsigned i=0; i < 2; i++)
+  for(unsigned i=0; i < 2 && !diff_canceled; i++)
   {
     tab_objs=ref_tab->getObjectList(types[i]);
 
     for(auto tab_obj : *tab_objs)
     {
+      //Get the object from the compared table
       aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
       constr=dynamic_cast<Constraint *>(tab_obj);
 
+      /* If the current info is ALTER or CREATE, only objects created by generalization or
+         not created by common relationships will be considered on the comparison. Also,
+         foreign keys are discarded here, since they will be compared on the main comparison
+         at diffModels() */
       if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
          ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
           (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
       {
+        //If there are some differences on the XML code of the objects
         if(tab_obj->isCodeDiffersFrom(aux_obj))
           generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
       }
+      //If the object does not exists it will generate a drop info
       else if(!aux_obj)
         generateDiffInfo(diff_type, tab_obj);
     }
+
+    QThread::msleep(15);
   }
 }
 
@@ -154,6 +168,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
+    /* For DROP detection, we must gather the objects from the database in order to check
+       if they exists on the model. The object drop order here is the inverse of the creation order
+       on the database */
 		obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
     aux_model=source_model;
     factor=25;
@@ -161,6 +178,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
 	{
+    /* For creation or modification of objects the order followed is the same
+       as the creation order on the source model */
 		obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
 		aux_model=imported_model;
     factor=50;
@@ -175,6 +194,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		obj_type=object->getObjectType();
 		idx++;
 
+    /* If this checking the following objects are discarded:
+       1) BASE_RELATIONSHIP objects
+       2) Objects which SQL code is disabled or system objects
+       3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
     if(obj_type!=BASE_RELATIONSHIP &&
        !object->isSystemObject() && !object->isSQLDisabled() &&
 			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
@@ -184,12 +207,16 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                              trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
 
-      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type) && obj_type!=BASE_RELATIONSHIP)
+      //Processing objects that are not database, table child object (they are processed further)
+      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))// && obj_type!=BASE_RELATIONSHIP)
       {
+        /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
+           the permission is ignored */
         if(obj_type==OBJ_PERMISSION &&
            ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !keep_obj_perms))
           generateDiffInfo(diff_type, object);
 
+        //Processing relationship (in this case only generalization ones are considered)
         else if(obj_type==OBJ_RELATIONSHIP)
         {
           Relationship *rel=dynamic_cast<Relationship *>(object);
@@ -201,20 +228,27 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
             ref_tab=aux_model->getTable(rel->getReferenceTable()->getName(true));
             rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
+            /* If the receiver table exists on the model generates a info for the relationship,
+               otherwise, the generalization will be created automatically when the table is
+               created (see table's code defintion) */
             if(rec_tab && !aux_model->getRelationship(ref_tab, rec_tab))
               generateDiffInfo(diff_type, rel);
           }
         }
         else if(obj_type!=OBJ_PERMISSION)
         {
+          //Get the object from the database
           obj_name=object->getSignature();
           aux_object=aux_model->getObject(obj_name, obj_type);
 
           if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
           {
-            QString alter_def=aux_object->BaseObject::getAlterDefinition(object);
-            objs_differs=!alter_def.isEmpty();
+            /* Try to get a diff from the retrieve object and the current object,
+               comparing only basic attributes like schema, tablespace and owner
+               this is why the BaseObject::getAlterDefinition is called */
+            objs_differs=!aux_object->BaseObject::getAlterDefinition(object).isEmpty();
 
+            //If the objects does not differ, try to compare their XML definition
             if(!objs_differs)
               xml_differs=object->isCodeDiffersFrom(aux_object,
                                                     { ParsersAttributes::PROTECTED,
@@ -228,10 +262,12 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                                                       ParsersAttributes::APPENDED_SQL,
                                                       ParsersAttributes::PREPENDED_SQL });
 
+            //If a difference was detected between the objects
             if(objs_differs || xml_differs)
             {
               generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 
+              //If the object is a table, do additional comparision between their child objects
               if((!force_recreation || recreate_unchangeble) && object->getObjectType()==OBJ_TABLE)
               {
                 Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
@@ -265,7 +301,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                              object->getObjectType());
     }
 
-		QThread::msleep(10);
+    QThread::msleep(15);
 	}
 }
 
@@ -276,8 +312,10 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	QString obj_name=tab_obj->getName(true);
 	BaseObject *aux_tab_obj=nullptr;
 
+  //Get the parent table of the object
 	base_tab=tab_obj->getParentTable();
 
+  //If the operation is a DROP, try to get the table from the source mode
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 		aux_base_tab=dynamic_cast<BaseTable *>(source_model->getObject(base_tab->getName(true), base_tab->getObjectType()));
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
@@ -287,7 +325,8 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	if(obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT)
 	{
 		Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
-		if(aux_table)
+
+    if(aux_table)
 			aux_tab_obj=aux_table->getObject(obj_name, obj_type);
 	}
 	else
@@ -421,16 +460,20 @@ void ModelsDiffHelper::processDiffInfos(void)
       }
       else if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
       {
+        //Recreating the object instead of generating an ALTER command for it
         if((force_recreation && obj_type!=OBJ_DATABASE) &&
            (!recreate_unchangeble || (recreate_unchangeble && !object->acceptsAlterCommand())))
         {
           recreateObject(object, drop_vect, create_vect);
 
+          //Generating the drop for the object's reference
           for(auto obj : drop_vect)
             drop_objs[obj->getObjectId()]=getCodeDefinition(obj, true);
 
+          //Generating the create for the object's reference
           for(auto obj : create_vect)
           {
+            //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
              create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
           }
@@ -479,8 +522,10 @@ void ModelsDiffHelper::processDiffInfos(void)
 
     diff_def.clear();
 
-    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty())
+    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
+       !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty())
     {
+      //Attributes used on the diff schema file
       attribs[ParsersAttributes::HAS_CHANGES]="1";
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
       attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
@@ -516,6 +561,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       for(auto itr : alter_objs)
         attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;
 
+      //Generating the whole diff buffer
       schparser.setPgSQLVersion(pgsql_version);
       diff_def=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
                                            GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
@@ -540,6 +586,8 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
     TableObject *tab_obj=dynamic_cast<TableObject *>(object);
     QString cmd;
 
+    /* For columns and constraints it is needed to force the generation of
+       ALTER commands on the parent table */
     if(tab_obj && (tab_obj->getObjectType()==OBJ_COLUMN || tab_obj->getObjectType()==OBJ_CONSTRAINT))
     {
       bool gen_alter=false;
@@ -580,6 +628,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
     vector<BaseObject *> ref_objs;
     BaseObject *aux_obj=nullptr;
 
+    /* If the specified object is not a table's child object,
+       try to get an object from database which name is the same as 'object' */
     if(!TableObject::isTableObject(object->getObjectType()))
       aux_obj=imported_model->getObject(object->getSignature(), object->getObjectType());
     else
@@ -588,18 +638,24 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 
       if(tab_obj->getParentTable())
       {
+        /* If the object is a table's child object, first we get a table from the database which
+           name is the same as the 'object' parent table's name. Sencond, we try to get a child
+           object from that table using the same name as the 'object' */
         BaseTable *tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_obj->getParentTable()->getSignature(), tab_obj->getParentTable()->getObjectType()));
         aux_obj=tab->getObject(tab_obj->getName(true), tab_obj->getObjectType());
       }
     }
 
+    //Get all references to the retrieved object on the database
     imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
 
+    //Register a drop info for the object found on the database
     if(aux_obj)
       drop_objs.push_back(aux_obj);
 
     create_objs.push_back(object);
 
+    //Executing the recreation of the object's references
     for(auto obj : ref_objs)
       recreateObject(obj, drop_objs, create_objs);
   }

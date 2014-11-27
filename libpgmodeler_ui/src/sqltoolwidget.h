@@ -87,10 +87,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		static void exportResults(QTableWidget *results_tbw);
 
 	private slots:
-		//! brief Opens a connection to the selected database
-		void connectToDatabase(void);
+    //! brief Opens a connection to the selected server
+    void connectToServer(void);
 
-		void disconnectFromDatabase(void);
+    void disconnectFromServer(void);
 
 		//! brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);

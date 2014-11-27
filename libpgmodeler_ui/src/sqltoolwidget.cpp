@@ -57,9 +57,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
-	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
-	connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromDatabase(void)));
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromDatabase()));
+  connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+  connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+  connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromServer(void)));
+  connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromServer()));
   connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
 	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
@@ -84,7 +85,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(database_cmb, &QComboBox::currentTextChanged,
           [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0);
 									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0);
-									data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
+                  data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
 
 	connect(results_tbw, &QTableWidget::itemPressed,
 					[=](){ SQLToolWidget::copySelection(results_tbw); });
@@ -115,7 +116,7 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
 	enableSQLExecution(false);
 }
 
-void SQLToolWidget::connectToDatabase(void)
+void SQLToolWidget::connectToServer(void)
 {
 	try
 	{
@@ -129,6 +130,7 @@ void SQLToolWidget::connectToDatabase(void)
 		connections_cmb->setEnabled(false);
 		connect_tb->setEnabled(false);
 		disconnect_tb->setEnabled(true);
+    refresh_tb->setEnabled(true);
 	}
 	catch(Exception &e)
 	{
@@ -136,7 +138,7 @@ void SQLToolWidget::connectToDatabase(void)
 	}
 }
 
-void SQLToolWidget::disconnectFromDatabase(void)
+void SQLToolWidget::disconnectFromServer(void)
 {
 	try
 	{
@@ -144,6 +146,7 @@ void SQLToolWidget::disconnectFromDatabase(void)
 		connections_cmb->setEnabled(true);
 		connect_tb->setEnabled(true);
 		disconnect_tb->setEnabled(false);
+    refresh_tb->setEnabled(false);
 		enableSQLExecution(false);
 
     while(databases_tbw->count() > 0)
@@ -517,7 +520,7 @@ void SQLToolWidget::dropDatabase(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database! All data will be completely deleted. Do you really want to proceed?"),
+               trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(database_cmb->currentText()),
 							 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -543,7 +546,7 @@ void SQLToolWidget::dropDatabase(void)
 			aux_conn.connect();
 			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(database_cmb->currentText()));
 			aux_conn.close();
-			connectToDatabase();
+      connectToServer();
 		}
 		catch(Exception &e)
 		{
@@ -561,19 +564,16 @@ void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bo
 								trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
 								Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 	#else
-    DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
-
-    if(db_explorer_wgt)
-    {
       DataManipulationForm *data_manip=new DataManipulationForm;
+      Connection conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
       data_manip->setWindowModality(Qt::NonModal);
       data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
       data_manip->hide_views_chk->setChecked(hide_views);
 
-      data_manip->setAttributes(db_explorer_wgt->getConnection(), schema, table);
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+      data_manip->setAttributes(conn, schema, table);
       data_manip->show();
-    }
 #endif
 }
 
@@ -637,7 +637,6 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		sql_cmd_txt->setEnabled(enable);
 		load_tb->setEnabled(enable);
 		history_tb->setEnabled(enable);
-		data_grid_tb->setEnabled(enable);
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());

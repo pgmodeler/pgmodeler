@@ -33,38 +33,101 @@ class ModelsDiffHelper: public QObject {
 	private:
 		Q_OBJECT
 
-    QString diff_def, pgsql_version;
+    //! brief Stores the SQL code that represents the diff between model and database
+    QString diff_def,
 
-    bool diff_canceled, keep_cluster_objs, cascade_mode,
-         force_recreation, recreate_unchangeble, trucante_tables,
-         keep_obj_perms;
+    //! brief PostgreSQL version used to generate the diff
+    pgsql_version;
 
+    //! brief Indicates if the diff was cancelled by user
+    bool diff_canceled,
+
+    /*! brief Indicates if cluster level objects like tablespaces or roles must be kept intact on
+        database in case of drop */
+    keep_cluster_objs,
+
+    //! brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
+    cascade_mode,
+
+    //! brief Forces the recreation of any object maked as ALTER in the output
+    force_recreation,
+
+    //! brief Recreates only objects that can't be modified using ALTER commands
+    recreate_unchangeble,
+
+    //! brief Generate a TRUNCATE command for every table which columns was modified in their data types
+    trucante_tables,
+
+    //! brief Indicates if permissions must be preserved on database
+    keep_obj_perms;
+
+    //! brief Stores the count of objects to be dropped, changed or created
     unsigned diffs_counter[3];
 
-		DatabaseModel *source_model, *imported_model;
+    //! brief Reference model from which all changes are generated
+    DatabaseModel *source_model,
 
+    //! brief Model which is compared to the source one
+    *imported_model;
+
+    //! brief Stores all generated diff information during the process
 		vector<ObjectsDiffInfo> diff_infos;
 
+    /*! note The parameter diff_type in any methods below is one of the values in
+        ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
+
+    //! brief Compares two tables storing the diff between them in the diff_infos vector.
 		void diffTables(Table *src_table, Table *imp_table, unsigned diff_type);
+
+    //! brief Compares the two models storing the diff between them in the diff_infos vector.
 		void diffModels(unsigned diff_type);
+
+    /*! brief Compares the specified table object against the ones on the source model or imported
+        model depending on the diff_type parameter. */
 		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
+
+    //! brief Creates a diff info instance storing in o diff_infos vector
     void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
+
+    /*! brief Processes the generated diff infos resulting in a SQL buffer with the needed commands
+        to synchronize both model and database */
     void processDiffInfos(void);
+
+    /*! brief Generates the proper DROP and CREATE for the specified object and its references. This method
+        is used when the force_recreation is true and the object in the parameter is marked with an ALTER_OBJECT */
     void recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs);
+
+    /*! brief Returns if a diff information exists for the object. The exact_match parameter is used to force the
+        comparison of all values on the paramenter against the diff infos. When false the exact_match parameter
+        considers one of parameters object or old_object to be used (if not null) */
     bool isDiffInfoExists(unsigned diff_type, BaseObject *object, BaseObject *old_object, bool exact_match = true);
+
+    /*! brief Generate the proper code definition for the table's child objects. If drop_cmd is true a DROP command
+        will be generated otherwise a CREATE is generated. */
     QString getCodeDefinition(BaseObject *object, bool drop_cmd);
 
   public:
 		ModelsDiffHelper(void);
 
+    /*! brief Configures the models to be compared. It is assumed that src_model is the reference model
+        from which all changes must be collected and applied to the database. The imp_model is the
+        database model that represents the current arrange of the database. */
     void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
+
+    //! brief Configures the set of diff options before start the process
     void setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables,
                         bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms);
+
+    //! brief Configures the PostgreSQL version used in the diff generation
     void setPgSQLVersion(const QString pgsql_ver);
 
+    //! brief Returns the count of diff infos of the specified diff_type
 		unsigned getDiffTypeCount(unsigned diff_type);
+
+    //! brief Reset all the diff info counters in order to restart the diff process
 		void resetDiffCounter(void);
 
+    //! brief Returns the diff containing all the SQL commands needed to synchronize the model and database
     QString getDiffDefinition(void);
 
   public slots:

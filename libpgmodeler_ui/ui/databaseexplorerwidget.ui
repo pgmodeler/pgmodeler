@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
+    <width>308</width>
     <height>438</height>
    </rect>
   </property>
@@ -27,45 +27,48 @@
     <number>4</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLabel" name="label_5">
-       <property name="minimumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap resource="../res/resources.qrc">:/icones/icones/database.png</pixmap>
-       </property>
-       <property name="scaledContents">
+      <widget class="QCheckBox" name="sys_objs_chk">
+       <property name="enabled">
         <bool>true</bool>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="db_name_lbl">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
-        <string>&lt;strong&gt;postgres&lt;/strong&gt;&lt;em&gt;@localhost:5432&lt;/em&gt;</string>
+       <property name="toolTip">
+        <string>Toggles the display of system objects.</string>
        </property>
-       <property name="indent">
-        <number>-1</number>
+       <property name="text">
+        <string>System objects</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="ext_objs_chk">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Toggles the display of extension objects</string>
+       </property>
+       <property name="text">
+        <string>Extension objects</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -75,7 +78,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Update the objects tree with the currently selected database</string>
+        <string>Update the objects tree.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -92,48 +95,6 @@
        </property>
        <property name="shortcut">
         <string>Ctrl+F5</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QCheckBox" name="hide_sys_objs_chk">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Hide system objects</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="hide_ext_objs_chk">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Hide extension objects</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
        </property>
       </widget>
      </item>

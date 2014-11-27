@@ -614,6 +614,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				dir.remove(log_files.front());
 				log_files.pop_front();
 			}
+
+      qApp->quit();
 		}
 	}
 }

@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 		signal(SIGABRT, startCrashHandler);
 
 		Application app(argc,argv);
+    int res=0;
 
     //Loading the application splash screen
 		QSplashScreen splash;
@@ -140,8 +141,10 @@ int main(int argc, char **argv)
 
 		fmain.showMaximized();
 		splash.finish(&fmain);
+    res=app.exec();
+    app.closeAllWindows();
 
-		return(app.exec());
+    return(res);
 	}
 	catch(Exception &e)
 	{

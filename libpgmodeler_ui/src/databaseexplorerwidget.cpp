@@ -39,8 +39,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
   connect(expand_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(expandAll(void)));
   connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
-  connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
-  connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+  connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+  connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 }
 
@@ -69,11 +69,6 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 void DatabaseExplorerWidget::setConnection(Connection conn)
 {
   this->connection=conn;
-  db_name_lbl->setText(QString("<strong>%1</strong><em>@%2:%3</em>")
-                       .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
-                       .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
-                            conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
-                       .arg(conn.getConnectionParam(Connection::PARAM_PORT)));
 }
 
 Connection DatabaseExplorerWidget::getConnection(void)
@@ -99,7 +94,7 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
   import_helper.setConnection(connection);
   import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-  import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false, false);
+  import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false);
 }
 
 void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
