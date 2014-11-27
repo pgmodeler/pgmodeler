@@ -46,9 +46,7 @@ class ObjectsDiffInfo {
 		ObjectsDiffInfo(void);
     ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
 
-		//! \brief Returns the validation type
 		unsigned getDiffType(void);
-
 		QString getInfoMessage(void);
 		BaseObject *getObject(void);
     BaseObject *getOldObject(void);

@@ -614,6 +614,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				dir.remove(log_files.front());
 				log_files.pop_front();
 			}
+
+      qApp->quit();
 		}
 	}
 }
@@ -1623,12 +1625,6 @@ void MainWindow::storeDockWidgetsSettings(void)
 	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
 	params.clear();
 
-	params[ParsersAttributes::SQL_TOOL]="1";
-	params[ParsersAttributes::HIDE_EXT_OBJECTS]=(sql_tool_wgt->hide_ext_objs_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::HIDE_SYS_OBJECTS]=(sql_tool_wgt->hide_ext_objs_chk->isChecked() ? "1" : "");
-	conf_wgt->addConfigurationParam(ParsersAttributes::SQL_TOOL, params);
-	params.clear();
-
 	params[ParsersAttributes::OBJECT_FINDER]="1";
 	params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? "1" : "");
 	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? "1" : "");
@@ -1656,14 +1652,6 @@ void MainWindow::restoreDockWidgetsSettings(void)
 		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::_TRUE_);
-	}
-
-	if(confs.count(ParsersAttributes::SQL_TOOL))
-	{
-		sql_tool_wgt->blockSignals(true);
-		sql_tool_wgt->hide_ext_objs_chk->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::HIDE_EXT_OBJECTS]==ParsersAttributes::_TRUE_);
-		sql_tool_wgt->hide_sys_objs_chk->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::HIDE_SYS_OBJECTS]==ParsersAttributes::_TRUE_);
-		sql_tool_wgt->blockSignals(false);
 	}
 }
 

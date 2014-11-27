@@ -8,11 +8,6 @@ $tb [<widget]
   [ use-unique-names="] %if @{use-unique-names} %then true %else false %end ["]
   [ pgsql-version="] %if @{pgsql-ver} %then @{pgsql-ver} %else auto %end ["]
 %else
- %if @{sqltool} %then
-   [ id="sqltool"]
-   [ hide-ext-objects="] %if @{hide-ext-objects} %then true %else false %end ["]
-   [ hide-sys-objects="] %if @{hide-sys-objects} %then true %else false %end ["]
- %else
   %if @{objectfinder} %then
     [ id="objectfinder"]
     [ regexp="] %if @{regexp} %then true %else false %end ["]
@@ -20,7 +15,6 @@ $tb [<widget]
     [ exact-match="] %if @{exact-match} %then true %else false %end ["]
     [ highlight-objects="] %if @{highlight-objects} %then true %else false %end ["]
   %end
- %end
 %end
 
 /> $br

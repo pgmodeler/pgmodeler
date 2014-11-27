@@ -189,6 +189,7 @@
         <file>icones/design.png</file>
         <file>icones/managedb.png</file>
         <file>icones/ignore.png</file>
+        <file>icones/browsed.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

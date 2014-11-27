@@ -87,7 +87,7 @@ void Catalog::setConnection(Connection &conn)
 
 void Catalog::closeConnection(void)
 {
-  if(connection.isStablished())
+  //if(connection.isStablished())
     connection.close();
 }
 

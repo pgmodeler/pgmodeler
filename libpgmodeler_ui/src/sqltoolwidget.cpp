@@ -18,6 +18,7 @@
 
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
+#include "databaseexplorerwidget.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -48,17 +49,6 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	hbox->addWidget(find_replace_wgt);
 	find_wgt_parent->setVisible(false);
 
-	drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
-	drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
-
-	drop_cascade_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop cascade"), &handle_menu);
-	drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
-
-	show_data_action=new QAction(QIcon(":icones/icones/result.png"), trUtf8("Show data"), &handle_menu);
-
-	refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
-	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
-
   run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
@@ -67,25 +57,23 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
-	connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToDatabase(void)));
-	connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromDatabase(void)));
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromDatabase()));
-	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
+  connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+  connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+  connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromServer(void)));
+  connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromServer()));
+  connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
 	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
-	connect(expand_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(expandAll(void)));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
 	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
 	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveCommands(void)));
 	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadCommands(void)));
 	connect(history_tb, SIGNAL(toggled(bool)), cmd_history_gb, SLOT(setVisible(bool)));
-	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 	connect(clear_history_btn, SIGNAL(clicked(void)), cmd_history_lst, SLOT(clear(void)));
-	connect(hide_ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
-	connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
-	connect(refresh_action, SIGNAL(triggered()), this, SLOT(updateCurrentItem()));
 	connect(data_grid_tb, SIGNAL(clicked()), this, SLOT(openDataGrid()));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
+
+  connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
+  connect(databases_tbw, SIGNAL(currentChanged(int)), this, SLOT(setCurrentDatabase(int)));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(clear_history_btn, &QPushButton::clicked,
@@ -94,23 +82,22 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(cmd_history_lst, &QListWidget::itemDoubleClicked,
 					[=](){ sql_cmd_txt->setText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
 
-	connect(filter_edt, &QLineEdit::textChanged,
-					[=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(), 0); });
-
 	connect(database_cmb, &QComboBox::currentTextChanged,
-					[=](){ 	objects_trw->clear();
-									enableObjectTreeControls(false);
-									refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
+          [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0);
 									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0);
-									data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
+                  data_grid_tb->setEnabled(database_cmb->currentIndex() > 0); });
 
 	connect(results_tbw, &QTableWidget::itemPressed,
 					[=](){ SQLToolWidget::copySelection(results_tbw); });
 
 	connect(export_tb, &QToolButton::clicked,
-					[=](){ SQLToolWidget::exportResults(results_tbw); });
+          [=](){ SQLToolWidget::exportResults(results_tbw); });
+}
 
-	objects_trw->installEventFilter(this);
+SQLToolWidget::~SQLToolWidget(void)
+{
+  while(databases_tbw->count() > 0)
+    closeDatabaseExplorer(0);
 }
 
 void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
@@ -129,7 +116,7 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
 	enableSQLExecution(false);
 }
 
-void SQLToolWidget::connectToDatabase(void)
+void SQLToolWidget::connectToServer(void)
 {
 	try
 	{
@@ -143,6 +130,7 @@ void SQLToolWidget::connectToDatabase(void)
 		connections_cmb->setEnabled(false);
 		connect_tb->setEnabled(false);
 		disconnect_tb->setEnabled(true);
+    refresh_tb->setEnabled(true);
 	}
 	catch(Exception &e)
 	{
@@ -150,7 +138,7 @@ void SQLToolWidget::connectToDatabase(void)
 	}
 }
 
-void SQLToolWidget::disconnectFromDatabase(void)
+void SQLToolWidget::disconnectFromServer(void)
 {
 	try
 	{
@@ -158,169 +146,20 @@ void SQLToolWidget::disconnectFromDatabase(void)
 		connections_cmb->setEnabled(true);
 		connect_tb->setEnabled(true);
 		disconnect_tb->setEnabled(false);
-
-		enableObjectTreeControls(false);
+    refresh_tb->setEnabled(false);
 		enableSQLExecution(false);
+
+    while(databases_tbw->count() > 0)
+    {
+      databases_tbw->blockSignals(true);
+      closeDatabaseExplorer(0);
+      databases_tbw->blockSignals(false);
+    }
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void SQLToolWidget::listObjects(void)
-{
-	try
-	{
-		if(database_cmb->currentIndex() > 0)
-		{
-			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			configureImportHelper();
-			DatabaseImportForm::listObjects(import_helper, objects_trw, false, false);
-			import_helper.closeConnection();
-
-			if(sql_cmd_conn.isStablished())
-				sql_cmd_conn.close();
-
-			sql_cmd_conn=(*conn);
-			sql_cmd_conn.switchToDatabase(database_cmb->currentText());
-			enableSQLExecution(true);
-			enableObjectTreeControls(true);
-		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void SQLToolWidget::enableObjectTreeControls(bool enable)
-{
-	filter_parent->setEnabled(enable);
-	filter_edt->clear();
-	filter_lbl->setEnabled(enable);
-	filter_edt->setEnabled(enable);
-	expand_all_tb->setEnabled(enable);
-	collapse_all_tb->setEnabled(enable);
-	hide_ext_objs_chk->setEnabled(enable);
-	hide_sys_objs_chk->setEnabled(enable);
-}
-
-void SQLToolWidget::updateCurrentItem(void)
-{
-	QTreeWidgetItem *item=objects_trw->currentItem();
-
-	if(item)
-	{
-		QTreeWidgetItem *root=nullptr, *parent=nullptr;
-		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-		unsigned obj_id=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt());
-		QString sch_name, tab_name;
-		vector<QTreeWidgetItem *> gen_items, gen_items1;
-		vector<ObjectType> db_types=BaseObject::getChildObjectTypes(OBJ_DATABASE);
-
-		parent=item->parent();
-		objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
-		sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
-		tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
-
-		if(parent)
-		{
-			if(obj_id==0)
-			{
-				root=parent;
-				parent->takeChild(parent->indexOfChild(item));
-			}
-			else
-			{
-				if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
-				{
-					root=item;
-					root->takeChildren();
-
-					if(obj_type==OBJ_TABLE)
-						tab_name=item->text(0);
-					else
-						sch_name=item->text(0);
-				}
-				else
-				{
-					//If the object type is a database child one
-					if(std::find(db_types.begin(), db_types.end(), obj_type)!=db_types.end())
-					{
-						root=nullptr;
-						objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(parent));
-					}
-					else
-					{
-						//If the type is a table child object remove the group of current type
-						if(TableObject::isTableObject(obj_type))
-						{
-							root=parent->parent();
-							root->takeChild(root->indexOfChild(parent));
-						}
-						else
-						{
-							root=parent;
-							parent->takeChild(parent->indexOfChild(item));
-						}
-					}
-				}
-			}
-		}
-		else
-			objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
-
-		configureImportHelper();
-
-		//Updates the group type only
-		if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
-			gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
-		else
-			//Updates all child objcts when the selected object is a schema or table
-			gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																											BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
-
-		//Updating the subtree for schemas / tables
-		if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
-		{
-			for(auto item : gen_items)
-			{
-				//When the user refresh a single schema or table
-				if(obj_id > 0 || obj_type==OBJ_TABLE)
-				{
-					//Updates the table subtree
-					DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																								BaseObject::getChildObjectTypes(OBJ_TABLE),
-																								false, false, item,
-																								item->parent()->data(DatabaseImportForm::OBJECT_SCHEMA,Qt::UserRole).toString(),
-																								item->text(0));
-				}
-				//When the user refresh the schema group
-				else
-				{
-					//Updates the entire schema subtree
-					gen_items1= DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																														BaseObject::getChildObjectTypes(OBJ_SCHEMA),
-																														false, false, item, item->text(0));
-
-					//Updates the table group for the current schema
-					for(auto item1 : gen_items1)
-					{
-						DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																									BaseObject::getChildObjectTypes(OBJ_TABLE),
-																									false, false, item1,
-																									item1->parent()->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-																									item1->text(0));
-					}
-				}
-			}
-		}
-
-		import_helper.closeConnection();
-		objects_trw->sortItems(0, Qt::AscendingOrder);
-  }
 }
 
 void SQLToolWidget::enableCommandButtons(void)
@@ -449,36 +288,6 @@ void SQLToolWidget::showError(Exception &e)
 	export_tb->setEnabled(false);
 }
 
-bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
-{
-	if(object==objects_trw && event->type()==QEvent::KeyPress)
-	{
-		QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
-
-		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
-		{
-			if(k_event->key()==Qt::Key_F5)
-				updateCurrentItem();
-			else
-				dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
-
-			return(true);
-		}
-		else
-			return(false);
-	}
-
-	return(QWidget::eventFilter(object, event));
-}
-
-void SQLToolWidget::configureImportHelper(void)
-{
-	Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-	import_helper.setConnection(*conn);
-	import_helper.setCurrentDatabase(database_cmb->currentText());
-	import_helper.setImportOptions(!hide_sys_objs_chk->isChecked(), !hide_ext_objs_chk->isChecked(), false, false, false, false);
-}
-
 void SQLToolWidget::registerSQLCommand(const QString &cmd)
 {
 	if(!cmd.isEmpty())
@@ -513,7 +322,10 @@ void SQLToolWidget::runSQLCommand(void)
 
 		msgoutput_lst->clear();
 
+    sql_cmd_conn.connect();
 		sql_cmd_conn.executeDMLCommand(cmd, res);
+    sql_cmd_conn.close();
+
 		registerSQLCommand(cmd);
 
 		results_parent->setVisible(!res.isEmpty());
@@ -535,6 +347,7 @@ void SQLToolWidget::runSQLCommand(void)
 	}
 	catch(Exception &e)
 	{
+    sql_cmd_conn.close();
 		showError(e);
 	}
 }
@@ -654,109 +467,6 @@ QByteArray SQLToolWidget::generateCSVBuffer(QTableWidget *results_tbw, int start
 	return(buf);
 }
 
-void SQLToolWidget::dropObject(QTreeWidgetItem *item, bool cascade)
-{
-	Messagebox msg_box;
-
-	try
-	{
-		if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
-		{
-			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-			QString msg;
-
-			if(!cascade)
-				msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-						.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
-			else
-				msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it?")
-						.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
-
-			msg_box.show(trUtf8("Confirmation"), msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-			if(msg_box.result()==QDialog::Accepted)
-			{
-				QTreeWidgetItem *parent=nullptr;
-				attribs_map attribs;
-				QStringList types;
-				QString drop_cmd, obj_name=item->text(0);
-				int idx=0, idx1=0;
-
-				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-				attribs[ParsersAttributes::DECL_IN_TABLE]="";
-				attribs[BaseObject::getSchemaName(obj_type)]="1";
-
-				//For cast, operator and function is needed to extract the name and the params types
-				if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)
-				{
-					idx=obj_name.indexOf('(');
-					idx1=obj_name.indexOf(')');
-					types=obj_name.mid(idx+1, idx1-idx-1).split(',');
-					types.removeAll("-");
-					obj_name.remove(idx, obj_name.size());
-				}
-
-				//Formatting the names
-				attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
-				attribs[ParsersAttributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString());
-				attribs[ParsersAttributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
-
-				//For table objects the "table" attribute must be schema qualified
-				if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-					attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::TABLE];
-				//For operators and functions there must exist the signature attribute
-				else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
-					attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(','));
-				else if(obj_type==OBJ_CAST)
-				{
-					attribs[ParsersAttributes::SOURCE_TYPE]=types[0];
-					attribs[ParsersAttributes::DEST_TYPE]=types[1];
-				}
-				else
-				{
-					if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-						 attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + ".") < 0)
-						attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME];
-				}
-
-				//Generate the drop command
-				schparser.setIgnoreEmptyAttributes(true);
-				schparser.setIgnoreUnkownAttributes(true);
-				drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
-				drop_cmd.remove(QRegExp("^(--)"));
-
-				if(cascade)
-					drop_cmd.replace(";"," CASCADE;");
-
-				//Executes the drop cmd
-				sql_cmd_conn.executeDDLCommand(drop_cmd);
-
-				//Updates the object count on the parent item
-				parent=item->parent();
-				if(parent && parent->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()==0)
-				{
-					unsigned cnt=parent->data(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole).toUInt();
-					ObjectType parent_type=static_cast<ObjectType>(parent->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-
-					cnt--;
-					parent->setText(0, BaseObject::getTypeName(parent_type) + QString(" (%1)").arg(cnt));
-					parent->setData(DatabaseImportForm::OBJECT_COUNT, Qt::UserRole, QVariant::fromValue<unsigned>(cnt));
-				}
-
-				if(parent)
-					parent->takeChild(parent->indexOfChild(item));
-				else
-					objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
-
-			}
-		}
-	}
-	catch(Exception &e)
-	{
-		msg_box.show(e);
-	}
-}
-
 void SQLToolWidget::clearAll(void)
 {
 	Messagebox msg_box;
@@ -805,52 +515,12 @@ void SQLToolWidget::copySelection(QTableWidget *results_tbw, bool use_popup)
 	}
 }
 
-void SQLToolWidget::handleObject(QTreeWidgetItem *item, int)
-{
-	if(QApplication::mouseButtons()==Qt::RightButton)
-	{
-		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-		unsigned obj_id=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
-
-		for(auto act : handle_menu.actions())
-			handle_menu.removeAction(act);
-
-		if(obj_id > 0)
-		{
-			if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
-				handle_menu.addAction(show_data_action);
-
-			handle_menu.addAction(drop_action);
-			handle_menu.addAction(drop_cascade_action);
-
-      if(obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA)
-        handle_menu.addAction(refresh_action);
-
-			if(!handle_menu.actions().isEmpty())
-			{
-				QAction *exec_action=handle_menu.exec(QCursor::pos());
-
-				if(exec_action==drop_action || exec_action==drop_cascade_action)
-					dropObject(item,  exec_action==drop_cascade_action);
-				else if(exec_action==show_data_action)
-					openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-											 item->text(0), item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
-			}
-		}
-		else
-		{
-			handle_menu.addAction(refresh_action);
-			handle_menu.exec(QCursor::pos());
-		}
-	}
-}
-
 void SQLToolWidget::dropDatabase(void)
 {
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database! All data will be completely deleted. Do you really want to proceed?"),
+               trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(database_cmb->currentText()),
 							 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -861,16 +531,25 @@ void SQLToolWidget::dropDatabase(void)
 		try
 		{
 			enableSQLExecution(false);
+
+      //Closing tabs related to the database to be dropped
+      for(int i=0; i < databases_tbw->count(); i++)
+      {
+        if(databases_tbw->tabText(i)==database_cmb->currentText())
+        {
+          closeDatabaseExplorer(i);
+          i=-1;
+        }
+      }
+
+      sql_cmd_conn.close();
 			aux_conn.connect();
 			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(database_cmb->currentText()));
 			aux_conn.close();
-			connectToDatabase();
+      connectToServer();
 		}
 		catch(Exception &e)
 		{
-			if(aux_conn.isStablished())
-				aux_conn.close();
-
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -885,18 +564,70 @@ void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bo
 								trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
 								Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 	#else
-		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()),
-							 aux_conn=(*conn);
-		DataManipulationForm *data_manip=new DataManipulationForm;
+      DataManipulationForm *data_manip=new DataManipulationForm;
+      Connection conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-		data_manip->setWindowModality(Qt::NonModal);
-		data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-		data_manip->hide_views_chk->setChecked(hide_views);
+      data_manip->setWindowModality(Qt::NonModal);
+      data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+      data_manip->hide_views_chk->setChecked(hide_views);
 
-		aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-		data_manip->setAttributes(aux_conn, schema, table);
-		data_manip->show();
-	#endif
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+      data_manip->setAttributes(conn, schema, table);
+      data_manip->show();
+#endif
+}
+
+void SQLToolWidget::browseDatabase(void)
+{
+  try
+  {
+    Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+    DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
+    int tab_idx=0;
+
+    conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+    db_explorer_wgt->setConnection(conn);
+    db_explorer_wgt->listObjects();
+
+    databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
+    databases_tbw->setCurrentIndex(tab_idx);
+
+    connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+void SQLToolWidget::closeDatabaseExplorer(int idx)
+{
+  DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
+  databases_tbw->removeTab(idx);
+
+  if(db_explorer)
+    delete(db_explorer);
+
+  enableSQLExecution(databases_tbw->count()!=0);
+}
+
+void SQLToolWidget::setCurrentDatabase(int idx)
+{
+  try
+  {
+    DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
+    sql_cmd_conn.close();
+
+    if(db_explorer)
+    {
+      sql_cmd_conn=db_explorer->getConnection();
+      enableSQLExecution(true);
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void SQLToolWidget::enableSQLExecution(bool enable)
@@ -906,7 +637,6 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		sql_cmd_txt->setEnabled(enable);
 		load_tb->setEnabled(enable);
 		history_tb->setEnabled(enable);
-		data_grid_tb->setEnabled(enable);
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
@@ -915,11 +645,6 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 
 		if(history_tb->isChecked() && !enable)
 			history_tb->setChecked(false);
-
-		if(enable)
-			sql_cmd_conn.switchToDatabase(database_cmb->currentText());
-		else if(!enable && sql_cmd_conn.isStablished())
-			sql_cmd_conn.close();
 	}
 	catch(Exception &e)
 	{

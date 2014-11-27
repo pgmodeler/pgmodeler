@@ -366,15 +366,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			restoreGenAtlerCmdsStatus();
 
 		//Closes the new opened connection
-		if(new_db_conn.isStablished()) new_db_conn.close();
+    //if(new_db_conn.isStablished())
+    new_db_conn.close();
 
 		/* If the process was a simulation or even canceled undo the export
 		removing the created objects */
 		if(simulate || export_canceled)
       undoDBMSExport(db_model, conn, use_tmp_names);
 
-		if(conn.isStablished())
-			conn.close();
+    //if(conn.isStablished())
+    conn.close();
 
 		if(!export_canceled)
 			emit s_exportFinished();
@@ -393,14 +394,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		try
 		{
 			//Closes the new opened connection
-			if(new_db_conn.isStablished()) new_db_conn.close();
+      //if(new_db_conn.isStablished())
+      new_db_conn.close();
 
 			//Undo the export removing the created objects
       undoDBMSExport(db_model, conn, use_tmp_names);
 		}
 		catch(Exception &){}
 
-		if(conn.isStablished())	conn.close();
+    //if(conn.isStablished())
+    conn.close();
 
 		/* When running in a separated thread (other than the main application thread)
 		redirects the error in form of signal */

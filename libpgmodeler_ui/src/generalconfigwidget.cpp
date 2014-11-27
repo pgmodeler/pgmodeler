@@ -233,8 +233,7 @@ void GeneralConfigWidget::saveConfiguration()
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
-			else if(itr->first==ParsersAttributes::SQL_TOOL ||
-							itr->first==ParsersAttributes::VALIDATOR ||
+      else if(itr->first==ParsersAttributes::VALIDATOR ||
 							itr->first==ParsersAttributes::OBJECT_FINDER)
 			{
 				schparser.setIgnoreUnkownAttributes(true);

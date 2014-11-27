@@ -17,6 +17,7 @@
 */
 
 #include "connection.h"
+#include <QTextStream>
 
 const QString Connection::SSL_DESABLE="disable";
 const QString Connection::SSL_ALLOW="allow";
@@ -42,6 +43,7 @@ const QString Connection::PARAM_LIB_GSSAPI="gsslib";
 
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
+bool Connection::silence_conn_err=true;
 
 Connection::Connection(void)
 {
@@ -138,7 +140,17 @@ void Connection::setPrintSQL(bool value)
 
 bool Connection::isSQLPrinted(void)
 {
-	return(print_sql);
+  return(print_sql);
+}
+
+void Connection::setSilenceConnError(bool value)
+{
+  silence_conn_err=value;
+}
+
+bool Connection::isConnErrorSilenced(void)
+{
+  return(silence_conn_err);
 }
 
 void Connection::connect(void)
@@ -148,8 +160,18 @@ void Connection::connect(void)
 		thus an error is raised */
 	if(connection_str=="")
 		throw Exception(ERR_CONNECTION_NOT_CONFIGURED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	else if(connection)
-		throw Exception(ERR_CONNECTION_ALREADY_STABLISHED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  else if(connection)
+  {
+    if(!silence_conn_err)
+      throw Exception(ERR_CONNECTION_ALREADY_STABLISHED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+    else
+    {
+      QTextStream err(stderr);
+      err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << endl
+          << "Conn. info: [ " << connection_str << "]" << endl;
+      this->close();
+    }
+  }
 
 	//Try to connect to the database
 	connection=PQconnectdb(connection_str.toStdString().c_str());
@@ -170,13 +192,25 @@ void Connection::connect(void)
 
 void Connection::close(void)
 {
-	//Raise an erro in case the user try to close a not opened connection
-	if(!connection)
-		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  //Raise an error in case the user try to close a not opened connection
+  /* if(!connection)
+  {
+    if(!silence_conn_err)
+      throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+    else
+    {
+      QTextStream err(stderr);
+      err << QT_TR_NOOP("ERROR: trying to close an already terminated connection.")
+          << "[ " << connection_str << "]" << endl;
+    }
+  } */
 
-	//Finalizes the connection
-	PQfinish(connection);
-	connection=nullptr;
+  if(connection)
+  {
+    //Finalizes the connection
+    PQfinish(connection);
+    connection=nullptr;
+  }
 }
 
 void Connection::reset(void)
@@ -241,7 +275,10 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
-		cout << "\n---\n" << sql.toStdString() << endl;
+  {
+    QTextStream out(stdout);
+    out << "\n---\n" << sql << endl;
+  }
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection))>0)
@@ -274,7 +311,10 @@ void Connection::executeDDLCommand(const QString &sql)
 
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
-		cout << "\n---\n" << sql.toStdString() << endl;
+  {
+    QTextStream out(stdout);
+    out << "\n---\n" << sql << endl;
+  }
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)
@@ -293,8 +333,8 @@ void Connection::switchToDatabase(const QString &dbname)
 	try
 	{
 		//Closing the current connection if it's opened
-		if(isStablished())
-			close();
+    if(isStablished())
+     close();
 
 		//Change the database name and reconfigure the connection string
 		connection_params[PARAM_DB_NAME]=dbname;
@@ -312,10 +352,10 @@ void Connection::switchToDatabase(const QString &dbname)
 	}
 }
 
-void Connection::operator = (Connection &conn)
+void Connection::operator = (const Connection &conn)
 {
-	if(this->isStablished())
-		this->close();
+  if(this->isStablished())
+   this->close();
 
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
