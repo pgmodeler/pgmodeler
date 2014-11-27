@@ -483,7 +483,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-		QTimer::singleShot(1200000, qApp, SLOT(quit()));
+    //QTimer::singleShot(1200000, qApp, SLOT(quit()));
 	#endif
 }
 
@@ -1300,7 +1300,7 @@ void MainWindow::compareModelDatabase(void)
 		#warning "DEMO VERSION: model diff feature disabled."
 		Messagebox msg_box;
 		msg_box.show(trUtf8("Warning"),
-								 trUtf8("You're running a demonstration version! The model-database diff feature is under development and will be available only in the final 0.8.0 (full version)!"),
+                 trUtf8("You're running a demonstration version! The model-database diff feature is available only in the full version!"),
 								 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 	#else
 		ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -1660,7 +1660,7 @@ void MainWindow::showDemoVersionWarning(void)
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
-							 trUtf8("You're running a demonstration version! There is a time limit of <strong>20 minutes</strong> per execution. Note that you'll be able to create only <strong>%1</strong> instances \
+               trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 											of each type of object and some key features will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
 											<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
@@ -1673,8 +1673,8 @@ void MainWindow::quitDemoVersion(void)
 {
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-							 trUtf8("The demonstration period for this execution has finished!\
+  msg_box.show(trUtf8("Information"),
+               trUtf8("The execution of demonstration version has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
 											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
 											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\
@@ -1682,7 +1682,7 @@ void MainWindow::quitDemoVersion(void)
 											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
 											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
 											<br/>Thank you for testing pgModeler!"),
-							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+               Messagebox::INFO_ICON, Messagebox::OK_BUTTON);
     #endif
 }
 

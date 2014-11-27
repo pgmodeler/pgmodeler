@@ -21,7 +21,7 @@
 [ TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}
-    %if @{columns} %then [,] %end
+    %if @{columns} %or @{constraints} %then [,] %end
     $br
   %end
 
