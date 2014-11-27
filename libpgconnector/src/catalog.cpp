@@ -232,8 +232,7 @@ unsigned Catalog::getFilter(void)
 
 void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
 {
-	ObjectType tp;
-	try
+  try
 	{
 		vector<ObjectType> types=BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
 																																OBJ_TEXTBOX, OBJ_TAG, OBJ_COLUMN, OBJ_PERMISSION });
@@ -243,7 +242,6 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 
 		for(ObjectType type : types)
 		{
-			tp=type;
 			attribs=getObjectsNames(type, "", "", extra_attribs);
 
 			for(auto attr : attribs)
