@@ -555,7 +555,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   {
     stream << reinterpret_cast<unsigned *>(obj.first)  << "_" << dt.toTime_t();
 
-    //Generates an unique name for the permission through md5 hash
+    //Generates an unique name for the object through md5 hash
     hash.addData(QByteArray(tmp_name.toStdString().c_str()));
     tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
 
@@ -675,7 +675,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           obj_name=tab_name + "." + obj_name;
 
           emit s_progressUpdated(aux_prog,
-                                 trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
+                                 trUtf8("Creating object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
                                  obj_type, sql_cmd);
         }
         //Check if the regex matches the sql command

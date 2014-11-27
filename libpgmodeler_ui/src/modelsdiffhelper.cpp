@@ -74,9 +74,9 @@ void ModelsDiffHelper::diffModels(void)
 {
 	try
 	{
-		resetDiffCounter();
+    resetDiffCounter();
 
-		if(!source_model || !imported_model)
+    if(!source_model || !imported_model)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //First, we need to detect the objects to be dropped
@@ -95,7 +95,7 @@ void ModelsDiffHelper::diffModels(void)
 	catch(Exception &e)
 	{
 		emit s_diffAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
-	}
+  }
 }
 
 void ModelsDiffHelper::cancelDiff(void)

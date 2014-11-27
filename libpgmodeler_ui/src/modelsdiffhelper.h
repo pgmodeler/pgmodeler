@@ -62,7 +62,7 @@ class ModelsDiffHelper: public QObject {
     keep_obj_perms;
 
     //! brief Stores the count of objects to be dropped, changed or created
-    unsigned diffs_counter[3];
+    unsigned diffs_counter[4];
 
     //! brief Reference model from which all changes are generated
     DatabaseModel *source_model,

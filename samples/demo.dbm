@@ -184,37 +184,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<position x="730" y="617.4"/>
 </table>
 
-<relationship name="table_e_inherits_table_c" type="relgen"
-	 pk-pattern="{dt}_pk"
-	 custom-color="#124544"
-	 src-table="schema_a.table_e"
-	 dst-table="public.table_c">
-	<special-pk-cols indexes="0"/>
-</relationship>
-
-<relationship name="many_table_e_has_many_table_e" type="relnn"
-	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
-	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
-	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
-	 pk-col-pattern="id"
-	 custom-color="#d28818"
-	 src-table="schema_a.table_e"
-	 dst-table="schema_a.table_e"
-	 src-required="false" dst-required="false"
-	 table-name="many_table_e_has_many_table_e">
-	<line>
-		<position x="928" y="649.16"/>
-	<position x="928" y="607.4"/>
-	<position x="855.333" y="607.4"/>
-	</line>
-	<label ref-type="src-label">
-		<position x="8" y="-15.76"/>
-	</label>
-	<label ref-type="name-label">
-		<position x="-71.6303" y="-3.60001"/>
-	</label>
-</relationship>
-
 <relationship name="table_f_has_many_table_c" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
@@ -362,12 +331,6 @@ by the user.]]></comment>
 	<columns names="id_f" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="table_e_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="schema_a.table_e" table="schema_a.table_h">
-	<columns names="table_e_id" ref-type="src-columns"/>
-	<columns names="id_c" ref-type="dst-columns"/>
-</constraint>
-
 <relationship name="rel_table_h_table_a" type="relfk"
 	 custom-color="#0a21ad"
 	 src-table="schema_a.table_h"
@@ -382,23 +345,61 @@ by the user.]]></comment>
 	</label>
 </relationship>
 
-<relationship name="rel_table_h_table_e" type="relfk"
-	 custom-color="#127d6b"
-	 src-table="schema_a.table_h"
-	 dst-table="schema_a.table_e"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="972" y="788"/>
-	</line>
-	<label ref-type="dst-label">
-		<position x="15.54" y="25.4"/>
-	</label>
-</relationship>
-
 <relationship name="rel_table_h_table_f" type="relfk"
 	 custom-color="#1c70ed"
 	 src-table="schema_a.table_h"
 	 dst-table="schema_a.table_f"
 	 src-required="false" dst-required="false"/>
+
+<relationship name="table_e_inherits_table_c" type="relgen"
+         pk-pattern="{dt}_pk"
+         custom-color="#124544"
+         src-table="schema_a.table_e"
+         dst-table="public.table_c">
+        <special-pk-cols indexes="0"/>
+</relationship>
+
+<relationship name="many_table_e_has_many_table_e" type="relnn"
+         src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+         pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+         src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+         pk-col-pattern="id"
+         custom-color="#d28818"
+         src-table="schema_a.table_e"
+         dst-table="schema_a.table_e"
+         src-required="false" dst-required="false"
+         table-name="many_table_e_has_many_table_e">
+        <line>
+                <position x="928" y="649.16"/>
+        <position x="928" y="607.4"/>
+        <position x="855.333" y="607.4"/>
+        </line>
+        <label ref-type="src-label">
+                <position x="8" y="-15.76"/>
+        </label>
+        <label ref-type="name-label">
+                <position x="-71.6303" y="-3.60001"/>
+        </label>
+</relationship>
+
+<constraint name="table_e_fk" type="fk-constr" comparison-type="MATCH FULL"
+         upd-action="NO ACTION" del-action="NO ACTION" ref-table="schema_a.table_e" table="schema_a.table_h">
+        <columns names="table_e_id" ref-type="src-columns"/>
+        <columns names="id_c" ref-type="dst-columns"/>
+</constraint>
+
+
+<relationship name="rel_table_h_table_e" type="relfk"
+         custom-color="#127d6b"
+         src-table="schema_a.table_h"
+         dst-table="schema_a.table_e"
+         src-required="false" dst-required="false">
+        <line>
+                <position x="972" y="788"/>
+        </line>
+        <label ref-type="dst-label">
+                <position x="15.54" y="25.4"/>
+        </label>
+</relationship>
 
 </dbmodel>
