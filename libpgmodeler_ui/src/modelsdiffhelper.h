@@ -112,6 +112,8 @@ class ModelsDiffHelper: public QObject {
     //! brief Destroy the temporary objects and clears the diff info list
     void destroyTempObjects(void);
 
+    BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
+
   public:
 		ModelsDiffHelper(void);
     ~ModelsDiffHelper(void);

@@ -248,6 +248,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
           obj_name=object->getSignature();
           aux_object=aux_model->getObject(obj_name, obj_type);
 
+          //Special case for many-to-many relationships
+          if(obj_type==OBJ_TABLE && !aux_object)
+            aux_object=getRelNNTable(obj_name, aux_model);
+
           if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
           {
             /* Try to get a diff from the retrieve object and the current object,
@@ -284,9 +288,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
               objs_differs=xml_differs=false;
             }
-
           }
-          else if(!aux_object)
+          else if(!aux_object)           
             generateDiffInfo(diff_type, object);
         }
       }
@@ -316,36 +319,67 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 {
 	BaseTable *base_tab=nullptr, *aux_base_tab=nullptr;
 	ObjectType obj_type=tab_obj->getObjectType();
-	QString obj_name=tab_obj->getName(true);
+  QString tab_name, obj_name=tab_obj->getName(true);
 	BaseObject *aux_tab_obj=nullptr;
 
   //Get the parent table of the object
 	base_tab=tab_obj->getParentTable();
+  tab_name=base_tab->getSignature();
 
   //If the operation is a DROP, try to get the table from the source mode
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
-		aux_base_tab=dynamic_cast<BaseTable *>(source_model->getObject(base_tab->getName(true), base_tab->getObjectType()));
+  {
+    aux_base_tab=dynamic_cast<BaseTable *>(source_model->getObject(tab_name, base_tab->getObjectType()));
+
+    //If the table was not found, try to find it between the many-to-many relationships
+    if(!aux_base_tab)
+     aux_base_tab=dynamic_cast<BaseTable *>(getRelNNTable(tab_name, source_model));
+  }
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
-		aux_base_tab=dynamic_cast<BaseTable *>(imported_model->getObject(base_tab->getName(true), base_tab->getObjectType()));
+  {
+    aux_base_tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_name, base_tab->getObjectType()));
 
-	if(obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT)
-	{
-		Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
+    //If the table was not found, try to find it between the many-to-many relationships
+    if(!aux_base_tab)
+     aux_base_tab=dynamic_cast<BaseTable *>(getRelNNTable(obj_name, imported_model));
+  }
 
-    if(aux_table)
-			aux_tab_obj=aux_table->getObject(obj_name, obj_type);
-	}
-	else
-	{
-		if(aux_base_tab)
-			aux_tab_obj=aux_base_tab->getObject(obj_name, obj_type);
-	}
+  if(aux_base_tab)
+  {
+    if(obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT)
+    {
+      Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
+      aux_tab_obj=aux_table->getObject(obj_name, obj_type);
+    }
+    else
+      aux_tab_obj=aux_base_tab->getObject(obj_name, obj_type);
+  }
 
 	if(!aux_tab_obj)
 		generateDiffInfo(diff_type, tab_obj);
 	else if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && tab_obj->isCodeDiffersFrom(aux_tab_obj))
     generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
+}
+
+BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseModel *model)
+{
+  vector<BaseObject *> *rels=model->getObjectList(OBJ_RELATIONSHIP);
+  Relationship *rel=nullptr;
+  BaseObject *tab=nullptr;
+
+  for(auto obj : *rels)
+  {
+    rel=dynamic_cast<Relationship *>(obj);
+    if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
+       rel->getGeneratedTable() && rel->getGeneratedTable()->getSignature()==obj_name)
+    {
+      tab=rel->getGeneratedTable();
+      break;
+    }
+  }
+
+  return(tab);
 }
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
@@ -473,7 +507,8 @@ void ModelsDiffHelper::processDiffInfos(void)
   ObjectType obj_type;
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
-  QString alter_def, no_inherit_def, inherit_def, set_perms, unset_perms;
+  QString alter_def, no_inherit_def, inherit_def, set_perms,
+          unset_perms, fk_defs;
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
@@ -518,7 +553,14 @@ void ModelsDiffHelper::processDiffInfos(void)
         else if(obj_type==OBJ_PERMISSION)
           set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
         else
-          create_objs[object->getObjectId()]=getCodeDefinition(object, false);
+        {
+          //Generating fks definitions in a separated variable in order to append them at create commands maps
+          if(object->getObjectType()==OBJ_CONSTRAINT &&
+             dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+            fk_defs+=getCodeDefinition(object, false);
+          else
+            create_objs[object->getObjectId()]=getCodeDefinition(object, false);
+        }
       }
       else if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
       {
@@ -585,7 +627,8 @@ void ModelsDiffHelper::processDiffInfos(void)
     diff_def.clear();
 
     if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
-       !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty())
+       !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
+       !fk_defs.isEmpty())
     {
       //Attributes used on the diff schema file
       attribs[ParsersAttributes::HAS_CHANGES]="1";
@@ -615,6 +658,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       for(auto itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
+      attribs[ParsersAttributes::CREATE_CMDS]+=fk_defs;
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
 
       for(auto itr : truncate_tabs)

@@ -34,6 +34,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     import_thread=diff_thread=export_thread=nullptr;
     import_item=diff_item=export_item=nullptr;
     export_conn=nullptr;
+    process_paused=false;
+    diff_progress=0;
 
     apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
     apply_on_server_ht->setText(apply_on_server_rb->statusTip());
@@ -82,6 +84,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
     pgsql_ver_cmb->addItems(SchemaParser::getPgSQLVersions());
 
+    connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
     connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
     connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
     connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -125,7 +128,8 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
-	if((import_thread && import_thread->isRunning()) ||
+  if(process_paused ||
+     (import_thread && import_thread->isRunning()) ||
      (diff_thread && diff_thread->isRunning()) ||
      (export_thread && export_thread->isRunning()))
     event->ignore();
@@ -149,28 +153,20 @@ void ModelDatabaseDiffForm::createThreads(void)
           [=](){ apply_on_server_btn->setEnabled(false);
                  exportDiff(false); });
 
-  connect(cancel_btn, &QToolButton::clicked,
-          [=](){ import_helper->cancelImport();
-                 diff_helper->cancelDiff();
-                 export_helper->cancelExport(); });
-
   connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
   connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
   connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
 
   connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
   connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
 
   connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()), Qt::QueuedConnection);
-  connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::QueuedConnection);
 
   connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()), Qt::QueuedConnection);
-  connect(export_helper, SIGNAL(s_exportCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
 
@@ -424,8 +420,11 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
     cancelOperation(true);
   else
   {
+    process_paused=true;
     settings_tbw->setCurrentIndex(2);
     apply_on_server_btn->setVisible(true);
+    output_trw->collapseItem(diff_item);
+    createOutputItem(trUtf8("Diff process paused. Waiting user action..."), QPixmap(":/icones/icones/msgbox_alerta.png"), nullptr);
   }
 }
 
@@ -442,7 +441,6 @@ void ModelDatabaseDiffForm::filterDiffInfos(void)
     if(diff_item->child(i)->data(0, Qt::UserRole).toUInt()==diff_types[btn])
       output_trw->setItemHidden(diff_item->child(i), !btn->isChecked());
   }
-
 }
 
 void ModelDatabaseDiffForm::resetButtons(void)
@@ -507,9 +505,19 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
     createOutputItem(step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
   }
 
+  if(import_helper)
+   import_helper->cancelImport();
+
+  if(diff_helper)
+   diff_helper->cancelDiff();
+
+  if(export_helper)
+   export_helper->cancelExport();
+
   destroyModel();
 	destroyThreads();
 	resetButtons();
+  process_paused=false;
 }
 
 void ModelDatabaseDiffForm::captureThreadError(Exception e)
@@ -523,11 +531,6 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
   createOutputItem(e.getErrorMessage(), *progress_ico_lbl->pixmap(), item, true);
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-}
-
-void ModelDatabaseDiffForm::handleOperationCanceled(void)
-{
-  cancelOperation(true);
 }
 
 void ModelDatabaseDiffForm::handleImportFinished(Exception e)
@@ -570,21 +573,9 @@ void ModelDatabaseDiffForm::handleExportFinished(void)
   finishDiff();
 }
 
-QString ModelDatabaseDiffForm::formatMessage(const QString &msg)
-{
-	QString fmt_msg=msg;
-
-	fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<strong>");
-	fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</strong>");
-  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<em>");
-  fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</em>");
-
-	return(fmt_msg);
-}
-
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-  msg=formatMessage(msg);
+  msg=PgModelerNS::formatString(msg);
 
 	if(import_thread->isRunning())
 	{
@@ -632,7 +623,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
   QToolButton *btn=buttons[diff_type];
   QTreeWidgetItem *item=nullptr;
 
-  item=createOutputItem(formatMessage(diff_info.getInfoMessage()),
+  item=createOutputItem(PgModelerNS::formatString(diff_info.getInfoMessage()),
                                       QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())), diff_item);
   item->setData(0, Qt::UserRole, diff_info.getDiffType());
   btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));

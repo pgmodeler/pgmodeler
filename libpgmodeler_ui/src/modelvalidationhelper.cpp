@@ -247,7 +247,7 @@ void ModelValidationHelper::validateModel(void)
 		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
-		QString name, signal_msg="`%1' (%2)";
+    QString name, signal_msg="`%1' `(%2)'";
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();

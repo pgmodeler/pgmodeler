@@ -479,6 +479,7 @@ class Relationship: public BaseRelationship {
 		friend class ModelWidget;
 		friend class RelationshipWidget;
 		friend class ModelExportHelper;
+    friend class ModelsDiffHelper;
 };
 
 #endif

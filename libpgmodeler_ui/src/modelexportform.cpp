@@ -19,6 +19,7 @@
 #include "modelexportform.h"
 #include "taskprogresswidget.h"
 #include "configurationform.h"
+#include "pgmodelerns.h"
 
 extern ConfigurationForm *configuration_form;
 
@@ -92,9 +93,7 @@ void ModelExportForm::exec(ModelWidget *model)
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-	msg.replace("`","<strong>");
-	msg.replace("'","</strong>");
-	progress_lbl->setText(msg);
+  progress_lbl->setText(PgModelerNS::formatString(msg));
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)

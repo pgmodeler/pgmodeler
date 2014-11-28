@@ -76,6 +76,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
     int diff_progress;
 
+    bool process_paused;
+
 		void showEvent(QShowEvent *);	
 		void closeEvent(QCloseEvent *event);
 
@@ -92,7 +94,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void resetButtons(void);
     void saveDiffToFile(void);
     void finishDiff(void);
-		QString formatMessage(const QString &msg);
 
     //! brief Creates and adds a tree item on the output
     QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
@@ -111,7 +112,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
-    void handleOperationCanceled(void);
 		void handleImportFinished(Exception e);
     void handleDiffFinished(void);
     void handleExportFinished(void);

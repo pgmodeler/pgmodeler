@@ -85,7 +85,7 @@ class BaseObject {
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
-	protected:
+  protected:
 		SchemaParser schparser;
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
@@ -209,13 +209,17 @@ class BaseObject {
         ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
     void setBasicAttributes(bool format_name);
 
-    static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
+    /*! brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
+    and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
+    bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
 
     /*! brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
         as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
         attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
         products of comparison */
     void copyAttributes(attribs_map &attribs);
+
+    static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
   public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have

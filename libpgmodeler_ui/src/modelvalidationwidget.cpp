@@ -387,18 +387,10 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
     ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
     object_lbl->setText(trUtf8("Running SQL validation..."));
 
-		int idx=msg.indexOf('`');
+    msg=PgModelerNS::formatString(msg);
 		item=new QTreeWidgetItem;
 		label=new QLabel;
     label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-		if(idx > 0)
-		{
-			msg.replace("`","<strong>");
-			msg.replace("'","</strong>");
-			msg.replace(" ("," <em>(");
-			msg.replace(")",")</em>");
-		}
 
 		if(obj_type!=BASE_OBJECT)
 			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
@@ -433,11 +425,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	obj_name.replace("`","<strong>");
-	obj_name.replace("'","</strong>");
-	obj_name.replace(" ("," <em>(");
-	obj_name.replace(")",")</em>");
-	object_lbl->setText(trUtf8("Processing object: %1").arg(obj_name));
+  object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerNS::formatString(obj_name)));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 }
 

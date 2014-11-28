@@ -163,8 +163,8 @@ void Constraint::addColumn(Column *column, unsigned col_type)
         setColumnsNotNull(true);
       }
 
-			setCodeInvalidated(true);
-		}
+      setCodeInvalidated(true);
+    }
 	}
 }
 
@@ -648,7 +648,7 @@ void Constraint::setDeclInTableAttribute(void)
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+  if(!inc_addedbyrel && !code_def.isEmpty()) return(code_def);
 
 	QString attrib;
 
@@ -731,4 +731,23 @@ QString Constraint::getSignature(bool format)
     return(BaseObject::getSignature(format));
 
   return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+}
+
+bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+{
+  if(!object)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else if(object->getObjectType()!=this->getObjectType())
+    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  try
+  {
+    return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         object->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         ignored_attribs, ignored_tags));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
 }

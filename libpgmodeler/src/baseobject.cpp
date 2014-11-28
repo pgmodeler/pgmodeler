@@ -980,6 +980,50 @@ bool BaseObject::isCodeInvalidated(void)
 	return(use_cached_code && code_invalidated);
 }
 
+bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+{
+  QString xml, tag=QString("<%1").arg(this->getSchemaName()),
+      attr_regex="(%1=\")",
+      tag_regex="<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))";
+  QStringList xml_defs{ xml_def1, xml_def2 };
+  int start=0, end=-1, tag_end=-1;
+  QRegExp regexp;
+
+  for(int i=0; i < 2; i++)
+  {
+    xml=xml_defs[i].simplified();
+    start=xml.indexOf(tag) + tag.length();
+    end=-1;
+
+    //Removing ignored attributes
+    for(QString attr : ignored_attribs)
+    {
+      do
+      {
+        regexp=QRegExp(attr_regex.arg(attr));
+        tag_end=xml.indexOf(QRegExp("(\\\\)?(>)"));
+        start=regexp.indexIn(xml);//, start);
+        end=xml.indexOf("\"", start + regexp.matchedLength());
+
+        if(end > tag_end)
+          end=-1;
+
+        if(start >=0 && end >=0)
+          xml.remove(start, (end - start) + 1);
+      }
+      while(start >= 0 && end >= 0);
+    }
+
+    //Removing ignored tags
+    for(QString tag : ignored_tags)
+      xml.remove(QRegExp(tag_regex.arg(tag)));
+
+    xml_defs[i]=xml.simplified();
+  }
+
+  return(xml_defs[0]!=xml_defs[1]);
+}
+
 bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
 	if(!object)
@@ -989,47 +1033,9 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 	try
 	{
-		QString xml, tag=QString("<%1").arg(this->getSchemaName()),
-				attr_regex="(%1=\")",
-				tag_regex="<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))";
-		QStringList xml_defs{ this->getCodeDefinition(SchemaParser::XML_DEFINITION),
-													object->getCodeDefinition(SchemaParser::XML_DEFINITION) };
-		int start=0, end=-1, tag_end=-1;
-		QRegExp regexp;
-
-		for(int i=0; i < 2; i++)
-		{
-			xml=xml_defs[i].simplified();
-			start=xml.indexOf(tag) + tag.length();
-			end=-1;
-
-			//Removing ignored attributes
-			for(QString attr : ignored_attribs)
-			{
-				do
-				{
-          regexp=QRegExp(attr_regex.arg(attr));
-					tag_end=xml.indexOf(QRegExp("(\\\\)?(>)"));
-          start=regexp.indexIn(xml);//, start);
-					end=xml.indexOf("\"", start + regexp.matchedLength());
-
-					if(end > tag_end)
-						end=-1;
-
-					if(start >=0 && end >=0)
-						xml.remove(start, (end - start) + 1);
-				}
-				while(start >= 0 && end >= 0);
-			}
-
-			//Removing ignored tags
-			for(QString tag : ignored_tags)
-				xml.remove(QRegExp(tag_regex.arg(tag)));
-
-			xml_defs[i]=xml.simplified();
-		}
-
-    return(xml_defs[0]!=xml_defs[1]);
+    return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION),
+                                         object->getCodeDefinition(SchemaParser::XML_DEFINITION),
+                                         ignored_attribs, ignored_tags));
 	}
 	catch(Exception &e)
 	{
