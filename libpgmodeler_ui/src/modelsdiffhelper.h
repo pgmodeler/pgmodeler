@@ -73,6 +73,9 @@ class ModelsDiffHelper: public QObject {
     //! brief Stores all generated diff information during the process
 		vector<ObjectsDiffInfo> diff_infos;
 
+    //! brief Stores all temporary objects created during the diff process
+    vector<BaseObject *> tmp_objects;
+
     /*! note The parameter diff_type in any methods below is one of the values in
         ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
 
@@ -106,8 +109,12 @@ class ModelsDiffHelper: public QObject {
         will be generated otherwise a CREATE is generated. */
     QString getCodeDefinition(BaseObject *object, bool drop_cmd);
 
+    //! brief Destroy the temporary objects and clears the diff info list
+    void destroyTempObjects(void);
+
   public:
 		ModelsDiffHelper(void);
+    ~ModelsDiffHelper(void);
 
     /*! brief Configures the models to be compared. It is assumed that src_model is the reference model
         from which all changes must be collected and applied to the database. The imp_model is the

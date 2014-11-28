@@ -18,6 +18,7 @@
 
 #include "modelsdiffhelper.h"
 #include <QThread>
+#include "pgmodelerns.h"
 
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
@@ -26,6 +27,11 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	source_model=imported_model=nullptr;
   resetDiffCounter();
   setDiffOptions(true, true, false, false, false, true);
+}
+
+ModelsDiffHelper::~ModelsDiffHelper(void)
+{
+  destroyTempObjects();
 }
 
 void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms)
@@ -74,8 +80,6 @@ void ModelsDiffHelper::diffModels(void)
 {
 	try
 	{
-    resetDiffCounter();
-
     if(!source_model || !imported_model)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -96,6 +100,9 @@ void ModelsDiffHelper::diffModels(void)
 	{
 		emit s_diffAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
   }
+
+  destroyTempObjects();
+  resetDiffCounter();
 }
 
 void ModelsDiffHelper::cancelDiff(void)
@@ -343,39 +350,94 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
-  ObjectsDiffInfo diff_info;
+  if(object)
+  {
+    ObjectsDiffInfo diff_info;
 
-  /* If the info is for ALTER and there is a DROP info on the list,
+    /* If the info is for ALTER and there is a DROP info on the list,
      the object will be recreated instead of modified */
-  if((!force_recreation || recreate_unchangeble) &&
-     diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
-     isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
-     !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr))
-  {
-    diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr);
-    diff_infos.push_back(diff_info);
-    diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
-    emit s_objectsDiffInfoGenerated(diff_info);
-  }
-  else if(!isDiffInfoExists(diff_type, object, old_object))
-  {
-    diff_info=ObjectsDiffInfo(diff_type, object, old_object);
-    diff_infos.push_back(diff_info);
-    diffs_counter[diff_type]++;
-    emit s_objectsDiffInfoGenerated(diff_info);
-
-    /* If the info is for DROP, generate the drop for referer objects of the
-       one marked to be dropped */
     if((!force_recreation || recreate_unchangeble) &&
-       diff_type==ObjectsDiffInfo::DROP_OBJECT)
+       diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
+       isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
+       !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr))
     {
-      vector<BaseObject *> ref_objs;
-      imported_model->getObjectReferences(object, ref_objs);
-
-      for(auto obj : ref_objs)
+      diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr);
+      diff_infos.push_back(diff_info);
+      diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+      emit s_objectsDiffInfoGenerated(diff_info);
+    }
+    else if(!isDiffInfoExists(diff_type, object, old_object))
+    {
+      /* Special case for columns marked with ALTER.
+         If the type of them is "serial" or similar then a sequence will be created and the
+         type of the column changed to "integer" or similar, this because the ALTER command
+         for columns don't accept the type "serial" */
+      if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && object->getObjectType()==OBJ_COLUMN)
       {
-        if(obj->getObjectType()!=BASE_RELATIONSHIP)
-          generateDiffInfo(diff_type, obj);
+        Column *col=dynamic_cast<Column *>(object),
+               *old_col=dynamic_cast<Column *>(old_object);
+
+        if(col->getType()!=old_col->getType() && col->getType().isSerialType())
+        {
+          Column *aux_col=new Column;
+          Sequence *seq=new Sequence;
+          BaseTable *tab=col->getParentTable();
+          QString seq_name;
+
+          //Configures the sequence
+          seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
+          seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
+          seq->setName(seq_name);
+          seq->setOwner(tab->getOwner());
+          seq->setSchema(tab->getSchema());
+
+          //Configure an auxiliary column with the same values of the original one
+          (*aux_col)=(*col);
+          aux_col->setDefaultValue("");
+          //Setting the type as the alias of the serial type
+          aux_col->setType(aux_col->getType().getAliasType());
+          //Assigns the sequence to the column in order to configure the default value correctly
+          aux_col->setSequence(seq);
+
+          //Creates a new ALTER info with the created column
+          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
+          diff_infos.push_back(diff_info);
+          diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+          emit s_objectsDiffInfoGenerated(diff_info);
+
+          //Creates a CREATE info with the sequence
+          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
+          diff_infos.push_back(diff_info);
+          diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+          emit s_objectsDiffInfoGenerated(diff_info);
+
+          /* Stores the created objects in the temp list in order to be destroyed at the
+             end of the process. */
+          tmp_objects.push_back(aux_col);
+          tmp_objects.push_back(seq);
+        }
+      }
+      else
+      {
+        diff_info=ObjectsDiffInfo(diff_type, object, old_object);
+        diff_infos.push_back(diff_info);
+        diffs_counter[diff_type]++;
+        emit s_objectsDiffInfoGenerated(diff_info);
+      }
+
+      /* If the info is for DROP, generate the drop for referer objects of the
+       one marked to be dropped */
+      if((!force_recreation || recreate_unchangeble) &&
+              diff_type==ObjectsDiffInfo::DROP_OBJECT)
+      {
+        vector<BaseObject *> ref_objs;
+        imported_model->getObjectReferences(object, ref_objs);
+
+        for(auto obj : ref_objs)
+        {
+          if(obj->getObjectType()!=BASE_RELATIONSHIP)
+            generateDiffInfo(diff_type, obj);
+        }
       }
     }
   }
@@ -617,6 +679,20 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
   {
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
+}
+
+void ModelsDiffHelper::destroyTempObjects(void)
+{
+  BaseObject *tmp_obj=nullptr;
+
+  while(!tmp_objects.empty())
+  {
+    tmp_obj=tmp_objects.back();
+    tmp_objects.pop_back();
+    delete(tmp_obj);
+  }
+
+  diff_infos.clear();
 }
 
 void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &drop_objs, vector<BaseObject *> &create_objs)

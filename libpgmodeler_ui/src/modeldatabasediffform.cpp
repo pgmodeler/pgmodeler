@@ -158,21 +158,21 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
   connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
 
-  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()));
-  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
 
-  connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-  connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
-  connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()));
-  connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-  connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)));
+  connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
+  connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()), Qt::QueuedConnection);
+  connect(diff_helper, SIGNAL(s_diffCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
+  connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::QueuedConnection);
 
-  connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
-  connect(export_helper, SIGNAL(s_exportCanceled()), this, SLOT(handleOperationCanceled()));
-  connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-  connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+  connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()), Qt::QueuedConnection);
+  connect(export_helper, SIGNAL(s_exportCanceled()), this, SLOT(handleOperationCanceled()), Qt::QueuedConnection);
+  connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
 
   connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
   connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));

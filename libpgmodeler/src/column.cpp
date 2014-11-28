@@ -166,7 +166,7 @@ QString Column::getCodeDefinition(unsigned def_type)
   {
     //Configuring the default value of the column to get the next value of the sequence
     if(def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getName(true).remove("\""));
+      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature().remove("\""));
 
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
@@ -183,6 +183,7 @@ QString Column::getAlterDefinition(BaseObject *object)
   {
     Column *col=dynamic_cast<Column *>(object);
     attribs_map attribs;
+    QString def_val;
 
     BaseObject::setBasicAttributes(true);
 
@@ -192,8 +193,13 @@ QString Column::getAlterDefinition(BaseObject *object)
     if(!this->type.isEquivalentTo(col->type))
       attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
-    if(this->default_value!=col->default_value)
-      attribs[ParsersAttributes::DEFAULT_VALUE]=(col->default_value.isEmpty() ? ParsersAttributes::UNSET : col->default_value);
+    if(col->sequence)
+      def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature().remove("\""));
+    else
+      def_val=col->default_value;
+
+    if(this->default_value!=def_val)
+      attribs[ParsersAttributes::DEFAULT_VALUE]=(def_val.isEmpty() ? ParsersAttributes::UNSET : def_val);
 
     if(this->not_null!=col->not_null)
       attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
@@ -210,7 +216,6 @@ QString Column::getAlterDefinition(BaseObject *object)
 void Column::operator = (Column &col)
 {
 	this->comment=col.comment;
-  //this->object_id=col.object_id;
 	this->is_protected=col.is_protected;
 
 	this->obj_name=col.obj_name;
