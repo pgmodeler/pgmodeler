@@ -1,6 +1,103 @@
 Change Log
 ---------
 
+v0.8.0-beta
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: November 29, 2014</em><br/>
+
+* [New] Introduced the first version of model database diff feature.
+* [New] Created the method Constraint::isCodeDiffersFrom in order to correctly generate the xml code and compare it with another object's code.
+* [New] Created the method PgModelerNS::formatString in order to avoid repeatedly replace special chars by html tags.
+* [New] Added the method PgSQLType::isEquivalentTo in order to check if a type is equivalent to another. This method helps to avoids unnecessary recreation of columns or type attributes on diff process.
+* [New] Created the class DatabaseExplorerWidget in order to permit user manage several database instances on the sql tool.
+* [New] Enabled the usage of cached catalog queries on Catalog class in order to increase the performance of the whole import process.
+* [New] Added the method PgSQLType::isRegistered that indicates if a type is already registered or not.
+* [New] Added the method BaseObject::acceptsAlterCommand to indicate if an object type can be changed through ALTER commands.
+* [New] Added the method BaseObject::acceptsDropCommand to be able to identify which kind of object accepts DROP commands.
+* [New] Added the method Column::getAlterDefinition in order to get the ALTER definition based upon the differences of two columns.
+* [New] Added the ability to schema parser to create attributes from within the parsed schema files or buffer.
+* [New] Added the method Table::getTruncateDefinition to return the proper TRUNCATE command.
+* [New] Added method Sequence::getAlterDefinition.
+* [New] Added method Role::getAlterDefinition.
+* [New] Added method Index::getAlterDefinition.
+* [New] Created the getAlterDefinition method for Extension and Function.
+* [New] Created the custom implementation for getSignature() for Aggregate, Cast, Constraint, Index, Operator Class, Operator Family, Rule, Trigger.
+* [New] Created the own versions of getDropDefinition for Function and Index.
+* [New] Added to schema parser the ability to evaluate simple comparison expressions in the form (@{attribute} [operator] "value").
+* [New] Added a special attribute pgsql-ver when generating code definition to store the currently used pgsql version.
+* [New] Introduced a new method BaseObject::getSignature() that returns by default the object's name (formatted or not) and with the schema name prepended (when available).
+* [New] Introduced a new name pattern PK_COL_PATTERN which is used to generate the single pk column name for many-to-many relationships.
+* [New] Added method getAlterDefinition for Aggregate, Collation and EventTrigger.
+* [New] Created a styled text box object.
+* [New] Created the new class RoundedRectItem in order to generate rounded corner rectangle items on scene.
+* [New] Added a sql disabled info item for relationships.
+* [New] SQL disabled status are now displayed as a textbox on top of tables and schemas. Other objects will continue to have their names striked out to denote the deactivation of SQL code.
+* [New] Added the ability to copy text from validation widget output.
+* [Change] Minor change on Connection class. Added the method Connection::setSilenceConnError in order to silence connection errors in certain cases.
+* [Change] Major changes on sql tool. Now it's possible to manage several database instances on the same server connection.
+* [Change] Moved the code that was handling database objects tree from SQLToolWidget to DatabaseExplorerWidget
+* [Change] Improvements on DBMS export process. Now the process detects when a object is being created, changed or dropped returning the correct message to the user.
+* [Change] Minor fix on Role::getAlterDefinition.
+* [Change] Removed the generation of inheritance command from Table::getAlterDefinition and moved to Relationship::getInheritDefinition.
+* [Change] Minor update on sql highlight configuration file.
+* [Change] Minor adjustments on schema files for CREATE commands.
+* [Change] Minor update on sql-highlight.conf.
+* [Change] Several changes on schema files related to comment command formatting.
+* [Change] Removed the attribute ParsersAttributes::DIF_SQL due its deprecation.
+* [Change] Improvements on all schema files that makes use of @{pgsql9x} attribute. Those attributes were deprecated and replaced by comparison expressions.
+* [Change] The method SchemaParser::storePgSQLVersion was removed due to the deprecation of attribute @{pgsql9x}.
+* [Change] Minor change on the Connection class to return the full version or only the major one of the server.
+* [Change] Code blocks where there was a special treatment to get object's name filtering by object's type (specially function and operator) were replaced by a single call to BaseObject::getSignature().
+* [Change] Improved the way many-to-many relationships can be configured. Now the generated table can have a single column as primary key or a multi-valued one.
+* [Change] The ModelWidget::convertRelationshipNN method was improved in order to correctly convert many-to-many relationships with single or multi-valued primary key.
+* [Change] Removed the restriction from Catalog and DatabaseImportForm to hide the "postgres" database.
+* [Change] Minor change on how drop command is generated for collations.
+* [Change] Minor fix on fields which accepts expressions to show scroll bars as needed.
+* [Change] Changed the order of actions on left control bar at main window.
+* [Change] Minor improvement on export to png process. The output image is generated with a margin.
+* [Change] Minor change on sample models and asset images.
+* [Change] Minor changes on TextboxView.
+* [Change] Changed the style of graphical resentation for schemas, views, tables. Now they are drawn with rounded borders.
+* [Change] Minor improvements on how sql disabled info item is generated and managed.
+* [Change] Change the relationship cardinality pattern from (1,n) to 1:n.
+* [Change] Minor label adjustment for many-to-many relatinships.
+* [Change] Minor adjustments on textbox resizing.
+* [Change] Minor adjustments on relationships custom points descriptors in order to give better selection and movement.
+* [Change] Minor improve when moving a schema object. Relationship points will be moved together.
+* [Change] Minor editing forms size adjustments.
+* [Change] Changed the layout of modeldatabasediffform.ui and added hint text widgets.
+* [Change] Changed the hint texts on general config, relationship config and model restoration form.
+* [Change] Minor change on relationship editing form, by default random line colors are enabled.
+* [Change] Minor fix on temporary models saving process.
+* [Change] Explicit hint texts were moved to the instances of the new class HintTextWidget.
+* [Change] Minor improvement on database editing form. LC_COLLATE and LC_CTYPE can be freely modified.
+* [Change] Minor improvement on primary key constraints. Columns added to them will be marked as not-null by default. This is done to avoid false-positive changes on the model db diff process.
+* [Change] Improvements on main window in order to give more visibility to SQL tool and central widget. Now there are three different views (welcome, design and manage).
+* [Fix] Minor fixes throught the code in order to remove g++ warnings.
+* [Fix] Minor fix on table's SQL schema file.
+* [Fix] Minor fixes on demo version code. Remove the execution time limit and increased the maximum objects count.
+* [Fix] Fixed a bug when generating XML code for materialized views that was causing these objects to break DTD rules.
+* [Fix] Minor fix on code generation of permissions.
+* [Fix] Minor fix on permissions editing form.
+* [Fix] Fixed a bug on database import process that was crashing the application whenever importing a composite type.
+* [Fix] Minor fix on reverse engineering process when importing columns which reference user defined type that are in pg_catalog.
+* [Fix] Minor bug fix on database import process that was causing some crashes.
+* [Fix] Minor improvements on "move to schema" feature on model widget. The references to moved object are now correctly updated.
+* [Fix] Minor fix on SyntaxHighlighter that was not correctly applying the default font to the parent object.
+* [Fix] Minor fix on index class and editing form to accept FILLFACTOR no matter the indexing method used.
+* [Fix] Minor fix when removing table children objects and restoring them from operations list.
+* [Fix] Fixed a crash when reverse engineering a model. The crash was due to trying to handle a not existent graphical object for pg_catalog schema.
+* [Fix] Fixed the resizing of schema objects.
+* [Fix] Minor fixes on schema editing form.
+* [Fix] Additional fixes for export model to png. Now the correct bounding rect is calculated.
+* [Fix] Fixed a bug when exporting model to png that was exporting unnecessary blank areas.
+* [Fix] Fixed the click on the object selector input field. When the control is disabled the object selection dialog will not be opened.
+* [Fix] Minor fix on domain class and editing form that was not resetting the constraint name attribute.
+* [Fix] Minor fix on model validation helper to avoid include the database as a referer of other objects.
+* [Fix] Fixed a bug when renaming objects and invalidating their references.
+* [Fix] Fixed a bug on schema parser when converting chars to xml entities.
+
 v0.8.0-alpha2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
@@ -698,225 +795,225 @@ v0.4.1_r1
 
 <em>Release date: March 19, 2013</em>
 
-* [Change]: user can now prepend a CTE (commom table expression, a.k.a "with queries") on view's definition.
-* [Change]: user can now create a single reference containing a expression that defines the entire view.
-* [Change]: improvements on permissions, user now can control GRANTs and REVOKEs via permission editing form.
-* [Fix]: fixed invalid UTF-8 chars on function definition.
-* [Fix]: fixed unavailable "nocreatedb" role option.
+* [Change] user can now prepend a CTE (commom table expression, a.k.a "with queries") on view's definition.
+* [Change] user can now create a single reference containing a expression that defines the entire view.
+* [Change] improvements on permissions, user now can control GRANTs and REVOKEs via permission editing form.
+* [Fix] fixed invalid UTF-8 chars on function definition.
+* [Fix] fixed unavailable "nocreatedb" role option.
 
 v0.4.1
 ------
 
 <em>Release date: March 16, 2013 </em>
 
-* [New]: introduced the  "Disable SQL code" option for roles/tablespaces.
-* [New]: user now can add objects by right-clicking group items on "Model Objects" dockwidget tree.
-* [New]: added the abbreviation for time and timesptamp data types both with timezone: timetz and timestamptz.
-* [New]: introduced a object highlight action on "model objects" dockwidget.
-* [Change]: major changes on SQL code generation/export. Introduced a token to help export process to identify the end of each DDL command.
-* [Change]: minor improvements on role editing form.
-* [Change]: when generationg XML code empty tags that stores pure texts are now created with a <![CDATA[]]> tag in order to avoid malformed xml code.
-* [Change]: index FASTUPDATE and FILLFACTOR params is now activated according the indexing type.
-* [Change]: index fill factor now is optional.
-* [Change]: chinese, portuguese and french translations update.
-* [Fix]: pgModeler no longer crash when in error state (showing an exception) and try to auto save the models.
-* [Fix]: minor size adjustments on forms.
-* [Fix]: corrected a bug related to one-to-many relationship validation (endless looping) when changing to automatic suffix generation.
-* [Fix]: corrected the "apply button disabled" bug on constraint edit form.
-* [Fix]: IN/OUT keywords now appears on functions signature.
-* [Fix]: corrected translation bypassing on index edit form.
-* [Fix]: pgModeler no longer crash when triggering the print action.
-* [Fix]: triggers no longer complains about assigning a function without parameters.
-* [Fix]: corrected the loading process for indexes.
-* [Fix]: corrected some bugs related to GiST and index sorting.
-* [Fix]: minor fix on quick rename action when renaming a column with primary key.
-* [Fix]: corrected a bug that was causing pgModeler to complain about duplicated elements when loading indexes.
-* [Fix]: corrected a bug related to main window title when save a model with a different filename.
-* [Fix]: fixed a bug related reload a model file after editing a foreign key.
-* [Fix]: corrected a bug related to invalid chars at task progress.
+* [New] introduced the  "Disable SQL code" option for roles/tablespaces.
+* [New] user now can add objects by right-clicking group items on "Model Objects" dockwidget tree.
+* [New] added the abbreviation for time and timesptamp data types both with timezone: timetz and timestamptz.
+* [New] introduced a object highlight action on "model objects" dockwidget.
+* [Change] major changes on SQL code generation/export. Introduced a token to help export process to identify the end of each DDL command.
+* [Change] minor improvements on role editing form.
+* [Change] when generationg XML code empty tags that stores pure texts are now created with a <![CDATA[]]> tag in order to avoid malformed xml code.
+* [Change] index FASTUPDATE and FILLFACTOR params is now activated according the indexing type.
+* [Change] index fill factor now is optional.
+* [Change] chinese, portuguese and french translations update.
+* [Fix] pgModeler no longer crash when in error state (showing an exception) and try to auto save the models.
+* [Fix] minor size adjustments on forms.
+* [Fix] corrected a bug related to one-to-many relationship validation (endless looping) when changing to automatic suffix generation.
+* [Fix] corrected the "apply button disabled" bug on constraint edit form.
+* [Fix] IN/OUT keywords now appears on functions signature.
+* [Fix] corrected translation bypassing on index edit form.
+* [Fix] pgModeler no longer crash when triggering the print action.
+* [Fix] triggers no longer complains about assigning a function without parameters.
+* [Fix] corrected the loading process for indexes.
+* [Fix] corrected some bugs related to GiST and index sorting.
+* [Fix] minor fix on quick rename action when renaming a column with primary key.
+* [Fix] corrected a bug that was causing pgModeler to complain about duplicated elements when loading indexes.
+* [Fix] corrected a bug related to main window title when save a model with a different filename.
+* [Fix] fixed a bug related reload a model file after editing a foreign key.
+* [Fix] corrected a bug related to invalid chars at task progress.
 
 v0.4.0_r1
 ---------
 
 <em>Release date: March 04, 2013 </em>
 
-* [New]: introducing the "pgModeler Wiki" as the main project's support resource.
-* [Fix]: when main windows is closed the overview widget is closed too.
-* [Fix]: corrected a bug on operation list widget that was converting an item name to UTF-8 twice.
+* [New] introducing the "pgModeler Wiki" as the main project's support resource.
+* [Fix] when main windows is closed the overview widget is closed too.
+* [Fix] corrected a bug on operation list widget that was converting an item name to UTF-8 twice.
 
 v0.4.0
 ------
 
 <em>Release date: February 27, 2013 </em>
 
-* [New]: introduce a "New object" submenu when activating the schema context menu (right-click)
-* [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
-* [New]: compiling pgModeler now works perfectly on Mac OSX system.
-* [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
-* [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
-* [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
-* [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
-* [Change]: all relationships type are now grouped together on "Model objects" widget.
-* [Change]: chinese UI translation updated (provided by: [Bumanji](https://github.com/Bumanji)).
-* [Change]: user now can remove fk relationships directly without needing to remove the related foreign keys.
-* [Change]: field semantics adjustments on relationship editing form.
-* [Change]: graphical object can be now selected and have the context menu activated only with a single right-click.
-* [Change]: minor improvements on plugin base class: PgModelerPlugin.
-* [Change]: widget size adjustments to better showing on Mac OSX system.
-* [Change]: crashhandler now shows the compiled and running versions of Qt.
-* [Change]: french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
-* [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
-* [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
-* [Change]: PostGiS 'geometry' type can have a free assigned SRID value.
-* [Change]: editing forms when shown set the focus on the first field, generally, the object name.
-* [Change]: 'Objects of Model' widget displays the nodes in alphabetical order.
-* [Change]: the printing options for the model were moved to the general configuration form.
-* [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
-* [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
-* [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
-* [Fix]: corrected a bug related  constraint name on domain XML code generation.
-* [Fix]: corrected a bug that was causing crash when click "Apply" on Type editing form with fields not filled.
-* [Fix]: corrected the "invalid constraint name" error on domain editing form.
-* [Fix]: corrected the empty DEFAULT clause for columns, types and domains.
-* [Fix]: corrected a bug related to incorrectly initialized OID attribute when creating tables.
-* [Fix]: corrected a bug when creating a view with WHERE statement.
-* [Fix]: corrected a bug related to one-to-many relationships semantics.
-* [Fix]: corrected some bugs that was causing crash when removing all operations from operation list.
-* [Fix]: minor bug fixes related to object selection over the model.
-* [Fix]: corrected a bug on load model dialog filter (chinese UI only).
-* [Fix]: pgModeler no longer crash when editing objects style.
-* [Fix]: corrected bug that was deleting two sequeces at once.
-* [Fix]: pgModeler no longer crash when removing (disconnecting) relationship that has special primary keys.
-* [Fix]: minor fixes on the startup scripts on all platforms.
-* [Fix]: corrected an incorrect reference to output stream on Windows system.
-* [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
-* [Fix]: the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
-* [Fix]: corrected some weird SRID value on non spatial types.
-* [Fix]: corrected bug on objects table when move rows to last / first.
-* [Fix]: typos corrections on some error messages and dialog titles.
-* [Fix]: 'referenced columns' combobox on constraint editing form are filled correctly when the dialog is shown in a second time.
-* [Fix]: pgModeler no longer crash when creating many-to-many relationships.
-* [Fix]: pgModeler no longer crash when the user activates the print dialog.
-* [Fix]: corrected bug that was removing fk relationships when pasting objects.
-* [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
-* [Fix]: corrected constraint type showing on editing form.
-* [Fix]: corrected bug on cyrillic typed enums and check constraints expressions.
-* [Fix]: corrected bug on enumeration type editing form.
-* [Fix]: corrected bug on 'truncate' table privilege code generation.
-* [Fix]: corrected column default value code generation.
-* [Fix]: dummyplugin build process corrected on Windows.
-* [Fix]: corrected bug on column comment code generation.
-* [Fix]: corrected bug that was deleting two tables at once.
+* [New] introduce a "New object" submenu when activating the schema context menu (right-click)
+* [New] tables and view are now graphically separated by colored rectangles representing its schemas.
+* [New] compiling pgModeler now works perfectly on Mac OSX system.
+* [New] introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
+* [New] the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
+* [New] the user now can add relationships only creating foreign keys on tables (fk relationships).
+* [New] added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change] all relationships type are now grouped together on "Model objects" widget.
+* [Change] chinese UI translation updated (provided by: [Bumanji](https://github.com/Bumanji)).
+* [Change] user now can remove fk relationships directly without needing to remove the related foreign keys.
+* [Change] field semantics adjustments on relationship editing form.
+* [Change] graphical object can be now selected and have the context menu activated only with a single right-click.
+* [Change] minor improvements on plugin base class: PgModelerPlugin.
+* [Change] widget size adjustments to better showing on Mac OSX system.
+* [Change] crashhandler now shows the compiled and running versions of Qt.
+* [Change] french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
+* [Change] 'Objects of Model' when used as object picker now expand all the nodes by default.
+* [Change] 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
+* [Change] PostGiS 'geometry' type can have a free assigned SRID value.
+* [Change] editing forms when shown set the focus on the first field, generally, the object name.
+* [Change] 'Objects of Model' widget displays the nodes in alphabetical order.
+* [Change] the printing options for the model were moved to the general configuration form.
+* [Change] relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
+* [Change] copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Change] pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix] corrected a bug related  constraint name on domain XML code generation.
+* [Fix] corrected a bug that was causing crash when click "Apply" on Type editing form with fields not filled.
+* [Fix] corrected the "invalid constraint name" error on domain editing form.
+* [Fix] corrected the empty DEFAULT clause for columns, types and domains.
+* [Fix] corrected a bug related to incorrectly initialized OID attribute when creating tables.
+* [Fix] corrected a bug when creating a view with WHERE statement.
+* [Fix] corrected a bug related to one-to-many relationships semantics.
+* [Fix] corrected some bugs that was causing crash when removing all operations from operation list.
+* [Fix] minor bug fixes related to object selection over the model.
+* [Fix] corrected a bug on load model dialog filter (chinese UI only).
+* [Fix] pgModeler no longer crash when editing objects style.
+* [Fix] corrected bug that was deleting two sequeces at once.
+* [Fix] pgModeler no longer crash when removing (disconnecting) relationship that has special primary keys.
+* [Fix] minor fixes on the startup scripts on all platforms.
+* [Fix] corrected an incorrect reference to output stream on Windows system.
+* [Fix] shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
+* [Fix] the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
+* [Fix] corrected some weird SRID value on non spatial types.
+* [Fix] corrected bug on objects table when move rows to last / first.
+* [Fix] typos corrections on some error messages and dialog titles.
+* [Fix] 'referenced columns' combobox on constraint editing form are filled correctly when the dialog is shown in a second time.
+* [Fix] pgModeler no longer crash when creating many-to-many relationships.
+* [Fix] pgModeler no longer crash when the user activates the print dialog.
+* [Fix] corrected bug that was removing fk relationships when pasting objects.
+* [Fix] corrected SQL syntax error of 'timestamp with time zone'.
+* [Fix] corrected constraint type showing on editing form.
+* [Fix] corrected bug on cyrillic typed enums and check constraints expressions.
+* [Fix] corrected bug on enumeration type editing form.
+* [Fix] corrected bug on 'truncate' table privilege code generation.
+* [Fix] corrected column default value code generation.
+* [Fix] dummyplugin build process corrected on Windows.
+* [Fix] corrected bug on column comment code generation.
+* [Fix] corrected bug that was deleting two tables at once.
 
 v0.3.4
 ------
 
 <em>Release date: October 17, 2012</em>
 
-* [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
-* [New]: added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster since pgModeler WILL NOT install it automatically or generate the command to do it!
-* [New]: added a model restoration feature to reopen models after unexpected quit (crash).
-* [New]: added a crash handler to pgModeler. Now signal SIGSEGV is trapped (in most cases) and the crash handler pops up permiting the user to generate an error report. (EXPERIMENTAL)
-* [New]: to facilitate the error reporting exceptions stack now can be showed in text format. Users can post the complete error stack when creating an issue.
-* [New]: icon added to pgModeler executable (Windows only)
-* [Change]: update on pt_BR translation file.
-* [Change]: removed "pgmodeler" prefix from translation files.
-* [Change]: added the field "Underline" on textbox editing form.
-* [Fix]: corrected the "AlwayOnTop" bug on model overview widget. ([issue#30](https://github.com/pgmodeler/pgmodeler/issues/30))
-* [Fix]: little fix on startup scripts. Corrected de PGMODELER_ROOT on both Linux and Windows systems. ([issue#29](https://github.com/pgmodeler/pgmodeler/issues/29))
-* [Fix]: corrected the referece to environment variables PGMODELER_*. Now pgModeler search for necessary paths on current directory if some of these variables are not set.
-* [Fix]: corrected the validation of UTF-8 names that have 3 bytes length.
-* [Fix]: corrected the sources path reference on project (.pro) files. Now lupdate command do not generates empty TS files.
-* [Fix]: corrected a bug that was causing crash where user try to edit protected objects.
-* [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statements.
+* [New] added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
+* [New] added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster since pgModeler WILL NOT install it automatically or generate the command to do it!
+* [New] added a model restoration feature to reopen models after unexpected quit (crash).
+* [New] added a crash handler to pgModeler. Now signal SIGSEGV is trapped (in most cases) and the crash handler pops up permiting the user to generate an error report. (EXPERIMENTAL)
+* [New] to facilitate the error reporting exceptions stack now can be showed in text format. Users can post the complete error stack when creating an issue.
+* [New] icon added to pgModeler executable (Windows only)
+* [Change] update on pt_BR translation file.
+* [Change] removed "pgmodeler" prefix from translation files.
+* [Change] added the field "Underline" on textbox editing form.
+* [Fix] corrected the "AlwayOnTop" bug on model overview widget. ([issue#30](https://github.com/pgmodeler/pgmodeler/issues/30))
+* [Fix] little fix on startup scripts. Corrected de PGMODELER_ROOT on both Linux and Windows systems. ([issue#29](https://github.com/pgmodeler/pgmodeler/issues/29))
+* [Fix] corrected the referece to environment variables PGMODELER_*. Now pgModeler search for necessary paths on current directory if some of these variables are not set.
+* [Fix] corrected the validation of UTF-8 names that have 3 bytes length.
+* [Fix] corrected the sources path reference on project (.pro) files. Now lupdate command do not generates empty TS files.
+* [Fix] corrected a bug that was causing crash where user try to edit protected objects.
+* [Fix] corrected the exhibition of UTF-8 messages on ```throw``` statements.
 
 v0.3.3
 ------
 
 <em>Release date: October 09, 2012</em>
 
-* [Change]: pgModeler license were update to GPLv3.
-* [Change]: Error massages and entire UI were translated to en_US. Now people can contribute more easily with translation files. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
-* [Change]: The left side image were removed form all forms giving more space to show widgets.
-* [Change]: pgModeler now shows a messagebox at startup if any critical error is raised instead to show them on stdin.
-* [Fix]: Translation files now are correctly loaded depending on system language. [(issue#23)](https://github.com/pgmodeler/pgmodeler/issues/23)
-* [Fix]: Compilation process and execution is working correctly on Windows system. [(issue#11)](https://github.com/pgmodeler/pgmodeler/issues/11)
-* [Fix]: No more crashes when dealing with relationships that have special triggers/indexes/columns. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8) [(issue#24)](https://github.com/pgmodeler/pgmodeler/issues/24)
+* [Change] pgModeler license were update to GPLv3.
+* [Change] Error massages and entire UI were translated to en_US. Now people can contribute more easily with translation files. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
+* [Change] The left side image were removed form all forms giving more space to show widgets.
+* [Change] pgModeler now shows a messagebox at startup if any critical error is raised instead to show them on stdin.
+* [Fix] Translation files now are correctly loaded depending on system language. [(issue#23)](https://github.com/pgmodeler/pgmodeler/issues/23)
+* [Fix] Compilation process and execution is working correctly on Windows system. [(issue#11)](https://github.com/pgmodeler/pgmodeler/issues/11)
+* [Fix] No more crashes when dealing with relationships that have special triggers/indexes/columns. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8) [(issue#24)](https://github.com/pgmodeler/pgmodeler/issues/24)
 
 v0.3.2
 ------
 
 <em>Release date: September 27, 2012</em>
 
-* [Change]: The default extension for the models now stands for ".dbm" [(issue#9)](https://github.com/pgmodeler/pgmodeler/issues/9)
-* [Change]: Tables and sequences now can be used as function return type as well parameter type. This is valid for other objects that make use of base types (except for table columns).
-* [Change]: The relationship conversion command now need to be confirmed by the user.
-* [Fix]: Compilation process now works correctly on Windows system.
-* [Fix]: Adjusted the size of some forms to show their fields properly.
-* [Fix]: The "make distclean" command now make the correct cleanup on build/ directory.
-* [Fix]: Startup scripts "start-pgmodeler.(sh|bat)" where adjusted. To prevent errors pgModeler need to be started through these scripts.
-* [Fix]: Corrected the reference to the plugins directory. [(issue#7)](https://github.com/pgmodeler/pgmodeler/issues/7)
-* [Fix]: The action "New Object -> Tablespace" now is displayed properly.
+* [Change] The default extension for the models now stands for ".dbm" [(issue#9)](https://github.com/pgmodeler/pgmodeler/issues/9)
+* [Change] Tables and sequences now can be used as function return type as well parameter type. This is valid for other objects that make use of base types (except for table columns).
+* [Change] The relationship conversion command now need to be confirmed by the user.
+* [Fix] Compilation process now works correctly on Windows system.
+* [Fix] Adjusted the size of some forms to show their fields properly.
+* [Fix] The "make distclean" command now make the correct cleanup on build/ directory.
+* [Fix] Startup scripts "start-pgmodeler.(sh|bat)" where adjusted. To prevent errors pgModeler need to be started through these scripts.
+* [Fix] Corrected the reference to the plugins directory. [(issue#7)](https://github.com/pgmodeler/pgmodeler/issues/7)
+* [Fix] The action "New Object -> Tablespace" now is displayed properly.
 
 v0.3.1
 ------
 
 <em>Release date: September 18, 2012</em>
 
-* [New]: Relationships generates column suffixes automaticaly. This behavior can be changed on the relationship editing form.
-* [New]: Added two samples to pgModeler.
-* [Change]: Tables are now created with "With OIDs" attribute by default.
+* [New] Relationships generates column suffixes automaticaly. This behavior can be changed on the relationship editing form.
+* [New] Added two samples to pgModeler.
+* [Change] Tables are now created with "With OIDs" attribute by default.
 * [Change] The graphical update method on overview widget has improved preventing unecessary processing.
-* [Fix]: Class CenaObjetos now doesn't delete objects twice.
-* [Fix]: Eliminated bug that caused crashing on pgModeler when closing a model.
+* [Fix] Class CenaObjetos now doesn't delete objects twice.
+* [Fix] Eliminated bug that caused crashing on pgModeler when closing a model.
 
 v0.3.0
 ------
 
 <em>Release date: September 12, 2012</em>
 
-* [New]: Added a model overview widget.
-* [New]: Added export feature that generates PNG image of the models.
-* [Fix]: Corrected the naming of columns generated by many-to-many relationships.
-* [Fix]: Corrected generation of XML/SQL code by the model.
+* [New] Added a model overview widget.
+* [New] Added export feature that generates PNG image of the models.
+* [Fix] Corrected the naming of columns generated by many-to-many relationships.
+* [Fix] Corrected generation of XML/SQL code by the model.
 
 v0.2.0
 ------
 
 <em>Release date: August 31, 2012</em>
 
-* [New]: Added an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
-* [New]: Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down).
-* [Change]: Due to the plugin interface the compilation method changed back to the form of shared libraries + executable.
-* [Fix]: No more crashes when removing an primary-key of a table which has relationship with other tables. [(issue#2)](https://github.com/pgmodeler/pgmodeler/issues/2)
-* [Fix]: Adjusted the semantics of one-to-one relationships.
+* [New] Added an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
+* [New] Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down).
+* [Change] Due to the plugin interface the compilation method changed back to the form of shared libraries + executable.
+* [Fix] No more crashes when removing an primary-key of a table which has relationship with other tables. [(issue#2)](https://github.com/pgmodeler/pgmodeler/issues/2)
+* [Fix] Adjusted the semantics of one-to-one relationships.
 
 v0.1.2
 ------
 
 <em>Release date: August 24, 2012</em>
 
-* [New]: Added a functionality to save modified models before closing the software.
-* [Change]: Updated the en_US dictionary with the texts of the above functionality.
-* [Fix]: Dockwidgets no longer disappear unexpectedly when the main window is minimized.
-* [Fix]: Operations performed before creating a table object (column, constraint, trigger, index, rule) are no longer removed when any exception is thrown in the creation of these object.
-* [Fix]: Fixed bug that caused user-defined types had wrong SQL/XML code generated by the model.
-* [Fix]: Functions and Types received an own range of id in order to create these objects in a correct way.
-* [Fix]: Eliminated segmentation faults caused by the destruction of relationships which possessed attributes/constraints.
-* [Fix]: Adjusted the translation to SQL code of one-to-one relationships.
-* [Fix]: Eliminated segmentation fault when editing relationships and/or undoing an operation involving a relationship.
-* [Fix]: Identifiers relationships now correctly display the thick line beside the weak entity.
+* [New] Added a functionality to save modified models before closing the software.
+* [Change] Updated the en_US dictionary with the texts of the above functionality.
+* [Fix] Dockwidgets no longer disappear unexpectedly when the main window is minimized.
+* [Fix] Operations performed before creating a table object (column, constraint, trigger, index, rule) are no longer removed when any exception is thrown in the creation of these object.
+* [Fix] Fixed bug that caused user-defined types had wrong SQL/XML code generated by the model.
+* [Fix] Functions and Types received an own range of id in order to create these objects in a correct way.
+* [Fix] Eliminated segmentation faults caused by the destruction of relationships which possessed attributes/constraints.
+* [Fix] Adjusted the translation to SQL code of one-to-one relationships.
+* [Fix] Eliminated segmentation fault when editing relationships and/or undoing an operation involving a relationship.
+* [Fix] Identifiers relationships now correctly display the thick line beside the weak entity.
 
 v0.1.1
 ------
 
 <em>Release date: August 14, 2012</em>
 
-* [Fix]: Correction of the actions for inserting graphic objects (table, text box, vision and relationship) in Windows environment.
-* [Fix]: Correction on the display of the maximize button in the window decoration in Windows environment.
-* [Fix]: Adjust on the position and spacing of widgets in editing forms.
-* [Fix]: The XML parser can now correctly read DTD files in Windows environment.
-* [Fix]: The compilation method is no longer in the form of shared libraries + executable and passed to be as standalone executable only.
+* [Fix] Correction of the actions for inserting graphic objects (table, text box, vision and relationship) in Windows environment.
+* [Fix] Correction on the display of the maximize button in the window decoration in Windows environment.
+* [Fix] Adjust on the position and spacing of widgets in editing forms.
+* [Fix] The XML parser can now correctly read DTD files in Windows environment.
+* [Fix] The compilation method is no longer in the form of shared libraries + executable and passed to be as standalone executable only.
 
 v0.1.0
 ------

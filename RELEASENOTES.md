@@ -1,46 +1,50 @@
-v0.8.0-alpha2
+v0.8.0-beta
 ------
-<em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: September 30, 2014</em><br/>
-<em>Changes since: <strong>v0.8.0-alpha1</strong></em><br/>
-<strong>Summary:</strong> this release brings important fixes that improved stability as well small features as a preparation for model-database diff scheduled to the first beta. The key feature for this release is that the code is able to be compiled using the lastest Qt version (5.3.2) without issues or crashes. All binaries releases are now aligned to the same Qt version.
+<em>Codename: <strong>Faithful Elephant</strong></em>
+<em>Release date: November 29, 2014</em>
+<em>Changes since: <strong>v0.8.0-alpha2</strong></em><br/>
+<strong>Summary:</strong> after two months of work this release brings a great set of changes / fixes and the first version of the model database diff feature, being a giant step into the maturity.<br/>
+Despite being experimental this feature works nicely in small and simple databases. In large or small but complex ones the process still generates false-positive differences but these issues will be gradually solved in future releases like it was with reverse engineering.<br/>
+The graphical objects on the canvas were completely redesigned being more pleasing to the eyes with rounded corners and smooth colors. Also, there was several improvements on dialogs design, where explicit hint texts were replaced by discreet help buttons reducing the size of these windows on screen. Another change was the reformulation of some portions of the main window. Now, pgModeler works in form of views being them: <em>welcome</em>, <em>design</em> and <em>manage</em>.<br/>
+Welcome view is where the user can start to work, loading models or creating new ones. The design view is the canvas area, where main work occurs. Finally, and this is considered a new feature, is the separation of SQL tool from the canvas area with the introduction of the manage view, where the user can manage several database instances. In the side of fixes, a lot of bugs (23 in total) were removed during this long development process. The entire list of new features / changes / fixes are quite long (90 entries) and only the most relevant is listed below. The complete change long can be found on the file CHANGELOG.md in binary packages or the source code.<br/>
 
-* [New] Added an option on general settings to disable ask to validate model before save, export and diff.
-* [New] If the user try to save, export or diff a model and it is invalidated, pgModeler will first validate and then proceed with the pending operation.
-* [New] Added an entry on general settings to control how graphical objects are created.
-* [New] Added an option to disable render smoothness to improve performance on large models.
-* [New] Added the method Catalog::getObjectsOIDs in order to retrieve all database objects oid and store them in maps. This method is used as an auxiliary for model-database diff process.
-* [New] Added the method ConnectionsConfigWidget::fillConnectionsComboBox() in order to reuse the code that fills up a combobox with configured connections.
-* [New] Added the ability to create special primary key on many-to-many relationships.
-* [New] Added the ability to save the dock widgets configuration on the main configuration file.
-* [New] Added methods to retrieve objects by their names on DatabaseModel class.
-* [Change] The configuration form was reestrucured decreasing the size occupied on the screen.
-* [Change] Minor improvement on model fix dialog.
-* [Change] Minor improvement on constraint import. Fillfactor attribute now is correcly retrieved.
-* [Change] Removed extern directives referencing configurations from SyntaxHighlighter and ModelWidget converting the used attributes to static ones.
-* [Change] Changed the way threads are created, as well the import and diff helpers instances to avoid race conditions and crashes.
-* [Change] Schemas by default will be created to show the bounding rectangle.
-* [Change] Minor improvement on BaseObject::getTypes() in order to exclude some types from the resulting vector.
-* [Change] Minor widgets adjustment on modeldatabasediffform.ui, modelexportform.ui and databaseimportform.ui.
-* [Change] Updates on several resource images.
-* [Change] Minor change on example.dbm file.
-* [Change] Minor change on DatabaseImportHelper to accept a DatabaseModel instance instead of ModelWidget.
-* [Change] Minor adjustments on deployment scripts.
-* [Fix] Fixed issue with Inno Setup invalid bitmap error (Windows).
-* [Fix] Fixed a bug that was preventing encrypted password to be configured for roles.
-* [Fix] Fixed a crash whenever user quit the application on Mac OSX.
-* [Fix] Minor fixes in order to compile using Qt 5.3.2.
-* [Fix] Fixed a bug when starting the creation process of relationships on model widget.
-* [Fix] Fixed a bug related to individual permission exclusion and object removal error when there are permissions attached to it.
-* [Fix] Fixed typos on demo version warning messages.
-* [Fix] Fixed a bug that was not generating FILLFACTOR attribute for constraints.
-* [Fix] Minor fix on object naming rules. Now the dollar sign ($) is accepted in the middle of object's name.
-* [Fix] Fixed a bug when import domains which have the same name as some tables.
-* [Fix] Fixed a bug on trigger class and editing form that was preventing the "FOR EACH ROW" attribute to be saved.
-* [Fix] Fixed a infinite loop on operation list class when calculating the chain size.
-* [Fix] Fixed a crash when creating relationships. Apparently this crash was caused by a faulty access on some threads right after close the relationship dialog.
-* [Fix] Fixed the bug that was preventing a sequence to be assinged to a column.
-* [Fix] Fixed a bug on relationship validation process that was causing errors mainly related to generalization relationships.
-* [Fix] Fixed a bug on xml parser when reading DTD files from paths that contains accentuated chars.
-* [Fix] Minor fix on Messagebox class when replacing <br> tags on message text.
-* [Fix] Minor fix on conditional compilation macros entries for demo version.
+* [New] Introduced the first version of model database diff feature.
+* [New] Enabled the usage of cached catalog queries on Catalog class in order to increase the performance of the whole import process.
+* [New] Created a styled text box object.
+* [New] Created the new class RoundedRectItem in order to generate rounded corner rectangle items on scene.
+* [New] Added a sql disabled info item for relationships.
+* [New] Added the ability to copy text from validation widget output.
+* [Change] Major changes on sql tool. Now it's possible to manage several database instances on the same server connection.
+* [Change] Improvements on DBMS export process. Now the process detects when a object is being created, changed or dropped returning the correct message to the user.
+* [Change] Improved the way many-to-many relationships can be configured. Now the generated table can have a single column as primary key or a multi-valued one.
+* [Change] Removed the restriction from Catalog and DatabaseImportForm to hide the "postgres" database.
+* [Change] Minor fix on fields which accepts expressions to show scroll bars as needed.
+* [Change] Changed the order of actions on left control bar at main window.
+* [Change] Minor improvement on export to png process. The output image is generated with a margin.
+* [Change] Minor change on sample models and asset images.
+* [Change] Changed the style of graphical resentation for schemas, views, tables. Now they are drawn with rounded borders.
+* [Change] Change the relationship cardinality pattern from (1,n) to 1:n.
+* [Change] Minor adjustments on relationships custom points descriptors in order to give better selection and movement.
+* [Change] Minor improve when moving a schema object. Relationship points will be moved together.
+* [Change] Minor change on relationship editing form, by default random line colors are enabled.
+* [Change] Minor fix on temporary models saving process.
+* [Change] Explicit hint texts were moved to the instances of the new class HintTextWidget.
+* [Change] Minor improvement on database editing form. LC_COLLATE and LC_CTYPE can be freely modified.
+* [Change] Minor improvement on primary key constraints. Columns added to them will be marked as not-null by default. This is done to avoid false-positive changes on the model db diff process.
+* [Change] Improvements on main window in order to give more visibility to SQL tool and central widget. Now there are three different views (welcome, design and manage).
+* [Fix] Fixed a bug when generating XML code for materialized views that was causing these objects to break DTD rules.
+* [Fix] Minor fix on code generation of permissions.
+* [Fix] Minor fix on permissions editing form.
+* [Fix] Fixed a bug on database import process that was crashing the application whenever importing a composite type.
+* [Fix] Minor fix on reverse engineering process when importing columns which reference user defined type that are in pg_catalog.
+* [Fix] Minor bug fix on database import process that was causing some crashes.
+* [Fix] Minor improvements on "move to schema" feature on model widget. The references to moved object are now correctly updated.
+* [Fix] Minor fix on SyntaxHighlighter that was not correctly applying the default font to the parent object.
+* [Fix] Minor fix on index class and editing form to accept FILLFACTOR no matter the indexing method used.
+* [Fix] Minor fix when removing table children objects and restoring them from operations list.
+* [Fix] Fixed a crash when reverse engineering a model. The crash was due to trying to handle a not existent graphical object for pg_catalog schema.
+* [Fix] Fixed the resizing of schema objects.
+* [Fix] Additional fixes for export model to png. Now the correct bounding rect is calculated.
+* [Fix] Fixed a bug when exporting model to png that was exporting unnecessary blank areas.
+* [Fix] Minor fix on model validation helper to avoid include the database as a referer of other objects.
+* [Fix] Fixed a bug when renaming objects and invalidating their references.
