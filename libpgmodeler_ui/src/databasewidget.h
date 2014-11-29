@@ -32,6 +32,11 @@ class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 	private:
 		Q_OBJECT
 
+    ObjectSelectorWidget *def_collation_sel,
+    *def_schema_sel,
+    *def_owner_sel,
+    *def_tablespace_sel;
+
 	public:
 		DatabaseWidget(QWidget * parent = 0);
 

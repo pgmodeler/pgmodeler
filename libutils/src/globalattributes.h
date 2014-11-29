@@ -34,7 +34,7 @@
 
 namespace GlobalAttributes {
 	static const QString
-	PGMODELER_VERSION="0.8.0-alpha1",
+  PGMODELER_VERSION="0.8.0-beta",
 	PGMODELER_VER_CODENAME="Faithful Elephant",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
   PGMODELER_SITE="http://www.pgmodeler.com.br",
@@ -53,6 +53,7 @@ namespace GlobalAttributes {
 	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
 	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
+  ALTER_SCHEMA_DIR="alter", //! \brief Default name for the alter schemas directory
 	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
 	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
@@ -116,6 +117,11 @@ namespace GlobalAttributes {
 	#else
 		//For MacOSX the crash handler path is fixed (inside bundle)
 		CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
+	#endif
+
+	#ifdef DEMO_VERSION
+	 //Maximum object creation counter for demo version
+   static const unsigned MAX_OBJECT_COUNT=8;
 	#endif
 }
 

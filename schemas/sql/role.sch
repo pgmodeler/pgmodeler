@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-@{drop}
+[-- ] @{drop}
 
  %if @{prepended-sql} %then
    @{prepended-sql}
@@ -21,7 +21,7 @@
   %if @{createrole} %then $br $tb CREATEROLE %end
   %if @{inherit} %then $br $tb INHERIT %end
   %if @{login} %then $br $tb LOGIN %end
-  %if @{replication} %and %not @{pgsql90} %then $br $tb REPLICATION %end
+  %if @{replication} %and (@{pgsql-ver} != "9.0") %then $br $tb REPLICATION %end
 %end
 
 %if @{password} %then
@@ -42,13 +42,15 @@
 %if @{admin-roles} %then $br $tb [ADMIN ] @{admin-roles} %end
 ; $br
 
-%if @{comment} %then @{comment} %end
-
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+[-- ddl-end --] $br
+
+%if @{comment} %then @{comment} %end
 
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
+
+$br

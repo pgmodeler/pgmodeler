@@ -35,7 +35,7 @@
 
 using namespace std;
 
-static const int ERROR_COUNT=218;
+static const int ERROR_COUNT=219;
 
 /*
  ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -202,6 +202,7 @@ enum ErrorType {
 	ERR_INV_CONDITIONAL,
 	ERR_UNK_ATTRIBUTE,
 	ERR_INV_METACHARACTER,
+  ERR_INV_OPERATOR_IN_EXPR,
 	ERR_UNDEF_ATTRIB_VALUE,
 	ERR_ASG_EMPTY_XML_BUFFER,
 	ERR_FILE_DIR_NOT_ACCESSED,

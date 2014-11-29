@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-alpha2" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
 <database name="exampledb" encoding="UTF8">
 	<comment><![CDATA[Example Database Model]]></comment>
 </database>
@@ -46,12 +46,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="column1">
 		<type name="text"/>
 	</column>
-	<column name="column2" not-null="true">
-		<type name="integer"/>
-	</column>
-	<column name="column3">
-		<type name="text"/>
-	</column>
 	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table">
 		<columns names="column" ref-type="src-columns"/>
 	</constraint>
@@ -73,7 +67,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table1">
 	<schema name="public"/>
-	<position x="371" y="323"/>
+	<position x="377" y="234"/>
 	<column name="column" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -117,8 +111,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.table"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="318.35" y="351.6"/>
-	<position x="318.35" y="104.6"/>
+		<position x="307" y="248"/>
+	<position x="306" y="111"/>
 	</line>
 	<label ref-type="name-label">
 		<position x="12.6257" y="16.0515"/>
@@ -126,17 +120,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="attribute">
 		<type name="integer"/>
 	</column>
-	<column name="attribute1">
-		<type name="integer"/>
-	</column>
-	<column name="attribute2">
-		<type name="integer"/>
-	</column>
 </relationship>
 
 <view name="view">
 	<schema name="public"/>
-	<position x="17" y="341"/>
+	<position x="12" y="244"/>
 	<reference table="public.table" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -157,17 +145,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.table1"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="9.26941" y="10.4593"/>
+		<position x="9.79871" y="6.45926"/>
 	</label>
 </relationship>
 
 <textbox name="textbox" font-size="9">
-	<position x="429" y="197"/>
+	<position x="406" y="156"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
 <textbox name="textbox1" protected="true" font-size="9">
-	<position x="425" y="247"/>
+	<position x="401" y="193"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 

@@ -115,6 +115,9 @@ class Trigger: public TableObject{
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
 
+		//! \brief Returns the current EXECUTE PER ROW state
+		bool isExecutePerRow(void);
+
 		//! \brief Gets one reference column by its index
 		Column *getColumn(unsigned col_idx);
 
@@ -177,6 +180,8 @@ class Trigger: public TableObject{
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
 		void validateTrigger(void);
+
+    virtual QString getSignature(bool format=true) final;
 };
 
 #endif

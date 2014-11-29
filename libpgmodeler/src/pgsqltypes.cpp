@@ -851,7 +851,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			//Creates the type based on the extracted values
 			type=PgSQLType(type_str);
 		}
-		catch(Exception &)
+    catch(Exception &)
 		{
 			/* In case of error (specially with PostGiS types) split the string to remove
 				the schema name and try to create the type once more */
@@ -859,6 +859,12 @@ PgSQLType PgSQLType::parseString(const QString &str)
 
 			if(typname.size()==2)
 				type=PgSQLType(typname[1]);
+      else
+      {
+        /* One last try it to check if the type has an entry on user defined types
+           as pg_catalog.[type name] */
+        type=PgSQLType("pg_catalog." + type_str);
+      }
 		}
 
 		type.setWithTimezone(with_tz);
@@ -965,6 +971,14 @@ QString PgSQLType::getTypeName(void)
 QString PgSQLType::getSQLTypeName(void)
 {
   return(*(*this));
+}
+
+bool PgSQLType::isRegistered(const QString &type, void *pmodel)
+{
+  if(getBaseTypeIndex(type)!=BaseType::null)
+    return(true);
+  else
+    return(getUserTypeIndex(type, nullptr, pmodel)!=BaseType::null);
 }
 
 bool PgSQLType::operator == (unsigned type_id)
@@ -1341,7 +1355,41 @@ bool PgSQLType::hasVariableLength(void)
 
 bool PgSQLType::acceptsPrecision(void)
 {
-	return(isNumericType() || (type_list[this->type_idx]!="date" && isDateTimeType()));
+  return(isNumericType() || (type_list[this->type_idx]!="date" && isDateTimeType()));
+}
+
+bool PgSQLType::isEquivalentTo(PgSQLType type)
+{
+  unsigned this_idx=0, type_idx=0;
+  static vector<QStringList> types={ {"int2","smallint"},
+                                     {"int4","integer"},
+                                     {"int8","bigint"},
+                                     {"decimal","numeric"},
+                                     {"character varying","varchar"},
+                                     {"character", "char"},
+                                     {"bit varying","varbit"} };
+
+  //If the types are equal there is no need to perform further operations
+  if(*this==type)
+    return(true);
+
+  //Getting the index which the this type is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~(*this))) break;
+    this_idx++;
+  }
+
+  //Getting the index which 'type' is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~type)) break;
+    type_idx++;
+  }
+
+  return(this_idx < types.size() && type_idx < types.size() &&
+         this_idx==type_idx &&
+         this->isArrayType()==type.isArrayType());
 }
 
 PgSQLType PgSQLType::getAliasType(void)
@@ -1351,7 +1399,7 @@ PgSQLType PgSQLType::getAliasType(void)
 	else if(type_list[this->type_idx]=="smallserial")
 		return(PgSQLType("smallint"));
 	else if(type_list[this->type_idx]=="bigserial")
-		return(PgSQLType("bigint"));
+		return(PgSQLType("bigint")); 
 	else
 		return(PgSQLType(type_list[this->type_idx]));
 }

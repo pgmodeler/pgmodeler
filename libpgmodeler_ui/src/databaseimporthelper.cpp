@@ -28,7 +28,6 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
-	model_wgt=nullptr;
 	xmlparser=nullptr;
 	dbmodel=nullptr;
 }
@@ -48,9 +47,8 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 
 void DatabaseImportHelper::closeConnection(void)
 {
-  if(connection.isStablished())
-    connection.close();
-
+  //if(connection.isStablished())
+  connection.close();
   catalog.closeConnection();
 }
 
@@ -67,26 +65,21 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 	}
 }
 
-void DatabaseImportHelper::setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
+void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids)
 {
-	map<ObjectType, vector<unsigned> >::iterator itr=obj_oids.begin();
-
-	if(!model_wgt)
+	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->model_wgt=model_wgt;
-	dbmodel=model_wgt->getDatabaseModel();
+	dbmodel=db_model;
 	xmlparser=dbmodel->getXMLParser();
-	object_oids=obj_oids;
-	column_oids=col_oids;
+	object_oids.insert(obj_oids.begin(), obj_oids.end());
+	column_oids.insert(col_oids.begin(), col_oids.end());
 
 	//Fills the creation order vector with the selected OIDs
 	creation_order.clear();
-	while(itr!=obj_oids.end())
-	{
-		creation_order.insert(creation_order.end(), itr->second.begin(), itr->second.end());
-		itr++;
-	}
+
+	for(auto itr : object_oids)
+		creation_order.insert(creation_order.end(), itr.second.begin(), itr.second.end());
 
 	//Sort the creation order vector to create the object in the correct sequence
 	std::sort(creation_order.begin(), creation_order.end());
@@ -136,7 +129,6 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 
 void DatabaseImportHelper::swapSequencesTablesIds(void)
 {
-	//Schema *schema=nullptr;
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
 
@@ -245,17 +237,6 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 													 OBJ_COLUMN);
 
 		names=getObjectName(QString::number(col_itr->first)).split(".");
-    /*objects=catalog.getObjectsAttributes(OBJ_COLUMN, names[0], names[1], col_itr->second);
-		itr=objects.begin();
-
-		while(itr!=objects.end() && !import_canceled)
-		{
-			oid=itr->at(ParsersAttributes::OID).toUInt();
-			columns[col_itr->first][oid]=(*itr);
-			itr++;
-		}
-
-    objects.clear(); */
     retrieveTableColumns(names[0], names[1], col_itr->second);
 
 		progress=(i/static_cast<float>(column_oids.size()))*100;
@@ -478,6 +459,9 @@ void DatabaseImportHelper::importDatabase(void)
 {
 	try
 	{
+		if(!dbmodel)
+			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
@@ -761,6 +745,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
+			ts << "<!-- OID: " << attribs[ParsersAttributes::OID] << " -->" << endl;
 			ts << xml_buf << endl;
 		}
 
@@ -777,7 +762,6 @@ void DatabaseImportHelper::resetImportParameters(void)
 	Connection::setPrintSQL(false);
 	import_canceled=false;
 	dbmodel=nullptr;
-	model_wgt=nullptr;
 	column_oids.clear();
 	object_oids.clear();
 	types.clear();
@@ -791,8 +775,11 @@ void DatabaseImportHelper::resetImportParameters(void)
 	constr_creation_order.clear();
 	obj_perms.clear();
 	col_perms.clear();
-}
 
+  //if(connection.isStablished())
+  connection.close();
+  catalog.closeConnection();
+}
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 {
@@ -930,14 +917,13 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 				//Create the type
 				param_types[i].remove("[]");
-				type=PgSQLType::parseString(param_types[i]);//PgSQLType(param_types[i]);
+        type=PgSQLType::parseString(param_types[i]);
 				type.setDimension(dim);
 			}
 
 			//Alocates a new parameter
 			param=Parameter();
 			param.setType(type);
-			//param.setIn(true);
 
 			if(param_names.isEmpty())
 				param.setName(QString("_param%1").arg(i+1));
@@ -1345,12 +1331,13 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			{
 				values=comp_attribs[i].split(":");
 
-				type_attrib.setName(values[0].remove("\""));
-				type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
-				type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
-				//type_attrib.setCodeInvalidated(true);
-
-				attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        if(values.size() >= 2)
+        {
+          type_attrib.setName(values[0].remove("\""));
+          type_attrib.setType(PgSQLType::parseString(values[1].remove("\\")));
+          type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove("\"")),	OBJ_COLLATION));
+          attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        }
 			}
 		}
 		else if(!attribs[ParsersAttributes::RANGE_TYPE].isEmpty())
@@ -1406,8 +1393,9 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	try
 	{
     unsigned tab_oid=attribs[ParsersAttributes::OID].toUInt(), type_oid=0;
+    bool is_type_registered=false;
 		Column col;
-    QString type_def, unknown_obj_xml;
+    QString type_def, unknown_obj_xml, type_name;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, "0" },
 														{ ParsersAttributes::Y_POS, "0" }};
@@ -1415,7 +1403,6 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 		attribs[ParsersAttributes::COLUMNS]="";
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
-
 
     //Retrieving columns if they were not retrieved yet
     if(columns[attribs[ParsersAttributes::OID].toUInt()].empty() && auto_resolve_deps)
@@ -1441,10 +1428,27 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				col_perms[tab_oid].push_back(itr->second[ParsersAttributes::OID].toUInt());
 
 			col.setName(itr->second[ParsersAttributes::NAME]);
-
-      //Checking if the type used by the column exists, if not it'll be created when auto_resolve_deps is checked
       type_oid=itr->second[ParsersAttributes::TYPE_OID].toUInt();
-      if(auto_resolve_deps && types.count(type_oid)==0)
+
+      /* If the type has an entry on the types map and its OID is greater than system object oids,
+         means that it's a user defined type, thus, there is the need to check if the type
+         is registered. */
+      if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+      {
+        /* Building the type name prepending the schema name in order to search it on
+           the user defined types list at PgSQLType class */
+        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], OBJ_SCHEMA);
+        type_name+="." + types[type_oid][ParsersAttributes::NAME];
+        is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
+      }
+      else
+      {
+        is_type_registered=(types.count(type_oid)!=0);
+        type_name=itr->second[ParsersAttributes::TYPE];
+      }
+
+      //Checking if the type used by the column exists (is registered), if not it'll be created when auto_resolve_deps is checked
+      if(auto_resolve_deps && !is_type_registered)
       {
         type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
         unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
@@ -1455,7 +1459,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
           type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_DOMAIN);
       }
 
-      col.setType(PgSQLType::parseString(itr->second[ParsersAttributes::TYPE]));
+      col.setType(PgSQLType::parseString(type_name));
       col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
@@ -1465,9 +1469,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         getDependencyObject(itr->second[ParsersAttributes::COLLATION], OBJ_COLLATION);
 
       col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
-			//col.setCodeInvalidated(true);
-
-			attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
+      attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			itr++;
 		}
 
@@ -1515,9 +1517,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	Rule *rule=nullptr;
-	//BaseTable *table=nullptr;
-	QString /*tab_name=getObjectName(attribs[ParsersAttributes::TABLE]),*/
-					cmds=attribs[ParsersAttributes::COMMANDS];
+  QString cmds=attribs[ParsersAttributes::COMMANDS];
 	int start=-1, end=-1;
 	QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+"), cond_regexp("(WHERE)(.)+(DO)");
 	QStringList commands;
@@ -1536,24 +1536,8 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		commands=cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts);
 		attribs[ParsersAttributes::COMMANDS]=commands.join(";");
 		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
-
-		//Check if the table exists
-		//table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
-
-		//If the table doesn't exists will check if a view exists instead
-		/*if(!table)
-			table=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
-
-		if(!table)
-			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-											.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_RULE))
-											.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
-											ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__); */
-
 		loadObjectXML(OBJ_RULE, attribs);
-		rule=dbmodel->createRule();//nullptr);
-		//table->addObject(rule);
-		//table->setModified(true);
+    rule=dbmodel->createRule();
 	}
 	catch(Exception &e)
 	{
@@ -1572,7 +1556,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 		attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(",\"\"")).join(",");
 
 		loadObjectXML(OBJ_TRIGGER, attribs);
-		dbmodel->createTrigger();//nullptr);
+    dbmodel->createTrigger();
 	}
 	catch(Exception &e)
 	{
@@ -1660,76 +1644,85 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 						tab_name=getObjectName(table_oid);
 		Table *table=nullptr;
 
-		attribs[attribs[ParsersAttributes::TYPE]]="1";
-		table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
-
-		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
+		//If the table oid is 0 indicates that the constraint is part of a data type like domains
+		if(!table_oid.isEmpty() && table_oid!="0")
 		{
-			QStringList cols, exprs, opclasses, opers;
-			ExcludeElement elem;
-			QString opc_name, op_name;
-			OperatorClass *opclass=nullptr;
-			Operator *oper=nullptr;
+      QStringList factor=Catalog::parseArrayValues(attribs[ParsersAttributes::FACTOR]);
 
-			attribs[ParsersAttributes::SRC_COLUMNS]="";
-			attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
+      if(!factor.isEmpty() && factor[0].startsWith("fillfactor="))
+        attribs[ParsersAttributes::FACTOR]=factor[0].remove("fillfactor=");
 
-			cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-			exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
-			opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
-			opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
+			attribs[attribs[ParsersAttributes::TYPE]]="1";
+			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
-			for(int i=0, id_expr=0; i < cols.size(); i++)
+			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
 			{
-				elem=ExcludeElement();
+				QStringList cols, exprs, opclasses, opers;
+				ExcludeElement elem;
+				QString opc_name, op_name;
+				OperatorClass *opclass=nullptr;
+				Operator *oper=nullptr;
 
-				if(cols[i]!="0")
-					elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
-				else if(id_expr < exprs.size())
-					elem.setExpression(exprs[id_expr++]);
+				attribs[ParsersAttributes::SRC_COLUMNS]="";
+				attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
 
-				if(i < opclasses.size() && opclasses[i]!="0")
+				cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
+				exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
+				opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
+				opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
+
+				for(int i=0, id_expr=0; i < cols.size(); i++)
 				{
-					opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
-					opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
+					elem=ExcludeElement();
 
-					if(opclass)
-						elem.setOperatorClass(opclass);
+					if(cols[i]!="0")
+						elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
+					else if(id_expr < exprs.size())
+						elem.setExpression(exprs[id_expr++]);
+
+					if(i < opclasses.size() && opclasses[i]!="0")
+					{
+						opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
+						opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
+
+						if(opclass)
+							elem.setOperatorClass(opclass);
+					}
+
+					if(i < opers.size() && opers[i]!="0")
+					{
+						op_name=getDependencyObject(opers[i], OBJ_OPERATOR, true, true, false);
+						oper=dynamic_cast<Operator *>(dbmodel->getObject(op_name, OBJ_OPERATOR));
+
+						if(oper)
+							elem.setOperator(oper);
+					}
+
+					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 				}
 
-				if(i < opers.size() && opers[i]!="0")
-				{
-					op_name=getDependencyObject(opers[i], OBJ_OPERATOR, true, true, false);
-					oper=dynamic_cast<Operator *>(dbmodel->getObject(op_name, OBJ_OPERATOR));
+			}
+			else
+			{
+				//Clears the tablespace attribute when the constraint is fk avoiding errors
+				if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
+					attribs[ParsersAttributes::TABLESPACE]="";
 
-					if(oper)
-						elem.setOperator(oper);
-				}
-
-				attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				attribs[ParsersAttributes::SRC_COLUMNS]=getColumnNames(attribs[ParsersAttributes::TABLE], attribs[ParsersAttributes::SRC_COLUMNS]).join(",");
 			}
 
-		}
-		else
-		{
-			//Clears the tablespace attribute when the constraint is fk avoiding errors
-			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
-				attribs[ParsersAttributes::TABLESPACE]="";
+			attribs[ParsersAttributes::REF_TABLE]=getDependencyObject(ref_tab_oid, OBJ_TABLE, false, true, false);
+			attribs[ParsersAttributes::DST_COLUMNS]=getColumnNames(ref_tab_oid, attribs[ParsersAttributes::DST_COLUMNS]).join(",");
+			attribs[ParsersAttributes::TABLE]=tab_name;
 
-			attribs[ParsersAttributes::SRC_COLUMNS]=getColumnNames(attribs[ParsersAttributes::TABLE], attribs[ParsersAttributes::SRC_COLUMNS]).join(",");
-    }
+			loadObjectXML(OBJ_CONSTRAINT, attribs);
+			constr=dbmodel->createConstraint(nullptr);
 
-    attribs[ParsersAttributes::REF_TABLE]=getDependencyObject(ref_tab_oid, OBJ_TABLE, false, true, false);
-    attribs[ParsersAttributes::DST_COLUMNS]=getColumnNames(ref_tab_oid, attribs[ParsersAttributes::DST_COLUMNS]).join(",");
-		attribs[ParsersAttributes::TABLE]=tab_name;  
-
-		loadObjectXML(OBJ_CONSTRAINT, attribs);
-		constr=dbmodel->createConstraint(nullptr);
-
-		if(table &&  constr->getConstraintType()==ConstraintType::primary_key)
-		{
-			table->addConstraint(constr);
-			table->setModified(true);
+			if(table &&  constr->getConstraintType()==ConstraintType::primary_key)
+			{
+				table->addConstraint(constr);
+				table->setModified(true);
+			}
 		}
 	}
 	catch(Exception &e)

@@ -1,8 +1,6 @@
 #include <QApplication>
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-	QApplication app(argc, argv);
 
-	return(app.exec());
 }

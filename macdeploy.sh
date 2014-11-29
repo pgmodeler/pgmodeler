@@ -1,7 +1,7 @@
 #/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.2.1/5.2.1/clang_64
+QT_ROOT=/Users/$USR/Qt5.3.2/5.3/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
 LOG=macdeploy.log
 
@@ -10,11 +10,25 @@ DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep 
 DEPLOY_VER=${DEPLOY_VER/\",/}
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 WITH_BUILD_NUM='-with-build-num'
+DEMO_VERSION_OPT='-demo-version'
+DEMO_VERSION=0
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-macosx"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 fi
 
 PKGFILE=$PKGNAME.dmg
@@ -52,6 +66,11 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
 rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1

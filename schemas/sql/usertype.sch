@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-@{drop}
+[-- ] @{drop}
 
 [CREATE TYPE ] @{name}
 
@@ -32,7 +32,7 @@
      %if @{enumerations} %then [ ENUM ] (@{enumerations}); %end
    %end
 
-   %if %not @{pgsql90} %and %not @{pgsql91} %and @{range} %then
+   %if (@{pgsql-ver} >= "9.2") %and @{range} %then
     [RANGE (] $br
     [SUBTYPE = ] @{subtype}
     
@@ -67,17 +67,20 @@
     );
   %end
   $br
-  %if @{owner} %then @{owner} %end
-  %if @{comment} %then @{comment} %end
 
   # This is a special token that pgModeler recognizes as end of DDL command
   # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-  [-- ddl-end --] $br $br
+  [-- ddl-end --] $br
+
+  %if @{owner} %then @{owner} %end
+  %if @{comment} %then @{comment} %end
 
    %if @{appended-sql} %then
     @{appended-sql}
-    $br [-- ddl-end --] $br $br
+    $br [-- ddl-end --] $br
    %end
+
+   $br
 %end
 
 

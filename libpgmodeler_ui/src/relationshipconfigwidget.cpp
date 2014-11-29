@@ -29,7 +29,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 	SyntaxHighlighter *pattern_hl=nullptr;
 	QList<QTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																			src_fk_pattern_txt, dst_fk_pattern_txt,
-																			pk_pattern_txt, uq_pattern_txt };
+                                      pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
@@ -42,10 +42,14 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
+  fk_to_pk_ht=new HintTextWidget(fk_to_pk_hint, this);
+  fk_to_pk_ht->setText(fk_to_pk_chk->statusTip());
+
+  center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
+  center_pnts_ht->setText(center_pnts_chk->statusTip());
+
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
-	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), hint2_lbl, SLOT(setDisabled(bool)));
 	connect(center_pnts_chk, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
-	connect(center_pnts_chk, SIGNAL(toggled(bool)), hint1_lbl, SLOT(setDisabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
@@ -164,10 +168,13 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
 	QList<QTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
-															dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt };
+                              dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
+                              pk_col_pattern_txt };
+
 	 QList<QString> pattern_ids={ ParsersAttributes::PK_PATTERN,  ParsersAttributes::UQ_PATTERN,
 																ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
-																ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
+                                ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
+                                ParsersAttributes::PK_COL_PATTERN };
 
 	relnn=(rel_type==ParsersAttributes::RELATIONSHIP_NN);
 	reldep=(rel_type==ParsersAttributes::RELATIONSHIP_DEP);
@@ -178,12 +185,14 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	src_col_pattern_txt->setEnabled(!relgen && !reldep);
 	src_fk_pattern_txt->setEnabled(!relgen && !reldep);
 	uq_pattern_txt->setEnabled(!relgen && !reldep);
+  pk_col_pattern_txt->setEnabled(relnn);
 
 	dst_col_pattern_lbl->setEnabled(relnn);
 	dst_fk_pattern_lbl->setEnabled(relnn);
 	src_col_pattern_lbl->setEnabled(!relgen && !reldep);
 	src_fk_pattern_lbl->setEnabled(!relgen && !reldep);
 	uq_pattern_lbl->setEnabled(!relgen && !reldep);
+  pk_col_pattern_lbl->setEnabled(relnn);
 
 	for(int i=0; i < inputs.size(); i++)
 	{
@@ -204,10 +213,15 @@ void RelationshipConfigWidget::updatePattern(void)
 																				 { uq_pattern_txt, ParsersAttributes::UQ_PATTERN },
 																				 { src_col_pattern_txt, ParsersAttributes::SRC_COL_PATTERN },
 																				 { dst_col_pattern_txt, ParsersAttributes::DST_COL_PATTERN },
-																				 { src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN },
-																				 { dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN } };
+                                         { src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN   },
+                                         { dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN   },
+                                         { pk_col_pattern_txt, ParsersAttributes::PK_COL_PATTERN   } };
 
 
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();
 }
 
+void RelationshipConfigWidget::hideEvent(QHideEvent *)
+{
+  settings_twg->setCurrentIndex(0);
+}

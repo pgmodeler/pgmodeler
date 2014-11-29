@@ -67,6 +67,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
+    //! brief Create an info item on the current widget's output
+    void insertInfoMessage(const QString &msg);
+
 	private slots:
 		void applyFixes(void);
 		void updateValidation(ValidationInfo val_info);
@@ -85,6 +88,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	signals:
 		void s_visibilityChanged(bool);
 		void s_validationInProgress(bool);
+    void s_validationFinished(bool);
+    void s_validationCanceled(void);
 
 	friend class MainWindow;
 };

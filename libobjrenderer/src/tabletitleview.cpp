@@ -26,7 +26,9 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	obj_name=new QGraphicsSimpleTextItem;
 	obj_name->setZValue(1);
 
-	box=new QGraphicsPolygonItem;
+  //box=new QGraphicsPolygonItem;
+  box=new RoundedRectItem;
+  box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
 	box->setZValue(0);
 
 	this->addToGroup(box);
@@ -75,10 +77,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 
 	//Strike out the table name when its sql is disabled
-	fmt=font_config[schema_name_attrib];
-	font=fmt.font();
-  font.setStrikeOut(object->isSQLDisabled() && !schema->isRectVisible());
-
+  fmt=font_config[schema_name_attrib];
+  font=fmt.font();
   schema_name->setFont(font);
 
   if(!tag)
@@ -91,11 +91,10 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	else
 		schema_name->setText(Utf8String::create(schema->getName() + "."));
 
-	fmt=font_config[name_attrib];
-	font=fmt.font();
-	font.setStrikeOut(object->isSQLDisabled());
+  fmt=font_config[name_attrib];
+  font=fmt.font();
 
-	obj_name->setFont(font);
+  obj_name->setFont(font);
 	obj_name->setText(Utf8String::create(object->getName()));
 
   if(!tag)
@@ -129,7 +128,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 void TableTitleView::resizeTitle(float width, float height)
 {
-	QPolygonF pol;
+  /*QPolygonF pol;
 	pol=box->polygon();
 
 	if(pol.isEmpty())
@@ -141,7 +140,8 @@ void TableTitleView::resizeTitle(float width, float height)
 	}
 
 	this->resizePolygon(pol, width, height);
-	box->setPolygon(pol);
+  box->setPolygon(pol); */
+  box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==" ")
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);

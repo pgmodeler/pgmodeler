@@ -9,7 +9,7 @@
 %if @{operator} %then
  $tb OPERATOR $tb @{stg-number} $tb @{signature}
 
- %if %not @{pgsql90} %then
+ %if (@{pgsql-ver} != "9.0") %then
     %if @{opfamily} %then
 	[ FOR ORDER BY ] @{opfamily}
     %else

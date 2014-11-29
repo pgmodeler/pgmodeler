@@ -40,6 +40,9 @@ namespace PgModelerNS {
 		 the template function above. */
 	void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
+  //! brief Replaces the sequence of chars [`'] by html tags <strong>  and <em>
+  QString formatString(const QString &msg);
+
   /*! brief Generates a unique name based upon the specified object and the list of objects of the same type.
   User can specify a suffix for the generated name as well if the comparison inside the method must be done with
   formated names */

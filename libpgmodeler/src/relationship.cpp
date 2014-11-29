@@ -32,6 +32,7 @@ const unsigned Relationship::PK_PATTERN=2;
 const unsigned Relationship::UQ_PATTERN=3;
 const unsigned Relationship::SRC_FK_PATTERN=4;
 const unsigned Relationship::DST_FK_PATTERN=5;
+const unsigned Relationship::PK_COL_PATTERN=6;
 
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
@@ -78,6 +79,7 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
     this->upd_action=fk_upd_act;
 
     this->invalidated=true;
+    this->single_pk_column=false;
 
 		if(rel_type==RELATIONSHIP_11)
 			str_aux=QApplication::translate("Relationship","%1_has_one_%2","");
@@ -117,6 +119,7 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + "uq");
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
+      setNamePattern(PK_COL_PATTERN, "id");
 		}
 		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN)
 			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
@@ -149,7 +152,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 		for(i=0; i < count; i++)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
-		if(pat_id > DST_FK_PATTERN)
+    if(pat_id > PK_COL_PATTERN)
 			throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
 											.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!BaseObject::isValidName(aux_name))
@@ -163,7 +166,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 
 QString Relationship::getNamePattern(unsigned pat_id)
 {
-	if(pat_id > DST_FK_PATTERN)
+  if(pat_id > PK_COL_PATTERN)
 		throw Exception(ERR_REF_INV_NAME_PATTERN_ID,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(name_patterns[pat_id]);
@@ -226,8 +229,8 @@ void Relationship::setIdentifier(bool value)
 void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 {
 	/* Raises an error if the user try to set columns for special primary key when the
-		relationship type is n-n or identifier or self relationship */
-	if(!cols.empty() && (isSelfRelationship() || isIdentifier() || rel_type==RELATIONSHIP_NN))
+		relationship type is identifier or self relationship */
+	if(!cols.empty() && (isSelfRelationship() || isIdentifier()))
 		throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
 										.arg(Utf8String::create(this->getName())),
 										ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -380,11 +383,11 @@ int Relationship::getObjectIndex(TableObject *object)
 
 bool Relationship::isColumnExists(Column *column)
 {
-	vector<Column *>::iterator itr, itr_end;
-	Column *col_aux=nullptr;
-	bool found=false;
-
-	//Raises an error if the column is not allocated
+    vector<Column *>::iterator itr, itr_end;
+    Column *col_aux=nullptr;
+    bool found=false;
+    
+    //Raises an error if the column is not allocated
 	if(!column)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -1414,6 +1417,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
       column->setDefaultValue("");
+      column->setComment("");
 
 			prev_name=prev_ref_col_names[column_aux->getObjectId()];
 
@@ -1638,12 +1642,13 @@ void Relationship::addColumnsRel1n(void)
 
 void Relationship::addColumnsRelNn(void)
 {
+  Column *pk_col=nullptr;
 	Table *tab=nullptr, *tab1=nullptr;
 	Constraint *pk_tabnn=nullptr;
 	bool src_not_null=false, dst_not_null=false;
   ActionType src_del_act=ActionType::restrict, dst_del_act=ActionType::restrict,
       src_upd_act=ActionType::cascade, dst_upd_act=ActionType::cascade;
-	unsigned i, count;
+
 
 	try
 	{
@@ -1665,15 +1670,39 @@ void Relationship::addColumnsRelNn(void)
 		copyColumns(tab, table_relnn, src_not_null);
 		copyColumns(tab1, table_relnn, dst_not_null);
 
+    if(single_pk_column)
+    {
+      pk_col=new Column;
+      pk_col->setName(generateObjectName(PK_COL_PATTERN));
+      pk_col->setType(PgSQLType("serial"));
+      pk_col->setAddedByLinking(true);
+      table_relnn->addColumn(pk_col);
+    }
+
 		//Creates the primary key for the n-n relationship table
 		pk_tabnn=new Constraint;
 		pk_tabnn->setName(generateObjectName(PK_PATTERN));
 		pk_tabnn->setConstraintType(ConstraintType::primary_key);
 		pk_tabnn->setAddedByLinking(true);
-		count=gen_columns.size();
 
-		for(i=0; i < count; i++)
-			pk_tabnn->addColumn(gen_columns[i],Constraint::SOURCE_COLS);
+    if(!single_pk_column)
+    {
+      for(auto col : gen_columns)
+        pk_tabnn->addColumn(col, Constraint::SOURCE_COLS);
+    }
+    else
+    {
+      pk_tabnn->addColumn(pk_col, Constraint::SOURCE_COLS);
+
+      for(auto col : gen_columns)
+        col->setNotNull(true);
+    }
+
+		for(unsigned i : column_ids_pk_rel)
+		{
+			if(i < rel_attributes.size())
+				pk_tabnn->addColumn(dynamic_cast<Column *>(rel_attributes[i]), Constraint::SOURCE_COLS);
+		}
 
 		table_relnn->addConstraint(pk_tabnn);
 
@@ -1681,14 +1710,17 @@ void Relationship::addColumnsRelNn(void)
 		addConstraints(table_relnn);
 
     addForeignKey(tab, table_relnn, src_del_act, src_upd_act);
-    addForeignKey(tab1, table_relnn, dst_del_act, dst_upd_act);
+		addForeignKey(tab1, table_relnn, dst_del_act, dst_upd_act);
+
+    //For single pk column mode the generated column is added at the end of gen_columns vector
+    if(pk_col)
+      gen_columns.push_back(pk_col);
 	}
 	catch(Exception &e)
 	{
 		//Forcing the relationship as connected to perform the disconnection operations
 		this->connected=true;
 		this->disconnectRelationship();
-
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1705,7 +1737,21 @@ Table *Relationship::getReferenceTable(void)
 			return(dynamic_cast<Table *>(dst_table));
 		else
 			return(dynamic_cast<Table *>(src_table));
-	}
+  }
+}
+
+void Relationship::setSiglePKColumn(bool value)
+{
+  if(rel_type==RELATIONSHIP_NN)
+  {
+    single_pk_column=value;
+    this->invalidated=(single_pk_column!=value);
+  }
+}
+
+bool Relationship::isSiglePKColumn(void)
+{
+  return(single_pk_column);
 }
 
 Table *Relationship::getReceiverTable(void)
@@ -2239,32 +2285,32 @@ bool Relationship::isInvalidated(void)
 
 				valid=(rel_cols_count == tab_cols_count);
 
-				/* Checking if the columns created with the connection still exists
-				in reference table */
-				count=fk->getColumnCount(Constraint::SOURCE_COLS);
-				pk=table->getPrimaryKey();
+        /* Checking if the columns created with the connection still exists
+        in reference table */
+        count=fk->getColumnCount(Constraint::SOURCE_COLS);
+        pk=table->getPrimaryKey();
 
-				for(i=0; i < count && valid; i++)
-				{
-					gen_col=fk->getColumn(i, Constraint::SOURCE_COLS);
-					pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
-					valid=(gen_col->getName()==generateObjectName(SRC_COL_PATTERN, pk_col) ||
-								 gen_col->getName().contains(pk_col->getName()));
-				}
+        for(i=0; i < count && valid; i++)
+        {
+          gen_col=fk->getColumn(i, Constraint::SOURCE_COLS);
+          pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
+          valid=(gen_col->getName()==generateObjectName(SRC_COL_PATTERN, pk_col) ||
+                 gen_col->getName().contains(pk_col->getName()));
+        }
 
-				/* Checking if the columns created with the connection still exists
-				in receiver table */
-				count=fk1->getColumnCount(Constraint::SOURCE_COLS);
-				pk=table1->getPrimaryKey();
+        /* Checking if the columns created with the connection still exists
+        in receiver table */
+        count=fk1->getColumnCount(Constraint::SOURCE_COLS);
+        pk=table1->getPrimaryKey();
 
-				for(i=0; i < count && valid; i++)
-				{
-					gen_col=fk1->getColumn(i, Constraint::SOURCE_COLS);
-					pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
-					valid=(gen_col->getName()==generateObjectName(DST_COL_PATTERN, pk_col) ||
-								 gen_col->getName().contains(pk_col->getName()));
-				}
-			}
+        for(i=0; i < count && valid; i++)
+        {
+          gen_col=fk1->getColumn(i, Constraint::SOURCE_COLS);
+          pk_col=pk->getColumn(i, Constraint::SOURCE_COLS);
+          valid=(gen_col->getName()==generateObjectName(DST_COL_PATTERN, pk_col) ||
+                 gen_col->getName().contains(pk_col->getName()));
+        }
+      }
 		}
 		return(!valid);
 	}
@@ -2329,6 +2375,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		setRelationshipAttributes();
 		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
+    attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? "1" : "");
 		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
 		attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
@@ -2344,6 +2391,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UQ_PATTERN];
 		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
 		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
+    attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PK_COL_PATTERN];
 
 		attributes[ParsersAttributes::COLUMNS]="";
 		count=rel_attributes.size();
@@ -2412,5 +2460,18 @@ void Relationship::operator = (Relationship &rel)
   this->upd_action=rel.upd_action;
   this->del_action=rel.del_action;
 	this->custom_color=rel.custom_color;
+  this->single_pk_column=rel.single_pk_column;
+}
+
+QString Relationship::getInheritDefinition(bool undo_inherit)
+{
+  if(rel_type!=RELATIONSHIP_GEN)
+    return("");
+
+  attributes[ParsersAttributes::INHERIT]=(undo_inherit ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+  attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
+
+  return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
 }
 

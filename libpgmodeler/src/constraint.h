@@ -81,6 +81,8 @@ class Constraint: public TableObject{
 		//! \brief Formats the exclude elements string used by the SchemaParser
 		void setExcludeElementsAttribute(unsigned def_type);
 
+    void setDeclInTableAttribute(void);
+
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
@@ -130,7 +132,9 @@ class Constraint: public TableObject{
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
 		void setTablespace(BaseObject *tabspc);
 
-		//! \brief Defines the constraint fill factor (only for primary keys and unique)
+		/*! \brief Defines the constraint fill factor (only for primary keys and unique).
+				Values less than 10 (except 0) or above 100 will be adjusted to accepted values. To use the default
+				settings specify 0 as fill factor */
 		void setFillFactor(unsigned factor);
 
 		//! \brief Defines if the constraints is propagated to child tables (only for exclude constraints)
@@ -213,6 +217,8 @@ class Constraint: public TableObject{
 		 whether the columns added by relationship must appear on the code definition */
 		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
 
+    virtual QString getDropDefinition(bool cascade) final;
+
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);
 
@@ -240,6 +246,15 @@ class Constraint: public TableObject{
 
 		//! \brief Remove all exclude elements from the constraint
 		void removeExcludeElements(void);
+
+    //! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
+    void setColumnsNotNull(bool value);
+
+    virtual QString getSignature(bool format) final;
+
+    /*! brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
+        BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
+    virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
 };
 
 #endif

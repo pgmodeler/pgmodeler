@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha1" last-position="60,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.0-beta" last-position="60,0" last-zoom="1">
 <role name="admin1"
       superuser="true"
       connlimit="500"
@@ -549,7 +549,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_A1">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="150" y="930.4"/>
-	<column name="coluna_B_">
+	<column name="coluna_B_" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1_">
@@ -578,7 +578,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_A2">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="90" y="1207.8"/>
-	<column name="њcoluna_Bњ">
+	<column name="њcoluna_Bњ" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="њcoluna_B1њ">
@@ -604,7 +604,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_C1">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="1567" y="567.2"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -630,7 +630,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="tabela_B_4a" protected="true">
 	<schema name="public"/>
 	<position x="1021" y="949"/>
-	<column name="coluna_B" protected="true">
+	<column name="coluna_B" not-null="true" protected="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1" protected="true">
@@ -656,7 +656,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_B1">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="628.889" y="549.667"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -682,7 +682,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="tabela_B_4c">
 	<schema name="public"/>
 	<position x="1019" y="1231.4"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -731,7 +731,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_A3">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="612" y="1033"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -760,7 +760,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_C3">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="958" y="263"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -786,7 +786,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_A4">
 	<schema name="&quot;schema_A&quot;"/>
 	<position x="604" y="906"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -815,7 +815,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_C4">
 	<schema name="&quot;schema_C&quot;"/>
 	<position x="948" y="617.8"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -841,7 +841,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_B2">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="482.444" y="722.333"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -867,7 +867,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_B4">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="108.444" y="700.667"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -893,7 +893,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="table_B3">
 	<schema name="&quot;schema_B&quot;"/>
 	<position x="629.333" y="254.889"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -920,7 +920,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="tabela_B_4z" oids="true">
 	<schema name="public"/>
 	<position x="1183" y="1102.6"/>
-	<column name="coluna_B">
+	<column name="coluna_B" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="coluna_B1">
@@ -1050,7 +1050,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste2">
 		<type name="integer"/>
 	</column>
-	<column name="__coluna_Teste3">
+	<column name="__coluna_Teste3" not-null="true">
 		<type name="integer"/>
 	</column>
 	<constraint name="relacao_teste_6_pk" type="pk-constr" factor="100">
@@ -1080,7 +1080,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste2">
 		<type name="integer"/>
 	</column>
-	<column name="coluna_Teste3">
+	<column name="coluna_Teste3" not-null="true">
 		<type name="integer"/>
 	</column>
 	<constraint name="relacao_teste_7_pk" type="pk-constr" factor="100">
@@ -1169,19 +1169,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </trigger>
 
 <textbox name="pagila_desc" font-size="11">
-	<position x="82" y="80.273"/>
-	<comment><![CDATA[This database model is here just for historical (or nostalgic) reason,
+	<position x="82" y="39.273"/>
+	<comment><![CDATA[[ sampledb database ]
+
+This database model is here just for historical (or nostalgic) reason,
 being heavily used on initial versions of pgModeler to test the integration
 between the objects.
 
 It does not represent any specific context and export it to database will
 generate several errors since they are arbitrarily connected and, furthermore,
 some other dependency objects are purposely mal-formed to provoke SQL errors.]]></comment>
-</textbox>
-
-<textbox name="sample_text" bold="true" font-size="11">
-	<position x="82.818" y="31.455"/>
-	<comment><![CDATA[sampledb database]]></comment>
 </textbox>
 
 </dbmodel>

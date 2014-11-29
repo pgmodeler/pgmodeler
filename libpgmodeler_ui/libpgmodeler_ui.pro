@@ -98,7 +98,12 @@ SOURCES += src/mainwindow.cpp \
     src/relationshipconfigwidget.cpp \
     src/datamanipulationform.cpp \
     src/customsqlwidget.cpp \
-    src/findreplacewidget.cpp
+    src/findreplacewidget.cpp \
+    src/modeldatabasediffform.cpp \
+    src/modelsdiffhelper.cpp \
+    src/objectsdiffinfo.cpp \
+    src/hinttextwidget.cpp \
+    src/databaseexplorerwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -176,7 +181,12 @@ HEADERS += src/mainwindow.h \
     src/relationshipconfigwidget.h \
     src/datamanipulationform.h \
     src/customsqlwidget.h \
-    src/findreplacewidget.h
+    src/findreplacewidget.h \
+    src/modeldatabasediffform.h \
+    src/modelsdiffhelper.h \
+    src/objectsdiffinfo.h \
+    src/hinttextwidget.h \
+    src/databaseexplorerwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -245,6 +255,9 @@ FORMS += ui/mainwindow.ui \
     ui/relationshipconfigwidget.ui \
     ui/datamanipulationform.ui \
     ui/customsqlwidget.ui \
-    ui/findreplacewidget.ui
+    ui/findreplacewidget.ui \
+    ui/modeldatabasediffform.ui \
+    ui/hinttextwidget.ui \
+    ui/databaseexplorerwidget.ui
 
 

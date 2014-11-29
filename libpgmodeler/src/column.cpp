@@ -153,10 +153,10 @@ QString Column::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+  if(getParentTable())
+    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+  attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 
   attributes[ParsersAttributes::DEFAULT_VALUE]="";
 
@@ -166,21 +166,56 @@ QString Column::getCodeDefinition(unsigned def_type)
   {
     //Configuring the default value of the column to get the next value of the sequence
     if(def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getName(true).remove("\""));
+      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature().remove("\""));
 
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
 
-	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
-	attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
+  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
+  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Column::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Column *col=dynamic_cast<Column *>(object);
+    attribs_map attribs;
+    QString def_val;
+
+    BaseObject::setBasicAttributes(true);
+
+    if(getParentTable())
+      attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+
+    if(!this->type.isEquivalentTo(col->type))
+      attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+    if(col->sequence)
+      def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature().remove("\""));
+    else
+      def_val=col->default_value;
+
+    if(this->default_value!=def_val)
+      attribs[ParsersAttributes::DEFAULT_VALUE]=(def_val.isEmpty() ? ParsersAttributes::UNSET : def_val);
+
+    if(this->not_null!=col->not_null)
+      attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+
+    copyAttributes(attribs);
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Column::operator = (Column &col)
 {
 	this->comment=col.comment;
-	this->object_id=col.object_id;
 	this->is_protected=col.is_protected;
 
 	this->obj_name=col.obj_name;

@@ -243,7 +243,7 @@ void CodeCompletionWidget::updateList(void)
 	QString pattern;
 	QStringList list;
 	vector<BaseObject *> objects;
-	vector<ObjectType> types=BaseObject::getObjectTypes(false);
+	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
 	QTextCursor tc;
 
 	name_list->clear();
@@ -288,11 +288,6 @@ void CodeCompletionWidget::updateList(void)
 
 	if(db_model)
 	{
-		//Textboxes and relationships are the only objects that is not listed on the completion
-		types.erase(std::find(types.begin(), types.end(), OBJ_TEXTBOX));
-		types.erase(std::find(types.begin(), types.end(), OBJ_RELATIONSHIP));
-		types.erase(std::find(types.begin(), types.end(), BASE_RELATIONSHIP));
-
 		//Negative qualifying level means that user called the completion before a space (empty word)
 		if(qualifying_level < 0)
 			//The default behavior for this is to search all the objects on the model

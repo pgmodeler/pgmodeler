@@ -511,7 +511,7 @@ unsigned OperationList::getChainSize(void)
 		}
 
 		//Calculates the size of chain
-		while(i>=0 && i < static_cast<int>(operations.size()) && operations[i]->chain_type!=chain_type)
+		while(i>=0 && i < static_cast<int>(operations.size()) && size < operations.size() && operations[i]->chain_type!=chain_type)
 		{
 			i+=inc;
 			size++;
@@ -596,8 +596,7 @@ void OperationList::redoOperation(void)
 		Exception error;
 		unsigned chain_size=0, pos=0;
 
-		//if(!this->signalsBlocked())
-			chain_size=getChainSize();
+		chain_size=getChainSize();
 
 		do
 		{
@@ -723,10 +722,15 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(aux_obj)
 				oper->xml_definition=orig_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
-			/* The original object (obtained from the table, relationship or model) will have its
-				previous values restored with the existing copy on the pool. After restoring the object
-				on the pool will have the same attributes as the object before being restored
-				to enable redo operations */
+
+      //For pk constraint, before restore the previous configuration, uncheck the not-null flag of the source columns
+      if(obj_type==OBJ_CONSTRAINT)
+        dynamic_cast<Constraint *>(orig_obj)->setColumnsNotNull(false);
+
+      /* The original object (obtained from the table, relationship or model) will have its
+        previous values restored with the existing copy on the pool. After restoring the object
+        on the pool will have the same attributes as the object before being restored
+        to enable redo operations */
 			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
 			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
 			PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
@@ -734,6 +738,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 			if(aux_obj)
 				PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
+
+      //For pk constraint, after restore the previous configuration, check the not-null flag of the new source columns
+      if(obj_type==OBJ_CONSTRAINT)
+        dynamic_cast<Constraint *>(orig_obj)->setColumnsNotNull(true);
 		}
 
 		/* If the operation is of object removed and is not a redo, or
@@ -786,6 +794,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			{
 				parent_tab->setCodeInvalidated(true);
 				parent_tab->setModified(true);
+
+        if(parent_tab->getSchema())
+          dynamic_cast<Schema *>(parent_tab->getSchema())->setModified(true);
 
 				if(object->getObjectType()==OBJ_COLUMN ||
 					 object->getObjectType()==OBJ_CONSTRAINT)

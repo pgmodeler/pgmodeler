@@ -110,3 +110,21 @@ void TableObject::setCodeInvalidated(bool value)
 
 	BaseObject::setCodeInvalidated(value);
 }
+
+QString TableObject::getDropDefinition(bool cascade)
+{
+  if(getParentTable())
+    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+
+  attributes[this->getSchemaName()]="1";
+
+  return(BaseObject::getDropDefinition(cascade));
+}
+
+QString TableObject::getSignature(bool format)
+{
+  if(!parent_table)
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
+}

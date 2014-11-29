@@ -30,8 +30,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 			i <= BaseRelationship::REL_NAME_LABEL; i++)
 	{
 		if(rel->getLabel(i))
-		{
-			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
+		{      
 			labels[i]=new TextboxView(rel->getLabel(i), true);
       labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 0 : 1);
 			this->addToGroup(labels[i]);
@@ -47,6 +46,15 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	descriptor=new QGraphicsPolygonItem;
 	descriptor->setZValue(0);
 	this->addToGroup(descriptor);
+
+  obj_shadow=new QGraphicsPolygonItem;
+  obj_shadow->setZValue(-1);
+  this->addToGroup(obj_shadow);
+
+  obj_selection=new QGraphicsPolygonItem;
+  obj_selection->setZValue(4);
+  obj_selection->setVisible(false);
+  this->addToGroup(obj_selection);
 
 	tables[0]=tables[1]=nullptr;
 
@@ -106,7 +114,7 @@ RelationshipView::~RelationshipView(void)
 	delete(descriptor);
 }
 
-void RelationshipView::hideNameLabel(bool value)
+void RelationshipView::setHideNameLabel(bool value)
 {
 	hide_name_label=value;
 }
@@ -164,7 +172,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
-		pos_info_pol->setVisible(value.toBool());
+    pos_info_rect->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool());
 		this->configurePositionInfo();
@@ -427,8 +435,8 @@ void RelationshipView::configurePositionInfo(void)
 		BaseObjectView::configurePositionInfo(descriptor->pos());
 		pos_info_txt->setPos(descriptor->pos().x(),
 												 descriptor->pos().y() - pos_info_txt->boundingRect().height());
-		pos_info_pol->setPos(descriptor->pos().x(),
-												 descriptor->pos().y() - pos_info_pol->boundingRect().height());
+    pos_info_rect->setPos(descriptor->pos().x(),
+                         descriptor->pos().y() - pos_info_rect->boundingRect().height());
 	}
 }
 
@@ -629,8 +637,8 @@ void RelationshipView::configureLine(void)
 				else
 					pol=graph_points[i];
 
-				pol->setPos(QPointF(points[i].x()-GRAPHIC_PNT_RADIUS,
-														points[i].y()-GRAPHIC_PNT_RADIUS));
+        pol->setPos(points[i]);
+        pol->moveBy(-GRAPHIC_PNT_RADIUS/2.5, -GRAPHIC_PNT_RADIUS/2.5);
 				pol->setVisible(this->isSelected());
 			}
 
@@ -773,11 +781,11 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-
-		this->configureDescriptor();
+    this->configureDescriptor();
 		this->configureLabels();
 		this->configureProtectedIcon();
-		configuring_line=false;
+
+    configuring_line=false;
 
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
@@ -808,11 +816,12 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-	float x, y, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+  float x, y, x1, y1, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
 	QColor line_color=base_rel->getCustomColor();
+  QGraphicsPolygonItem *pol_item=nullptr;
 
 	//Configuring the relationship descriptor color
 	if(base_rel->getCustomColor()!=Qt::transparent)
@@ -885,27 +894,35 @@ void RelationshipView::configureDescriptor(void)
 		obj_shadow->setRotation(-lin.angle());
 	}
 
-	x=pnt.x() - (pol.boundingRect().width()/2.0f);
-	y=pnt.y() - (pol.boundingRect().height()/2.0f);
+  x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
+  y=y1=pnt.y() - (pol.boundingRect().height()/2.0f);
 
 	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
 												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
+
+  configureSQLDisabledInfo();
+  x1+=6 * HORIZ_SPACING;
+  y1-=3 * VERT_SPACING;
+  sql_disabled_box->setPos(x1, y1);
+  sql_disabled_txt->setPos(x1 + HORIZ_SPACING, y1 + VERT_SPACING);
 
 	descriptor->setPolygon(pol);
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());
 	descriptor->setPos(x, y);
 
-	obj_selection->setPolygon(pol);
-	obj_selection->setTransformOriginPoint(obj_selection->boundingRect().center());
-	obj_selection->setPos(x,y);
-	obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+  pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_selection);
+  pol_item->setPolygon(pol);
+  pol_item->setTransformOriginPoint(obj_selection->boundingRect().center());
+  pol_item->setPos(x,y);
+  pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+  pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 
-	obj_shadow->setPolygon(pol);
-	obj_shadow->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	obj_shadow->setPos(x + 2.5f, y + 3.5f);
-	obj_shadow->setPen(Qt::NoPen);
-	obj_shadow->setBrush(QColor(50,50,50,60));
+  pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
+  pol_item->setPolygon(pol);
+  pol_item->setTransformOriginPoint(obj_shadow->boundingRect().center());
+  pol_item->setPos(x + 2.5f, y + 3.5f);
+  pol_item->setPen(Qt::NoPen);
+  pol_item->setBrush(QColor(50,50,50,60));
 
 	this->configureAttributes();
 	this->configurePositionInfo();
@@ -1036,12 +1053,6 @@ void RelationshipView::configureLabels(void)
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
-	/*if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-	{
-		base_rel->setMandatoryTable(BaseRelationship::SRC_TABLE, true);
-		base_rel->setMandatoryTable(BaseRelationship::DST_TABLE, true);
-	}*/
-
 	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
 
 	pnt=descriptor->pos();
@@ -1062,7 +1073,7 @@ void RelationshipView::configureLabels(void)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-		float dl, da, factor;
+    float dl, da, factor, v_space=VERT_SPACING * 2.5, h_space=HORIZ_SPACING * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
@@ -1079,12 +1090,12 @@ void RelationshipView::configureLabels(void)
 				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
 					 (rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.45 : 0.75);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.80 : 0.55);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 				else
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.50 : 0.25);
+          factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.05 : 0.45);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 
@@ -1139,8 +1150,8 @@ void RelationshipView::configureLabels(void)
 					pf=lins[idx].p1();
 				}
 
-				dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
-				da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
+        dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
+        da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
 
 				x=pi.x() - dl;
 				y=pi.y() - da;
@@ -1152,24 +1163,24 @@ void RelationshipView::configureLabels(void)
 				rect.setSize(labels[idx]->boundingRect().size());
 
 				if(rect.contains(tab_rect.bottomRight()))
-				{ x+=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+        { x+=dl + h_space; y+=da + v_space; }
 				else if(rect.contains(tab_rect.bottomLeft()))
-				{ x-=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
+        { x-=dl + h_space; y+=da + v_space; }
 				else if(rect.contains(tab_rect.topLeft()))
-				{ x-=dl + HORIZ_SPACING; y-=da + VERT_SPACING; }
+        { x-=dl + h_space; y-=da + v_space; }
 				else if(rect.contains(tab_rect.topRight()))
-				{ x+=dl + HORIZ_SPACING;  y-=da + VERT_SPACING; }
+        { x+=dl + h_space; y-=da + v_space; }
 				else
 				{
 					if(tab_rect.contains(rect.bottomLeft()) && tab_rect.contains(rect.bottomRight()))
-						y-=da + VERT_SPACING;
+            y-=da + v_space;
 					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.topRight()))
-						y+=da + VERT_SPACING;
+            y+=da + v_space;
 
 					if(tab_rect.contains(rect.topRight()) && tab_rect.contains(rect.bottomRight()))
-						x-=dl + HORIZ_SPACING;
+            x-=dl + h_space;
 					else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.bottomLeft()))
-						x+=dl + HORIZ_SPACING;
+            x+=dl + h_space;
 				}
 
 				configureLabelPosition(label_ids[idx], x, y);
@@ -1186,6 +1197,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 	if(labels[label_id])
 	{
 		BaseRelationship *base_rel=this->getSourceObject();
+    QTextCharFormat char_fmt;
 		QPointF label_dist;
 
 		labels_ini_pos[label_id]=QPointF(x,y);
@@ -1199,7 +1211,10 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 
 		labels[label_id]->setPos(x,y);
 		labels[label_id]->setToolTip(this->toolTip());
-		labels[label_id]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+
+    char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::LABEL);
+    char_fmt.setFontPointSize(char_fmt.fontPointSize() * 0.90);
+    labels[label_id]->setFontStyle(char_fmt);
 		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
 																		BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
 		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);

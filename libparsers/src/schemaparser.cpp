@@ -17,6 +17,7 @@
 */
 
 #include "schemaparser.h"
+#include "parsersattributes.h"
 
 const char SchemaParser::CHR_COMMENT='#';
 const char SchemaParser::CHR_LINE_END='\n';
@@ -29,6 +30,9 @@ const char SchemaParser::CHR_INI_CONDITIONAL='%';
 const char SchemaParser::CHR_INI_METACHAR='$';
 const char SchemaParser::CHR_INI_PURETEXT='[';
 const char SchemaParser::CHR_END_PURETEXT=']';
+const char SchemaParser::CHR_INI_CEXPR='(';
+const char SchemaParser::CHR_END_CEXPR=')';
+const char SchemaParser::CHR_VAL_DELIM='"';
 
 const QString SchemaParser::TOKEN_IF="if";
 const QString SchemaParser::TOKEN_THEN="then";
@@ -37,6 +41,7 @@ const QString SchemaParser::TOKEN_END="end";
 const QString SchemaParser::TOKEN_OR="or";
 const QString SchemaParser::TOKEN_AND="and";
 const QString SchemaParser::TOKEN_NOT="not";
+const QString SchemaParser::TOKEN_DEFINE="define";
 
 const QString SchemaParser::TOKEN_META_SP="sp";
 const QString SchemaParser::TOKEN_META_BR="br";
@@ -44,22 +49,18 @@ const QString SchemaParser::TOKEN_META_TB="tb";
 const QString SchemaParser::TOKEN_META_OB="ob";
 const QString SchemaParser::TOKEN_META_CB="cb";
 
+const QString SchemaParser::TOKEN_EQ_OP="==";
+const QString SchemaParser::TOKEN_NE_OP="!=";
+const QString SchemaParser::TOKEN_GT_OP=">";
+const QString SchemaParser::TOKEN_LT_OP="<";
+const QString SchemaParser::TOKEN_GT_EQ_OP=">=";
+const QString SchemaParser::TOKEN_LT_EQ_OP="<=";
+
 const QString SchemaParser::PGSQL_VERSION_90="9.0";
 const QString SchemaParser::PGSQL_VERSION_91="9.1";
 const QString SchemaParser::PGSQL_VERSION_92="9.2";
 const QString SchemaParser::PGSQL_VERSION_93="9.3";
 const QString SchemaParser::PGSQL_VERSION_94="9.4";
-
-/*vector<QString> SchemaParser::buffer;
-attribs_map SchemaParser::attributes;
-QString SchemaParser::filename="";
-unsigned SchemaParser::line=0;
-unsigned SchemaParser::column=0;
-unsigned SchemaParser::comment_count=0;
-bool SchemaParser::ignore_unk_atribs=false;
-bool SchemaParser::ignore_empty_atribs=false;
-
-QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_94; */
 
 SchemaParser::SchemaParser(void)
 {
@@ -272,7 +273,7 @@ QString SchemaParser::getPureText(void)
 
 		/* Extracts the text while the end of pure text (]), end of buffer or
 		 beginning of other pure text ([) is reached */
-		while(current_line[column]!=CHR_END_PURETEXT &&
+    while(current_line[column]!=CHR_END_PURETEXT &&
 					line < buffer.size() &&
 					current_line[column]!=CHR_INI_PURETEXT)
 		{
@@ -286,7 +287,9 @@ QString SchemaParser::getPureText(void)
 				//Step to the next line
 				line++;
 				column=0;
-				current_line=buffer[line];
+
+        if(line < buffer.size())
+          current_line=buffer[line];
 			}
 			else column++;
 		}
@@ -393,10 +396,212 @@ bool SchemaParser::isSpecialCharacter(char chr)
 				 chr==CHR_END_PURETEXT);
 }
 
+bool SchemaParser::evaluateComparisonExpr(void)
+{
+  QString curr_line, attrib, value, oper, valid_op_chrs="=!<>";
+  bool error=false, end_eval=false, expr_is_true=true;
+  static QStringList opers = { TOKEN_EQ_OP, TOKEN_NE_OP, TOKEN_GT_OP,
+                               TOKEN_LT_OP, TOKEN_GT_EQ_OP, TOKEN_LT_EQ_OP };
+
+  try
+  {
+    curr_line=buffer[line];
+    column++;
+
+    while(!end_eval && !error)
+    {
+      ignoreBlankChars(curr_line);
+
+      /* If the scan reached the end of the line and the expression was not closed raises an syntax error
+         Comparison expr must start and end in the same line */
+      if(curr_line[column]==CHR_LINE_END && !end_eval)
+         error=true;
+
+      switch(curr_line[column].toLatin1())
+      {
+        case CHR_INI_ATTRIB:
+          /* Extract the attribute (the first element in the expression) only
+             if the comparison operator and values aren't extracted */
+          if(attrib.isEmpty() && oper.isEmpty() && value.isEmpty())
+            attrib=getAttribute();
+          else
+            error=true;
+        break;
+
+        case CHR_VAL_DELIM:
+          /* Extract the value (the last element in the expression) only
+             if the attribute and operator were extracted */
+          if(value.isEmpty() && !attrib.isEmpty() && !oper.isEmpty())
+          {
+            value+=curr_line[column++];
+
+            while(column < static_cast<unsigned>(curr_line.size()))
+            {
+              value+=curr_line[column++];
+
+              if(curr_line[column]==CHR_VAL_DELIM)
+              {
+                value+=CHR_VAL_DELIM;
+                column++;
+                break;
+              }
+            }
+          }
+          else
+            error=true;
+
+        break;
+
+        case CHR_END_CEXPR:
+          column++;
+
+          //If one of the elements are missing, raise an syntax error
+          if(attrib.isEmpty() || oper.isEmpty() || value.isEmpty())
+            error=true;
+          else if(!opers.contains(oper))
+          {
+            throw Exception(QString(Exception::getErrorMessage(ERR_INV_OPERATOR_IN_EXPR))
+                            .arg(oper).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                            ERR_INV_OPERATOR_IN_EXPR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          }
+          else if(attributes.count(attrib)==0 && !ignore_unk_atribs)
+          {
+            throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+                            .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                            ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          }
+          else
+          {
+            value.remove(CHR_VAL_DELIM);
+
+            //Evaluating the attribute value against the one captured on the expression
+            expr_is_true=((oper==TOKEN_EQ_OP && (attributes[attrib] == value)) ||
+                          (oper==TOKEN_NE_OP && (attributes[attrib] != value)) ||
+                          (oper==TOKEN_GT_OP && (attributes[attrib] > value)) ||
+                          (oper==TOKEN_LT_OP && (attributes[attrib] < value)) ||
+                          (oper==TOKEN_GT_EQ_OP && (attributes[attrib] >= value)) ||
+                          (oper==TOKEN_LT_EQ_OP && (attributes[attrib] <= value)));
+
+            end_eval=true;
+          }
+        break;
+
+        default:
+          /* Extract the operator (the second element in the expression) only
+             if the attribute was extracted and the value not */
+          if(oper.size() <= 2 && !attrib.isEmpty() && value.isEmpty())
+          {
+            //If the current char is a valid operator capture it otherwise raise an error
+            if(valid_op_chrs.indexOf(curr_line[column]) >= 0)
+              oper+=curr_line[column++];
+            else
+              error=true;
+          }
+          else
+            error=true;
+
+        break;
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  if(error)
+    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  return(expr_is_true);
+}
+
+void SchemaParser::defineAttribute(void)
+{
+  QString curr_line, attrib, value, new_attrib;
+  bool error=false, end_def=false;
+
+  try
+  {
+    curr_line=buffer[line];
+
+    while(!end_def && !error)
+    {
+      ignoreBlankChars(curr_line);
+
+      switch(curr_line[column].toLatin1())
+      {
+        case CHR_LINE_END:
+          end_def=true;
+        break;
+
+        case CHR_INI_CONDITIONAL:
+          error=true;
+        break;
+
+        case CHR_INI_ATTRIB:
+          if(new_attrib.isEmpty())
+            new_attrib=getAttribute();
+          else
+          {
+            //Get the attribute in the middle of the value
+            attrib=getAttribute();
+
+            if(attributes.count(attrib)==0 && !ignore_unk_atribs)
+            {
+              throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+                              .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                              ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+            else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
+            {
+              throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+                              .arg(attrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+                              ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            }
+
+            value+=attributes[attrib];
+          }
+        break;
+
+        case CHR_INI_PURETEXT:
+          value+=getPureText();
+        break;
+
+        case CHR_INI_METACHAR:
+          value+=translateMetaCharacter(getMetaCharacter());
+        break;
+
+        default:
+          value+=getWord();
+        break;
+      }
+
+      //If the attribute name was not extracted yet returns a error
+      if(new_attrib.isEmpty())
+        error=true;
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  if(!error)
+    /* Creates the attribute in the attribute map of the schema, making the attribute
+       available on the rest of the script being parsed */
+    attributes[new_attrib]=value;
+  else
+    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+}
+
 bool SchemaParser::evaluateExpression(void)
 {
 	QString current_line, cond, attrib, prev_cond;
-	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true;
+  bool error=false, end_eval=false, expr_is_true=true, attrib_true=true, comp_true=true;
 	unsigned attrib_count=0, and_or_count=0;
 
 	try
@@ -493,6 +698,26 @@ bool SchemaParser::evaluateExpression(void)
 					}
 				break;
 
+        case CHR_INI_CEXPR:
+          comp_true=evaluateComparisonExpr();
+
+          //Appliyng the NOT operator if found
+          if(cond==TOKEN_NOT) comp_true=!comp_true;
+
+          //Executing the AND operation if the token is found
+          if(cond==TOKEN_AND || prev_cond==TOKEN_AND)
+            expr_is_true=(expr_is_true && comp_true);
+          else if(cond==TOKEN_OR || prev_cond==TOKEN_OR)
+            expr_is_true=(expr_is_true || comp_true);
+          else
+            expr_is_true=comp_true;
+
+          //Consider the comparison expression as an attribute evaluation
+          attrib_count++;
+          cond.clear();
+          prev_cond.clear();
+        break;
+
 				default:
 					error=true;
 				break;
@@ -521,6 +746,24 @@ void SchemaParser::ignoreBlankChars(const QString &line)
          line[column]==CHR_TABULATION)) column++;
 }
 
+char SchemaParser::translateMetaCharacter(const QString &meta)
+{
+  if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
+     meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
+     meta!=TOKEN_META_CB)
+  {
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
+                    .arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1),
+                    ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
+
+  if(meta==TOKEN_META_SP) return(CHR_SPACE);
+  else if(meta==TOKEN_META_TB) return(CHR_TABULATION);
+  else if(meta==TOKEN_META_OB) return(CHR_INI_PURETEXT); //Currently this constant is used since it returns '[' (open bracket)
+  else if(meta==TOKEN_META_CB) return(CHR_END_PURETEXT); //Currently this constant is used since it returns ']' (close bracket)
+  else return(CHR_LINE_END);
+}
+
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
 {
 	try
@@ -533,7 +776,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
 
-			storePgSQLVersion(attribs);
+      attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
 			return(getCodeDefinition(filename, attribs));
@@ -583,6 +826,8 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 		//Checks if the current line is a comment start tag
 		if(!in_comment)
 			in_comment=(lin.indexOf("<!--") >= 0);
+    else if(in_comment && lin.indexOf("-->") >=0)
+      in_comment=false;
 
 		//Case the line is empty, is a xml header or a comment line and does not treat XML entities on it
 		if(lin.isEmpty() || xml_header || in_comment)
@@ -648,18 +893,6 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 	return(buf_aux);
 }
 
-void SchemaParser::storePgSQLVersion(attribs_map &attribs)
-{
-	QStringList vers=getPgSQLVersions();
-
-	while(!vers.isEmpty())
-	{
-		//Setting the @{pgsql[VERSION]} attribute in other to know which version is being used
-		attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
-		vers.pop_back();
-	}
-}
-
 QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 {
 	QString object_def;
@@ -676,7 +909,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 	//In case the file was successfuly loaded
 	if(buffer.size() > 0)
-	{
+  {
 		//Init the control variables
 		attributes=attribs;
 		error=if_expr=false;
@@ -706,19 +939,8 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 				case CHR_INI_METACHAR:
 					meta=getMetaCharacter();
 
-					//Checks whether the extracted token is valid metacharacter
-					if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
-						 meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
-						 meta!=TOKEN_META_CB)
-					{
-						str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
-										.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
-
-
-						throw Exception(str_aux,ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					}
 					//Checks whether the metacharacter is part of the  'if' expression (this is an error)
-					else if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
+          if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
 					{
 						str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
 										.arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -728,12 +950,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					else
 					{
 						//Converting the metacharacter drawn to the character that represents this
-						if(meta==TOKEN_META_SP) chr=CHR_SPACE;
-						else if(meta==TOKEN_META_TB) chr=CHR_TABULATION;
-						else if(meta==TOKEN_META_OB) chr=CHR_INI_PURETEXT; //Currently this constant is used since it returns '[' (open bracket)
-						else if(meta==TOKEN_META_CB) chr=CHR_END_PURETEXT; //Currently this constant is used since it returns ']' (close bracket)
-						else chr=CHR_LINE_END;
-
+            chr=translateMetaCharacter(meta);
 						meta="";
 						meta+=chr;
 
@@ -767,7 +984,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					atrib=getAttribute();
 
 					//Checks if the attribute extracted belongs to the passed list of attributes
-					if(attribs.count(atrib)==0)
+          if(attributes.count(atrib)==0)
 					{
 						if(!ignore_unk_atribs)
 						{
@@ -776,7 +993,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 							throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
-							attribs[atrib]="";
+              attributes[atrib]="";
 					}
 
 					//If the parser is inside an 'if / else' extracting tokens
@@ -807,7 +1024,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						/* If the attribute has no value set and parser must not ignore empty values
 						raises an exception */
-						if(attribs[atrib]=="" && !ignore_empty_atribs)
+            if(attributes[atrib]=="" && !ignore_empty_atribs)
 						{
 							str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
 											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -817,7 +1034,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 						/* If the parser is not in an if / else, concatenates the value of the attribute
 							directly in definition in sql */
-						object_def+=attribs[atrib];
+            object_def+=attributes[atrib];
 					}
 				break;
 
@@ -830,12 +1047,16 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
 						 cond!=TOKEN_THEN && cond!=TOKEN_END &&
 						 cond!=TOKEN_OR && cond!=TOKEN_NOT &&
-						 cond!=TOKEN_AND)
+             cond!=TOKEN_AND && cond!=TOKEN_DEFINE)
 					{
 						str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
 										.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
 						throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
+          else if(cond==TOKEN_DEFINE)
+          {
+            defineAttribute();
+          }
 					else
 					{
 						//If the toke is an 'if'
@@ -864,7 +1085,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						//If the parser is in 'if / else' and one 'then' token is found
 						else if(cond==TOKEN_THEN && if_level>=0)
 						{
-							//Marks the then thoke flag of the current 'if'
+              //Marks the then token flag of the current 'if'
 							vet_tk_then[if_level]=true;
 
 							/* Clears the  expression extracted flag from the 'if - then',
@@ -911,9 +1132,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 								itr=if_map[if_level].begin();
 								itr_end=if_map[if_level].end();
 							}
-							/* Caso a parte else do if atual exista
-								 então o parser varrerá a lista de palavras da parte else
-								 do if atual */
 
 							/* If there is a 'else' part on the current 'if'
 								 then the parser will scan the list of words on the 'else' part */
@@ -942,7 +1160,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 										/* If its an attribute, extracts the name and checks if the same
 										has empty value */
 										atrib=word.mid(2,word.size()-3);
-										word=attribs[atrib];
+                    word=attributes[atrib];
 
 										/* If the attribute has no value set and parser must not ignore empty values
 										raises an exception */
@@ -1051,7 +1269,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 		}
 	}
 
-
 	restartParser();
 	ignore_unk_atribs=false;
 	ignore_empty_atribs=false;
@@ -1063,7 +1280,7 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	try
 	{
 		loadFile(filename);
-		storePgSQLVersion(attribs);
+    attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
 		return(getCodeDefinition(attribs));
 	}
 	catch(Exception &e)

@@ -24,6 +24,6 @@
 @{source-type}
 @{destiny-type}
 
-%if @{signature} %then @{signature} %end
+%if @{function} %then @{function} %end
 
 </cast>  $br $br

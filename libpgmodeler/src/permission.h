@@ -152,6 +152,10 @@ class Permission: public BaseObject {
 
 		//! \brief Returns the SQL / XML definition for the permission
 		virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getSignature(bool format=false) final;
+
+    virtual QString getDropDefinition(bool cascade) final;
 };
 
 #endif

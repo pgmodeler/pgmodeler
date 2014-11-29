@@ -64,10 +64,8 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	public slots:
 		void setEnabled(bool value);
 		void setButtonVisible(unsigned idx, bool value);
-
-	private slots:
-		void selectColor(void);
-		void generateRandomColors(void);
+    void selectColor(void);
+    void generateRandomColors(void);
 
 	signals:
 		void s_colorChanged(unsigned, QColor);

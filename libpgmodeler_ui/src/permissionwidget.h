@@ -77,7 +77,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		void editPermission(void);
 
 		//! \brief Removes the selected permission
-    void removePermission(int perm_id);
+		void removePermission(int);
 
 		//! \brief Removes all permissions from the permissions table
 		void removePermissions(void);

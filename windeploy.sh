@@ -1,6 +1,6 @@
 #/bin/bash
 
-QT_INSTALL_VERSION='5.3.0'
+QT_INSTALL_VERSION='5.3.2'
 QT_BASE_VERSION='5.3'
 PGSQL_VERSION='9.3'
 QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw482_32/"
@@ -17,11 +17,25 @@ DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 WITH_BUILD_NUM='-with-build-num'
+DEMO_VERSION_OPT='-demo-version'
+DEMO_VERSION=0
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-windows"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 fi
 
 PKGFILE=$PKGNAME.exe
@@ -96,6 +110,11 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1

@@ -9,7 +9,7 @@
     [ LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace ]
   %end
       
-  %if @{pgsql90} %or @{pgsql91} %or @{pgsql92} %then
+  %if (@{pgsql-ver} <= "9.2") %then
     [ WHERE vw.relkind='v']
   %else
     [ WHERE vw.relkind IN ('v','m') ]
@@ -43,7 +43,7 @@
       [ FROM pg_class AS vw
 	LEFT JOIN pg_namespace AS ns ON ns.oid = vw.relnamespace ]
 	
-      %if @{pgsql90} %or @{pgsql91} %or @{pgsql92} %then
+      %if (@{pgsql-ver} <= "9.2") %then
        [ WHERE vw.relkind='v']
       %else
        [ WHERE vw.relkind IN ('v','m') ]

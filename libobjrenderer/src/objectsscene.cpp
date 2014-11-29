@@ -87,6 +87,7 @@ ObjectsScene::~ObjectsScene(void)
 			if(item && !item->parentItem() &&
 				 ((dynamic_cast<RelationshipView *>(item) && obj_types[i]==OBJ_RELATIONSHIP) ||
 					(dynamic_cast<TextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
+          (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
 					(dynamic_cast<GraphicalView *>(item) && obj_types[i]==OBJ_VIEW) ||
 					(dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE) ||
 					(dynamic_cast<SchemaView *>(item) && obj_types[i]==OBJ_SCHEMA)))
@@ -100,12 +101,12 @@ ObjectsScene::~ObjectsScene(void)
 	}
 }
 
-void ObjectsScene::enableCornerMove(bool enable)
+void ObjectsScene::setEnableCornerMove(bool enable)
 {
   ObjectsScene::corner_move=enable;
 }
 
-void ObjectsScene::invertPanningRangeSelection(bool invert)
+void ObjectsScene::setInvertPanningRangeSelection(bool invert)
 {
   ObjectsScene::invert_panning_rangesel=invert;
 }
@@ -128,7 +129,49 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
 {
-	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
+  QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
+}
+
+QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
+{
+  if(!seek_only_db_objs)
+    return(QGraphicsScene::itemsBoundingRect());
+  else
+  {
+    QRectF rect=QGraphicsScene::itemsBoundingRect();
+    QList<QGraphicsItem *> items=this->items();
+    float x=rect.width(), y=rect.height();
+    BaseObjectView *obj_view=nullptr;
+    QPointF pnt;
+    BaseGraphicObject *graph_obj=nullptr;
+
+    for(auto item : items)
+    {
+      obj_view=dynamic_cast<BaseObjectView *>(item);
+
+      if(obj_view && obj_view->isVisible())
+      {
+        graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
+
+        if(graph_obj)
+        {
+          if(graph_obj->getObjectType()!=OBJ_RELATIONSHIP &&
+             graph_obj->getObjectType()!=BASE_RELATIONSHIP)
+            pnt=graph_obj->getPosition();
+          else
+            pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+
+          if(pnt.x() < x)
+            x=pnt.x();
+
+          if(pnt.y() < y)
+            y=pnt.y();
+        }
+      }
+    }
+
+    return(QRectF(QPointF(x, y), rect.bottomRight()));
+  }
 }
 
 void ObjectsScene::setGridSize(unsigned size)
@@ -636,12 +679,47 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
      event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
   {
     unsigned i, count;
-    QList<QGraphicsItem *> items=this->selectedItems();
+    QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
     float x1,y1,x2,y2, dx, dy;
     QRectF rect;
-    RelationshipView *rel=nullptr;
+    SchemaView *sch_view=nullptr;
     vector<QPointF> points;
     vector<QPointF>::iterator itr;
+    vector<BaseObject *> rels, base_rels;
+    BaseRelationship *base_rel=nullptr;
+    RelationshipView *rel=nullptr;
+
+    //Gathering the relationships inside the selected schemsa in order to move their points too
+    for(auto item : items)
+    {
+      sch_view=dynamic_cast<SchemaView *>(item);
+
+      if(sch_view)
+      {
+        //Get the schema object
+        Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+
+        if(!schema->isProtected())
+        {
+          //Get the table-table and table-view relationships
+          rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
+          base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
+          rels.insert(rels.end(), base_rels.begin(), base_rels.end());
+
+          for(auto rel : rels)
+          {
+            base_rel=dynamic_cast<BaseRelationship *>(rel);
+
+            /* If the relationship contains points it will be included on the list in order to
+             move their custom line points */
+            if(!base_rel->getPoints().empty())
+              rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+          }
+        }
+      }
+    }
+
+    items.append(rel_list);
 
     /* Get the extreme points of the scene to check if some objects are out the area
      forcing the scene to be resized */
@@ -865,7 +943,12 @@ bool ObjectsScene::isRangeSelectionEnabled(void)
   return(enable_range_sel);
 }
 
-bool ObjectsScene::isPanningRangeSelectionInverted()
+bool ObjectsScene::isPanningRangeSelectionInverted(void)
 {
-  return(invert_panning_rangesel);
+	return(invert_panning_rangesel);
+}
+
+bool ObjectsScene::isRelationshipLineVisible(void)
+{
+	return(rel_line->isVisible());
 }

@@ -232,6 +232,8 @@ void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table,
 	if(trigger)
 	{
 		constr_trig_chk->setChecked(trigger->isConstraint());
+
+		exec_per_row_chk->setChecked(trigger->isExecutePerRow());
 		cond_expr_txt->setPlainText(Utf8String::create(trigger->getCondition()));
 		deferrable_chk->setChecked(trigger->isDeferrable());
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));

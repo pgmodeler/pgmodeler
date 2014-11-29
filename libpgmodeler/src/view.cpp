@@ -142,7 +142,7 @@ bool View::hasDefinitionExpression(void)
 		itr++;
 	}
 
-	return(found);
+  return(found);
 }
 
 QString View::getCommomTableExpression(void)

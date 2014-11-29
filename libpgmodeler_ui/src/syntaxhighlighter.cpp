@@ -17,38 +17,19 @@
 */
 
 #include "syntaxhighlighter.h"
-#include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
+QFont SyntaxHighlighter::default_font=QFont("DejaVu Sans Mono", 9);
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
-  GeneralConfigWidget *general_conf=nullptr;
-  map<QString, attribs_map> confs;
-
-  if(configuration_form)
-  {
-    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-    confs=general_conf->getConfigurationParams();
-  }
+  if(!parent)
+    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent->setAcceptRichText(true);
-
-  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
-  {
-    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
-    if(size < 5.0f) size=5.0f;
-
-    parent->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
-    parent->setFontPointSize(size);
-  }
-
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
-
   parent->installEventFilter(this);
-  parent_txt=parent;
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -83,7 +64,6 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 
 void SyntaxHighlighter::configureAttributes(void)
 {
-
 	conf_loaded=false;
 	current_block=-1;
 	curr_blk_info_count=0;
@@ -610,6 +590,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
 									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
 
+                format.setFontFamily(default_font.family());
+                format.setFontPointSize(default_font.pointSizeF());
 								format.setFontItalic(italic);
 								format.setFontUnderline(underline);
 
@@ -714,3 +696,7 @@ QChar SyntaxHighlighter::getCompletionTrigger(void)
 	return(completion_trigger);
 }
 
+void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
+{
+	SyntaxHighlighter::default_font=fnt;
+}

@@ -71,8 +71,9 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	viewp->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewp->centerOn(0,0);
 
-	appearanceconfig_grid->addWidget(color_picker, 3, 2, 1, 4);
-	appearanceconfig_grid->addWidget(viewp, 4 , 0, 1, 6);
+  QGridLayout *grid=dynamic_cast<QGridLayout *>(appearance_frm->layout());
+  grid->addWidget(color_picker, 3, 2, 1, 3);
+  grid->addWidget(viewp, 4 , 0, 1, 5);
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle(void)));
@@ -102,7 +103,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 	try
 	{
 		RelationshipView *rel=nullptr;
-		TextboxView *txtbox=nullptr;
+    StyledTextboxView *txtbox=nullptr;
 		TableView *tab=nullptr;
 		GraphicalView *view=nullptr;
 		unsigned count, i;
@@ -145,7 +146,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 			count=model->getObjectCount(OBJ_TEXTBOX);
 			for(i=0; i < count; i++)
 			{
-				txtbox=new TextboxView(model->getTextbox(i));
+        txtbox=new StyledTextboxView(model->getTextbox(i));
 				txtbox->setSelected(i==0);
 				scene->addItem(txtbox);
 			}

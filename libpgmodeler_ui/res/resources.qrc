@@ -184,6 +184,12 @@
         <file>icones/adddata.png</file>
         <file>icones/exportdata.png</file>
         <file>icones/disconnect.png</file>
+        <file>icones/diff.png</file>
+        <file>icones/sqlcmd.png</file>
+        <file>icones/design.png</file>
+        <file>icones/managedb.png</file>
+        <file>icones/ignore.png</file>
+        <file>icones/browsed.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -196,6 +202,8 @@
         <file>imagens/crashhandler.png</file>
         <file>imagens/rel_center_pnts.png</file>
         <file>imagens/rel_fk_to_pk.png</file>
+        <file>imagens/diff2db.png</file>
+        <file>imagens/diff2sql.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>

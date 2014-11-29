@@ -23,35 +23,35 @@ Type::Type(void)
 	obj_type=OBJ_TYPE;
 	setConfiguration(ENUMERATION_TYPE);
 
-	BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
-	BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]="";
-	BaseObject::attributes[ParsersAttributes::INPUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::OUTPUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::RECV_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::SEND_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::ANALYZE_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="";
-	BaseObject::attributes[ParsersAttributes::BY_VALUE]="";
-	BaseObject::attributes[ParsersAttributes::ALIGNMENT]="";
-	BaseObject::attributes[ParsersAttributes::STORAGE]="";
-	BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	BaseObject::attributes[ParsersAttributes::ELEMENT]="";
-	BaseObject::attributes[ParsersAttributes::DELIMITER]="";
-	BaseObject::attributes[ParsersAttributes::REDUCED_FORM]="";
-	BaseObject::attributes[ParsersAttributes::CATEGORY]="";
-	BaseObject::attributes[ParsersAttributes::PREFERRED]="";
-	BaseObject::attributes[ParsersAttributes::LIKE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::COLLATABLE]="";
-	BaseObject::attributes[ParsersAttributes::SUBTYPE]="";
-	BaseObject::attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::CANONICAL_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::OP_CLASS]="";
+  attributes[ParsersAttributes::BASE_TYPE]="";
+  attributes[ParsersAttributes::COMPOSITE_TYPE]="";
+  attributes[ParsersAttributes::RANGE_TYPE]="";
+  attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
+  attributes[ParsersAttributes::ENUM_TYPE]="";
+  attributes[ParsersAttributes::ENUMARATIONS]="";
+  attributes[ParsersAttributes::INPUT_FUNC]="";
+  attributes[ParsersAttributes::OUTPUT_FUNC]="";
+  attributes[ParsersAttributes::RECV_FUNC]="";
+  attributes[ParsersAttributes::SEND_FUNC]="";
+  attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
+  attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
+  attributes[ParsersAttributes::ANALYZE_FUNC]="";
+  attributes[ParsersAttributes::INTERNAL_LENGHT]="";
+  attributes[ParsersAttributes::BY_VALUE]="";
+  attributes[ParsersAttributes::ALIGNMENT]="";
+  attributes[ParsersAttributes::STORAGE]="";
+  attributes[ParsersAttributes::DEFAULT_VALUE]="";
+  attributes[ParsersAttributes::ELEMENT]="";
+  attributes[ParsersAttributes::DELIMITER]="";
+  attributes[ParsersAttributes::REDUCED_FORM]="";
+  attributes[ParsersAttributes::CATEGORY]="";
+  attributes[ParsersAttributes::PREFERRED]="";
+  attributes[ParsersAttributes::LIKE_TYPE]="";
+  attributes[ParsersAttributes::COLLATABLE]="";
+  attributes[ParsersAttributes::SUBTYPE]="";
+  attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]="";
+  attributes[ParsersAttributes::CANONICAL_FUNC]="";
+  attributes[ParsersAttributes::OP_CLASS]="";
 }
 
 void Type::setName(const QString &name)
@@ -72,21 +72,26 @@ void Type::setSchema(BaseObject *schema)
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
-bool Type::isAttributeExists(const QString &attrib_name)
+int Type::getAttributeIndex(const QString &attrib_name)
 {
 	vector<TypeAttribute>::iterator itr, itr_end;
-	bool found=false;
+  int idx=-1;
 
-	itr=attributes.begin();
-	itr_end=attributes.end();
+  itr=type_attribs.begin();
+  itr_end=type_attribs.end();
 
-	while(itr!=itr_end && !found)
+  while(itr!=itr_end)
 	{
-		found=(itr->getName()==attrib_name);
+    if(itr->getName()==attrib_name)
+    {
+      idx=(itr - type_attribs.begin());
+      break;
+    }
+
 		itr++;
 	}
 
-	return(found);
+  return(idx);
 }
 
 void Type::addAttribute(TypeAttribute attrib)
@@ -99,26 +104,26 @@ void Type::addAttribute(TypeAttribute attrib)
 		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the attribute already exists
-	else if(isAttributeExists(attrib.getName()))
+  else if(getAttributeIndex(attrib.getName()) >= 0)
 		throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.push_back(attrib);
+  type_attribs.push_back(attrib);
 	setCodeInvalidated(true);
 }
 
 void Type::removeAttribute(unsigned attrib_idx)
 {
 	//Raises an error if the attribute index is out of bound
-	if(attrib_idx >= attributes.size())
+  if(attrib_idx >= type_attribs.size())
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.erase(attributes.begin() + attrib_idx);
+  type_attribs.erase(type_attribs.begin() + attrib_idx);
 	setCodeInvalidated(true);
 }
 
 void Type::removeAttributes(void)
 {
-	attributes.clear();
+  type_attribs.clear();
 	setCodeInvalidated(true);
 }
 
@@ -176,7 +181,7 @@ void Type::setConfiguration(unsigned conf)
 	if(conf < BASE_TYPE || conf > RANGE_TYPE)
 		throw Exception(ERR_ASG_INV_TYPE_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.clear();
+  type_attribs.clear();
 	enumerations.clear();
 
 	for(unsigned idx=0; idx < sizeof(functions)/sizeof(Function *); idx++)
@@ -412,14 +417,14 @@ void Type::setElementsAttribute(unsigned def_type)
 	QString str_elem;
 	unsigned i, count;
 
-	count=Type::attributes.size();
+  count=type_attribs.size();
 	for(i=0; i < count; i++)
-		str_elem+=Type::attributes[i].getCodeDefinition(def_type);
+    str_elem+=type_attribs[i].getCodeDefinition(def_type);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
-	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
+  attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
 }
 
 void Type::setEnumerationsAttribute(unsigned def_type)
@@ -438,7 +443,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 		if(i < (count-1)) str_enum+=",";
 	}
 
-	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
+  attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
 }
 
 void Type::setCategory(CategoryType categ)
@@ -493,15 +498,15 @@ void Type::setSubtypeOpClass(OperatorClass *opclass)
 
 TypeAttribute Type::getAttribute(unsigned attrib_idx)
 {
-	if(attrib_idx >= attributes.size())
+  if(attrib_idx >= type_attribs.size())
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(attributes[attrib_idx]);
+  return(type_attribs[attrib_idx]);
 }
 
 unsigned Type::getAttributeCount(void)
 {
-	return(attributes.size());
+  return(type_attribs.size());
 }
 
 QString Type::getEnumeration(unsigned idx_enum)
@@ -607,62 +612,62 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(config==ENUMERATION_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="1";
+    attributes[ParsersAttributes::ENUM_TYPE]="1";
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==COMPOSITE_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
+    attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
 		setElementsAttribute(def_type);
 	}
 	else if(config==RANGE_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="1";
+    attributes[ParsersAttributes::RANGE_TYPE]="1";
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			BaseObject::attributes[ParsersAttributes::SUBTYPE]=(*subtype);
+      attributes[ParsersAttributes::SUBTYPE]=(*subtype);
 		else
-			BaseObject::attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
+      attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 		if(subtype_opclass)
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
+        attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
 			else
-				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
+        attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
 		}
 	}
 	else
 	{
-		BaseObject::attributes[ParsersAttributes::BASE_TYPE]="1";
+    attributes[ParsersAttributes::BASE_TYPE]="1";
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
-			BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
+      attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
 		else
-			BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
+      attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
 
-		BaseObject::attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
-		BaseObject::attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
-		BaseObject::attributes[ParsersAttributes::STORAGE]=(~storage);
-		BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+    attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
+    attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
+    attributes[ParsersAttributes::STORAGE]=(~storage);
+    attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
 		if(element!="any")
-			BaseObject::attributes[ParsersAttributes::ELEMENT]=(*element);
+      attributes[ParsersAttributes::ELEMENT]=(*element);
 
 		if(delimiter!='\0')
-			BaseObject::attributes[ParsersAttributes::DELIMITER]=delimiter;
+      attributes[ParsersAttributes::DELIMITER]=delimiter;
 
-		BaseObject::attributes[ParsersAttributes::CATEGORY]=~(category);
+    attributes[ParsersAttributes::CATEGORY]=~(category);
 
-		BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
-		BaseObject::attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
+    attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
+    attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
 
 		if(like_type!="any")
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
+        attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
 			else
-				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 	}
 
@@ -684,17 +689,115 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 			if(functions[i])
 			{
 				if(def_type==SchemaParser::SQL_DEFINITION)
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getName();
+          attributes[func_attrib[i]]=functions[i]->getName();
 				else
 				{
 					functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attrib[i]);
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
+          attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
 				}
 			}
 		}
 	}
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+}
+
+QString Type::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Type *type=dynamic_cast<Type *>(object);
+    attribs_map attribs;
+    QString alter_def, prev_val;
+    int attrib_idx=-1;
+
+    alter_def=BaseObject::getAlterDefinition(object);
+
+    if(this->config==type->config)
+    {
+      if(config==ENUMERATION_TYPE)
+      {
+        for(QString enum_val : type->enumerations)
+        {
+          if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
+          {
+            attribs[ParsersAttributes::BEFORE]="";
+            if(prev_val.isEmpty())
+            {
+              attribs[ParsersAttributes::BEFORE]="1";
+              prev_val=this->enumerations[0];
+            }
+
+            attribs[ParsersAttributes::VALUE]=enum_val;
+            attribs[ParsersAttributes::EXISTING_VALUE]=prev_val;
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attribs.clear();
+          }
+
+          prev_val=enum_val;
+        }
+      }
+      else if(config==COMPOSITE_TYPE)
+      {
+        //Removing type attributes
+        for(TypeAttribute attrib : this->type_attribs)
+        {
+          if(type->getAttributeIndex(attrib.getName()) < 0)
+          {
+            attribs[ParsersAttributes::DROP]="1";
+            attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attribs.clear();
+            attributes[ParsersAttributes::DROP]="";
+          }
+        }
+
+        for(TypeAttribute attrib : type->type_attribs)
+        {
+          attrib_idx=this->getAttributeIndex(attrib.getName());
+
+          //Creating type attributes
+          if(attrib_idx < 0)
+          {
+            attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+            attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+            attribs[ParsersAttributes::COLLATION]="";
+
+            if(attrib.getCollation())
+              attribs[ParsersAttributes::COLLATION]=attrib.getCollation()->getName(true);
+
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+          }
+          //Changing type attributes
+          else
+          {
+            attribs[ParsersAttributes::CHANGE]="1";
+
+            if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
+            {
+              attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+              attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+            }
+
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attributes[ParsersAttributes::CHANGE]="";
+          }
+
+          attribs.clear();
+        }
+      }
+    }
+
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Type::operator = (Type &type)
@@ -706,7 +809,7 @@ void Type::operator = (Type &type)
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(type);
 
 	this->config=type.config;
-	this->attributes=type.attributes;
+  this->type_attribs=type.type_attribs;
 	this->enumerations=type.enumerations;
 	this->internal_len=type.internal_len;
 	this->by_value=type.by_value;

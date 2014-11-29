@@ -28,6 +28,8 @@
 #include "schema.h"
 #include "databasemodel.h"
 #include "baseobjectview.h"
+#include "textboxview.h"
+#include "roundedrectitem.h"
 
 class SchemaView: public BaseObjectView
 {
@@ -36,7 +38,7 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsSimpleTextItem *sch_name;
 
-		QGraphicsPolygonItem *box;
+    RoundedRectItem *box;
 
 		QPointF last_pos;
 
@@ -64,7 +66,7 @@ class SchemaView: public BaseObjectView
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
 		unsigned getChildrenCount(void);
-		QList<BaseObjectView *> getChildren(void);
+    QList<BaseObjectView *> getChildren(void);
 
 	public slots:
 		void configureObject(void);

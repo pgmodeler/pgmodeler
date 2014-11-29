@@ -30,7 +30,7 @@
 	LEFT JOIN pg_type AS tp ON tp.typnamespace=ns.oid
         WHERE tp.oid=cl.atttypid) || format_type(atttypid,atttypmod) AS type, atttypid AS type_oid, ]
 
-      %if @{pgsql90} %then
+      %if (@{pgsql-ver} == "9.0") %then
        [ NULL AS collation ]
       %else
        [ cl.attcollation AS collation ]

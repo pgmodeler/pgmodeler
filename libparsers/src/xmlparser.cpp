@@ -17,15 +17,7 @@
 */
 
 #include "xmlparser.h"
-
-/*QString XMLParser::xml_doc_filename="";
-QString XMLParser::xml_buffer="";
-QString XMLParser::dtd_decl="";
-QString XMLParser::xml_decl="";
-xmlNode *XMLParser::root_elem=nullptr;
-xmlNode *XMLParser::curr_elem=nullptr;
-xmlDoc *XMLParser::xml_doc=nullptr;
-stack<xmlNode*> XMLParser::elems_stack; */
+#include <QUrl>
 
 const QString XMLParser::CHAR_AMP="&amp;";
 const QString XMLParser::CHAR_LT="&lt;";
@@ -147,9 +139,9 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		fmt_dtd_file="file:///";
 	#endif
 
-	//Formats the dtd file path in order to replace spaces by %20 (url format)
-	fmt_dtd_file+=QFileInfo(dtd_file).absoluteFilePath();
-	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  fmt_dtd_file.replace(QString(" "),QString("%20")) + "\">\n";
+	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
+	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
+	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  fmt_dtd_file + "\">\n";
 }
 
 void XMLParser::readBuffer(void)

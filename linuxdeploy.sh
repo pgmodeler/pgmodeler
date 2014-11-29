@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.3.2/5.3/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.3.2/5.3/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -26,27 +26,45 @@ QT_IFW_ROOT=/opt/qt-if-1.5.0
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
 GEN_INSTALLER_OPT='-gen-installer'
+DEMO_VERSION_OPT='-demo-version'
+NO_QT_LIBS_OPT='-no-qt-libs'
 GEN_INST_PKG=0
+DEMO_VERSION=0
+BUNDLE_QT_LIBS=1
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
-fi
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
 
-if [[ "$*" == "$GEN_INSTALLER_OPT" ]]; then
-  GEN_INST_PKG=1
+ if [[ "$param" == "$GEN_INSTALLER_OPT" ]]; then
+   GEN_INST_PKG=1
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   GEN_INST_PKG=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+ 
+ if [[ "$param" == "$NO_QT_LIBS_OPT" ]]; then
+  BUNDLE_QT_LIBS=0
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-$ARCH"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi
 
 PKGFILE=$PKGNAME.tar.gz
-NO_QT_LIBS_OPT='-no-qt-libs'
 
-if [[ "$*" == "$NO_QT_LIBS_OPT" ]]; then
+if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz
-  BUNDLE_QT_LIBS=0
 else
-  BUNDLE_QT_LIBS=1
   QT_CONF=build/qt.conf
   DEP_PLUGINS_DIR=build/qtplugins
   
@@ -131,7 +149,11 @@ if [ $BUNDLE_QT_LIBS = 0 ]; then
 fi
 
 if [ $GEN_INST_PKG = 1 ]; then
-  echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
+  echo "The installer will be generated. (Found $GEN_INSTALLER_OPT)"
+fi
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
 
 echo "Cleaning previous compilation..."
@@ -209,25 +231,26 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-echo "Generating tarball..."
-rm -r $PKGNAME  >> $LOG 2>&1
-mkdir $PKGNAME  >> $LOG 2>&1
-cp -r build/* $PKGNAME  >> $LOG 2>&1
-tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
-rm -r $PKGNAME  >> $LOG 2>&1
+if [ $DEMO_VERSION = 0 ]; then
+  echo "Generating tarball..."
+  rm -r $PKGNAME  >> $LOG 2>&1
+  mkdir $PKGNAME  >> $LOG 2>&1
+  cp -r build/* $PKGNAME  >> $LOG 2>&1
+  tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
+  rm -r $PKGNAME  >> $LOG 2>&1
 
-if [ $? -ne 0 ]; then
-  echo
-  echo "** Failed to create package!"
-  echo
-  exit 1
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create package!"
+    echo
+    exit 1
+  fi
+
+  echo "File created: $PKGFILE"
 fi
-
-echo "File created: $PKGFILE"
 
 
 if [ $GEN_INST_PKG = 1 ]; then
-
   echo "Generating installer..."
   $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
 

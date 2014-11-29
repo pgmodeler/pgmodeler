@@ -26,8 +26,9 @@ macx {
 windows {
  PGSQL_LIB = C:/PostgreSQL/9.3/bin/libpq.dll
  PGSQL_INC = C:/PostgreSQL/9.3/include
- XML_INC = C:/Qt/Qt5.3.0/5.3/mingw482_32/include
- XML_LIB = C:/Qt/Qt5.3.0/5.3/mingw482_32/bin/libxml2-2.dll
+ XML_INC = C:/Qt/Qt5.3.2/5.3/mingw482_32/include
+ XML_LIB = C:/Qt/Qt5.3.2/5.3/mingw482_32/bin/libxml2-2.dll
+ QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 }
 
 macx | windows {
@@ -153,6 +154,9 @@ LIBPGCONNECTOR=$${LIB_PREFIX}pgconnector.$${LIB_EXT}
 LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
+
+#Setting up the flag passed to compiler to build the demo version
+defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 
 INCLUDEPATH += $$XML_INC \
                $$PGSQL_INC \

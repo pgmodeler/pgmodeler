@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 # Extension exists only on PostgreSQL >= 9.1
-%if @{list} %and %not @{pgsql90} %then
+%if @{list} %and (@{pgsql-ver} != "9.0") %then
    [SELECT ex.oid, extname AS name FROM pg_extension AS ex ]
 
    %if @{schema} %then
@@ -21,7 +21,7 @@
   %end
 
 %else
-    %if @{attribs} %and %not @{pgsql90}  %then
+    %if @{attribs} %and (@{pgsql-ver} != "9.0")  %then
 	[SELECT ex.oid, ex.extname AS name, ex.extversion AS cur_version, NULL AS old_version,
 		ex.extowner AS owner, ex.extnamespace AS schema,
 	  (SELECT CASE

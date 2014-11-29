@@ -4,7 +4,7 @@
 #          Code generation can be broken if incorrect changes are made.
 [  ] @{name} $sp @{type}
 
-%if %not @{pgsql90} %and @{collation} %then
+%if (@{pgsql-ver} != "9.0") %and @{collation} %then
 [ COLLATE ] @{collation}
 %end
 

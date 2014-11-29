@@ -41,6 +41,7 @@
 #include "objectfinderwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
+#include "modeldatabasediffform.h"
 #include "sqltoolwidget.h"
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"
@@ -56,7 +57,24 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
-		AboutWidget *about_wgt;
+    const static int GENERAL_ACTIONS_COUNT=9;
+
+    const static int WELCOME_VIEW=0,
+    DESIGN_VIEW=1,
+    MANAGE_VIEW=2;
+
+    static bool confirm_validation;
+
+    //! \brief Constants used to mark a pending operation to be executed after validate model
+    const static unsigned NO_PENDING_OPER=0,
+    PENDING_SAVE_OPER=1,
+    PENDING_SAVE_AS_OPER=2,
+    PENDING_EXPORT_OPER=3,
+    PENDING_DIFF_OPER=4;
+
+    unsigned pending_op;
+
+    AboutWidget *about_wgt;
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -67,9 +85,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Thread that controls temporary model file savings
 		QThread tmpmodel_thread;
-
-		//! \brief Dialog used to configure printing options.
-		QPrintDialog *print_dlg;
 
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
@@ -128,12 +143,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-		/*! brief This event filter controls the position of central widget putting it on top or base
-		of it's parent's stack whenever the widgets model_valid_parent, obj_finder_parent or sql_tool_parent
-		colides or not with the central_wgt in order to avoid this latter to be on top of them causing an
-		undesired overlay */
-		bool eventFilter(QObject *object, QEvent *event);
-
 		//! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
@@ -142,12 +151,22 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void configureSamplesMenu(void);
 
+		/*! brief Stores the current checkboxes states of the main dock widgets on the set of configuration params
+				in order to save them on the main configuration file */
+		void storeDockWidgetsSettings(void);
+
+		//! brief Restore the dock widget configurations from the parameters loaded from main configuration file
+		void restoreDockWidgetsSettings(void);
+
 	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
+
+    //! brief Indicates if model must be validated before save, diff or export
+    static void setConfirmValidation(bool value);
 
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
@@ -204,6 +223,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Executes the reverse engineering
 		void importDatabase(void);
 
+		//! \brief Executes the model <> database comparison
+		void compareModelDatabase(void);
+
 		//! \brief Updates the opened models with new configurations
 		void applyConfigurations(void);
 
@@ -232,7 +254,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateConnections(void);
 
 		//! \brief Save the temp files for all opened models
-		void saveTemporaryModels(bool force=false);
+    void saveTemporaryModels(void);//(bool force=false);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
@@ -248,6 +270,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
 		void removeModelActions(void);
+
+		void showDemoVersionWarning(void);
+		void quitDemoVersion(void);
+
+    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
+    void executePendingOperation(bool valid_error);
+
+    void changeCurrentView(bool checked);
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include "basetable.h"
 #include "tabletitleview.h"
 #include "tableobjectview.h"
+#include "roundedrectitem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -45,13 +46,13 @@ class BaseTableView: public BaseObjectView {
 
     static bool hide_ext_attribs, hide_tags;
 
-		//! \brief Polygonal object that defines the table body
-		QGraphicsPolygonItem *body,
+    //! \brief Polygonal object that defines the table body
+    RoundedRectItem *body,
 
-		//! \brief Extended table attributes (indexes, rules, triggers) section body
-    *ext_attribs_body,
+    //! \brief Extended table attributes (indexes, rules, triggers) section body
+    *ext_attribs_body;
 
-    *tag_body;
+    QGraphicsPolygonItem *tag_body;
 
     QGraphicsSimpleTextItem *tag_name;
 
@@ -84,10 +85,10 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
-		static void hideExtAttributes(bool value);
+    static void setHideExtAttributes(bool value);
 
     //! \brief Hides the table tags. This applies to all table instances
-    static void hideTags(bool value);
+    static void setHideTags(bool value);
 
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);

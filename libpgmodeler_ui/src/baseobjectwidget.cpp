@@ -72,7 +72,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
 		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
-		//baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
 		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
@@ -359,9 +358,16 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	append_sql_tb->setEnabled(object!=nullptr);
 
 	owner_sel->setModel(model);
+  owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));
+
 	schema_sel->setModel(model);
+  schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA));
+
 	tablespace_sel->setModel(model);
+  tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE));
+
 	collation_sel->setModel(model);
+  collation_sel->setSelectedObject(model->getDefaultObject(OBJ_COLLATION));
 
 	if(object)
 	{
@@ -371,16 +377,17 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
 		name_edt->setText(Utf8String::create(object->getName()));
 		comment_edt->setText(Utf8String::create(object->getComment()));
-		owner_sel->setSelectedObject(object->getOwner());
-		collation_sel->setSelectedObject(object->getCollation());
 
-		//if there is no schema assigned to object, set the "public" as the default
-		if(!object->getSchema())
-			schema_sel->setSelectedObject(model->getObject("public", OBJ_SCHEMA));
-		else
-			schema_sel->setSelectedObject(object->getSchema());
-
-		tablespace_sel->setSelectedObject(object->getTablespace());
+    /* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
+       In order to avoid the selectors to have empty values, we check if the flag is false which means
+       that the object is not new at all */
+    if(!new_object)
+    {
+      schema_sel->setSelectedObject(object->getSchema());
+      tablespace_sel->setSelectedObject(object->getTablespace());
+      owner_sel->setSelectedObject(object->getOwner());
+      collation_sel->setSelectedObject(object->getCollation());
+    }
 
 		obj_type=object->getObjectType();
 		prot=(parent_type!=OBJ_RELATIONSHIP &&
@@ -397,10 +404,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
-		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
+    if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
 			schema_sel->setSelectedObject(parent_obj);
-		else
-			schema_sel->setSelectedObject(model->getObject("public", OBJ_SCHEMA));
 	}
 }
 
@@ -736,13 +741,7 @@ void BaseObjectWidget::applyConfiguration(void)
 					else if(!aux_obj && obj_type==OBJ_VIEW)
 						aux_obj=model->getObject(obj_name, OBJ_TABLE);
 
-					if(obj_type==OBJ_FUNCTION)
-						aux_obj1=model->getObject(dynamic_cast<Function *>(object)->getSignature(),obj_type);
-					else if(obj_type==OBJ_OPERATOR)
-						aux_obj1=model->getObject(dynamic_cast<Operator *>(object)->getSignature(),obj_type);
-					else
-						aux_obj1=model->getObject(object->getName(true),obj_type);
-
+          aux_obj1=model->getObject(object->getSignature(), obj_type);
 					new_obj=(!aux_obj && !aux_obj1);
 				}
 
@@ -836,20 +835,15 @@ void BaseObjectWidget::finishConfiguration(void)
         this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 		}
 
-		if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-			 object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-			 object->getObjectType()==OBJ_EXTENSION || object->getObjectType()==OBJ_SEQUENCE)
-		{
-			model->getObjectReferences(object, ref_objs);
 
-			for(auto obj : ref_objs)
-			{
-				obj->setCodeInvalidated(true);
+    model->getObjectReferences(object, ref_objs);
+    for(auto obj : ref_objs)
+    {
+      obj->setCodeInvalidated(true);
 
-				if(obj->getObjectType()==OBJ_COLUMN)
-					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
-			}
-		}
+      if(obj->getObjectType()==OBJ_COLUMN)
+        dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+    }
 
 		object->setCodeInvalidated(true);
 		this->accept();

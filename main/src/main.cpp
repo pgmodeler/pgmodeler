@@ -97,18 +97,20 @@ int main(int argc, char **argv)
 		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
+		qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
 
 		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
 		Application app(argc,argv);
+    int res=0;
 
-		//Loading the application splash screen
+    //Loading the application splash screen
 		QSplashScreen splash;
 		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
+    splash.setMask(pix.mask());
 
 		#ifndef Q_OS_MAC
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
@@ -122,7 +124,7 @@ int main(int argc, char **argv)
       splash.showMaximized();
     #endif
 
-		app.processEvents();
+    app.processEvents();
 
 		//Creates the main form
 		MainWindow fmain;
@@ -139,8 +141,10 @@ int main(int argc, char **argv)
 
 		fmain.showMaximized();
 		splash.finish(&fmain);
+    res=app.exec();
+    app.closeAllWindows();
 
-		return(app.exec());
+    return(res);
 	}
 	catch(Exception &e)
 	{

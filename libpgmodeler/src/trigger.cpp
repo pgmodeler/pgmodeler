@@ -172,6 +172,11 @@ bool Trigger::isExecuteOnEvent(EventType event)
 	return(events.at(!event));
 }
 
+bool Trigger::isExecutePerRow(void)
+{
+	return(is_exec_per_row);
+}
+
 QString Trigger::getArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
@@ -441,4 +446,12 @@ void Trigger::validateTrigger(void)
 				throw Exception(ERR_CONST_TRIG_NOT_AFTER_ROW,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
+}
+
+QString Trigger::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

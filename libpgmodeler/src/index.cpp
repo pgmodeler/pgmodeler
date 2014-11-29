@@ -325,7 +325,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(this->indexing_type==IndexingType::gist)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? "1" : "");
 
-	if(this->indexing_type==IndexingType::btree && fill_factor >= 10)
+  if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 		attributes[ParsersAttributes::STORAGE_PARAMS]="1";
@@ -341,3 +341,43 @@ QString Index::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Index::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format)));
+}
+
+QString Index::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Index *index=dynamic_cast<Index *>(object);
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if(this->indexing_type==index->indexing_type)
+    {
+      attribs_map attribs;
+
+      if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
+        attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
+
+      if(this->indexing_type==IndexingType::gin &&
+         this->index_attribs[FAST_UPDATE] != index->index_attribs[FAST_UPDATE])
+        attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+      if(this->indexing_type==IndexingType::gist &&
+         this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
+        attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+      copyAttributes(attribs);
+    }
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

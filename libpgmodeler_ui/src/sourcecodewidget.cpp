@@ -173,12 +173,28 @@ void SourceCodeWidget::generateSourceCode(int)
 -- original positions.\n\n") + aux_def;
 				sqlcode_txt->setPlainText(sqlcode_txt->toPlainText() + aux_def);
 			}
+
+			#ifdef DEMO_VERSION
+				#warning "DEMO VERSION: SQL code preview truncated."
+				if(!sqlcode_txt->toPlainText().isEmpty())
+				{
+					QString code=sqlcode_txt->toPlainText();
+					code=code.mid(0, code.size()/2);
+					code+=trUtf8("\n\n-- SQL code purposely truncated at this point on demo version!");
+					sqlcode_txt->setPlainText(code);
+				}
+			#endif
 		}
 
 		if(sqlcode_txt->toPlainText().isEmpty())
 			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
-		xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
+		#ifdef DEMO_VERSION
+			#warning "DEMO VERSION: XML code preview disabled."
+			xmlcode_txt->setPlainText(trUtf8("<!-- XML code preview disabled in demonstration version -->"));
+		#else
+			xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
+		#endif
 
 		setSourceCodeTab();
 
@@ -220,9 +236,16 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 			incl_refs_sql_chk->blockSignals(true);
 			incl_refs_sql_chk->setVisible(inc_child_sql);
-			incl_refs_sql_chk->setChecked(inc_child_sql);
-			incl_refs_sql_chk->blockSignals(false);
 
+			#ifdef DEMO_VERSION
+				#warning "DEMO VERSION: Referrer objects SQL code attachment disabled."
+				incl_refs_sql_chk->setChecked(false);
+				incl_refs_sql_chk->setEnabled(false);
+			#else
+				incl_refs_sql_chk->setChecked(inc_child_sql);
+			#endif
+
+			incl_refs_sql_chk->blockSignals(false);
 			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
 																			BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
 

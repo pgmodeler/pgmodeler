@@ -117,9 +117,6 @@ class DatabaseImportHelper: public QObject {
 				is referenced by it in order to avoid reference breaking */
 		map<QString, QString> seq_tab_swap;
 
-		//! \brief Database model widget which will receive the imported objects
-		ModelWidget *model_wgt;
-
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
 
@@ -206,11 +203,13 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Set the current database to work on
 		void setCurrentDatabase(const QString &dbname);
 
-		//! \brief Defines the selected object to be imported
-		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		//! \brief Defines the selected object to be imported. This method always expect filled maps. Hint: use the method Catalog::getObjectOIDs()
+		void setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
+		//! brief Configures the import parameters
 		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors);
 
+		//! brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
@@ -254,6 +253,7 @@ class DatabaseImportHelper: public QObject {
 		void importDatabase(void);
 		
 	friend class DatabaseImportForm;
+	friend class ModelDatabaseDiffForm;
 };
 
 #endif

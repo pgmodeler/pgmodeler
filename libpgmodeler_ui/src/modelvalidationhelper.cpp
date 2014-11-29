@@ -247,7 +247,7 @@ void ModelValidationHelper::validateModel(void)
 		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
-		QString name, signal_msg="`%1' (%2)";
+    QString name, signal_msg="`%1' `(%2)'";
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -295,6 +295,10 @@ void ModelValidationHelper::validateModel(void)
 					else
 					{
 						db_model->getObjectReferences(object, refs);
+
+            /*if(obj_type==OBJ_SCHEMA || obj_type==OBJ_COLLATION ||
+               obj_type==OBJ_ROLE || obj_type==OBJ_C)
+             std::remove(refs.begin(), refs.end(), db_model); */
 
 						while(!refs.empty() && !valid_canceled)
 						{
@@ -574,6 +578,7 @@ void ModelValidationHelper::cancelValidation(void)
 
 void ModelValidationHelper::captureThreadError(Exception e)
 {
+  ValidationInfo val_info(e);
 	export_thread->quit();
 	warn_count++;
 
@@ -581,13 +586,16 @@ void ModelValidationHelper::captureThreadError(Exception e)
 	sql errors are ignored since validator cannot fix SQL related problems */
 	db_model->setInvalidated(error_count > 0);
 
-	emit s_validationInfoGenerated(ValidationInfo(e));
+  emit s_validationInfoGenerated(val_info);
+
+  if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+    emit s_validationFinished();
 }
 
 void ModelValidationHelper::emitValidationCanceled(void)
 {
+  db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
-	db_model->setInvalidated(error_count > 0);
 	emit s_validationCanceled();
 	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
 }

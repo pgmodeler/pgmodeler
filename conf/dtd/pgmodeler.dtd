@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT pgmodeler (configuration, widget-conf?, session?, recent-models?)>
+<!ELEMENT pgmodeler (configuration, widget-conf?, session?, recent-models?, dock-widgets?)>
 
 <!ELEMENT configuration EMPTY>
 <!ATTLIST configuration op-list-size CDATA #REQUIRED>
@@ -22,12 +22,28 @@
 <!ATTLIST configuration check-update (false|true) "false">
 <!ATTLIST configuration save-last-position (false|true) "false">
 <!ATTLIST configuration show-main-menu (false|true) "false">
+<!ATTLIST configuration disable-smoothness (false|true) "false">
+<!ATTLIST configuration simplified-obj-creation (false|true) "false">
+<!ATTLIST configuration confirm-validation (false|true) "true">
 <!ATTLIST configuration code-font CDATA #IMPLIED>
 <!ATTLIST configuration code-font-size CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
+<!ELEMENT dock-widgets (widget+)>
 
 <!ELEMENT file EMPTY>
 <!ATTLIST file id CDATA #REQUIRED>
 <!ATTLIST file path CDATA #REQUIRED>
+
+<!ELEMENT widget EMPTY>
+<!ATTLIST widget id (validator|objectfinder) "validator">
+<!ATTLIST widget sql-validation (false|true) "false">
+<!ATTLIST widget pgsql-version CDATA #IMPLIED>
+<!ATTLIST widget use-unique-names (false|true) "false">
+<!ATTLIST widget regexp (false|true) "false">
+<!ATTLIST widget exact-match (false|true) "false">
+<!ATTLIST widget case-sensitive (false|true) "false">
+<!ATTLIST widget highlight-objects (false|true) "false">
+
+

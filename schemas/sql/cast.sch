@@ -4,7 +4,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [-- object: cast] ( @{source-type} [,] @{destiny-type} )  [ | type: ] @{sql-object} [ --] $br
-@{drop}
+[-- ] @{drop}
 
 %if @{prepended-sql} %then
  @{prepended-sql}
@@ -17,7 +17,7 @@
   $tb [WITH INOUT ]
 %else
   %if @{signature} %then
-    $tb [WITH FUNCTION ] @{signature}
+    $tb [WITH FUNCTION ] @{function}
   %else
     $tb [WITHOUT FUNCTION]
   %end
@@ -28,14 +28,15 @@
 %end
 ; $br
 
-%if @{comment} %then @{comment} %end
-
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+[-- ddl-end --] $br
+
+%if @{comment} %then @{comment} %end
 
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
 
+$br

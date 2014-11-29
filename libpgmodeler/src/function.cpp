@@ -415,7 +415,7 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	setCodeInvalidated(true);
 }
 
-QString Function::getSignature(void)
+QString Function::getSignature(bool)
 {
 	return(signature);
 }
@@ -447,7 +447,7 @@ void Function::createSignature(bool format, bool prepend_schema)
 
 QString Function::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+  return(this->getCodeDefinition(def_type, false));
 }
 
 QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
@@ -494,3 +494,45 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+QString Function::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Function *func=dynamic_cast<Function *>(object);
+    attribs_map attribs;
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if(this->execution_cost!=func->execution_cost)
+      attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
+
+    if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+    {
+      attribs[ParsersAttributes::RETURNS_SETOF]="1";
+      attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+    }
+
+    if(this->function_type!=func->function_type)
+      attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+
+    if(this->is_leakproof!=func->is_leakproof)
+      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? "1" : ParsersAttributes::UNSET);
+
+    if(this->security_type!=func->security_type)
+      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type; 
+
+    if((this->behavior_type!=func->behavior_type) &&
+       ((this->behavior_type==BehaviorType::called_on_null_input) ||
+        ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
+         func->function_type==BehaviorType::called_on_null_input)))
+      attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

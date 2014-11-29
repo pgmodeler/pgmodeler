@@ -57,7 +57,11 @@ void Role::setOption(unsigned op_type, bool value)
 		options[i]=false;
 
 	setCodeInvalidated(options[op_type] != value);
-	options[op_type]=(!options[OP_SUPERUSER] && value);
+
+  if(op_type!=OP_ENCRYPTED)
+    options[op_type]=(!options[OP_SUPERUSER] && value);
+  else
+    options[op_type]=value;
 }
 
 void Role::addRole(unsigned role_type, Role *role)
@@ -347,11 +351,44 @@ QString Role::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;
 
-	attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
-
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
+{
+  try
+  {
+    Role *role=dynamic_cast<Role *>(object);
+    attribs_map attribs;
+    QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+                           ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+                           ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+                           ParsersAttributes::REPLICATION };
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+
+    if(this->password!=role->password)
+      attribs[ParsersAttributes::PASSWORD]=role->password;
+
+    if(this->validity!=role->validity)
+      attribs[ParsersAttributes::VALIDITY]=role->validity;
+
+    for(unsigned i=0; i <= OP_REPLICATION; i++)
+    {
+      if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
+         this->options[i]!=role->options[i])
+        attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+    }
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

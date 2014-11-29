@@ -410,6 +410,10 @@ class PgSQLType: public BaseType{
 		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
+    /*! brief Returns if the type is registered in the list of valid types (built-in one and user defined).
+        The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
+    static bool isRegistered(const QString &type, void *pmodel=nullptr);
+
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
 		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
 		static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);
@@ -440,6 +444,12 @@ class PgSQLType: public BaseType{
     bool isIntegerType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
+
+    /*! brief Returns if the "this" type is equivalent to the specified type.
+        In order to be compatible the "this" and "type" must be an alias from each other,
+        for instance, "varchar" is compatible with "character varying" and vice-versa,
+        smallint is compatible with int2, and so on. */
+    bool isEquivalentTo(PgSQLType type);
 
 		PgSQLType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type="");

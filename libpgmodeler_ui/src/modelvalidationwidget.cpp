@@ -40,7 +40,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
-		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
+		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));    
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -65,6 +65,10 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+
+    connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
+            [=](){ emit s_validationCanceled(); });
+
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
@@ -160,6 +164,25 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
 		itr++;
 	}
+
+	if(conns.empty())
+	{
+		sql_validation_chk->setChecked(false);
+		sql_validation_chk->setEnabled(false);
+  }
+}
+
+void ModelValidationWidget::insertInfoMessage(const QString &msg)
+{
+  QTreeWidgetItem *item=new QTreeWidgetItem;
+  QLabel *label=new QLabel;
+
+  item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
+  label->setText(msg);
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+  output_trw->addTopLevelItem(item);
+  output_trw->setItemWidget(item, 0, label);
 }
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
@@ -171,6 +194,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
 
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 									.arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
@@ -213,7 +237,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	}
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
-		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model thus you can save it without any problem.</em>"));
+    label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
 	else
 		label->setText(val_info.getErrors().at(0));
 
@@ -234,6 +258,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			{
 				item1=new QTreeWidgetItem(item);
 				label1=new QLabel;
+        label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				label1->setText(errors.back());
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				fnt=label1->font();
@@ -254,6 +279,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		{
 			item1=new QTreeWidgetItem(item);
 			label1=new QLabel;
+      label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
 
 			tab_obj=dynamic_cast<TableObject *>(refs.back());
@@ -272,6 +298,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 						QPalette pal;
 						item2=new QTreeWidgetItem(item1);
 						label2=new QLabel;
+            label2->setTextInteractionFlags(Qt::TextSelectableByMouse);
 						pal.setColor(QPalette::Text, QColor(255,0,0));
 						label2->setPalette(pal);
 						label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
@@ -314,6 +341,9 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	error_count_lbl->setText(QString("%1").arg(validation_helper.getErrorCount()));
 	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
+
+  if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+    emit s_validationFinished(validation_helper.getErrorCount() != 0);
 }
 
 void ModelValidationWidget::validateModel(void)
@@ -342,37 +372,30 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	if(prog >= 100 &&
 		 validation_helper.getErrorCount()==0 && validation_helper.getWarningCount()==0)
 	{
-		item=new QTreeWidgetItem;
-		label=new QLabel;
-
-		item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
-		label->setText(trUtf8("Database model sucessfully validated."));
+    insertInfoMessage(trUtf8("Database model sucessfully validated."));
 
 		warn_count_lbl->setText(QString("%1").arg(0));
 		error_count_lbl->setText(QString("%1").arg(0));
 		fix_btn->setEnabled(false);
 		output_trw->addTopLevelItem(item);
 		output_trw->setItemWidget(item, 0, label);
+
+    emit s_validationFinished(validation_helper.getErrorCount() != 0);
 	}
 	else if(!msg.isEmpty())
 	{
     ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
     object_lbl->setText(trUtf8("Running SQL validation..."));
 
-		int idx=msg.indexOf('`');
+    msg=PgModelerNS::formatString(msg);
 		item=new QTreeWidgetItem;
 		label=new QLabel;
-
-		if(idx > 0)
-		{
-			msg.replace("`","<strong>");
-			msg.replace("'","</strong>");
-			msg.replace(" ("," <em>(");
-			msg.replace(")",")</em>");
-		}
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		if(obj_type!=BASE_OBJECT)
 			item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		else if(!cmd.isEmpty())
+			item->setIcon(0, QPixmap(QString(":/icones/icones/sqlcmd.png")));
 		else
 			item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
@@ -402,11 +425,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	obj_name.replace("`","<strong>");
-	obj_name.replace("'","</strong>");
-	obj_name.replace(" ("," <em>(");
-	obj_name.replace(")",")</em>");
-	object_lbl->setText(trUtf8("Processing object: %1").arg(obj_name));
+  object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerNS::formatString(obj_name)));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 }
 
@@ -431,5 +450,5 @@ void ModelValidationWidget::configureValidation(void)
 void ModelValidationWidget::swapObjectsIds(void)
 {
 	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
-	swapobjectsids_wgt->show();
+  swapobjectsids_wgt->show();
 }

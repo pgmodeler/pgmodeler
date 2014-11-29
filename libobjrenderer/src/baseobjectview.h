@@ -50,19 +50,25 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		QGraphicsSimpleTextItem *pos_info_txt;
 
 		//! \brief Graphical object (rectangle) of the position info
-		QGraphicsPolygonItem *pos_info_pol;
+    QGraphicsRectItem *pos_info_rect;
 
 		//! \brief Stores the objects bounding rect
 		QRectF bounding_rect;
 
 		//! \brief Graphical object that represents the object selection
-		QGraphicsPolygonItem *obj_selection;
+    QGraphicsItem *obj_selection;
 
 		//! \brief Icon that represent the object protection
 		QGraphicsItemGroup *protected_icon;
 
 		//! \brief Graphical object that represents the current object shadow
-		QGraphicsPolygonItem *obj_shadow;
+    QGraphicsItem *obj_shadow;
+
+    //! \brief Graphical object of the sql disabled info
+    QGraphicsRectItem *sql_disabled_box;
+
+    //! \brief Graphical text for the sql disabled info
+    QGraphicsSimpleTextItem *sql_disabled_txt;
 
 		//! \brief Stores the object font configuration
 		static map<QString, QTextCharFormat> font_config;
@@ -82,10 +88,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Configures the polygons used to show the current object position
 		void configurePositionInfo(QPointF pos);
 
+    //! \brief Configures the rectangle used to show the sql disabled status
+    void configureSQLDisabledInfo(void);
+
 		//! \brief Configures the icon that denotes the object's protection
 		void configureProtectedIcon(void);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		void setSelectionOrder(bool selected);
+    void setSelectionOrder(bool selected);
 
 	public:
     static constexpr float VERT_SPACING=2.0f,
@@ -133,10 +142,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
     //! \brief Returns the color for the specified element id (used to get color for objects and font)
     static QColor getElementColor(const QString &id, unsigned color_id);
 
-		//! \brief Defines the object that the view represents
-		void setSourceObject(BaseObject *object);
+    //! \brief Defines the object that the view represents
+    void setSourceObject(BaseObject *object);
 
-		//! \brief Pure virtual object (the derived classes must implement it)
+    //! \brief Pure virtual object (the derived classes must implement it)
 		virtual void configureObject(void)=0;
 
 		/*! \brief Returns the center point of the whole object.

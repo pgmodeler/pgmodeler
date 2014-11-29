@@ -17,6 +17,11 @@
 */
 
 #include "generalconfigwidget.h"
+#include "objectsscene.h"
+#include "modelwidget.h"
+#include "operationlist.h"
+#include "syntaxhighlighter.h"
+#include "mainwindow.h"
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
 {
@@ -59,6 +64,36 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]="";
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]="";
+
+  simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
+  simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
+
+  confirm_validation_ht=new HintTextWidget(confirm_validation_hint, this);
+  confirm_validation_ht->setText(confirm_validation_chk->statusTip());
+
+  corner_move_ht=new HintTextWidget(corner_move_hint, this);
+  corner_move_ht->setText(corner_move_chk->statusTip());
+
+  save_last_pos_ht=new HintTextWidget(save_last_pos_hint, this);
+  save_last_pos_ht->setText(save_last_pos_chk->statusTip());
+
+  invert_pan_range_ht=new HintTextWidget(invert_pan_range_hint, this);
+  invert_pan_range_ht->setText(invert_pan_range_chk->statusTip());
+
+  disable_smooth_ht=new HintTextWidget(disable_smooth_hint, this);
+  disable_smooth_ht->setText(disable_smooth_chk->statusTip());
+
+  hide_ext_attribs_ht=new HintTextWidget(hide_ext_attribs_hint, this);
+  hide_ext_attribs_ht->setText(hide_ext_attribs_chk->statusTip());
+
+  hide_table_tags_ht=new HintTextWidget(hide_table_tags_hint, this);
+  hide_table_tags_ht->setText(hide_table_tags_chk->statusTip());
+
+  hide_rel_name_ht=new HintTextWidget(hide_rel_name_hint, this);
+  hide_rel_name_ht->setText(hide_rel_name_chk->statusTip());
 
 	selectPaperSize();
 }
@@ -85,6 +120,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 		invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
 		check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
 		save_last_pos_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]==ParsersAttributes::_TRUE_);
+		disable_smooth_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]==ParsersAttributes::_TRUE_);
+		simple_obj_creation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]==ParsersAttributes::_TRUE_);
+    confirm_validation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]==ParsersAttributes::_TRUE_);
 
 		print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 		print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -124,7 +162,7 @@ void GeneralConfigWidget::saveConfiguration()
 	try
 	{
 		map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir;
+		QString file_sch, root_dir, widget_sch;
 
 		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR;
@@ -133,6 +171,12 @@ void GeneralConfigWidget::saveConfiguration()
 						 GlobalAttributes::SCHEMAS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR +
 						 ParsersAttributes::_FILE_ +
+						 GlobalAttributes::SCHEMA_EXT;
+
+		widget_sch=root_dir +
+						 GlobalAttributes::SCHEMAS_DIR +
+						 GlobalAttributes::DIR_SEPARATOR +
+						 ParsersAttributes::WIDGET +
 						 GlobalAttributes::SCHEMA_EXT;
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
@@ -144,6 +188,9 @@ void GeneralConfigWidget::saveConfiguration()
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? "1" : "");
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? "1" : "");
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? "1" : "");
 
 		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -186,6 +233,14 @@ void GeneralConfigWidget::saveConfiguration()
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
+      else if(itr->first==ParsersAttributes::VALIDATOR ||
+							itr->first==ParsersAttributes::OBJECT_FINDER)
+			{
+				schparser.setIgnoreUnkownAttributes(true);
+				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
+					schparser.getCodeDefinition(widget_sch, itr->second);
+				schparser.setIgnoreUnkownAttributes(false);
+			}
 
 			itr++;
 		}
@@ -201,6 +256,11 @@ void GeneralConfigWidget::saveConfiguration()
 void GeneralConfigWidget::applyConfiguration(void)
 {
 	int unit=unity_cmb->currentIndex();
+	QFont fnt;
+	float fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+
+	if(fnt_size < 5.0f)
+		fnt_size=5.0f;
 
   unity_cmb->setCurrentIndex(UNIT_POINT);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
@@ -209,14 +269,21 @@ void GeneralConfigWidget::applyConfiguration(void)
 																		 QSizeF(width_spb->value(), height_spb->value()));
 	unity_cmb->setCurrentIndex(unit);
 
-  ObjectsScene::enableCornerMove(corner_move_chk->isChecked());
-  ObjectsScene::invertPanningRangeSelection(invert_pan_range_chk->isChecked());
+  ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
+  ObjectsScene::setInvertPanningRangeSelection(invert_pan_range_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 	OperationList::setMaximumSize(oplist_size_spb->value());
-	BaseTableView::hideExtAttributes(hide_ext_attribs_chk->isChecked());
-  BaseTableView::hideTags(hide_table_tags_chk->isChecked());
-	RelationshipView::hideNameLabel(hide_rel_name_chk->isChecked());
-  ModelWidget::saveLastCanvasPosition(save_last_pos_chk->isChecked());
+  BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
+  BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
+  RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
+	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
+	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
+	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
+  MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
+
+	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+	fnt.setPointSize(fnt_size);
+	SyntaxHighlighter::setDefaultFont(fnt);
 }
 
 void GeneralConfigWidget::restoreDefaults(void)
@@ -428,4 +495,9 @@ void GeneralConfigWidget::selectPaperSize()
 	height_lbl->setVisible(visible);
 	width_spb->setVisible(visible);
 	height_spb->setVisible(visible);
+}
+
+void GeneralConfigWidget::hideEvent(QHideEvent *)
+{
+  settings_twg->setCurrentIndex(0);
 }

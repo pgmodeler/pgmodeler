@@ -34,7 +34,7 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-    static constexpr float GRAPHIC_PNT_RADIUS=2.5f;
+    static constexpr float GRAPHIC_PNT_RADIUS=6.0f;
 
 		//! brief Length of the lines linked to fk/pk columns
 		static constexpr float CONN_LINE_LENGTH=20.0f;
@@ -141,7 +141,7 @@ class RelationshipView: public BaseObjectView {
 		void disconnectTables(void);
 
 		//! \brief Hides the relationship's name label. This applies to all relationship instances
-		static void hideNameLabel(bool value);
+		static void setHideNameLabel(bool value);
 
 		//! \brief Returns the current visibility state of name label
 		static bool isNameLabelHidden(void);

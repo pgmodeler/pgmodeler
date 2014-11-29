@@ -85,7 +85,7 @@ class BaseObject {
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
-	protected:
+  protected:
 		SchemaParser schparser;
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
@@ -205,7 +205,23 @@ class BaseObject {
 		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
-	public:
+    /*! brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
+        ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
+    void setBasicAttributes(bool format_name);
+
+    /*! brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
+    and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
+    bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
+
+    /*! brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
+        as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
+        attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
+        products of comparison */
+    void copyAttributes(attribs_map &attribs);
+
+    static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
+
+  public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
 
@@ -293,6 +309,9 @@ class BaseObject {
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
     virtual QString getName(bool format=false, bool prepend_schema=true);
 
+    //! brief Returns the name of the object with schema name (when available) prepended by default
+    virtual QString getSignature(bool format=true);
+
 		//! \brief Retorns the object's comment
 		QString getComment(void);
 
@@ -342,6 +361,19 @@ class BaseObject {
 		 of the object. See schema file for: functions, schemas, domains, types. */
     virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
+    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+        This form do the camparison considering the difference on the objects' names (ignore_name_diff=false). This method
+        is used in cases when the objects' name differences are important and can't be discarded */
+    virtual QString getAlterDefinition(BaseObject *object);
+
+    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+        The paramenter ignore_name_diff when true will cause the method to not generate a ALTER ... RENAME TO when the name of
+        objects differs. */
+    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff);
+
+    //!brief Returns the DROP statement for the object
+    virtual QString getDropDefinition(bool cascade);
+
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);
 
@@ -356,6 +388,12 @@ class BaseObject {
 
 		//! \brief Returns if the specified type accepts to have appended sql commands
 		static bool acceptsCustomSQL(ObjectType obj_type);
+
+    //! \brief Returns if the specified type accepts the use of ALTER commands to have its attributes changed
+    static bool acceptsAlterCommand(ObjectType obj_type);
+
+    //! \brief Returns if the specified type accepts the use of DROP commands
+    static bool acceptsDropCommand(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
@@ -372,6 +410,12 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsCustomSQL(void);
 
+    //! \brief Returns if the object accepts the use of ALTER commands to have its attributes changed
+    bool acceptsAlterCommand(void);
+
+    //! \brief Returns if the object accepts the use of DROP commands
+    bool acceptsDropCommand(void);
+
 		/*! brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
 				will automatically invalidate the code but for all other setters / attributes the user must call
@@ -382,6 +426,10 @@ class BaseObject {
 		//! brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);
 
+		/*! brief Compares the xml code between the "this" object and another one. The user can specify which attributes
+		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
+		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
+
 		/*! brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
 				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
@@ -391,7 +439,7 @@ class BaseObject {
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
-    static vector<ObjectType> getObjectTypes(bool inc_table_objs=true);
+		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true, vector<ObjectType> exclude_types={});
 
     /*! \brief Returns the valid object types that are child or grouped under the specified type.
     This method works a litte different from getObjectTypes() since this latter returns all valid types

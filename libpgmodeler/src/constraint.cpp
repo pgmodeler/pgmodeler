@@ -24,7 +24,7 @@ Constraint::Constraint(void)
 	obj_type=OBJ_CONSTRAINT;
 	deferrable=false;
 	no_inherit=false;
-	fill_factor=100;
+	fill_factor=0;
 	index_type=BaseType::null;
 
 	attributes[ParsersAttributes::PK_CONSTR]="";
@@ -157,11 +157,14 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 		{
 			if(col_type==REFERENCED_COLS)
 				ref_columns.push_back(column);
-			else
-				columns.push_back(column);
+      else
+      {
+        columns.push_back(column);
+        setColumnsNotNull(true);
+      }
 
-			setCodeInvalidated(true);
-		}
+      setCodeInvalidated(true);
+    }
 	}
 }
 
@@ -247,7 +250,8 @@ void Constraint::setMatchType(MatchType match_type)
 
 void Constraint::setFillFactor(unsigned factor)
 {
-	if(factor < 10) factor=10;
+	if(factor!=0 && factor < 10) factor=10;
+	else if(factor > 100) factor=100;
 	fill_factor=factor;
 }
 
@@ -329,6 +333,7 @@ unsigned Constraint::getColumnCount(unsigned col_type)
 
 void Constraint::removeColumns(void)
 {
+  setColumnsNotNull(false);
 	columns.clear();
 	ref_columns.clear();
 	setCodeInvalidated(true);
@@ -355,7 +360,10 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 
 		//Case the column is found
 		if(col->getName()==name)
-		{
+    {
+      if(constr_type==ConstraintType::primary_key)
+        col->setNotNull(false);
+
 			//Remove its iterator from the list
 			cols->erase(itr);
 			setCodeInvalidated(true);
@@ -574,7 +582,16 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 void Constraint::removeExcludeElements(void)
 {
 	excl_elements.clear();
-	setCodeInvalidated(true);
+  setCodeInvalidated(true);
+}
+
+void Constraint::setColumnsNotNull(bool value)
+{
+  if(constr_type==ConstraintType::primary_key)
+  {
+    for(auto col : columns)
+      col->setNotNull(value);
+  }
 }
 
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
@@ -620,10 +637,18 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 	return(getCodeDefinition(def_type, false));
 }
 
+void Constraint::setDeclInTableAttribute(void)
+{
+  if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
+    attributes[ParsersAttributes::DECL_IN_TABLE]="";
+  else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
+    attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+}
+
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+  if(!inc_addedbyrel && !code_def.isEmpty()) return(code_def);
 
 	QString attrib;
 
@@ -684,16 +709,45 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
-		attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
-		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+  setDeclInTableAttribute();
 
-	if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)
+	if(fill_factor!=0 && (constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique))
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 	else
 		attributes[ParsersAttributes::FACTOR]="";
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Constraint::getDropDefinition(bool cascade)
+{
+  setDeclInTableAttribute();
+  return(TableObject::getDropDefinition(cascade));
+}
+
+QString Constraint::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+}
+
+bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+{
+  if(!object)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else if(object->getObjectType()!=this->getObjectType())
+    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  try
+  {
+    return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         object->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         ignored_attribs, ignored_tags));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}

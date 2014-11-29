@@ -116,12 +116,12 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-    attribs[ParsersAttributes::DIF_SQL]="1";
+    attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
-		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
-		attribs[ParsersAttributes::TABLE]=this->getName(true);
-		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
+    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
+    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
+    attribs[ParsersAttributes::TABLE]=this->getName(true);
+    attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
 		schparser.setIgnoreUnkownAttributes(true);
@@ -304,6 +304,19 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		int idx;
 		obj_type=obj->getObjectType();
 
+		#ifdef DEMO_VERSION
+			#warning "DEMO VERSION: table children objects creation limit."
+      vector<TableObject *> *obj_list=(obj_type!=OBJ_TABLE ? getObjectList(obj_type) : nullptr);
+
+      if((obj_list && obj_list->size() >= GlobalAttributes::MAX_OBJECT_COUNT) ||
+         (obj_type==OBJ_TABLE && ancestor_tables.size() >= GlobalAttributes::MAX_OBJECT_COUNT))
+       throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
+											 .arg(GlobalAttributes::MAX_OBJECT_COUNT)
+											 .arg(BaseObject::getTypeName(obj_type)),
+											 ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		#endif
+
 		try
 		{
 			//Raises an error if already exists a object with the same name and type
@@ -377,7 +390,12 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					}
 
 					if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
+          {
 						updateAlterCmdsStatus();
+
+            if(obj_type==OBJ_CONSTRAINT)
+              dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
+          }
 				break;
 
 				case OBJ_TABLE:
@@ -387,6 +405,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						ancestor_tables.push_back(tab);
 					else
 						ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
+
+          /* Updating the storage parameter WITH OIDS depending on the ancestors.
+             According to the docs, the child table will inherit WITH OID status from the parents */
+          with_oid=(with_oid || tab->isWithOIDs());
 				break;
 
 				default:
@@ -550,9 +572,22 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
 	{
 		vector<Table *>::iterator itr;
+    Table *tab=nullptr;
 
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
+    with_oid=false;
+
+    for(auto obj : ancestor_tables)
+    {
+      tab=dynamic_cast<Table *>(obj);
+
+      if(!with_oid && tab->isWithOIDs())
+      {
+        with_oid=true;
+        break;
+      }
+    }
 	}
 	else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
 	{
@@ -574,6 +609,9 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			 tab_obj->setParentTable(nullptr);
 
 			obj_list->erase(itr);
+
+      if(obj_type==OBJ_CONSTRAINT)
+        dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
 		}
 		else
 		{
@@ -1525,5 +1563,46 @@ void Table::setCodeInvalidated(bool value)
 	}
 
 	BaseObject::setCodeInvalidated(value);
+}
 
+QString Table::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Table *tab=dynamic_cast<Table *>(object);
+    QString alter_def;
+
+    attributes[ParsersAttributes::OIDS]="";
+    attributes[ParsersAttributes::HAS_CHANGES]="";
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
+
+    if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
+    {
+      attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+      attributes[ParsersAttributes::HAS_CHANGES]="1";
+    }
+
+    alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+    attributes[ParsersAttributes::OIDS]="";
+
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+QString Table::getTruncateDefinition(bool cascade)
+{
+  try
+  {
+    BaseObject::setBasicAttributes(true);
+    attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+    return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

@@ -121,7 +121,9 @@ class Sequence: public BaseObject {
 		void operator = (Sequence &seq);
 
 		//! \brief Returns the SQL / XML definition for the sequence
-		virtual QString getCodeDefinition(unsigned def_type) final;
+    virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

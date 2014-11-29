@@ -319,7 +319,12 @@ class Table: public BaseTable {
     //! brief Creates custom index from rel. created object using a name and index vectors as input.
     void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
 
+    //! brief Invalidates the cached code forcing the generation of both SQL and XML
 		void setCodeInvalidated(bool value);
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
+    QString getTruncateDefinition(bool cascade);
 
 		friend class Relationship;
 		friend class OperationList;

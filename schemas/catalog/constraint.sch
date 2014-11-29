@@ -39,14 +39,14 @@
 	     cs.conkey AS src_columns, cs.confkey AS dst_columns, cs.consrc AS expression,
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
-	     am.amname AS index_type, ]
+             am.amname AS index_type, cl.reloptions AS factor,  ]
 
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
        string_to_array(pg_get_expr(id.indexprs, id.indexrelid),',') AS expressions, ]
 
-     %if @{pgsql90} %or @{pgsql91} %then
+     %if (@{pgsql-ver} <= "9.1") %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]
@@ -88,7 +88,7 @@
 	  WHEN 'f' THEN 'MATCH FULL'
 	  WHEN 'p' THEN 'MATCH PARTIAL' ]
 
-          [ WHEN ] %if @{pgsql93} %or @{pgsql94} %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
+          [ WHEN ] %if (@{pgsql-ver} >= "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
 
 	[ ELSE NULL
 	END AS comparison_type

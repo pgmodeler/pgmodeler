@@ -216,7 +216,7 @@ class View: public BaseTable {
 		//! \brief Returns if the view has an reference expression that is used as view definition
 		bool hasDefinitionExpression(void);
 
-		//! \brief Copy the attributes between two views
+    //! \brief Copy the attributes between two views
 		void operator = (View &visao);
 };
 

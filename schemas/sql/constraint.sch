@@ -8,7 +8,7 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
   %if @{table} %then
-   @{drop}
+   [-- ] @{drop}
    [ALTER TABLE ] @{table} [ ADD ]
   %end
 %end
@@ -35,10 +35,15 @@
   ( @{elements} $br $tb )
 %end
 
+%if @{pk-constr} %or @{uq-constr} %then
+  %if @{factor} %then
+    %if @{decl-in-table} %then $br $tb %end
+    [ WITH (FILLFACTOR = ] @{factor} [)]
+  %end
+%end
+
 %if @{tablespace} %then
   $br
-  %if @{decl-in-table} %then $tb %end
-  [WITH (FILLFACTOR = ] @{factor} [)] $br
   %if @{decl-in-table} %then $tb %end
   %if @{pk-constr} %or @{uq-constr} %or @{ex-constr} %then [USING INDEX TABLESPACE ] @{tablespace} %end
 %end
@@ -68,5 +73,7 @@
  
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
-%end $br
+[-- ddl-end --] $br
+%end
+
+$br

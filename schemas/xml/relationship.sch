@@ -21,6 +21,10 @@
     %if @{dst-fk-pattern} %then [ dst-fk-pattern=] "@{dst-fk-pattern}" %end
    %end
 
+  %if @{pk-col-pattern} %then
+    $br $tb [ pk-col-pattern=] "@{pk-col-pattern}"
+  %end
+
   %if @{custom-color} %then
    $br $tb [ custom-color=] "@{custom-color}"
   %end
@@ -43,11 +47,15 @@ $br $tb [ dst-table=] "@{dst-table}"
   [ dst-required=] %if @{dst-required} %then "true" %else "false" %end
 
   %if @{identifier} %then
-   $tb $sp identifier="true" $br
+   $br $tb $sp identifier="true" $br
+  %end
+
+  %if @{single-pk-col} %then
+   $br $tb [ single-pk-col=] "true"
   %end
 
   %if @{table-name} %then
-   $tb $sp table-name="@{table-name}"
+   $br $tb $sp table-name="@{table-name}"
   %end
 
   %if @{deferrable} %then

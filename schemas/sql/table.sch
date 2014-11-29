@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-@{drop}
+[-- ] @{drop}
 
  %if @{prepended-sql} %then
    @{prepended-sql}
@@ -14,14 +14,14 @@
 
 [CREATE]
 
-%if %not @{pgsql90} %and @{unlogged} %then
+%if (@{pgsql-ver} != "9.0") %and @{unlogged} %then
   [ UNLOGGED]
 %end
 
 [ TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}
-    %if @{columns} %then [,] %end
+    %if @{columns} %or @{constraints} %then [,] %end
     $br
   %end
 
@@ -56,13 +56,9 @@ $br )
 %if @{cols-comment} %then @{cols-comment} %end
 %if @{owner} %then @{owner} %end
 
-%if @{comment} %or @{cols-comment} %or @{owner} %then
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
-%end
-
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
+
+ $br

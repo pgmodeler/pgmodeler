@@ -31,6 +31,24 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
 
+  rand_color_ht=new HintTextWidget(rand_color_hint, this);
+  rand_color_ht->setText(rand_rel_color_chk->statusTip());
+
+  auto_res_deps_ht=new HintTextWidget(auto_res_deps_hint, this);
+  auto_res_deps_ht->setText(resolve_deps_chk->statusTip());
+
+  imp_sys_objs_ht=new HintTextWidget(imp_sys_objs_hint, this);
+  imp_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
+
+  imp_ext_objs_ht=new HintTextWidget(imp_ext_objs_hint, this);
+  imp_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
+
+  debug_mode_ht=new HintTextWidget(debug_mode_hint, this);
+  debug_mode_ht->setText(debug_mode_chk->statusTip());
+
+  ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
+  ignore_errors_ht->setText(ignore_errors_chk->statusTip());
+
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
@@ -114,7 +132,8 @@ void DatabaseImportForm::importDatabase(void)
 		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
-		import_helper.setSelectedOIDs(model_wgt, obj_oids, col_oids);
+
+		import_helper.setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 
 		timer.stop();
 
@@ -250,7 +269,7 @@ void DatabaseImportForm::listDatabases(void)
 
     //List the available databases using the selected connection
     import_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(import_helper, true, database_cmb);
+    DatabaseImportForm::listDatabases(import_helper, database_cmb);
 
     db_objects_tw->clear();
     database_gb->setEnabled(database_cmb->count() > 1);
@@ -281,9 +300,6 @@ void DatabaseImportForm::hideProgress(bool value)
 
 void DatabaseImportForm::showEvent(QShowEvent *)
 {
-	map<QString, Connection *> connections;
-	map<QString, Connection *>::iterator itr;
-
 	debug_mode_chk->setChecked(false);
 	ignore_errors_chk->setChecked(false);
 	import_sys_objs_chk->blockSignals(true);
@@ -298,19 +314,7 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	database_cmb->setEnabled(false);
 	db_objects_tw->setEnabled(false);
 
-	//Get the current connections configured on the connections widget
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(connections);
-
-	connections_cmb->clear();
-	itr=connections.begin();
-
-	//Add the connections to the combo
-	while(itr!=connections.end())
-	{
-		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-		itr++;
-	}
-
+	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
 	hideProgress();
 }
 
@@ -324,9 +328,9 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 	{
 		if(!model_wgt)
 			this->setResult(QDialog::Rejected);
-	}
 
-  import_helper.closeConnection();
+    import_helper.closeConnection();
+	}
 }
 
 void DatabaseImportForm::captureThreadError(Exception e)
@@ -418,12 +422,14 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 	model_wgt->rearrangeSchemas(QPointF(origin_sb->value(), origin_sb->value()),
 															tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+  model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
   import_helper.closeConnection();
   import_thread->quit();
+  import_thread->wait();
   timer.stop();
 
 	this->accept();
@@ -449,19 +455,18 @@ ModelWidget *DatabaseImportForm::getModelWidget(void)
   return(model_wgt);
 }
 
-void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, bool hide_postgres_db, QComboBox *dbcombo)
+void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)
 {
   if(dbcombo)
   {
     try
     {
-      attribs_map db_attribs, extra_attr;
+      attribs_map db_attribs;
       attribs_map::iterator itr;
       QStringList list;
       map<QString, unsigned> oids;
 
-      extra_attr[ParsersAttributes::HIDE_POSTGRES_DB]=(hide_postgres_db ? "1" : "");
-      db_attribs=import_helper.getObjects(OBJ_DATABASE, "", "", extra_attr);
+      db_attribs=import_helper.getObjects(OBJ_DATABASE);
       dbcombo->clear();
 
       if(db_attribs.empty())

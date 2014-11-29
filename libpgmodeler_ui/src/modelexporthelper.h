@@ -68,6 +68,8 @@ class ModelExportHelper: public QObject {
 		//! \brief Database connection used to export data to DBMS (only in thread mode)
 		Connection *connection;
 
+    QString sql_buffer, db_name;
+
 		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
 		This attribute is used to drop the created roles / tablespaces from server */
 		map<ObjectType, int> created_objs;
@@ -95,10 +97,21 @@ class ModelExportHelper: public QObject {
     //! brief Restore the original name of the database, roles and tablespaces
     void restoreObjectNames(void);
 
-	protected:
-		//! \brief Configures the DBMS export params before start the export thread (only in thread mode)
+    //! brief Exports the contents of the buffer to a previously opened connection
+    void exportBufferToDBMS(const QString &buffer, Connection &conn);
+
+    //! brief Returns if the error code is one of the treated by the export process
+    bool isExportError(const QString &error_code);
+
+  protected:
+    /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
+        This form receive a database model as input and the sql code to be exported will be generated from it */
     void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
                                bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
+
+    /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
+        This form receive a previously generated sql buffer to be exported the the helper */
+    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
@@ -122,7 +135,7 @@ class ModelExportHelper: public QObject {
 		finished before completely quit the thread itself otherwise the method don't do anything. */
 		void sleepThread(unsigned msecs);
 
-	signals:
+  signals:
 		//! \brief This singal is emitted whenever the export progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd="");
 
@@ -145,6 +158,7 @@ class ModelExportHelper: public QObject {
 
 	friend class ModelValidationHelper;
 	friend class ModelExportForm;
+  friend class ModelDatabaseDiffForm;
 };
 
 #endif

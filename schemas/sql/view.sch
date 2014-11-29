@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-@{drop}
+[-- ] @{drop}
 
  %if @{prepended-sql} %then
    @{prepended-sql}
@@ -14,7 +14,7 @@
 
 [CREATE ]
 
-%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+%if (@{pgsql-ver} >= "9.3") %then
   %if @{recursive} %then
     [RECURSIVE ]
   %else
@@ -32,7 +32,7 @@ VIEW $sp @{name}
 
 $br
 
-%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+%if (@{pgsql-ver} >= "9.3") %then
   %if @{materialized} %and @{tablespace} %then
     TABLESPACE $sp @{tablespace} $br
   %end
@@ -47,7 +47,7 @@ $br
 
 @{declaration}
 
-%if %not @{pgsql90} %and %not @{pgsql91} %and %not @{pgsql92} %then
+%if (@{pgsql-ver} >= "9.3") %then
   %if @{materialized} %and @{with-no-data} %then
     $br [WITH NO DATA]
   %end
@@ -55,15 +55,16 @@ $br
 
  ; $br
 
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+[-- ddl-end --] $br
+
 %if @{comment} %then @{comment} %end
 %if @{owner} %then @{owner} %end
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
-
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
 
+$br

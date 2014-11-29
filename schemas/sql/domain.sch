@@ -5,7 +5,7 @@
 
 [-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
 
-@{drop}
+[-- ] @{drop}
 
  %if @{prepended-sql} %then
    @{prepended-sql}
@@ -14,7 +14,7 @@
 
 [CREATE DOMAIN ] @{name} [ AS ] @{type}
 
-%if %not @{pgsql90} %and @{collation} %then
+%if (@{pgsql-ver} != "9.0") %and @{collation} %then
  $br $tb [COLLATE ] @{collation}
 %end
 
@@ -22,28 +22,33 @@
  $br $tb [DEFAULT ] @{default-value}
 %end
 
-%if @{constraint} %then
- $br $tb [CONSTRAINT ] @{constraint}
-%end
-
 %if @{not-null} %then
  $br $tb [NOT NULL]
 %end
 
 %if @{expression} %then
- $br $tb [CHECK ] (@{expression})
+
+ $br $tb
+
+ %if @{constraint} %then
+   [CONSTRAINT ] @{constraint} $sp
+ %end
+
+ [CHECK ] (@{expression})
 %end
 
 ;$br
 
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+[-- ddl-end --] $br
+
 %if @{owner} %then @{owner} %end
 %if @{comment} %then @{comment} %end
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
-
 %if @{appended-sql} %then
  @{appended-sql}
- $br [-- ddl-end --] $br $br
+ $br [-- ddl-end --] $br
 %end
+
+$br
