@@ -112,7 +112,7 @@ namespace GlobalAttributes {
 		#ifdef Q_OS_LINUX
 			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("./pgmodeler-ch"));
 		#else
-			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")).replace("\\","/") : QString("./pgmodeler-ch.exe"));
+      CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString(".\\pgmodeler-ch.exe"));
 		#endif
 	#else
 		//For MacOSX the crash handler path is fixed (inside bundle)
