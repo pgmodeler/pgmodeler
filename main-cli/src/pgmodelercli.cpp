@@ -605,7 +605,7 @@ void PgModelerCLI::recreateObjects(void)
 	QStringList fail_objs, constr, list;
 	QString xml_def;
 	BaseObject *object=nullptr;
-	ObjectType obj_type;
+  ObjectType obj_type=BASE_OBJECT;
 	attribs_map attribs;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FIX_TRIES].toUInt();
