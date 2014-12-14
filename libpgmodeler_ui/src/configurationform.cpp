@@ -66,9 +66,9 @@ void ConfigurationForm::reject(void)
 	try
 	{
 		if(sender()==cancel_btn)
-		{
-			appearance_conf->loadConfiguration();
-			connections_conf->loadConfiguration();
+    {
+      appearance_conf->loadConfiguration();
+      connections_conf->loadConfiguration();
 		}
 	}
 	catch(Exception &)

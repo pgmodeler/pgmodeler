@@ -75,6 +75,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Updates on the tree under the current selected object
     void updateCurrentItem(void);
 
+    void loadObjectProperties(void);
+
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
     void s_dataGridOpenRequested(QString schema, QString table, bool hide_views);

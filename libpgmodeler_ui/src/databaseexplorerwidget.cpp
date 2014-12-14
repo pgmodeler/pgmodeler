@@ -136,6 +136,10 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
       handle_menu.exec(QCursor::pos());
     }
   }
+  else if(QApplication::mouseButtons()==Qt::LeftButton)
+  {
+    loadObjectProperties();
+  }
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
@@ -355,5 +359,73 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
 
     import_helper.closeConnection();
     objects_trw->sortItems(0, Qt::AscendingOrder);
+  }
+}
+
+void DatabaseExplorerWidget::loadObjectProperties(void)
+{
+  try
+  {
+    QTreeWidgetItem *item=objects_trw->currentItem();
+    unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+
+    while(properties_tbw->rowCount() > 0)
+      properties_tbw->removeRow(0);
+
+    if(oid != 0)
+    {
+      Catalog catalog;
+      Connection conn=connection;
+      unsigned filter=Catalog::LIST_ALL_OBJS;
+      ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+      QString sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+              tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
+      vector<attribs_map> attribs;
+      QTableWidgetItem *item=nullptr;
+      int row=0;
+      QFont font;
+
+      if(!sys_objs_chk->isChecked())
+        filter=filter | Catalog::EXCL_SYSTEM_OBJS;
+
+      if(!ext_objs_chk->isChecked())
+        filter=filter | Catalog::EXCL_EXTENSION_OBJS;
+
+      catalog.setFilter(filter);
+      catalog.setConnection(conn);
+      attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+
+      if(attribs.size()==1)
+      {
+        for(auto attrib : attribs[0])
+        {
+          properties_tbw->insertRow(properties_tbw->rowCount());
+          row=properties_tbw->rowCount() - 1;
+
+          item=new QTableWidgetItem;
+          font=item->font();
+          font.setItalic(true);
+          item->setText(attrib.first);
+          item->setFont(font);
+          item->setIcon(QPixmap(":/icones/icones/attribute.png"));
+          properties_tbw->setItem(row, 0, item);
+
+          item=new QTableWidgetItem;
+
+          if(attrib.first==ParsersAttributes::OBJECT_TYPE)
+            item->setText(BaseObject::getTypeName(static_cast<ObjectType>(attrib.second.toUInt())));
+          else
+            item->setText(attrib.second);
+
+          properties_tbw->setItem(row, 1, item);
+        }
+      }
+    }
+
+    properties_tbw->horizontalHeader()->setVisible(properties_tbw->rowCount() > 0);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }

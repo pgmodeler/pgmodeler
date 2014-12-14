@@ -170,7 +170,7 @@ void ConnectionsConfigWidget::newConnection(void)
 
 	edit_tb->setEnabled(connections_cmb->count() > 0);
 	remove_tb->setEnabled(connections_cmb->count() > 0);
-	duplicate_tb->setEnabled(connections_cmb->count() > 0);
+  duplicate_tb->setEnabled(connections_cmb->count() > 0);
 }
 
 void ConnectionsConfigWidget::duplicateConnection()
@@ -185,8 +185,8 @@ void ConnectionsConfigWidget::duplicateConnection()
 		(*new_conn)=(*conn);
 		alias=QString("cp_%1").arg(connections_cmb->currentText());
 		connections_cmb->addItem(alias,  QVariant::fromValue<void *>(reinterpret_cast<void *>(new_conn)));
-		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
-	}
+    connections_cmb->setCurrentIndex(connections_cmb->count()-1);
+  }
 	catch(Exception &e)
 	{
 		if(new_conn)
@@ -235,12 +235,12 @@ void ConnectionsConfigWidget::removeConnection(void)
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
-		Connection *conexao=nullptr;
+    Connection *conexao=nullptr;
 
-		conexao=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+    conexao=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		connections_cmb->removeItem(connections_cmb->currentIndex());
-		delete(conexao);
-		this->newConnection();
+    delete(conexao);
+    this->newConnection();
 	}
 }
 
@@ -296,7 +296,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		new_tb->setVisible(false);
 		duplicate_tb->setEnabled(false);
 		cancel_tb->setVisible(true);
-		edit_tb->setEnabled(false);
+    edit_tb->setEnabled(false);
 	}
 }
 
@@ -379,7 +379,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 			this->removeConnection();
 
 		//Reloads the configuration
-		this->loadConfiguration();
+    this->loadConfiguration();
 	}
 	catch(Exception &e)
 	{
@@ -441,8 +441,8 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			}
 		}
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF);
-	}
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF);
+  }
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

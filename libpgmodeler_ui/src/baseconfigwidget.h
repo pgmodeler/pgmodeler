@@ -34,7 +34,7 @@ class BaseConfigWidget {
 	protected:
 		XMLParser xmlparser;
 
-		SchemaParser schparser;
+    SchemaParser schparser;
 
 		/*! \brief Stores the configuration params, the main key is the xml element name
 		 and the value is a map where the key is the attribute name and the value
@@ -56,7 +56,7 @@ class BaseConfigWidget {
 		void restoreDefaults(const QString &conf_id);
 
 	public:
-		BaseConfigWidget(void){}
+    BaseConfigWidget(void){}
 
 		//! \brief Adds a configuration param to the configuration map. Replaces the values if the param already exists.
 		void addConfigurationParam(const QString &param, const attribs_map &attribs);
@@ -68,7 +68,7 @@ class BaseConfigWidget {
 		void removeConfigurationParam(const QString &param);
 
 		//! \brief Removes all the configuration params
-		void removeConfigurationParams(void);
+    void removeConfigurationParams(void);
 
 		virtual void applyConfiguration(void)=0;
 };

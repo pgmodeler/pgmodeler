@@ -41,12 +41,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     models_tbw->tabBar()->setVisible(false);
     general_tb->layout()->setContentsMargins(0,0,0,0);
 
-    central_wgt=new CentralWidget(stacked_wgt);
+    central_wgt=new CentralWidget(views_stw);
     grid=new QGridLayout;
     grid->setContentsMargins(0,0,0,0);
     grid->setSpacing(0);
     grid->addWidget(central_wgt, 0, 0);
-    stacked_wgt->widget(WELCOME_VIEW)->setLayout(grid);
+    views_stw->widget(WELCOME_VIEW)->setLayout(grid);
 
     action_welcome->setData(WELCOME_VIEW);
     action_design->setData(DESIGN_VIEW);
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     grid->setContentsMargins(0,0,0,0);
     grid->setSpacing(0);
     grid->addWidget(sql_tool_wgt, 0, 0);
-    stacked_wgt->widget(MANAGE_VIEW)->setLayout(grid);
+    views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
     plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
@@ -625,10 +625,10 @@ void MainWindow::updateConnections(void)
 	ConnectionsConfigWidget *conn_cfg_wgt=nullptr;
 	map<QString, Connection *> connections;
 
-	conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-	conn_cfg_wgt->getConnections(connections);
-	model_valid_wgt->updateConnections(connections);
-	sql_tool_wgt->updateConnections(connections);
+  conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+  conn_cfg_wgt->getConnections(connections);
+  model_valid_wgt->updateConnections(connections);
+  sql_tool_wgt->updateConnections(connections);
 }
 
 void MainWindow::saveTemporaryModels(void)//(bool force)
@@ -855,7 +855,7 @@ void MainWindow::showMainMenu(void)
 
 void MainWindow::setCurrentModel(void)
 {
-	QObject *object=nullptr;
+  QObject *object=nullptr;
 
 	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
@@ -1223,7 +1223,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
 				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
-			}
+      }
 		}
 	}
 	catch(Exception &e)
@@ -1723,7 +1723,7 @@ void MainWindow::changeCurrentView(bool checked)
     action_design->setChecked(false);
 
     curr_act->setChecked(true);
-    stacked_wgt->setCurrentIndex(curr_act->data().toInt());
+    views_stw->setCurrentIndex(curr_act->data().toInt());
 
     action_welcome->blockSignals(false);
     action_manage->blockSignals(false);

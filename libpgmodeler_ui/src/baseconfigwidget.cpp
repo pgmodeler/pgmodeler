@@ -36,7 +36,7 @@ void BaseConfigWidget::removeConfigurationParam(const QString &param)
 
 void BaseConfigWidget::removeConfigurationParams(void)
 {
-	config_params.clear();
+  config_params.clear();
 }
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id)
@@ -61,7 +61,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 	map<QString, attribs_map >::iterator itr, itr_end;
 
 	try
-	{
+  {
 		itr=config_params.begin();
 		itr_end=config_params.end();
 
@@ -119,7 +119,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 		//Overwrites the current file with the default
 		QFile::remove(current_file);
 		QFile::copy(default_file, current_file);
-	}
+  }
 }
 
 void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs)

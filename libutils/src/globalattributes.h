@@ -34,7 +34,7 @@
 
 namespace GlobalAttributes {
 	static const QString
-  PGMODELER_VERSION="0.8.0-beta",
+  PGMODELER_VERSION="0.8.0-beta1",
 	PGMODELER_VER_CODENAME="Faithful Elephant",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
   PGMODELER_SITE="http://www.pgmodeler.com.br",

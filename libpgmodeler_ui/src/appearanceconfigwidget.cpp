@@ -330,7 +330,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	}
 
 	model->setObjectsModified();
-	scene->update();
+  scene->update();
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)
@@ -348,7 +348,7 @@ void AppearanceConfigWidget::applyFontStyle(void)
 			conf_items[element_cmb->currentIndex()].font_fmt);
 
 	model->setObjectsModified();
-	scene->update();
+  scene->update();
 }
 
 void AppearanceConfigWidget::restoreDefaults(void)

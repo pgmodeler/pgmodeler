@@ -23,7 +23,7 @@
 	  WHERE (nspname NOT LIKE 'pg_temp%' AND nspname NOT LIKE 'pg_toast%') ]
 
        %if @{last-sys-oid} %then
-	 [ AND oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ]
+         [ AND (oid ] @{oid-filter-op} $sp @{last-sys-oid} [ OR nspname = 'public' ) ]
        %end
 
        %if @{filter-oids} %then

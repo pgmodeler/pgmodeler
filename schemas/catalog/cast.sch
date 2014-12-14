@@ -43,8 +43,19 @@
        [ WHERE oid ] @{oid-filter-op} $sp @{last-sys-oid}
       %end
 
+      %if @{filter-oids} %then
+
+        %if @{last-sys-oid} %then
+         [ AND]
+        %else
+         [ WHERE ]
+        %end
+
+        [ oid IN (] @{filter-oids} )
+      %end
+
       %if @{not-ext-object} %then
-	 %if @{last-sys-oid} %then
+         %if @{last-sys-oid} %or @{filter-oids} %then
 	   [ AND ]
 	 %else
 	   [ WHERE ]
