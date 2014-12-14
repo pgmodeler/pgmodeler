@@ -47,20 +47,7 @@ bool Connection::silence_conn_err=true;
 
 Connection::Connection(void)
 {
-	connection=nullptr;
-}
-
-Connection::Connection(const QString &server_fqdn, const QString &port, const QString &user, const QString &passwd, const QString &db_name)
-{
-	//Configures the basic connection params
-	setConnectionParam(PARAM_SERVER_FQDN, server_fqdn);
-	setConnectionParam(PARAM_PORT, port);
-	setConnectionParam(PARAM_USER, user);
-	setConnectionParam(PARAM_PASSWORD, passwd);
-	setConnectionParam(PARAM_DB_NAME, db_name);
-
-	//Estabelece a conexão
-	connect();
+  connection=nullptr;
 }
 
 Connection::~Connection(void)
@@ -94,7 +81,13 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
     connection_params[param]=value;
 
 	//Updates the connection string
-	generateConnectionString();
+  generateConnectionString();
+}
+
+void Connection::setConnectionParams(const attribs_map &params)
+{
+  this->connection_params=params;
+  generateConnectionString();
 }
 
 void Connection::generateConnectionString(void)
@@ -228,7 +221,7 @@ QString Connection::getConnectionParam(const QString &param)
 	return(connection_params[param]);
 }
 
-attribs_map Connection::getConnectionParams(void)
+attribs_map Connection::getConnectionParams(void) const
 {
 	return(connection_params);
 }

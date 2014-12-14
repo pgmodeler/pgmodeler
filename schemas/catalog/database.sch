@@ -27,5 +27,9 @@
         [ AND oid IN (] @{filter-oids} )
       %end
 
+      %if @{name} %then
+       [ AND datname = ] '@{name}'
+      %end
+
     %end
 %end

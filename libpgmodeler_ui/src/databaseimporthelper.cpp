@@ -111,7 +111,17 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 
 unsigned DatabaseImportHelper::getLastSystemOID(void)
 {
-	return(catalog.getLastSysObjectOID());
+  return(catalog.getLastSysObjectOID());
+}
+
+QString DatabaseImportHelper::getCurrentDatabase(void)
+{
+  return(connection.getConnectionParam(Connection::PARAM_DB_NAME));
+}
+
+Catalog DatabaseImportHelper::getCatalog(void)
+{
+  return(catalog);
 }
 
 attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString &schema, const QString &table, attribs_map extra_attribs)

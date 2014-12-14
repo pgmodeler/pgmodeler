@@ -87,8 +87,8 @@ class Connection {
 													SSL_CA_VERIF,
 													SSL_FULL_VERIF;
 
-		Connection(void);
-		Connection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
+    Connection(void);
+    //Connection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
 		~Connection(void);
 
 		//! \brief Toggles the notice output for connections. By default any notice are omitted
@@ -115,6 +115,9 @@ class Connection {
 		 the connection to the database */
 		void setConnectionParam(const QString &param, const QString &value);
 
+    //! brief Sets all the connection parameters at once
+    void setConnectionParams(const attribs_map &params);
+
 		//! \brief Open the connection to the database
 		void connect(void);
 
@@ -125,10 +128,10 @@ class Connection {
 		void close(void);
 
 		//! \brief Returns the value of specified parameter name
-		QString getConnectionParam(const QString &param);
+    QString getConnectionParam(const QString &param);
 
 		//! \brief Returns the full parameter map
-		attribs_map getConnectionParams(void);
+    attribs_map getConnectionParams(void) const;
 
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);

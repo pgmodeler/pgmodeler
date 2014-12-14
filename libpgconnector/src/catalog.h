@@ -113,6 +113,7 @@ class Catalog {
 
 	public:
 		Catalog(void);
+    Catalog(const Catalog &catalog);
 
 		//! \brief Excludes the system objects from listing
 		static const unsigned EXCL_SYSTEM_OBJS=1,
@@ -183,6 +184,9 @@ class Catalog {
 
     //! brief Returns the current status of cached catalog queries
     static bool isCachedQueriesEnabled(void);
+
+    //! brief Performs the copy between two catalogs
+    void operator = (const Catalog &catalog);
 };
 
 #endif

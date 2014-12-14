@@ -19,6 +19,8 @@
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
 
+const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(not defined)");
+
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
   setupUi(this);
@@ -33,7 +35,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
   refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
-
   objects_trw->installEventFilter(this);
 
   connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
@@ -52,18 +53,74 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 
     if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
     {
-      if(k_event->key()==Qt::Key_F5)
+     if(k_event->key()==Qt::Key_F5)
         updateCurrentItem();
-      else
-        dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
-
-      return(true);
+     else
+       dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
+     return(true);
     }
     else
       return(false);
   }
 
   return(QWidget::eventFilter(object, event));
+}
+
+void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
+{
+  ObjectType obj_type=BASE_OBJECT;
+  attribs_map fmt_attribs;
+  QString attr_name, attr_value;
+  vector<attribs_map> dep_attribs;
+  QRegExp oid_regexp=QRegExp("^[0-9]+");
+  unsigned oid=0;
+  map<QString, ObjectType> dep_types={{ParsersAttributes::OWNER, OBJ_ROLE},
+                                      {ParsersAttributes::SCHEMA, OBJ_SCHEMA},
+                                      {ParsersAttributes::TABLESPACE, OBJ_TABLESPACE},
+                                      {ParsersAttributes::COLLATION, OBJ_COLLATION}};
+
+  if(attribs.count(ParsersAttributes::OBJECT_TYPE)!=0)
+    obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+
+  switch(obj_type)
+  {
+    case OBJ_SCHEMA:
+      formatSchemaAttributes(attribs);
+    break;
+
+    default:
+      qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
+    break;
+  }
+
+  for(auto attrib : attribs)
+  {
+    attr_name=attrib.first;
+    attr_value=attrib.second;
+
+    if(attr_name==ParsersAttributes::OBJECT_TYPE)
+     attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
+    else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
+    {
+      oid=attr_value.toUInt();
+      dep_attribs=catalog.getObjectsAttributes(dep_types[attr_name], "", "", { oid });
+
+      if(!dep_attribs.empty())
+        attr_value=dep_attribs[0].at(ParsersAttributes::NAME);
+      else
+        attr_value=DEP_NOT_DEFINED;
+    }
+
+    attr_name[0]=attr_name[0].toUpper();
+    fmt_attribs[attr_name]=attr_value;
+  }
+
+  attribs=fmt_attribs;
+}
+
+void DatabaseExplorerWidget::formatSchemaAttributes(attribs_map &attribs)
+{
+
 }
 
 void DatabaseExplorerWidget::setConnection(Connection conn)
@@ -81,7 +138,7 @@ void DatabaseExplorerWidget::listObjects(void)
   try
   {
     configureImportHelper();
-    DatabaseImportForm::listObjects(import_helper, objects_trw, false, false);
+    DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true);
     import_helper.closeConnection();
   }
   catch(Exception &e)
@@ -95,6 +152,10 @@ void DatabaseExplorerWidget::configureImportHelper(void)
   import_helper.setConnection(connection);
   import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
   import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false);
+
+  catalog.closeConnection();
+  catalog.setFilter(Catalog::LIST_ALL_OBJS);
+  catalog.setConnection(connection);
 }
 
 void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
@@ -107,34 +168,27 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     for(auto act : handle_menu.actions())
       handle_menu.removeAction(act);
 
-    if(obj_id > 0)
+    if(obj_id > 0 && obj_type!=OBJ_DATABASE)
     {
       if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
         handle_menu.addAction(show_data_action);
 
       handle_menu.addAction(drop_action);
       handle_menu.addAction(drop_cascade_action);
-
-      if(obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA)
-        handle_menu.addAction(refresh_action);
-
-      if(!handle_menu.actions().isEmpty())
-      {
-        QAction *exec_action=handle_menu.exec(QCursor::pos());
-
-        if(exec_action==drop_action || exec_action==drop_cascade_action)
-          dropObject(item,  exec_action==drop_cascade_action);
-        else if(exec_action==show_data_action)
-          emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-                                       item->text(0),
-                                       item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
-      }
-    }
-    else
-    {
       handle_menu.addAction(refresh_action);
-      handle_menu.exec(QCursor::pos());
     }
+
+    handle_menu.addAction(refresh_action);
+    QAction *exec_action=handle_menu.exec(QCursor::pos());
+
+    if(exec_action==drop_action || exec_action==drop_cascade_action)
+      dropObject(item,  exec_action==drop_cascade_action);
+    else if(exec_action==refresh_action)
+      updateCurrentItem();
+    else if(exec_action==show_data_action)
+      emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+                                   item->text(0),
+                                   item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
   }
   else if(QApplication::mouseButtons()==Qt::LeftButton)
   {
@@ -257,108 +311,91 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
     unsigned obj_id=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt());
     QString sch_name, tab_name;
     vector<QTreeWidgetItem *> gen_items, gen_items1;
-    vector<ObjectType> db_types=BaseObject::getChildObjectTypes(OBJ_DATABASE);
 
-    parent=item->parent();
-    objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
-    sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
-    tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
-
-    if(parent)
+    if(obj_type==OBJ_DATABASE)
+      listObjects();
+    else
     {
-      if(obj_id==0)
-      {
-        root=parent;
-        parent->takeChild(parent->indexOfChild(item));
-      }
-      else
-      {
-        if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
-        {
-          root=item;
-          root->takeChildren();
+      parent=item->parent();
+      sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+      tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
 
-          if(obj_type==OBJ_TABLE)
-            tab_name=item->text(0);
-          else
-            sch_name=item->text(0);
+      if(parent)
+      {
+        if(obj_id==0)
+        {
+          root=parent;
+          parent->takeChild(parent->indexOfChild(item));
         }
         else
         {
-          //If the object type is a database child one
-          if(std::find(db_types.begin(), db_types.end(), obj_type)!=db_types.end())
+          if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
           {
-            root=nullptr;
-            objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(parent));
-          }
-          else
-          {
-            //If the type is a table child object remove the group of current type
-            if(TableObject::isTableObject(obj_type))
-            {
-              root=parent->parent();
-              root->takeChild(root->indexOfChild(parent));
-            }
+            root=item;
+            root->takeChildren();
+
+            if(obj_type==OBJ_TABLE)
+              tab_name=item->text(0);
             else
-            {
-              root=parent;
-              parent->takeChild(parent->indexOfChild(item));
-            }
+              sch_name=item->text(0);
+          }
+          else
+          {
+            root=parent->parent();
+            root->takeChild(root->indexOfChild(parent));
           }
         }
       }
-    }
-    else
-      objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
-    configureImportHelper();
+      configureImportHelper();
 
-    //Updates the group type only
-    if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
-      gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
-    else
-      //Updates all child objcts when the selected object is a schema or table
-      gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                      BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
+      //Updates the group type only
+      if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
+        gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
+      else
+        //Updates all child objcts when the selected object is a schema or table
+        gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+                                                        BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
 
-    //Updating the subtree for schemas / tables
-    if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
-    {
-      for(auto item : gen_items)
+      //Updating the subtree for schemas / tables
+      if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
       {
-        //When the user refresh a single schema or table
-        if(obj_id > 0 || obj_type==OBJ_TABLE)
+        for(auto item : gen_items)
         {
-          //Updates the table subtree
-          DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                BaseObject::getChildObjectTypes(OBJ_TABLE),
-                                                false, false, item,
-                                                item->parent()->data(DatabaseImportForm::OBJECT_SCHEMA,Qt::UserRole).toString(),
-                                                item->text(0));
-        }
-        //When the user refresh the schema group
-        else
-        {
-          //Updates the entire schema subtree
-          gen_items1= DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-                                                            BaseObject::getChildObjectTypes(OBJ_SCHEMA),
-                                                            false, false, item, item->text(0));
-
-          //Updates the table group for the current schema
-          for(auto item1 : gen_items1)
+          //When the user refresh a single schema or table
+          if(obj_id > 0 || obj_type==OBJ_TABLE)
           {
+            //Updates the table subtree
             DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
                                                   BaseObject::getChildObjectTypes(OBJ_TABLE),
-                                                  false, false, item1,
-                                                  item1->parent()->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-                                                  item1->text(0));
+                                                  false, false, item,
+                                                  item->parent()->data(DatabaseImportForm::OBJECT_SCHEMA,Qt::UserRole).toString(),
+                                                  item->text(0));
+          }
+          //When the user refresh the schema group
+          else
+          {
+            //Updates the entire schema subtree
+            gen_items1= DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+                                                              BaseObject::getChildObjectTypes(OBJ_SCHEMA),
+                                                              false, false, item, item->text(0));
+
+            //Updates the table group for the current schema
+            for(auto item1 : gen_items1)
+            {
+              DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
+                                                    BaseObject::getChildObjectTypes(OBJ_TABLE),
+                                                    false, false, item1,
+                                                    item1->parent()->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+                                                    item1->text(0));
+            }
           }
         }
       }
-    }
 
-    import_helper.closeConnection();
-    objects_trw->sortItems(0, Qt::AscendingOrder);
+      import_helper.closeConnection();
+      objects_trw->sortItems(0, Qt::AscendingOrder);
+    }
   }
 }
 
@@ -374,9 +411,6 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
 
     if(oid != 0)
     {
-      Catalog catalog;
-      Connection conn=connection;
-      unsigned filter=Catalog::LIST_ALL_OBJS;
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
       QString sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
               tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
@@ -385,18 +419,13 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       int row=0;
       QFont font;
 
-      if(!sys_objs_chk->isChecked())
-        filter=filter | Catalog::EXCL_SYSTEM_OBJS;
-
-      if(!ext_objs_chk->isChecked())
-        filter=filter | Catalog::EXCL_EXTENSION_OBJS;
-
-      catalog.setFilter(filter);
-      catalog.setConnection(conn);
       attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+      properties_tbw->setSortingEnabled(false);
 
       if(attribs.size()==1)
       {
+        formatObjectAttributes(attribs[0]);
+
         for(auto attrib : attribs[0])
         {
           properties_tbw->insertRow(properties_tbw->rowCount());
@@ -411,17 +440,13 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
           properties_tbw->setItem(row, 0, item);
 
           item=new QTableWidgetItem;
-
-          if(attrib.first==ParsersAttributes::OBJECT_TYPE)
-            item->setText(BaseObject::getTypeName(static_cast<ObjectType>(attrib.second.toUInt())));
-          else
-            item->setText(attrib.second);
-
+          item->setText(attrib.second);
           properties_tbw->setItem(row, 1, item);
         }
       }
     }
 
+    properties_tbw->setSortingEnabled(true);
     properties_tbw->horizontalHeader()->setVisible(properties_tbw->rowCount() > 0);
   }
   catch(Exception &e)

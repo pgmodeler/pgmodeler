@@ -212,6 +212,12 @@ class DatabaseImportHelper: public QObject {
 		//! brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID(void);
 
+    //! brief Returns the current database in which the helper is working on
+    QString getCurrentDatabase(void);
+
+    //! brief Returns a copy of the current catalog instance being used
+    Catalog getCatalog(void);
+
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
 				\note: The database used as reference is the same as the currently connection. So,

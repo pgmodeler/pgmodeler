@@ -43,7 +43,12 @@ map<ObjectType, QString> Catalog::oid_fields=
 Catalog::Catalog(void)
 {
 	last_sys_oid=0;
-	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+  setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+}
+
+Catalog::Catalog(const Catalog &catalog)
+{
+  (*this)=catalog;
 }
 
 void Catalog::setConnection(Connection &conn)
@@ -546,4 +551,24 @@ void Catalog::enableCachedQueries(bool value)
 bool Catalog::isCachedQueriesEnabled(void)
 {
   return(use_cached_queries);
+}
+
+void Catalog::operator = (const Catalog &catalog)
+{
+  try
+  {
+    this->ext_obj_oids=catalog.ext_obj_oids;
+    this->connection.setConnectionParams(catalog.connection.getConnectionParams());
+    this->last_sys_oid=catalog.last_sys_oid;
+    this->filter=catalog.filter;
+    this->exclude_ext_objs=catalog.exclude_ext_objs;
+    this->exclude_sys_objs=catalog.exclude_sys_objs;
+    this->exclude_array_types=catalog.exclude_array_types;
+    this->list_only_sys_objs=catalog.list_only_sys_objs;
+    this->connection.connect();
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

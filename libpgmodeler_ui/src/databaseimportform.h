@@ -85,7 +85,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
 
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
-    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps);
+    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps, bool create_db_item);
 
 		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column=OBJECT_ID);
 

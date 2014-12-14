@@ -33,12 +33,16 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private:
 		Q_OBJECT
 
+    static const QString DEP_NOT_DEFINED;
+
     /*! brief Connection used to handle objects on database. This connection is copied
         whenever a new operation must be performed on database */
     Connection connection;
 
     //! brief Database import helper used to list objects from current connection
     DatabaseImportHelper import_helper;
+
+    Catalog catalog;
 
     SchemaParser schparser;
 
@@ -54,6 +58,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void dropObject(QTreeWidgetItem *item, bool cascade);
 
     bool eventFilter(QObject *object, QEvent *event);
+
+    void formatObjectAttributes(attribs_map &attribs);
+    void formatSchemaAttributes(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);

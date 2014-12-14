@@ -341,6 +341,12 @@
       </layout>
      </widget>
      <widget class="QTableWidget" name="properties_tbw">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
       <property name="autoScrollMargin">
        <number>16</number>
       </property>
@@ -366,10 +372,10 @@
        <enum>QAbstractItemView::SelectItems</enum>
       </property>
       <property name="showGrid">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="gridStyle">
-       <enum>Qt::NoPen</enum>
+       <enum>Qt::SolidLine</enum>
       </property>
       <property name="sortingEnabled">
        <bool>true</bool>
