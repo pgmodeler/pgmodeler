@@ -210,9 +210,6 @@
                 <height>22</height>
                </size>
               </property>
-              <property name="shortcut">
-               <string>Ctrl+F5</string>
-              </property>
              </widget>
             </item>
             <item>
@@ -307,9 +304,6 @@
                 <width>22</width>
                 <height>22</height>
                </size>
-              </property>
-              <property name="shortcut">
-               <string>Ctrl+F5</string>
               </property>
              </widget>
             </item>

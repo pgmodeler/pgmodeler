@@ -32,6 +32,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
 
   show_data_action=new QAction(QIcon(":icones/icones/result.png"), trUtf8("Show data"), &handle_menu);
+  properties_action=new QAction(QIcon(":icones/icones/editar.png"), trUtf8("Properties"), &handle_menu);
 
   refresh_action=new QAction(QIcon(":icones/icones/atualizar.png"), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
@@ -175,16 +176,21 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
       handle_menu.addAction(drop_action);
       handle_menu.addAction(drop_cascade_action);
-      handle_menu.addAction(refresh_action);
     }
 
     handle_menu.addAction(refresh_action);
+
+    if(obj_id > 0)
+      handle_menu.addAction(properties_action);
+
     QAction *exec_action=handle_menu.exec(QCursor::pos());
 
     if(exec_action==drop_action || exec_action==drop_cascade_action)
       dropObject(item,  exec_action==drop_cascade_action);
     else if(exec_action==refresh_action)
       updateCurrentItem();
+    else if(exec_action==properties_action)
+      loadObjectProperties();
     else if(exec_action==show_data_action)
       emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),

@@ -50,7 +50,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     QMenu handle_menu;
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
-            *show_data_action, *refresh_action;
+            *show_data_action, *refresh_action, *properties_action;
 
     void configureImportHelper(void);
 
