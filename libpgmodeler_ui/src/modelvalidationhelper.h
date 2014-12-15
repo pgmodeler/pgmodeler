@@ -67,6 +67,9 @@ class ModelValidationHelper: public QObject {
 		This vector is read when applying fixes */
 		vector<ValidationInfo> val_infos;
 
+    //! brief Stores the analyzed relationship marked as invalidated
+    vector<BaseObject *> inv_rels;
+
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
 		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
 		finished before completely quit the thread itself otherwise the method don't do anything. */
@@ -128,6 +131,10 @@ class ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
 		void s_fixApplied(void);
+
+    /*! brief This signal is emitted when the validator need the validation of relationship.
+        This process must be performed outside the current thread, this explains the usage of this signal */
+    void s_relsValidationRequested(void);
 };
 
 #endif
