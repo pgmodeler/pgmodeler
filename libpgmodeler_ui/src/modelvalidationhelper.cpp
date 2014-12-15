@@ -43,13 +43,17 @@ void ModelValidationHelper::sleepThread(unsigned msecs)
 
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
 {
-  if(!refs.empty())
+  if(!refs.empty() ||
+     (val_type==ValidationInfo::BROKEN_REL_CONFIG &&
+      std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
   {
     //Configures a validation info
 		ValidationInfo info=ValidationInfo(val_type, object, refs);
     error_count++;
-
     val_infos.push_back(info);
+
+    if(val_type==ValidationInfo::BROKEN_REL_CONFIG)
+      inv_rels.push_back(object);
 
     //Emit the signal containing the info
     emit s_validationInfoGenerated(info);
@@ -177,6 +181,21 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				sleepThread(10);
 			}
 		}
+    else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+    {
+      vector<BaseObject *> *rels=db_model->getObjectList(OBJ_RELATIONSHIP);
+      vector<BaseObject *>::iterator itr;
+
+      itr=std::find(rels->begin(), rels->end(), info.getObject());
+
+      if(itr!=rels->end() && (*itr)!=rels->back())
+      {
+        rels->erase(itr);
+        rels->push_back(info.getObject());
+        BaseObject::updateObjectId(info.getObject());
+        info.getObject();
+      }
+    }
 	}
 	catch(Exception &e)
 	{
@@ -205,6 +224,7 @@ void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection
 	fix_mode=false;
 	valid_canceled=false;
 	val_infos.clear();
+  inv_rels.clear();
 	this->db_model=model;
 	this->conn=conn;
 	this->pgsql_ver=pgsql_ver;
@@ -296,11 +316,7 @@ void ModelValidationHelper::validateModel(void)
 					{
 						db_model->getObjectReferences(object, refs);
 
-            /*if(obj_type==OBJ_SCHEMA || obj_type==OBJ_COLLATION ||
-               obj_type==OBJ_ROLE || obj_type==OBJ_C)
-             std::remove(refs.begin(), refs.end(), db_model); */
-
-						while(!refs.empty() && !valid_canceled)
+            while(!refs.empty() && !valid_canceled)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered
 							tab_obj=dynamic_cast<TableObject *>(refs.back());
@@ -495,6 +511,22 @@ void ModelValidationHelper::validateModel(void)
 			sleepThread(5);
 		}
 
+    /* Step 3: Checking if there are some invalidated relationship. In some cases, specially with identifier relationship,
+       the columns aren't correctly propagated due to creation order and special behavior of those objects. Thus, in order to
+       keep all columns synchonized it is need to make this step and change the relationship creation order if needed */ 
+    obj_list=db_model->getObjectList(OBJ_RELATIONSHIP);
+    itr=db_model->getObjectList(OBJ_RELATIONSHIP)->begin();
+
+    while(itr!=obj_list->end() && !valid_canceled)
+    {
+      if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
+        generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
+
+      itr++;
+      sleepThread(5);
+    }
+
+
 		if(!valid_canceled && !fix_mode)
 		{
 			//Step 3 (optional): Validating the SQL code onto a local DBMS.
@@ -538,9 +570,11 @@ void ModelValidationHelper::applyFixes(void)
 		{
 			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
 			{
-				validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-                       val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
-											 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
+        if(!validate_rels)
+          validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
+                         val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
+                         val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
+                         val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
 
 				sleepThread(5);
 
@@ -552,17 +586,17 @@ void ModelValidationHelper::applyFixes(void)
 
 			sleepThread(10);
 
-			if(!valid_canceled)
-				validateModel();
+      if(!valid_canceled)
+        validateModel();
 		}
 
 		if(!valid_canceled && val_infos.empty())
-		{
-			if(validate_rels)
-				db_model->validateRelationships();
+    {
+      if(validate_rels)
+        emit s_relsValidationRequested();
 
-			fix_mode=false;
-		}
+      fix_mode=false;
+    }
 	}
 }
 

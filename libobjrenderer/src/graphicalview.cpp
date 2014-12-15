@@ -36,7 +36,6 @@ GraphicalView::~GraphicalView(void)
 void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
-	QPolygonF pol;
 	int i, count, count1=0;
 	Reference ref;
 	QPen pen;

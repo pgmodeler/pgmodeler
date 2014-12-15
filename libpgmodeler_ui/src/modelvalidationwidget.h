@@ -80,6 +80,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void configureValidation(void);
 		void cancelValidation(void);
 		void swapObjectsIds(void);
+    void validateRelationships(void);
 
 	public slots:
 		void hide(void);

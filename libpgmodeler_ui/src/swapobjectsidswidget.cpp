@@ -5,7 +5,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX, OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
+    vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX, OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
 		setupUi(this);
 
 		src_object_sel=nullptr;
