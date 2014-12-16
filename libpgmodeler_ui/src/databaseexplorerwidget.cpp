@@ -18,6 +18,7 @@
 
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
+#include "sqltoolwidget.h"
 
 const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(not defined)");
 
@@ -44,6 +45,13 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
+
+  connect(properties_tbw, &QTableWidget::itemPressed,
+          [=]() { SQLToolWidget::copySelection(properties_tbw, true); });
+
+  connect(filter_edt, &QLineEdit::textChanged,
+          [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
+                                                   (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0)); });
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
@@ -460,3 +468,118 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
+
+/*
+admin-roles
+alignment
+analyze
+arg-count
+arg-def-count
+arg-defaults
+arg-modes
+arg-names
+arg-types
+attribute
+behavior-type
+by-value
+cast-type
+category
+collatable
+collation
+comment
+commutator-op
+configuration
+connlimit
+constraint
+createdb
+createrole
+cur-version
+default
+default-value
+definition
+delimiter
+destiny-type
+dimension
+directory
+dst-encoding
+element
+encoding
+encrypted
+enumerations
+execution-cost
+expression
+family
+final
+function
+function-type
+handler
+handles-type
+hashes
+index-type
+inherit
+initial-cond
+inline
+input
+internal-length
+interval-type
+io-cast
+join
+language
+lc-collate
+lc-ctype
+leakproof
+left-type
+length
+library
+login
+materialized
+member-roles
+merges
+name
+negator-op
+not-null
+object-type
+oid
+oids
+old-version
+operator
+operfunc
+output
+owner
+owner-col
+parents
+password
+permission
+precision
+preferred
+range-attribs
+receive
+ref-roles
+replication
+restriction
+return-type
+returns-setof
+right-type
+row-amount
+schema
+security-type
+send
+sort-op
+source-type
+src-encoding
+state-type
+storage
+superuser
+tablespace
+tpmodin
+tpmodout
+transition
+trusted
+type
+typeattrib
+types
+unlogged
+validator
+validity
+window-func
+*/

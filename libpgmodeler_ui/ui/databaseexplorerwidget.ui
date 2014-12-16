@@ -333,6 +333,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="by_oid_chk">
+              <property name="text">
+               <string>By OID</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -366,7 +373,7 @@
        <bool>true</bool>
       </property>
       <property name="selectionMode">
-       <enum>QAbstractItemView::SingleSelection</enum>
+       <enum>QAbstractItemView::ContiguousSelection</enum>
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectItems</enum>

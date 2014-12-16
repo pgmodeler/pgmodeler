@@ -232,7 +232,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(!pgsql_ver.isEmpty())
 		{
 			BaseObject::setPgSQLVersion(pgsql_ver);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1.").arg(pgsql_ver));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overridden. Using version %1.").arg(pgsql_ver));
 		}
 		else
 		{
