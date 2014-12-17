@@ -21,7 +21,9 @@
 [ TABLE ] @{name} ( $br
   %if @{copy-table} %then
     $tb LIKE $sp @{copy-table}
-    %if @{columns} %or @{constraints} %then [,] %end
+    %if %not @{gen-alter-cmds} %then
+      %if @{columns} %or @{constraints} %then [,] %end
+    %end
     $br
   %end
 

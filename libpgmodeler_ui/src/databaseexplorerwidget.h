@@ -64,6 +64,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     QString getObjectName(ObjectType obj_type, unsigned oid);
     void formatObjectAttribs(attribs_map &attribs);
+    void formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs);
+    void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array);
     void formatCastAttribs(attribs_map &attribs);
     void formatLanguageAttribs(attribs_map &attribs);
     void formatTriggerAttribs(attribs_map &attribs);
@@ -71,6 +73,10 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatEventTriggerAttribs(attribs_map &attribs);
     void formatAggregateAttribs(attribs_map &attribs);
     void formatConversionAttribs(attribs_map &attribs);
+    void formatDomainAttribs(attribs_map &attribs);
+    void formatExtensionAttribs(attribs_map &attribs);
+    void formatFunctionAttribs(attribs_map &attribs);
+    void formatOperatorAttribs(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);

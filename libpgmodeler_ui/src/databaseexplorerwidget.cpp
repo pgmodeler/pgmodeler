@@ -161,6 +161,22 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
         formatConversionAttribs(attribs);
       break;
 
+      case OBJ_DOMAIN:
+        formatDomainAttribs(attribs);
+      break;
+
+      case OBJ_EXTENSION:
+        formatExtensionAttribs(attribs);
+      break;
+
+      case OBJ_FUNCTION:
+        formatFunctionAttribs(attribs);
+      break;
+
+      case OBJ_OPERATOR:
+        formatOperatorAttribs(attribs);
+      break;
+
       default:
         qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
       break;
@@ -194,15 +210,42 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
   attribs=fmt_attribs;
 }
 
-void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
+void DatabaseExplorerWidget::formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs)
 {
-  QStringList type_attrs={ ParsersAttributes::DEST_TYPE, ParsersAttributes::SOURCE_TYPE };
+  for(QString attr : bool_attrs)
+    attribs[attr]=(attribs[attr].isEmpty() ?
+                   attribs_i18n.at(ParsersAttributes::_FALSE_) :
+                   attribs_i18n.at(ParsersAttributes::_TRUE_));
+}
 
-  attribs[ParsersAttributes::IO_CAST]=(attribs[ParsersAttributes::IO_CAST].isEmpty() ?
-                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
-                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
-  for(QString attr : type_attrs)
-   attribs[attr]=getObjectName(OBJ_TYPE, attribs[attr].toUInt());
+void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array)
+{
+  if(!is_oid_array)
+  {
+    for(QString attr : oid_attrs)
+      attribs[attr]=getObjectName(obj_type, attribs[attr].toUInt());
+  }
+  else
+  {
+    QStringList oid_vect;
+    for(QString attr : oid_attrs)
+    {
+      oid_vect=Catalog::parseArrayValues(attribs[attr]);
+
+      for(int idx=0; idx < oid_vect.size(); idx++)
+        oid_vect[idx]=getObjectName(obj_type, oid_vect[idx].toUInt());
+
+      attribs[attr]=oid_vect.join(",");
+    }
+  }
+}
+
+void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
+{  
+  formatBooleanAttribs(attribs, { ParsersAttributes::IO_CAST });
+
+  formatOidAttribs(attribs, { ParsersAttributes::DEST_TYPE,
+                              ParsersAttributes::SOURCE_TYPE }, OBJ_TYPE, false);
 
   attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
 }
@@ -215,71 +258,83 @@ void DatabaseExplorerWidget::formatEventTriggerAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 {
-  QStringList func_attrs={ ParsersAttributes::FINAL_FUNC, ParsersAttributes::TRANSITION_FUNC },
-              types;
+  formatOidAttribs(attribs, { ParsersAttributes::FINAL_FUNC,
+                              ParsersAttributes::TRANSITION_FUNC }, OBJ_FUNCTION, false);
 
-  for(QString attr : func_attrs)
-   attribs[attr]=getObjectName(OBJ_FUNCTION, attribs[attr].toUInt());
+  formatOidAttribs(attribs, { ParsersAttributes::TYPES }, OBJ_TYPE, true);
 
   attribs[ParsersAttributes::STATE_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::STATE_TYPE].toUInt());
   attribs[ParsersAttributes::SORT_OP]=getObjectName(OBJ_OPERATOR, attribs[ParsersAttributes::SORT_OP].toUInt());
-
-  types=Catalog::parseArrayValues(attribs[ParsersAttributes::TYPES]);
-  for(int idx=0; idx < types.size(); idx++)
-    types[idx]=getObjectName(OBJ_TYPE, types[idx].toUInt());
-
-  attribs[ParsersAttributes::TYPES]=types.join(",");
   attribs[ParsersAttributes::INITIAL_COND]=Catalog::parseArrayValues(attribs[ParsersAttributes::INITIAL_COND]).join(",");
 }
 
 void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 {
-  QStringList func_attribs={ ParsersAttributes::VALIDATOR_FUNC,
-                             ParsersAttributes::HANDLER_FUNC,
-                             ParsersAttributes::INLINE_FUNC };
+  formatBooleanAttribs(attribs, { ParsersAttributes::TRUSTED });
 
-  attribs[ParsersAttributes::TRUSTED]=(attribs[ParsersAttributes::TRUSTED].isEmpty() ?
-                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
-                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
-
-  for(QString attr : func_attribs)
-    attribs[attr]=getObjectName(OBJ_FUNCTION, attribs[attr].toUInt());
+  formatOidAttribs(attribs, { ParsersAttributes::VALIDATOR_FUNC,
+                              ParsersAttributes::HANDLER_FUNC,
+                              ParsersAttributes::INLINE_FUNC }, OBJ_FUNCTION, false);
 }
 
 void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
 {
-  QStringList role_attribs={ ParsersAttributes::SUPERUSER, ParsersAttributes::INHERIT,
-                             ParsersAttributes::CREATEROLE, ParsersAttributes::CREATEDB,
-                             ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-                             ParsersAttributes::REPLICATION },
+  formatOidAttribs(attribs, { ParsersAttributes::ADMIN_ROLES,
+                              ParsersAttributes::MEMBER_ROLES,
+                              ParsersAttributes::REF_ROLES }, OBJ_ROLE, true);
 
-              members_attribs={ ParsersAttributes::ADMIN_ROLES,
-                                ParsersAttributes::MEMBER_ROLES,
-                                ParsersAttributes::REF_ROLES },
-              roles;
-
-  for(QString attr : role_attribs)
-    attribs[attr]=(attribs[attr].isEmpty() ?
-                   attribs_i18n.at(ParsersAttributes::_FALSE_) :
-                   attribs_i18n.at(ParsersAttributes::_TRUE_));
-
-  for(QString attr : members_attribs)
-  {
-    roles=Catalog::parseArrayValues(attribs[attr]);
-
-    for(int idx=0; idx < roles.size(); idx++)
-      roles[idx]=getObjectName(OBJ_ROLE, roles[idx].toUInt());
-
-    attribs[attr]=roles.join(",");
-  }
+  formatBooleanAttribs(attribs, { ParsersAttributes::SUPERUSER, ParsersAttributes::INHERIT,
+                                  ParsersAttributes::CREATEROLE, ParsersAttributes::CREATEDB,
+                                  ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+                                  ParsersAttributes::REPLICATION });
 }
 
 void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)
 {
-  attribs[ParsersAttributes::DEFAULT]=(attribs[ParsersAttributes::DEFAULT].isEmpty() ?
-                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
-                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
+  formatBooleanAttribs(attribs, { ParsersAttributes::DEFAULT });
   attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
+}
+
+void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
+{
+  formatBooleanAttribs(attribs, { ParsersAttributes::NOT_NULL });
+  attribs[ParsersAttributes::TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::TYPE].toUInt());
+}
+
+void DatabaseExplorerWidget::formatExtensionAttribs(attribs_map &attribs)
+{
+  formatBooleanAttribs(attribs, { ParsersAttributes::HANDLES_TYPE });
+}
+
+void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
+{
+  attribs[ParsersAttributes::LANGUAGE]=getObjectName(OBJ_LANGUAGE, attribs[ParsersAttributes::LANGUAGE].toUInt());
+  attribs[ParsersAttributes::RETURN_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::RETURN_TYPE].toUInt());
+  attribs[ParsersAttributes::ARG_NAMES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]).join(",");
+  attribs[ParsersAttributes::ARG_MODES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_MODES]).join(",");
+  attribs[ParsersAttributes::ARG_DEFAULTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_DEFAULTS]).join(",");
+
+  formatOidAttribs(attribs, { ParsersAttributes::ARG_TYPES }, OBJ_TYPE, true);
+
+  formatBooleanAttribs(attribs, { ParsersAttributes::WINDOW_FUNC,
+                                  ParsersAttributes::LEAKPROOF,
+                                  ParsersAttributes::RETURNS_SETOF });
+}
+
+void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
+{
+  formatBooleanAttribs(attribs, { ParsersAttributes::HASHES,
+                                  ParsersAttributes::MERGES });
+
+  formatOidAttribs(attribs, { ParsersAttributes::LEFT_TYPE,
+                              ParsersAttributes::RIGHT_TYPE}, OBJ_TYPE, false);
+
+  formatOidAttribs(attribs, { ParsersAttributes::COMMUTATOR_OP,
+                              ParsersAttributes::NEGATOR_OP}, OBJ_OPERATOR, false);
+
+  formatOidAttribs(attribs, { ParsersAttributes::OPERATOR_FUNC,
+                              ParsersAttributes::RESTRICTION_FUNC,
+                              ParsersAttributes::JOIN_FUNC }, OBJ_FUNCTION, false);
 }
 
 void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
