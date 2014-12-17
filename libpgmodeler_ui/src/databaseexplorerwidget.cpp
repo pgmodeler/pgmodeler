@@ -119,7 +119,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
   return(QWidget::eventFilter(object, event));
 }
 
-void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 {
   ObjectType obj_type=BASE_OBJECT;
   attribs_map fmt_attribs;
@@ -138,23 +138,27 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
     switch(obj_type)
     {
       case OBJ_CAST:
-        formatCastAttributes(attribs);
+        formatCastAttribs(attribs);
       break;
 
       case OBJ_EVENT_TRIGGER:
-        formatEventTriggerAttributes(attribs);
+        formatEventTriggerAttribs(attribs);
       break;
 
       case OBJ_LANGUAGE:
-        formatLanguageAttributes(attribs);
+        formatLanguageAttribs(attribs);
       break;
 
       case OBJ_ROLE:
-        formatRoleAttributes(attribs);
+        formatRoleAttribs(attribs);
       break;
 
-      case OBJ_TRIGGER:
-        formatTriggerAttributes(attribs);
+      case OBJ_AGGREGATE:
+        formatAggregateAttribs(attribs);
+      break;
+
+      case OBJ_CONVERSION:
+        formatConversionAttribs(attribs);
       break;
 
       default:
@@ -170,6 +174,9 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
 
   if(attribs.count(ParsersAttributes::PERMISSION)!=0)
     attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(",");
+
+  if(attribs[ParsersAttributes::NAME].startsWith("pg_catalog."))
+    attribs[ParsersAttributes::NAME].remove("pg_catalog.");
 
   for(auto attrib : attribs)
   {
@@ -187,7 +194,7 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
   attribs=fmt_attribs;
 }
 
-void DatabaseExplorerWidget::formatCastAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
 {
   QStringList type_attrs={ ParsersAttributes::DEST_TYPE, ParsersAttributes::SOURCE_TYPE };
 
@@ -200,18 +207,32 @@ void DatabaseExplorerWidget::formatCastAttributes(attribs_map &attribs)
   attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
 }
 
-void DatabaseExplorerWidget::formatEventTriggerAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatEventTriggerAttribs(attribs_map &attribs)
 {
   attribs[ParsersAttributes::VALUES]=Catalog::parseArrayValues(attribs[ParsersAttributes::VALUES]).join(',');
   attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
 }
 
-void DatabaseExplorerWidget::formatAggregateAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 {
+  QStringList func_attrs={ ParsersAttributes::FINAL_FUNC, ParsersAttributes::TRANSITION_FUNC },
+              types;
 
+  for(QString attr : func_attrs)
+   attribs[attr]=getObjectName(OBJ_FUNCTION, attribs[attr].toUInt());
+
+  attribs[ParsersAttributes::STATE_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::STATE_TYPE].toUInt());
+  attribs[ParsersAttributes::SORT_OP]=getObjectName(OBJ_OPERATOR, attribs[ParsersAttributes::SORT_OP].toUInt());
+
+  types=Catalog::parseArrayValues(attribs[ParsersAttributes::TYPES]);
+  for(int idx=0; idx < types.size(); idx++)
+    types[idx]=getObjectName(OBJ_TYPE, types[idx].toUInt());
+
+  attribs[ParsersAttributes::TYPES]=types.join(",");
+  attribs[ParsersAttributes::INITIAL_COND]=Catalog::parseArrayValues(attribs[ParsersAttributes::INITIAL_COND]).join(",");
 }
 
-void DatabaseExplorerWidget::formatLanguageAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 {
   QStringList func_attribs={ ParsersAttributes::VALIDATOR_FUNC,
                              ParsersAttributes::HANDLER_FUNC,
@@ -225,7 +246,7 @@ void DatabaseExplorerWidget::formatLanguageAttributes(attribs_map &attribs)
     attribs[attr]=getObjectName(OBJ_FUNCTION, attribs[attr].toUInt());
 }
 
-void DatabaseExplorerWidget::formatRoleAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
 {
   QStringList role_attribs={ ParsersAttributes::SUPERUSER, ParsersAttributes::INHERIT,
                              ParsersAttributes::CREATEROLE, ParsersAttributes::CREATEDB,
@@ -234,7 +255,8 @@ void DatabaseExplorerWidget::formatRoleAttributes(attribs_map &attribs)
 
               members_attribs={ ParsersAttributes::ADMIN_ROLES,
                                 ParsersAttributes::MEMBER_ROLES,
-                                ParsersAttributes::REF_ROLES };
+                                ParsersAttributes::REF_ROLES },
+              roles;
 
   for(QString attr : role_attribs)
     attribs[attr]=(attribs[attr].isEmpty() ?
@@ -242,10 +264,25 @@ void DatabaseExplorerWidget::formatRoleAttributes(attribs_map &attribs)
                    attribs_i18n.at(ParsersAttributes::_TRUE_));
 
   for(QString attr : members_attribs)
-    attribs[attr]=Catalog::parseArrayValues(attribs[attr]).join(",");
+  {
+    roles=Catalog::parseArrayValues(attribs[attr]);
+
+    for(int idx=0; idx < roles.size(); idx++)
+      roles[idx]=getObjectName(OBJ_ROLE, roles[idx].toUInt());
+
+    attribs[attr]=roles.join(",");
+  }
 }
 
-void DatabaseExplorerWidget::formatTriggerAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)
+{
+  attribs[ParsersAttributes::DEFAULT]=(attribs[ParsersAttributes::DEFAULT].isEmpty() ?
+                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
+                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
+  attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
+}
+
+void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 {
   attribs[ParsersAttributes::TRIGGER_FUNC]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::TRIGGER_FUNC].toUInt());
 }
@@ -291,7 +328,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, unsigned oid)
       {
         QStringList arg_types;
         QString type_name;
-        vector<QString> attrib_ids={ ParsersAttributes::LEFT, ParsersAttributes::RIGHT };
+        vector<QString> attrib_ids={ ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE };
 
         for(QString attr : attrib_ids)
         {
@@ -616,7 +653,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       if(cached_attribs.empty())
       {
         cached_attribs=catalog.getObjectAttributes(obj_type, oid);
-        formatObjectAttributes(cached_attribs);
+        formatObjectAttribs(cached_attribs);
         item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(cached_attribs));
       }
 
