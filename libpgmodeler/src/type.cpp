@@ -28,7 +28,7 @@ Type::Type(void)
   attributes[ParsersAttributes::RANGE_TYPE]="";
   attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
   attributes[ParsersAttributes::ENUM_TYPE]="";
-  attributes[ParsersAttributes::ENUMARATIONS]="";
+  attributes[ParsersAttributes::ENUMERATIONS]="";
   attributes[ParsersAttributes::INPUT_FUNC]="";
   attributes[ParsersAttributes::OUTPUT_FUNC]="";
   attributes[ParsersAttributes::RECV_FUNC]="";
@@ -36,7 +36,7 @@ Type::Type(void)
   attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
   attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
   attributes[ParsersAttributes::ANALYZE_FUNC]="";
-  attributes[ParsersAttributes::INTERNAL_LENGHT]="";
+  attributes[ParsersAttributes::INTERNAL_LENGTH]="";
   attributes[ParsersAttributes::BY_VALUE]="";
   attributes[ParsersAttributes::ALIGNMENT]="";
   attributes[ParsersAttributes::STORAGE]="";
@@ -443,7 +443,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 		if(i < (count-1)) str_enum+=",";
 	}
 
-  attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
+  attributes[ParsersAttributes::ENUMERATIONS]=str_enum;
 }
 
 void Type::setCategory(CategoryType categ)
@@ -642,9 +642,9 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
     attributes[ParsersAttributes::BASE_TYPE]="1";
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
+      attributes[ParsersAttributes::INTERNAL_LENGTH]="VARIABLE";
 		else
-      attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
+      attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
     attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
     attributes[ParsersAttributes::ALIGNMENT]=(*alignment);

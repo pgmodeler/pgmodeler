@@ -3777,8 +3777,8 @@ Type *DatabaseModel::createType(void)
 			type->setConfiguration(Type::BASE_TYPE);
 			type->setByValue(attribs[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
 
-			if(!attribs[ParsersAttributes::INTERNAL_LENGHT].isEmpty())
-				type->setInternalLength(attribs[ParsersAttributes::INTERNAL_LENGHT].toUInt());
+			if(!attribs[ParsersAttributes::INTERNAL_LENGTH].isEmpty())
+				type->setInternalLength(attribs[ParsersAttributes::INTERNAL_LENGTH].toUInt());
 
 			if(!attribs[ParsersAttributes::ALIGNMENT].isEmpty())
 				type->setAlignment(attribs[ParsersAttributes::ALIGNMENT]);

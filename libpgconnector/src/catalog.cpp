@@ -464,7 +464,21 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 										QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
-	}
+  }
+}
+
+attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, attribs_map extra_attribs)
+{
+  try
+  {
+    vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, "", "", { oid }, extra_attribs);
+    return(attribs_vect.empty() ? attribs_map() : attribs_vect[0]);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+                    QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+  }
 }
 
 QStringList Catalog::parseArrayValues(const QString &array_val)

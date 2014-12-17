@@ -20,7 +20,51 @@
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
 
+using namespace ParsersAttributes;
+
 const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(not defined)");
+const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found)");
+
+const attribs_map DatabaseExplorerWidget::attribs_i18n {
+  {ADMIN_ROLES, QT_TR_NOOP("Admin. roles")},           {ALIGNMENT, QT_TR_NOOP("Alignment")},              {ANALYZE_FUNC, QT_TR_NOOP("Analyze func.")},
+  {ARG_COUNT, QT_TR_NOOP("Arg. count")},               {ARG_DEF_COUNT, QT_TR_NOOP("Arg. default count")}, {ARG_DEFAULTS, QT_TR_NOOP("Arg. defaults")},
+  {ARG_MODES, QT_TR_NOOP("Arg. modes")},               {ARG_NAMES, QT_TR_NOOP("Arg. names")},             {ARG_TYPES, QT_TR_NOOP("Arg. types")},
+  {ATTRIBUTE, QT_TR_NOOP("Attribute")},                {BEHAVIOR_TYPE, QT_TR_NOOP("Behavior type")},      {BY_VALUE, QT_TR_NOOP("By value")},
+  {CAST_TYPE, QT_TR_NOOP("Cast type")},                {CATEGORY, QT_TR_NOOP("Category")},                {COLLATABLE, QT_TR_NOOP("Collatable")},
+  {COLLATION, QT_TR_NOOP("Collation")},                {COMMENT, QT_TR_NOOP("Comment")},                  {COMMUTATOR_OP, QT_TR_NOOP("Commutator Op.")},
+  {CONFIGURATION, QT_TR_NOOP("Configuration")},        {CONN_LIMIT, QT_TR_NOOP("Conn. limit")},           {CONSTRAINT, QT_TR_NOOP("Constraint")},
+  {CREATEDB, QT_TR_NOOP("Create DB")},                 {CREATEROLE, QT_TR_NOOP("Create role")},           {CUR_VERSION, QT_TR_NOOP("Curr. version")},
+  {DEFAULT, QT_TR_NOOP("Default")},                    {DEFAULT_VALUE, QT_TR_NOOP("Default value")},      {DEFINITION, QT_TR_NOOP("Definition")},
+  {DELIMITER, QT_TR_NOOP("Delimiter")},                {DEST_TYPE, QT_TR_NOOP("Dest. type")},             {DIMENSION, QT_TR_NOOP("Dimension")},
+  {DIRECTORY, QT_TR_NOOP("Directory")},                {DST_ENCODING, QT_TR_NOOP("Dest. encoding")},      {ELEMENT, QT_TR_NOOP("Element")},
+  {ENCODING, QT_TR_NOOP("Encoding")},                  {ENCRYPTED, QT_TR_NOOP("Encrypted")},              {ENUMERATIONS, QT_TR_NOOP("Enumerations")},
+  {EXECUTION_COST, QT_TR_NOOP("Exec. cost")},          {EXPRESSION, QT_TR_NOOP("Expression")},            {FAMILY, QT_TR_NOOP("Op. family")},
+  {FINAL_FUNC, QT_TR_NOOP("Final func.")},             {FUNCTION, QT_TR_NOOP("Function")},                {FUNCTION_TYPE, QT_TR_NOOP("Func. type")},
+  {HANDLER_FUNC, QT_TR_NOOP("Handler func.")},         {HANDLES_TYPE, QT_TR_NOOP("Handles type")},        {HASHES, QT_TR_NOOP("Hashes")},
+  {INDEX_TYPE, QT_TR_NOOP("Index type")},              {INHERIT, QT_TR_NOOP("Inherit")},                  {INITIAL_COND, QT_TR_NOOP("Ini. condition")},
+  {INLINE_FUNC, QT_TR_NOOP("Inline func.")},           {INPUT_FUNC, QT_TR_NOOP("Input func.")},           {INTERNAL_LENGTH, QT_TR_NOOP("Internal length")},
+  {INTERVAL_TYPE, QT_TR_NOOP("Interval type")},        {IO_CAST, QT_TR_NOOP("I/O cast")},                 {JOIN_FUNC, QT_TR_NOOP("Join func.")},
+  {LANGUAGE, QT_TR_NOOP("Language")},                  {_LC_COLLATE_, QT_TR_NOOP("LC COLLATE")},          {_LC_CTYPE_, QT_TR_NOOP("LC CTYPE")},
+  {LEAKPROOF, QT_TR_NOOP("Leak proof")},               {LEFT_TYPE, QT_TR_NOOP("Left type")},              {LENGTH, QT_TR_NOOP("Length")},
+  {LIBRARY, QT_TR_NOOP("Library")},                    {LOGIN, QT_TR_NOOP("Can login")},                  {MATERIALIZED, QT_TR_NOOP("Materialized")},
+  {MEMBER_ROLES, QT_TR_NOOP("Member roles")},          {MERGES, QT_TR_NOOP("Merges")},                    {NAME, QT_TR_NOOP("Name")},
+  {NEGATOR_OP, QT_TR_NOOP("Negator op.")},             {NOT_NULL, QT_TR_NOOP("Not null")},                {OBJECT_TYPE, QT_TR_NOOP("Object type")},
+  {OID, QT_TR_NOOP("OID")},                            {OIDS, QT_TR_NOOP("OIDs")},                        {OLD_VERSION, QT_TR_NOOP("Old version")},
+  {OPERATOR, QT_TR_NOOP("Operator")},                  {OPERATOR_FUNC, QT_TR_NOOP("Operator func.")},     {OUTPUT_FUNC, QT_TR_NOOP("Output func.")},
+  {OWNER, QT_TR_NOOP("Owner")},                        {OWNER_COLUMN, QT_TR_NOOP("Owner column")},        {PARENTS, QT_TR_NOOP("Parents")},
+  {PASSWORD, QT_TR_NOOP("Password")},                  {PERMISSION, QT_TR_NOOP("Permissions")},           {PRECISION, QT_TR_NOOP("Precision")},
+  {PREFERRED, QT_TR_NOOP("Preferred")},                {RANGE_ATTRIBS, QT_TR_NOOP("Range attributes")},   {RECV_FUNC, QT_TR_NOOP("Receive func.")},
+  {REF_ROLES, QT_TR_NOOP("Ref. roles")},               {REPLICATION, QT_TR_NOOP("Replication")},          {RESTRICTION_FUNC, QT_TR_NOOP("Restriction func.")},
+  {RETURN_TYPE, QT_TR_NOOP("Return type")},            {RETURNS_SETOF, QT_TR_NOOP("Returns SETOF")},      {RIGHT_TYPE, QT_TR_NOOP("Right type")},
+  {ROW_AMOUNT, QT_TR_NOOP("Row amount")},              {SCHEMA, QT_TR_NOOP("Schema")},                    {SECURITY_TYPE, QT_TR_NOOP("Security type")},
+  {SEND_FUNC, QT_TR_NOOP("Send func.")},               {SORT_OP, QT_TR_NOOP("Sort op.")},                 {SOURCE_TYPE, QT_TR_NOOP("Source type")},
+  {SRC_ENCODING, QT_TR_NOOP("Src. encoding")},         {STATE_TYPE, QT_TR_NOOP("State type")},            {STORAGE, QT_TR_NOOP("Storage")},
+  {SUPERUSER, QT_TR_NOOP("Superuser")},                {TABLESPACE, QT_TR_NOOP("Tablespace")},            {TPMOD_IN_FUNC, QT_TR_NOOP("Type mod. in func.")},
+  {TPMOD_OUT_FUNC, QT_TR_NOOP("Type mod. out func.")}, {TRANSITION_FUNC, QT_TR_NOOP("Transition func.")}, {TRUSTED, QT_TR_NOOP("Trusted")},
+  {TYPE, QT_TR_NOOP("Type")},                          {TYPE_ATTRIBUTE, QT_TR_NOOP("Type attribute")},    {TYPES, QT_TR_NOOP("Types")},
+  {UNLOGGED, QT_TR_NOOP("Unlogged")},                  {VALIDATOR, QT_TR_NOOP("Validator func.")},        {VALIDITY, QT_TR_NOOP("Validity")},
+  {WINDOW_FUNC, QT_TR_NOOP("Windows func.")}
+};
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
@@ -80,7 +124,7 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
   ObjectType obj_type=BASE_OBJECT;
   attribs_map fmt_attribs;
   QString attr_name, attr_value;
-  vector<attribs_map> dep_attribs;
+  attribs_map dep_attribs;
   QRegExp oid_regexp=QRegExp("^[0-9]+");
   unsigned oid=0;
   map<QString, ObjectType> dep_types={{ParsersAttributes::OWNER, OBJ_ROLE},
@@ -91,15 +135,23 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
   if(attribs.count(ParsersAttributes::OBJECT_TYPE)!=0)
     obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 
-  switch(obj_type)
+  try
   {
-    case OBJ_SCHEMA:
-      formatSchemaAttributes(attribs);
-    break;
+    switch(obj_type)
+    {
+      case OBJ_CAST:
+        formatCastAttributes(attribs);
+      break;
 
-    default:
-      qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
-    break;
+      default:
+        qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
+      break;
+    }
+  }
+  catch(Exception &e)
+  {
+    Messagebox msg_box;
+    msg_box.show(e);
   }
 
   for(auto attrib : attribs)
@@ -112,24 +164,29 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
     else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
     {
       oid=attr_value.toUInt();
-      dep_attribs=catalog.getObjectsAttributes(dep_types[attr_name], "", "", { oid });
+      dep_attribs=catalog.getObjectAttributes(dep_types[attr_name], oid);
 
       if(!dep_attribs.empty())
-        attr_value=dep_attribs[0].at(ParsersAttributes::NAME);
+        attr_value=dep_attribs.at(ParsersAttributes::NAME);
       else
         attr_value=DEP_NOT_DEFINED;
     }
 
-    attr_name[0]=attr_name[0].toUpper();
-    fmt_attribs[attr_name]=attr_value;
+    fmt_attribs[attribs_i18n.at(attr_name)]=attr_value;
   }
 
   attribs=fmt_attribs;
 }
 
-void DatabaseExplorerWidget::formatSchemaAttributes(attribs_map &attribs)
+void DatabaseExplorerWidget::formatCastAttributes(attribs_map &attribs)
 {
+  attribs_map dep_attribs;
 
+  dep_attribs=catalog.getObjectAttributes(OBJ_TYPE, attribs[ParsersAttributes::DEST_TYPE].toUInt());
+  attribs[ParsersAttributes::DEST_TYPE]=(dep_attribs.empty() ? DEP_NOT_FOUND : dep_attribs[ParsersAttributes::NAME]);
+
+  dep_attribs=catalog.getObjectAttributes(OBJ_TYPE, attribs[ParsersAttributes::SOURCE_TYPE].toUInt());
+  attribs[ParsersAttributes::SOURCE_TYPE]=(dep_attribs.empty() ? DEP_NOT_FOUND : dep_attribs[ParsersAttributes::NAME]);
 }
 
 void DatabaseExplorerWidget::setConnection(Connection conn)
@@ -426,41 +483,46 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     if(oid != 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-      QString sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-              tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
-      vector<attribs_map> attribs;
-      QTableWidgetItem *item=nullptr;
+      attribs_map cached_attribs;
+      QTableWidgetItem *tab_item=nullptr;
       int row=0;
       QFont font;
 
-      attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+      cached_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
+
+      if(cached_attribs.empty())
+      {
+        cached_attribs=catalog.getObjectAttributes(obj_type, oid);
+        formatObjectAttributes(cached_attribs);
+        item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(cached_attribs));
+      }
+
       properties_tbw->setSortingEnabled(false);
 
-      if(attribs.size()==1)
+      if(!cached_attribs.empty())
       {
-        formatObjectAttributes(attribs[0]);
-
-        for(auto attrib : attribs[0])
+        for(auto attrib : cached_attribs)
         {
           properties_tbw->insertRow(properties_tbw->rowCount());
           row=properties_tbw->rowCount() - 1;
 
-          item=new QTableWidgetItem;
-          font=item->font();
+          tab_item=new QTableWidgetItem;
+          font=tab_item->font();
           font.setItalic(true);
-          item->setText(attrib.first);
-          item->setFont(font);
-          item->setIcon(QPixmap(":/icones/icones/attribute.png"));
-          properties_tbw->setItem(row, 0, item);
+          tab_item->setText(attrib.first);
+          tab_item->setFont(font);
+          tab_item->setIcon(QPixmap(":/icones/icones/attribute.png"));
+          properties_tbw->setItem(row, 0, tab_item);
 
-          item=new QTableWidgetItem;
-          item->setText(attrib.second);
-          properties_tbw->setItem(row, 1, item);
+          tab_item=new QTableWidgetItem;
+          tab_item->setText(attrib.second);
+          properties_tbw->setItem(row, 1, tab_item);
         }
       }
+
+      properties_tbw->setSortingEnabled(true);
     }
 
-    properties_tbw->setSortingEnabled(true);
     properties_tbw->horizontalHeader()->setVisible(properties_tbw->rowCount() > 0);
   }
   catch(Exception &e)
@@ -468,118 +530,3 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
-
-/*
-admin-roles
-alignment
-analyze
-arg-count
-arg-def-count
-arg-defaults
-arg-modes
-arg-names
-arg-types
-attribute
-behavior-type
-by-value
-cast-type
-category
-collatable
-collation
-comment
-commutator-op
-configuration
-connlimit
-constraint
-createdb
-createrole
-cur-version
-default
-default-value
-definition
-delimiter
-destiny-type
-dimension
-directory
-dst-encoding
-element
-encoding
-encrypted
-enumerations
-execution-cost
-expression
-family
-final
-function
-function-type
-handler
-handles-type
-hashes
-index-type
-inherit
-initial-cond
-inline
-input
-internal-length
-interval-type
-io-cast
-join
-language
-lc-collate
-lc-ctype
-leakproof
-left-type
-length
-library
-login
-materialized
-member-roles
-merges
-name
-negator-op
-not-null
-object-type
-oid
-oids
-old-version
-operator
-operfunc
-output
-owner
-owner-col
-parents
-password
-permission
-precision
-preferred
-range-attribs
-receive
-ref-roles
-replication
-restriction
-return-type
-returns-setof
-right-type
-row-amount
-schema
-security-type
-send
-sort-op
-source-type
-src-encoding
-state-type
-storage
-superuser
-tablespace
-tpmodin
-tpmodout
-transition
-trusted
-type
-typeattrib
-types
-unlogged
-validator
-validity
-window-func
-*/

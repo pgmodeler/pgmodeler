@@ -1328,7 +1328,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		attribs[attribs[ParsersAttributes::CONFIGURATION]]="1";
 
 		if(!attribs[ParsersAttributes::ENUM_TYPE].isEmpty())
-			attribs[ParsersAttributes::ENUMARATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMARATIONS]).join(",");
+			attribs[ParsersAttributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMERATIONS]).join(",");
 		else if(!attribs[ParsersAttributes::COMPOSITE_TYPE].isEmpty())
 		{
 			QStringList comp_attribs, values;

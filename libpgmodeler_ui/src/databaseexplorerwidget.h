@@ -33,7 +33,10 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private:
 		Q_OBJECT
 
-    static const QString DEP_NOT_DEFINED;
+    static const QString DEP_NOT_DEFINED,
+                         DEP_NOT_FOUND;
+
+    static const attribs_map attribs_i18n;
 
     /*! brief Connection used to handle objects on database. This connection is copied
         whenever a new operation must be performed on database */
@@ -60,7 +63,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     bool eventFilter(QObject *object, QEvent *event);
 
     void formatObjectAttributes(attribs_map &attribs);
-    void formatSchemaAttributes(attribs_map &attribs);
+    void formatCastAttributes(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
