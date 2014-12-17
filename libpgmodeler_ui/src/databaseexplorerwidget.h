@@ -62,8 +62,14 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     bool eventFilter(QObject *object, QEvent *event);
 
+    QString getObjectName(ObjectType obj_type, unsigned oid);
     void formatObjectAttributes(attribs_map &attribs);
     void formatCastAttributes(attribs_map &attribs);
+    void formatLanguageAttributes(attribs_map &attribs);
+    void formatTriggerAttributes(attribs_map &attribs);
+    void formatRoleAttributes(attribs_map &attribs);
+    void formatEventTriggerAttributes(attribs_map &attribs);
+    void formatAggregateAttributes(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);

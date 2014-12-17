@@ -63,7 +63,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {TPMOD_OUT_FUNC, QT_TR_NOOP("Type mod. out func.")}, {TRANSITION_FUNC, QT_TR_NOOP("Transition func.")}, {TRUSTED, QT_TR_NOOP("Trusted")},
   {TYPE, QT_TR_NOOP("Type")},                          {TYPE_ATTRIBUTE, QT_TR_NOOP("Type attribute")},    {TYPES, QT_TR_NOOP("Types")},
   {UNLOGGED, QT_TR_NOOP("Unlogged")},                  {VALIDATOR, QT_TR_NOOP("Validator func.")},        {VALIDITY, QT_TR_NOOP("Validity")},
-  {WINDOW_FUNC, QT_TR_NOOP("Windows func.")}
+  {WINDOW_FUNC, QT_TR_NOOP("Windows func.")},          {_FALSE_, QT_TR_NOOP("false")},                    {_TRUE_, QT_TR_NOOP("true")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -124,9 +124,7 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
   ObjectType obj_type=BASE_OBJECT;
   attribs_map fmt_attribs;
   QString attr_name, attr_value;
-  attribs_map dep_attribs;
   QRegExp oid_regexp=QRegExp("^[0-9]+");
-  unsigned oid=0;
   map<QString, ObjectType> dep_types={{ParsersAttributes::OWNER, OBJ_ROLE},
                                       {ParsersAttributes::SCHEMA, OBJ_SCHEMA},
                                       {ParsersAttributes::TABLESPACE, OBJ_TABLESPACE},
@@ -143,6 +141,22 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
         formatCastAttributes(attribs);
       break;
 
+      case OBJ_EVENT_TRIGGER:
+        formatEventTriggerAttributes(attribs);
+      break;
+
+      case OBJ_LANGUAGE:
+        formatLanguageAttributes(attribs);
+      break;
+
+      case OBJ_ROLE:
+        formatRoleAttributes(attribs);
+      break;
+
+      case OBJ_TRIGGER:
+        formatTriggerAttributes(attribs);
+      break;
+
       default:
         qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
       break;
@@ -154,6 +168,9 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
     msg_box.show(e);
   }
 
+  if(attribs.count(ParsersAttributes::PERMISSION)!=0)
+    attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(",");
+
   for(auto attrib : attribs)
   {
     attr_name=attrib.first;
@@ -162,15 +179,7 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
     if(attr_name==ParsersAttributes::OBJECT_TYPE)
      attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
     else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
-    {
-      oid=attr_value.toUInt();
-      dep_attribs=catalog.getObjectAttributes(dep_types[attr_name], oid);
-
-      if(!dep_attribs.empty())
-        attr_value=dep_attribs.at(ParsersAttributes::NAME);
-      else
-        attr_value=DEP_NOT_DEFINED;
-    }
+     attr_value=getObjectName(dep_types[attr_name], attr_value.toUInt());
 
     fmt_attribs[attribs_i18n.at(attr_name)]=attr_value;
   }
@@ -180,13 +189,127 @@ void DatabaseExplorerWidget::formatObjectAttributes(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatCastAttributes(attribs_map &attribs)
 {
-  attribs_map dep_attribs;
+  QStringList type_attrs={ ParsersAttributes::DEST_TYPE, ParsersAttributes::SOURCE_TYPE };
 
-  dep_attribs=catalog.getObjectAttributes(OBJ_TYPE, attribs[ParsersAttributes::DEST_TYPE].toUInt());
-  attribs[ParsersAttributes::DEST_TYPE]=(dep_attribs.empty() ? DEP_NOT_FOUND : dep_attribs[ParsersAttributes::NAME]);
+  attribs[ParsersAttributes::IO_CAST]=(attribs[ParsersAttributes::IO_CAST].isEmpty() ?
+                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
+                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
+  for(QString attr : type_attrs)
+   attribs[attr]=getObjectName(OBJ_TYPE, attribs[attr].toUInt());
 
-  dep_attribs=catalog.getObjectAttributes(OBJ_TYPE, attribs[ParsersAttributes::SOURCE_TYPE].toUInt());
-  attribs[ParsersAttributes::SOURCE_TYPE]=(dep_attribs.empty() ? DEP_NOT_FOUND : dep_attribs[ParsersAttributes::NAME]);
+  attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
+}
+
+void DatabaseExplorerWidget::formatEventTriggerAttributes(attribs_map &attribs)
+{
+  attribs[ParsersAttributes::VALUES]=Catalog::parseArrayValues(attribs[ParsersAttributes::VALUES]).join(',');
+  attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION].toUInt());
+}
+
+void DatabaseExplorerWidget::formatAggregateAttributes(attribs_map &attribs)
+{
+
+}
+
+void DatabaseExplorerWidget::formatLanguageAttributes(attribs_map &attribs)
+{
+  QStringList func_attribs={ ParsersAttributes::VALIDATOR_FUNC,
+                             ParsersAttributes::HANDLER_FUNC,
+                             ParsersAttributes::INLINE_FUNC };
+
+  attribs[ParsersAttributes::TRUSTED]=(attribs[ParsersAttributes::TRUSTED].isEmpty() ?
+                                       attribs_i18n.at(ParsersAttributes::_FALSE_) :
+                                       attribs_i18n.at(ParsersAttributes::_TRUE_));
+
+  for(QString attr : func_attribs)
+    attribs[attr]=getObjectName(OBJ_FUNCTION, attribs[attr].toUInt());
+}
+
+void DatabaseExplorerWidget::formatRoleAttributes(attribs_map &attribs)
+{
+  QStringList role_attribs={ ParsersAttributes::SUPERUSER, ParsersAttributes::INHERIT,
+                             ParsersAttributes::CREATEROLE, ParsersAttributes::CREATEDB,
+                             ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+                             ParsersAttributes::REPLICATION },
+
+              members_attribs={ ParsersAttributes::ADMIN_ROLES,
+                                ParsersAttributes::MEMBER_ROLES,
+                                ParsersAttributes::REF_ROLES };
+
+  for(QString attr : role_attribs)
+    attribs[attr]=(attribs[attr].isEmpty() ?
+                   attribs_i18n.at(ParsersAttributes::_FALSE_) :
+                   attribs_i18n.at(ParsersAttributes::_TRUE_));
+
+  for(QString attr : members_attribs)
+    attribs[attr]=Catalog::parseArrayValues(attribs[attr]).join(",");
+}
+
+void DatabaseExplorerWidget::formatTriggerAttributes(attribs_map &attribs)
+{
+  attribs[ParsersAttributes::TRIGGER_FUNC]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::TRIGGER_FUNC].toUInt());
+}
+
+QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, unsigned oid)
+{
+  try
+  {
+    if(oid==0)
+      return(DEP_NOT_DEFINED);
+    else
+    {
+      attribs_map attribs, aux_attribs;
+      QString obj_name=DEP_NOT_FOUND, sch_name;
+
+      attribs=catalog.getObjectAttributes(obj_type, oid);
+
+      if(!attribs.empty())
+      {
+        obj_name=attribs[ParsersAttributes::NAME];
+
+        if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
+           attribs[ParsersAttributes::SCHEMA]!="0")
+        {
+          aux_attribs=catalog.getObjectAttributes(obj_type, attribs[ParsersAttributes::SCHEMA].toUInt());
+          sch_name=aux_attribs[ParsersAttributes::NAME];
+
+          if(!sch_name.isEmpty() && sch_name!="pg_catalog" && sch_name!="information_schema")
+            obj_name=sch_name + "." + obj_name;
+        }
+      }
+
+      if(obj_type==OBJ_FUNCTION)
+      {
+        QStringList arg_types=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_TYPES]);
+
+        for(int idx=0; idx < arg_types.size(); idx++)
+         arg_types[idx]=getObjectName(OBJ_TYPE, arg_types[idx].toUInt());
+
+        obj_name+=QString("(%1)").arg(arg_types.join(','));
+      }
+      else if(obj_type==OBJ_OPERATOR)
+      {
+        QStringList arg_types;
+        QString type_name;
+        vector<QString> attrib_ids={ ParsersAttributes::LEFT, ParsersAttributes::RIGHT };
+
+        for(QString attr : attrib_ids)
+        {
+          type_name=getObjectName(OBJ_TYPE, attribs[attr].toUInt());
+          if(type_name.isEmpty()) type_name="-";
+          arg_types.push_back(type_name);
+        }
+
+        obj_name+=QString("(%1)").arg(arg_types.join(','));
+      }
+
+      return(obj_name);
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void DatabaseExplorerWidget::setConnection(Connection conn)
