@@ -241,6 +241,7 @@ namespace ParsersAttributes {
   LANGUAGE="language",
   LAST_POSITION="last-position",
   LAST_SYS_OID="last-sys-oid",
+  LAST_VALUE="last-value",
   LAST_ZOOM="last-zoom",
   LEAKPROOF="leakproof",
   LEFT_TYPE="left-type",
