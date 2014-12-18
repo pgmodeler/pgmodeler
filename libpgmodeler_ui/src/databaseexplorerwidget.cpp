@@ -22,8 +22,9 @@
 
 using namespace ParsersAttributes;
 
-const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(not defined)");
-const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found)");
+const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(undefined, OID: %1)");
+const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
+const QString DatabaseExplorerWidget::ELEM_SEPARATOR="•";
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {ADMIN_ROLES, QT_TR_NOOP("Admin. roles")},           {ALIGNMENT, QT_TR_NOOP("Alignment")},              {ANALYZE_FUNC, QT_TR_NOOP("Analyze func.")},
@@ -93,6 +94,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
+  connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(loadObjectProperties()));
 
   connect(properties_tbw, &QTableWidget::itemPressed,
           [=]() { SQLToolWidget::copySelection(properties_tbw, true); });
@@ -181,6 +183,10 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
         formatOperatorAttribs(attribs);
       break;
 
+      case OBJ_OPCLASS:
+        formatOperatorClassAttribs(attribs);
+      break;
+
       case OBJ_TABLE:
         formatTableAttribs(attribs);
       break;
@@ -209,7 +215,7 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
   }
 
   if(attribs.count(ParsersAttributes::PERMISSION)!=0)
-    attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(",");
+    attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
   if(attribs[ParsersAttributes::NAME].startsWith("pg_catalog."))
     attribs[ParsersAttributes::NAME].remove("pg_catalog.");
@@ -260,7 +266,7 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
         for(int idx=0; idx < oid_vect.size(); idx++)
           oid_vect[idx]=getObjectName(obj_type, oid_vect[idx]);
 
-        attribs[attr]=oid_vect.join(",");
+        attribs[attr]=oid_vect.join(ELEM_SEPARATOR);
       }
     }
   }
@@ -282,7 +288,7 @@ void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatEventTriggerAttribs(attribs_map &attribs)
 {
-  attribs[ParsersAttributes::VALUES]=Catalog::parseArrayValues(attribs[ParsersAttributes::VALUES]).join(',');
+  attribs[ParsersAttributes::VALUES]=Catalog::parseArrayValues(attribs[ParsersAttributes::VALUES]).join(ELEM_SEPARATOR);
   attribs[ParsersAttributes::FUNCTION]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::FUNCTION]);
 }
 
@@ -295,7 +301,7 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 
   attribs[ParsersAttributes::STATE_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::STATE_TYPE]);
   attribs[ParsersAttributes::SORT_OP]=getObjectName(OBJ_OPERATOR, attribs[ParsersAttributes::SORT_OP]);
-  attribs[ParsersAttributes::INITIAL_COND]=Catalog::parseArrayValues(attribs[ParsersAttributes::INITIAL_COND]).join(",");
+  attribs[ParsersAttributes::INITIAL_COND]=Catalog::parseArrayValues(attribs[ParsersAttributes::INITIAL_COND]).join(ELEM_SEPARATOR);
 }
 
 void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
@@ -340,9 +346,9 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 {
   attribs[ParsersAttributes::LANGUAGE]=getObjectName(OBJ_LANGUAGE, attribs[ParsersAttributes::LANGUAGE]);
   attribs[ParsersAttributes::RETURN_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::RETURN_TYPE]);
-  attribs[ParsersAttributes::ARG_NAMES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]).join(",");
-  attribs[ParsersAttributes::ARG_MODES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_MODES]).join(",");
-  attribs[ParsersAttributes::ARG_DEFAULTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_DEFAULTS]).join(",");
+  attribs[ParsersAttributes::ARG_NAMES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_NAMES]).join(ELEM_SEPARATOR);
+  attribs[ParsersAttributes::ARG_MODES]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_MODES]).join(ELEM_SEPARATOR);
+  attribs[ParsersAttributes::ARG_DEFAULTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_DEFAULTS]).join(ELEM_SEPARATOR);
 
   formatOidAttribs(attribs, { ParsersAttributes::ARG_TYPES }, OBJ_TYPE, true);
 
@@ -426,7 +432,8 @@ void DatabaseExplorerWidget::formatViewAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 {
-  QStringList range_attr=Catalog::parseArrayValues(attribs[ParsersAttributes::RANGE_ATTRIBS]);
+  QStringList range_attr=Catalog::parseArrayValues(attribs[ParsersAttributes::RANGE_ATTRIBS]),
+              type_attr=Catalog::parseArrayValues(attribs[ParsersAttributes::TYPE_ATTRIBUTE]);
 
   formatBooleanAttribs(attribs, { ParsersAttributes::BY_VALUE,
                                   ParsersAttributes::COLLATABLE,
@@ -441,16 +448,62 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
                               ParsersAttributes::TPMOD_OUT_FUNC }, OBJ_FUNCTION, false);
 
   attribs[ParsersAttributes::ELEMENT]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::ELEMENT]);
-  attribs[ParsersAttributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMERATIONS]).join(',');
 
+  if(attribs[ParsersAttributes::ENUMERATIONS].isEmpty())
+    attribs.erase(ParsersAttributes::ENUMERATIONS);
+  else
+    attribs[ParsersAttributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMERATIONS]).join(ELEM_SEPARATOR);
+
+  attribs.erase(ParsersAttributes::RANGE_ATTRIBS);
   if(!range_attr.isEmpty())
   {
-    attribs.erase(ParsersAttributes::RANGE_ATTRIBS);
     attribs[ParsersAttributes::SUBTYPE]=getObjectName(OBJ_TYPE, range_attr[0]);
     attribs[ParsersAttributes::COLLATION]=getObjectName(OBJ_COLLATION, range_attr[1]);
     attribs[ParsersAttributes::OP_CLASS]=getObjectName(OBJ_OPCLASS, range_attr[2]);
     attribs[ParsersAttributes::CANONICAL_FUNC]=getObjectName(OBJ_FUNCTION, range_attr[3]);
     attribs[ParsersAttributes::SUBTYPE_DIFF_FUNC]=getObjectName(OBJ_FUNCTION, range_attr[4]);
+  }
+
+  if(!type_attr.isEmpty())
+  {
+    QStringList list, fmt_attribs;
+
+    for(QString attr : type_attr)
+    {
+      list=attr.split(':');
+      list.removeAt(2);
+      fmt_attribs.push_back(list.join(" "));
+    }
+
+    attribs[ParsersAttributes::TYPE_ATTRIBUTE]=fmt_attribs.join(ELEM_SEPARATOR);
+  }
+  else
+    attribs.erase(ParsersAttributes::TYPE_ATTRIBUTE);
+}
+
+void DatabaseExplorerWidget::formatOperatorClassAttribs(attribs_map &attribs)
+{
+  QStringList list, array_vals, elems;
+
+  attribs[ParsersAttributes::FAMILY]=getObjectName(OBJ_OPFAMILY, attribs[ParsersAttributes::FAMILY]);
+
+  formatBooleanAttribs(attribs, { ParsersAttributes::DEFAULT });
+
+  formatOidAttribs(attribs, { ParsersAttributes::STORAGE,
+                              ParsersAttributes::TYPE }, OBJ_TYPE, false);
+
+  array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::FUNCTION]);
+
+  if(!array_vals.isEmpty())
+  {
+    for(int i=0; i < array_vals.size(); i++)
+    {
+      list=array_vals[i].split(":");
+      elems.push_back(QString("[%1] %2").arg(list[0], getObjectName(OBJ_FUNCTION, list[1])));
+    }
+
+    attribs[ParsersAttributes::FUNCTION]=elems.join(ELEM_SEPARATOR);
+    elems.clear();
   }
 }
 
@@ -464,11 +517,11 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
   try
   {
     if(oid=="0" || oid.isEmpty())
-      return(DEP_NOT_DEFINED);
+      return(DEP_NOT_DEFINED.arg(oid));
     else
     {
       attribs_map attribs, aux_attribs;
-      QString obj_name=DEP_NOT_FOUND, sch_name;
+      QString obj_name=DEP_NOT_FOUND.arg(oid), sch_name;
 
       attribs=catalog.getObjectAttributes(obj_type, oid.toUInt());
 
@@ -531,12 +584,22 @@ Connection DatabaseExplorerWidget::getConnection(void)
   return(connection);
 }
 
+void DatabaseExplorerWidget::clearObjectProperties(void)
+{
+  while(properties_tbw->rowCount() > 0)
+    properties_tbw->removeRow(0);
+}
+
 void DatabaseExplorerWidget::listObjects(void)
 {
   try
   {
     configureImportHelper();
+    objects_trw->blockSignals(true);
+    clearObjectProperties();
+
     DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true);
+    objects_trw->blockSignals(false);
     import_helper.closeConnection();
   }
   catch(Exception &e)
@@ -593,10 +656,6 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
                                    item->text(0),
                                    item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
   }
-  else if(QApplication::mouseButtons()==Qt::LeftButton)
-  {
-    loadObjectProperties();
-  }
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
@@ -652,7 +711,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
           attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::TABLE];
         //For operators and functions there must exist the signature attribute
         else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(','));
+          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + "." + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
         else if(obj_type==OBJ_CAST)
           attribs[ParsersAttributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
         else
@@ -713,12 +772,13 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
     ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
     unsigned obj_id=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt());
     QString sch_name, tab_name;
-    vector<QTreeWidgetItem *> gen_items, gen_items1;
+    vector<QTreeWidgetItem *> gen_items, gen_items1;   
 
     if(obj_type==OBJ_DATABASE)
       listObjects();
     else
     {
+      clearObjectProperties();
       parent=item->parent();
       sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
       tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
@@ -809,14 +869,14 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     QTreeWidgetItem *item=objects_trw->currentItem();
     unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-    while(properties_tbw->rowCount() > 0)
-      properties_tbw->removeRow(0);
+    clearObjectProperties();
 
     if(oid != 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
       attribs_map cached_attribs;
       QTableWidgetItem *tab_item=nullptr;
+      QStringList values;
       int row=0;
       QFont font;
 
@@ -846,9 +906,21 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
           tab_item->setIcon(QPixmap(":/icones/icones/attribute.png"));
           properties_tbw->setItem(row, 0, tab_item);
 
-          tab_item=new QTableWidgetItem;
-          tab_item->setText(attrib.second);
-          properties_tbw->setItem(row, 1, tab_item);
+          values=attrib.second.split(ELEM_SEPARATOR);
+
+          if(values.size() >= 2)
+          {
+            QComboBox *combo=new QComboBox;
+            combo->setStyleSheet("border: 0px");
+            combo->addItems(values);
+            properties_tbw->setCellWidget(row, 1, combo);
+          }
+          else
+          {
+            tab_item=new QTableWidgetItem;
+            tab_item->setText(attrib.second);
+            properties_tbw->setItem(row, 1, tab_item);
+          }
         }
       }
 

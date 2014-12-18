@@ -34,7 +34,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		Q_OBJECT
 
     static const QString DEP_NOT_DEFINED,
-                         DEP_NOT_FOUND;
+                         DEP_NOT_FOUND,
+                         ELEM_SEPARATOR;
 
     static const attribs_map attribs_i18n;
 
@@ -81,6 +82,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatSequenceAttribs(attribs_map &attribs);
     void formatViewAttribs(attribs_map &attribs);
     void formatTypeAttribs(attribs_map &attribs);
+    void formatOperatorClassAttribs(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
@@ -90,6 +92,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     //! brief Returns a copy of the connection used by this explorer instance
     Connection getConnection(void);
+
+    void clearObjectProperties(void);
 
   public slots:
     //! brief Lists all objects for the current selected database

@@ -354,6 +354,9 @@
       <property name="lineWidth">
        <number>1</number>
       </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
       <property name="autoScrollMargin">
        <number>16</number>
       </property>
