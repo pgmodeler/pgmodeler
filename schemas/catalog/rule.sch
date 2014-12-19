@@ -76,7 +76,12 @@
       %end
 
       %if @{filter-oids} %then
-	[ AND rl.oid IN (] @{filter-oids} )
+        %if %not @{last-sys-oid} %then
+          [ WHERE ]
+        %else
+          [ AND ]
+        %end
+        [ rl.oid IN (] @{filter-oids} )
       %end
 
     %end

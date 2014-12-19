@@ -557,6 +557,16 @@ QStringList Catalog::parseDefaultValues(const QString &def_vals, const QString &
   return(values);
 }
 
+QStringList Catalog::parseRuleCommands(const QString &cmds)
+{
+  int start=-1, end=-1;
+  QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+
+  start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
+  end=cmds.lastIndexOf(";");// - 2;
+  return(cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts));
+}
+
 void Catalog::enableCachedQueries(bool value)
 {
   use_cached_queries=value;

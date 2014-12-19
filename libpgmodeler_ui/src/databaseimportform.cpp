@@ -201,21 +201,21 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 	while(*itr)
 	{
 		//If the item is checked and its OID is valid
-		if((*itr)->checkState(0)==Qt::Checked && (*itr)->data(0, Qt::UserRole).value<unsigned>() > 0)
+    if((*itr)->checkState(0)==Qt::Checked && (*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>() > 0)
 		{
-			obj_type=static_cast<ObjectType>((*itr)->data(1, Qt::UserRole).value<unsigned>());
+      obj_type=static_cast<ObjectType>((*itr)->data(OBJECT_TYPE, Qt::UserRole).value<unsigned>());
 
 			//If the object is not a column store it on general object list
 			if(obj_type!=OBJ_COLUMN)
-			 obj_oids[obj_type].push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
+       obj_oids[obj_type].push_back((*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>());
 			//If its a column
 			else
 			{
 				//Get the table's oid from the parent item
-				tab_oid=(*itr)->parent()->parent()->data(0, Qt::UserRole).value<unsigned>();
+        tab_oid=(*itr)->parent()->parent()->data(OBJECT_ID, Qt::UserRole).value<unsigned>();
 
 				//Store the column oid on the selected colums map using the table oid as key
-				col_oids[tab_oid].push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
+        col_oids[tab_oid].push_back((*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>());
 			}
 		}
 

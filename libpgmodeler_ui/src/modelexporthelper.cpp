@@ -628,8 +628,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
   if(!conn.isStablished())
   {
-    aux_conn=conn;
-
     if(!db_name.isEmpty())
       conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
 
@@ -776,6 +774,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       if(ts.atEnd() && !db_sql_cmds.empty())
       {
         conn.close();
+        aux_conn=conn;
         aux_conn.connect();
         for(QString cmd : db_sql_cmds)
           aux_conn.executeDDLCommand(cmd);

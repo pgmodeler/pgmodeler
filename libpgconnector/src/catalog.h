@@ -181,6 +181,9 @@ class Catalog {
 		contains several values */
 		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
+    //! brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
+    static QStringList parseRuleCommands(const QString &cmd);
+
     /*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
         so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
     static void enableCachedQueries(bool value);

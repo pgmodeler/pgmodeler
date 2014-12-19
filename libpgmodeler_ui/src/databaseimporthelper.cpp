@@ -1528,9 +1528,8 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	Rule *rule=nullptr;
   QString cmds=attribs[ParsersAttributes::COMMANDS];
-	int start=-1, end=-1;
-	QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+"), cond_regexp("(WHERE)(.)+(DO)");
-	QStringList commands;
+  int start=-1;
+  QRegExp cond_regexp("(WHERE)(.)+(DO)");
 
 	try
 	{
@@ -1541,11 +1540,8 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 			attribs[ParsersAttributes::CONDITION].remove(QRegExp("(DO)|(WHERE)"));
 		}
 
-		start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
-		end=cmds.lastIndexOf(";");// - 2;
-		commands=cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts);
-		attribs[ParsersAttributes::COMMANDS]=commands.join(";");
-		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
+    attribs[ParsersAttributes::COMMANDS]=Catalog::parseRuleCommands(attribs[ParsersAttributes::COMMANDS]).join(";");
+    attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
 		loadObjectXML(OBJ_RULE, attribs);
     rule=dbmodel->createRule();
 	}
