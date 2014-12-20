@@ -583,14 +583,13 @@ void SQLToolWidget::browseDatabase(void)
   {
     Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
     DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
-    int tab_idx=0;
 
     conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
     db_explorer_wgt->setConnection(conn);
     db_explorer_wgt->listObjects();
 
     databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
-    databases_tbw->setCurrentIndex(tab_idx);
+    databases_tbw->setCurrentWidget(db_explorer_wgt);
 
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
   }

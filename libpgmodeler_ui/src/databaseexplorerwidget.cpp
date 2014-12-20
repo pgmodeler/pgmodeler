@@ -74,7 +74,11 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {TRUNC_EVENT, QT_TR_NOOP("On truncate")},            {ARGUMENTS, QT_TR_NOOP("Arguments")},                  {TABLE, QT_TR_NOOP("Table")},
   {TRIGGER_FUNC, QT_TR_NOOP("Trigger func.")},         {COLUMNS, QT_TR_NOOP("Columns")},                      {CONDITION, QT_TR_NOOP("Condition")},
   {DEFER_TYPE, QT_TR_NOOP("Deferment")},               {EVENT_TYPE, QT_TR_NOOP("Event")},                     {EXEC_TYPE, QT_TR_NOOP("Execution mode")},
-  {COMMANDS, QT_TR_NOOP("Commands")}
+  {COMMANDS, QT_TR_NOOP("Commands")},                  {POSITION, QT_TR_NOOP("Position")},                    {COMPARISON_TYPE, QT_TR_NOOP("Comparison type")},
+  {DEL_ACTION, QT_TR_NOOP("On delete")},               {DST_COLUMNS, QT_TR_NOOP("Ref. columns")},             {EXPRESSIONS, QT_TR_NOOP("Expressions")},
+  {FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
+  {OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
+  {UPD_ACTION, QT_TR_NOOP("On update")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -140,7 +144,8 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
   map<QString, ObjectType> dep_types={{ParsersAttributes::OWNER, OBJ_ROLE},
                                       {ParsersAttributes::SCHEMA, OBJ_SCHEMA},
                                       {ParsersAttributes::TABLESPACE, OBJ_TABLESPACE},
-                                      {ParsersAttributes::COLLATION, OBJ_COLLATION}};
+                                      {ParsersAttributes::COLLATION, OBJ_COLLATION},
+                                      {ParsersAttributes::TABLE, OBJ_TABLE}};
 
   if(attribs.count(ParsersAttributes::OBJECT_TYPE)!=0)
     obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
@@ -166,6 +171,8 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
       case OBJ_VIEW: formatViewAttribs(attribs); break;
       case OBJ_TRIGGER: formatTriggerAttribs(attribs); break;
       case OBJ_RULE: formatRuleAttribs(attribs); break;
+      case OBJ_COLUMN: formatColumnAttribs(attribs); break;
+      case OBJ_CONSTRAINT: formatConstraintAttribs(attribs); break;
 
       default:
         qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
@@ -499,7 +506,6 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
                                   ParsersAttributes::TRUNC_EVENT });
 
   attribs[ParsersAttributes::TRIGGER_FUNC]=getObjectName(OBJ_FUNCTION, attribs[ParsersAttributes::TRIGGER_FUNC]);
-  attribs[ParsersAttributes::TABLE]=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]);
   attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS]).join(ELEM_SEPARATOR);
   attribs[ParsersAttributes::COLUMNS]=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]).join(ELEM_SEPARATOR);
 }
@@ -507,7 +513,26 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatRuleAttribs(attribs_map &attribs)
 {
   attribs[ParsersAttributes::COMMANDS]=Catalog::parseRuleCommands(attribs[ParsersAttributes::COMMANDS]).join(";");
-  attribs[ParsersAttributes::TABLE]=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]);
+
+}
+
+void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
+{
+  formatBooleanAttribs(attribs, { ParsersAttributes::NOT_NULL });
+  attribs[ParsersAttributes::POSITION]=attribs[ParsersAttributes::OID];
+  attribs.erase(ParsersAttributes::OID);
+  attribs.erase(ParsersAttributes::TYPE_OID);
+}
+
+void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
+{
+  map<QString, ConstraintType> constr_types={{ParsersAttributes::PK_CONSTR, ConstraintType(ConstraintType::primary_key)},
+                                             {ParsersAttributes::FK_CONSTR, ConstraintType(ConstraintType::foreign_key)},
+                                             {ParsersAttributes::UQ_CONSTR, ConstraintType(ConstraintType::unique)},
+                                             {ParsersAttributes::CK_CONSTR, ConstraintType(ConstraintType::check)},
+                                             {ParsersAttributes::EX_CONSTR, ConstraintType(ConstraintType::exclude)}};
+
+  attribs[ParsersAttributes::TYPE]=~constr_types[attribs[ParsersAttributes::TYPE]];
 }
 
 QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString &oid)
@@ -882,7 +907,18 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
 
       if(cached_attribs.empty())
       {
-        cached_attribs=catalog.getObjectAttributes(obj_type, oid);
+        if(obj_type!=OBJ_COLUMN)
+          cached_attribs=catalog.getObjectAttributes(obj_type, oid);
+        else
+        {
+          QString tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString(),
+                  sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+          vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
+
+          if(!vect_attribs.empty())
+            cached_attribs=vect_attribs[0];
+        }
+
         formatObjectAttribs(cached_attribs);
         item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(cached_attribs));
       }
@@ -926,6 +962,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       }
 
       properties_tbw->setSortingEnabled(true);
+      properties_tbw->sortByColumn(0, Qt::AscendingOrder);
     }
 
     properties_tbw->horizontalHeader()->setVisible(properties_tbw->rowCount() > 0);

@@ -84,6 +84,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatOperatorClassAttribs(attribs_map &attribs);
     void formatTriggerAttribs(attribs_map &attribs);
     void formatRuleAttribs(attribs_map &attribs);
+    void formatColumnAttribs(attribs_map &attribs);
+    void formatConstraintAttribs(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
