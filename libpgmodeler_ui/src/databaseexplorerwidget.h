@@ -63,7 +63,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     bool eventFilter(QObject *object, QEvent *event);
 
-    QString getObjectName(ObjectType obj_type, const QString &oid);
+    QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
+    QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
+    QString formatObjectName(attribs_map &attribs);
     void formatObjectAttribs(attribs_map &attribs);
     void formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs);
     void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array);

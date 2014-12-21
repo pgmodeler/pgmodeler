@@ -22,7 +22,7 @@
 
 using namespace ParsersAttributes;
 
-const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(undefined, OID: %1)");
+const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(undefined)");
 const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ELEM_SEPARATOR="•";
 
@@ -78,7 +78,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {DEL_ACTION, QT_TR_NOOP("On delete")},               {DST_COLUMNS, QT_TR_NOOP("Ref. columns")},             {EXPRESSIONS, QT_TR_NOOP("Expressions")},
   {FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
   {OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
-  {UPD_ACTION, QT_TR_NOOP("On update")}
+  {UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -229,15 +229,12 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
     }
     else
     {
-      QStringList oid_vect;
+      QStringList names;
+
       for(QString attr : oid_attrs)
       {
-        oid_vect=Catalog::parseArrayValues(attribs[attr]);
-
-        for(int idx=0; idx < oid_vect.size(); idx++)
-          oid_vect[idx]=getObjectName(obj_type, oid_vect[idx]);
-
-        attribs[attr]=oid_vect.join(ELEM_SEPARATOR);
+        names=getObjectsNames(obj_type, Catalog::parseArrayValues(attribs[attr]));
+        attribs[attr]=names.join(ELEM_SEPARATOR);
       }
     }
   }
@@ -477,22 +474,22 @@ void DatabaseExplorerWidget::formatOperatorClassAttribs(attribs_map &attribs)
     elems.clear();
   }
 
-   array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
+  array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
 
-   if(!array_vals.isEmpty())
-   {
-     for(int i=0; i < array_vals.size(); i++)
-     {
-       list=array_vals[i].split(":");
-       elems.push_back(QString("[%1] [%2] [%3]")
-                       .arg(list[0],
-                            getObjectName(OBJ_OPERATOR, list[1]),
-                            getObjectName(OBJ_OPERATOR, list[2])));
-     }
+  if(!array_vals.isEmpty())
+  {
+    for(int i=0; i < array_vals.size(); i++)
+    {
+      list=array_vals[i].split(":");
+      elems.push_back(QString("[%1] [%2] [%3]")
+                      .arg(list[0],
+                      getObjectName(OBJ_OPERATOR, list[1]),
+          getObjectName(OBJ_OPERATOR, list[2])));
+    }
 
-     attribs[ParsersAttributes::OPERATOR]=elems.join(ELEM_SEPARATOR);
-     elems.clear();
-   }
+    attribs[ParsersAttributes::OPERATOR]=elems.join(ELEM_SEPARATOR);
+    elems.clear();
+  }
 }
 
 void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
@@ -513,7 +510,6 @@ void DatabaseExplorerWidget::formatTriggerAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatRuleAttribs(attribs_map &attribs)
 {
   attribs[ParsersAttributes::COMMANDS]=Catalog::parseRuleCommands(attribs[ParsersAttributes::COMMANDS]).join(";");
-
 }
 
 void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
@@ -526,41 +522,66 @@ void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 {
-  map<QString, ConstraintType> constr_types={{ParsersAttributes::PK_CONSTR, ConstraintType(ConstraintType::primary_key)},
-                                             {ParsersAttributes::FK_CONSTR, ConstraintType(ConstraintType::foreign_key)},
-                                             {ParsersAttributes::UQ_CONSTR, ConstraintType(ConstraintType::unique)},
-                                             {ParsersAttributes::CK_CONSTR, ConstraintType(ConstraintType::check)},
-                                             {ParsersAttributes::EX_CONSTR, ConstraintType(ConstraintType::exclude)}};
+  map<QString, ConstraintType> types={{ParsersAttributes::PK_CONSTR, ConstraintType(ConstraintType::primary_key)},
+                                      {ParsersAttributes::FK_CONSTR, ConstraintType(ConstraintType::foreign_key)},
+                                      {ParsersAttributes::UQ_CONSTR, ConstraintType(ConstraintType::unique)},
+                                      {ParsersAttributes::CK_CONSTR, ConstraintType(ConstraintType::check)},
+                                      {ParsersAttributes::EX_CONSTR, ConstraintType(ConstraintType::exclude)}};
 
-  attribs[ParsersAttributes::TYPE]=~constr_types[attribs[ParsersAttributes::TYPE]];
+  ConstraintType constr_type=types[attribs[ParsersAttributes::TYPE]];
+  QStringList names=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]).split(".");
+
+  attribs[ParsersAttributes::TYPE]=~types[attribs[ParsersAttributes::TYPE]];
+  attribs[ParsersAttributes::SRC_COLUMNS]=getObjectsNames(OBJ_COLUMN,
+                                                          Catalog::parseArrayValues(attribs[ParsersAttributes::SRC_COLUMNS]),
+                                                          names[0], names[1]).join(ELEM_SEPARATOR);
+
+  if(constr_type==ConstraintType::foreign_key)
+  {
+    attribs[ParsersAttributes::REF_TABLE]=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::REF_TABLE]);
+    names=attribs[ParsersAttributes::REF_TABLE].split(".");
+    attribs[ParsersAttributes::DST_COLUMNS]=getObjectsNames(OBJ_COLUMN,
+                                                            Catalog::parseArrayValues(attribs[ParsersAttributes::DST_COLUMNS]),
+                                                            names[0], names[1]).join(ELEM_SEPARATOR);
+
+  }
+  else
+  {
+    attribs.erase(ParsersAttributes::DST_COLUMNS);
+    attribs.erase(ParsersAttributes::REF_TABLE);
+    attribs.erase(ParsersAttributes::UPD_ACTION);
+    attribs.erase(ParsersAttributes::DEL_ACTION);
+    attribs.erase(ParsersAttributes::DEFERRABLE);
+    attribs.erase(ParsersAttributes::DEFER_TYPE);
+  }
 }
 
-QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString &oid)
+QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 {
   try
   {
-    if(oid=="0" || oid.isEmpty())
-      return(DEP_NOT_DEFINED.arg(oid));
+    if(attribs.empty() ||
+       attribs[ParsersAttributes::OID].isEmpty() ||
+       attribs[ParsersAttributes::OID]=="0" ||
+       attribs[ParsersAttributes::NAME].isEmpty())
+      return(DEP_NOT_DEFINED);
     else
     {
-      attribs_map attribs, aux_attribs;
-      QString obj_name=DEP_NOT_FOUND.arg(oid), sch_name;
+      ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+      attribs_map aux_attribs;
+      QString oid=attribs[ParsersAttributes::OID],
+              obj_name=DEP_NOT_FOUND.arg(oid), sch_name;
 
-      attribs=catalog.getObjectAttributes(obj_type, oid.toUInt());
+      obj_name=attribs[ParsersAttributes::NAME];
 
-      if(!attribs.empty())
+      if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
+         attribs[ParsersAttributes::SCHEMA]!="0")
       {
-        obj_name=attribs[ParsersAttributes::NAME];
+        aux_attribs=catalog.getObjectAttributes(OBJ_SCHEMA, attribs[ParsersAttributes::SCHEMA].toUInt());
+        sch_name=aux_attribs[ParsersAttributes::NAME];
 
-        if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-           attribs[ParsersAttributes::SCHEMA]!="0")
-        {
-          aux_attribs=catalog.getObjectAttributes(obj_type, attribs[ParsersAttributes::SCHEMA].toUInt());
-          sch_name=aux_attribs[ParsersAttributes::NAME];
-
-          if(!sch_name.isEmpty() && sch_name!="pg_catalog" && sch_name!="information_schema")
-            obj_name=sch_name + "." + obj_name;
-        }
+        if(!sch_name.isEmpty())// && sch_name!="pg_catalog" && sch_name!="information_schema")
+          obj_name=sch_name + "." + obj_name;
       }
 
       if(obj_type==OBJ_FUNCTION)
@@ -589,6 +610,52 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
       }
 
       return(obj_name);
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name, const QString tab_name)
+{
+  try
+  {
+    if(oids.isEmpty())
+     return(QStringList{ DEP_NOT_DEFINED });
+    else
+    {
+      vector<attribs_map> attribs;
+      vector<unsigned> oids_vect;
+      QStringList names;
+
+      for(QString oid : oids)
+        oids_vect.push_back(oid.toUInt());
+
+      attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
+      for(attribs_map attr : attribs)
+        names.push_back(formatObjectName(attr));
+
+      return(names);
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name, const QString tab_name)
+{
+  try
+  {
+    if(oid=="0" || oid.isEmpty())
+      return(DEP_NOT_DEFINED);
+    else
+    {
+     attribs_map attribs=catalog.getObjectAttributes(obj_type, oid.toUInt(), sch_name, tab_name);
+     return(formatObjectName(attribs));
     }
   }
   catch(Exception &e)

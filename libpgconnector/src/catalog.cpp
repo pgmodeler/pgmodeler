@@ -467,11 +467,11 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
   }
 }
 
-attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, attribs_map extra_attribs)
+attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name, const QString tab_name, attribs_map extra_attribs)
 {
   try
   {
-    vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, "", "", { oid }, extra_attribs);
+    vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
     return(attribs_vect.empty() ? attribs_map() : attribs_vect[0]);
   }
   catch(Exception &e)

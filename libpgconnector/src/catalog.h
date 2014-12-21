@@ -171,7 +171,7 @@ class Catalog {
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
     //! brief Returns the attributes for the object specified by its type and OID
-    attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, attribs_map extra_attribs=attribs_map());
+    attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name="", const QString tab_name="", attribs_map extra_attribs=attribs_map());
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
