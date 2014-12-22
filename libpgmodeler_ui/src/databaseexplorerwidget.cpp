@@ -187,8 +187,10 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
   if(attribs.count(ParsersAttributes::PERMISSION)!=0)
     attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
-  if(attribs[ParsersAttributes::NAME].startsWith("pg_catalog."))
-    attribs[ParsersAttributes::NAME].remove("pg_catalog.");
+  //Removing system schemas from object's name
+  if(attribs[ParsersAttributes::NAME].startsWith("pg_catalog.") ||
+     attribs[ParsersAttributes::NAME].startsWith("information_schema."))
+    attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
   for(auto attrib : attribs)
   {
@@ -197,9 +199,12 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
     if(attr_name==ParsersAttributes::OBJECT_TYPE)
      attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
+
+    //If the current attribute is related to a dependency object, retreive its real name
     else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
      attr_value=getObjectName(dep_types[attr_name], attr_value);
 
+    //Applying translation on the attribute
     if(attribs_i18n.count(attr_name)!=0)
       attr_name=attribs_i18n.at(attr_name);
 
@@ -373,6 +378,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
       attribs[ParsersAttributes::OWNER_COLUMN]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(ParsersAttributes::NAME));
   }
 
+  //Retrieving the current value of the sequence by querying the database
   try
   {
     Connection conn=connection;
@@ -405,7 +411,6 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
   formatBooleanAttribs(attribs, { ParsersAttributes::BY_VALUE,
                                   ParsersAttributes::COLLATABLE,
                                   ParsersAttributes::PREFERRED });
-
   formatOidAttribs(attribs, { ParsersAttributes::ANALYZE_FUNC,
                               ParsersAttributes::INPUT_FUNC,
                               ParsersAttributes::OUTPUT_FUNC,
@@ -413,7 +418,6 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
                               ParsersAttributes::SEND_FUNC,
                               ParsersAttributes::TPMOD_IN_FUNC,
                               ParsersAttributes::TPMOD_OUT_FUNC }, OBJ_FUNCTION, false);
-
   attribs[ParsersAttributes::ELEMENT]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::ELEMENT]);
 
   if(attribs[ParsersAttributes::ENUMERATIONS].isEmpty())
@@ -453,9 +457,7 @@ void DatabaseExplorerWidget::formatOperatorClassAttribs(attribs_map &attribs)
   QStringList list, array_vals, elems;
 
   attribs[ParsersAttributes::FAMILY]=getObjectName(OBJ_OPFAMILY, attribs[ParsersAttributes::FAMILY]);
-
   formatBooleanAttribs(attribs, { ParsersAttributes::DEFAULT });
-
   formatOidAttribs(attribs, { ParsersAttributes::STORAGE,
                               ParsersAttributes::TYPE }, OBJ_TYPE, false);
 
@@ -532,12 +534,9 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 
   formatBooleanAttribs(attribs, { ParsersAttributes::DEFERRABLE,
                                   ParsersAttributes::NO_INHERIT });
-
   attribs[ParsersAttributes::TYPE]=~types[attribs[ParsersAttributes::TYPE]];
-
   attribs[ParsersAttributes::OP_CLASSES]=getObjectsNames(OBJ_OPCLASS,
                                                          Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
-
   attribs[ParsersAttributes::SRC_COLUMNS]=getObjectsNames(OBJ_COLUMN,
                                                           Catalog::parseArrayValues(attribs[ParsersAttributes::SRC_COLUMNS]),
                                                           names[0], names[1]).join(ELEM_SEPARATOR);
@@ -618,16 +617,18 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 
       obj_name=attribs[ParsersAttributes::NAME];
 
+      //Retrieving the schema name
       if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
          attribs[ParsersAttributes::SCHEMA]!="0")
       {
         aux_attribs=catalog.getObjectAttributes(OBJ_SCHEMA, attribs[ParsersAttributes::SCHEMA].toUInt());
         sch_name=aux_attribs[ParsersAttributes::NAME];
 
-        if(!sch_name.isEmpty())// && sch_name!="pg_catalog" && sch_name!="information_schema")
+        if(!sch_name.isEmpty())
           obj_name=sch_name + "." + obj_name;
       }
 
+      //Formatting paramenter types for function
       if(obj_type==OBJ_FUNCTION)
       {
         QStringList names, arg_types=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_TYPES]);
@@ -640,6 +641,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 
         obj_name+=QString("(%1)").arg(arg_types.join(','));
       }
+      //Formatting paramenter types for operator
       else if(obj_type==OBJ_OPERATOR)
       {
         QStringList arg_types, names;
@@ -683,6 +685,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
         oids_vect.push_back(oid.toUInt());
 
       attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
+
       for(attribs_map attr : attribs)
         names.push_back(formatObjectName(attr));
 
@@ -703,8 +706,8 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
       return(DEP_NOT_DEFINED);
     else
     {
-     attribs_map attribs=catalog.getObjectAttributes(obj_type, oid.toUInt(), sch_name, tab_name);
-     return(formatObjectName(attribs));
+      attribs_map attribs=catalog.getObjectAttributes(obj_type, oid.toUInt(), sch_name, tab_name);
+      return(formatObjectName(attribs));
     }
   }
   catch(Exception &e)
@@ -1019,10 +1022,13 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       int row=0;
       QFont font;
 
+      //First, retrieve the attributes stored on the item as a result of a previous properties listing
       cached_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
+      //In case of the cached attributes are empty
       if(cached_attribs.empty())
       {
+        //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
           cached_attribs=catalog.getObjectAttributes(obj_type, oid);
         else
@@ -1035,7 +1041,9 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
             cached_attribs=vect_attribs[0];
         }
 
+        //Format values and translate the attribute names
         formatObjectAttribs(cached_attribs);
+        //Store the attributes on the item to avoid repeatedly query the database
         item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(cached_attribs));
       }
 
@@ -1048,6 +1056,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
           properties_tbw->insertRow(properties_tbw->rowCount());
           row=properties_tbw->rowCount() - 1;
 
+          //Creates the property name item
           tab_item=new QTableWidgetItem;
           font=tab_item->font();
           font.setItalic(true);
@@ -1058,8 +1067,10 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
 
           values=attrib.second.split(ELEM_SEPARATOR);
 
+          //Creating the value item
           if(values.size() >= 2)
           {
+            //If the values contatins more the one item, the a combo box will be placed instead of the text
             QComboBox *combo=new QComboBox;
             combo->setStyleSheet("border: 0px");
             combo->addItems(values);
@@ -1071,6 +1082,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
             tab_item->setText(attrib.second);
             properties_tbw->setItem(row, 1, tab_item);
 
+            //If the value contains multiple lines, configures the tooltip to expose the complete form of the value
             if(attrib.second.contains('\n'))
               tab_item->setToolTip(attrib.second);
           }

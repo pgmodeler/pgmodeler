@@ -47,6 +47,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Database import helper used to list objects from current connection
     DatabaseImportHelper import_helper;
 
+    //! brief Catalog instance used to retrieve object's attributes
     Catalog catalog;
 
     SchemaParser schparser;
@@ -115,6 +116,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Returns a copy of the connection used by this explorer instance
     Connection getConnection(void);
 
+    //! brief Clears the object's properties table
     void clearObjectProperties(void);
 
   public slots:
@@ -128,6 +130,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Updates on the tree under the current selected object
     void updateCurrentItem(void);
 
+    //! brief Expose the catalog properties of a selected object
     void loadObjectProperties(void);
 
   signals:
