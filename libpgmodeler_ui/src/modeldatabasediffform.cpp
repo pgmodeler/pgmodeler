@@ -77,10 +77,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     ignore_duplic_ht->setText(ignore_duplic_chk->statusTip());
 
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
-    sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-                                  GlobalAttributes::DIR_SEPARATOR +
-                                  GlobalAttributes::SQL_HIGHLIGHT_CONF +
-                                  GlobalAttributes::CONFIGURATION_EXT);
+    sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     pgsql_ver_cmb->addItems(SchemaParser::getPgSQLVersions());
 

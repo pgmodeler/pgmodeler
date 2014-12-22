@@ -54,16 +54,10 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
     single_pk_ht->setText(single_pk_chk->statusTip());
 
 		table1_hl=new SyntaxHighlighter(ref_table_txt, false);
-		table1_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		table2_hl=new SyntaxHighlighter(recv_table_txt, false);
-		table2_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		for(i=0; i < count; i++)
 		{

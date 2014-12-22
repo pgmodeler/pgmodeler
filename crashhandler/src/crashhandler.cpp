@@ -56,10 +56,7 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt, false);
-	hl_model_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																	GlobalAttributes::DIR_SEPARATOR +
-																	GlobalAttributes::XML_HIGHLIGHT_CONF +
-																	GlobalAttributes::CONFIGURATION_EXT);
+  hl_model_txt->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
 	QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
 	tmp_dir.setSorting(QDir::Time);

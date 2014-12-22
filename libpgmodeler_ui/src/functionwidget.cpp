@@ -364,10 +364,7 @@ void FunctionWidget::selectLanguage(void)
 		}
 		catch(Exception &e)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				 GlobalAttributes::DIR_SEPARATOR +
-																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																				 GlobalAttributes::CONFIGURATION_EXT);
+      source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		}
 
 		source_code_hl->rehighlight();

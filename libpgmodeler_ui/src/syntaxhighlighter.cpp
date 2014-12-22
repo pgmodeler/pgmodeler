@@ -456,7 +456,7 @@ void SyntaxHighlighter::clearConfiguration(void)
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
 	if(filename!="")
-	{
+  {
 		attribs_map attribs;
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,

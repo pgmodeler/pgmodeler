@@ -28,10 +28,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		QFrame *frame=nullptr;
 
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, false);
-		initial_cond_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			 GlobalAttributes::DIR_SEPARATOR +
-																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			 GlobalAttributes::CONFIGURATION_EXT);
+    initial_cond_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
     transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
@@ -41,7 +38,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
 		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																						ObjectTableWidget::EDIT_BUTTON, true, this);
+                                          ObjectTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
     funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);

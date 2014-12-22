@@ -34,10 +34,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, false);
 
-		format_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		GlobalAttributes::DIR_SEPARATOR +
-																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		GlobalAttributes::CONFIGURATION_EXT);
+    format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		IntervalType::getTypes(interval_lst);
 		interval_cmb->addItem("");

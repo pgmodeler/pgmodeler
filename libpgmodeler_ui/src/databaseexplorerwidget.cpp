@@ -78,7 +78,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {DEL_ACTION, QT_TR_NOOP("On delete")},               {DST_COLUMNS, QT_TR_NOOP("Ref. columns")},             {EXPRESSIONS, QT_TR_NOOP("Expressions")},
   {FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
   {OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
-  {UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")}
+  {UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")},                  {UNIQUE, QT_TR_NOOP("Unique")},
+  {PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -173,10 +174,8 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
       case OBJ_RULE: formatRuleAttribs(attribs); break;
       case OBJ_COLUMN: formatColumnAttribs(attribs); break;
       case OBJ_CONSTRAINT: formatConstraintAttribs(attribs); break;
-
-      default:
-        qDebug("format method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
-      break;
+      case OBJ_INDEX: formatIndexAttribs(attribs); break;
+      default: break;
     }
   }
   catch(Exception &e)
@@ -367,11 +366,11 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
   owner_col=attribs[ParsersAttributes::OWNER_COLUMN].split(':');
   if(owner_col.size()==2)
   {
-    QString tab_name=getObjectName(OBJ_TABLE, owner_col[0]);
-    vector<attribs_map> col_attribs=catalog.getObjectsAttributes(OBJ_COLUMN, sch_name, tab_name, { owner_col[1].toUInt() });
+    QStringList names=getObjectName(OBJ_TABLE, owner_col[0]).split(".");
+    vector<attribs_map> col_attribs=catalog.getObjectsAttributes(OBJ_COLUMN, names[0], names[1], { owner_col[1].toUInt() });
 
     if(!col_attribs.empty())
-      attribs[ParsersAttributes::OWNER_COLUMN]=QString("%1.%2.%3").arg(sch_name, tab_name, col_attribs[0].at(ParsersAttributes::NAME));
+      attribs[ParsersAttributes::OWNER_COLUMN]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(ParsersAttributes::NAME));
   }
 
   try
@@ -531,7 +530,14 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
   ConstraintType constr_type=types[attribs[ParsersAttributes::TYPE]];
   QStringList names=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]).split(".");
 
+  formatBooleanAttribs(attribs, { ParsersAttributes::DEFERRABLE,
+                                  ParsersAttributes::NO_INHERIT });
+
   attribs[ParsersAttributes::TYPE]=~types[attribs[ParsersAttributes::TYPE]];
+
+  attribs[ParsersAttributes::OP_CLASSES]=getObjectsNames(OBJ_OPCLASS,
+                                                         Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
+
   attribs[ParsersAttributes::SRC_COLUMNS]=getObjectsNames(OBJ_COLUMN,
                                                           Catalog::parseArrayValues(attribs[ParsersAttributes::SRC_COLUMNS]),
                                                           names[0], names[1]).join(ELEM_SEPARATOR);
@@ -543,7 +549,6 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
     attribs[ParsersAttributes::DST_COLUMNS]=getObjectsNames(OBJ_COLUMN,
                                                             Catalog::parseArrayValues(attribs[ParsersAttributes::DST_COLUMNS]),
                                                             names[0], names[1]).join(ELEM_SEPARATOR);
-
   }
   else
   {
@@ -551,9 +556,48 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
     attribs.erase(ParsersAttributes::REF_TABLE);
     attribs.erase(ParsersAttributes::UPD_ACTION);
     attribs.erase(ParsersAttributes::DEL_ACTION);
+    attribs.erase(ParsersAttributes::COMPARISON_TYPE);
+  }
+
+  if(constr_type==ConstraintType::check)
+  {
     attribs.erase(ParsersAttributes::DEFERRABLE);
     attribs.erase(ParsersAttributes::DEFER_TYPE);
   }
+  else
+    attribs.erase(ParsersAttributes::EXPRESSION);
+
+  if(constr_type==ConstraintType::exclude)
+  {
+    attribs[ParsersAttributes::EXPRESSIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ELEM_SEPARATOR);
+    attribs[ParsersAttributes::OPERATORS]=getObjectsNames(OBJ_OPERATOR,
+                                                          Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS])).join(ELEM_SEPARATOR);
+  }
+  else
+  {
+    attribs.erase(ParsersAttributes::CONDITION);
+    attribs.erase(ParsersAttributes::EXPRESSIONS);
+    attribs.erase(ParsersAttributes::OPERATORS);
+  }
+}
+
+void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
+{
+  QStringList names=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]).split(".");
+
+  formatBooleanAttribs(attribs, { ParsersAttributes::UNIQUE });
+
+  attribs[ParsersAttributes::EXPRESSIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ELEM_SEPARATOR);
+
+  attribs[ParsersAttributes::COLLATIONS]=getObjectsNames(OBJ_COLLATION,
+                                                         Catalog::parseArrayValues(attribs[ParsersAttributes::COLLATIONS])).join(ELEM_SEPARATOR);
+
+  attribs[ParsersAttributes::OP_CLASSES]=getObjectsNames(OBJ_OPCLASS,
+                                                         Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
+
+  attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
+                                                      Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
+                                                      names[0], names[1]).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -1030,6 +1074,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
 
       properties_tbw->setSortingEnabled(true);
       properties_tbw->sortByColumn(0, Qt::AscendingOrder);
+      properties_tbw->resizeColumnToContents(0);
     }
 
     properties_tbw->horizontalHeader()->setVisible(properties_tbw->rowCount() > 0);

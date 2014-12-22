@@ -30,10 +30,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		Ui_IndexWidget::setupUi(this);
 
     predicate_hl=new SyntaxHighlighter(predicate_txt, false);
-    predicate_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																						GlobalAttributes::CONFIGURATION_EXT);
+    predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		elements_wgt = new ElementsWidget(this);
 

@@ -60,10 +60,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		if(install_highlighter)
 		{
 			obj_name_hl=new SyntaxHighlighter(obj_name_txt, false);
-			obj_name_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+      obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		}
 
     connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));

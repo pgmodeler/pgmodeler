@@ -409,7 +409,7 @@
        <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
-       <number>18</number>
+       <number>20</number>
       </attribute>
       <attribute name="verticalHeaderStretchLastSection">
        <bool>false</bool>

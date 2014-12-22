@@ -253,18 +253,12 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 			if(!hl_sqlcode->isConfigurationLoaded())
 			{
-				hl_sqlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+        hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 			}
 
 			if(!hl_xmlcode->isConfigurationLoaded())
 			{
-				hl_xmlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::XML_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+        hl_xmlcode->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 			}
 
 			generateSourceCode();

@@ -79,7 +79,6 @@ namespace GlobalAttributes {
 	DEFAULT_QT_STYLE="Fusion",
 	UI_STYLE_OPT="-style";
 
-
 	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
 	 the working dir. But these values ​​can be overwritten using the
@@ -105,6 +104,8 @@ namespace GlobalAttributes {
 	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
 	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
 	SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString("./samples")),
+  SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
+  XML_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + XML_HIGHLIGHT_CONF + CONFIGURATION_EXT,
 
 	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
 	different location for pgmodeler-ch */
@@ -122,7 +123,7 @@ namespace GlobalAttributes {
 	#ifdef DEMO_VERSION
 	 //Maximum object creation counter for demo version
    static const unsigned MAX_OBJECT_COUNT=8;
-	#endif
+	#endif  
 }
 
 #endif

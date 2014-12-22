@@ -37,6 +37,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
                          DEP_NOT_FOUND,
                          ELEM_SEPARATOR;
 
+    //! brief Stores the translations of all used attributes at properties panel
     static const attribs_map attribs_i18n;
 
     /*! brief Connection used to handle objects on database. This connection is copied
@@ -63,12 +64,27 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     bool eventFilter(QObject *object, QEvent *event);
 
+    /*! brief Returns the properly format object name by querying it using its OID and type.
+        Optional schema and table names can be specified to filter the results */
     QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
+
+    /*! brief Returns the properly format list of object names by querying them using their OIDs and type.
+        Optional schema and table names can be specified to filter the results */
     QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
+
+    //! brief Format the object's name based upon the passed attributes
     QString formatObjectName(attribs_map &attribs);
+
+    /*! brief Formats the attributes for the passed object. This method do basic formattation on commom attributes
+        and internally call the format[OBJECT]Attribs() method according to the object being currently processed */
     void formatObjectAttribs(attribs_map &attribs);
+
+    //! brief Formats the boolean attributes translating the 1 ou "" values to true or false
     void formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs);
+
+    //! brief Convert oid attributes (or array of oids) in object names by querying it on catalog
     void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array);
+
     void formatCastAttribs(attribs_map &attribs);
     void formatLanguageAttribs(attribs_map &attribs);
     void formatRoleAttribs(attribs_map &attribs);
@@ -88,6 +104,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatRuleAttribs(attribs_map &attribs);
     void formatColumnAttribs(attribs_map &attribs);
     void formatConstraintAttribs(attribs_map &attribs);
+    void formatIndexAttribs(attribs_map &attribs);
 
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
