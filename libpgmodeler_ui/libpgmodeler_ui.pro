@@ -258,6 +258,7 @@ FORMS += ui/mainwindow.ui \
     ui/findreplacewidget.ui \
     ui/modeldatabasediffform.ui \
     ui/hinttextwidget.ui \
-    ui/databaseexplorerwidget.ui
+    ui/databaseexplorerwidget.ui \
+    ui/sqlsnippetswidget.ui
 
 
