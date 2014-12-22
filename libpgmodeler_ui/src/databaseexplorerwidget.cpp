@@ -630,22 +630,27 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 
       if(obj_type==OBJ_FUNCTION)
       {
-        QStringList arg_types=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_TYPES]);
+        QStringList names, arg_types=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_TYPES]);
 
         for(int idx=0; idx < arg_types.size(); idx++)
-         arg_types[idx]=getObjectName(OBJ_TYPE, arg_types[idx]);
+        {
+          names=getObjectName(OBJ_TYPE, arg_types[idx]).split(".");
+          arg_types[idx]=names[names.size()-1];
+        }
 
         obj_name+=QString("(%1)").arg(arg_types.join(','));
       }
       else if(obj_type==OBJ_OPERATOR)
       {
-        QStringList arg_types;
+        QStringList arg_types, names;
         QString type_name;
         vector<QString> attrib_ids={ ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE };
 
         for(QString attr : attrib_ids)
         {
-          type_name=getObjectName(OBJ_TYPE, attribs[attr]);
+          names=getObjectName(OBJ_TYPE, attribs[attr]).split(".");
+          type_name=names[names.size()-1];
+
           if(type_name.isEmpty()) type_name="-";
           arg_types.push_back(type_name);
         }
