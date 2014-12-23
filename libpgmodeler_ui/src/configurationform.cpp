@@ -29,31 +29,23 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	connections_conf=new ConnectionsConfigWidget(this);
 	plugins_conf=new PluginsConfigWidget(this);
 	relationships_conf=new RelationshipConfigWidget(this);
+  snippets_conf=new SnippetsConfigWidget(this);
 
-	layout=new QGridLayout;
-  layout->setContentsMargins(2,0,0,0);
-	layout->addWidget(general_conf);
-	confs_stw->widget(GENERAL_CONF_WGT)->setLayout(layout);
+  QWidget *wgt=nullptr;
+  QWidgetList wgt_list={ general_conf, appearance_conf, connections_conf,
+                         relationships_conf, snippets_conf, plugins_conf};
 
-	layout=new QGridLayout;
-  layout->setContentsMargins(2,0,0,0);
-	layout->addWidget(appearance_conf);
-	confs_stw->widget(APPEARANCE_CONF_WGT)->setLayout(layout);
+  for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
+  {
+    wgt=new QWidget;
+    wgt->setObjectName(QString("page_%1").arg(i));
+    confs_stw->addWidget(wgt);
 
-	layout=new QGridLayout;
-  layout->setContentsMargins(2,0,0,0);
-	layout->addWidget(connections_conf);
-	confs_stw->widget(CONNECTIONS_CONF_WGT)->setLayout(layout);
-
-	layout=new QGridLayout;
-  layout->setContentsMargins(2,0,0,0);
-	layout->addWidget(plugins_conf);
-	confs_stw->widget(PLUGINS_CONF_WGT)->setLayout(layout);
-
-	layout=new QGridLayout;
-  layout->setContentsMargins(2,0,0,0);
-	layout->addWidget(relationships_conf);
-	confs_stw->widget(RELATIONSHIPS_CONF_WGT)->setLayout(layout);
+    layout=new QGridLayout;
+    layout->setContentsMargins(2,0,0,0);
+    layout->addWidget(wgt_list[i]);
+    wgt->setLayout(layout);
+  }
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
@@ -99,6 +91,7 @@ void ConfigurationForm::loadConfiguration(void)
 		relationships_conf->loadConfiguration();
 		appearance_conf->loadConfiguration();
 		connections_conf->loadConfiguration();
+    snippets_conf->loadConfiguration();
 		plugins_conf->loadPlugins();
 	}
 	catch(Exception &e)
@@ -141,6 +134,10 @@ void ConfigurationForm::restoreDefaults(void)
 				dynamic_cast<ConnectionsConfigWidget *>(this->getConfigurationWidget(CONNECTIONS_CONF_WGT))->restoreDefaults();
 			break;
 
+      case SNIPPETS_CONF_WGT:
+        dynamic_cast<SnippetsConfigWidget *>(this->getConfigurationWidget(SNIPPETS_CONF_WGT))->restoreDefaults();
+      break;
+
 			default:
 			break;
 		}
@@ -159,6 +156,7 @@ BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 			case RELATIONSHIPS_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(relationships_conf)); break;
 			case APPEARANCE_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(appearance_conf)); break;
 			case CONNECTIONS_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(connections_conf)); break;
+      case SNIPPETS_CONF_WGT: return(dynamic_cast<BaseConfigWidget *>(connections_conf)); break;
 			default:
 			return(dynamic_cast<BaseConfigWidget *>(plugins_conf));
 			break;

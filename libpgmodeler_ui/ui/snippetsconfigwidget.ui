@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SQLSnippetsWidget</class>
- <widget class="QWidget" name="SQLSnippetsWidget">
+ <class>SnippetsConfigWidget</class>
+ <widget class="QWidget" name="SnippetsConfigWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -29,14 +29,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="connections_lbl">
+      <widget class="QLabel" name="snippets_lbl">
        <property name="text">
         <string>Snippets:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="connections_cmb">
+      <widget class="QComboBox" name="snippets_cmb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -107,7 +107,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="remove_tb_2">
+      <widget class="QToolButton" name="remove_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -136,7 +136,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="remove_all_tb_2">
+      <widget class="QToolButton" name="remove_all_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -200,24 +200,24 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="id_lbl">
        <property name="text">
         <string>ID:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="id_edt"/>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="applies_to_lbl">
        <property name="text">
         <string>Applies to:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="applies_to_cmb"/>
      </item>
      <item>
       <spacer name="horizontalSpacer">
@@ -237,7 +237,7 @@
        <item>
         <widget class="QToolButton" name="add_tb">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -310,50 +310,12 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QToolButton" name="remove_all_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Remove All</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="shortcut">
-          <string>Shift+Del</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QTextEdit" name="textEdit"/>
+    <widget class="QTextEdit" name="snippet_txt"/>
    </item>
   </layout>
  </widget>

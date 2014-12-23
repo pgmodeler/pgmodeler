@@ -238,6 +238,15 @@
         </item>
         <item>
          <property name="text">
+          <string>Snippets</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/codesnippet.png</normaloff>:/icones/icones/codesnippet.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Plug-ins</string>
          </property>
          <property name="textAlignment">
@@ -277,20 +286,8 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>-1</number>
         </property>
-        <widget class="QWidget" name="general_pg">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-        <widget class="QWidget" name="relationships_pg"/>
-        <widget class="QWidget" name="style_pg"/>
-        <widget class="QWidget" name="connections_pg"/>
-        <widget class="QWidget" name="plugins_pg"/>
        </widget>
       </item>
      </layout>
