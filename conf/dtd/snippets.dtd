@@ -2,11 +2,9 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT snippets (object)*>
-
-<!ELEMENT object (snippet)*>
-<!ATTLIST object type CDATA #REQUIRED>
+<!ELEMENT snippets (snippet)*>
 
 <!ELEMENT snippet (#PCDATA)>
 <!ATTLIST snippet id CDATA #REQUIRED>
 <!ATTLIST snippet description CDATA #REQUIRED>
+<!ATTLIST snippet object CDATA #REQUIRED>

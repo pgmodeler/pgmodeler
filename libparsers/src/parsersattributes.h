@@ -37,6 +37,7 @@ namespace ParsersAttributes {
   _LC_COLLATE_="lc-collate",
   _LC_CTYPE_="lc-ctype",
   _TRUE_="true",
+  _CONTENTS_="_contents_",
   ADMIN_OPTION="admin-option",
   ADMIN_ROLES="admin-roles",
   ALIAS="alias",

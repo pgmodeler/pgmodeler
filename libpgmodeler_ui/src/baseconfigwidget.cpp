@@ -149,16 +149,19 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 				{
 					this->getConfigurationParams(key_attribs);
 
-					if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
+          if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT, XML_ELEMENT_NODE))
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
-						do
-						{
-							this->getConfigurationParams(key_attribs);
-						}
-						while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+            if(xmlparser.getElementType()!=XML_TEXT_NODE)
+            {
+              do
+              {
+                this->getConfigurationParams(key_attribs);
+              }
+              while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+            }
 
 						xmlparser.restorePosition();
 					}
@@ -192,8 +195,17 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
 		itr++;
 	}
 
-	if(key.isEmpty())
+  if(key.isEmpty())
 		key=xmlparser.getElementName();
+
+  //Extract the contents of the child element and create a special element on map called "_contents_"
+  if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT, XML_TEXT_NODE))
+  {
+    xmlparser.savePosition();
+    xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+    aux_attribs[ParsersAttributes::_CONTENTS_]=xmlparser.getElementContent().simplified();
+    xmlparser.restorePosition();
+  }
 
 	if(!aux_attribs.empty())
 		config_params[key]=aux_attribs;

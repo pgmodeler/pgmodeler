@@ -2253,7 +2253,7 @@ void ModelWidget::pasteObjects(void)
 			try
 			{
 				//Creates the object from the XML
-				object=db_model->createObject(db_model->getObjectType(xmlparser->getElementName()));
+        object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
 				tab_obj=dynamic_cast<TableObject *>(object);
 				constr=dynamic_cast<Constraint *>(tab_obj);
 

@@ -110,6 +110,22 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		return("");
 }
 
+ObjectType BaseObject::getObjectType(const QString &type_name)
+{
+  ObjectType obj_type=BASE_OBJECT;
+
+  for(int i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
+  {
+    if(objs_schemas[i]==type_name)
+    {
+      obj_type=static_cast<ObjectType>(i);
+      break;
+    }
+  }
+
+  return(obj_type);
+}
+
 QString BaseObject::getSchemaName(ObjectType obj_type)
 {
 	return(objs_schemas[obj_type]);

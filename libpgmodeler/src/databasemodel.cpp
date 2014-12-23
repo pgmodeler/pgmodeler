@@ -1813,7 +1813,7 @@ void DatabaseModel::createSpecialObject(const QString &xml_def, unsigned obj_id)
 		xmlparser.loadXMLBuffer(xml_def);
 
 		//Identifies the object type through the start element on xml buffer
-		obj_type=getObjectType(xmlparser.getElementName());
+    obj_type=BaseObject::getObjectType(xmlparser.getElementName());
 
 		if(obj_type==OBJ_SEQUENCE)
 			object=createSequence(true);
@@ -2961,23 +2961,6 @@ void DatabaseModel::loadModel(const QString &filename)
   }
 }
 
-ObjectType DatabaseModel::getObjectType(const QString &type_name)
-{
-	ObjectType obj_type=BASE_OBJECT;
-	int i;
-
-	for(i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
-	{
-		if(objs_schemas[i]==type_name)
-		{
-			obj_type=static_cast<ObjectType>(i);
-			break;
-		}
-	}
-
-	return(obj_type);
-}
-
 BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 {
 	BaseObject *object=nullptr;
@@ -3381,7 +3364,7 @@ Language *DatabaseModel::createLanguage(void)
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					obj_type=getObjectType(xmlparser.getElementName());
+          obj_type=BaseObject::getObjectType(xmlparser.getElementName());
 
 					if(obj_type==OBJ_FUNCTION)
 					{
@@ -3485,7 +3468,7 @@ Function *DatabaseModel::createFunction(void)
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
 					elem=xmlparser.getElementName();
-					obj_type=getObjectType(elem);
+          obj_type=BaseObject::getObjectType(elem);
 
 					//Gets the function return type from the XML
 					if(elem==ParsersAttributes::RETURN_TYPE)
@@ -4483,7 +4466,7 @@ Table *DatabaseModel::createTable(void)
           else if(elem==ParsersAttributes::CUSTOMIDXS)
           {
 						xmlparser.getElementAttributes(aux_attribs);
-            obj_type=getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
+            obj_type=BaseObject::getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
 
 						xmlparser.savePosition();
 
@@ -6015,7 +5998,7 @@ Permission *DatabaseModel::createPermission(void)
 		xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 		xmlparser.getElementAttributes(attribs);
 
-		obj_type=getObjectType(attribs[ParsersAttributes::TYPE]);
+    obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
 		obj_name=attribs[ParsersAttributes::NAME];
 		parent_name=attribs[ParsersAttributes::PARENT];
 

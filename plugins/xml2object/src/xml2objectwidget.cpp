@@ -75,7 +75,7 @@ void Xml2ObjectWidget::generateObject(void)
 				if(xmlparser->getElementType()==XML_ELEMENT_NODE)
 				{
 					elem_name=xmlparser->getElementName();
-					obj_type=model->getObjectType(elem_name);
+          obj_type=BaseObject::getObjectType(elem_name);
 
 					xmlparser->savePosition();
 

@@ -251,6 +251,9 @@ class BaseObject {
 		//! \brief Returns the object's type name related to the passed object type
 		static QString getTypeName(ObjectType obj_type);
 
+    //! \brief Returns the object's type related to the passed type name
+    static ObjectType getObjectType(const QString &type_name);
+
 		/*! \brief Returns the schema identifier used to generate the code definition related to the
 		 passed object type */
 		static QString getSchemaName(ObjectType obj_type);

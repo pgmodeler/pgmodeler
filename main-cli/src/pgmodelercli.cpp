@@ -638,7 +638,7 @@ void PgModelerCLI::recreateObjects(void)
 		{
 			xmlparser->restartParser();
 			xmlparser->loadXMLBuffer(xml_def);
-			obj_type=model->getObjectType(xmlparser->getElementName());
+      obj_type=BaseObject::getObjectType(xmlparser->getElementName());
 
 			xmlparser->getElementAttributes(attribs);
 

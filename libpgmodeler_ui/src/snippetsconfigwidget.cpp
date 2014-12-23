@@ -36,19 +36,23 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
 
   applies_to_cmb->insertItem(0, trUtf8("General purpose"), BASE_OBJECT);
   applies_to_cmb->setCurrentIndex(0);
-}
 
-SnippetsConfigWidget::~SnippetsConfigWidget(void)
-{
-
+  try
+  {
+    snippet_hl=new SyntaxHighlighter(snippet_txt, false);
+    snippet_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void SnippetsConfigWidget::loadConfiguration(void)
 {
 	try
 	{
-    BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::TYPE });
-    config_params.size();
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::ID });
 	}
 	catch(Exception &e)
 	{

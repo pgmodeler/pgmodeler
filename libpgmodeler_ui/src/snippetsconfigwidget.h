@@ -27,14 +27,16 @@
 
 #include "ui_snippetsconfigwidget.h"
 #include "baseconfigwidget.h"
+#include "syntaxhighlighter.h"
 
 class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, public BaseConfigWidget {
 	private:
 		Q_OBJECT
 
+    SyntaxHighlighter *snippet_hl;
+
 	public:
     SnippetsConfigWidget(QWidget * parent=0);
-    ~SnippetsConfigWidget(void);
 
 		//! \brief Saves the configuration to file
 		void saveConfiguration(void);
