@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>350</height>
+    <width>486</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -26,15 +26,15 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="snippets_lbl">
+     <property name="text">
+      <string>Snippets:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="snippets_lbl">
-       <property name="text">
-        <string>Snippets:</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QComboBox" name="snippets_cmb">
        <property name="sizePolicy">
@@ -68,6 +68,35 @@
        <property name="icon">
         <iconset resource="../res/resources.qrc">
          <normaloff>:/icones/icones/novo.png</normaloff>:/icones/icones/novo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="cancel_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Cancel edition</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -175,7 +204,40 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="filter_lbl">
+     <property name="text">
+      <string>Filter:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="filter_cmb">
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>18</width>
+       <height>18</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>340</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="3">
     <widget class="QFrame" name="div_ln">
      <property name="minimumSize">
       <size>
@@ -197,50 +259,82 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+   <item row="3" column="0" colspan="3">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="id_lbl">
        <property name="text">
         <string>ID:</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLineEdit" name="id_edt"/>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QLabel" name="applies_to_lbl">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Applies to:</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="applies_to_cmb"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
+     <item row="0" column="3">
+      <widget class="QComboBox" name="applies_to_cmb">
+       <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>167</width>
+         <height>0</height>
         </size>
        </property>
-      </spacer>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>18</width>
+         <height>18</height>
+        </size>
+       </property>
+      </widget>
      </item>
-     <item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="id_lbl_2">
+       <property name="text">
+        <string>Label:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="id_edt_2"/>
+     </item>
+     <item row="1" column="2" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QToolButton" name="add_tb">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="add_tb">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -251,11 +345,14 @@
            <height>0</height>
           </size>
          </property>
-         <property name="toolTip">
-          <string>Add Item</string>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="text">
-          <string/>
+          <string>Add</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -267,18 +364,15 @@
            <height>20</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Ins</string>
-         </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="update_tb">
+        <widget class="QPushButton" name="update_tb">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -289,15 +383,18 @@
            <height>0</height>
           </size>
          </property>
-         <property name="toolTip">
-          <string>Update Item</string>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="text">
-          <string/>
+          <string>Update</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+           <normaloff>:/icones/icones/padroes.png</normaloff>:/icones/icones/padroes.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -305,16 +402,13 @@
            <height>20</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Alt+R</string>
-         </property>
         </widget>
        </item>
       </layout>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="4" column="0" colspan="3">
     <widget class="QTextEdit" name="snippet_txt"/>
    </item>
   </layout>

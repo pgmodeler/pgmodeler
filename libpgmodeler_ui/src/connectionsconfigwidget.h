@@ -65,7 +65,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void removeConnection(void);
 		void enableCertificates(void);
 		void enableConnectionTest(void);
-    void applyConfiguration(void){};
+    void applyConfiguration(void){}
 };
 
 #endif

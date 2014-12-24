@@ -21,6 +21,8 @@
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
 {
+  QPixmap ico;
+  QString gen_purpose=trUtf8("General purpose");
   map<QString, ObjectType> types_map;
   vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_RELATIONSHIP, OBJ_TAG, OBJ_TEXTBOX,
                                                              OBJ_PERMISSION, BASE_RELATIONSHIP });
@@ -31,11 +33,18 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
     types_map[BaseObject::getTypeName(type)]=type;
 
   for(auto itr : types_map)
-    applies_to_cmb->addItem(QPixmap(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second))),
-                            itr.first, itr.second);
+  {
+    ico.load(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second)));
+    applies_to_cmb->addItem(ico, itr.first, itr.second);
+    filter_cmb->addItem(ico, itr.first, itr.second);
+  }
 
-  applies_to_cmb->insertItem(0, trUtf8("General purpose"), BASE_OBJECT);
+  applies_to_cmb->insertItem(0, gen_purpose, BASE_OBJECT);
   applies_to_cmb->setCurrentIndex(0);
+
+  filter_cmb->insertItem(0, gen_purpose, BASE_OBJECT);
+  filter_cmb->insertItem(0, trUtf8("All snippets"));
+  filter_cmb->setCurrentIndex(0);
 
   try
   {
@@ -46,6 +55,14 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
   {
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
+
+  cancel_tb->setVisible(false);
+
+  connect(snippets_cmb, &QComboBox::currentTextChanged,
+          [=](){ bool enable=snippets_cmb->count() > 0;
+                 edit_tb->setEnabled(enable);
+                 remove_tb->setEnabled(enable);
+                 remove_all_tb->setEnabled(enable); });
 }
 
 void SnippetsConfigWidget::loadConfiguration(void)
@@ -53,11 +70,19 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	try
 	{
     BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::ID });
+
+    for(auto cfg : config_params)
+      snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::DESCRIPTION)));
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void SnippetsConfigWidget::newSnippet(void)
+{
+
 }
 
 void SnippetsConfigWidget::saveConfiguration(void)

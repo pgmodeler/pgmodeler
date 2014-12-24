@@ -48,6 +48,8 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}
 
+    void newSnippet(void);
+
 	public slots:
 		void restoreDefaults(void);
 };

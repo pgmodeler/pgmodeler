@@ -142,6 +142,7 @@ namespace ParsersAttributes {
   DEL_EVENT="del-event",
   DELETE_PRIV="delete",
   DELIMITER="delimiter",
+  DESCRIPTION="description",
   DEST_TYPE="destiny-type",
   DIFF="diff",
   DIMENSION="dimension",
