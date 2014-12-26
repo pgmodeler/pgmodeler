@@ -65,7 +65,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
    DatabaseModel, Tag */
 unsigned BaseObject::global_id=4000;
 
-QString BaseObject::pgsql_ver=SchemaParser::PGSQL_VERSION_94;
+QString BaseObject::pgsql_ver=PgSQLVersions::DEFAULT_VERSION;
 bool BaseObject::use_cached_code=true;
 
 BaseObject::BaseObject(void)

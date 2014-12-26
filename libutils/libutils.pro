@@ -16,7 +16,8 @@ macx:DESTDIR=$$LIBDESTDIR
 
 HEADERS += src/exception.h \
 	   src/globalattributes.h \
-	   src/utf8string.h
+	   src/utf8string.h \
+    src/pgsqlversions.h
 
 SOURCES += src/exception.cpp
 

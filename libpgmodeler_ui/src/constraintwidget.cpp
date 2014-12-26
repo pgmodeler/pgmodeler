@@ -86,7 +86,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
 		warn_frm=generateVersionWarningFrame(fields_map);
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);

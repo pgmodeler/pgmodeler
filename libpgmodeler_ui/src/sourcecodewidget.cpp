@@ -38,7 +38,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		comment_edt->setReadOnly(true);
 		name_edt->setFont(font);
 		name_edt->setReadOnly(true);
-		version_cmb->addItems(SchemaParser::getPgSQLVersions());
+    version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);

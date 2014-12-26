@@ -38,7 +38,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(can_replicate_chk);
+  fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_90)].push_back(can_replicate_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);

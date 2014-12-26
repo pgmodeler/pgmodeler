@@ -33,6 +33,7 @@
 #include <QTextStream>
 #include "xmlparser.h"
 #include "attribsmap.h"
+#include "pgsqlversions.h"
 
 class SchemaParser {
 	private:
@@ -166,14 +167,6 @@ class SchemaParser {
 		QString pgsql_version;
 
 	public:
-
-		//! \brief Constants used to refernce PostgreSQL versions.
-		static const QString PGSQL_VERSION_90,
-												 PGSQL_VERSION_91,
-												 PGSQL_VERSION_92,
-												 PGSQL_VERSION_93,
-												 PGSQL_VERSION_94;
-
 		//! \brief Constants used to get a specific object definition
     static const unsigned SQL_DEFINITION=0,
 													XML_DEFINITION=1;
@@ -218,9 +211,6 @@ class SchemaParser {
 
 		//! \brief Retorns the current PostgreSQL version used by the parser
 		QString getPgSQLVersion(void);
-
-		//! \brief Returns the PostgreSQL version supported by pgModeler
-		static QStringList getPgSQLVersions(void);
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
     called when generating XML code and only tag attributes are treated.*/

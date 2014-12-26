@@ -78,7 +78,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(leakproof_chk);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));

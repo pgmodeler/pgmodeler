@@ -23,7 +23,7 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
   diff_canceled=false;
-  pgsql_version=SchemaParser::PGSQL_VERSION_94;
+  pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
   setDiffOptions(true, true, false, false, false, true);

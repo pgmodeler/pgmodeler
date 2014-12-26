@@ -30,7 +30,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
 
 		version_cmb->addItem(trUtf8("Autodetect"));
-		version_cmb->addItems(SchemaParser::getPgSQLVersions());
+    version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 		options_frm->setVisible(false);
 		curr_step=0;

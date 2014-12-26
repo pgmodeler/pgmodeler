@@ -487,7 +487,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		QFrame *frame=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(collation_lbl);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
