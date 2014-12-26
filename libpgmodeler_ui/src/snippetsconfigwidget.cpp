@@ -18,6 +18,7 @@
 
 #include "snippetsconfigwidget.h"
 #include "baseobject.h"
+#include "messagebox.h"
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
 {
@@ -56,13 +57,27 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 
-  cancel_tb->setVisible(false);
 
-  connect(snippets_cmb, &QComboBox::currentTextChanged,
-          [=](){ bool enable=snippets_cmb->count() > 0;
-                 edit_tb->setEnabled(enable);
-                 remove_tb->setEnabled(enable);
-                 remove_all_tb->setEnabled(enable); });
+  enableEditMode(false);
+
+  connect(new_tb, SIGNAL(clicked()), this, SLOT(resetForm()));
+  connect(edit_tb, SIGNAL(clicked()), this, SLOT(editSnippet()));
+  connect(remove_tb, SIGNAL(clicked()), this, SLOT(removeSnippet()));
+  connect(remove_all_tb, SIGNAL(clicked()), this, SLOT(removeAllSnippets()));
+  connect(cancel_tb, &QToolButton::clicked, [=](){ enableEditMode(false); });
+  connect(snippets_cmb, &QComboBox::currentTextChanged, [=](){ enableEditMode(false); });
+  connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
+  connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
+  connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
+  connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
+}
+
+void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
+{
+  snippets_cmb->clear();
+
+  for(auto cfg : config)
+    snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::LABEL)), cfg.first);
 }
 
 void SnippetsConfigWidget::loadConfiguration(void)
@@ -70,9 +85,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	try
 	{
     BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::ID });
-
-    for(auto cfg : config_params)
-      snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::DESCRIPTION)));
+    fillSnippetsCombo(config_params);
 	}
 	catch(Exception &e)
 	{
@@ -80,9 +93,92 @@ void SnippetsConfigWidget::loadConfiguration(void)
   }
 }
 
-void SnippetsConfigWidget::newSnippet(void)
+void SnippetsConfigWidget::resetForm(void)
 {
+  snippet_txt->clear();
+  id_edt->clear();
+  label_edt->clear();
+  applies_to_cmb->setCurrentIndex(0);
+}
 
+void SnippetsConfigWidget::editSnippet(void)
+{
+  QString snip_id=snippets_cmb->currentData().toString();
+  ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(ParsersAttributes::OBJECT));
+
+  enableEditMode(true);
+  snippet_txt->setPlainText(config_params[snip_id].at(ParsersAttributes::_CONTENTS_));
+  id_edt->setText(snip_id);
+  label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
+  applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
+}
+
+void SnippetsConfigWidget::removeSnippet(void)
+{
+  config_params.erase(snippets_cmb->currentData().toString());
+  filterSnippets(filter_cmb->currentIndex());
+}
+
+void SnippetsConfigWidget::removeAllSnippets(void)
+{
+  Messagebox msg_box;
+
+  msg_box.show(trUtf8("Confirmation"), trUtf8("Do you really want to remove all snippets?"),
+               Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+  if(msg_box.result()==QDialog::Accepted)
+  {
+    config_params.clear();
+    filterSnippets(0);
+  }
+}
+
+void SnippetsConfigWidget::enableEditMode(bool enable)
+{
+  bool has_snippets=(snippets_cmb->count() > 0);
+
+  cancel_tb->setVisible(enable);
+  new_tb->setVisible(!enable);
+  snippets_cmb->setEnabled(!enable);
+  filter_cmb->setEnabled(!enable);
+  add_tb->setVisible(!enable);
+  update_tb->setVisible(enable);
+
+  edit_tb->setEnabled(!enable && has_snippets);
+  remove_tb->setEnabled(!enable && has_snippets);
+  remove_all_tb->setEnabled(!enable && has_snippets);
+
+  if(!enable) resetForm();
+}
+
+void SnippetsConfigWidget::enableSaveButtons(void)
+{
+  bool enable=(!id_edt->text().isEmpty() &&
+               !label_edt->text().isEmpty() &&
+               !snippet_txt->toPlainText().isEmpty());
+
+  add_tb->setEnabled(enable);
+  update_tb->setEnabled(enable);
+}
+
+void SnippetsConfigWidget::filterSnippets(int idx)
+{
+  if(idx <= 0)
+    fillSnippetsCombo(config_params);
+  else
+  {
+    ObjectType obj_type=static_cast<ObjectType>(filter_cmb->currentData().toUInt());
+    map<QString, attribs_map> flt_snippets;
+    QString object_id=BaseObject::getSchemaName(obj_type);
+
+    for(auto cfg : config_params)
+    {
+      if(cfg.second.at(ParsersAttributes::OBJECT)==object_id)
+        flt_snippets[cfg.first]=cfg.second;
+    }
+
+    fillSnippetsCombo(flt_snippets);
+  }
 }
 
 void SnippetsConfigWidget::saveConfiguration(void)

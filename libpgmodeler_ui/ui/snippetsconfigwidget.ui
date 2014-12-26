@@ -80,7 +80,7 @@
      <item>
       <widget class="QToolButton" name="cancel_tb">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="minimumSize">
         <size>
@@ -311,7 +311,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="id_edt_2"/>
+      <widget class="QLineEdit" name="label_edt"/>
      </item>
      <item row="1" column="2" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout">

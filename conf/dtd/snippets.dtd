@@ -6,5 +6,5 @@
 
 <!ELEMENT snippet (#PCDATA)>
 <!ATTLIST snippet id CDATA #REQUIRED>
-<!ATTLIST snippet description CDATA #REQUIRED>
+<!ATTLIST snippet label CDATA #REQUIRED>
 <!ATTLIST snippet object CDATA #REQUIRED>

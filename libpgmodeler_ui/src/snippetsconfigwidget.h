@@ -35,6 +35,8 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 
     SyntaxHighlighter *snippet_hl;
 
+    void fillSnippetsCombo(map<QString, attribs_map> &config);
+
 	public:
     SnippetsConfigWidget(QWidget * parent=0);
 
@@ -44,13 +46,19 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 		//! \brief Loads the configuration from file
 		void loadConfiguration(void);
 
-	private slots:
+  private slots:
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}
 
-    void newSnippet(void);
+    void resetForm(void);
+    void editSnippet(void);
+    void removeSnippet(void);
+    void removeAllSnippets(void);
+    void enableEditMode(bool enable);   
+    void enableSaveButtons(void);
+    void filterSnippets(int idx);
 
-	public slots:
+  public slots:
 		void restoreDefaults(void);
 };
 
