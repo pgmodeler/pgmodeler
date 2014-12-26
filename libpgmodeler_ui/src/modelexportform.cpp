@@ -62,8 +62,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 	connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::HighPriority); });
 
-	pgsqlvers_cmb->addItems(SchemaParser::getPgSQLVersions());
-	pgsqlvers1_cmb->addItems(SchemaParser::getPgSQLVersions());
+  pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+  pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 	#ifdef Q_OS_WIN
 		this->frame->setFrameShape(QFrame::WinPanel);

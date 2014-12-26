@@ -79,7 +79,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    pgsql_ver_cmb->addItems(SchemaParser::getPgSQLVersions());
+    pgsql_ver_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
     connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
     connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
