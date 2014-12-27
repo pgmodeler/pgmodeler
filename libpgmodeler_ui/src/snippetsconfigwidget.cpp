@@ -20,6 +20,8 @@
 #include "baseobject.h"
 #include "messagebox.h"
 
+const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("([a-z]+|(\\d)*|(_)*|(\\-)*)+", Qt::CaseInsensitive);
+
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
 {
   QPixmap ico;
@@ -57,7 +59,6 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 
-
   enableEditMode(false);
 
   connect(new_tb, SIGNAL(clicked()), this, SLOT(resetForm()));
@@ -70,6 +71,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
   connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
   connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
   connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
+  connect(update_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
+  connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -111,6 +114,42 @@ void SnippetsConfigWidget::editSnippet(void)
   id_edt->setText(snip_id);
   label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
   applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
+}
+
+void SnippetsConfigWidget::handleSnippet(void)
+{
+  Messagebox msg_box;
+  QString orig_id=snippets_cmb->currentData().toString(),
+          new_id=id_edt->text();
+
+  if(new_id!=orig_id && config_params.count(new_id)!=0)
+  {
+    msg_box.show(trUtf8("Error"), trUtf8("There is another snippet defined with the id <strong>%1</strong>. Please, choose a different one!").arg(new_id),
+                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+  }
+  else if(!ID_FORMAT_REGEXP.exactMatch(new_id))
+  {
+    msg_box.show(trUtf8("Error"), trUtf8("Invalid ID pattern. This one must be composed by letters, numbers, hifen (-) and underscore (_)!"),
+                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+  }
+  else
+  {
+    QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
+
+    if(object_id.isEmpty())
+      object_id=ParsersAttributes::GENERAL;
+
+    config_params[new_id]=attribs_map{ {ParsersAttributes::ID, new_id},
+                                       {ParsersAttributes::LABEL, label_edt->text()},
+                                       {ParsersAttributes::OBJECT, object_id},
+                                       {ParsersAttributes::_CONTENTS_, snippet_txt->toPlainText()} };
+
+    if(sender()==update_tb)
+      config_params.erase(orig_id);
+
+    filterSnippets(filter_cmb->currentIndex());
+    resetForm();
+  }
 }
 
 void SnippetsConfigWidget::removeSnippet(void)
@@ -170,6 +209,9 @@ void SnippetsConfigWidget::filterSnippets(int idx)
     ObjectType obj_type=static_cast<ObjectType>(filter_cmb->currentData().toUInt());
     map<QString, attribs_map> flt_snippets;
     QString object_id=BaseObject::getSchemaName(obj_type);
+
+    if(object_id.isEmpty())
+      object_id=ParsersAttributes::GENERAL;
 
     for(auto cfg : config_params)
     {

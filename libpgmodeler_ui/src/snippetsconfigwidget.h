@@ -37,6 +37,8 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 
     void fillSnippetsCombo(map<QString, attribs_map> &config);
 
+    static const QRegExp ID_FORMAT_REGEXP;
+
 	public:
     SnippetsConfigWidget(QWidget * parent=0);
 
@@ -52,6 +54,7 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 
     void resetForm(void);
     void editSnippet(void);
+    void handleSnippet(void);
     void removeSnippet(void);
     void removeAllSnippets(void);
     void enableEditMode(bool enable);   

@@ -198,6 +198,7 @@ namespace ParsersAttributes {
   FROM_EXP="from-exp",
   FUNCTION_TYPE="function-type",
   FUNCTION="function",
+  GENERAL="general",
   GEN_ALTER_CMDS="gen-alter-cmds",
   GLOBAL="global",
   GRANT_OP="grant-op",
