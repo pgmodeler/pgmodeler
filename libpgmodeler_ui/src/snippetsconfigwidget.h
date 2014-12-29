@@ -33,11 +33,14 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
 	private:
 		Q_OBJECT
 
+    static const QRegExp ID_FORMAT_REGEXP;
     SyntaxHighlighter *snippet_hl;
 
+    //! brief Fills the snippet combobox with previously loaded snippet map
     void fillSnippetsCombo(map<QString, attribs_map> &config);
 
-    static const QRegExp ID_FORMAT_REGEXP;
+    //! brief Validates the specified snippet atributes against the current loaded ones
+    bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
 
 	public:
     SnippetsConfigWidget(QWidget * parent=0);
@@ -57,7 +60,7 @@ class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, pub
     void handleSnippet(void);
     void removeSnippet(void);
     void removeAllSnippets(void);
-    void enableEditMode(bool enable);   
+    void enableEditMode(bool enable);
     void enableSaveButtons(void);
     void filterSnippets(int idx);
 

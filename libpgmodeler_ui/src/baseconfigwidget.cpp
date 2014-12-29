@@ -22,6 +22,8 @@ void BaseConfigWidget::addConfigurationParam(const QString &param, const attribs
 {
 	if(!param.isEmpty() && !attribs.empty())
 		config_params[param]=attribs;
+
+  confs_changed=false;
 }
 
 map<QString, attribs_map > BaseConfigWidget::getConfigurationParams(void)
@@ -83,6 +85,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());
 		output.close();
+    config_params.erase(conf_id);
 	}
 	catch(Exception &e)
 	{
@@ -203,7 +206,7 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
   {
     xmlparser.savePosition();
     xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-    aux_attribs[ParsersAttributes::_CONTENTS_]=xmlparser.getElementContent().simplified();
+    aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent().simplified();
     xmlparser.restorePosition();
   }
 

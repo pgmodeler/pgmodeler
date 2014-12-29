@@ -20,7 +20,7 @@
 #include "baseobject.h"
 #include "messagebox.h"
 
-const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("([a-z]+|(\\d)*|(_)*|(\\-)*)+", Qt::CaseInsensitive);
+const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(_)*)+", Qt::CaseInsensitive);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
 {
@@ -35,6 +35,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
   for(ObjectType type : types)
     types_map[BaseObject::getTypeName(type)]=type;
 
+  //Creates a combo with the accepted object type
   for(auto itr : types_map)
   {
     ico.load(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second)));
@@ -83,11 +84,49 @@ void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
     snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::LABEL)), cfg.first);
 }
 
+bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &orig_id)
+{
+  Messagebox msg_box;
+  QString snip_id=attribs.at(ParsersAttributes::ID),
+          err_msg;
+
+  if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
+    err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
+  else if(!ID_FORMAT_REGEXP.exactMatch(snip_id))
+    err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
+  else if(attribs[ParsersAttributes::LABEL].isEmpty())
+    err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+  else if(attribs[ParsersAttributes::CONTENTS])
+    err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+
+  if(!err_msg.isEmpty())
+  {
+    msg_box.show(trUtf8("Error"), err_msg, Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+    return(false);
+  }
+  else
+    return(true);
+}
+
 void SnippetsConfigWidget::loadConfiguration(void)
 {
 	try
 	{
+    QStringList inv_snippets;
+
     BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::ID });
+
+    //Check if there are invalid snippets loaded
+    for(auto snip : config_params)
+    {
+      if(!isSnippetValid(snip.second,""))
+        inv_snippets.push_back(snip.first);
+    }
+
+    //Destroy any invalid snippets
+    for(QString id : inv_snippets)
+      config_params.erase(id);
+
     fillSnippetsCombo(config_params);
 	}
 	catch(Exception &e)
@@ -110,7 +149,7 @@ void SnippetsConfigWidget::editSnippet(void)
   ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(ParsersAttributes::OBJECT));
 
   enableEditMode(true);
-  snippet_txt->setPlainText(config_params[snip_id].at(ParsersAttributes::_CONTENTS_));
+  snippet_txt->setPlainText(config_params[snip_id].at(ParsersAttributes::CONTENTS));
   id_edt->setText(snip_id);
   label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
   applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
@@ -118,33 +157,24 @@ void SnippetsConfigWidget::editSnippet(void)
 
 void SnippetsConfigWidget::handleSnippet(void)
 {
-  Messagebox msg_box;
   QString orig_id=snippets_cmb->currentData().toString(),
-          new_id=id_edt->text();
+          object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
+  attribs_map snippet;
 
-  if(new_id!=orig_id && config_params.count(new_id)!=0)
-  {
-    msg_box.show(trUtf8("Error"), trUtf8("There is another snippet defined with the id <strong>%1</strong>. Please, choose a different one!").arg(new_id),
-                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
-  }
-  else if(!ID_FORMAT_REGEXP.exactMatch(new_id))
-  {
-    msg_box.show(trUtf8("Error"), trUtf8("Invalid ID pattern. This one must be composed by letters, numbers, hifen (-) and underscore (_)!"),
-                 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
-  }
-  else
-  {
-    QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
+  if(object_id.isEmpty())
+    object_id=ParsersAttributes::GENERAL;
 
-    if(object_id.isEmpty())
-      object_id=ParsersAttributes::GENERAL;
+  snippet=attribs_map{ {ParsersAttributes::ID, id_edt->text()},
+                       {ParsersAttributes::LABEL, label_edt->text()},
+                       {ParsersAttributes::OBJECT, object_id},
+                       {ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} };
 
-    config_params[new_id]=attribs_map{ {ParsersAttributes::ID, new_id},
-                                       {ParsersAttributes::LABEL, label_edt->text()},
-                                       {ParsersAttributes::OBJECT, object_id},
-                                       {ParsersAttributes::_CONTENTS_, snippet_txt->toPlainText()} };
+  if(isSnippetValid(snippet, orig_id))
+  {  
+    config_params[id_edt->text()]=snippet;
 
-    if(sender()==update_tb)
+    //If the operation is update and the snippet id changed, remove the original one
+    if(sender()==update_tb && id_edt->text() != orig_id)
       config_params.erase(orig_id);
 
     filterSnippets(filter_cmb->currentIndex());
@@ -227,62 +257,25 @@ void SnippetsConfigWidget::saveConfiguration(void)
 {
 	try
 	{
-    /* attribs_map attribs;
-		vector<AppearanceConfigItem>::iterator itr, itr_end;
-		AppearanceConfigItem item;
-		QString attrib_id;
-		QFont font;
+    QString root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+                     GlobalAttributes::DIR_SEPARATOR,
 
-		itr=conf_items.begin();
-		itr_end=conf_items.end();
+        snippet_sch=root_dir +
+        GlobalAttributes::SCHEMAS_DIR +
+        GlobalAttributes::DIR_SEPARATOR +
+        ParsersAttributes::SNIPPET +
+        GlobalAttributes::SCHEMA_EXT;
 
-		while(itr!=itr_end)
-		{
-			item=(*itr);
-			itr++;
+    attribs_map attribs;
 
-			//If the item is a object color config
-			if(item.obj_conf)
-			{
-				//Creates an attribute that stores the fill color
-				attrib_id=item.conf_id + QString("-color");
-				if(item.colors[0]==item.colors[1])
-					attribs[attrib_id]=item.colors[0].name();
-				else
-					attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
+    for(auto snip : config_params)
+    {
+      attribs[ParsersAttributes::SNIPPET]+=
+       schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip.second));
+    }
 
-				//Creates an attribute that stores the border color
-				attrib_id=item.conf_id + QString("-bcolor");
-				attribs[attrib_id]=item.colors[2].name();
-			}
-			//If the item is a font config
-			else if(item.conf_id!=ParsersAttributes::GLOBAL && !item.obj_conf)
-			{
-				font=item.font_fmt.font();
-
-				//Creates an attribute to store the font color
-				attrib_id=item.conf_id + QString("-fcolor");
-				attribs[attrib_id]=item.font_fmt.foreground().color().name();
-
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
-				attribs[attrib_id]=(font.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::BOLD;
-				attribs[attrib_id]=(font.bold() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
-				attribs[attrib_id]=(font.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-			}
-			//Special case: treating the global font element
-			else
-			{
-				attribs["font-name"]=QFontInfo(item.font_fmt.font()).family();
-				attribs["font-size"]=QString("%1").arg(item.font_fmt.font().pointSizeF());
-			}
-		}
-
-		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-    BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF); */
+    config_params[GlobalAttributes::SNIPPETS_CONF]=attribs;
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::SNIPPETS_CONF);
 	}
 	catch(Exception &e)
 	{
