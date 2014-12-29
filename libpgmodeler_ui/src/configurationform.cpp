@@ -80,6 +80,7 @@ void ConfigurationForm::applyConfiguration(void)
 
 	appearance_conf->saveConfiguration();
 	connections_conf->saveConfiguration();
+  snippets_conf->saveConfiguration();
 
 	QDialog::accept();
 }
