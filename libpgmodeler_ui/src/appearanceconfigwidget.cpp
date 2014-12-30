@@ -18,7 +18,7 @@
 
 #include "appearanceconfigwidget.h"
 
-AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(parent)
+AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -191,7 +191,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 
 void AppearanceConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
 		attribs_map attribs;
 		vector<AppearanceConfigItem>::iterator itr, itr_end;

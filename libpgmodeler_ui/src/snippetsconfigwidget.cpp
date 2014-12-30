@@ -22,7 +22,7 @@
 
 const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(_)*)+", Qt::CaseInsensitive);
 
-SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : QWidget(parent)
+SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
   QPixmap ico;
   QString gen_purpose=trUtf8("General purpose");
@@ -254,7 +254,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 }
 
 void SnippetsConfigWidget::saveConfiguration(void)
-{
+{ 
 	try
 	{
     QString root_dir=GlobalAttributes::CONFIGURATIONS_DIR +

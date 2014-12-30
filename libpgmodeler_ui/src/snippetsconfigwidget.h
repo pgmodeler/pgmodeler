@@ -29,7 +29,7 @@
 #include "baseconfigwidget.h"
 #include "syntaxhighlighter.h"
 
-class SnippetsConfigWidget: public QWidget, public Ui::SnippetsConfigWidget, public BaseConfigWidget {
+class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
 		Q_OBJECT
 

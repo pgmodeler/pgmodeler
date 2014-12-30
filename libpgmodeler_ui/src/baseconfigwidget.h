@@ -29,11 +29,14 @@
 #include "xmlparser.h"
 #include "parsersattributes.h"
 #include <algorithm>
+#include <QWidget>
 
-class BaseConfigWidget {
+class BaseConfigWidget: public QWidget {
+  private:
+    Q_OBJECT
+
 	protected:
 		XMLParser xmlparser;
-
     SchemaParser schparser;
 
 		/*! \brief Stores the configuration params, the main key is the xml element name
@@ -47,7 +50,7 @@ class BaseConfigWidget {
 
 		/*! \brief Loads a configuration from file. The vector key_attribs is used to specify the xml element name
 		 considered as a key on the configuration map */
-		void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
+    void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
 
 		//! \brief Get a configuratoin key from the xml parser
 		void getConfigurationParams(const vector<QString> &key_attribs);
@@ -56,7 +59,8 @@ class BaseConfigWidget {
 		void restoreDefaults(const QString &conf_id);
 
 	public:
-    BaseConfigWidget(void){}
+    BaseConfigWidget(QWidget *parent = 0) : QWidget(parent){}
+    ~BaseConfigWidget(void){}
 
 		//! \brief Adds a configuration param to the configuration map. Replaces the values if the param already exists.
 		void addConfigurationParam(const QString &param, const attribs_map &attribs);
@@ -70,7 +74,10 @@ class BaseConfigWidget {
 		//! \brief Removes all the configuration params
     void removeConfigurationParams(void);
 
-		virtual void applyConfiguration(void)=0;
+    virtual void applyConfiguration(void)=0;
+    virtual void loadConfiguration(void)=0;
+    virtual void saveConfiguration(void)=0;
+    virtual void restoreDefaults(void)=0;
 };
 
 #endif

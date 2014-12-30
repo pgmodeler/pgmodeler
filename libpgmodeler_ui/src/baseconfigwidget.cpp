@@ -190,7 +190,7 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
 
 	while(itr!=itr_end && key.isEmpty())
 	{
-		if(key.isEmpty() && find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
+    if(key.isEmpty() && std::find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
 			key=itr->second;
 
 		itr++;

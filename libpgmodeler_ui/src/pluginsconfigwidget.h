@@ -30,7 +30,7 @@
 #include "objecttablewidget.h"
 #include "pgmodelerplugin.h"
 
-class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, public BaseConfigWidget {
+class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:
 		Q_OBJECT
 
@@ -43,13 +43,18 @@ class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, publi
 		//! \brief Table used to show the loaded plugins
 		ObjectTableWidget *plugins_tab;
 
-		void applyConfiguration(void){}
+    /* Disabled methods */
+    void applyConfiguration(void){}
+    void saveConfiguration(void){}
+    void restoreDefaults(void){}
+    void storeConfigParams(map<QString, attribs_map> &){}
 
-	public:
+  public:
 		PluginsConfigWidget(QWidget *parent = 0);
 		~PluginsConfigWidget(void);
 
-		void loadPlugins(void);
+    //! brief Since plugins has its own configurations this method load all plugins instead
+    void loadConfiguration(void);
 
 		/*! \brief Install the created actions on menu and toolbars. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */

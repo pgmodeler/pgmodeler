@@ -18,9 +18,9 @@
 
 #include "connectionsconfigwidget.h"
 
-ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(parent)
+ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	setupUi(this);
+  Ui_ConnectionsConfigWidget::setupUi(this);
 
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
 
@@ -172,7 +172,7 @@ void ConnectionsConfigWidget::newConnection(void)
   duplicate_tb->setEnabled(connections_cmb->count() > 0);
 }
 
-void ConnectionsConfigWidget::duplicateConnection()
+void ConnectionsConfigWidget::duplicateConnection(void)
 {
 	Connection *conn=nullptr, *new_conn=nullptr;
 	QString alias;
@@ -388,7 +388,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 
 void ConnectionsConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
 		int i, count;
 		Connection *conn=nullptr;

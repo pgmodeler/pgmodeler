@@ -18,7 +18,7 @@
 
 #include "pluginsconfigwidget.h"
 
-PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
+PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -61,7 +61,7 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 	plugins[idx]->showPluginInfo();
 }
 
-void PluginsConfigWidget::loadPlugins(void)
+void PluginsConfigWidget::loadConfiguration(void)
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,

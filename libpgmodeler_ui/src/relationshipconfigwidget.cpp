@@ -18,7 +18,7 @@
 
 #include "relationshipconfigwidget.h"
 
-RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(parent)
+RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ ParsersAttributes::RELATIONSHIP_11, ParsersAttributes::RELATIONSHIP_1N,
 																ParsersAttributes::RELATIONSHIP_NN, ParsersAttributes::RELATIONSHIP_GEN,
@@ -102,7 +102,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 }
 
 void RelationshipConfigWidget::saveConfiguration(void)
-{
+{  
 	try
 	{
 		QString patterns_sch, root_dir;

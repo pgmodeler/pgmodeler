@@ -30,7 +30,7 @@
 #include "messagebox.h"
 #include "hinttextwidget.h"
 
-class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
+class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
 

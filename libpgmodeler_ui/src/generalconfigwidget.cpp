@@ -23,7 +23,7 @@
 #include "syntaxhighlighter.h"
 #include "mainwindow.h"
 
-GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : QWidget(parent)
+GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPrinter::PaperSize paper_ids[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,
 																	 QPrinter::A6, QPrinter::A7, QPrinter::A8, QPrinter::A9, QPrinter::B0, QPrinter::B1,
@@ -154,98 +154,102 @@ void GeneralConfigWidget::loadConfiguration(void)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
 }
 
-void GeneralConfigWidget::saveConfiguration()
+void GeneralConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
-		map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir, widget_sch;
+    map<QString, attribs_map >::iterator itr, itr_end;
+    QString file_sch, root_dir, widget_sch;
 
-		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR;
+    root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+             GlobalAttributes::DIR_SEPARATOR;
 
-		file_sch=root_dir +
-						 GlobalAttributes::SCHEMAS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 ParsersAttributes::_FILE_ +
-						 GlobalAttributes::SCHEMA_EXT;
+    file_sch=root_dir +
+             GlobalAttributes::SCHEMAS_DIR +
+             GlobalAttributes::DIR_SEPARATOR +
+             ParsersAttributes::_FILE_ +
+             GlobalAttributes::SCHEMA_EXT;
 
-		widget_sch=root_dir +
-						 GlobalAttributes::SCHEMAS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 ParsersAttributes::WIDGET +
-						 GlobalAttributes::SCHEMA_EXT;
+    widget_sch=root_dir +
+             GlobalAttributes::SCHEMAS_DIR +
+             GlobalAttributes::DIR_SEPARATOR +
+             ParsersAttributes::WIDGET +
+             GlobalAttributes::SCHEMA_EXT;
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(oplist_size_spb->value());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(oplist_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? "1" : "");
 
-		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
-																																										 .arg(top_marg->value())
-																																										 .arg(right_marg->value())
-																																										 .arg(bottom_marg->value());
+    unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
+                                                                                     .arg(top_marg->value())
+                                                                                     .arg(right_marg->value())
+                                                                                     .arg(bottom_marg->value());
 
-		if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
-			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
-		else
-			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
+    if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
+      config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
+    else
+      config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? "1" : "");
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? "1" : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? "1" : "");
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? "1" : "");
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
 
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
 
-		itr=config_params.begin();
-		itr_end=config_params.end();
+    itr=config_params.begin();
+    itr_end=config_params.end();
 
-		while(itr!=itr_end)
-		{
-			//Checking if the current attribute is a file to be stored in a <session> tag
-			if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
-			{
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
-			}
-			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::RECENT + QString(")([0-9]+)"))))
-			{
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
-			}
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
+
+    while(itr!=itr_end)
+    {
+      //Checking if the current attribute is a file to be stored in a <session> tag
+      if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::_FILE_ + QString(")([0-9]+)"))))
+      {
+        config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
+            schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+      }
+      //Checking if the current attribute is a file to be stored in a <recent-models> tag
+      else if((itr->first).contains(QRegExp(QString("(") + ParsersAttributes::RECENT + QString(")([0-9]+)"))))
+      {
+        config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]+=
+            schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+      }
       else if(itr->first==ParsersAttributes::VALIDATOR ||
-							itr->first==ParsersAttributes::OBJECT_FINDER)
-			{
-				schparser.setIgnoreUnkownAttributes(true);
-				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
-					schparser.getCodeDefinition(widget_sch, itr->second);
-				schparser.setIgnoreUnkownAttributes(false);
-			}
+              itr->first==ParsersAttributes::OBJECT_FINDER)
+      {
+        schparser.setIgnoreUnkownAttributes(true);
+        config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
+          schparser.getCodeDefinition(widget_sch, itr->second);
+        schparser.setIgnoreUnkownAttributes(false);
+      }
 
-			itr++;
-		}
+      itr++;
+    }
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF);
 	}
 	catch(Exception &e)
 	{
