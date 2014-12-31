@@ -77,6 +77,7 @@ namespace ParsersAttributes {
   CHANGELOG="changelog",
   CHECK_UPDATE="check-update",
   CK_CONSTR="ck-constr",
+  CODE_COMPLETION="code-completion",
   CODE_FONT_SIZE="code-font-size",
   CODE_FONT="code-font",
   COL_INDEXES="col-indexes",
