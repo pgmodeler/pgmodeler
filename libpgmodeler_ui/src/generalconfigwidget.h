@@ -34,6 +34,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	private:
 		Q_OBJECT
 
+    static map<QString, attribs_map> config_params;
+
 		static const unsigned UNIT_MILIMETERS=0,
                           UNIT_POINT=1,
 													UNIT_INCHS=2,
@@ -45,12 +47,13 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
     void hideEvent(QHideEvent *);
 
-
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static void addConfigurationParam(const QString &param, const attribs_map &attribs);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
 	public slots:
 		void applyConfiguration(void);

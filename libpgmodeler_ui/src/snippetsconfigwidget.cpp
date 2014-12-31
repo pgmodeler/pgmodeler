@@ -20,6 +20,8 @@
 #include "baseobject.h"
 #include "messagebox.h"
 
+map<QString, attribs_map> SnippetsConfigWidget::config_params;
+
 const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(_)*)+", Qt::CaseInsensitive);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
@@ -76,6 +78,11 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
 }
 
+map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
+}
+
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
 {
   snippets_cmb->clear();
@@ -114,7 +121,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	{
     QStringList inv_snippets;
 
-    BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, { ParsersAttributes::ID });
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, config_params, { ParsersAttributes::ID });
 
     //Check if there are invalid snippets loaded
     for(auto snip : config_params)
@@ -275,7 +282,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
     }
 
     config_params[GlobalAttributes::SNIPPETS_CONF]=attribs;
-    BaseConfigWidget::saveConfiguration(GlobalAttributes::SNIPPETS_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::SNIPPETS_CONF, config_params);
 	}
 	catch(Exception &e)
 	{

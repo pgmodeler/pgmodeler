@@ -23,6 +23,8 @@
 #include "syntaxhighlighter.h"
 #include "mainwindow.h"
 
+map<QString, attribs_map> GeneralConfigWidget::config_params;
+
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPrinter::PaperSize paper_ids[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,
@@ -67,6 +69,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]="";
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]="";
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
 
   simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
   simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -107,7 +110,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		unsigned interv=0;
 
 		key_attribs.push_back(ParsersAttributes::ID);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, key_attribs);
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, config_params, key_attribs);
 
 		grid_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
 		oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
@@ -155,6 +158,16 @@ void GeneralConfigWidget::loadConfiguration(void)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
+}
+
+void GeneralConfigWidget::addConfigurationParam(const QString &param, const attribs_map &attribs)
+{
+  BaseConfigWidget::addConfigurationParam(config_params, param, attribs);
+}
+
+map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void GeneralConfigWidget::saveConfiguration(void)
@@ -249,7 +262,7 @@ void GeneralConfigWidget::saveConfiguration(void)
       itr++;
     }
 
-    BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF, config_params);
 	}
 	catch(Exception &e)
 	{

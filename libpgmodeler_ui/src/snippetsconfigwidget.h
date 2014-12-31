@@ -33,7 +33,12 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 	private:
 		Q_OBJECT
 
+    //! brief Stores all snippets created by the user or loaded from file
+    static map<QString, attribs_map> config_params;
+
+    //! brief The regular expression the defines a valid id for a snippet
     static const QRegExp ID_FORMAT_REGEXP;
+
     SyntaxHighlighter *snippet_hl;
 
     //! brief Fills the snippet combobox with previously loaded snippet map
@@ -42,19 +47,17 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     //! brief Validates the specified snippet atributes against the current loaded ones
     bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
 
+    /* Disable methods */
+    void applyConfiguration(void){}
+
 	public:
     SnippetsConfigWidget(QWidget * parent=0);
 
-		//! \brief Saves the configuration to file
 		void saveConfiguration(void);
-
-		//! \brief Loads the configuration from file
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
   private slots:
-		/*! \brief Disabled method */
-		void applyConfiguration(void){}
-
     void resetForm(void);
     void editSnippet(void);
     void handleSnippet(void);

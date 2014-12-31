@@ -21,8 +21,6 @@
 #include "configurationform.h"
 #include "taskprogresswidget.h"
 
-extern ConfigurationForm *configuration_form;
-
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
@@ -314,7 +312,7 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	database_cmb->setEnabled(false);
 	db_objects_tw->setEnabled(false);
 
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
 	hideProgress();
 }
 

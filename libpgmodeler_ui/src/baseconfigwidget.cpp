@@ -18,28 +18,13 @@
 
 #include "baseconfigwidget.h"
 
-void BaseConfigWidget::addConfigurationParam(const QString &param, const attribs_map &attribs)
+void BaseConfigWidget::addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
 {
 	if(!param.isEmpty() && !attribs.empty())
     config_params[param]=attribs;
 }
 
-map<QString, attribs_map > BaseConfigWidget::getConfigurationParams(void)
-{
-	return(config_params);
-}
-
-void BaseConfigWidget::removeConfigurationParam(const QString &param)
-{
-	config_params.erase(param);
-}
-
-void BaseConfigWidget::removeConfigurationParams(void)
-{
-  config_params.clear();
-}
-
-void BaseConfigWidget::saveConfiguration(const QString &conf_id)
+void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
 {
 	QByteArray buf;
 
@@ -123,7 +108,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
   }
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
 	try
 	{
@@ -148,7 +133,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					this->getConfigurationParams(key_attribs);
+          this->getConfigurationParams(config_params, key_attribs);
 
           if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT, XML_ELEMENT_NODE))
 					{
@@ -159,7 +144,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
             {
               do
               {
-                this->getConfigurationParams(key_attribs);
+                this->getConfigurationParams(config_params, key_attribs);
               }
               while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
             }
@@ -177,7 +162,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs)
+void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;

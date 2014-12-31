@@ -20,8 +20,6 @@
 #include "configurationform.h"
 #include "databaseimportform.h"
 
-extern ConfigurationForm *configuration_form;
-
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
   try
@@ -113,7 +111,7 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 {
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
 	connect_tb->setEnabled(connections_cmb->isEnabled());

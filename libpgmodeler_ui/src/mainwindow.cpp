@@ -17,9 +17,8 @@
 */
 
 #include "mainwindow.h"
-#include "configurationform.h"
 
-ConfigurationForm *configuration_form=nullptr;
+//ConfigurationForm *configuration_form=nullptr;
 bool MainWindow::confirm_validation=true;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
-	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
   QGridLayout *grid=nullptr;
 
@@ -69,9 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		action_plugins->setMenu(plugins_menu);
     dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
-		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
-		confs=conf_wgt->getConfigurationParams();
-
+    confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
 		itr_end=confs.end();
 
@@ -553,8 +549,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			this->overview_wgt->close();
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-			confs=conf_wgt->getConfigurationParams();
-			conf_wgt->removeConfigurationParams();
+      confs=conf_wgt->getConfigurationParams();
 
 			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? "1" : "";
 			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);

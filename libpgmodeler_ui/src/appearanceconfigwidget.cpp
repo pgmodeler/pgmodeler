@@ -18,6 +18,8 @@
 
 #include "appearanceconfigwidget.h"
 
+map<QString, attribs_map> AppearanceConfigWidget::config_params;
+
 AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
@@ -96,6 +98,11 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
 	delete(viewp);
 	delete(scene);
 	delete(model);
+}
+
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void AppearanceConfigWidget::loadExampleModel(void)
@@ -248,7 +255,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 		}
 
 		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF, config_params);
 	}
 	catch(Exception &e)
 	{

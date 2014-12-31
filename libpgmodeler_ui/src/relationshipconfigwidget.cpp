@@ -18,6 +18,8 @@
 
 #include "relationshipconfigwidget.h"
 
+map<QString, attribs_map> RelationshipConfigWidget::config_params;
+
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ ParsersAttributes::RELATIONSHIP_11, ParsersAttributes::RELATIONSHIP_1N,
@@ -66,13 +68,18 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 		rel_type_cmb->setItemData(i, rel_types[i]);
 }
 
+map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
+}
+
 void RelationshipConfigWidget::loadConfiguration(void)
 {
 	try
 	{
 		int idx;
 		vector<QString> key_attribs={ParsersAttributes::TYPE};
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, key_attribs);
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, config_params, key_attribs);
 
 		fk_to_pk_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_FK_TO_PK);
 		center_pnts_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
@@ -83,7 +90,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		idx=upd_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx=upd_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
+    idx=del_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		patterns[ParsersAttributes::RELATIONSHIP_11]=config_params[ParsersAttributes::RELATIONSHIP_11];
@@ -134,7 +141,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 			config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
 		}
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, config_params);
 	}
 	catch(Exception &e)
 	{

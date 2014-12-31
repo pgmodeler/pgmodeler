@@ -30,17 +30,16 @@ $tb $tb [sslmode=] "@{sslmode}" $br
 
 
 %if @{krbsrvname} %then
- $tb $tb [krbsrvname=] "@{krbsrvname}" 
+ $br $tb $tb [krbsrvname=] "@{krbsrvname}" 
 
  %if @{gsslib} %then 
    [ gsslib=] "@{gsslib}"
  %end
- $br 
 %end
 
 %if @{options} %then
- $tb $tb options="@{options}"
+ $br $tb $tb options="@{options}"
 %end
 
- $tb $tb /> $br
+/> $br
 %end

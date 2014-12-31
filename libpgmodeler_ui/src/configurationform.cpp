@@ -25,9 +25,9 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	general_conf=new GeneralConfigWidget(this);
 	appearance_conf=new AppearanceConfigWidget(this);
 	connections_conf=new ConnectionsConfigWidget(this);
-	plugins_conf=new PluginsConfigWidget(this);
 	relationships_conf=new RelationshipConfigWidget(this);
   snippets_conf=new SnippetsConfigWidget(this);
+  plugins_conf=new PluginsConfigWidget(this);
 
   QWidgetList wgt_list={ general_conf, relationships_conf,
                          appearance_conf, connections_conf,
