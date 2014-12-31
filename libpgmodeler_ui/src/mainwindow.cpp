@@ -17,9 +17,8 @@
 */
 
 #include "mainwindow.h"
-#include "configurationform.h"
 
-ConfigurationForm *configuration_form=nullptr;
+//ConfigurationForm *configuration_form=nullptr;
 bool MainWindow::confirm_validation=true;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
-	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
   QGridLayout *grid=nullptr;
 
@@ -69,9 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		action_plugins->setMenu(plugins_menu);
     dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
-		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
-		confs=conf_wgt->getConfigurationParams();
-
+    confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
 		itr_end=confs.end();
 
@@ -553,10 +549,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			this->overview_wgt->close();
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-			confs=conf_wgt->getConfigurationParams();
-			conf_wgt->removeConfigurationParams();
+      confs=conf_wgt->getConfigurationParams();
 
-			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? "1" : "";
+      attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : "";
 			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
 			attribs.clear();
 
@@ -1619,17 +1614,17 @@ void MainWindow::storeDockWidgetsSettings(void)
 	attribs_map params;
 
 	params[ParsersAttributes::VALIDATOR]="1";
-	params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? "1" : "");
+  params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
 	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
 	params.clear();
 
 	params[ParsersAttributes::OBJECT_FINDER]="1";
-	params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? "1" : "");
-	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? "1" : "");
+  params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
 	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
 	params.clear();
 }

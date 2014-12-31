@@ -65,7 +65,8 @@ class Connection {
 
 	public:
 		//! \brief Constants used to reference the connections parameters
-		static const QString	PARAM_SERVER_FQDN,
+    static const QString	PARAM_ALIAS,
+                          PARAM_SERVER_FQDN,
 													PARAM_SERVER_IP,
 													PARAM_PORT,
 													PARAM_DB_NAME,
@@ -88,7 +89,6 @@ class Connection {
 													SSL_FULL_VERIF;
 
     Connection(void);
-    //Connection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
 		~Connection(void);
 
 		//! \brief Toggles the notice output for connections. By default any notice are omitted
@@ -135,6 +135,9 @@ class Connection {
 
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
+
+    //! brief Returns a string string containing the following signature: 'alias (host:port)'
+    QString getConnectionId(void);
 
     /*! \brief Returns the DBMS version in format XX.YY[.ZZ]
         If major_only is true only XX.YY portion is returned */

@@ -389,18 +389,18 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? "1" : "");
+	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? "1" : "");
+	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : "");
 
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
 	{
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
-		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? "1" : "");
+		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	}
 

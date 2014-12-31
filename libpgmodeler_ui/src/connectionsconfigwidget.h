@@ -34,6 +34,13 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 	private:
 		Q_OBJECT
 
+    //! brief Stores the connections created by the user
+    static vector<Connection *> connections;
+
+    /*! brief Stores the connections attributes. This map is used to write the connections.conf file
+        as well to create the connections stored by the 'connections' vector */
+    static map<QString, attribs_map> config_params;
+
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn);
 
@@ -46,17 +53,18 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
 		//! \brief Fills the passed map with all the loaded connections.
-		void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+    static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 
 		//! brief Fills the passed combobox with all the loaded connections
-		void fillConnectionsComboBox(QComboBox *combo);
+    static void fillConnectionsComboBox(QComboBox *combo);
 
-	public slots:
+  public slots:
 		void restoreDefaults(void);
 
-	private slots:
+  private slots:
 		void newConnection(void);
 		void duplicateConnection(void);
 		void handleConnection(void);

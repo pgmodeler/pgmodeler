@@ -18,6 +18,9 @@
 
 #include "connectionsconfigwidget.h"
 
+vector<Connection *> ConnectionsConfigWidget::connections;
+map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
   Ui_ConnectionsConfigWidget::setupUi(this);
@@ -59,12 +62,18 @@ void ConnectionsConfigWidget::destroyConnections(void)
 {
 	Connection *conn=nullptr;
 
-	while(connections_cmb->count() > 0)
+  while(!connections.empty())
 	{
-		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(0).value<void *>());
+    conn=connections.back();
+    connections.pop_back();
 		connections_cmb->removeItem(0);
 		delete(conn);
 	}
+}
+
+map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void ConnectionsConfigWidget::loadConfiguration(void)
@@ -78,7 +87,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		destroyConnections();
 
 		key_attribs.push_back(ParsersAttributes::ALIAS);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -87,6 +96,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		{
 			conn=new Connection;
 
+      conn->setConnectionParam(Connection::PARAM_ALIAS, itr->second[ParsersAttributes::ALIAS]);
 			conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
 			conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
 			conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
@@ -102,9 +112,8 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
 			conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
 
-			connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]) +
-					QString(" (%1:%2)").arg(itr->second[Connection::PARAM_SERVER_FQDN]).arg(itr->second[Connection::PARAM_PORT]),
-					QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
+      connections.push_back(conn);
+      connections_cmb->addItem(conn->getConnectionId());
 
 			itr++;
 		}
@@ -175,15 +184,16 @@ void ConnectionsConfigWidget::newConnection(void)
 void ConnectionsConfigWidget::duplicateConnection(void)
 {
 	Connection *conn=nullptr, *new_conn=nullptr;
-	QString alias;
 
 	try
 	{
-		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+    conn=connections.at(connections_cmb->currentIndex());
 		new_conn=new Connection;
 		(*new_conn)=(*conn);
-		alias=QString("cp_%1").arg(connections_cmb->currentText());
-		connections_cmb->addItem(alias,  QVariant::fromValue<void *>(reinterpret_cast<void *>(new_conn)));
+    connections.push_back(new_conn);
+
+    new_conn->setConnectionParam(Connection::PARAM_ALIAS, QString("cp_%1").arg(conn->getConnectionParam(Connection::PARAM_ALIAS)));
+    connections_cmb->addItem(new_conn->getConnectionId());
     connections_cmb->setCurrentIndex(connections_cmb->count()-1);
   }
 	catch(Exception &e)
@@ -198,23 +208,21 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 void ConnectionsConfigWidget::handleConnection(void)
 {
 	Connection *conn=nullptr;
-	QString alias;
 
 	try
 	{
-		alias=QString("%1 (%2:%3)").arg(alias_edt->text()).arg(host_edt->text()).arg(port_sbp->value());
-
 		if(!update_tb->isVisible())
 		{
 			conn=new Connection;
 			this->configureConnection(conn);
-			connections_cmb->addItem(alias, QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
+      connections_cmb->addItem(conn->getConnectionId());
+      connections.push_back(conn);
 		}
 		else
 		{
-			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+      conn=connections.at(connections_cmb->currentIndex());
 			this->configureConnection(conn);
-			connections_cmb->setItemText(connections_cmb->currentIndex(), alias);
+      connections_cmb->setItemText(connections_cmb->currentIndex(), conn->getConnectionId());
 		}
 
 		this->newConnection();
@@ -234,11 +242,11 @@ void ConnectionsConfigWidget::removeConnection(void)
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
-    Connection *conexao=nullptr;
-
-    conexao=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+    Connection *conn=nullptr;
+    conn=connections.at(connections_cmb->currentIndex());
 		connections_cmb->removeItem(connections_cmb->currentIndex());
-    delete(conexao);
+    connections.erase(connections.begin() + connections_cmb->currentIndex());
+    delete(conn);
     this->newConnection();
 	}
 }
@@ -249,10 +257,8 @@ void ConnectionsConfigWidget::editConnection(void)
 	{
     Connection *conn=nullptr;
 
-		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-		//Removes the (host:port) portion from the alias before fill the field
-		alias_edt->setText(connections_cmb->currentText().remove(QRegExp("( )(\\()(.)+(\\:)(.)+(\\))")));
+    conn=connections.at(connections_cmb->currentIndex());
+    alias_edt->setText(conn->getConnectionParam(Connection::PARAM_ALIAS));
 
 		if(!conn->getConnectionParam(Connection::PARAM_SERVER_FQDN).isEmpty())
 			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_FQDN));
@@ -303,6 +309,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 {
 	if(conn)
 	{
+    conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
 		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(Connection::PARAM_USER, user_edt->text());
@@ -390,8 +397,6 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 {
   try
 	{
-		int i, count;
-		Connection *conn=nullptr;
 		attribs_map attribs;
 
     /* If add or update buttons are enabled when saving the configs indicates
@@ -409,23 +414,21 @@ void ConnectionsConfigWidget::saveConfiguration(void)
     }
 
 		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
-		count=connections_cmb->count();
 
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
-		if(count==0)
+    if(connections.empty())
 			config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
 		else
 		{
-			for(i=0; i < count; i++)
+      for(Connection *conn : connections)
 			{
-				conn=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
 				attribs=conn->getConnectionParams();
 
 				if(attribs[Connection::PARAM_SERVER_FQDN].isEmpty())
 					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
 
-				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i).remove(QRegExp(" \\((.)*\\)"));
+        attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
 
 				schparser.setIgnoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
@@ -440,7 +443,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			}
 		}
 
-    BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params);
   }
 	catch(Exception &e)
 	{
@@ -450,20 +453,17 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, bool inc_hosts)
 {
-	int i, count;
 	QString alias;
 
 	conns.clear();
-	count=connections_cmb->count();
-
-	for(i=0; i < count; i++)
+  for(Connection *conn : connections)
 	{
-		alias=connections_cmb->itemText(i);
+    alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegExp(" \\((.)*\\)"));
+      alias.remove(QRegExp(" \\((.)*\\)"));
 
-		conns[alias]=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
+    conns[alias]=conn;
 	}
 }
 
@@ -474,7 +474,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
 	if(!combo)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->getConnections(connections);
+  getConnections(connections);
 	combo->clear();
 
 	for(auto itr : connections)

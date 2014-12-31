@@ -346,7 +346,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	setRoleAttribute(ADMIN_ROLE);
 
 	for(i=0; i <= OP_REPLICATION; i++)
-		attributes[op_attribs[i]]=(options[i] ? "1" : "");
+		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : "");
 
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;

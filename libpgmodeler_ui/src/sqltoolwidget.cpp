@@ -38,7 +38,6 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setModal(true);
 
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
-	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
@@ -641,6 +640,8 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 
 		if(history_tb->isChecked() && !enable)
 			history_tb->setChecked(false);
+
+    code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
 	}
 	catch(Exception &e)
 	{

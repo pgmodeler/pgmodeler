@@ -22,8 +22,6 @@
 #include "tablewidget.h"
 #include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
-
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
 	try
@@ -469,12 +467,11 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 
 	if(value)
 	{
-		//Using the global settings
-		RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
-		deferrable_chk->setChecked(rel_conf_wgt->deferrable_chk->isChecked());
-		deferral_cmb->setCurrentText(rel_conf_wgt->deferral_cmb->currentText());
-		upd_action_cmb->setCurrentText(rel_conf_wgt->upd_action_cmb->currentText());
-		del_action_cmb->setCurrentText(rel_conf_wgt->del_action_cmb->currentText());
+    map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+    deferrable_chk->setChecked(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+    deferral_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
+    upd_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
+    del_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
 	}
 	else
 	{
@@ -506,13 +503,10 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 	{
 		if(value)
 		{
-			RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
-			map<QString, attribs_map> confs;
+      map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 			QString rel_type=rel->getRelTypeAttribute();
 
-			confs=rel_conf_wgt->getConfigurationParams();
-
-			//Using the global settings
+      //Using the global settings
 			pk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::PK_PATTERN]);
 			src_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_FK_PATTERN]);
 			dst_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_FK_PATTERN]);

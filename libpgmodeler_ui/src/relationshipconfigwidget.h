@@ -36,6 +36,8 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 	private:
 		Q_OBJECT
 
+    static map<QString, attribs_map> config_params;
+
 		map<QString, attribs_map> patterns;
 
     HintTextWidget *fk_to_pk_ht, *center_pnts_ht;
@@ -47,8 +49,9 @@ public:
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
-	public slots:
+  public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
 

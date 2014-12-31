@@ -398,8 +398,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? "1" : "");
-	attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
   attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)

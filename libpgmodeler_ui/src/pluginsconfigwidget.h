@@ -46,8 +46,8 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
     /* Disabled methods */
     void applyConfiguration(void){}
     void saveConfiguration(void){}
-    void restoreDefaults(void){}
-    void storeConfigParams(map<QString, attribs_map> &){}
+    void restoreDefaults(void){}    
+    void addConfigurationParam(const QString &, const attribs_map &){}
 
   public:
 		PluginsConfigWidget(QWidget *parent = 0);

@@ -172,7 +172,7 @@ QString Column::getCodeDefinition(unsigned def_type)
   }
 
   attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
-  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
+  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : "");
 
   return(BaseObject::__getCodeDefinition(def_type));
 }

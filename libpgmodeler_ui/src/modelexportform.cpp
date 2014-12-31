@@ -21,8 +21,6 @@
 #include "configurationform.h"
 #include "pgmodelerns.h"
 
-extern ConfigurationForm *configuration_form;
-
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	model=nullptr;
@@ -83,8 +81,8 @@ void ModelExportForm::exec(ModelWidget *model)
 {
 	if(model)
 	{
-		this->model=model;
-		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+		this->model=model;    
+    ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
     hideProgress();
     enableExportMode();
 		QDialog::exec();

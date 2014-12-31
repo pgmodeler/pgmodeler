@@ -700,8 +700,8 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	}
 
 	attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : "");
-	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
-	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? "1" : "");
+	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~ index_type);

@@ -643,7 +643,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::TRUNCATE_CMDS]="";
       attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
       attribs[ParsersAttributes::SET_PERMS]=set_perms;
-      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? "1" : "");
+      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : "");
 
       ritr=drop_objs.rbegin();
       ritr_end=drop_objs.rend();

@@ -330,8 +330,8 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[ParsersAttributes::HASHES]=(hashes ? "1" : "");
-	attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
+	attributes[ParsersAttributes::HASHES]=(hashes ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::MERGES]=(merges ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

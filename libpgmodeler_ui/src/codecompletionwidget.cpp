@@ -17,6 +17,7 @@
 */
 
 #include "codecompletionwidget.h"
+#include "generalconfigwidget.h"
 
 CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
@@ -46,8 +47,6 @@ CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(
 	font.setPointSizeF(8);
 	name_list->setFont(font);
 
-	code_field_txt->installEventFilter(this);
-	name_list->installEventFilter(this);
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
 
@@ -136,37 +135,57 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	name_list->clear();
-	word.clear();
-	setQualifyingLevel(nullptr);
-	auto_triggered=false;
-	this->db_model=db_model;
+  map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
-	//By default, the persistent mode is activated when the model is not allocated
-	persistent_chk->setVisible(db_model==nullptr);
-	persistent_chk->setChecked(db_model==nullptr);
+  name_list->clear();
+  word.clear();
+  setQualifyingLevel(nullptr);
+  auto_triggered=false;
+  this->db_model=db_model;
 
-	if(syntax_hl)
-	{
-		//Get the keywords from the highlighter
-		vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+  //By default, the persistent mode is activated when the model is not allocated
+  persistent_chk->setVisible(db_model==nullptr);
+  persistent_chk->setChecked(db_model==nullptr);
 
-		while(!exprs.empty())
-		{
-			keywords.push_front(exprs.back().pattern());
-			exprs.pop_back();
-		}
+  if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_)
+  {
+    code_field_txt->installEventFilter(this);
+    name_list->installEventFilter(this);
 
-		completion_trigger=syntax_hl->getCompletionTrigger();
-	}
-	else
-		completion_trigger=QChar('.');
+    if(syntax_hl)
+    {
+      //Get the keywords from the highlighter
+      vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+      keywords.clear();
+
+      while(!exprs.empty())
+      {
+        keywords.push_front(exprs.back().pattern());
+        exprs.pop_back();
+      }
+
+      completion_trigger=syntax_hl->getCompletionTrigger();
+    }
+    else
+      completion_trigger=QChar('.');
+  }
+  else
+  {
+    code_field_txt->removeEventFilter(this);
+    name_list->removeEventFilter(this);
+  }
 }
 
 void CodeCompletionWidget::insertCustomItem(const QString &name, const QPixmap &icon)
 {
 	if(!name.isEmpty())
-		custom_items[name.simplified()]=icon;
+    custom_items[name.simplified()]=icon;
+}
+
+void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QPixmap &icon)
+{
+  for(QString name : names)
+    custom_items[name.simplified()]=icon;
 }
 
 void CodeCompletionWidget::clearCustomItems(void)
