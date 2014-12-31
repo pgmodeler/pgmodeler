@@ -371,7 +371,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	try
 	{
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "")}};
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : "")}};
 
     loadCatalogQuery(query_id);
     return(schparser.getCodeDefinition(attribs).simplified());

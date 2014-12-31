@@ -156,6 +156,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
     {
       //Get the keywords from the highlighter
       vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
+      keywords.clear();
 
       while(!exprs.empty())
       {

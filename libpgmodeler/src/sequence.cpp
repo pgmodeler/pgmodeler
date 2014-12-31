@@ -399,7 +399,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::MAX_VALUE]=max_value;
 	attributes[ParsersAttributes::START]=start;
 	attributes[ParsersAttributes::CACHE]=cache;
-	attributes[ParsersAttributes::CYCLE]=(cycle ? "1" : "");
+	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::_TRUE_ : "");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

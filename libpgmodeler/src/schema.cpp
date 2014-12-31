@@ -68,6 +68,6 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
-	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? "1" : "");
+	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : "");
 	return(BaseObject::__getCodeDefinition(def_type));
 }

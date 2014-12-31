@@ -646,7 +646,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
       attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
-    attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
+    attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : "");
     attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
     attributes[ParsersAttributes::STORAGE]=(~storage);
     attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
@@ -659,8 +659,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     attributes[ParsersAttributes::CATEGORY]=~(category);
 
-    attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
-    attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
+    attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : "");
 
 		if(like_type!="any")
 		{

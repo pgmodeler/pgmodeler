@@ -670,7 +670,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
+		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : "");
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SQL_DEFINITION) ||
@@ -688,7 +688,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XML_DEFINITION)
-			attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");
+			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : "");
 
 		if(tablespace)
 		{
@@ -1091,7 +1091,7 @@ QString BaseObject::getDropDefinition(bool cascade)
       schparser.setIgnoreEmptyAttributes(true);
 
       attribs=attributes;
-      attribs[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+      attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
 
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
     }

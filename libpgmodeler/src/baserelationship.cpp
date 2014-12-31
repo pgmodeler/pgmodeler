@@ -352,8 +352,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 
 	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
-	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? "1" : "");
-	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? "1" : "");
+	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::_TRUE_ : "");
 
 	if(src_table)
 		attributes[ParsersAttributes::SRC_TABLE]=src_table->getName(true);

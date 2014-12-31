@@ -477,9 +477,9 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? "1" : "");
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? "1" : "");
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? "1" : "");
+	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;

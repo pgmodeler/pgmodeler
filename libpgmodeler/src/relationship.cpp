@@ -2374,16 +2374,16 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? "1" : "");
-    attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? "1" : "");
-		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
+		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
 		attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
 		attributes[ParsersAttributes::DEL_ACTION]=~del_action;
 
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
-		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
-		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
+		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? ParsersAttributes::_TRUE_ : "");
 
 		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
 		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
