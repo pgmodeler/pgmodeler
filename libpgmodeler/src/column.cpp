@@ -171,7 +171,7 @@ QString Column::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
 
-  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
+  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : ParsersAttributes::_TRUE_);
   attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : "");
 
   return(BaseObject::__getCodeDefinition(def_type));

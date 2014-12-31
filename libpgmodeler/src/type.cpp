@@ -612,17 +612,17 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(config==ENUMERATION_TYPE)
 	{
-    attributes[ParsersAttributes::ENUM_TYPE]="1";
+    attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::_TRUE_;
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==COMPOSITE_TYPE)
 	{
-    attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
+    attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::_TRUE_;
 		setElementsAttribute(def_type);
 	}
 	else if(config==RANGE_TYPE)
 	{
-    attributes[ParsersAttributes::RANGE_TYPE]="1";
+    attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
       attributes[ParsersAttributes::SUBTYPE]=(*subtype);
@@ -639,7 +639,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 	else
 	{
-    attributes[ParsersAttributes::BASE_TYPE]="1";
+    attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
       attributes[ParsersAttributes::INTERNAL_LENGTH]="VARIABLE";
@@ -724,7 +724,7 @@ QString Type::getAlterDefinition(BaseObject *object)
             attribs[ParsersAttributes::BEFORE]="";
             if(prev_val.isEmpty())
             {
-              attribs[ParsersAttributes::BEFORE]="1";
+              attribs[ParsersAttributes::BEFORE]=ParsersAttributes::_TRUE_;
               prev_val=this->enumerations[0];
             }
 
@@ -745,7 +745,7 @@ QString Type::getAlterDefinition(BaseObject *object)
         {
           if(type->getAttributeIndex(attrib.getName()) < 0)
           {
-            attribs[ParsersAttributes::DROP]="1";
+            attribs[ParsersAttributes::DROP]=ParsersAttributes::_TRUE_;
             attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
             copyAttributes(attribs);
             alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
@@ -774,7 +774,7 @@ QString Type::getAlterDefinition(BaseObject *object)
           //Changing type attributes
           else
           {
-            attribs[ParsersAttributes::CHANGE]="1";
+            attribs[ParsersAttributes::CHANGE]=ParsersAttributes::_TRUE_;
 
             if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
             {

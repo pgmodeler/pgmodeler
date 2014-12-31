@@ -333,7 +333,7 @@ void ModelDatabaseDiffForm::importDatabase(void)
     //The import process will exclude built-in array array types, system and extension objects
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, "1"}});
+    catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
 
 		imported_model=new DatabaseModel;

@@ -43,7 +43,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
     HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
     *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
-    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht;
+    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht, *code_completion_ht;
 
     void hideEvent(QHideEvent *);
 

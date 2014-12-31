@@ -508,7 +508,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 
     if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
     {
-      attribs[ParsersAttributes::RETURNS_SETOF]="1";
+      attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
     }
 
@@ -516,7 +516,7 @@ QString Function::getAlterDefinition(BaseObject *object)
       attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
 
     if(this->is_leakproof!=func->is_leakproof)
-      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? "1" : ParsersAttributes::UNSET);
+      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
     if(this->security_type!=func->security_type)
       attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type; 

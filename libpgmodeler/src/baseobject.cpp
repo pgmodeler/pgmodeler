@@ -787,10 +787,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
     }
 
-		if(reduced_form)
-			attributes[ParsersAttributes::REDUCED_FORM]="1";
-		else
-			attributes[ParsersAttributes::REDUCED_FORM]="";
+    attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : "");
 
 		try
 		{
@@ -1128,7 +1125,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 {
   if(!attribs.empty())
   {
-    attributes[ParsersAttributes::HAS_CHANGES]="1";
+    attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
     for(auto itr : attribs)
      attributes[itr.first]=itr.second;
   }

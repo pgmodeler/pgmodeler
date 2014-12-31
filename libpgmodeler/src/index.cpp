@@ -328,7 +328,7 @@ QString Index::getCodeDefinition(unsigned def_type)
   if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
-		attributes[ParsersAttributes::STORAGE_PARAMS]="1";
+    attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
 	}
 	else if(def_type==SchemaParser::XML_DEFINITION)
 		attributes[ParsersAttributes::FACTOR]="0";
@@ -336,7 +336,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+    attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

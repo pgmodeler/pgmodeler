@@ -99,6 +99,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   hide_rel_name_ht=new HintTextWidget(hide_rel_name_hint, this);
   hide_rel_name_ht->setText(hide_rel_name_chk->statusTip());
 
+  code_completion_ht=new HintTextWidget(code_completion_hint, this);
+  code_completion_ht->setText(code_completion_chk->statusTip());
+
 	selectPaperSize();
 }
 

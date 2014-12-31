@@ -1579,7 +1579,7 @@ QString Table::getAlterDefinition(BaseObject *object)
     if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
     {
       attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-      attributes[ParsersAttributes::HAS_CHANGES]="1";
+      attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
     }
 
     alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);

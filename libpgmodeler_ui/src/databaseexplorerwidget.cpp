@@ -831,7 +831,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
         attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
         attribs[ParsersAttributes::DECL_IN_TABLE]="";
-        attribs[BaseObject::getSchemaName(obj_type)]="1";
+        attribs[BaseObject::getSchemaName(obj_type)]=ParsersAttributes::_TRUE_;
 
         //For cast, operator and function is needed to extract the name and the params types
         if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)

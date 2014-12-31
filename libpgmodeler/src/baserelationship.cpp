@@ -216,12 +216,10 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 	if(lables[label_id])
 	{
 		if(rel_type==RELATIONSHIP_11)
-      //lables[label_id]->setComment("(" + cmin + ",1)");
       lables[label_id]->setComment(cmin + ":1");
 		else if(rel_type==RELATIONSHIP_1N)
 		{
 			aux=(table_id==SRC_TABLE ? "1" : "n");
-      //lables[label_id]->setComment("(" + cmin + "," + aux + ")");
       lables[label_id]->setComment(cmin + ":" + aux);
 		}
 		else if(rel_type==RELATIONSHIP_FK)
@@ -236,15 +234,12 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 				else
 					aux="1";
 
-        //lables[label_id]->setComment("(" + aux + ")");
         lables[label_id]->setComment(aux);
 			}
 			else
-        //lables[label_id]->setComment("(1,n)");
         lables[label_id]->setComment("1:n");
 		}
 		else if(rel_type==RELATIONSHIP_NN)
-      //lables[label_id]->setComment("(n)");
       lables[label_id]->setComment("n");
 
 		lables[label_id]->setModified(true);

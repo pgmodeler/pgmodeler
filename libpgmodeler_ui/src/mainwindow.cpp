@@ -1613,14 +1613,14 @@ void MainWindow::storeDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	attribs_map params;
 
-	params[ParsersAttributes::VALIDATOR]="1";
+  params[ParsersAttributes::VALIDATOR]=ParsersAttributes::_TRUE_;
   params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
   params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
 	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
 	params.clear();
 
-	params[ParsersAttributes::OBJECT_FINDER]="1";
+  params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::_TRUE_;
   params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : "");
   params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
   params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");

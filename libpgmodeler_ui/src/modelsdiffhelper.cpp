@@ -631,7 +631,7 @@ void ModelsDiffHelper::processDiffInfos(void)
        !fk_defs.isEmpty())
     {
       //Attributes used on the diff schema file
-      attribs[ParsersAttributes::HAS_CHANGES]="1";
+      attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
       attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
       attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());

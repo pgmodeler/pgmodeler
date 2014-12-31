@@ -801,7 +801,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Hide the object that represents the relationship name</string>
+               <string>Toggles the code completion in all fields that accepts the input of SQL commads.</string>
               </property>
               <property name="text">
                <string>Enable SQL code completion</string>

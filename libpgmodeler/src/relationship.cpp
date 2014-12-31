@@ -2329,7 +2329,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			unsigned count, i;
 
-			attributes[ParsersAttributes::RELATIONSHIP_1N]="1";
+      attributes[ParsersAttributes::RELATIONSHIP_1N]=ParsersAttributes::_TRUE_;
 			attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->getCodeDefinition(def_type);
 
 			if(uq_rel11)
@@ -2349,7 +2349,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			unsigned count, i;
 
-			attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
+      attributes[ParsersAttributes::RELATIONSHIP_NN]=ParsersAttributes::_TRUE_;
 			attributes[ParsersAttributes::TABLE]=table_relnn->getCodeDefinition(def_type);
 
 			count=table_relnn->getConstraintCount();
@@ -2362,7 +2362,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		}
 		else if(rel_type==RELATIONSHIP_GEN)
 		{
-			attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
+      attributes[ParsersAttributes::RELATIONSHIP_GEN]=ParsersAttributes::_TRUE_;
 			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
 		}
 

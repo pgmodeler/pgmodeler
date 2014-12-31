@@ -156,7 +156,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		QString sql, custom_filter;
 
     schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-		attribs[qry_type]="1";
+    attribs[qry_type]=ParsersAttributes::_TRUE_;
 
 		if(exclude_sys_objs || list_only_sys_objs)
 			attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
@@ -167,7 +167,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			attribs[ParsersAttributes::OID_FILTER_OP]=">";
 
 		if(obj_type==OBJ_TYPE && exclude_array_types)
-			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
+      attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
 
 		//Checking if the custom filter expression is present
 		if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
@@ -418,7 +418,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		{
 			attr_name.remove(BOOL_FIELD);
 			if(value==PGSQL_FALSE) value.clear();
-			else value="1";
+      else value=ParsersAttributes::_TRUE_;
 		}
 
 		attr_name.replace("_","-");
