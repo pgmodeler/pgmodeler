@@ -19,6 +19,7 @@
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
+#include "snippetsconfigwidget.h"
 
 using namespace ParsersAttributes;
 
@@ -86,6 +87,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
   setupUi(this);
 
+  snippets_menu.setTitle(trUtf8("Snippets"));
+  snippets_menu.setIcon(QIcon(":icones/icones/codesnippet.png"));
+
   drop_action=new QAction(QIcon(":icones/icones/excluir.png"), trUtf8("Drop object"), &handle_menu);
   drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
@@ -105,7 +109,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
-  connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(loadObjectProperties()));
+  connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
+  connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
 
   connect(properties_tbw, &QTableWidget::itemPressed,
           [=]() { SQLToolWidget::copySelection(properties_tbw, true); });
@@ -136,7 +141,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
   return(QWidget::eventFilter(object, event));
 }
 
-void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
+attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 {
   ObjectType obj_type=BASE_OBJECT;
   attribs_map fmt_attribs;
@@ -204,6 +209,8 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
     else if(dep_types.count(attr_name)!=0 && oid_regexp.exactMatch(attr_value))
      attr_value=getObjectName(dep_types[attr_name], attr_value);
 
+    attribs[attr_name]=attr_value;
+
     //Applying translation on the attribute
     if(attribs_i18n.count(attr_name)!=0)
       attr_name=attribs_i18n.at(attr_name);
@@ -211,7 +218,7 @@ void DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
     fmt_attribs[attr_name]=attr_value;
   }
 
-  attribs=fmt_attribs;
+  return(fmt_attribs);
 }
 
 void DatabaseExplorerWidget::formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs)
@@ -596,7 +603,7 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 
   attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
                                                       Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-                                                      names[0], names[1]).join(ELEM_SEPARATOR);
+      names[0], names[1]).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -615,14 +622,14 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
       QString oid=attribs[ParsersAttributes::OID],
               obj_name=DEP_NOT_FOUND.arg(oid), sch_name;
 
-      obj_name=attribs[ParsersAttributes::NAME];
+      obj_name=BaseObject::formatName(attribs[ParsersAttributes::NAME], obj_type==OBJ_OPERATOR);
 
       //Retrieving the schema name
       if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
          attribs[ParsersAttributes::SCHEMA]!="0")
       {
         aux_attribs=catalog.getObjectAttributes(OBJ_SCHEMA, attribs[ParsersAttributes::SCHEMA].toUInt());
-        sch_name=aux_attribs[ParsersAttributes::NAME];
+        sch_name=BaseObject::formatName(aux_attribs[ParsersAttributes::NAME], false);
 
         if(!sch_name.isEmpty())
           obj_name=sch_name + "." + obj_name;
@@ -768,6 +775,8 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
     unsigned obj_id=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
+    SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu, { obj_type, BASE_OBJECT });
+
     for(auto act : handle_menu.actions())
       handle_menu.removeAction(act);
 
@@ -785,6 +794,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     if(obj_id > 0)
       handle_menu.addAction(properties_action);
 
+    handle_menu.addSeparator();
+    handle_menu.addMenu(&snippets_menu);
+
     QAction *exec_action=handle_menu.exec(QCursor::pos());
 
     if(exec_action==drop_action || exec_action==drop_cascade_action)
@@ -792,12 +804,59 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     else if(exec_action==refresh_action)
       updateCurrentItem();
     else if(exec_action==properties_action)
-      loadObjectProperties();
+      showObjectProperties();
     else if(exec_action==show_data_action)
       emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),
                                    item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
+    else if(exec_action)
+      processSelectedSnippet(exec_action->text());
   }
+}
+
+void DatabaseExplorerWidget::processSelectedSnippet(const QString &snip_id)
+{
+  attribs_map attribs,
+              snip_attribs=SnippetsConfigWidget::getSnippetById(snip_id);
+  QString snippet=snip_attribs[ParsersAttributes::CONTENTS], str_aux;
+  QTreeWidgetItem *item=objects_trw->currentItem();
+  ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+  loadObjectProperties();
+  attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
+
+  if(attribs.empty())
+  {
+    QString sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+            tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
+
+    //Formatting a schema qualified "table" attribute for table children objects
+    if(TableObject::isTableObject(obj_type) && !sch_name.isEmpty() && !tab_name.isEmpty())
+      attribs[ParsersAttributes::TABLE]=BaseObject::formatName(sch_name) + "." + BaseObject::formatName(tab_name);
+  }
+  //Formatting the "name" attribute if it is not schema qualified
+  else if(attribs.count(ParsersAttributes::SCHEMA) &&
+          attribs.count(ParsersAttributes::NAME) &&
+          !attribs[ParsersAttributes::NAME].contains("."))
+  {
+    attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + "." +
+                                     BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+  }
+
+  attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+
+  /* Replacing the attributes enclosed by {} in the snippet by the
+     value of the attributes retrieved from the object */
+  for(auto attr : attribs)
+  {
+    str_aux=QString("{%1}").arg(attr.first);
+
+    if(snippet.contains(str_aux))
+      snippet.replace(str_aux, attr.second);
+  }
+
+  if(!snippet.isEmpty())
+    emit s_snippetShowRequested(snippet);
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
@@ -1011,26 +1070,20 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     QTreeWidgetItem *item=objects_trw->currentItem();
     unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-    clearObjectProperties();
-
     if(oid != 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-      attribs_map cached_attribs;
-      QTableWidgetItem *tab_item=nullptr;
-      QStringList values;
-      int row=0;
-      QFont font;
+      attribs_map orig_attribs, fmt_attribs;
 
       //First, retrieve the attributes stored on the item as a result of a previous properties listing
-      cached_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
+      orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
       //In case of the cached attributes are empty
-      if(cached_attribs.empty())
+      if(orig_attribs.empty())
       {
         //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
-          cached_attribs=catalog.getObjectAttributes(obj_type, oid);
+          orig_attribs=catalog.getObjectAttributes(obj_type, oid);
         else
         {
           QString tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString(),
@@ -1038,14 +1091,47 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
           vector<attribs_map> vect_attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, { oid });
 
           if(!vect_attribs.empty())
-            cached_attribs=vect_attribs[0];
+            orig_attribs=vect_attribs[0];
         }
 
         //Format values and translate the attribute names
-        formatObjectAttribs(cached_attribs);
+        fmt_attribs=formatObjectAttribs(orig_attribs);
+
+        //Store the original attributes on the item to permit value replacements when using code snippets
+        item->setData(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole, QVariant::fromValue<attribs_map>(orig_attribs));
+
         //Store the attributes on the item to avoid repeatedly query the database
-        item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(cached_attribs));
+        item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
       }
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+void DatabaseExplorerWidget::showObjectProperties(void)
+{
+  try
+  {
+    QTreeWidgetItem *item=objects_trw->currentItem();
+    unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+
+    clearObjectProperties();
+
+    if(oid != 0)
+    {
+      attribs_map cached_attribs;
+      QTableWidgetItem *tab_item=nullptr;
+      QStringList values;
+      int row=0;
+      QFont font;
+
+      loadObjectProperties();
+      cached_attribs=item->data((raw_attrib_names_chk->isChecked() ?
+                                 DatabaseImportForm::OBJECT_OTHER_DATA : DatabaseImportForm::OBJECT_ATTRIBS),
+                                Qt::UserRole).value<attribs_map>();
 
       properties_tbw->setSortingEnabled(false);
 
@@ -1101,3 +1187,5 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
+
+

@@ -18,10 +18,30 @@
 
 #include "baseconfigwidget.h"
 
+BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
+{
+  config_changed=false;
+}
+
 void BaseConfigWidget::addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
 {
 	if(!param.isEmpty() && !attribs.empty())
     config_params[param]=attribs;
+}
+
+void BaseConfigWidget::showEvent(QShowEvent *)
+{
+  config_changed=false;
+}
+
+void BaseConfigWidget::setConfigurationChanged(bool changed)
+{
+  config_changed=changed;
+}
+
+bool BaseConfigWidget::isConfigurationChanged(void)
+{
+  return(config_changed);
 }
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
@@ -189,7 +209,7 @@ void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_
   {
     xmlparser.savePosition();
     xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-    aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent().simplified();
+    aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent();
     xmlparser.restorePosition();
   }
 

@@ -48,9 +48,16 @@ void ConfigurationForm::reject(void)
 	{
 		if(sender()==cancel_btn)
     {
-      appearance_conf->loadConfiguration();
-      connections_conf->loadConfiguration();
-      snippets_conf->loadConfiguration();
+      QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
+      BaseConfigWidget *conf_wgt=nullptr;
+
+      for(QWidget *wgt : wgt_list)
+      {
+        conf_wgt=qobject_cast<BaseConfigWidget *>(wgt);
+
+        if(conf_wgt->isConfigurationChanged())
+          conf_wgt->loadConfiguration();
+      }
 		}
 	}
 	catch(Exception &)
@@ -61,8 +68,15 @@ void ConfigurationForm::reject(void)
 
 void ConfigurationForm::applyConfiguration(void)
 {
+  BaseConfigWidget *conf_wgt=nullptr;
+
   for(int i=GENERAL_CONF_WGT; i <= SNIPPETS_CONF_WGT; i++)
-   qobject_cast<BaseConfigWidget *>(confs_stw->widget(i))->saveConfiguration();
+  {
+    conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
+
+    if(conf_wgt->isConfigurationChanged())
+      conf_wgt->saveConfiguration();
+  }
 
   general_conf->applyConfiguration();
   relationships_conf->applyConfiguration();

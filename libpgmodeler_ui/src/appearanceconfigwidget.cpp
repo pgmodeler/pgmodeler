@@ -338,6 +338,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 
 	model->setObjectsModified();
   scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)
@@ -356,6 +357,7 @@ void AppearanceConfigWidget::applyFontStyle(void)
 
 	model->setObjectsModified();
   scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::restoreDefaults(void)
@@ -363,7 +365,8 @@ void AppearanceConfigWidget::restoreDefaults(void)
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
-		this->loadConfiguration();
+    this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

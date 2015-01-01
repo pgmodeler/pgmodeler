@@ -83,6 +83,64 @@ map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams(void)
   return(config_params);
 }
 
+attribs_map SnippetsConfigWidget::getSnippetById(const QString &snip_id)
+{
+  if(config_params.count(snip_id))
+    return(config_params[snip_id]);
+  else
+    return(attribs_map());
+}
+
+QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
+{
+  QStringList ids;
+  QString type_name=(obj_type==BASE_OBJECT ?
+                     ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
+
+  for(auto snip : config_params)
+  {
+    if(snip.second[ParsersAttributes::OBJECT]==type_name)
+      ids.push_back(snip.second[ParsersAttributes::ID]);
+  }
+
+  return(ids);
+}
+
+vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
+{
+  vector<attribs_map> snippets;
+  QString type_name=(obj_type==BASE_OBJECT ?
+                     ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
+
+  for(auto snip : config_params)
+  {
+    if(snip.second[ParsersAttributes::OBJECT]==type_name)
+      snippets.push_back(snip.second);
+  }
+
+  return(snippets);
+}
+
+QStringList SnippetsConfigWidget::getAllSnippetsIds(void)
+{
+  QStringList ids;
+
+  for(auto snip : config_params)
+   ids.push_back(snip.second[ParsersAttributes::ID]);
+
+  return(ids);
+}
+
+vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
+{
+  vector<attribs_map> snippets;
+
+  for(auto snip : config_params)
+    snippets.push_back(snip.second);
+
+  return(snippets);
+}
+
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
 {
   snippets_cmb->clear();
@@ -186,6 +244,7 @@ void SnippetsConfigWidget::handleSnippet(void)
 
     filterSnippets(filter_cmb->currentIndex());
     resetForm();
+    setConfigurationChanged(true);
   }
 }
 
@@ -193,6 +252,7 @@ void SnippetsConfigWidget::removeSnippet(void)
 {
   config_params.erase(snippets_cmb->currentData().toString());
   filterSnippets(filter_cmb->currentIndex());
+  setConfigurationChanged(true);
 }
 
 void SnippetsConfigWidget::removeAllSnippets(void)
@@ -206,6 +266,7 @@ void SnippetsConfigWidget::removeAllSnippets(void)
   {
     config_params.clear();
     filterSnippets(0);
+    setConfigurationChanged(true);
   }
 }
 
@@ -296,6 +357,7 @@ void SnippetsConfigWidget::restoreDefaults(void)
 	{
     BaseConfigWidget::restoreDefaults(GlobalAttributes::SNIPPETS_CONF);
 		this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
@@ -303,3 +365,66 @@ void SnippetsConfigWidget::restoreDefaults(void)
 	}
 }
 
+void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types)
+{
+  vector<attribs_map> snippets, vet_aux;
+  QAction *act=nullptr;
+  QMenu *menu=nullptr;
+  map<QString, QMenu *> submenus;
+  QString object, snip_id, type_name;
+  QPixmap ico;
+
+  //Retrieve all snippets if the 'types' is empty
+  if(types.empty())
+    snippets=SnippetsConfigWidget::getAllSnippets();
+  else
+  {
+    //Retreving only the snippets of the type specified by user
+    for(ObjectType type : types)
+    {
+      vet_aux=SnippetsConfigWidget::getSnippetsByObject(type);
+      snippets.insert(snippets.end(), vet_aux.begin(), vet_aux.end());
+    }
+  }
+
+  snip_menu->clear();
+
+  for(attribs_map snip : snippets)
+  {
+    object=snip[ParsersAttributes::OBJECT];
+    snip_id=snip[ParsersAttributes::ID];
+
+    //Creating the snippet submenu for the current object type
+    if(submenus.count(object)==0)
+    {
+      type_name=BaseObject::getTypeName(object);
+
+      if(type_name.isEmpty())
+      {
+        ico=QPixmap();
+        type_name=trUtf8("General");
+      }
+      else
+        ico=QPixmap(QString(":/icones/icones/%1.png").arg(object));
+
+      menu=new QMenu(type_name, snip_menu);
+      menu->setIcon(ico);
+      menu->setToolTipsVisible(true);
+      submenus[object]=menu;
+
+      /* If the current group (object) is general does not include the submenu yet.
+         This will be included as the last submenu */
+      if(object!=ParsersAttributes::GENERAL)
+        snip_menu->addMenu(menu);
+    }
+
+    //Creating the action for the current snippet
+    act=new QAction(QPixmap(":/icones/icones/codesnippet.png"), snip_id, submenus[object]);
+    act->setToolTip(snip[ParsersAttributes::LABEL]);
+    submenus[object]->addAction(act);
+  }
+
+  //Include the "general" submenu at the end of snippet menu
+  if(submenus.count(ParsersAttributes::GENERAL)!=0)
+    snip_menu->addMenu(submenus[ParsersAttributes::GENERAL]);
+}

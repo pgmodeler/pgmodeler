@@ -51,7 +51,11 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
   center_pnts_ht->setText(center_pnts_chk->statusTip());
 
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
+  connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
 	connect(center_pnts_chk, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
+  connect(center_pnts_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
@@ -163,6 +167,7 @@ void RelationshipConfigWidget::restoreDefaults(void)
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::RELATIONSHIPS_CONF);
 		this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

@@ -28,6 +28,7 @@
 #include "ui_snippetsconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "syntaxhighlighter.h"
+#include "baseobject.h"
 
 class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
@@ -56,6 +57,25 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		void saveConfiguration(void);
 		void loadConfiguration(void);
     static map<QString, attribs_map> getConfigurationParams(void);
+
+    //! brief Returns the snippet attributes related to the identified snippet snip_id
+    static attribs_map getSnippetById(const QString &snip_id);
+
+    //! brief Returns only the snippets ids related to the specified object type.
+    static QStringList getSnippetsIdsByObject(ObjectType obj_type);
+
+    /*! brief Returns a vector of snippets' attributes filtering by the object type in which they apply.
+        There's a special group for general purpose snippets that can be retrieved using BASE_OBJECT type.
+        If there is no snippets related to the type an empty vector is returned. */
+    static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
+
+    //! brief Returns the a vector of all available snippets ids.
+    static QStringList getAllSnippetsIds(void);
+
+    //! brief Returns the a vector of all available snippets.
+    static vector<attribs_map> getAllSnippets(void);
+
+    static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());
 
   private slots:
     void resetForm(void);

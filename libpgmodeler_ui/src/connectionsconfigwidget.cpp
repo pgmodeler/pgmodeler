@@ -195,6 +195,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
     new_conn->setConnectionParam(Connection::PARAM_ALIAS, QString("cp_%1").arg(conn->getConnectionParam(Connection::PARAM_ALIAS)));
     connections_cmb->addItem(new_conn->getConnectionId());
     connections_cmb->setCurrentIndex(connections_cmb->count()-1);
+    setConfigurationChanged(true);
   }
 	catch(Exception &e)
 	{
@@ -228,6 +229,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 		this->newConnection();
 		edit_tb->setEnabled(connections_cmb->count() > 0);
 		remove_tb->setEnabled(connections_cmb->count() > 0);
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
@@ -248,6 +250,7 @@ void ConnectionsConfigWidget::removeConnection(void)
     connections.erase(connections.begin() + connections_cmb->currentIndex());
     delete(conn);
     this->newConnection();
+    setConfigurationChanged(true);
 	}
 }
 
@@ -386,6 +389,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 
 		//Reloads the configuration
     this->loadConfiguration();
+
 	}
 	catch(Exception &e)
 	{

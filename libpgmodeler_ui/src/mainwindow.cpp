@@ -617,16 +617,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-	ConnectionsConfigWidget *conn_cfg_wgt=nullptr;
-	map<QString, Connection *> connections;
+  map<QString, Connection *> connections;
+  ConnectionsConfigWidget *conn_cfg_wgt=
+      dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 
-  conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
   conn_cfg_wgt->getConnections(connections);
-  model_valid_wgt->updateConnections(connections);
-  sql_tool_wgt->updateConnections(connections);
+
+  if(conn_cfg_wgt->isConfigurationChanged() ||
+     model_valid_wgt->connections_cmb->count()==0 ||
+     sql_tool_wgt->connections_cmb->count()==0 )
+  {
+    model_valid_wgt->updateConnections(connections);
+    sql_tool_wgt->updateConnections(connections);
+  }
 }
 
-void MainWindow::saveTemporaryModels(void)//(bool force)
+void MainWindow::saveTemporaryModels(void)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: temporary model saving disabled."
@@ -636,7 +642,7 @@ void MainWindow::saveTemporaryModels(void)//(bool force)
 		ModelWidget *model=nullptr;
 		int count=models_tbw->count();
 
-    if(count > 0)// && (force || this->isActiveWindow()))
+    if(count > 0)
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -1126,6 +1132,7 @@ void MainWindow::applyConfigurations(void)
 		}
 
 		updateConnections();
+    sql_tool_wgt->configureSnippets();
 	}
 }
 

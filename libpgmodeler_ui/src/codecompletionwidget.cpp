@@ -152,11 +152,10 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
     code_field_txt->installEventFilter(this);
     name_list->installEventFilter(this);
 
-    if(syntax_hl)
+    if(syntax_hl && keywords.isEmpty())
     {
       //Get the keywords from the highlighter
       vector<QRegExp> exprs=syntax_hl->getExpressions(keywords_grp);
-      keywords.clear();
 
       while(!exprs.empty())
       {

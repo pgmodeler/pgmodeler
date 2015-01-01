@@ -37,6 +37,8 @@ class BaseConfigWidget: public QWidget {
   private:
     Q_OBJECT
 
+    bool config_changed;
+
 	protected:
 		XMLParser xmlparser;
     SchemaParser schparser;
@@ -59,9 +61,13 @@ class BaseConfigWidget: public QWidget {
     //! brief Adds a parameter to the specified configuration parameters set
     static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
 
+    void showEvent(QShowEvent *);
+
   public:
-    BaseConfigWidget(QWidget *parent = 0) : QWidget(parent){}
+    BaseConfigWidget(QWidget *parent = 0);
     ~BaseConfigWidget(void){}
+
+    bool isConfigurationChanged(void);
 
     //! brief Applies the configuration to object
     virtual void applyConfiguration(void)=0;
@@ -74,6 +80,9 @@ class BaseConfigWidget: public QWidget {
 
     //! brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
     virtual void restoreDefaults(void)=0;
+
+  public slots:
+    void setConfigurationChanged(bool changed=true);
 };
 
 #endif

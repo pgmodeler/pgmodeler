@@ -34,6 +34,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	private:
 		Q_OBJECT
 
+    QWidgetList child_wgts;
     static map<QString, attribs_map> config_params;
 
 		static const unsigned UNIT_MILIMETERS=0,

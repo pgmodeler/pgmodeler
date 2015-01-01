@@ -427,6 +427,13 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="QCheckBox" name="raw_attrib_names_chk">
+     <property name="text">
+      <string>Show raw attribute names</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources>

@@ -103,6 +103,42 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   code_completion_ht->setText(code_completion_chk->statusTip());
 
 	selectPaperSize();
+
+  QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
+  QList<QSpinBox *> spin_boxes=this->findChildren<QSpinBox *>();
+  QList<QDoubleSpinBox *> dspin_boxes=this->findChildren<QDoubleSpinBox *>();
+  QList<QComboBox *> combos=this->findChildren<QComboBox *>();
+  QList<QRadioButton *> radios=this->findChildren<QRadioButton *>();
+
+  for(QCheckBox *chk : chk_boxes)
+  {
+    child_wgts.push_back(chk);
+    connect(chk, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
+  }
+
+  for(QSpinBox *spin : spin_boxes)
+  {
+    child_wgts.push_back(spin);
+    connect(spin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+  }
+
+  for(QDoubleSpinBox *dspin : dspin_boxes)
+  {
+    child_wgts.push_back(dspin);
+    connect(dspin, SIGNAL(valueChanged(QString)), this, SLOT(setConfigurationChanged()));
+  }
+
+  for(QComboBox *cmb : combos)
+  {
+    child_wgts.push_back(cmb);
+    connect(cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigurationChanged()));
+  }
+
+  for(QRadioButton *radio : radios)
+  {
+    child_wgts.push_back(radio);
+    connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
+  }
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
@@ -112,6 +148,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 		QStringList margin, custom_size;
 		vector<QString> key_attribs;
 		unsigned interv=0;
+
+    for(QWidget *wgt : child_wgts)
+      wgt->blockSignals(true);
 
 		key_attribs.push_back(ParsersAttributes::ID);
     BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, config_params, key_attribs);
@@ -156,6 +195,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
 		font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
+
+    for(QWidget *wgt : child_wgts)
+      wgt->blockSignals(false);
 
 		this->applyConfiguration();
 	}
@@ -315,6 +357,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
 		this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

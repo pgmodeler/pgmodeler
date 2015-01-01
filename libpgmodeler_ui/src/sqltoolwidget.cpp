@@ -19,6 +19,7 @@
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
 #include "databaseexplorerwidget.h"
+#include "snippetsconfigwidget.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -37,7 +38,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
-	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
+  snippets_tb->setMenu(&snippets_menu);
+
+  code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
@@ -588,6 +591,7 @@ void SQLToolWidget::browseDatabase(void)
     databases_tbw->setCurrentWidget(db_explorer_wgt);
 
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
+    connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), sql_cmd_txt, SLOT(setPlainText(QString)));
   }
   catch(Exception &e)
   {
@@ -625,6 +629,15 @@ void SQLToolWidget::setCurrentDatabase(int idx)
   }
 }
 
+void SQLToolWidget::configureSnippets(void)
+{ 
+  SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
+  code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
+  code_compl_wgt->clearCustomItems();
+  code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsIds(),
+                                    QPixmap(":/icones/icones/codesnippet.png"));
+}
+
 void SQLToolWidget::enableSQLExecution(bool enable)
 {
 	try
@@ -632,6 +645,7 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		sql_cmd_txt->setEnabled(enable);
 		load_tb->setEnabled(enable);
 		history_tb->setEnabled(enable);
+    snippets_tb->setEnabled(enable);
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
@@ -640,8 +654,6 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 
 		if(history_tb->isChecked() && !enable)
 			history_tb->setChecked(false);
-
-    code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
 	}
 	catch(Exception &e)
 	{

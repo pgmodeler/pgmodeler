@@ -575,6 +575,55 @@
               </widget>
              </item>
              <item>
+              <widget class="QToolButton" name="snippets_tb">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>27</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>Export results to a CSV file</string>
+               </property>
+               <property name="text">
+                <string>Snippe&amp;ts</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../res/resources.qrc">
+                 <normaloff>:/icones/icones/codesnippet.png</normaloff>:/icones/icones/codesnippet.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="shortcut">
+                <string notr="true">Alt+X</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::InstantPopup</enum>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QToolButton" name="export_tb">
                <property name="enabled">
                 <bool>false</bool>

@@ -107,7 +107,12 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
 	else
-		return("");
+    return("");
+}
+
+QString BaseObject::getTypeName(const QString &type_str)
+{
+  return(getTypeName(getObjectType(type_str)));
 }
 
 ObjectType BaseObject::getObjectType(const QString &type_name)

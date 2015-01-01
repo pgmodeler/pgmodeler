@@ -51,6 +51,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
+    QMenu snippets_menu;
+
 		FindReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
@@ -86,7 +88,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
-	private slots:
+  public slots:
+    void configureSnippets(void);
+
+  private slots:
     //! brief Opens a connection to the selected server
     void connectToServer(void);
 
