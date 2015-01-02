@@ -133,7 +133,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
+void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp, bool persistent)
 {
   map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
@@ -143,9 +143,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
   auto_triggered=false;
   this->db_model=db_model;
 
-  //By default, the persistent mode is activated when the model is not allocated
   persistent_chk->setVisible(db_model==nullptr);
-  persistent_chk->setChecked(db_model==nullptr);
+  persistent_chk->setChecked(persistent);
 
   if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_)
   {
@@ -412,6 +411,8 @@ void CodeCompletionWidget::selectItem(void)
 			code_field_txt->insertPlainText(item->text() + " ");
 			setQualifyingLevel(nullptr);
 		}
+
+    emit s_wordSelected(item->text());
 	}
 	else
 		setQualifyingLevel(nullptr);

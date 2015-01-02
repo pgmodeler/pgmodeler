@@ -103,7 +103,7 @@ class CodeCompletionWidget: public QWidget
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
+    void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords", bool persistent=false);
 
 		//! brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QPixmap &icon);
@@ -126,6 +126,10 @@ class CodeCompletionWidget: public QWidget
 
 		//! \brief Selects an item and closes the completion list
 		void selectItem(void);
+
+  signals:
+    //! brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
+    void s_wordSelected(QString);
 };
 
 #endif

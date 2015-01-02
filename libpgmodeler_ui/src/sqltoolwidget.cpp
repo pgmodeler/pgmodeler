@@ -91,6 +91,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	connect(export_tb, &QToolButton::clicked,
           [=](){ SQLToolWidget::exportResults(results_tbw); });
+
+  connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
+
+  connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -626,6 +630,27 @@ void SQLToolWidget::setCurrentDatabase(int idx)
   catch(Exception &e)
   {
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+void SQLToolWidget::selectSnippet(QAction *act)
+{
+  attribs_map snip=SnippetsConfigWidget::getSnippetById(act->text());
+
+  if(!snip.empty())
+    sql_cmd_txt->setPlainText(snip[ParsersAttributes::CONTENTS]);
+}
+
+void SQLToolWidget::handleSelectedWord(QString word)
+{
+  if(SnippetsConfigWidget::isSnippetExists(word))
+  {
+    QTextCursor tc=sql_cmd_txt->textCursor();
+    attribs_map snip=SnippetsConfigWidget::getSnippetById(word);
+
+    tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+    tc.removeSelectedText();
+    tc.insertText(snip[ParsersAttributes::CONTENTS]);
   }
 }
 

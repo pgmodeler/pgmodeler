@@ -622,7 +622,10 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
       QString oid=attribs[ParsersAttributes::OID],
               obj_name=DEP_NOT_FOUND.arg(oid), sch_name;
 
-      obj_name=BaseObject::formatName(attribs[ParsersAttributes::NAME], obj_type==OBJ_OPERATOR);
+      if(obj_type!=OBJ_TYPE)
+        obj_name=BaseObject::formatName(attribs[ParsersAttributes::NAME], obj_type==OBJ_OPERATOR);
+      else
+        obj_name=attribs[ParsersAttributes::NAME];
 
       //Retrieving the schema name
       if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
@@ -810,11 +813,11 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
                                    item->text(0),
                                    item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
     else if(exec_action)
-      processSelectedSnippet(exec_action->text());
+      handleSelectedSnippet(exec_action->text());
   }
 }
 
-void DatabaseExplorerWidget::processSelectedSnippet(const QString &snip_id)
+void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 {
   attribs_map attribs,
               snip_attribs=SnippetsConfigWidget::getSnippetById(snip_id);
@@ -851,8 +854,13 @@ void DatabaseExplorerWidget::processSelectedSnippet(const QString &snip_id)
   {
     str_aux=QString("{%1}").arg(attr.first);
 
-    if(snippet.contains(str_aux))
-      snippet.replace(str_aux, attr.second);
+    if(!attr.second.isEmpty() && snippet.contains(str_aux))
+    {
+      if(attr.second.contains(ELEM_SEPARATOR))
+        snippet.replace(str_aux, attr.second.replace(ELEM_SEPARATOR,","));
+      else
+        snippet.replace(str_aux, attr.second);
+    }
   }
 
   if(!snippet.isEmpty())
@@ -1116,9 +1124,12 @@ void DatabaseExplorerWidget::showObjectProperties(void)
   try
   {
     QTreeWidgetItem *item=objects_trw->currentItem();
-    unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+    unsigned oid=0;
 
     clearObjectProperties();
+
+    if(item)
+      oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
     if(oid != 0)
     {

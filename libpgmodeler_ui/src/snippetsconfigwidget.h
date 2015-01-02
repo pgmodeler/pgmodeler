@@ -75,7 +75,11 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     //! brief Returns the a vector of all available snippets.
     static vector<attribs_map> getAllSnippets(void);
 
+    //! brief Configures a QMenu instances with the available snippets categorizing them in submenus
     static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());
+
+    //! brief Returns is the identified snippet exists
+    static bool isSnippetExists(const QString &snip_id);
 
   private slots:
     void resetForm(void);

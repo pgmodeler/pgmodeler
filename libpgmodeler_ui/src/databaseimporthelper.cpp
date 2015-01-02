@@ -1951,7 +1951,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				obj_name.prepend(sch_name + ".");
 
 			//Formatting the name in form of signature (only for functions and operators)
-			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR))
+      if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE))
 			{
 				QStringList params;
 
@@ -1972,9 +1972,16 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 								params.push_back("VARIADIC " + arg_types[i]);
 						}
 						else
-							params.push_back(/*"IN " +*/ arg_types[i]);
+              params.push_back(arg_types[i]);
 					}
 				}
+        else if(obj_type==OBJ_AGGREGATE)
+        {
+          QStringList params=getTypes(obj_attr[ParsersAttributes::TYPES], false);
+
+          if(params.isEmpty())
+            params.push_back("*");
+        }
 				else
 				{
 					if(obj_attr[ParsersAttributes::LEFT_TYPE].toUInt() > 0)

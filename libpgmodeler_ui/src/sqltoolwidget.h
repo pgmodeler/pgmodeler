@@ -124,6 +124,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void closeDatabaseExplorer(int idx);
 
     void setCurrentDatabase(int idx);
+
+    void selectSnippet(QAction *act);
+
+    void handleSelectedWord(QString word);
 };
 
 #endif

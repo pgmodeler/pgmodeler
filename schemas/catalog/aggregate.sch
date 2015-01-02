@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if @{list} %then
-  [SELECT pr.oid, proname AS name FROM pg_proc AS pr ]
+  [SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')'  AS name FROM pg_proc AS pr ]
 
   %if @{schema} %then
     [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid

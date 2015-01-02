@@ -329,10 +329,10 @@ void SnippetsConfigWidget::saveConfiguration(void)
                      GlobalAttributes::DIR_SEPARATOR,
 
         snippet_sch=root_dir +
-        GlobalAttributes::SCHEMAS_DIR +
-        GlobalAttributes::DIR_SEPARATOR +
-        ParsersAttributes::SNIPPET +
-        GlobalAttributes::SCHEMA_EXT;
+                    GlobalAttributes::SCHEMAS_DIR +
+                    GlobalAttributes::DIR_SEPARATOR +
+                    ParsersAttributes::SNIPPET +
+                    GlobalAttributes::SCHEMA_EXT;
 
     attribs_map attribs;
 
@@ -427,4 +427,9 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
   //Include the "general" submenu at the end of snippet menu
   if(submenus.count(ParsersAttributes::GENERAL)!=0)
     snip_menu->addMenu(submenus[ParsersAttributes::GENERAL]);
+}
+
+bool SnippetsConfigWidget::isSnippetExists(const QString &snip_id)
+{
+  return(config_params.count(snip_id)!=0);
 }

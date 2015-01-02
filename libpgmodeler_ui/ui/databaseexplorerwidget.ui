@@ -430,7 +430,7 @@
    <item>
     <widget class="QCheckBox" name="raw_attrib_names_chk">
      <property name="text">
-      <string>Show raw attribute names</string>
+      <string>Show raw attributes names</string>
      </property>
     </widget>
    </item>
