@@ -8,8 +8,8 @@
 
 <snippets> $br
 
-%if @{snippet} %then
- @{snippet}
+%if {snippet} %then
+ {snippet}
 %end
 
 </snippets> $br

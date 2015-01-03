@@ -3,44 +3,44 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if (@{pgsql-ver} != "9.0") %and @{has-changes} %then 
-  %define @{alter-type} [ALTER ] @{sql-object} $sp @{name}
-  %define @{ddl-end} ; $br [-- ddl-end --] $br
+%if ({pgsql-ver} != "9.0") %and {has-changes} %then 
+  %define {alter-type} [ALTER ] {sql-object} $sp {name}
+  %define {ddl-end} ; $br [-- ddl-end --] $br
 
-  %if @{value} %then
-    @{alter-type} 
-    [ ADD VALUE ] '@{value}'
+  %if {value} %then
+    {alter-type} 
+    [ ADD VALUE ] '{value}'
     
-    %if @{before} %then 
+    %if {before} %then 
       [ BEFORE ]
     %else
       [ AFTER ]
     %end
     
-    '@{existing-value}'
+    '{existing-value}'
     
-    @{ddl-end}
+    {ddl-end}
   %end
 
-  %if @{attribute} %then
-    @{alter-type}
+  %if {attribute} %then
+    {alter-type}
 
-    %if @{drop} %then
-      [ DROP ATTRIBUTE ] @{attribute} 
+    %if {drop} %then
+      [ DROP ATTRIBUTE ] {attribute} 
     %else
-       %if @{change} %then
-	[ ALTER ATTRIBUTE ] @{attribute} [ TYPE ] @{type}
+       %if {change} %then
+	[ ALTER ATTRIBUTE ] {attribute} [ TYPE ] {type}
        %else
-	[ ADD ATTRIBUTE ] @{attribute} $sp @{type}
+	[ ADD ATTRIBUTE ] {attribute} $sp {type}
       
-	%if @{collation} %then
-	  [ COLLATE ] @{collation}
+	%if {collation} %then
+	  [ COLLATE ] {collation}
 	%end
        %end
     %end
 
     [ CASCADE]
 
-    @{ddl-end}
+    {ddl-end}
   %end
 %end

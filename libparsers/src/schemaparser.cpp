@@ -23,8 +23,7 @@ const char SchemaParser::CHR_COMMENT='#';
 const char SchemaParser::CHR_LINE_END='\n';
 const char SchemaParser::CHR_TABULATION='\t';
 const char SchemaParser::CHR_SPACE=' ';
-const char SchemaParser::CHR_INI_ATTRIB='@';
-const char SchemaParser::CHR_MID_ATTRIB='{';
+const char SchemaParser::CHR_INI_ATTRIB='{';
 const char SchemaParser::CHR_END_ATTRIB='}';
 const char SchemaParser::CHR_INI_CONDITIONAL='%';
 const char SchemaParser::CHR_INI_METACHAR='$';
@@ -48,6 +47,8 @@ const QString SchemaParser::TOKEN_META_BR="br";
 const QString SchemaParser::TOKEN_META_TB="tb";
 const QString SchemaParser::TOKEN_META_OB="ob";
 const QString SchemaParser::TOKEN_META_CB="cb";
+const QString SchemaParser::TOKEN_META_OC="oc";
+const QString SchemaParser::TOKEN_META_CC="cc";
 
 const QString SchemaParser::TOKEN_EQ_OP="==";
 const QString SchemaParser::TOKEN_NE_OP="!=";
@@ -159,62 +160,54 @@ void SchemaParser::loadFile(const QString &filename)
 
 QString SchemaParser::getAttribute(void)
 {
-	QString atrib, current_line, str_aux;
+  QString atrib, current_line;
 	bool start_attrib, end_attrib, error=false;
 
 	//Get the current line from the buffer
 	current_line=buffer[line];
 
-	/* Only start extracting an attribute if it starts with a @
+  /* Only start extracting an attribute if it starts with a {
 		even if the current character is an attribute delimiter */
-	if(current_line[column]==CHR_INI_ATTRIB)
-	{
-		//Step to the next column in the line
-		column++;
+  if(current_line[column]!=CHR_INI_ATTRIB)
+    error=true;
+  else
+  {
+    //Step to the next column in the line
+    column++;
 
-		/* The next character must be one { because this starts the delimitation
-		 of the attribute name. If not this indicates an error */
-		if(current_line[column]!=CHR_MID_ATTRIB)
-			error=true;
-		else
-		{
-			//Marks the flag indicating start of attribute
-			start_attrib=true;
-			//Unmarks the flag indicating end of attribute
-			end_attrib=false;
-			//Step to the next column that contains the first letter of the attribute name
-			column++;
+    //Marks the flag indicating start of attribute
+    start_attrib=true;
+    //Unmarks the flag indicating end of attribute
+    end_attrib=false;
 
-			/* Attempt to extract an attribute until a space, end of line
-			or attribute is encountered */
-			while(current_line[column]!=CHR_LINE_END &&
-						current_line[column]!=CHR_SPACE &&
-						current_line[column]!=CHR_TABULATION &&
-						!end_attrib && !error)
-			{
-				if(current_line[column]!=CHR_END_ATTRIB)
-					atrib+=current_line[column];
-				else if(current_line[column]==CHR_END_ATTRIB && atrib!="")
-					end_attrib=true;
-				else
-					error=true;
-				column++;
-			}
+    /* Attempt to extract an attribute until a space, end of line
+      or attribute is encountered */
+    while(current_line[column]!=CHR_LINE_END &&
+          current_line[column]!=CHR_SPACE &&
+          current_line[column]!=CHR_TABULATION &&
+          !end_attrib && !error)
+    {
+      if(current_line[column]!=CHR_END_ATTRIB)
+        atrib+=current_line[column];
+      else if(current_line[column]==CHR_END_ATTRIB && atrib!="")
+        end_attrib=true;
+      else
+        error=true;
+      column++;
+    }
 
-			/* If the attribute has been started but not finished
-			ie absence of the } in its statement (ie. @{attr),
-			generates an error. */
-			if(start_attrib && !end_attrib) error=true;
-		}
+    /* If the attribute has been started but not finished
+      ie absence of the } in its statement (ie. {attr),
+      generates an error. */
+    if(start_attrib && !end_attrib) error=true;
 	}
-	else error=true;
 
 	if(error)
 	{
 		//Raise a syntax error
-		str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1));
-		throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return(atrib);
@@ -378,10 +371,9 @@ QString SchemaParser::getMetaCharacter(void)
 
 bool SchemaParser::isSpecialCharacter(char chr)
 {
-	return(chr==CHR_INI_ATTRIB || chr==CHR_MID_ATTRIB ||
-				 chr==CHR_END_ATTRIB || chr==CHR_INI_CONDITIONAL ||
-				 chr==CHR_INI_METACHAR || chr==CHR_INI_PURETEXT ||
-				 chr==CHR_END_PURETEXT);
+  return(chr==CHR_INI_ATTRIB || chr==CHR_END_ATTRIB ||
+         chr==CHR_INI_CONDITIONAL || chr==CHR_INI_METACHAR ||
+         chr==CHR_INI_PURETEXT || chr==CHR_END_PURETEXT);
 }
 
 bool SchemaParser::evaluateComparisonExpr(void)
@@ -620,13 +612,13 @@ bool SchemaParser::evaluateExpression(void)
 					prev_cond=cond;
 					cond=getConditional();
 
-								//Error 1: %if @{a} %or %or %then
+                //Error 1: %if {a} %or %or %then
 					error=(cond==prev_cond ||
-								 //Error 2: %if @{a} %and %or %then
+                 //Error 2: %if {a} %and %or %then
 								 (cond==TOKEN_AND && prev_cond==TOKEN_OR) ||
-								 //Error 3: %if @{a} %or %and %then
+                 //Error 3: %if {a} %or %and %then
 								 (cond==TOKEN_OR && prev_cond==TOKEN_AND) ||
-								 //Error 4: %if %and @{a} %then
+                 //Error 4: %if %and {a} %then
 								 (attrib_count==0 && (cond==TOKEN_AND || cond==TOKEN_OR)));
 
 					if(cond==TOKEN_THEN)
@@ -636,11 +628,11 @@ bool SchemaParser::evaluateExpression(void)
 						column-=cond.length()+1;
 						end_eval=true;
 
-									//Error 1: %if @{a} %not %then
+                  //Error 1: %if {a} %not %then
 						error=(prev_cond==TOKEN_NOT ||
 									//Error 2: %if %then
 									attrib_count==0 ||
-									//Error 3: %if @{a} %and %then
+                  //Error 3: %if {a} %and %then
 									(and_or_count!=attrib_count-1));
 					}
 					else if(cond==TOKEN_OR || cond==TOKEN_AND)
@@ -660,9 +652,9 @@ bool SchemaParser::evaluateExpression(void)
 
 					//Error 1: A conditional token other than %or %not %and if found on conditional expression
 					error=(!cond.isEmpty() && cond!=TOKEN_OR && cond!=TOKEN_AND && cond!=TOKEN_NOT) ||
-								//Error 2: A %not token if found after an attribute: %if @{a} %not %then
+                //Error 2: A %not token if found after an attribute: %if {a} %not %then
 								(attrib_count > 0 && cond==TOKEN_NOT && prev_cond.isEmpty()) ||
-								//Error 3: Two attributes not separated by any conditional token: %if @{a} @{b} %then
+                //Error 3: Two attributes not separated by any conditional token: %if {a} {b} %then
 								(attrib_count > 0 && cond.isEmpty());
 
 					//Increments the extracted attribute counter
@@ -747,8 +739,10 @@ char SchemaParser::translateMetaCharacter(const QString &meta)
 
   if(meta==TOKEN_META_SP) return(CHR_SPACE);
   else if(meta==TOKEN_META_TB) return(CHR_TABULATION);
-  else if(meta==TOKEN_META_OB) return(CHR_INI_PURETEXT); //Currently this constant is used since it returns '[' (open bracket)
-  else if(meta==TOKEN_META_CB) return(CHR_END_PURETEXT); //Currently this constant is used since it returns ']' (close bracket)
+  else if(meta==TOKEN_META_OB) return(CHR_INI_PURETEXT);
+  else if(meta==TOKEN_META_CB) return(CHR_END_PURETEXT);
+  else if(meta==TOKEN_META_OC) return(CHR_INI_ATTRIB);
+  else if(meta==TOKEN_META_CC) return(CHR_END_ATTRIB);
   else return(CHR_LINE_END);
 }
 
@@ -965,9 +959,8 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 				break;
 
-					//Attribute extraction
+        //Attribute extraction
 				case CHR_INI_ATTRIB:
-				case CHR_MID_ATTRIB:
 				case CHR_END_ATTRIB:
 					atrib=getAttribute();
 
@@ -993,7 +986,6 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 							word=atrib;
 							atrib="";
 							atrib+=CHR_INI_ATTRIB;
-							atrib+=CHR_MID_ATTRIB;
 							atrib+=word;
 							atrib+=CHR_END_ATTRIB;
 
@@ -1145,18 +1137,17 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 									//Check if the work is not an attribute
 									if(word[0]==CHR_INI_ATTRIB)
 									{
-										/* If its an attribute, extracts the name and checks if the same
-										has empty value */
-										atrib=word.mid(2,word.size()-3);
+                    //If its an attribute, extracts the name between { } and checks if the same has empty value
+                    atrib=word.mid(1, word.size()-2);
                     word=attributes[atrib];
 
 										/* If the attribute has no value set and parser must not ignore empty values
 										raises an exception */
 										if(word=="" && !ignore_empty_atribs)
 										{
-											str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
-															.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
-											throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+                                      .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+                                      ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 										}
 									}
 

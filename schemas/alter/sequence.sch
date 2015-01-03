@@ -3,52 +3,52 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-@{alter-cmds}
+{alter-cmds}
 
-%if @{has-changes} %then
- [ALTER ] @{sql-object} $sp @{signature} $br
+%if {has-changes} %then
+ [ALTER ] {sql-object} $sp {signature} $br
 
- %if @{increment} %then
-  $tb [INCREMENT BY ] @{increment} $br
+ %if {increment} %then
+  $tb [INCREMENT BY ] {increment} $br
  %end
 
- %if @{min-value} %then
-  $tb [MINVALUE ] @{min-value} $br
+ %if {min-value} %then
+  $tb [MINVALUE ] {min-value} $br
  %end
 
- %if @{max-value} %then
-  $tb [MAXVALUE ] @{max-value} $br
+ %if {max-value} %then
+  $tb [MAXVALUE ] {max-value} $br
  %end
 
- %if @{start} %then
-  $tb [START WITH ] @{start} $br
+ %if {start} %then
+  $tb [START WITH ] {start} $br
  %end
 
- %if @{cache} %then
-  $tb [CACHE ] @{cache} $br
+ %if {cache} %then
+  $tb [CACHE ] {cache} $br
  %end
 
- %if @{cycle} %then
+ %if {cycle} %then
    $tb 
-   %if (@{cycle}=="unset") %then NO %end
+   %if ({cycle}=="unset") %then NO %end
    CYCLE $br
  %end
 
- %if @{owner-col} %then 
+ %if {owner-col} %then 
    $tb [OWNED BY ]
   
-    %if (@{owner-col}=="unset") %then
+    %if ({owner-col}=="unset") %then
       NONE
     %else
-      @{owner-col}
+      {owner-col}
     %end
  %end
  ; $br
 
- %if @{owner-col} %and (@{owner-col}!="unset") %then
+ %if {owner-col} %and ({owner-col}!="unset") %then
   $br
-  [ALTER TABLE ] @{table} [ ALTER COLUMN ] @{column} $br
-  [      SET DEFAULT nextval('] @{name} ['::regclass);] $br
+  [ALTER TABLE ] {table} [ ALTER COLUMN ] {column} $br
+  [      SET DEFAULT nextval('] {name} ['::regclass);] $br
  %end
  
   [-- ddl-end --] $br

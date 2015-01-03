@@ -50,7 +50,6 @@ class SchemaParser {
 											CHR_SPACE,        //! \brief Character that indicates spacing
 											CHR_TABULATION,   //! \brief Character that indicates tabulation
 											CHR_INI_ATTRIB,   //! \brief Character that indicates a reference to an attribute
-											CHR_MID_ATTRIB,   //! \brief Character that delimits on the left the attribute name
 											CHR_END_ATTRIB,   //! \brief Character that delimits on the right the attribute name
 											CHR_INI_CONDITIONAL,//! \brief Character that starts a conditional instruction
 											CHR_INI_METACHAR,   //! \brief Character that starts a metacharacter
@@ -75,8 +74,10 @@ class SchemaParser {
 		static const QString	TOKEN_META_SP,// $sp (space)
 													TOKEN_META_BR,// $br (line break)
 													TOKEN_META_TB,// $tb (tabulation)
-													TOKEN_META_OB,// $ob (open bracket '[')
-													TOKEN_META_CB;// $cb (close bracket ']')
+                          TOKEN_META_OB,// $ob (open square bracket '[')
+                          TOKEN_META_CB,// $cb (close square bracket ']')
+                          TOKEN_META_OC,// $ob (open curly bracket '{')
+                          TOKEN_META_CC;// $cb (close curly bracket '}')
 
     //! \brief Tokens related to comparison expressions
     static const QString	TOKEN_EQ_OP,// == (equal)
@@ -104,18 +105,18 @@ class SchemaParser {
 		Let's suppose a1 and a2 has values and a3 is empty, the following expression
 		results will be:
 
-				%if @{a1} %or @{a2} %and {a3} %then --> FALSE
-				%if @{a1} %or @{a2} %and %not {a3} %then --> TRUE
-				%if @{a1} %or %not @{a3} %then --> TRUE
-				%if @{a1} %and @{a3} %then --> FALSE
+        %if {a1} %or {a2} %and {a3} %then --> FALSE
+        %if {a1} %or {a2} %and %not {a3} %then --> TRUE
+        %if {a1} %or %not {a3} %then --> TRUE
+        %if {a1} %and {a3} %then --> FALSE
 		*/
 		bool evaluateExpression(void);
 
     /*! \brief Returns the result (true|false) of a comparison expression. A comparison expression
-        have the form: ( @{attribute} [operator] "value" ), where:
+        have the form: ( {attribute} [operator] "value" ), where:
 
         (            --> Starts the expression
-        @{attribute} --> Is the attribute to be compared to a value
+        {attribute} --> Is the attribute to be compared to a value
         [operator]   --> A valid comparison operator:
                          == (equal), != (not equal), < (less than), > (greater than)
                          <= (less or equal to), >= (greater or equal to)
@@ -126,7 +127,7 @@ class SchemaParser {
         %not %and %or in the same () are not supported. */
     bool evaluateComparisonExpr(void);
 
-    /*! brief Creates a new attribute when finding  %define @{attrib-name} [expr], where [expr]
+    /*! brief Creates a new attribute when finding  %define {attrib-name} [expr], where [expr]
         can be pure texts, meta chars or other attributes exists overwrite its value */
     void defineAttribute(void);
 

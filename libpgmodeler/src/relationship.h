@@ -279,10 +279,10 @@ class Relationship: public BaseRelationship {
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
 		static const QString SUFFIX_SEPARATOR,
-		SRC_TAB_TOKEN, //@{st}
-		DST_TAB_TOKEN, //@{dt}
-		GEN_TAB_TOKEN, //@{gt}
-		SRC_COL_TOKEN; //@{sc}
+    SRC_TAB_TOKEN, //{st}
+    DST_TAB_TOKEN, //{dt}
+    GEN_TAB_TOKEN, //{gt}
+    SRC_COL_TOKEN; //{sc}
 
 		//! \brief Patterns ids
 		static const unsigned SRC_COL_PATTERN,

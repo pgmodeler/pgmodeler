@@ -1,34 +1,34 @@
 # XML definition for sequences
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<sequence name=] "@{name}"
+[<sequence name=] "{name}"
 
 $br $tb
-[ start=] "@{start}"
-[ increment=] "@{increment}"
+[ start=] "{start}"
+[ increment=] "{increment}"
 
 $br $tb
-[ min-value=] "@{min-value}"
-[ max-value=] "@{max-value}"
+[ min-value=] "{min-value}"
+[ max-value=] "{max-value}"
 
 $br $tb
-[ cache=] "@{cache}"
-[ cycle=] %if @{cycle} %then "true" %else "false" %end
-%if @{owner-col} %then [ owner-col=] "@{owner-col}" %end
+[ cache=] "{cache}"
+[ cycle=] %if {cycle} %then "true" %else "false" %end
+%if {owner-col} %then [ owner-col=] "{owner-col}" %end
 
- %if @{protected} %then 
+ %if {protected} %then 
   [ protected=] "true"
  %end
 
-  %if @{sql-disabled} %then
+  %if {sql-disabled} %then
    [ sql-disabled=] "true"
   %end
 
 > $br
 
-  @{schema}
-  %if @{owner} %then @{owner} %end
-  %if @{comment} %then @{comment} %end
-  %if @{appended-sql} %then @{appended-sql} %end
-  %if @{prepended-sql} %then @{prepended-sql} %end
+  {schema}
+  %if {owner} %then {owner} %end
+  %if {comment} %then {comment} %end
+  %if {appended-sql} %then {appended-sql} %end
+  %if {prepended-sql} %then {prepended-sql} %end
 </sequence>  $br $br

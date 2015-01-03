@@ -6,48 +6,48 @@
 [CAUTION: Do not modify this file unless you know what you are doing.] $br
 [         Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
-<dbmodel [ pgmodeler-ver=] "@{pgmodeler-ver}"
+<dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}"
 
- %if @{author} %then [ author=] "@{author}" %end
+ %if {author} %then [ author=] "{author}" %end
 
- %if @{protected} %then 
+ %if {protected} %then 
   [ protected=] "true"
  %end
 
- %if @{last-position} %then
-  [ last-position=] "@{last-position}"
+ %if {last-position} %then
+  [ last-position=] "{last-position}"
  %end
 
- %if @{last-zoom} %then
-  [ last-zoom=] "@{last-zoom}"
+ %if {last-zoom} %then
+  [ last-zoom=] "{last-zoom}"
  %end
 
- %if @{default-schema} %or @{default-owner}  %then
+ %if {default-schema} %or {default-owner}  %then
     $br $tb
 
-    %if @{default-schema} %then
-      [ default-schema=] "@{default-schema}"
+    %if {default-schema} %then
+      [ default-schema=] "{default-schema}"
     %end
 
-    %if @{default-owner} %then
-      [ default-owner=] "@{default-owner}"
+    %if {default-owner} %then
+      [ default-owner=] "{default-owner}"
     %end
  %end
 
- %if @{default-collation} %or @{default-tablespace} %then
+ %if {default-collation} %or {default-tablespace} %then
     $br $tb
 
-    %if @{default-collation} %then
-      [ default-collation=] "@{default-collation}"
+    %if {default-collation} %then
+      [ default-collation=] "{default-collation}"
     %end
 
-    %if @{default-tablespace} %then
-      [ default-tablespace=] "@{default-tablespace}"
+    %if {default-tablespace} %then
+      [ default-tablespace=] "{default-tablespace}"
     %end
 
  %end
 
  > $br
- %if @{objects} %then @{objects} %end
- %if @{permission} %then @{permission} %end
+ %if {objects} %then {objects} %end
+ %if {permission} %then {permission} %end
  </dbmodel> $br
