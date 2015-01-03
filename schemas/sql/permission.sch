@@ -3,32 +3,32 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[-- object: ] @{name} [ | type: ] PERMISSION [ --]
+[-- object: ] {name} [ | type: ] PERMISSION [ --]
 
-%if @{privileges} %then
+%if {privileges} %then
 
   $br
 
-  %if @{revoke} %then
+  %if {revoke} %then
     [REVOKE ]
   %else
     [GRANT ]
   %end
 
-  @{privileges} $br
+  {privileges} $br
 
-  %if @{parent} %then
-    $sp $sp (@{object}) [ ON TABLE ] @{parent} $br
+  %if {parent} %then
+    $sp $sp ({object}) [ ON TABLE ] {parent} $br
   %else
-    $sp $sp  [ ON ] @{type} $sp @{object} $br
+    $sp $sp  [ ON ] {type} $sp {object} $br
   %end
 
-  $sp $sp  %if @{revoke} %then [ FROM ] %else [ TO ] %end
+  $sp $sp  %if {revoke} %then [ FROM ] %else [ TO ] %end
 
-  %if @{roles} %then
-    @{roles}
+  %if {roles} %then
+    {roles}
 
-    %if @{revoke} %and @{cascade} %then
+    %if {revoke} %and {cascade} %then
      [ CASCADE]
     %end
   %else
@@ -39,31 +39,31 @@
 %end
 
 
-%if @{privileges-gop} %then
+%if {privileges-gop} %then
 
   $br
 
-  %if @{revoke} %then
+  %if {revoke} %then
     [REVOKE GRANT OPTION FOR ]
   %else
     [GRANT ]
   %end
 
-  @{privileges-gop} $br
+  {privileges-gop} $br
 
-  %if @{parent} %then
-    $sp $sp (@{object}) [ ON TABLE ] @{parent} $br
+  %if {parent} %then
+    $sp $sp ({object}) [ ON TABLE ] {parent} $br
   %else
-    $sp $sp  [ ON ] @{type} $sp @{object} $br
+    $sp $sp  [ ON ] {type} $sp {object} $br
   %end
 
   $sp $sp
 
-  %if @{revoke} %then
-   [ FROM ] @{roles}
-   %if @{cascade} %then [ CASCADE] %end ; $br
+  %if {revoke} %then
+   [ FROM ] {roles}
+   %if {cascade} %then [ CASCADE] %end ; $br
   %else
-   [ TO ] @{roles} [ WITH GRANT OPTION]; $br
+   [ TO ] {roles} [ WITH GRANT OPTION]; $br
   %end
 
 %end

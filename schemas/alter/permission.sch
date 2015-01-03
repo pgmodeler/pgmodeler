@@ -3,12 +3,12 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made. 
 
-%if @{revoke} %then
- @{definition}
+%if {revoke} %then
+ {definition}
 %else
- [REVOKE ALL PRIVILEGES ON] @{object} [ FROM ] @{roles} 
+ [REVOKE ALL PRIVILEGES ON] {object} [ FROM ] {roles} 
  
-  %if @{cascade} %then
+  %if {cascade} %then
    [ CASCADE]
   %end
   

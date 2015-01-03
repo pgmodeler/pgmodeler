@@ -3,13 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb [<element type=]
 
-%if @{function} %then "function" %end
-%if @{operator} %then "operator" %end
-%if @{storage} %then "storage" %end
+%if {function} %then "function" %end
+%if {operator} %then "operator" %end
+%if {storage} %then "storage" %end
 
-%if @{stg-number} %then
- [ stg-number=] "@{stg-number}"
+%if {stg-number} %then
+ [ stg-number=] "{stg-number}"
 %end
 > $br
-$tb @{definition}
+$tb {definition}
 $tb </element> $br

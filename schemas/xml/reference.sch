@@ -3,18 +3,18 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb <reference
 
-%if @{table} %then
-  [ table=] "@{table}" 
-  %if @{column} %then [ column=] "@{column}" %end
-  %if @{alias} %then [ alias=] "@{alias}" %end
-  %if @{column-alias} %then [ column-alias=] "@{column-alias}" %end
+%if {table} %then
+  [ table=] "{table}" 
+  %if {column} %then [ column=] "{column}" %end
+  %if {alias} %then [ alias=] "{alias}" %end
+  %if {column-alias} %then [ column-alias=] "{column-alias}" %end
 %else
-  %if @{alias} %then [ alias=] "@{alias}" %end
+  %if {alias} %then [ alias=] "{alias}" %end
 %end
 
-%if @{expression} %then
+%if {expression} %then
  > $br
- $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
+ $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
 $tb </reference> $br
 %else
  /> $br
