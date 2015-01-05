@@ -7,8 +7,6 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)     #
 # XML_INC   -> Root path where XML2 includes can be found  #
 ############################################################
-#cache()
-
 unix {
  !macx:CONFIG += link_pkgconfig
  !macx:PKGCONFIG = libpq libxml-2.0
@@ -101,8 +99,17 @@ SUBDIRS = libutils \
           plugins/dummy \
           plugins/xml2object
 
-#Include the tests subproject only on debug mode
+# Include the tests subproject only on debug mode
 CONFIG(debug, debug|release):SUBDIRS+=tests
+
+# Workaround for GCC 4.8 and 4.9
+# In these versions the relationship dialog always crash due to some bug on code (?) or in the compiler
+# if the -O2 optmization flag is used in release model so we need to reduce the optmization set to
+# make things work.
+# NOTE: this issue does not happens when using clang compiler (LLVM)
+CONFIG(release, debug|release) {
+ contains(QMAKESPEC, (.)+(g)(\+)+):QMAKE_CXXFLAGS_RELEASE+=-O1
+}
 
 QT += core widgets printsupport network
 TEMPLATE = subdirs
