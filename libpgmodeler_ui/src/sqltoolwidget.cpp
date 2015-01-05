@@ -633,12 +633,46 @@ void SQLToolWidget::setCurrentDatabase(int idx)
   }
 }
 
+QString SQLToolWidget::getParsedSnippet(const QString &snip_id)
+{
+  attribs_map snip=SnippetsConfigWidget::getSnippetById(snip_id);
+
+  if(snip.empty())
+   return("");
+
+  if(snip[ParsersAttributes::PARSABLE]==ParsersAttributes::_TRUE_)
+  {
+    try
+    {
+      SchemaParser schparser;
+      QStringList attr_names;
+      attribs_map attribs;
+
+      schparser.loadBuffer(snip[ParsersAttributes::CONTENTS]);
+      attr_names=schparser.extractAttributes();
+
+      //Using dummy values for the extracted attributes
+      for(QString attr : attr_names)
+        attribs[attr]=QString("{%1}").arg(attr);
+
+      schparser.ignoreEmptyAttributes(true);
+      schparser.ignoreUnkownAttributes(true);
+      return(schparser.getCodeDefinition(attribs));
+    }
+    catch(Exception &e)
+    {
+      return(trUtf8("/* Error parsing the snippet '%1':\n\n %2 */")
+             .arg(snip[ParsersAttributes::ID], e.getErrorMessage()));
+    }
+  }
+  else
+    return(snip[ParsersAttributes::CONTENTS]);
+
+}
+
 void SQLToolWidget::selectSnippet(QAction *act)
 {
-  attribs_map snip=SnippetsConfigWidget::getSnippetById(act->text());
-
-  if(!snip.empty())
-    sql_cmd_txt->setPlainText(snip[ParsersAttributes::CONTENTS]);
+  sql_cmd_txt->setPlainText(getParsedSnippet(act->text()));
 }
 
 void SQLToolWidget::handleSelectedWord(QString word)
@@ -646,11 +680,9 @@ void SQLToolWidget::handleSelectedWord(QString word)
   if(SnippetsConfigWidget::isSnippetExists(word))
   {
     QTextCursor tc=sql_cmd_txt->textCursor();
-    attribs_map snip=SnippetsConfigWidget::getSnippetById(word);
-
     tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
     tc.removeSelectedText();
-    tc.insertText(snip[ParsersAttributes::CONTENTS]);
+    tc.insertText(getParsedSnippet(word));
   }
 }
 
@@ -659,7 +691,8 @@ void SQLToolWidget::configureSnippets(void)
   SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
   code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
   code_compl_wgt->clearCustomItems();
-  code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsIds(),
+  code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
+                                    SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
                                     QPixmap(":/icones/icones/codesnippet.png"));
 }
 

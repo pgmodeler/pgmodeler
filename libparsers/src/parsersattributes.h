@@ -310,6 +310,7 @@ namespace ParsersAttributes {
   PARAMETERS="parameters",
   PARENT="parent",
   PARENTS="parents",
+  PARSABLE="parsable",
   PARTIAL_MATCH="partial-match",
   PASSWORD="password",
   PATH="path",

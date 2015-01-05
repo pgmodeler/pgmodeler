@@ -153,7 +153,8 @@ void DataManipulationForm::listColumns(void)
 		for(auto col : cols)
 		{
 			col_names.push_back(col[ParsersAttributes::NAME]);
-			code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], QPixmap(":/icones/icones/column.png"));
+      code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
+                                       QPixmap(":/icones/icones/column.png"));
 		}
 
 		ord_column_cmb->addItems(col_names);

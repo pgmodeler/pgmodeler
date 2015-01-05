@@ -719,9 +719,9 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				if(generate_xml)
 				{
           obj_attr[ParsersAttributes::REDUCED_FORM]=ParsersAttributes::_TRUE_;
-					schparser.setIgnoreUnkownAttributes(true);
+					schparser.ignoreUnkownAttributes(true);
 					xml_def=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
-					schparser.setIgnoreUnkownAttributes(false);
+					schparser.ignoreUnkownAttributes(false);
 				}
 				else
 					xml_def=obj_name;
@@ -746,10 +746,10 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 	try
 	{
-		schparser.setIgnoreUnkownAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
 		xml_buf=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
 
-		schparser.setIgnoreUnkownAttributes(false);
+		schparser.ignoreUnkownAttributes(false);
 		xmlparser->restartParser();
 
 		if(debug_mode)
@@ -1113,9 +1113,9 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		//Generating the complete XML code for operator class elements
 		for(unsigned i=0; i < elems.size(); i++)
 		{
-			schparser.setIgnoreUnkownAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
 			attribs[ParsersAttributes::ELEMENTS]+=schparser.getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
-			schparser.setIgnoreUnkownAttributes(false);
+			schparser.ignoreUnkownAttributes(false);
 		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
@@ -2101,9 +2101,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
 				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
 
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 				xml_def=schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
-				schparser.setIgnoreUnkownAttributes(false);
+				schparser.ignoreUnkownAttributes(false);
 			}
 			else
 				return(obj_name);

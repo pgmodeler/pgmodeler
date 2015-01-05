@@ -56,8 +56,9 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 
 	private slots:
 		void setCurrentModel(void);
+    void showTooltip(int idx);
 
-	signals:
+  signals:
 		void s_modelRemoved(int idx);
 		void s_modelCloseRequested(int idx);
 		void s_currentModelChanged(int idx);

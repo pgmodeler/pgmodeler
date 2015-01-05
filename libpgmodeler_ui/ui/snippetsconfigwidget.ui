@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>545</width>
-    <height>469</height>
+    <width>613</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,10 +50,39 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="snippets_lbl">
+      <item row="4" column="0" colspan="3">
+       <widget class="QTextEdit" name="snippet_txt"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="filter_lbl">
         <property name="text">
-         <string>Snippets:</string>
+         <string>Filter:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>340</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="filter_cmb">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -228,38 +257,12 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="filter_lbl">
+      <item row="0" column="0">
+       <widget class="QLabel" name="snippets_lbl">
         <property name="text">
-         <string>Filter:</string>
+         <string>Snippets:</string>
         </property>
        </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="filter_cmb">
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>18</width>
-          <height>18</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>340</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="2" column="0" colspan="3">
        <widget class="QFrame" name="div_ln">
@@ -303,6 +306,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>79</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
            <string>Applies to:</string>
           </property>
@@ -339,6 +348,38 @@
         </item>
         <item row="1" column="2" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QCheckBox" name="parsable_chk">
+            <property name="statusTip">
+             <string>Parsable or dynamic snippets are written in the &lt;strong&gt;schema micro language&lt;/strong&gt; syntax. When using a parsable snippet the attributes surrounded in &lt;strong&gt;{}&lt;/strong&gt; will be replaced by the selected object's matching attributes.</string>
+            </property>
+            <property name="text">
+             <string>Parsable</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="parsable_hint" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
@@ -431,9 +472,6 @@
          </layout>
         </item>
        </layout>
-      </item>
-      <item row="4" column="0" colspan="3">
-       <widget class="QTextEdit" name="snippet_txt"/>
       </item>
      </layout>
     </widget>

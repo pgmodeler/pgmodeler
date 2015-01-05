@@ -7,6 +7,7 @@
 <!ELEMENT snippet (#PCDATA)>
 <!ATTLIST snippet id CDATA #REQUIRED>
 <!ATTLIST snippet label CDATA #REQUIRED>
+<!ATTLIST snippet parsable (false|true) "false">
 <!ATTLIST snippet object (column|constraint|function|trigger|index|rule|table|view|domain|
 	schema|aggregate|operator|sequence|role|conversion|cast|
 	language|usertype|tablespace|opfamily|opclass|database|collation|

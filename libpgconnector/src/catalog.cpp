@@ -180,8 +180,8 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 
     loadCatalogQuery(BaseObject::getSchemaName(obj_type));
-		schparser.setIgnoreUnkownAttributes(true);
-		schparser.setIgnoreEmptyAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
 
     attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
     sql=schparser.getCodeDefinition(attribs).simplified();

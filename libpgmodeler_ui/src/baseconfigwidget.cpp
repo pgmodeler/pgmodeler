@@ -77,7 +77,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 		}
 
 		//Generates the configuration from the schema file
-		schparser.setIgnoreEmptyAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
 		buf.append(schparser.getCodeDefinition(sch_filename, attribs));
 		output.open(QFile::WriteOnly);
 

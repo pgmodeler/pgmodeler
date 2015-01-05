@@ -124,12 +124,12 @@ void Table::setCommentAttribute(TableObject *tab_obj)
     attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
-		schparser.setIgnoreUnkownAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
 			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
 
 		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
-		schparser.setIgnoreUnkownAttributes(false);
+		schparser.ignoreUnkownAttributes(false);
 	}
 }
 

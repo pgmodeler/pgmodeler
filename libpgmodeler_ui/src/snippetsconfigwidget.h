@@ -29,6 +29,7 @@
 #include "baseconfigwidget.h"
 #include "syntaxhighlighter.h"
 #include "baseobject.h"
+#include "hinttextwidget.h"
 
 class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
@@ -42,16 +43,22 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
     SyntaxHighlighter *snippet_hl;
 
+    HintTextWidget *parsable_ht;
+
     //! brief Fills the snippet combobox with previously loaded snippet map
     void fillSnippetsCombo(map<QString, attribs_map> &config);
 
     //! brief Validates the specified snippet atributes against the current loaded ones
     bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
 
+    void hideEvent(QHideEvent *);
+
     /* Disable methods */
     void applyConfiguration(void){}
 
 	public:
+    static const QString PARSE_SNIP_TOKEN;
+
     SnippetsConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
@@ -69,11 +76,15 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
         If there is no snippets related to the type an empty vector is returned. */
     static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
 
-    //! brief Returns the a vector of all available snippets ids.
-    static QStringList getAllSnippetsIds(void);
+    //! brief Returns the a list of all available snippets specified attribute
+    static QStringList getAllSnippetsAttribute(const QString &attrib);
 
     //! brief Returns the a vector of all available snippets.
     static vector<attribs_map> getAllSnippets(void);
+
+    /*! brief Returns the parsed snipped identified by 'snip_id'. The 'attribs' contains the set of
+        attributes to be replaced on the original snippet code */
+    static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map(), bool fill_empty_attrs=true);
 
     //! brief Configures a QMenu instances with the available snippets categorizing them in submenus
     static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());

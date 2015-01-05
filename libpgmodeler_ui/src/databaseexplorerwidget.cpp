@@ -197,6 +197,9 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
      attribs[ParsersAttributes::NAME].startsWith("information_schema."))
     attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
+  if(attribs.count(ParsersAttributes::SIGNATURE)==0)
+    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
+
   for(auto attrib : attribs)
   {
     attr_name=attrib.first;
@@ -277,6 +280,9 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
                               ParsersAttributes::TRANSITION_FUNC }, OBJ_FUNCTION, false);
 
   formatOidAttribs(attribs, { ParsersAttributes::TYPES }, OBJ_TYPE, true);
+  attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2)")
+                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(attribs[ParsersAttributes::TYPES])).replace(ELEM_SEPARATOR, ",");
 
   attribs[ParsersAttributes::STATE_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::STATE_TYPE]);
   attribs[ParsersAttributes::SORT_OP]=getObjectName(OBJ_OPERATOR, attribs[ParsersAttributes::SORT_OP]);
@@ -330,6 +336,9 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
   attribs[ParsersAttributes::ARG_DEFAULTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARG_DEFAULTS]).join(ELEM_SEPARATOR);
 
   formatOidAttribs(attribs, { ParsersAttributes::ARG_TYPES }, OBJ_TYPE, true);
+  attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2)")
+                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(attribs[ParsersAttributes::ARG_TYPES])).replace(ELEM_SEPARATOR, ",");
 
   formatBooleanAttribs(attribs, { ParsersAttributes::WINDOW_FUNC,
                                   ParsersAttributes::LEAKPROOF,
@@ -350,6 +359,11 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
   formatOidAttribs(attribs, { ParsersAttributes::OPERATOR_FUNC,
                               ParsersAttributes::RESTRICTION_FUNC,
                               ParsersAttributes::JOIN_FUNC }, OBJ_FUNCTION, false);
+
+  attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2,%3)")
+                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(attribs[ParsersAttributes::LEFT_TYPE])
+                                         .arg(attribs[ParsersAttributes::RIGHT_TYPE])).replace(ELEM_SEPARATOR, ",");
 }
 
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
@@ -687,17 +701,23 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
      return(QStringList{ DEP_NOT_DEFINED });
     else
     {
-      vector<attribs_map> attribs;
+      vector<attribs_map> attribs_vect;
       vector<unsigned> oids_vect;
+      map<QString, attribs_map> attrs_map;
       QStringList names;
 
+      //Converting the oids to unsigned in order to filter them on Catalog
       for(QString oid : oids)
         oids_vect.push_back(oid.toUInt());
 
-      attribs=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
+      //Retrieve all the objects by their oids and put them on a auxiliary map in which key is their oids
+      attribs_vect=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
+      for(attribs_map attr : attribs_vect)
+        attrs_map[attr[ParsersAttributes::OID]]=attr;
 
-      for(attribs_map attr : attribs)
-        names.push_back(formatObjectName(attr));
+      //Retreving the names from the auxiliary map using the provided oids
+      for(QString oid : oids)
+        names.push_back(formatObjectName(attrs_map[oid]));
 
       return(names);
     }
@@ -819,9 +839,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
 void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 {
-  attribs_map attribs,
-              snip_attribs=SnippetsConfigWidget::getSnippetById(snip_id);
-  QString snippet=snip_attribs[ParsersAttributes::CONTENTS], str_aux;
+  attribs_map attribs, attribs_aux;
   QTreeWidgetItem *item=objects_trw->currentItem();
   ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
@@ -848,23 +866,13 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 
   attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
 
-  /* Replacing the attributes enclosed by {} in the snippet by the
-     value of the attributes retrieved from the object */
   for(auto attr : attribs)
   {
-    str_aux=QString("{%1}").arg(attr.first);
-
-    if(!attr.second.isEmpty() && snippet.contains(str_aux))
-    {
-      if(attr.second.contains(ELEM_SEPARATOR))
-        snippet.replace(str_aux, attr.second.replace(ELEM_SEPARATOR,","));
-      else
-        snippet.replace(str_aux, attr.second);
-    }
+    if(attr.second.contains(ELEM_SEPARATOR))
+      attribs[attr.first]=attr.second.replace(ELEM_SEPARATOR,",");
   }
 
-  if(!snippet.isEmpty())
-    emit s_snippetShowRequested(snippet);
+  emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs, true));
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
@@ -933,8 +941,8 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
         }
 
         //Generate the drop command
-        schparser.setIgnoreEmptyAttributes(true);
-        schparser.setIgnoreUnkownAttributes(true);
+        schparser.ignoreEmptyAttributes(true);
+        schparser.ignoreUnkownAttributes(true);
         drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
 
         if(cascade)
@@ -1104,6 +1112,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
 
         //Format values and translate the attribute names
         fmt_attribs=formatObjectAttribs(orig_attribs);
+        fmt_attribs.erase(ParsersAttributes::SIGNATURE);
 
         //Store the original attributes on the item to permit value replacements when using code snippets
         item->setData(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole, QVariant::fromValue<attribs_map>(orig_attribs));

@@ -64,11 +64,16 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Stores the command on the sql command history
 		void registerSQLCommand(const QString &cmd);
 
+    //! brief Show the exception message in the output widget
 		void showError(Exception &e);
 
+    //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
-	public:
+    //! brief Return the parsed snippet identified by its id
+    QString getParsedSnippet(const QString &snip_id);
+
+  public:
 		SQLToolWidget(QWidget * parent = 0);
     ~SQLToolWidget(void);
 

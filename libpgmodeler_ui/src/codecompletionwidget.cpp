@@ -52,7 +52,9 @@ CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(
 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
+
 	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(void)));
+  connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip(void)));
 
 	this->setVisible(false);
 }
@@ -174,16 +176,25 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
   }
 }
 
-void CodeCompletionWidget::insertCustomItem(const QString &name, const QPixmap &icon)
+void CodeCompletionWidget::insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon)
 {
 	if(!name.isEmpty())
-    custom_items[name.simplified()]=icon;
+  {
+    QString item_name=name.simplified();
+    custom_items[item_name]=icon;
+    custom_items_tips[item_name]=tooltip;
+  }
 }
 
-void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QPixmap &icon)
+void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QStringList &tooltips, const QPixmap &icon)
 {
-  for(QString name : names)
-    custom_items[name.simplified()]=icon;
+  for(int i=0; i < names.size(); i++)
+  {
+    insertCustomItem(names[i],
+                     (i < tooltips.size() ? tooltips[i] : ""),
+                     icon);
+
+  }
 }
 
 void CodeCompletionWidget::clearCustomItems(void)
@@ -195,20 +206,22 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 {
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
+  ObjectType obj_type;
 	QRegExp regexp(filter.remove("\"") + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
 
 	name_list->clear();
 	for(unsigned i=0; i < objects.size(); i++)
 	{
+    obj_type=objects[i]->getObjectType();
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(objects[i]->getObjectType()==OBJ_FUNCTION)
+    if(obj_type==OBJ_FUNCTION)
 		{
 			dynamic_cast<Function *>(objects[i])->createSignature(false);
 			obj_name=dynamic_cast<Function *>(objects[i])->getSignature();
 		}
-		else if(objects[i]->getObjectType()==OBJ_OPERATOR)
+    else if(obj_type==OBJ_OPERATOR)
 			obj_name=dynamic_cast<Operator *>(objects[i])->getSignature(false);
 		else
 			obj_name+=objects[i]->getName(false, false);
@@ -219,6 +232,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 			item=new QListWidgetItem(QPixmap(QString(":/icones/icones/") + objects[i]->getSchemaName() + QString(".png")), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
 			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
+      item->setToolTip(BaseObject::getTypeName(obj_type));
 			name_list->addItem(item);
 		}
 	}
@@ -229,6 +243,7 @@ void CodeCompletionWidget::show(void)
 	prev_txt_cur=code_field_txt->textCursor();
 	this->updateList();
 	parent_wgt->show();
+  this->showItemTooltip();
 }
 
 void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
@@ -339,7 +354,7 @@ void CodeCompletionWidget::updateList(void)
 		for(int i=0; i < list.size(); i++)
 		{
 			item=new QListWidgetItem(QPixmap(":/icones/icones/keyword.png"), list[i]);
-			item->setToolTip(trUtf8("Keyword"));
+      item->setToolTip(trUtf8("SQL Keyword"));
 			name_list->addItem(item);
 		}
 
@@ -350,6 +365,7 @@ void CodeCompletionWidget::updateList(void)
 		{
 			QStringList list;
 			int row=0;
+      QListWidgetItem *item=nullptr;
 
 			for(auto itr : custom_items)
 			{
@@ -358,8 +374,12 @@ void CodeCompletionWidget::updateList(void)
 			}
 
 			list.sort();
-			for(auto item : list)
-				name_list->insertItem(row++, new QListWidgetItem(custom_items[item], item));
+      for(auto item_name : list)
+      {
+        item=new QListWidgetItem(custom_items[item_name], item_name);
+        item->setToolTip(custom_items_tips[item_name]);
+        name_list->insertItem(row++, item);
+      }
 		}
 	}
 
@@ -367,6 +387,7 @@ void CodeCompletionWidget::updateList(void)
 	{
 		name_list->addItem(trUtf8("(no items found.)"));
 		name_list->item(0)->setFlags(Qt::NoItemFlags);
+    QToolTip::hideText();
 	}
 	else
 		name_list->setItemSelected(name_list->item(0), true);
@@ -422,7 +443,18 @@ void CodeCompletionWidget::selectItem(void)
 	if(!persistent_chk->isChecked())
 		this->close();
 
-	auto_triggered=false;
+  auto_triggered=false;
+}
+
+void CodeCompletionWidget::showItemTooltip(void)
+{
+  QListWidgetItem *item=name_list->currentItem();
+
+  if(item)
+  {
+    QPoint pos=name_list->mapToGlobal(QPoint(name_list->width(), name_list->geometry().top()));
+    QToolTip::showText(pos, item->toolTip());
+  }
 }
 
 void CodeCompletionWidget::close(void)

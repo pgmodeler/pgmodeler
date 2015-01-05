@@ -60,8 +60,8 @@ const QString SchemaParser::TOKEN_LT_EQ_OP="<=";
 SchemaParser::SchemaParser(void)
 {
 	line=column=comment_count=0;
-	ignore_unk_atribs=ignore_empty_atribs=false;
-  pgsql_version=PgSQLVersions::PGSQL_VERSION_94;
+  ignore_unk_atribs=ignore_empty_atribs=false;
+  pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 }
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
@@ -81,7 +81,38 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 
 QString SchemaParser::getPgSQLVersion(void)
 {
-	return(pgsql_version);
+  return(pgsql_version);
+}
+
+QStringList SchemaParser::extractAttributes(void)
+{
+  QStringList attribs;
+  int start=0, end=0;
+
+  for(QString line : buffer)
+  {
+    //Find the first occurrence of '{' in the line
+    start=line.indexOf(CHR_INI_ATTRIB, start);
+
+    while(start >= 0 && start < line.size())
+    {
+      end=line.indexOf(CHR_END_ATTRIB, start);
+      if(end >= 0)
+      {
+        //Extract the name between {} and push it into the list
+        attribs.push_back(line.mid(start + 1, end - start -1));
+        //Start searching new attribute start now from the last position
+        start=line.indexOf(CHR_INI_ATTRIB, end);
+      }
+      else
+        break;
+    }
+
+    start=end=0;
+  }
+
+  attribs.removeDuplicates();
+  return(attribs);
 }
 
 void SchemaParser::restartParser(void)
@@ -101,6 +132,8 @@ void SchemaParser::loadBuffer(const QString &buf)
 
 	//Prepares the parser to do new reading
 	restartParser();
+
+  filename="[memory buffer]";
 
 	//While the input file doesn't reach the end
 	while(!ts.atEnd())
@@ -162,6 +195,7 @@ QString SchemaParser::getAttribute(void)
 {
   QString atrib, current_line;
 	bool start_attrib, end_attrib, error=false;
+  QRegExp attr_regexp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
 
 	//Get the current line from the buffer
 	current_line=buffer[line];
@@ -204,11 +238,16 @@ QString SchemaParser::getAttribute(void)
 
 	if(error)
 	{
-		//Raise a syntax error
-    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
                     .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
-                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
+  else if(!attr_regexp.exactMatch(atrib))
+  {
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_ATTRIBUTE))
+                    .arg(atrib).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INV_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
 
 	return(atrib);
 }
@@ -241,7 +280,7 @@ QString SchemaParser::getWord(void)
 
 QString SchemaParser::getPureText(void)
 {
-	QString text, current_line, str_aux;
+  QString text, current_line;
 	bool error=false;
 
 	current_line=buffer[line];
@@ -284,10 +323,9 @@ QString SchemaParser::getPureText(void)
 
 	if(error)
 	{
-		str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-						.arg(filename).arg((line + comment_count + 1)).arg((column+1));
-
-		throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                    .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return(text);
@@ -295,7 +333,7 @@ QString SchemaParser::getPureText(void)
 
 QString SchemaParser::getConditional(void)
 {
-	QString conditional, current_line, str_aux;
+  QString conditional, current_line;
 	bool error=false;
 
 	current_line=buffer[line];
@@ -324,9 +362,9 @@ QString SchemaParser::getConditional(void)
 
 	if(error)
 	{
-		str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-						.arg(filename).arg(line + comment_count + 1).arg(column+1);
-		throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                    .arg(filename).arg(line + comment_count + 1).arg(column+1),
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return(conditional);
@@ -334,7 +372,7 @@ QString SchemaParser::getConditional(void)
 
 QString SchemaParser::getMetaCharacter(void)
 {
-	QString meta, current_line, str_aux;
+  QString meta, current_line;
 	bool error=false;
 
 	current_line=buffer[line];
@@ -361,9 +399,9 @@ QString SchemaParser::getMetaCharacter(void)
 
 	if(error)
 	{
-		str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-						.arg(filename).arg(line + comment_count + 1).arg(column+1);
-		throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                    .arg(filename).arg(line + comment_count + 1).arg(column+1),
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return(meta);
@@ -415,7 +453,7 @@ bool SchemaParser::evaluateComparisonExpr(void)
           {
             value+=curr_line[column++];
 
-            while(column < static_cast<unsigned>(curr_line.size()))
+            while(column < curr_line.size())
             {
               value+=curr_line[column++];
 
@@ -490,9 +528,9 @@ bool SchemaParser::evaluateComparisonExpr(void)
   }
 
   if(error)
-    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
                     .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
-                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   return(expr_is_true);
 }
@@ -573,9 +611,9 @@ void SchemaParser::defineAttribute(void)
        available on the rest of the script being parsed */
     attributes[new_attrib]=value;
   else
-    throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
                     .arg(filename).arg((line + comment_count + 1)).arg((column+1)),
-                    ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 bool SchemaParser::evaluateExpression(void)
@@ -645,9 +683,9 @@ bool SchemaParser::evaluateExpression(void)
 					//Raises an error if the attribute does is unknown
 					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
 					{
-						throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+            throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
 														.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
-														ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                            ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
 					//Error 1: A conditional token other than %or %not %and if found on conditional expression
@@ -711,9 +749,9 @@ bool SchemaParser::evaluateExpression(void)
 
 	if(error)
 	{
-		throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+    throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
 										.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
-										ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return(expr_is_true);
@@ -721,7 +759,7 @@ bool SchemaParser::evaluateExpression(void)
 
 void SchemaParser::ignoreBlankChars(const QString &line)
 {
-  while(column < static_cast<unsigned>(line.size()) &&
+  while(column < line.size() &&
         (line[column]==CHR_SPACE ||
          line[column]==CHR_TABULATION)) column++;
 }
@@ -778,14 +816,14 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 	}
 }
 
-void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
+void SchemaParser::ignoreUnkownAttributes(bool ignore)
 {
 	ignore_unk_atribs=ignore;
 }
 
-void SchemaParser::setIgnoreEmptyAttributes(bool ignore)
+void SchemaParser::ignoreEmptyAttributes(bool ignore)
 {
-	ignore_empty_atribs=ignore;
+  ignore_empty_atribs=ignore;
 }
 
 QString SchemaParser::convertCharsToXMLEntities(QString buf)
@@ -880,7 +918,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 	QString object_def;
 	unsigned end_cnt, if_cnt;
 	int if_level, prev_if_level;
-	QString atrib, cond, prev_cond, word, meta, str_aux;
+  QString atrib, cond, prev_cond, word, meta;
 	bool error, if_expr;
 	char chr;
 	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
@@ -924,10 +962,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					//Checks whether the metacharacter is part of the  'if' expression (this is an error)
           if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
 					{
-						str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-										.arg(filename).arg(line + comment_count +1).arg(column+1);
-
-						throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                            .arg(filename).arg(line + comment_count +1).arg(column+1),
+                            ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else
 					{
@@ -969,9 +1006,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						if(!ignore_unk_atribs)
 						{
-							str_aux=QString(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE))
-											.arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1));
-							throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+              throw Exception(QString(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE))
+                              .arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+                              ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
               attributes[atrib]="";
@@ -1006,10 +1043,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						raises an exception */
             if(attributes[atrib]=="" && !ignore_empty_atribs)
 						{
-							str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
-											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
-
-							throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+              throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+                              .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
+                              ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						/* If the parser is not in an if / else, concatenates the value of the attribute
@@ -1029,9 +1065,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						 cond!=TOKEN_OR && cond!=TOKEN_NOT &&
              cond!=TOKEN_AND && cond!=TOKEN_DEFINE)
 					{
-						str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
-										.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
-						throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            throw Exception(QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
+                            .arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1),
+                            ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
           else if(cond==TOKEN_DEFINE)
           {
@@ -1195,9 +1231,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 						if(error)
 						{
-							str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-											.arg(filename).arg(line + comment_count +1).arg(column+1);
-							throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+              throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                              .arg(filename).arg(line + comment_count +1).arg(column+1),
+                              ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
 				break;
@@ -1217,9 +1253,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						 because only an attribute must be on the 'if' expression  */
 						if(vet_tk_if[if_level] && !vet_tk_then[if_level])
 						{
-							str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-											.arg(filename).arg(line + comment_count +1).arg(column+1);
-							throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+              throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                              .arg(filename).arg(line + comment_count +1).arg(column+1),
+                              ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						//Case the parser is in 'if' section
 						else if(vet_tk_if[if_level] &&
@@ -1242,9 +1278,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 		was not closed thus the parser returns an error */
 		if(if_cnt!=end_cnt)
 		{
-			str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-							.arg(filename).arg(line + comment_count +1).arg(column+1);
-			throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(QString(Exception::getErrorMessage(ERR_INV_SYNTAX))
+                      .arg(filename).arg(line + comment_count +1).arg(column+1),
+                      ERR_INV_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 

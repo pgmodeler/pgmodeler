@@ -434,7 +434,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
         attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
 
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
 						schparser.getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
 																				GlobalAttributes::DIR_SEPARATOR +
@@ -443,7 +443,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 																				GlobalAttributes::CONNECTIONS_CONF +
 																				GlobalAttributes::SCHEMA_EXT,
 																				attribs);
-				schparser.setIgnoreUnkownAttributes(false);
+				schparser.ignoreUnkownAttributes(false);
 			}
 		}
 

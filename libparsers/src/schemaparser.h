@@ -153,14 +153,14 @@ class SchemaParser {
 
 		/*! \brief Vectorial representation of the loaded file. This is the buffer that is
 		 analyzed by de parser */
-		vector<QString> buffer;
+    QStringList buffer;
 
-		unsigned line, //! \brief Current line where the parser reading is
-						 column, //! \brief Current column where the parser reading is
+    int line, //! \brief Current line where the parser reading is
+        column, //! \brief Current column where the parser reading is
 
-						/*! \brief Comment line ammout extracted. This attribute is used to make the correct
-											reference to the line on file that has syntax errors */
-						 comment_count;
+        /*! \brief Comment line ammout extracted. This attribute is used to make the correct
+                  reference to the line on file that has syntax errors */
+        comment_count;
 
 		attribs_map attributes;
 
@@ -204,14 +204,17 @@ class SchemaParser {
 		//! \brief Resets the parser in order to do new analysis
 		void restartParser(void);
 
-		//! \brief Set if the parser must ignore unknown attributes avoiding expcetion throwing
-		void setIgnoreUnkownAttributes(bool ignore);
+    //! \brief Set if the parser must ignore unknown attributes avoiding exception throwing
+    void ignoreUnkownAttributes(bool ignore);
 
-		//! \brief Set if the parser must ignore empty attributes avoiding expcetion throwing
-		void setIgnoreEmptyAttributes(bool ignore);
+    //! \brief Set if the parser must ignore empty attributes avoiding exception throwing
+    void ignoreEmptyAttributes(bool ignore);
 
 		//! \brief Retorns the current PostgreSQL version used by the parser
 		QString getPgSQLVersion(void);
+
+    //! brief Extracts the attributes names from the currently loaded buffer
+    QStringList extractAttributes(void);
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
     called when generating XML code and only tag attributes are treated.*/

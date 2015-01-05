@@ -301,10 +301,10 @@ void GeneralConfigWidget::saveConfiguration(void)
       else if(itr->first==ParsersAttributes::VALIDATOR ||
               itr->first==ParsersAttributes::OBJECT_FINDER)
       {
-        schparser.setIgnoreUnkownAttributes(true);
+        schparser.ignoreUnkownAttributes(true);
         config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
           schparser.getCodeDefinition(widget_sch, itr->second);
-        schparser.setIgnoreUnkownAttributes(false);
+        schparser.ignoreUnkownAttributes(false);
       }
 
       itr++;
