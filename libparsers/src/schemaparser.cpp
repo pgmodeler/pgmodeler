@@ -766,22 +766,22 @@ void SchemaParser::ignoreBlankChars(const QString &line)
 
 char SchemaParser::translateMetaCharacter(const QString &meta)
 {
-  if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
-     meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
-     meta!=TOKEN_META_CB)
+  static map<QString, char> metas={{ TOKEN_META_SP, CHR_SPACE },
+                                   { TOKEN_META_TB, CHR_TABULATION },
+                                   { TOKEN_META_BR, CHR_LINE_END },
+                                   { TOKEN_META_OB, CHR_INI_PURETEXT },
+                                   { TOKEN_META_CB, CHR_END_PURETEXT },
+                                   { TOKEN_META_OC, CHR_INI_ATTRIB },
+                                   { TOKEN_META_CC, CHR_END_ATTRIB }};
+
+  if(metas.count(meta)==0)
   {
     throw Exception(QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
                     .arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1),
                     ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  if(meta==TOKEN_META_SP) return(CHR_SPACE);
-  else if(meta==TOKEN_META_TB) return(CHR_TABULATION);
-  else if(meta==TOKEN_META_OB) return(CHR_INI_PURETEXT);
-  else if(meta==TOKEN_META_CB) return(CHR_END_PURETEXT);
-  else if(meta==TOKEN_META_OC) return(CHR_INI_ATTRIB);
-  else if(meta==TOKEN_META_CC) return(CHR_END_ATTRIB);
-  else return(CHR_LINE_END);
+  return(metas.at(meta));
 }
 
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)

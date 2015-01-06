@@ -23,7 +23,7 @@
 
 using namespace ParsersAttributes;
 
-const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QT_TR_NOOP("(undefined)");
+const QString DatabaseExplorerWidget::DEP_NOT_DEFINED="";
 const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ELEM_SEPARATOR="•";
 
@@ -860,8 +860,14 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
           attribs.count(ParsersAttributes::NAME) &&
           !attribs[ParsersAttributes::NAME].contains("."))
   {
-    attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + "." +
-                                     BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+    QString obj_name;
+
+    if(obj_type!=OBJ_OPERATOR)
+      obj_name=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+    else
+      obj_name=attribs[ParsersAttributes::NAME];
+
+    attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + "." + obj_name;
   }
 
   attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
