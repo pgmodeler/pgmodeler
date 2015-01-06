@@ -43,7 +43,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
     SyntaxHighlighter *snippet_hl;
 
-    HintTextWidget *parsable_ht;
+    HintTextWidget *parsable_ht, *placeholders_ht;
 
     //! brief Fills the snippet combobox with previously loaded snippet map
     void fillSnippetsCombo(map<QString, attribs_map> &config);
@@ -84,7 +84,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
     /*! brief Returns the parsed snipped identified by 'snip_id'. The 'attribs' contains the set of
         attributes to be replaced on the original snippet code */
-    static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map(), bool fill_empty_attrs=true);
+    static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map());
 
     //! brief Configures a QMenu instances with the available snippets categorizing them in submenus
     static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());

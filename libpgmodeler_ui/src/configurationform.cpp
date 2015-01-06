@@ -40,6 +40,13 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
+
+  icons_lst->setCurrentRow(GENERAL_CONF_WGT);
+}
+
+void ConfigurationForm::hideEvent(QHideEvent *)
+{
+  icons_lst->setCurrentRow(GENERAL_CONF_WGT);
 }
 
 void ConfigurationForm::reject(void)

@@ -839,7 +839,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
 void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 {
-  attribs_map attribs, attribs_aux;
+  attribs_map attribs;
   QTreeWidgetItem *item=objects_trw->currentItem();
   ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
@@ -872,7 +872,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
       attribs[attr.first]=attr.second.replace(ELEM_SEPARATOR,",");
   }
 
-  emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs, true));
+  emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs));
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)

@@ -320,6 +320,7 @@ namespace ParsersAttributes {
   PGMODELER_VERSION="pgmodeler-ver",
   PGSQL_BASE_TYPE="basetype",
   PGSQL_VERSION="pgsql-ver",
+  PLACEHOLDERS="placeholders",
   PK_COL_PATTERN="pk-col-pattern",
   PK_COLUMN="pk-column",
   PK_CONSTR="pk-constr",

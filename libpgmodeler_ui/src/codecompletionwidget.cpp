@@ -266,7 +266,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 	{
 		sel_objects[qualifying_level]=obj;
 		lvl_cur=code_field_txt->textCursor();
-	}
+  }
 }
 
 void CodeCompletionWidget::updateList(void)

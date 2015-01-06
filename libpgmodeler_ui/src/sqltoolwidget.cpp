@@ -633,46 +633,9 @@ void SQLToolWidget::setCurrentDatabase(int idx)
   }
 }
 
-QString SQLToolWidget::getParsedSnippet(const QString &snip_id)
-{
-  attribs_map snip=SnippetsConfigWidget::getSnippetById(snip_id);
-
-  if(snip.empty())
-   return("");
-
-  if(snip[ParsersAttributes::PARSABLE]==ParsersAttributes::_TRUE_)
-  {
-    try
-    {
-      SchemaParser schparser;
-      QStringList attr_names;
-      attribs_map attribs;
-
-      schparser.loadBuffer(snip[ParsersAttributes::CONTENTS]);
-      attr_names=schparser.extractAttributes();
-
-      //Using dummy values for the extracted attributes
-      for(QString attr : attr_names)
-        attribs[attr]=QString("{%1}").arg(attr);
-
-      schparser.ignoreEmptyAttributes(true);
-      schparser.ignoreUnkownAttributes(true);
-      return(schparser.getCodeDefinition(attribs));
-    }
-    catch(Exception &e)
-    {
-      return(trUtf8("/* Error parsing the snippet '%1':\n\n %2 */")
-             .arg(snip[ParsersAttributes::ID], e.getErrorMessage()));
-    }
-  }
-  else
-    return(snip[ParsersAttributes::CONTENTS]);
-
-}
-
 void SQLToolWidget::selectSnippet(QAction *act)
 {
-  sql_cmd_txt->setPlainText(getParsedSnippet(act->text()));
+  sql_cmd_txt->setPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
 }
 
 void SQLToolWidget::handleSelectedWord(QString word)
@@ -682,7 +645,7 @@ void SQLToolWidget::handleSelectedWord(QString word)
     QTextCursor tc=sql_cmd_txt->textCursor();
     tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
     tc.removeSelectedText();
-    tc.insertText(getParsedSnippet(word));
+    tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
   }
 }
 

@@ -56,6 +56,9 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   parsable_ht=new HintTextWidget(parsable_hint, this);
   parsable_ht->setText(parsable_chk->statusTip());
 
+  placeholders_ht=new HintTextWidget(placeholders_hint, this);
+  placeholders_ht->setText(placeholders_chk->statusTip());
+
   try
   {
     snippet_hl=new SyntaxHighlighter(snippet_txt, false);
@@ -80,6 +83,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
   connect(update_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
   connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
+  connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
 }
 
 map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams(void)
@@ -148,11 +152,15 @@ vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
   return(snippets);
 }
 
-QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_map attribs, bool fill_empty_attrs)
+QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_map attribs)
 {
   if(config_params.count(snip_id))
   {
     QString buf=config_params[snip_id].at(ParsersAttributes::CONTENTS);
+
+    if(config_params[snip_id].at(ParsersAttributes::PARSABLE)!=ParsersAttributes::_TRUE_)
+      return(buf);
+
     SchemaParser schparser;
     QStringList aux_attribs;
 
@@ -161,12 +169,13 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
       schparser.loadBuffer(buf);
 
       //Assigning dummy values for empty attributes
-      if(fill_empty_attrs)
+      if(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::_TRUE_)
       {
         aux_attribs=schparser.extractAttributes();
         for(QString attr : aux_attribs)
         {
-          if(attribs.count(attr)==0)
+          if(attribs.count(attr)==0 ||
+             (attribs.count(attr) && attribs[attr].isEmpty()))
             attribs[attr]=QString("{%1}").arg(attr);
         }
       }
@@ -237,7 +246,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 void SnippetsConfigWidget::hideEvent(QHideEvent *)
 {
-  this->resetForm();
+  enableEditMode(false);
 }
 
 void SnippetsConfigWidget::loadConfiguration(void)
@@ -274,6 +283,8 @@ void SnippetsConfigWidget::resetForm(void)
   id_edt->clear();
   label_edt->clear();
   applies_to_cmb->setCurrentIndex(0);
+  parsable_chk->setChecked(false);
+  placeholders_chk->setChecked(false);
 }
 
 void SnippetsConfigWidget::editSnippet(void)
@@ -286,6 +297,7 @@ void SnippetsConfigWidget::editSnippet(void)
   id_edt->setText(snip_id);
   label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
   parsable_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PARSABLE)==ParsersAttributes::_TRUE_);
+  placeholders_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::_TRUE_);
   applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 
@@ -302,6 +314,8 @@ void SnippetsConfigWidget::handleSnippet(void)
                        {ParsersAttributes::LABEL, label_edt->text()},
                        {ParsersAttributes::OBJECT, object_id},
                        {ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
+                       {ParsersAttributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
+                                                            ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
                        {ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} };
 
   if(isSnippetValid(snippet, orig_id))

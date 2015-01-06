@@ -70,9 +70,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
-    //! brief Return the parsed snippet identified by its id
-    QString getParsedSnippet(const QString &snip_id);
-
   public:
 		SQLToolWidget(QWidget * parent = 0);
     ~SQLToolWidget(void);
