@@ -32,11 +32,9 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vlayout=nullptr;
 		QFrame *frame=nullptr;
-		QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
-																	src_fk_pattern_txt, dst_fk_pattern_txt,
-                                  pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-		unsigned i, count=sizeof(pattern_fields)/sizeof(QTextEdit *);
-
+    QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+                                 src_fk_pattern_txt, dst_fk_pattern_txt,
+                                 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 		operation_count=0;
 
     gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
@@ -51,20 +49,22 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
     single_pk_ht=new HintTextWidget(single_pk_hint, this);
     single_pk_ht->setText(single_pk_chk->statusTip());
 
-		table1_hl=new SyntaxHighlighter(ref_table_txt, false);
+    table1_hl=nullptr;
+    table1_hl=new SyntaxHighlighter(ref_table_txt, false);
     table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		table2_hl=new SyntaxHighlighter(recv_table_txt, false);
+    table2_hl=nullptr;
+    table2_hl=new SyntaxHighlighter(recv_table_txt, false);
     table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		for(i=0; i < count; i++)
+    for(int i=0; i < pattern_fields.size(); i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true, true);
+      patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QTextEdit *>(pattern_fields[i]), true, true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																			 GlobalAttributes::DIR_SEPARATOR +
 																			 GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
-		}
+    }
 
 		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																					(ObjectTableWidget::UPDATE_BUTTON |

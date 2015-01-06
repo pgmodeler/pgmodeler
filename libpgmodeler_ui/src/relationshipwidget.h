@@ -52,7 +52,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		SyntaxHighlighter *table1_hl,
 											*table2_hl,
-											*patterns_hl[6];
+                      *patterns_hl[7];
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		ObjectTableWidget *attributes_tab,
