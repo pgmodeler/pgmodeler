@@ -707,8 +707,7 @@ void DataManipulationForm::saveChanges(void)
 		QString cmd;
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("Confirmation"),
-								 trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
+    msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
 								 Messagebox::ALERT_ICON,
 								 Messagebox::YES_NO_BUTTONS);
 

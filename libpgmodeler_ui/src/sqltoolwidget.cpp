@@ -474,8 +474,7 @@ void SQLToolWidget::clearAll(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Confirmation"),
-							 trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
+  msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
 							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)

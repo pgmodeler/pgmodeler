@@ -1174,7 +1174,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
       if(confirm_validation && db_model->isInvalidated())
 			{
-				msg_box.show(trUtf8("Confirmation"),
+        msg_box.show(trUtf8("Confirmation"),
                      trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 										 trUtf8("Save anyway"), trUtf8("Validate"), "",
@@ -1378,8 +1378,7 @@ void MainWindow::printModel(void)
 			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 				 orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
-				msg_box.show(trUtf8("Confirmation"),
-										 trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
+        msg_box.show(trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS);
 			}
 
@@ -1675,8 +1674,7 @@ void MainWindow::quitDemoVersion(void)
 {
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
-  msg_box.show(trUtf8("Information"),
-               trUtf8("The execution of demonstration version has finished!\
+  msg_box.show(trUtf8("The execution of demonstration version has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
 											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
 											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\

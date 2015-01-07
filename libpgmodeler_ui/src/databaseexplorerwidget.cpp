@@ -899,7 +899,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
         msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it?")
             .arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
 
-      msg_box.show(trUtf8("Confirmation"), msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+      msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)
       {

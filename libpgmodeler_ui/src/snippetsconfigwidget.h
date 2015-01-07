@@ -56,7 +56,11 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     /* Disable methods */
     void applyConfiguration(void){}
 
-	public:
+    static QString parseSnippet(attribs_map snippet, attribs_map attribs);
+
+    attribs_map getSnippetAttributes(void);
+
+  public:
     static const QString PARSE_SNIP_TOKEN;
 
     SnippetsConfigWidget(QWidget * parent=0);
@@ -101,6 +105,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     void enableEditMode(bool enable);
     void enableSaveButtons(void);
     void filterSnippets(int idx);
+    void parseSnippet(void);
 
   public slots:
 		void restoreDefaults(void);

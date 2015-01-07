@@ -113,10 +113,9 @@ void ConfigurationForm::loadConfiguration(void)
 void ConfigurationForm::restoreDefaults(void)
 {
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Confirmation"),
-									trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-									Messagebox::CONFIRM_ICON,
-									Messagebox::YES_NO_BUTTONS);
+  msg_box.show(trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
+               Messagebox::CONFIRM_ICON,
+               Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
     qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();

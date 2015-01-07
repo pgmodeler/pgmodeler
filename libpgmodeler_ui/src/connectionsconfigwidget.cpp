@@ -410,8 +410,8 @@ void ConnectionsConfigWidget::saveConfiguration(void)
     {
       Messagebox msg_box;
 
-      msg_box.show(trUtf8("Alert"), trUtf8("There is an unsaved connection! Want to save it?"),
-               Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+      msg_box.show(trUtf8("There is an unsaved connection! Want to save it?"),
+                   Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)
        handleConnection();

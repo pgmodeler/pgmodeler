@@ -60,17 +60,6 @@ bool Messagebox::isCancelled(void)
   return(cancelled);
 }
 
-void Messagebox::setRawTextInformation(const QString &text, bool richtext)
-{
-  show_raw_info_tb->setVisible(true);
-  raw_info_txt->setAcceptRichText(richtext);
-
-  if(richtext)
-    raw_info_txt->setText(text);
-  else
-    raw_info_txt->setPlainText(text);
-}
-
 void Messagebox::showExceptionList(void)
 {
 	if(show_errors_tb->isChecked())
@@ -167,25 +156,6 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 		idx++;
 	}
 
-	switch(icon_type)
-	{
-		case ERROR_ICON:
-			title=trUtf8("Error");
-		break;
-
-		case ALERT_ICON:
-			title=trUtf8("Alert");
-		break;
-
-		case INFO_ICON:
-			title=trUtf8("Information");
-		break;
-
-		default:
-			title="";
-		break;
-	}
-
 	if(msg.isEmpty())
 		str_aux=e.getErrorMessage();
 	else
@@ -204,10 +174,15 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
   this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
+void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
+{
+  this->show("", msg,  icon_type, buttons);
+}
+
 void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,
                       const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	QString icon_name;
+  QString icon_name, aux_title=title;
 
   if(!yes_lbl.isEmpty())
     yes_ok_btn->setText(yes_lbl);
@@ -224,6 +199,28 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
+
+  if(title.isEmpty())
+  {
+    switch(icon_type)
+    {
+      case ERROR_ICON:
+        aux_title=trUtf8("Error");
+      break;
+
+      case ALERT_ICON:
+        aux_title=trUtf8("Alert");
+      break;
+
+      case INFO_ICON:
+        aux_title=trUtf8("Information");
+      break;
+
+      case CONFIRM_ICON:
+        aux_title=trUtf8("Confirmation");
+      break;
+    }
+  }
 
 	switch(icon_type)
 	{
@@ -256,7 +253,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	msg_lbl->setText(msg);
 
-	this->setWindowTitle("pgModeler - " + title);
+  this->setWindowTitle("pgModeler - " + aux_title);
 	this->objs_group_wgt->setCurrentIndex(0);
 	this->show_errors_tb->setChecked(false);
 	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));

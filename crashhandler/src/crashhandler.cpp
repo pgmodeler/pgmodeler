@@ -92,7 +92,7 @@ void CrashHandler::loadReport(const QString &filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), Messagebox::ERROR_ICON);
+    msgbox.show(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), Messagebox::ERROR_ICON);
 	else
 	{
 		QByteArray uncomp_buf;
@@ -148,7 +148,7 @@ void CrashHandler::generateReport(void)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), Messagebox::ERROR_ICON);
+    msgbox.show(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), Messagebox::ERROR_ICON);
 	else
 	{
 		buf.append(actions_txt->toPlainText().toUtf8());
@@ -168,7 +168,8 @@ void CrashHandler::generateReport(void)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file <strong>%1</strong> to <em>%2</em> in order be debugged. Thank you for the collaboration!").arg(crash_file).arg(GlobalAttributes::CRASH_REPORT_EMAIL), Messagebox::INFO_ICON);
+    msgbox.show(trUtf8("Crash report successfuly generated! Please send the file <strong>%1</strong> to <em>%2</em> in order be debugged. Thank you for the collaboration!").arg(crash_file).arg(GlobalAttributes::CRASH_REPORT_EMAIL),
+                Messagebox::INFO_ICON);
 		this->close();
 	}
 }

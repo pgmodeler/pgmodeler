@@ -80,9 +80,11 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
   connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
   connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
+  connect(parsable_chk, SIGNAL(toggled(bool)), this, SLOT(enableSaveButtons()));
   connect(filter_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSnippets(int)));
   connect(update_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
   connect(add_tb, SIGNAL(clicked()), this, SLOT(handleSnippet()));
+  connect(parse_tb, SIGNAL(clicked()), this, SLOT(parseSnippet()));
   connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
 }
 
@@ -152,37 +154,48 @@ vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
   return(snippets);
 }
 
+QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attribs)
+{ 
+  SchemaParser schparser;
+  QStringList aux_attribs;
+  QString buf=snippet[ParsersAttributes::CONTENTS];
+
+  if(snippet[ParsersAttributes::PARSABLE]!=ParsersAttributes::_TRUE_)
+    return(buf);
+
+  try
+  {
+    schparser.loadBuffer(buf);
+
+    //Assigning dummy values for empty attributes
+    if(snippet[ParsersAttributes::PLACEHOLDERS]==ParsersAttributes::_TRUE_)
+    {
+      aux_attribs=schparser.extractAttributes();
+      for(QString attr : aux_attribs)
+      {
+        if(attribs.count(attr)==0 ||
+           (attribs.count(attr) && attribs[attr].isEmpty()))
+          attribs[attr]=QString("{%1}").arg(attr);
+      }
+    }
+
+    schparser.ignoreEmptyAttributes(true);
+    schparser.ignoreUnkownAttributes(true);
+    return(schparser.getCodeDefinition(attribs));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
 QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_map attribs)
 {
   if(config_params.count(snip_id))
   {
-    QString buf=config_params[snip_id].at(ParsersAttributes::CONTENTS);
-
-    if(config_params[snip_id].at(ParsersAttributes::PARSABLE)!=ParsersAttributes::_TRUE_)
-      return(buf);
-
-    SchemaParser schparser;
-    QStringList aux_attribs;
-
     try
     {
-      schparser.loadBuffer(buf);
-
-      //Assigning dummy values for empty attributes
-      if(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::_TRUE_)
-      {
-        aux_attribs=schparser.extractAttributes();
-        for(QString attr : aux_attribs)
-        {
-          if(attribs.count(attr)==0 ||
-             (attribs.count(attr) && attribs[attr].isEmpty()))
-            attribs[attr]=QString("{%1}").arg(attr);
-        }
-      }
-
-      schparser.ignoreEmptyAttributes(true);
-      schparser.ignoreUnkownAttributes(true);
-      return(schparser.getCodeDefinition(attribs));
+      return(parseSnippet(config_params[snip_id], attribs));
     }
     catch(Exception &e)
     {
@@ -190,7 +203,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
     }
   }
   else
-   return("");
+    return("");
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -237,7 +250,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
   if(!err_msg.isEmpty())
   {
-    msg_box.show(trUtf8("Error"), err_msg, Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+    msg_box.show(err_msg, Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
     return(false);
   }
   else
@@ -287,6 +300,22 @@ void SnippetsConfigWidget::resetForm(void)
   placeholders_chk->setChecked(false);
 }
 
+attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
+{
+  QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
+
+  if(object_id.isEmpty())
+    object_id=ParsersAttributes::GENERAL;
+
+  return(attribs_map{ {ParsersAttributes::ID, id_edt->text()},
+                      {ParsersAttributes::LABEL, label_edt->text()},
+                      {ParsersAttributes::OBJECT, object_id},
+                      {ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
+                      {ParsersAttributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
+                                                         ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
+                      {ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} });
+}
+
 void SnippetsConfigWidget::editSnippet(void)
 {
   QString snip_id=snippets_cmb->currentData().toString();
@@ -303,20 +332,10 @@ void SnippetsConfigWidget::editSnippet(void)
 
 void SnippetsConfigWidget::handleSnippet(void)
 {
-  QString orig_id=snippets_cmb->currentData().toString(),
-          object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
+  QString orig_id=snippets_cmb->currentData().toString();
   attribs_map snippet;
 
-  if(object_id.isEmpty())
-    object_id=ParsersAttributes::GENERAL;
-
-  snippet=attribs_map{ {ParsersAttributes::ID, id_edt->text()},
-                       {ParsersAttributes::LABEL, label_edt->text()},
-                       {ParsersAttributes::OBJECT, object_id},
-                       {ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
-                       {ParsersAttributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
-                                                            ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
-                       {ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} };
+  snippet=getSnippetAttributes();
 
   if(isSnippetValid(snippet, orig_id))
   {  
@@ -343,7 +362,7 @@ void SnippetsConfigWidget::removeAllSnippets(void)
 {
   Messagebox msg_box;
 
-  msg_box.show(trUtf8("Confirmation"), trUtf8("Do you really want to remove all snippets?"),
+  msg_box.show(trUtf8("Do you really want to remove all snippets?"),
                Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
   if(msg_box.result()==QDialog::Accepted)
@@ -380,6 +399,7 @@ void SnippetsConfigWidget::enableSaveButtons(void)
 
   add_tb->setEnabled(enable);
   update_tb->setEnabled(enable);
+  parse_tb->setEnabled(enable && parsable_chk->isChecked());
 }
 
 void SnippetsConfigWidget::filterSnippets(int idx)
@@ -402,6 +422,21 @@ void SnippetsConfigWidget::filterSnippets(int idx)
     }
 
     fillSnippetsCombo(flt_snippets);
+  }
+}
+
+void SnippetsConfigWidget::parseSnippet(void)
+{
+  Messagebox msg_box;
+
+  try
+  {
+    parseSnippet(getSnippetAttributes(), attribs_map());
+    msg_box.show(trUtf8("No syntax errors found in the snippet."), Messagebox::INFO_ICON);
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
   }
 }
 

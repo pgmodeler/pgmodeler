@@ -31,7 +31,8 @@
 class Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
-		bool cancelled;
+
+    bool cancelled;
 
 	public:
 		//! \brief Constants used to define the message icon
@@ -56,12 +57,15 @@ class Messagebox: public QDialog, public Ui::Messagebox {
               const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
               const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
+    //! brief Shows the message box using an excpetion as message
     void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
               const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
               const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
-		bool isCancelled(void);
 
-    void setRawTextInformation(const QString &text, bool richtext);
+    //! brief Shows a simple message box with the title automatically defined by the icon type
+    void show(const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
+
+		bool isCancelled(void);
 
 	private slots:
 		void handleYesOkClick(void);
