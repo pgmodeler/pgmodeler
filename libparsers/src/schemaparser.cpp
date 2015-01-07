@@ -549,7 +549,7 @@ void SchemaParser::defineAttribute(void)
       ignoreBlankChars(curr_line);
 
       switch(curr_line[column].toLatin1())
-      {
+      {        
         case CHR_LINE_END:
           end_def=true;
         break;
@@ -572,12 +572,12 @@ void SchemaParser::defineAttribute(void)
                               .arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
                               ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
             }
-            else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
+            /*else if(attributes[attrib].isEmpty() && !ignore_empty_atribs)
             {
               throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
                               .arg(attrib).arg(filename).arg(line + comment_count +1).arg(column+1),
                               ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-            }
+            }*/
 
             value+=attributes[attrib];
           }
@@ -919,7 +919,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 	unsigned end_cnt, if_cnt;
 	int if_level, prev_if_level;
   QString atrib, cond, prev_cond, word, meta;
-	bool error, if_expr;
+  bool error, if_expr;
 	char chr;
 	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
 	map<int, vector<QString> > if_map, else_map;
@@ -1071,7 +1071,34 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					}
           else if(cond==TOKEN_DEFINE)
           {
-            defineAttribute();
+            bool extract=false;
+
+            /* Extracts the attribute only if the process is not in the middle of a 'if-then-else' or
+               if the parser is inside the 'if' part and the expression is evaluated as true, or in the 'else' part
+               and the related 'if' is false. Otherwise the line where %define is located will be completely ignored */
+            extract=(if_level < 0 || vet_expif.empty());
+
+            if(!extract && if_level >= 0)
+            {
+              //If in 'else' the related 'if' is false, extracts the attribute
+              if(prev_cond==TOKEN_ELSE && !vet_expif[if_level])
+                extract=true;
+              else if(prev_cond!=TOKEN_ELSE)
+              {
+                //If in the 'if' part all the previous ifs until the current must be true
+                extract=true;
+                for(int i=0; i <= if_level && extract; i++)
+                  extract=vet_expif[i];
+              }
+            }
+
+            if(extract)
+              defineAttribute();
+            else
+            {
+              column=0;
+              line++;
+            }
           }
 					else
 					{
@@ -1170,8 +1197,8 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 								{
 									word=(*itr);
 
-									//Check if the work is not an attribute
-									if(word[0]==CHR_INI_ATTRIB)
+                  //Check if the word is not an attribute
+                  if(!word.isEmpty() && word[0]==CHR_INI_ATTRIB)
 									{
                     //If its an attribute, extracts the name between { } and checks if the same has empty value
                     atrib=word.mid(1, word.size()-2);

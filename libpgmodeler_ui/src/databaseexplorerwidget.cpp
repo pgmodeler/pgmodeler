@@ -197,9 +197,6 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
      attribs[ParsersAttributes::NAME].startsWith("information_schema."))
     attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
-  if(attribs.count(ParsersAttributes::SIGNATURE)==0)
-    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
-
   for(auto attrib : attribs)
   {
     attr_name=attrib.first;
@@ -220,6 +217,15 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
     fmt_attribs[attr_name]=attr_value;
   }
+
+  if(attribs.count(ParsersAttributes::SIGNATURE)==0)
+    attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+
+  if(attribs.count(ParsersAttributes::SCHEMA)!=0)
+    attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
+                                          .arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
+                                          .arg(attribs[ParsersAttributes::SIGNATURE]);
+
 
   return(fmt_attribs);
 }
@@ -281,7 +287,7 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 
   formatOidAttribs(attribs, { ParsersAttributes::TYPES }, OBJ_TYPE, true);
   attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2)")
-                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(BaseObject::formatName(attribs[ParsersAttributes::NAME]))
                                          .arg(attribs[ParsersAttributes::TYPES])).replace(ELEM_SEPARATOR, ",");
 
   attribs[ParsersAttributes::STATE_TYPE]=getObjectName(OBJ_TYPE, attribs[ParsersAttributes::STATE_TYPE]);
@@ -337,7 +343,7 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 
   formatOidAttribs(attribs, { ParsersAttributes::ARG_TYPES }, OBJ_TYPE, true);
   attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2)")
-                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(BaseObject::formatName(attribs[ParsersAttributes::NAME]))
                                          .arg(attribs[ParsersAttributes::ARG_TYPES])).replace(ELEM_SEPARATOR, ",");
 
   formatBooleanAttribs(attribs, { ParsersAttributes::WINDOW_FUNC,
@@ -361,7 +367,7 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
                               ParsersAttributes::JOIN_FUNC }, OBJ_FUNCTION, false);
 
   attribs[ParsersAttributes::SIGNATURE]=(QString("%1(%2,%3)")
-                                         .arg(attribs[ParsersAttributes::NAME])
+                                         .arg(BaseObject::formatName(attribs[ParsersAttributes::NAME], true))
                                          .arg(attribs[ParsersAttributes::LEFT_TYPE])
                                          .arg(attribs[ParsersAttributes::RIGHT_TYPE])).replace(ELEM_SEPARATOR, ",");
 }

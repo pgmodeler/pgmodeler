@@ -128,7 +128,9 @@ class SchemaParser {
     bool evaluateComparisonExpr(void);
 
     /*! brief Creates a new attribute when finding  %define {attrib-name} [expr], where [expr]
-        can be pure texts, meta chars or other attributes exists overwrite its value */
+        can be pure texts, meta chars or other attributes exists overwrite its value.
+        The %define construction must be the only one in the line otherwise the parser will return
+        errors if another instruction starting with % is found. */
     void defineAttribute(void);
 
     //! brief Increments the column counter while blank chars (space and tabs) are found on the line
