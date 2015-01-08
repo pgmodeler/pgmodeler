@@ -218,6 +218,9 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
     fmt_attribs[attr_name]=attr_value;
   }
 
+  attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+  attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+
   if(attribs.count(ParsersAttributes::SIGNATURE)==0)
     attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
 
@@ -225,7 +228,6 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
     attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
                                           .arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
                                           .arg(attribs[ParsersAttributes::SIGNATURE]);
-
 
   return(fmt_attribs);
 }
@@ -876,7 +878,11 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
     attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + "." + obj_name;
   }
 
-  attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+  if(attribs.count(ParsersAttributes::SQL_OBJECT)==0)
+  {
+    attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+    attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+  }
 
   for(auto attr : attribs)
   {
