@@ -4,8 +4,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {has-changes} %then
-  %define {alter-table} [ALTER TABLE ] {table} [ ALTER COLUMN ] {name}
-  %define {ddl-end} [;] $br [-- ddl-end --] $br
+  %set {alter-table} [ALTER TABLE ] {table} [ ALTER COLUMN ] {name}
+  %set {ddl-end} [;] $br [-- ddl-end --] $br
 
   %if {type} %then
    {alter-table}

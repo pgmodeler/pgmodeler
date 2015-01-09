@@ -41,7 +41,7 @@ const QString SchemaParser::TOKEN_END="end";
 const QString SchemaParser::TOKEN_OR="or";
 const QString SchemaParser::TOKEN_AND="and";
 const QString SchemaParser::TOKEN_NOT="not";
-const QString SchemaParser::TOKEN_DEFINE="define";
+const QString SchemaParser::TOKEN_SET="set";
 const QString SchemaParser::TOKEN_UNSET="unset";
 
 const QString SchemaParser::TOKEN_META_SP="sp";
@@ -1135,20 +1135,20 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
 						 cond!=TOKEN_THEN && cond!=TOKEN_END &&
 						 cond!=TOKEN_OR && cond!=TOKEN_NOT &&
-             cond!=TOKEN_AND && cond!=TOKEN_DEFINE &&
+             cond!=TOKEN_AND && cond!=TOKEN_SET &&
              cond!=TOKEN_UNSET)
 					{
-            throw Exception(QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
+            throw Exception(QString(Exception::getErrorMessage(ERR_INV_INSTRUCTION))
                             .arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1),
-                            ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                            ERR_INV_INSTRUCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-          else if(cond==TOKEN_DEFINE || cond==TOKEN_UNSET)
+          else if(cond==TOKEN_SET || cond==TOKEN_UNSET)
           {
             bool extract=false;
 
             /* Extracts or unset the attribute only if the process is not in the middle of a 'if-then-else' or
                if the parser is inside the 'if' part and the expression is evaluated as true, or in the 'else' part
-               and the related 'if' is false. Otherwise the line where %define is located will be completely ignored */
+               and the related 'if' is false. Otherwise the line where %set is located will be completely ignored */
             extract=(if_level < 0 || vet_expif.empty());
 
             if(!extract && if_level >= 0)
@@ -1167,7 +1167,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
             if(extract)
             {
-              if(cond==TOKEN_DEFINE)
+              if(cond==TOKEN_SET)
                defineAttribute();
               else
                unsetAttribute();

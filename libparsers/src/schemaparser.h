@@ -58,7 +58,7 @@ class SchemaParser {
                       CHR_INI_CEXPR,      //! \brief Character that starts a comparison expression
                       CHR_END_CEXPR,      //! \brief Character that ends a comparison expression
                       CHR_VAL_DELIM,      //! \brief Character that delimiters a value (string)
-                      CHR_VALUE_OF;      /*! \brief Character that is used on %define instructions to
+                      CHR_VALUE_OF;      /*! \brief Character that is used on %set instructions to
                                               create an attribute name based upon another attribute value */
 
     //! \brief Tokens related to conditional instructions and operators
@@ -69,7 +69,7 @@ class SchemaParser {
 													TOKEN_OR,  // %or
 													TOKEN_NOT, // %not
                           TOKEN_AND, // %and
-                          TOKEN_DEFINE, //%define
+                          TOKEN_SET, //%set
                           TOKEN_UNSET; //%unset
 
 
@@ -133,8 +133,8 @@ class SchemaParser {
     bool evaluateComparisonExpr(void);
 
     /*! brief Creates a new attribute when finding:
-        1) %define  {attrib-name} [expr]  or
-        2) %define @{existing-attrib} [expr]
+        1) %set  {attrib-name} [expr]  or
+        2) %set @{existing-attrib} [expr]
 
         Where [expr] can be pure texts, meta chars or other attributes exists overwrite its value.
 
@@ -142,7 +142,7 @@ class SchemaParser {
         a new attribute which the name is the value of {existing-attribute}. In this case the parser
         may return error if the value used is an invalid name.
 
-        The %define construction must be the only one in the line otherwise the parser will return
+        The %set construction must be the only one in the line otherwise the parser will return
         errors if another instruction starting with % is found. */
     void defineAttribute(void);
 

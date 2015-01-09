@@ -4,8 +4,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} != "9.0") %and {has-changes} %then 
-  %define {alter-type} [ALTER ] {sql-object} $sp {name}
-  %define {ddl-end} ; $br [-- ddl-end --] $br
+  %set {alter-type} [ALTER ] {sql-object} $sp {name}
+  %set {ddl-end} ; $br [-- ddl-end --] $br
 
   %if {value} %then
     {alter-type} 

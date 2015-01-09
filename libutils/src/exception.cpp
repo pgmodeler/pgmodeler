@@ -168,7 +168,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_PLUGIN_NOT_LOADED", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"ERR_PLUGINS_NOT_LOADED", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
   {"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
-	{"ERR_INV_CONDITIONAL", QT_TR_NOOP("Invalid conditional instruction `%1' on file %2, line %3, column %4!")},
+  {"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file %2, line %3, column %4!")},
 	{"ERR_UNK_ATTRIBUTE", QT_TR_NOOP("Unknown attribute `%1' in file %2, line %3, column %4!")},
 	{"ERR_INV_METACHARACTER", QT_TR_NOOP("Invalid metacharacter `%1' in file %2, line %3, column %4!")},
   {"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file %2, line %3, column %4!")},
