@@ -56,8 +56,10 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     /* Disable methods */
     void applyConfiguration(void){}
 
+    //! brief Parse the snippet map by using the 'attribs' attributes referenced in the snippet code (for parsable snippets)
     static QString parseSnippet(attribs_map snippet, attribs_map attribs);
 
+    //! brief Create an attribute maps based upon the values filled in the form
     attribs_map getSnippetAttributes(void);
 
   public:

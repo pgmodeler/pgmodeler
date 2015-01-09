@@ -454,11 +454,20 @@ void SnippetsConfigWidget::saveConfiguration(void)
                     GlobalAttributes::SCHEMA_EXT;
 
     attribs_map attribs;
+    ObjectType obj_type;
+    vector<attribs_map> snippets;
 
-    for(auto snip : config_params)
+    //Saving the snippets sorting them by object type in the output file
+    for(int i=0; i < applies_to_cmb->count(); i++)
     {
-      attribs[ParsersAttributes::SNIPPET]+=
-       schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip.second));
+      obj_type=static_cast<ObjectType>(applies_to_cmb->itemData(i).toUInt());
+      snippets=getSnippetsByObject(obj_type);
+
+      for(auto snip : snippets)
+      {
+        attribs[ParsersAttributes::SNIPPET]+=
+         schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
+      }
     }
 
     config_params[GlobalAttributes::SNIPPETS_CONF]=attribs;
