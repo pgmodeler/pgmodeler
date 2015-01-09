@@ -96,9 +96,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[ParsersAttributes::COLUMN]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? "1" : "");
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? "1" : "");
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? "1" : "");
+	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : "");
 
 
 	if(column)

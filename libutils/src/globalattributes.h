@@ -66,6 +66,7 @@ namespace GlobalAttributes {
 	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
 	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
 	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
+  SNIPPETS_CONF="snippets",//! \brief Default name for the code snippets configuration file
 
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight

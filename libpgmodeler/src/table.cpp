@@ -118,18 +118,18 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
     attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
-    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
+    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : "");
+    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : "");
     attribs[ParsersAttributes::TABLE]=this->getName(true);
     attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
-		schparser.setIgnoreUnkownAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
 			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
 
 		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
-		schparser.setIgnoreUnkownAttributes(false);
+		schparser.ignoreUnkownAttributes(false);
 	}
 }
 
@@ -270,7 +270,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 				str_constr+=lines[i];
 			}
 
-			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? "1" : "");
+			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : "");
 		}
 	}
 
@@ -1341,9 +1341,9 @@ QString Table::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? "1" : "");
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? "1" : "");
+	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::COPY_TABLE]="";
 	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
   attributes[ParsersAttributes::TAG]="";
@@ -1579,7 +1579,7 @@ QString Table::getAlterDefinition(BaseObject *object)
     if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
     {
       attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-      attributes[ParsersAttributes::HAS_CHANGES]="1";
+      attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
     }
 
     alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
@@ -1598,7 +1598,7 @@ QString Table::getTruncateDefinition(bool cascade)
   try
   {
     BaseObject::setBasicAttributes(true);
-    attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+    attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
     return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
   }
   catch(Exception &e)

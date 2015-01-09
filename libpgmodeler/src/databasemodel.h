@@ -414,8 +414,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-		ObjectType getObjectType(const QString &type_name);
-		void setBasicAttributes(BaseObject *object);
+    void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
 		PgSQLType createPgSQLType(void);

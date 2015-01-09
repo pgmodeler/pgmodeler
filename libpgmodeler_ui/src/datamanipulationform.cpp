@@ -153,7 +153,8 @@ void DataManipulationForm::listColumns(void)
 		for(auto col : cols)
 		{
 			col_names.push_back(col[ParsersAttributes::NAME]);
-			code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], QPixmap(":/icones/icones/column.png"));
+      code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
+                                       QPixmap(":/icones/icones/column.png"));
 		}
 
 		ord_column_cmb->addItems(col_names);
@@ -706,8 +707,7 @@ void DataManipulationForm::saveChanges(void)
 		QString cmd;
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("Confirmation"),
-								 trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
+    msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
 								 Messagebox::ALERT_ICON,
 								 Messagebox::YES_NO_BUTTONS);
 

@@ -13,11 +13,9 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
     append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
     append_sql_cp=new CodeCompletionWidget(append_sql_txt);
 
-
     prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt, false);
     prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
     prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
-
 
     parent_form->setWindowTitle(trUtf8("Append / Prepend SQL code"));
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);

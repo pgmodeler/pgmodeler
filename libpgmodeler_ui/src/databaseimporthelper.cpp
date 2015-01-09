@@ -579,7 +579,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				attribs[ParsersAttributes::DECL_IN_TABLE]="";
 
 			//System objects will have the sql disabled by default
-			attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : "1");
+      attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : ParsersAttributes::_TRUE_);
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
 			if(attribs.count(ParsersAttributes::OWNER))
@@ -718,10 +718,10 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 
 				if(generate_xml)
 				{
-					obj_attr[ParsersAttributes::REDUCED_FORM]="1";
-					schparser.setIgnoreUnkownAttributes(true);
+          obj_attr[ParsersAttributes::REDUCED_FORM]=ParsersAttributes::_TRUE_;
+					schparser.ignoreUnkownAttributes(true);
 					xml_def=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XML_DEFINITION);
-					schparser.setIgnoreUnkownAttributes(false);
+					schparser.ignoreUnkownAttributes(false);
 				}
 				else
 					xml_def=obj_name;
@@ -746,10 +746,10 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 	try
 	{
-		schparser.setIgnoreUnkownAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
 		xml_buf=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), attribs, SchemaParser::XML_DEFINITION);
 
-		schparser.setIgnoreUnkownAttributes(false);
+		schparser.ignoreUnkownAttributes(false);
 		xmlparser->restartParser();
 
 		if(debug_mode)
@@ -1065,14 +1065,14 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		//Generating attributes for STORAGE elements
 		if(attribs[ParsersAttributes::STORAGE]!="0")
 		{
-			elem_attr[ParsersAttributes::STORAGE]="1";
+      elem_attr[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
 			elem_attr[ParsersAttributes::DEFINITION]=getType(attribs[ParsersAttributes::STORAGE], true);
 			elems.push_back(elem_attr);
 		}
 		else if(attribs[ParsersAttributes::FUNCTION].isEmpty() &&
 						attribs[ParsersAttributes::OPERATOR].isEmpty())
 		{
-			elem_attr[ParsersAttributes::STORAGE]="1";
+      elem_attr[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
 			elem_attr[ParsersAttributes::DEFINITION]=attribs[ParsersAttributes::TYPE];
 			elems.push_back(elem_attr);
 		}
@@ -1081,7 +1081,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		if(!attribs[ParsersAttributes::FUNCTION].isEmpty())
 		{
 			elem_attr.clear();
-			elem_attr[ParsersAttributes::FUNCTION]="1";
+      elem_attr[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
 			array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::FUNCTION]);
 
 			for(int i=0; i < array_vals.size(); i++)
@@ -1097,7 +1097,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		if(!attribs[ParsersAttributes::OPERATOR].isEmpty())
 		{
 			elem_attr.clear();
-			elem_attr[ParsersAttributes::OPERATOR]="1";
+      elem_attr[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
 			array_vals=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATOR]);
 
 			for(int i=0; i < array_vals.size(); i++)
@@ -1113,9 +1113,9 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		//Generating the complete XML code for operator class elements
 		for(unsigned i=0; i < elems.size(); i++)
 		{
-			schparser.setIgnoreUnkownAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
 			attribs[ParsersAttributes::ELEMENTS]+=schparser.getCodeDefinition(ParsersAttributes::ELEMENT, elems[i], SchemaParser::XML_DEFINITION);
-			schparser.setIgnoreUnkownAttributes(false);
+			schparser.ignoreUnkownAttributes(false);
 		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
@@ -1325,7 +1325,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 	try
 	{
-		attribs[attribs[ParsersAttributes::CONFIGURATION]]="1";
+    attribs[attribs[ParsersAttributes::CONFIGURATION]]=ParsersAttributes::_TRUE_;
 
 		if(!attribs[ParsersAttributes::ENUM_TYPE].isEmpty())
 			attribs[ParsersAttributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMERATIONS]).join(",");
@@ -1658,7 +1658,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
       if(!factor.isEmpty() && factor[0].startsWith("fillfactor="))
         attribs[ParsersAttributes::FACTOR]=factor[0].remove("fillfactor=");
 
-			attribs[attribs[ParsersAttributes::TYPE]]="1";
+      attribs[attribs[ParsersAttributes::TYPE]]=ParsersAttributes::_TRUE_;
 			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
@@ -1951,7 +1951,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				obj_name.prepend(sch_name + ".");
 
 			//Formatting the name in form of signature (only for functions and operators)
-			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR))
+      if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE))
 			{
 				QStringList params;
 
@@ -1972,9 +1972,16 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 								params.push_back("VARIADIC " + arg_types[i]);
 						}
 						else
-							params.push_back(/*"IN " +*/ arg_types[i]);
+              params.push_back(arg_types[i]);
 					}
 				}
+        else if(obj_type==OBJ_AGGREGATE)
+        {
+          QStringList params=getTypes(obj_attr[ParsersAttributes::TYPES], false);
+
+          if(params.isEmpty())
+            params.push_back("*");
+        }
 				else
 				{
 					if(obj_attr[ParsersAttributes::LEFT_TYPE].toUInt() > 0)
@@ -2094,9 +2101,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
 				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
 
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 				xml_def=schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);
-				schparser.setIgnoreUnkownAttributes(false);
+				schparser.ignoreUnkownAttributes(false);
 			}
 			else
 				return(obj_name);

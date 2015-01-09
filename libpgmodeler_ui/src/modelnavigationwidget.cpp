@@ -32,6 +32,8 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 
 	connect(previous_tb, &QToolButton::clicked,
 					[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
+
+  connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
 }
 
 int ModelNavigationWidget::getCurrentIndex(void)
@@ -51,17 +53,21 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 {
 	if(model)
 	{
+    QString tooltip;
+
 		setEnabled(true);
 		models_cmb->blockSignals(true);
-		models_cmb->addItem(model->getDatabaseModel()->getName(), model->getFilename());
+
+    tooltip=model->getFilename();
+
+    if(tooltip.isEmpty())
+      tooltip=trUtf8("(model not saved yet)");
+
+    models_cmb->addItem(model->getDatabaseModel()->getName(), tooltip);
 		models_cmb->setCurrentIndex(models_cmb->count()-1);
+    models_cmb->setToolTip(tooltip);
 
-		if(model->getFilename().isEmpty())
-			models_cmb->setToolTip(trUtf8("(model not saved yet)"));
-		else
-			models_cmb->setToolTip(model->getFilename());
-
-		models_cmb->blockSignals(false);
+    models_cmb->blockSignals(false);
 		enableNavigationButtons();
 	}
 }
@@ -106,4 +112,10 @@ void ModelNavigationWidget::enableNavigationButtons(void)
 {
 	previous_tb->setEnabled(models_cmb->currentIndex() > 0 && models_cmb->count() > 1);
 	next_tb->setEnabled(models_cmb->currentIndex() >= 0 && models_cmb->currentIndex()!=(models_cmb->count()-1));
+}
+
+void ModelNavigationWidget::showTooltip(int idx)
+{
+  QString tooltip=models_cmb->itemData(idx).toString();
+  QToolTip::showText(QCursor::pos(), tooltip);
 }

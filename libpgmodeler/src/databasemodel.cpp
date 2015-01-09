@@ -1813,7 +1813,7 @@ void DatabaseModel::createSpecialObject(const QString &xml_def, unsigned obj_id)
 		xmlparser.loadXMLBuffer(xml_def);
 
 		//Identifies the object type through the start element on xml buffer
-		obj_type=getObjectType(xmlparser.getElementName());
+    obj_type=BaseObject::getObjectType(xmlparser.getElementName());
 
 		if(obj_type==OBJ_SEQUENCE)
 			object=createSequence(true);
@@ -2950,7 +2950,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(xmlparser.getCurrentElement())
 				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
-      if(e.getErrorType()>=ERR_INVALID_SYNTAX)
+      if(e.getErrorType()>=ERR_INV_SYNTAX)
       {
         str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(filename);
         throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
@@ -2959,23 +2959,6 @@ void DatabaseModel::loadModel(const QString &filename)
         throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
     }
   }
-}
-
-ObjectType DatabaseModel::getObjectType(const QString &type_name)
-{
-	ObjectType obj_type=BASE_OBJECT;
-	int i;
-
-	for(i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
-	{
-		if(objs_schemas[i]==type_name)
-		{
-			obj_type=static_cast<ObjectType>(i);
-			break;
-		}
-	}
-
-	return(obj_type);
 }
 
 BaseObject *DatabaseModel::createObject(ObjectType obj_type)
@@ -3381,7 +3364,7 @@ Language *DatabaseModel::createLanguage(void)
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					obj_type=getObjectType(xmlparser.getElementName());
+          obj_type=BaseObject::getObjectType(xmlparser.getElementName());
 
 					if(obj_type==OBJ_FUNCTION)
 					{
@@ -3485,7 +3468,7 @@ Function *DatabaseModel::createFunction(void)
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
 					elem=xmlparser.getElementName();
-					obj_type=getObjectType(elem);
+          obj_type=BaseObject::getObjectType(elem);
 
 					//Gets the function return type from the XML
 					if(elem==ParsersAttributes::RETURN_TYPE)
@@ -4483,7 +4466,7 @@ Table *DatabaseModel::createTable(void)
           else if(elem==ParsersAttributes::CUSTOMIDXS)
           {
 						xmlparser.getElementAttributes(aux_attribs);
-            obj_type=getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
+            obj_type=BaseObject::getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
 
 						xmlparser.savePosition();
 
@@ -6015,7 +5998,7 @@ Permission *DatabaseModel::createPermission(void)
 		xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 		xmlparser.getElementAttributes(attribs);
 
-		obj_type=getObjectType(attribs[ParsersAttributes::TYPE]);
+    obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
 		obj_name=attribs[ParsersAttributes::NAME];
 		parent_name=attribs[ParsersAttributes::PARENT];
 
@@ -6234,8 +6217,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::ENCODING]=(~encoding);
 		attributes[ParsersAttributes::_LC_COLLATE_]=localizations[1];
 		attributes[ParsersAttributes::_LC_CTYPE_]=localizations[0];
-		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? "1" : "");
-    attributes[ParsersAttributes::PREPEND_AT_EOD]=(prepend_at_bod ? "1" : "");
+		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::PREPEND_AT_EOD]=(prepend_at_bod ? ParsersAttributes::_TRUE_ : "");
 	}
 
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
@@ -6305,7 +6288,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
-      attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? "1" : "");
+      attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::_TRUE_ : "");
 
       for(auto type : types)
       {
@@ -6419,7 +6402,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
     if(def_type==SchemaParser::XML_DEFINITION)
     {
-      attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
+      attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::_TRUE_ : "");
       attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
       attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
       attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[OBJ_SCHEMA] ? default_objs[OBJ_SCHEMA]->getName(true) : "");
@@ -6457,7 +6440,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 
-  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? "1" : "");
+  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::_TRUE_ : "");
 	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
   if(prepend_at_bod && def_type==SchemaParser::SQL_DEFINITION)

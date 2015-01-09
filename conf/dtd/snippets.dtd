@@ -1,0 +1,17 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT snippets (snippet)*>
+
+<!ELEMENT snippet (#PCDATA)>
+<!ATTLIST snippet id CDATA #REQUIRED>
+<!ATTLIST snippet label CDATA #REQUIRED>
+<!ATTLIST snippet parsable (false|true) "false">
+<!ATTLIST snippet placeholders (false|true) "false">
+
+<!ATTLIST snippet object (column|constraint|function|trigger|index|rule|table|view|domain|
+	schema|aggregate|operator|sequence|role|conversion|cast|
+	language|usertype|tablespace|opfamily|opclass|database|collation|
+	extension|eventtrigger|general) "general">
+

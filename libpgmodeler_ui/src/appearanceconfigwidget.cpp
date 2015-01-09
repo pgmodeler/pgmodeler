@@ -18,7 +18,9 @@
 
 #include "appearanceconfigwidget.h"
 
-AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(parent)
+map<QString, attribs_map> AppearanceConfigWidget::config_params;
+
+AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -96,6 +98,11 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
 	delete(viewp);
 	delete(scene);
 	delete(model);
+}
+
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void AppearanceConfigWidget::loadExampleModel(void)
@@ -191,7 +198,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 
 void AppearanceConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
 		attribs_map attribs;
 		vector<AppearanceConfigItem>::iterator itr, itr_end;
@@ -248,7 +255,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 		}
 
 		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -331,6 +338,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 
 	model->setObjectsModified();
   scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)
@@ -349,6 +357,7 @@ void AppearanceConfigWidget::applyFontStyle(void)
 
 	model->setObjectsModified();
   scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::restoreDefaults(void)
@@ -356,7 +365,8 @@ void AppearanceConfigWidget::restoreDefaults(void)
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
-		this->loadConfiguration();
+    this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

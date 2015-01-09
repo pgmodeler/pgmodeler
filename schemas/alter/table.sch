@@ -3,15 +3,15 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-@{alter-cmds}
+{alter-cmds}
 
-%if @{has-changes} %then
-  ALTER $sp @{sql-object} $sp @{signature}
+%if {has-changes} %then
+  ALTER $sp {sql-object} $sp {signature}
   
-  %if @{oids} %then
+  %if {oids} %then
     [ SET ]
   
-    %if (@{oids}=="unset") %then
+    %if ({oids}=="unset") %then
       WITHOUT
     %else
       WITH

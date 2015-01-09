@@ -17,9 +17,8 @@
 */
 
 #include "mainwindow.h"
-#include "configurationform.h"
 
-ConfigurationForm *configuration_form=nullptr;
+//ConfigurationForm *configuration_form=nullptr;
 bool MainWindow::confirm_validation=true;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
 	attribs_map attribs;
-	BaseConfigWidget *conf_wgt=nullptr;
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
   QGridLayout *grid=nullptr;
 
@@ -52,15 +50,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     action_design->setData(DESIGN_VIEW);
     action_manage->setData(MANAGE_VIEW);
 
-    configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-    configuration_form->loadConfiguration();
-
     sql_tool_wgt=new SQLToolWidget;
     grid=new QGridLayout;
     grid->setContentsMargins(0,0,0,0);
     grid->setSpacing(0);
     grid->addWidget(sql_tool_wgt, 0, 0);
     views_stw->widget(MANAGE_VIEW)->setLayout(grid);
+
+    configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    configuration_form->loadConfiguration();
 
     plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
@@ -69,9 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		action_plugins->setMenu(plugins_menu);
     dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
-		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
-		confs=conf_wgt->getConfigurationParams();
-
+    confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
 		itr_end=confs.end();
 
@@ -553,10 +549,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			this->overview_wgt->close();
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-			confs=conf_wgt->getConfigurationParams();
-			conf_wgt->removeConfigurationParams();
+      confs=conf_wgt->getConfigurationParams();
 
-			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? "1" : "";
+      attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : "";
 			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
 			attribs.clear();
 
@@ -622,16 +617,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-	ConnectionsConfigWidget *conn_cfg_wgt=nullptr;
-	map<QString, Connection *> connections;
+  map<QString, Connection *> connections;
+  ConnectionsConfigWidget *conn_cfg_wgt=
+      dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 
-  conn_cfg_wgt=dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
   conn_cfg_wgt->getConnections(connections);
-  model_valid_wgt->updateConnections(connections);
-  sql_tool_wgt->updateConnections(connections);
+
+  if(conn_cfg_wgt->isConfigurationChanged() ||
+     model_valid_wgt->connections_cmb->count()==0 ||
+     sql_tool_wgt->connections_cmb->count()==0 )
+  {
+    model_valid_wgt->updateConnections(connections);
+    sql_tool_wgt->updateConnections(connections);
+  }
 }
 
-void MainWindow::saveTemporaryModels(void)//(bool force)
+void MainWindow::saveTemporaryModels(void)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: temporary model saving disabled."
@@ -641,7 +642,7 @@ void MainWindow::saveTemporaryModels(void)//(bool force)
 		ModelWidget *model=nullptr;
 		int count=models_tbw->count();
 
-    if(count > 0)// && (force || this->isActiveWindow()))
+    if(count > 0)
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -1131,6 +1132,7 @@ void MainWindow::applyConfigurations(void)
 		}
 
 		updateConnections();
+    sql_tool_wgt->configureSnippets();
 	}
 }
 
@@ -1172,7 +1174,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
       if(confirm_validation && db_model->isInvalidated())
 			{
-				msg_box.show(trUtf8("Confirmation"),
+        msg_box.show(trUtf8("Confirmation"),
                      trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 										 trUtf8("Save anyway"), trUtf8("Validate"), "",
@@ -1376,8 +1378,7 @@ void MainWindow::printModel(void)
 			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 				 orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
-				msg_box.show(trUtf8("Confirmation"),
-										 trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
+        msg_box.show(trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS);
 			}
 
@@ -1618,18 +1619,18 @@ void MainWindow::storeDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	attribs_map params;
 
-	params[ParsersAttributes::VALIDATOR]="1";
-	params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? "1" : "");
+  params[ParsersAttributes::VALIDATOR]=ParsersAttributes::_TRUE_;
+  params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
 	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
 	params.clear();
 
-	params[ParsersAttributes::OBJECT_FINDER]="1";
-	params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? "1" : "");
-	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? "1" : "");
-	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? "1" : "");
+  params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::_TRUE_;
+  params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
 	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
 	params.clear();
 }
@@ -1673,8 +1674,7 @@ void MainWindow::quitDemoVersion(void)
 {
  #ifdef DEMO_VERSION
 	Messagebox msg_box;
-  msg_box.show(trUtf8("Information"),
-               trUtf8("The execution of demonstration version has finished!\
+  msg_box.show(trUtf8("The execution of demonstration version has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
 											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
 											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\

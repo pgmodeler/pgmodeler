@@ -74,8 +74,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
                           OBJECT_TYPE=2,
                           OBJECT_SCHEMA=3,
                           OBJECT_TABLE=4,
-                          OBJECT_ATTRIBS=5,
-                          OBJECT_COUNT=6; //Only for gropus
+                          OBJECT_ATTRIBS=5, //Stores the object's attributes returned by catalog query
+                          OBJECT_OTHER_DATA=6, //General purpose usage
+                          OBJECT_COUNT=7; //Only for gropus
 
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 

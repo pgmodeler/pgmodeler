@@ -93,17 +93,18 @@ SOURCES += src/mainwindow.cpp \
            src/eventtriggerwidget.cpp \
            src/aboutwidget.cpp \
            src/colorpickerwidget.cpp \
-    src/modelnavigationwidget.cpp \
-    src/centralwidget.cpp \
-    src/relationshipconfigwidget.cpp \
-    src/datamanipulationform.cpp \
-    src/customsqlwidget.cpp \
-    src/findreplacewidget.cpp \
-    src/modeldatabasediffform.cpp \
-    src/modelsdiffhelper.cpp \
-    src/objectsdiffinfo.cpp \
-    src/hinttextwidget.cpp \
-    src/databaseexplorerwidget.cpp
+           src/modelnavigationwidget.cpp \
+           src/centralwidget.cpp \
+           src/relationshipconfigwidget.cpp \
+           src/datamanipulationform.cpp \
+           src/customsqlwidget.cpp \
+           src/findreplacewidget.cpp \
+           src/modeldatabasediffform.cpp \
+           src/modelsdiffhelper.cpp \
+           src/objectsdiffinfo.cpp \
+           src/hinttextwidget.cpp \
+           src/databaseexplorerwidget.cpp \
+           src/snippetsconfigwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -176,17 +177,18 @@ HEADERS += src/mainwindow.h \
            src/eventtriggerwidget.h \
            src/aboutwidget.h \
            src/colorpickerwidget.h \
-    src/modelnavigationwidget.h \
-    src/centralwidget.h \
-    src/relationshipconfigwidget.h \
-    src/datamanipulationform.h \
-    src/customsqlwidget.h \
-    src/findreplacewidget.h \
-    src/modeldatabasediffform.h \
-    src/modelsdiffhelper.h \
-    src/objectsdiffinfo.h \
-    src/hinttextwidget.h \
-    src/databaseexplorerwidget.h
+           src/modelnavigationwidget.h \
+           src/centralwidget.h \
+           src/relationshipconfigwidget.h \
+           src/datamanipulationform.h \
+           src/customsqlwidget.h \
+           src/findreplacewidget.h \
+           src/modeldatabasediffform.h \
+           src/modelsdiffhelper.h \
+           src/objectsdiffinfo.h \
+           src/hinttextwidget.h \
+           src/databaseexplorerwidget.h \
+           src/snippetsconfigwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -258,6 +260,7 @@ FORMS += ui/mainwindow.ui \
     ui/findreplacewidget.ui \
     ui/modeldatabasediffform.ui \
     ui/hinttextwidget.ui \
-    ui/databaseexplorerwidget.ui
+    ui/databaseexplorerwidget.ui \
+    ui/snippetsconfigwidget.ui
 
 

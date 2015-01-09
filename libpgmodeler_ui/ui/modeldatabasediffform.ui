@@ -246,10 +246,13 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+               </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>18</width>
+                 <height>18</height>
                 </size>
                </property>
               </widget>

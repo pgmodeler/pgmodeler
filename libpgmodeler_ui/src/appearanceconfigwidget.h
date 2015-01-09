@@ -32,9 +32,11 @@
 #include "databasemodel.h"
 #include <algorithm>
 
-class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget, public BaseConfigWidget {
+class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
+
+    static map<QString, attribs_map> config_params;
 
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
@@ -69,13 +71,11 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
 		AppearanceConfigWidget(QWidget * parent=0);
 		~AppearanceConfigWidget(void);
 
-		//! \brief Saves the configuration to file
 		void saveConfiguration(void);
-
-		//! \brief Loads the configuration from file
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
-	private slots:
+  private slots:
 		void enableConfigElement(void);
 		void applyFontStyle(void);
 		void applyElementColor(unsigned color_idx, QColor color);

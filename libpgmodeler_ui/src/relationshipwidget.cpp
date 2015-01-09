@@ -22,8 +22,6 @@
 #include "tablewidget.h"
 #include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
-
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
 	try
@@ -34,11 +32,9 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vlayout=nullptr;
 		QFrame *frame=nullptr;
-		QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
-																	src_fk_pattern_txt, dst_fk_pattern_txt,
-                                  pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-		unsigned i, count=sizeof(pattern_fields)/sizeof(QTextEdit *);
-
+    QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+                                 src_fk_pattern_txt, dst_fk_pattern_txt,
+                                 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 		operation_count=0;
 
     gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
@@ -53,20 +49,22 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
     single_pk_ht=new HintTextWidget(single_pk_hint, this);
     single_pk_ht->setText(single_pk_chk->statusTip());
 
-		table1_hl=new SyntaxHighlighter(ref_table_txt, false);
+    table1_hl=nullptr;
+    table1_hl=new SyntaxHighlighter(ref_table_txt, false);
     table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		table2_hl=new SyntaxHighlighter(recv_table_txt, false);
+    table2_hl=nullptr;
+    table2_hl=new SyntaxHighlighter(recv_table_txt, false);
     table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		for(i=0; i < count; i++)
+    for(int i=0; i < pattern_fields.size(); i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true, true);
+      patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QTextEdit *>(pattern_fields[i]), true, true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																			 GlobalAttributes::DIR_SEPARATOR +
 																			 GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
-		}
+    }
 
 		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																					(ObjectTableWidget::UPDATE_BUTTON |
@@ -155,8 +153,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		tabs={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
 										rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
 
-		tab_labels={ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
-										 rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
+    tab_labels=QStringList{ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
+                            rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
@@ -469,12 +467,11 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 
 	if(value)
 	{
-		//Using the global settings
-		RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
-		deferrable_chk->setChecked(rel_conf_wgt->deferrable_chk->isChecked());
-		deferral_cmb->setCurrentText(rel_conf_wgt->deferral_cmb->currentText());
-		upd_action_cmb->setCurrentText(rel_conf_wgt->upd_action_cmb->currentText());
-		del_action_cmb->setCurrentText(rel_conf_wgt->del_action_cmb->currentText());
+    map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+    deferrable_chk->setChecked(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+    deferral_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
+    upd_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
+    del_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
 	}
 	else
 	{
@@ -506,13 +503,10 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 	{
 		if(value)
 		{
-			RelationshipConfigWidget *rel_conf_wgt=dynamic_cast<RelationshipConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::RELATIONSHIPS_CONF_WGT));
-			map<QString, attribs_map> confs;
+      map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 			QString rel_type=rel->getRelTypeAttribute();
 
-			confs=rel_conf_wgt->getConfigurationParams();
-
-			//Using the global settings
+      //Using the global settings
 			pk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::PK_PATTERN]);
 			src_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_FK_PATTERN]);
 			dst_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_FK_PATTERN]);

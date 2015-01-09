@@ -846,8 +846,7 @@ void ModelWidget::convertRelationshipNN(void)
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
 			Messagebox msg_box;
-			msg_box.show(trUtf8("Confirmation"),
-									 trUtf8("Do you really want to convert the relationship?"),
+      msg_box.show(trUtf8("Do you really want to convert the relationship?"),
 									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -1966,9 +1965,8 @@ void ModelWidget::copyObjects(void)
 	}
 
 	//Ask for confirmation to copy the dependencies of the object(s)
-	msg_box.show(trUtf8("Confirmation"),
-								trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-								Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+  msg_box.show(trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
+               Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	/* When in cut operation is necessary to store the selected objects in a separeted list
 	in order to correclty cut (remove) the object on the source model */
@@ -2253,7 +2251,7 @@ void ModelWidget::pasteObjects(void)
 			try
 			{
 				//Creates the object from the XML
-				object=db_model->createObject(db_model->getObjectType(xmlparser->getElementName()));
+        object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
 				tab_obj=dynamic_cast<TableObject *>(object);
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
@@ -2379,20 +2377,17 @@ void ModelWidget::removeObjects(void)
 		{
 			if(selected_objects.size() > 1)
 			{
-				msg_box.show(trUtf8("Confirmation"),
-												trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?"),
-												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+        msg_box.show(trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?"),
+                     Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 			else
 			{
 				if(selected_objects[0]->getObjectType()==OBJ_RELATIONSHIP)
-					msg_box.show(trUtf8("Confirmation"),
-													trUtf8("CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?"),
-													Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+          msg_box.show(trUtf8("CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?"),
+                       Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 				else
-					msg_box.show(trUtf8("Confirmation"),
-												trUtf8("Do you really want to delete the selected object?"),
-												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+          msg_box.show(trUtf8("Do you really want to delete the selected object?"),
+                       Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 		}
 

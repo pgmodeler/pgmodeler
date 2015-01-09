@@ -18,28 +18,33 @@
 
 #include "baseconfigwidget.h"
 
-void BaseConfigWidget::addConfigurationParam(const QString &param, const attribs_map &attribs)
+BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
+{
+  config_changed=false;
+}
+
+void BaseConfigWidget::addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
 {
 	if(!param.isEmpty() && !attribs.empty())
-		config_params[param]=attribs;
+    config_params[param]=attribs;
 }
 
-map<QString, attribs_map > BaseConfigWidget::getConfigurationParams(void)
+void BaseConfigWidget::showEvent(QShowEvent *)
 {
-	return(config_params);
+  config_changed=false;
 }
 
-void BaseConfigWidget::removeConfigurationParam(const QString &param)
+void BaseConfigWidget::setConfigurationChanged(bool changed)
 {
-	config_params.erase(param);
+  config_changed=changed;
 }
 
-void BaseConfigWidget::removeConfigurationParams(void)
+bool BaseConfigWidget::isConfigurationChanged(void)
 {
-  config_params.clear();
+  return(config_changed);
 }
 
-void BaseConfigWidget::saveConfiguration(const QString &conf_id)
+void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
 {
 	QByteArray buf;
 
@@ -72,7 +77,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		}
 
 		//Generates the configuration from the schema file
-		schparser.setIgnoreEmptyAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
 		buf.append(schparser.getCodeDefinition(sch_filename, attribs));
 		output.open(QFile::WriteOnly);
 
@@ -83,6 +88,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());
 		output.close();
+    config_params.erase(conf_id);
 	}
 	catch(Exception &e)
 	{
@@ -122,7 +128,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
   }
 }
 
-void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
 	try
 	{
@@ -147,18 +153,21 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 			{
 				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					this->getConfigurationParams(key_attribs);
+          this->getConfigurationParams(config_params, key_attribs);
 
-					if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
+          if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT, XML_ELEMENT_NODE))
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
-						do
-						{
-							this->getConfigurationParams(key_attribs);
-						}
-						while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+            if(xmlparser.getElementType()!=XML_TEXT_NODE)
+            {
+              do
+              {
+                this->getConfigurationParams(config_params, key_attribs);
+              }
+              while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+            }
 
 						xmlparser.restorePosition();
 					}
@@ -173,7 +182,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QS
 	}
 }
 
-void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs)
+void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
 	attribs_map aux_attribs;
 	attribs_map::iterator itr, itr_end;
@@ -186,14 +195,23 @@ void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs
 
 	while(itr!=itr_end && key.isEmpty())
 	{
-		if(key.isEmpty() && find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
+    if(key.isEmpty() && std::find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
 			key=itr->second;
 
 		itr++;
 	}
 
-	if(key.isEmpty())
+  if(key.isEmpty())
 		key=xmlparser.getElementName();
+
+  //Extract the contents of the child element and create a special element on map called "_contents_"
+  if(xmlparser.hasElement(XMLParser::CHILD_ELEMENT, XML_TEXT_NODE))
+  {
+    xmlparser.savePosition();
+    xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+    aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent();
+    xmlparser.restorePosition();
+  }
 
 	if(!aux_attribs.empty())
 		config_params[key]=aux_attribs;

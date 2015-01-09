@@ -65,7 +65,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
    DatabaseModel, Tag */
 unsigned BaseObject::global_id=4000;
 
-QString BaseObject::pgsql_ver=SchemaParser::PGSQL_VERSION_94;
+QString BaseObject::pgsql_ver=PgSQLVersions::DEFAULT_VERSION;
 bool BaseObject::use_cached_code=true;
 
 BaseObject::BaseObject(void)
@@ -107,7 +107,28 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
 	else
-		return("");
+    return("");
+}
+
+QString BaseObject::getTypeName(const QString &type_str)
+{
+  return(getTypeName(getObjectType(type_str)));
+}
+
+ObjectType BaseObject::getObjectType(const QString &type_name)
+{
+  ObjectType obj_type=BASE_OBJECT;
+
+  for(int i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
+  {
+    if(objs_schemas[i]==type_name)
+    {
+      obj_type=static_cast<ObjectType>(i);
+      break;
+    }
+  }
+
+  return(obj_type);
 }
 
 QString BaseObject::getSchemaName(ObjectType obj_type)
@@ -123,7 +144,7 @@ QString BaseObject::getSQLName(ObjectType obj_type)
 QString BaseObject::formatName(const QString &name, bool is_operator)
 {
 	bool is_formated=false;
-	QString frmt_name;
+  QString frmt_name;
 	QByteArray raw_name;
 	unsigned char chr, chr1, chr2;
 
@@ -654,7 +675,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
+		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : "");
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SQL_DEFINITION) ||
@@ -672,7 +693,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XML_DEFINITION)
-			attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");
+			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : "");
 
 		if(tablespace)
 		{
@@ -706,7 +727,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
                            GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
                            ParsersAttributes::OWNER + GlobalAttributes::SCHEMA_EXT;
 
-          sch_parser.setIgnoreUnkownAttributes(true);
+          sch_parser.ignoreUnkownAttributes(true);
           attributes[ParsersAttributes::OWNER]=sch_parser.getCodeDefinition(filename, attributes);
         }
 			}
@@ -726,7 +747,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 					obj_type!=OBJ_DATABASE) ||
 				 def_type==SchemaParser::XML_DEFINITION)
 			{
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 
         attributes[ParsersAttributes::COMMENT]=
 						schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
@@ -739,7 +760,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(def_type==SchemaParser::XML_DEFINITION)
 			{
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
 						schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
 			}
@@ -755,7 +776,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
       if(def_type==SchemaParser::XML_DEFINITION)
       {
-				schparser.setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
         attributes[ParsersAttributes::PREPENDED_SQL]=
 						schparser.getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
       }
@@ -771,10 +792,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
     }
 
-		if(reduced_form)
-			attributes[ParsersAttributes::REDUCED_FORM]="1";
-		else
-			attributes[ParsersAttributes::REDUCED_FORM]="";
+    attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : "");
 
 		try
 		{
@@ -1071,11 +1089,11 @@ QString BaseObject::getDropDefinition(bool cascade)
 
       setBasicAttributes(true);
       schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-      schparser.setIgnoreUnkownAttributes(true);
-      schparser.setIgnoreEmptyAttributes(true);
+      schparser.ignoreUnkownAttributes(true);
+      schparser.ignoreEmptyAttributes(true);
 
       attribs=attributes;
-      attribs[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+      attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
 
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
     }
@@ -1098,8 +1116,8 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
                           "%1" + GlobalAttributes::SCHEMA_EXT;
 
     schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-    schparser.setIgnoreEmptyAttributes(ignore_empty_attribs);
-    schparser.setIgnoreUnkownAttributes(ignore_ukn_attribs);
+    schparser.ignoreEmptyAttributes(ignore_empty_attribs);
+    schparser.ignoreUnkownAttributes(ignore_ukn_attribs);
     return(schparser.getCodeDefinition(alter_sch_dir.arg(sch_name), attribs));
   }
   catch(Exception &e)
@@ -1112,7 +1130,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 {
   if(!attribs.empty())
   {
-    attributes[ParsersAttributes::HAS_CHANGES]="1";
+    attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
     for(auto itr : attribs)
      attributes[itr.first]=itr.second;
   }
@@ -1170,8 +1188,8 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
         else
           attributes[ParsersAttributes::COMMENT]=object->getComment();
 
-        schparser.setIgnoreUnkownAttributes(true);
-        schparser.setIgnoreEmptyAttributes(true);
+        schparser.ignoreUnkownAttributes(true);
+        schparser.ignoreEmptyAttributes(true);
         alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
       }
     }

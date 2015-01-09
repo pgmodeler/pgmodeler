@@ -3,13 +3,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{comment} %or (@{comment}=="unset") %then
- [COMMENT ON ] @{sql-object} $sp @{signature} [ IS ]
+%if {comment} %or ({comment}=="unset") %then
+ [COMMENT ON ] {sql-object} $sp {signature} [ IS ]
 
- %if (@{comment}=="unset") %then
+ %if ({comment}=="unset") %then
   ''
  %else
-  '@{comment}'
+  '{comment}'
  %end
 
  ; $br

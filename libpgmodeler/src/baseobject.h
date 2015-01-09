@@ -248,8 +248,15 @@ class BaseObject {
 		 In this case, the formatting function just ignores some validations if the parameter is checked */
 		static QString formatName(const QString &name, bool is_operator=false);
 
-		//! \brief Returns the object's type name related to the passed object type
+    //! \brief Returns the object's type translated name related to the passed object type
 		static QString getTypeName(ObjectType obj_type);
+
+    /*! \brief Returns the object's type translated name related to the passed object type id (in string format).
+        The string parameter is the value returned by getSchemaName() */
+    static QString getTypeName(const QString &type_str);
+
+    //! \brief Returns the object's type related to the passed type name
+    static ObjectType getObjectType(const QString &type_name);
 
 		/*! \brief Returns the schema identifier used to generate the code definition related to the
 		 passed object type */

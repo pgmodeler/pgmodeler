@@ -42,13 +42,13 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 
 		if(text_attributes[ITALIC_TXT])
-			attributes[ParsersAttributes::ITALIC]="1";
+      attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
 
 		if(text_attributes[BOLD_TXT])
-			attributes[ParsersAttributes::BOLD]="1";
+      attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
 
 		if(text_attributes[UNDERLINE_TXT])
-			attributes[ParsersAttributes::UNDERLINE]="1";
+      attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
 
 		if(text_color.name()!="#000000")
 			attributes[ParsersAttributes::COLOR]=text_color.name();

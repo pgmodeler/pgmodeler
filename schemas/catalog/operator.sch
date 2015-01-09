@@ -2,26 +2,26 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
+%if {list} %then
   [SELECT op.oid, oprname || '(' || oprleft::regtype || ',' || oprright::regtype || ')' AS name FROM pg_operator AS op ]
 
-  %if @{schema} %then
+  %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid
-       WHERE oprcode > 0 AND ns.nspname = ] '@{schema}'
+       WHERE oprcode > 0 AND ns.nspname = ] '{schema}'
   %else
     [ WHERE oprcode > 0 ]
   %end
 
-  %if @{last-sys-oid} %then
-    [ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+  %if {last-sys-oid} %then
+    [ AND op.oid ] {oid-filter-op} $sp {last-sys-oid}
   %end
 
-  %if @{not-ext-object} %then
-   [ AND ] ( @{not-ext-object} )
+  %if {not-ext-object} %then
+   [ AND ] ( {not-ext-object} )
   %end
 
 %else
-    %if @{attribs} %then
+    %if {attribs} %then
       [SELECT op.oid, op.oprname AS name, op.oprnamespace AS schema, op.oprowner AS owner,
 	      op.oprcanmerge AS merges_bool, op.oprcanhash AS hashes_bool, op.oprleft AS left_type,
 	      op.oprright AS right_type, op.oprcom AS commutator_op,
@@ -40,30 +40,30 @@
        END
        AS negator_op, ]
 
-      (@{comment}) [ AS comment ]
+      ({comment}) [ AS comment ]
 
       [ FROM pg_operator AS op ]
 
-      %if @{schema} %then
+      %if {schema} %then
 	[ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
       %end
 
       [ WHERE oprcode > 0 ]
 
-      %if @{filter-oids} %then
-	[ AND op.oid IN (] @{filter-oids} )
+      %if {filter-oids} %then
+	[ AND op.oid IN (] {filter-oids} )
       %end
 
-      %if @{schema} %then
-	[ AND ns.nspname = ] '@{schema}'
+      %if {schema} %then
+	[ AND ns.nspname = ] '{schema}'
       %end
 
-      %if @{last-sys-oid} %then
-	[ AND op.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+      %if {last-sys-oid} %then
+	[ AND op.oid ] {oid-filter-op} $sp {last-sys-oid}
       %end
 
-      %if @{not-ext-object} %then
-	[ AND (] @{not-ext-object} )
+      %if {not-ext-object} %then
+	[ AND (] {not-ext-object} )
       %end
 
     %end

@@ -172,7 +172,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
       attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? "1" : "");
+		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : "");
 
 	if(cast_type==ASSIGNMENT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;

@@ -7,8 +7,6 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)     #
 # XML_INC   -> Root path where XML2 includes can be found  #
 ############################################################
-#cache()
-
 unix {
  !macx:CONFIG += link_pkgconfig
  !macx:PKGCONFIG = libpq libxml-2.0
@@ -101,7 +99,7 @@ SUBDIRS = libutils \
           plugins/dummy \
           plugins/xml2object
 
-#Include the tests subproject only on debug mode
+# Include the tests subproject only on debug mode
 CONFIG(debug, debug|release):SUBDIRS+=tests
 
 QT += core widgets printsupport network

@@ -116,7 +116,7 @@ class XMLParser {
 		bool accessElement(unsigned elem_type);
 
 		//! \brief Returns if an element has a root, child, previous or next element
-		bool hasElement(unsigned elem_type);
+    bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
 
 		//! \brief Retorns if an element has attributes
 		bool hasAttributes(void);

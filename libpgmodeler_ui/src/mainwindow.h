@@ -47,6 +47,7 @@
 #include "updatenotifierwidget.h"
 #include "modelnavigationwidget.h"
 #include "centralwidget.h"
+#include "configurationform.h"
 
 using namespace std;
 
@@ -112,6 +113,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
     //! brief Update notifier popup widget
     UpdateNotifierWidget *update_notifier_wgt;
+
+    //! brief Configuration form
+    ConfigurationForm *configuration_form;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;

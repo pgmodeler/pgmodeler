@@ -84,7 +84,9 @@ class CodeCompletionWidget: public QWidget
 
 		map<QString, QPixmap> custom_items;
 
-		//! \brief Puts the selected object name on the current cursor position.
+    attribs_map custom_items_tips;
+
+      //! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items
@@ -103,10 +105,13 @@ class CodeCompletionWidget: public QWidget
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
+    void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords", bool persistent=false);
 
 		//! brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
-		void insertCustomItem(const QString &name, const QPixmap &icon);
+    void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
+
+    //! brief Inserts several custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+    void insertCustomItems(const QStringList &names, const QStringList &tooltips, const QPixmap &icon);
 
 		//! brief Clear the custom added items
 		void clearCustomItems(void);
@@ -123,6 +128,12 @@ class CodeCompletionWidget: public QWidget
 
 		//! \brief Selects an item and closes the completion list
 		void selectItem(void);
+
+    void showItemTooltip(void);
+
+  signals:
+    //! brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
+    void s_wordSelected(QString);
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
 #include "databaseexplorerwidget.h"
+#include "snippetsconfigwidget.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -37,8 +38,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
-	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
-	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
+  snippets_tb->setMenu(&snippets_menu);
+
+  code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
@@ -89,6 +91,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	connect(export_tb, &QToolButton::clicked,
           [=](){ SQLToolWidget::exportResults(results_tbw); });
+
+  connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
+
+  connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -468,8 +474,7 @@ void SQLToolWidget::clearAll(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Confirmation"),
-							 trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
+  msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
 							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -589,6 +594,7 @@ void SQLToolWidget::browseDatabase(void)
     databases_tbw->setCurrentWidget(db_explorer_wgt);
 
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
+    connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), sql_cmd_txt, SLOT(setPlainText(QString)));
   }
   catch(Exception &e)
   {
@@ -626,6 +632,32 @@ void SQLToolWidget::setCurrentDatabase(int idx)
   }
 }
 
+void SQLToolWidget::selectSnippet(QAction *act)
+{
+  sql_cmd_txt->setPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
+}
+
+void SQLToolWidget::handleSelectedWord(QString word)
+{
+  if(SnippetsConfigWidget::isSnippetExists(word))
+  {
+    QTextCursor tc=sql_cmd_txt->textCursor();
+    tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+    tc.removeSelectedText();
+    tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
+  }
+}
+
+void SQLToolWidget::configureSnippets(void)
+{ 
+  SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
+  code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
+  code_compl_wgt->clearCustomItems();
+  code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
+                                    SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
+                                    QPixmap(":/icones/icones/codesnippet.png"));
+}
+
 void SQLToolWidget::enableSQLExecution(bool enable)
 {
 	try
@@ -633,6 +665,7 @@ void SQLToolWidget::enableSQLExecution(bool enable)
 		sql_cmd_txt->setEnabled(enable);
 		load_tb->setEnabled(enable);
 		history_tb->setEnabled(enable);
+    snippets_tb->setEnabled(enable);
 		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());

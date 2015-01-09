@@ -52,8 +52,11 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     SchemaParser schparser;
 
-    //! brief Stores the actions to drop and show object's data
-    QMenu handle_menu;
+    //! brief Stores the actions to be performed over the object
+    QMenu handle_menu,
+
+    //! brief Stores the snippets' actions
+    snippets_menu;
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
             *show_data_action, *refresh_action, *properties_action;
@@ -76,9 +79,11 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Format the object's name based upon the passed attributes
     QString formatObjectName(attribs_map &attribs);
 
-    /*! brief Formats the attributes for the passed object. This method do basic formattation on commom attributes
-        and internally call the format[OBJECT]Attribs() method according to the object being currently processed */
-    void formatObjectAttribs(attribs_map &attribs);
+    /*! brief Formats the keys and values for the passed object attributes returning a new map with the formatted attributes.
+        This method do basic formattation on commom attributes and internally call the format[OBJECT]Attribs()
+        method according to the object being currently processed. NOTE: the original 'attribs' has its value changed but the
+        keys are preserved. */
+    attribs_map formatObjectAttribs(attribs_map &attribs);
 
     //! brief Formats the boolean attributes translating the 1 ou "" values to true or false
     void formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs);
@@ -107,6 +112,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatConstraintAttribs(attribs_map &attribs);
     void formatIndexAttribs(attribs_map &attribs);
 
+    void handleSelectedSnippet(const QString &snip_id);
+
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
 
@@ -130,12 +137,18 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Updates on the tree under the current selected object
     void updateCurrentItem(void);
 
-    //! brief Expose the catalog properties of a selected object
+    //! brief Loads the catalog properties of a selected object and stores them in the current selected item
     void loadObjectProperties(void);
+
+    //! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid
+    void showObjectProperties(void);
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
     void s_dataGridOpenRequested(QString schema, QString table, bool hide_views);
+
+    //! brief This signal is emmited containing the processed snippet to be shown in an input field
+    void s_snippetShowRequested(QString snippet);
 };
 
 #endif

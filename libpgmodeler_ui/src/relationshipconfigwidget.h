@@ -32,9 +32,11 @@
 #include "relationshipview.h"
 #include "hinttextwidget.h"
 
-class RelationshipConfigWidget: public QWidget, public Ui::RelationshipConfigWidget, public BaseConfigWidget {
+class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:
 		Q_OBJECT
+
+    static map<QString, attribs_map> config_params;
 
 		map<QString, attribs_map> patterns;
 
@@ -47,8 +49,9 @@ public:
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
-	public slots:
+  public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
 

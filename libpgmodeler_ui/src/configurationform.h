@@ -31,24 +31,28 @@
 #include "connectionsconfigwidget.h"
 #include "pluginsconfigwidget.h"
 #include "relationshipconfigwidget.h"
+#include "snippetsconfigwidget.h"
 
 class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 
-		//Messagebox msg_box;
 		GeneralConfigWidget *general_conf;
 		AppearanceConfigWidget *appearance_conf;
 		ConnectionsConfigWidget *connections_conf;
-		PluginsConfigWidget *plugins_conf;
 		RelationshipConfigWidget *relationships_conf;
+    SnippetsConfigWidget *snippets_conf;
+    PluginsConfigWidget *plugins_conf;
+
+    void hideEvent(QHideEvent *);
 
 	public:
 		static const int	GENERAL_CONF_WGT=0,
 											RELATIONSHIPS_CONF_WGT=1,
 											APPEARANCE_CONF_WGT=2,
 											CONNECTIONS_CONF_WGT=3,
-											PLUGINS_CONF_WGT=4;
+                      SNIPPETS_CONF_WGT=4,
+                      PLUGINS_CONF_WGT=5;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
