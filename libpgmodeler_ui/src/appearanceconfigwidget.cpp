@@ -74,7 +74,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	viewp->centerOn(0,0);
 
   QGridLayout *grid=dynamic_cast<QGridLayout *>(appearance_frm->layout());
-  grid->addWidget(color_picker, 3, 2, 1, 3);
+  grid->addWidget(color_picker, 3, 1, 1, 4);
   grid->addWidget(viewp, 4 , 0, 1, 5);
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
