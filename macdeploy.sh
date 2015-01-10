@@ -1,7 +1,7 @@
 #/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.3.2/5.3/clang_64
+QT_ROOT=/Users/$USR/Qt5.4.0/5.4/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
 LOG=macdeploy.log
 
@@ -39,7 +39,7 @@ clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
