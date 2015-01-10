@@ -26,7 +26,6 @@ are emitted during the diff process on ModelsDiffHelper class.
 #ifndef OBJECTS_DIFF_INFO_H
 #define OBJECTS_DIFF_INFO_H
 
-#include <QString>
 #include "tableobject.h"
 
 class ObjectsDiffInfo {

@@ -26,7 +26,8 @@ are emitted during the validation process on ModelValidationHelper class.
 #ifndef VALIDATION_INFO_H
 #define VALIDATION_INFO_H
 
-#include <QString>
+/* Including QByteArray due to 'QByteArray has no toStdString()'
+   error on Qt 5.4 (Windows only) */
 #include "baseobject.h"
 #include <vector>
 
@@ -48,9 +49,9 @@ class ValidationInfo {
     static const unsigned NO_UNIQUE_NAME=0,
                           BROKEN_REFERENCE=1,
                           SP_OBJ_BROKEN_REFERENCE=2,
-                          BROKEN_REL_CONFIG=4,
-                          SQL_VALIDATION_ERR=5,
-                          VALIDATION_ABORTED=6;
+                          BROKEN_REL_CONFIG=3,
+                          SQL_VALIDATION_ERR=4,
+                          VALIDATION_ABORTED=5;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
