@@ -28,6 +28,9 @@
 #ifndef PARSERS_ATTRIBUTES_H
 #define PARSERS_ATTRIBUTES_H
 
+/* Including QByteArray due to 'QByteArray has no toStdString()'
+   error on Qt 5.4 (Windows only) */
+#include <QByteArray>
 #include <QString>
 
 namespace ParsersAttributes {
