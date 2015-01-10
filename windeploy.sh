@@ -45,9 +45,9 @@ QT_CONF=build/qt.conf
 DEP_PLUGINS_DIR=build/qtplugins
 PLUGINS="dummy xml2object"
   
-DEP_LIBS="$QMAKE_ROOT/icudt52.dll \
-		  $QMAKE_ROOT/icuin52.dll \
-		  $QMAKE_ROOT/icuuc52.dll \
+DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
+		  $QMAKE_ROOT/icuin53.dll \
+		  $QMAKE_ROOT/icuuc53.dll \
 		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
