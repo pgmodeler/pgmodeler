@@ -88,9 +88,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 	signals:
 		void s_visibilityChanged(bool);
-		void s_validationInProgress(bool);
+    void s_validationInProgress(bool);
     void s_validationFinished(bool);
     void s_validationCanceled(void);
+    void s_fixApplied(void);
 
 	friend class MainWindow;
 };

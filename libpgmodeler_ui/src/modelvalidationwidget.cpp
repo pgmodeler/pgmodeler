@@ -63,13 +63,16 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
-		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
+
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
     connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)), Qt::QueuedConnection);
 
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
             [=](){ emit s_validationCanceled(); });
 
+    connect(&validation_helper, &ModelValidationHelper::s_fixApplied,
+            [=](){ emit s_fixApplied(); });
 
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
