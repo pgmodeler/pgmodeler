@@ -1,6 +1,72 @@
 Change Log
 ---------
 
+v0.8.0-beta1
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: January 10, 2015</em><br/>
+
+* [New] Created the widget SnippetConfigWidget in order to handle SQL snippets on SQLTool and DatabaseExplorerWidget.
+* [New] Introduced a new expression %unset on SchemaParser to clear the named attributes.
+* [New] Added support for permission on objects Type and Domain.
+* [New] Added the method SchemaParser::extractAttributes that is capable to extract the attributes used in a loaded buffer.
+* [New] Added methods to handle snippet selection in DatabaseExplorerWidget and SQLToolWidget.
+* [New] Created the hint text for code completion option on GeneralConfigWidget.
+* [New] Added an option to enable/disable code completion widget on sql code input fields (linked to CodeCompletionWidget instances).
+* [New] Created a method Connection::getConnectionId that returns a string to identify that connection.
+* [New] Created the constant GlobalAttributes::SNIPPET_CONF to store the default name for code snippet config file.
+* [New] Added some basic code comments on DatabaseExplorerWidget.
+* [New] Created the global constant SQL_HIGHLIGHT_CONF_PATH and XML_HIGHLIGHT_CONF_PATH on GlobalAttributes in order to avoid code repetition when loading syntax highlight conf files.
+* [New] Added a method to parse rule commands on Catalog.
+* [New] Added the method Catalog::getObjectAttributes to retrieve object attributes by its oid.
+* [New] Introduced a new step on model validation: relationship configuration checking.
+* [New] Added "properties" action on context menu at DatabaseExplorerWidget.
+* [New] Added a panel related to object's properties on database explorer widget.
+* [Change] The operation history is erased whenever a fix is applied to the model by the validator.
+* [Change] Minor change on ColorPickerWidget in order to change color of pickers using stylesheet instead of QPallete.
+* [Change] Minor adjustments on AppearanceConfigWidget.
+* [Change] Minor copyright update on source files.
+* [Change] Renamed the instruction %define to %set at SchemaParser.
+* [Change] Removed unused methods from Messagebox.
+* [Change] Minor improvements on Messagebox class by adding a simple show() method that receives only trhee parameters.
+* [Change] Minor improvements on SchemaParser::translateMetaCharacter()
+* [Change] Minor fix on DatabaseExplorerWidget::handleSelectedSnippet()
+* [Change] Removed duplicated code to handle snippets on SQLToolWidget.
+* [Change] Methods setIgnoreEmptyAttributes and setIgnoreUnkownAttributes at SchemaParser were renamed to ignoreEmptyAttributes and ignoreUnkownAttributes.
+* [Change] Minor improvements on ModelNavigationWidget to show the filename associated to a hovered item on combobox.
+* [Change] Simplified the syntax for attributes on .sch files from @{attrb} to {attrib}.
+* [Change] Updated all .sch files with the new attribute syntax.
+* [Change] Minor improvements on configuration widgets in order to detect if the settings was changed, this will avoid the unecessary load/save of the configuration files in ConfigurationForm.
+* [Change] Replaced ternary ifs like "1" : "" by ParsersAttributes::_TRUE_ : ""
+* [Change] Extensive changes in BaseConfigWidget and its subclasses in order to remove the use of extern keyword on other libs when there is the need to get the current config params. Now, user must call * [class]::getConfigurationParams() where class must be one of the derivates of BaseConfigWidget.
+* [Change] The extern pointer configuration_form on mainwindow.cpp was moved into MainWindow class as a subwindow of it.
+* [Change] Improvement on BaseConfigWidget and its children classes in order to use polymorphism in ConfigurationForm when needing to save or load confs.
+* [Change] Moved the constants PGSQL_VERSION_xx from SchemaParser to a namespace called PgSQLVersions in order to avoid the "static initialization order" problem.
+* [Change] Additional constants were created on PgSQLVersions namespace: ALL_VERSIONS and DEFAULT_VERSION.
+* [Change] Improvement on XMLParser::hasElement method in order to permit user to check if the current element has a child of the specified XML node type.
+* [Change] Minor improvements on BaseConfigWidget.
+* [Change] Moved the method DatabaseModel::getObjectType(QString) to BaseObject as a static one.
+* [Change] Minor updates on sql-highlight.conf
+* [Change] Updated the version info on platform specific installer files.
+* [Change] Removed unused constructor on Connection class.
+* [Change] Minor improvement on DatabaseImportForm::listObjects, now it's possible to include a database root item.
+* [Change] Minor improvements on class DatabaseImportHelper.
+* [Fix] Minor fix on windeploy.sh to copy the correct libs.
+* [Fix] Minor fix on macdeploy.sh in order to use Qt 5.4.
+* [Fix] Fixes done in order to build pgModeler on Windows using Qt 5.4.
+* [Fix] Fixed a bug on SchemaParser that was wrongly reading %define instructions inside if's and creating attributes when it was not need to create them.
+* [Fix] Modifications done on attributes initialization at RelationshipWidget in order to fix some crashes. Now pgModeler runs without crashing when compiled in release mode using g++.
+* [Fix] Minor fix on aggregates listing on Catalog class. Now the handled types are attached to aggregates' names.
+* [Fix] Minor fix on config pages indexes on ConfigurationForm.
+* [Fix] Minor fix on MainWindow when there are errors during configuration files loading.
+* [Fix] Minor fix on object name formatting at DatabaseExplorerWidget.
+* [Fix] Minor fix on SQLToolWidget to set the current database explorer instance properly.
+* [Fix] Minor fix on rule catalog query.
+* [Fix] Minor fix on table.sch schema file.
+* [Fix] Fixed the object filter on database explorer.
+* [Fix] Typo correction on ModelExportHelper.
+* [Fix] Additional fix to remove g++ warnings.
+
 v0.8.0-beta
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
