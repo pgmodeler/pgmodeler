@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl;
 	out << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-  out << trUtf8("Copyright 2006-2014 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+  out << trUtf8("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
 	out << endl;
 	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
 the need to load them on graphical interface as well to fix model files to the most recent\n\
