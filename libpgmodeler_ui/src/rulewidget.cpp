@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,16 +28,10 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		Ui_RuleWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																						GlobalAttributes::CONFIGURATION_EXT);
+    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		command_hl=new SyntaxHighlighter(comando_txt, false);
-		command_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		GlobalAttributes::DIR_SEPARATOR +
-																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		GlobalAttributes::CONFIGURATION_EXT);
+    command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);

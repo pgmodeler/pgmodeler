@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -173,7 +173,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setElementsAttribute(def_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? "1" : "");
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : "");
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::TYPE]=(*data_type);

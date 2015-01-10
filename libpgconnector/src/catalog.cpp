@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,12 @@ map<ObjectType, QString> Catalog::oid_fields=
 Catalog::Catalog(void)
 {
 	last_sys_oid=0;
-	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+  setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+}
+
+Catalog::Catalog(const Catalog &catalog)
+{
+  (*this)=catalog;
 }
 
 void Catalog::setConnection(Connection &conn)
@@ -151,7 +156,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		QString sql, custom_filter;
 
     schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-		attribs[qry_type]="1";
+    attribs[qry_type]=ParsersAttributes::_TRUE_;
 
 		if(exclude_sys_objs || list_only_sys_objs)
 			attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
@@ -162,7 +167,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			attribs[ParsersAttributes::OID_FILTER_OP]=">";
 
 		if(obj_type==OBJ_TYPE && exclude_array_types)
-			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]="1";
+      attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
 
 		//Checking if the custom filter expression is present
 		if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
@@ -175,8 +180,8 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 
     loadCatalogQuery(BaseObject::getSchemaName(obj_type));
-		schparser.setIgnoreUnkownAttributes(true);
-		schparser.setIgnoreEmptyAttributes(true);
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
 
     attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
     sql=schparser.getCodeDefinition(attribs).simplified();
@@ -366,7 +371,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	try
 	{
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? "1" : "")}};
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : "")}};
 
     loadCatalogQuery(query_id);
     return(schparser.getCodeDefinition(attribs).simplified());
@@ -413,7 +418,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		{
 			attr_name.remove(BOOL_FIELD);
 			if(value==PGSQL_FALSE) value.clear();
-			else value="1";
+      else value=ParsersAttributes::_TRUE_;
 		}
 
 		attr_name.replace("_","-");
@@ -459,7 +464,21 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 										QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
-	}
+  }
+}
+
+attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name, const QString tab_name, attribs_map extra_attribs)
+{
+  try
+  {
+    vector<attribs_map> attribs_vect=getObjectsAttributes(obj_type, sch_name, tab_name, { oid }, extra_attribs);
+    return(attribs_vect.empty() ? attribs_map() : attribs_vect[0]);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+                    QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+  }
 }
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
@@ -538,6 +557,16 @@ QStringList Catalog::parseDefaultValues(const QString &def_vals, const QString &
   return(values);
 }
 
+QStringList Catalog::parseRuleCommands(const QString &cmds)
+{
+  int start=-1, end=-1;
+  QRegExp cmd_regexp("(DO)( )*(INSTEAD)*( )+");
+
+  start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
+  end=cmds.lastIndexOf(";");// - 2;
+  return(cmds.mid(start,(end - start) + 1).split(";", QString::SkipEmptyParts));
+}
+
 void Catalog::enableCachedQueries(bool value)
 {
   use_cached_queries=value;
@@ -546,4 +575,24 @@ void Catalog::enableCachedQueries(bool value)
 bool Catalog::isCachedQueriesEnabled(void)
 {
   return(use_cached_queries);
+}
+
+void Catalog::operator = (const Catalog &catalog)
+{
+  try
+  {
+    this->ext_obj_oids=catalog.ext_obj_oids;
+    this->connection.setConnectionParams(catalog.connection.getConnectionParams());
+    this->last_sys_oid=catalog.last_sys_oid;
+    this->filter=catalog.filter;
+    this->exclude_ext_objs=catalog.exclude_ext_objs;
+    this->exclude_sys_objs=catalog.exclude_sys_objs;
+    this->exclude_array_types=catalog.exclude_array_types;
+    this->list_only_sys_objs=catalog.list_only_sys_objs;
+    this->connection.connect();
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

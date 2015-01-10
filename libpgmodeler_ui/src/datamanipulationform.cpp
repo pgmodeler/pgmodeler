@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,10 +33,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setWindowFlags(Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
 	filter_hl=new SyntaxHighlighter(filter_txt, false);
-	filter_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-															 GlobalAttributes::DIR_SEPARATOR +
-															 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-															 GlobalAttributes::CONFIGURATION_EXT);
+  filter_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
@@ -156,7 +153,8 @@ void DataManipulationForm::listColumns(void)
 		for(auto col : cols)
 		{
 			col_names.push_back(col[ParsersAttributes::NAME]);
-			code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], QPixmap(":/icones/icones/column.png"));
+      code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
+                                       QPixmap(":/icones/icones/column.png"));
 		}
 
 		ord_column_cmb->addItems(col_names);
@@ -709,8 +707,7 @@ void DataManipulationForm::saveChanges(void)
 		QString cmd;
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("Confirmation"),
-								 trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
+    msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
 								 Messagebox::ALERT_ICON,
 								 Messagebox::YES_NO_BUTTONS);
 

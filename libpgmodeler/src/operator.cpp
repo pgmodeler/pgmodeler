@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -330,8 +330,8 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[ParsersAttributes::HASHES]=(hashes ? "1" : "");
-	attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
+	attributes[ParsersAttributes::HASHES]=(hashes ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::MERGES]=(merges ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

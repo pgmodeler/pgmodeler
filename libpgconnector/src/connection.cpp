@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ const QString Connection::SSL_PREFER="prefer";
 const QString Connection::SSL_REQUIRE="require";
 const QString Connection::SSL_CA_VERIF="verify-ca";
 const QString Connection::SSL_FULL_VERIF="verify-full";
+const QString Connection::PARAM_ALIAS="alias";
 const QString Connection::PARAM_SERVER_FQDN="host";
 const QString Connection::PARAM_SERVER_IP="hostaddr";
 const QString Connection::PARAM_PORT="port";
@@ -47,20 +48,7 @@ bool Connection::silence_conn_err=true;
 
 Connection::Connection(void)
 {
-	connection=nullptr;
-}
-
-Connection::Connection(const QString &server_fqdn, const QString &port, const QString &user, const QString &passwd, const QString &db_name)
-{
-	//Configures the basic connection params
-	setConnectionParam(PARAM_SERVER_FQDN, server_fqdn);
-	setConnectionParam(PARAM_PORT, port);
-	setConnectionParam(PARAM_USER, user);
-	setConnectionParam(PARAM_PASSWORD, passwd);
-	setConnectionParam(PARAM_DB_NAME, db_name);
-
-	//Estabelece a conexão
-	connect();
+  connection=nullptr;
 }
 
 Connection::~Connection(void)
@@ -94,7 +82,13 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
     connection_params[param]=value;
 
 	//Updates the connection string
-	generateConnectionString();
+  generateConnectionString();
+}
+
+void Connection::setConnectionParams(const attribs_map &params)
+{
+  this->connection_params=params;
+  generateConnectionString();
 }
 
 void Connection::generateConnectionString(void)
@@ -108,18 +102,21 @@ void Connection::generateConnectionString(void)
 	connection_str="";
 	while(itr!=connection_params.end())
 	{
-    value=itr->second;
+    if(itr->first!=PARAM_ALIAS)
+    {
+      value=itr->second;
 
-    value.replace("\\","\\\\");
-    value.replace("'","\\'");
+      value.replace("\\","\\\\");
+      value.replace("'","\\'");
 
-    if(itr->first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
-      value=QString("'%1'").arg(value);
+      if(itr->first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
+        value=QString("'%1'").arg(value);
 
-    if(!value.isEmpty())
-      connection_str+=itr->first + "=" + value + " ";
+      if(!value.isEmpty())
+        connection_str+=itr->first + "=" + value + " ";
+    }
 
-		itr++;
+    itr++;
 	}
 }
 
@@ -192,19 +189,6 @@ void Connection::connect(void)
 
 void Connection::close(void)
 {
-  //Raise an error in case the user try to close a not opened connection
-  /* if(!connection)
-  {
-    if(!silence_conn_err)
-      throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-    else
-    {
-      QTextStream err(stderr);
-      err << QT_TR_NOOP("ERROR: trying to close an already terminated connection.")
-          << "[ " << connection_str << "]" << endl;
-    }
-  } */
-
   if(connection)
   {
     //Finalizes the connection
@@ -228,14 +212,26 @@ QString Connection::getConnectionParam(const QString &param)
 	return(connection_params[param]);
 }
 
-attribs_map Connection::getConnectionParams(void)
+attribs_map Connection::getConnectionParams(void) const
 {
 	return(connection_params);
 }
 
 QString Connection::getConnectionString(void)
 {
-	return(connection_str);
+  return(connection_str);
+}
+
+QString Connection::getConnectionId(void)
+{
+  QString alias=connection_params[PARAM_ALIAS], addr;
+
+  if(!connection_params[PARAM_SERVER_FQDN].isEmpty())
+    addr=connection_params[PARAM_SERVER_FQDN];
+  else
+    addr=connection_params[PARAM_SERVER_IP];
+
+  return(QString("%1 (%2:%3)").arg(alias, addr, connection_params[PARAM_PORT]));
 }
 
 bool Connection::isStablished(void)

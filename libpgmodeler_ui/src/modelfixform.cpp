@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 #include "modelfixform.h"
 #include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
-
 #ifndef Q_OS_MAC
 	const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
 #else
@@ -29,26 +27,19 @@ extern ConfigurationForm *configuration_form;
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+  map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+
   setupUi(this);
   hideEvent(nullptr);
 
   //Configuring font style for output widget
-  if(configuration_form)
+  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
   {
-    GeneralConfigWidget *general_conf=nullptr;
-    map<QString, attribs_map> confs;
+    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+    if(size < 5.0f) size=5.0f;
 
-    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-    confs=general_conf->getConfigurationParams();
-
-    if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
-    {
-      float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
-      if(size < 5.0f) size=5.0f;
-
-      output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
-      output_txt->setFontPointSize(size);
-    }
+    output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+    output_txt->setFontPointSize(size);
   }
 
   connect(&pgmodeler_cli_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(updateOutput()));

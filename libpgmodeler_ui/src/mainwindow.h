@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@
 #include "updatenotifierwidget.h"
 #include "modelnavigationwidget.h"
 #include "centralwidget.h"
+#include "configurationform.h"
 
 using namespace std;
 
@@ -112,6 +113,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
     //! brief Update notifier popup widget
     UpdateNotifierWidget *update_notifier_wgt;
+
+    //! brief Configuration form
+    ConfigurationForm *configuration_form;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;

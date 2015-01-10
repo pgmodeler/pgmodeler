@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 #include "appearanceconfigwidget.h"
 
-AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(parent)
+map<QString, attribs_map> AppearanceConfigWidget::config_params;
+
+AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -72,7 +74,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	viewp->centerOn(0,0);
 
   QGridLayout *grid=dynamic_cast<QGridLayout *>(appearance_frm->layout());
-  grid->addWidget(color_picker, 3, 2, 1, 3);
+  grid->addWidget(color_picker, 3, 1, 1, 4);
   grid->addWidget(viewp, 4 , 0, 1, 5);
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
@@ -96,6 +98,11 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
 	delete(viewp);
 	delete(scene);
 	delete(model);
+}
+
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void AppearanceConfigWidget::loadExampleModel(void)
@@ -191,7 +198,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 
 void AppearanceConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
 		attribs_map attribs;
 		vector<AppearanceConfigItem>::iterator itr, itr_end;
@@ -248,7 +255,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 		}
 
 		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -330,7 +337,8 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	}
 
 	model->setObjectsModified();
-	scene->update();
+  scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)
@@ -348,7 +356,8 @@ void AppearanceConfigWidget::applyFontStyle(void)
 			conf_items[element_cmb->currentIndex()].font_fmt);
 
 	model->setObjectsModified();
-	scene->update();
+  scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::restoreDefaults(void)
@@ -356,7 +365,8 @@ void AppearanceConfigWidget::restoreDefaults(void)
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
-		this->loadConfiguration();
+    this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

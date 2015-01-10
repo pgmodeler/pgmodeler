@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -171,8 +171,8 @@ QString Column::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
 
-  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
-  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? "1" : "");
+  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : ParsersAttributes::_TRUE_);
+  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : "");
 
   return(BaseObject::__getCodeDefinition(def_type));
 }

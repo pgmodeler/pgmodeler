@@ -83,7 +83,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::NAME]=this->getName(true, false);
-	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? "1" : "");
+	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : "");
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];
 	attributes[ParsersAttributes::OLD_VERSION]=versions[OLD_VERSION];
   attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SQL_DEFINITION, false);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		comment_edt->setReadOnly(true);
 		name_edt->setFont(font);
 		name_edt->setReadOnly(true);
-		version_cmb->addItems(SchemaParser::getPgSQLVersions());
+    version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
@@ -253,18 +253,12 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 			if(!hl_sqlcode->isConfigurationLoaded())
 			{
-				hl_sqlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+        hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 			}
 
 			if(!hl_xmlcode->isConfigurationLoaded())
 			{
-				hl_xmlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			GlobalAttributes::DIR_SEPARATOR +
-																			GlobalAttributes::XML_HIGHLIGHT_CONF +
-																			GlobalAttributes::CONFIGURATION_EXT);
+        hl_xmlcode->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 			}
 
 			generateSourceCode();

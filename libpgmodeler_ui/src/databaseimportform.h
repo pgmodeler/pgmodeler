@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,11 +70,13 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
     //! brief Constants used to access the tree widget items data
-		static const unsigned OBJECT_ID=0,
-													OBJECT_TYPE=1,
-													OBJECT_SCHEMA=2,
-													OBJECT_TABLE=3,
-													OBJECT_COUNT=4; //Only for gropus
+    static const unsigned OBJECT_ID=1,
+                          OBJECT_TYPE=2,
+                          OBJECT_SCHEMA=3,
+                          OBJECT_TABLE=4,
+                          OBJECT_ATTRIBS=5, //Stores the object's attributes returned by catalog query
+                          OBJECT_OTHER_DATA=6, //General purpose usage
+                          OBJECT_COUNT=7; //Only for gropus
 
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
@@ -85,7 +87,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
 
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
-    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps);
+    static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps, bool create_db_item);
 
 		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column=OBJECT_ID);
 

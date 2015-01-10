@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 	result=(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
 					obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
 					obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
-					obj_type==OBJ_TABLESPACE);
+          obj_type==OBJ_TABLESPACE || obj_type==OBJ_DOMAIN || obj_type==OBJ_TYPE);
 
 
 	//Validating privilege
@@ -89,7 +89,7 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 				priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
 				priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
 
-		 ((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)&& priv_id==PRIV_TRUNCATE) ||
+     ((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && priv_id==PRIV_TRUNCATE) ||
 
 		 (obj_type==OBJ_COLUMN &&
 			(priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||
@@ -103,7 +103,7 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 
 		 ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id==PRIV_EXECUTE) ||
 
-		 (obj_type==OBJ_LANGUAGE && priv_id==PRIV_USAGE) ||
+     ((obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN) && priv_id==PRIV_USAGE) ||
 
 		 (obj_type==OBJ_SCHEMA && (priv_id==PRIV_USAGE || priv_id==PRIV_CREATE)) ||
 
@@ -398,8 +398,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? "1" : "");
-	attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
+	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
   attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)

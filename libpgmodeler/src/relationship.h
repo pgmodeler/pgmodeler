@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -279,10 +279,10 @@ class Relationship: public BaseRelationship {
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
 		static const QString SUFFIX_SEPARATOR,
-		SRC_TAB_TOKEN, //@{st}
-		DST_TAB_TOKEN, //@{dt}
-		GEN_TAB_TOKEN, //@{gt}
-		SRC_COL_TOKEN; //@{sc}
+    SRC_TAB_TOKEN, //{st}
+    DST_TAB_TOKEN, //{dt}
+    GEN_TAB_TOKEN, //{gt}
+    SRC_COL_TOKEN; //{sc}
 
 		//! \brief Patterns ids
 		static const unsigned SRC_COL_PATTERN,

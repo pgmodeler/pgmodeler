@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1497,7 +1497,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		}
 
 		if(with_timezone)
-			attribs[ParsersAttributes::WITH_TIMEZONE]="1";
+      attribs[ParsersAttributes::WITH_TIMEZONE]=ParsersAttributes::_TRUE_;
 
 		return(schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}

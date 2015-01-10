@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -456,7 +456,7 @@ void SyntaxHighlighter::clearConfiguration(void)
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
 	if(filename!="")
-	{
+  {
 		attribs_map attribs;
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,

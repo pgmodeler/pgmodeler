@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
   diff_canceled=false;
-  pgsql_version=SchemaParser::PGSQL_VERSION_94;
+  pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
   setDiffOptions(true, true, false, false, false, true);
@@ -631,7 +631,7 @@ void ModelsDiffHelper::processDiffInfos(void)
        !fk_defs.isEmpty())
     {
       //Attributes used on the diff schema file
-      attribs[ParsersAttributes::HAS_CHANGES]="1";
+      attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
       attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
       attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
@@ -643,7 +643,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::TRUNCATE_CMDS]="";
       attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
       attribs[ParsersAttributes::SET_PERMS]=set_perms;
-      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? "1" : "");
+      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : "");
 
       ritr=drop_objs.rbegin();
       ritr_end=drop_objs.rend();

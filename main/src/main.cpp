@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,20 +90,20 @@ void startCrashHandler(int signal)
 
 int main(int argc, char **argv)
 {
-	try
+  try
 	{
     /* Registering the below classes as metatypes in order to make
-		them liable to be sent through signal parameters. */
-		qRegisterMetaType<ObjectType>("ObjectType");
-		qRegisterMetaType<Exception>("Exception");
-		qRegisterMetaType<ValidationInfo>("ValidationInfo");
-		qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
+    them liable to be sent through signal parameters. */
+    qRegisterMetaType<ObjectType>("ObjectType");
+    qRegisterMetaType<Exception>("Exception");
+    qRegisterMetaType<ValidationInfo>("ValidationInfo");
+    qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
 
-		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
-		signal(SIGSEGV, startCrashHandler);
-		signal(SIGABRT, startCrashHandler);
+    //Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
+    signal(SIGSEGV, startCrashHandler);
+    signal(SIGABRT, startCrashHandler);
 
-		Application app(argc,argv);
+    Application app(argc,argv);
     int res=0;
 
     //Loading the application splash screen
@@ -150,6 +150,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(e.getErrorType());
-	}
+    return(e.getErrorType());
+  }
 }

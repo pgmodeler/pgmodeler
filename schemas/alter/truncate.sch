@@ -3,9 +3,9 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
  
-[TRUNCATE ] @{sql-object} $sp @{signature} 
+[TRUNCATE ] {sql-object} $sp {signature} 
 
-%if @{cascade} %then
+%if {cascade} %then
    [ CASCADE]
  %end
  ; 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	if(element_type==FUNCTION_ELEM && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-		attributes[ParsersAttributes::FUNCTION]="1";
+    attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
@@ -147,7 +147,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==OPERATOR_ELEM && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
-		attributes[ParsersAttributes::OPERATOR]="1";
+    attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
@@ -166,7 +166,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==STORAGE_ELEM && storage!=PgSQLType::null)
 	{
 		//STORAGE storage_type
-		attributes[ParsersAttributes::STORAGE]="1";
+    attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			attributes[ParsersAttributes::TYPE]=(*storage);

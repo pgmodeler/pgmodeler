@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,6 +113,7 @@ class Catalog {
 
 	public:
 		Catalog(void);
+    Catalog(const Catalog &catalog);
 
 		//! \brief Excludes the system objects from listing
 		static const unsigned EXCL_SYSTEM_OBJS=1,
@@ -169,6 +170,9 @@ class Catalog {
 		and by table name (only when retriving child objects for a specific table) */
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
+    //! brief Returns the attributes for the object specified by its type and OID
+    attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name="", const QString tab_name="", attribs_map extra_attribs=attribs_map());
+
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
 
@@ -177,12 +181,18 @@ class Catalog {
 		contains several values */
 		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
+    //! brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
+    static QStringList parseRuleCommands(const QString &cmd);
+
     /*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
         so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
     static void enableCachedQueries(bool value);
 
     //! brief Returns the current status of cached catalog queries
     static bool isCachedQueriesEnabled(void);
+
+    //! brief Performs the copy between two catalogs
+    void operator = (const Catalog &catalog);
 };
 
 #endif

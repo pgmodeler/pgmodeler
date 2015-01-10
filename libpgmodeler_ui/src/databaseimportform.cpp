@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "taskprogresswidget.h"
-
-extern ConfigurationForm *configuration_form;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -201,21 +199,21 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 	while(*itr)
 	{
 		//If the item is checked and its OID is valid
-		if((*itr)->checkState(0)==Qt::Checked && (*itr)->data(0, Qt::UserRole).value<unsigned>() > 0)
+    if((*itr)->checkState(0)==Qt::Checked && (*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>() > 0)
 		{
-			obj_type=static_cast<ObjectType>((*itr)->data(1, Qt::UserRole).value<unsigned>());
+      obj_type=static_cast<ObjectType>((*itr)->data(OBJECT_TYPE, Qt::UserRole).value<unsigned>());
 
 			//If the object is not a column store it on general object list
 			if(obj_type!=OBJ_COLUMN)
-			 obj_oids[obj_type].push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
+       obj_oids[obj_type].push_back((*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>());
 			//If its a column
 			else
 			{
 				//Get the table's oid from the parent item
-				tab_oid=(*itr)->parent()->parent()->data(0, Qt::UserRole).value<unsigned>();
+        tab_oid=(*itr)->parent()->parent()->data(OBJECT_ID, Qt::UserRole).value<unsigned>();
 
 				//Store the column oid on the selected colums map using the table oid as key
-				col_oids[tab_oid].push_back((*itr)->data(0, Qt::UserRole).value<unsigned>());
+        col_oids[tab_oid].push_back((*itr)->data(OBJECT_ID, Qt::UserRole).value<unsigned>());
 			}
 		}
 
@@ -238,7 +236,7 @@ void DatabaseImportForm::listObjects(void)
 																		 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 
       //List the objects using the static helper method
-      DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true);
+      DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true, false);
 		}
 
 		//Enable the control buttons only when objects were retrieved
@@ -314,7 +312,7 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	database_cmb->setEnabled(false);
 	db_objects_tw->setEnabled(false);
 
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
 	hideProgress();
 }
 
@@ -504,7 +502,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
   }
 }
 
-void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps)
+void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps, bool create_db_item)
 {
 	TaskProgressWidget task_prog_wgt;
 
@@ -512,6 +510,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
   {
     if(tree_wgt)
     {
+      QTreeWidgetItem *db_item=nullptr;
       vector<QTreeWidgetItem *> sch_items, tab_items;
       int inc=0, inc1=0;
 
@@ -520,12 +519,29 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       tree_wgt->clear();
       tree_wgt->setColumnHidden(1, true);
-
 			task_prog_wgt.updateProgress(1, trUtf8("Retrieving cluster level objects..."), OBJ_DATABASE);
+
+      if(create_db_item)
+      {
+        Catalog catalog=import_helper.getCatalog();
+        vector<attribs_map> attribs;
+
+        //Creating database item
+        db_item=new QTreeWidgetItem;
+        db_item->setText(0, import_helper.getCurrentDatabase());
+        db_item->setIcon(0, QPixmap(":/icones/icones/database.png"));
+        attribs=catalog.getObjectsAttributes(OBJ_DATABASE, "", "", {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
+
+        db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID));
+        db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
+        db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
+        db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(ParsersAttributes::OID)));
+        tree_wgt->addTopLevelItem(db_item);
+      }
 
       //Retrieving and listing the cluster scoped objects
       sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-                                    BaseObject::getChildObjectTypes(OBJ_DATABASE), checkable_items, disable_empty_grps);
+                                    BaseObject::getChildObjectTypes(OBJ_DATABASE), checkable_items, disable_empty_grps, db_item);
 
       inc=40/static_cast<float>(sch_items.size());
 
@@ -557,8 +573,12 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
       tree_wgt->sortItems(0, Qt::AscendingOrder);
 
-			task_prog_wgt.progress_pb->setValue(100);
+      if(db_item)
+        db_item->setExpanded(true);
+
+      task_prog_wgt.progress_pb->setValue(100);
 			task_prog_wgt.close();
+
     }
   }
   catch(Exception &e)
@@ -578,7 +598,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
   {
     QTreeWidgetItem *group=nullptr, *item=nullptr;
     QFont grp_fnt=tree_wgt->font();
-    attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, "1"}};
+    attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
     attribs_map::iterator itr;
 		QString tooltip="OID: %1";
     bool child_checked=false;

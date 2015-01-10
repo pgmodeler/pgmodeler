@@ -5,10 +5,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 	setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt, true);
-	code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-															GlobalAttributes::DIR_SEPARATOR +
-															GlobalAttributes::XML_HIGHLIGHT_CONF +
-															GlobalAttributes::CONFIGURATION_EXT);
+  code_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
 	connect(close_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearSource(void)));
@@ -78,7 +75,7 @@ void Xml2ObjectWidget::generateObject(void)
 				if(xmlparser->getElementType()==XML_ELEMENT_NODE)
 				{
 					elem_name=xmlparser->getElementName();
-					obj_type=model->getObjectType(elem_name);
+          obj_type=BaseObject::getObjectType(elem_name);
 
 					xmlparser->savePosition();
 

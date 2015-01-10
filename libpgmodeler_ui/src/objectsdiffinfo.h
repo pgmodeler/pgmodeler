@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ are emitted during the diff process on ModelsDiffHelper class.
 #ifndef OBJECTS_DIFF_INFO_H
 #define OBJECTS_DIFF_INFO_H
 
-#include <QString>
 #include "tableobject.h"
 
 class ObjectsDiffInfo {

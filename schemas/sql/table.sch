@@ -3,43 +3,45 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
+[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 
-[-- ] @{drop}
+[-- ] {drop}
 
- %if @{prepended-sql} %then
-   @{prepended-sql}
+ %if {prepended-sql} %then
+   {prepended-sql}
    $br [-- ddl-end --] $br $br
  %end
 
 [CREATE]
 
-%if (@{pgsql-ver} != "9.0") %and @{unlogged} %then
+%if ({pgsql-ver} != "9.0") %and {unlogged} %then
   [ UNLOGGED]
 %end
 
-[ TABLE ] @{name} ( $br
-  %if @{copy-table} %then
-    $tb LIKE $sp @{copy-table}
-    %if @{columns} %or @{constraints} %then [,] %end
+[ TABLE ] {name} ( $br
+  %if {copy-table} %then
+    $tb LIKE $sp {copy-table}
+    %if %not {gen-alter-cmds} %then
+      %if {columns} %or {constraints} %then [,] %end
+    %end
     $br
   %end
 
-  %if %not @{gen-alter-cmds} %then
-    %if @{columns} %then @{columns} %end
+  %if %not {gen-alter-cmds} %then
+    %if {columns} %then {columns} %end
 
-    %if @{constraints} %then
-        %if %not @{constr-sql-disabled} %and @{columns} %then [,] $br %end
-        @{constraints}
+    %if {constraints} %then
+        %if %not {constr-sql-disabled} %and {columns} %then [,] $br %end
+        {constraints}
     %end
   %end
 
 $br )
 
-%if @{ancestor-table} %then [ INHERITS(] @{ancestor-table} [)] $br %end
-%if @{oids} %then [WITH ( OIDS = TRUE )] %end
-%if @{tablespace} %then
- $br [TABLESPACE ] @{tablespace}
+%if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] $br %end
+%if {oids} %then [WITH ( OIDS = TRUE )] %end
+%if {tablespace} %then
+ $br [TABLESPACE ] {tablespace}
 %end
 ; $br
 
@@ -47,17 +49,17 @@ $br )
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br
 
-%if @{gen-alter-cmds} %then
-  %if @{columns} %then $br @{columns} %end
-  %if @{constraints} %then $br @{constraints} %end
+%if {gen-alter-cmds} %then
+  %if {columns} %then $br {columns} %end
+  %if {constraints} %then $br {constraints} %end
 %end
 
-%if @{comment} %then @{comment} %end
-%if @{cols-comment} %then @{cols-comment} %end
-%if @{owner} %then @{owner} %end
+%if {comment} %then {comment} %end
+%if {cols-comment} %then {cols-comment} %end
+%if {owner} %then {owner} %end
 
-%if @{appended-sql} %then
- @{appended-sql}
+%if {appended-sql} %then
+ {appended-sql}
  $br [-- ddl-end --] $br
 %end
 

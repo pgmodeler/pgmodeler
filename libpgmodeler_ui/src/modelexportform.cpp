@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "pgmodelerns.h"
-
-extern ConfigurationForm *configuration_form;
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -62,8 +60,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 	connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::HighPriority); });
 
-	pgsqlvers_cmb->addItems(SchemaParser::getPgSQLVersions());
-	pgsqlvers1_cmb->addItems(SchemaParser::getPgSQLVersions());
+  pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+  pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 	#ifdef Q_OS_WIN
 		this->frame->setFrameShape(QFrame::WinPanel);
@@ -83,8 +81,8 @@ void ModelExportForm::exec(ModelWidget *model)
 {
 	if(model)
 	{
-		this->model=model;
-		dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+		this->model=model;    
+    ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
     hideProgress();
     enableExportMode();
 		QDialog::exec();

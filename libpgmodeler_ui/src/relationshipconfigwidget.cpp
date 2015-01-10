@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 #include "relationshipconfigwidget.h"
 
-RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(parent)
+map<QString, attribs_map> RelationshipConfigWidget::config_params;
+
+RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ ParsersAttributes::RELATIONSHIP_11, ParsersAttributes::RELATIONSHIP_1N,
 																ParsersAttributes::RELATIONSHIP_NN, ParsersAttributes::RELATIONSHIP_GEN,
@@ -49,7 +51,11 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
   center_pnts_ht->setText(center_pnts_chk->statusTip());
 
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
+  connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
 	connect(center_pnts_chk, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
+  connect(center_pnts_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
@@ -66,13 +72,18 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : QWidget(p
 		rel_type_cmb->setItemData(i, rel_types[i]);
 }
 
+map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
+}
+
 void RelationshipConfigWidget::loadConfiguration(void)
 {
 	try
 	{
 		int idx;
 		vector<QString> key_attribs={ParsersAttributes::TYPE};
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, key_attribs);
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, config_params, key_attribs);
 
 		fk_to_pk_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_FK_TO_PK);
 		center_pnts_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
@@ -83,7 +94,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		idx=upd_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx=upd_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
+    idx=del_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		patterns[ParsersAttributes::RELATIONSHIP_11]=config_params[ParsersAttributes::RELATIONSHIP_11];
@@ -102,7 +113,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 }
 
 void RelationshipConfigWidget::saveConfiguration(void)
-{
+{  
 	try
 	{
 		QString patterns_sch, root_dir;
@@ -128,13 +139,13 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 		for(auto itr : patterns)
 		{
-			schparser.setIgnoreUnkownAttributes(true);
-			schparser.setIgnoreEmptyAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
 			config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
 		}
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -156,6 +167,7 @@ void RelationshipConfigWidget::restoreDefaults(void)
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::RELATIONSHIPS_CONF);
 		this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

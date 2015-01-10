@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 #include "modeldatabasediffform.h"
 #include "configurationform.h"
 #include "databaseimportform.h"
-
-extern ConfigurationForm *configuration_form;
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -77,12 +75,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     ignore_duplic_ht->setText(ignore_duplic_chk->statusTip());
 
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
-    sqlcode_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-                                  GlobalAttributes::DIR_SEPARATOR +
-                                  GlobalAttributes::SQL_HIGHLIGHT_CONF +
-                                  GlobalAttributes::CONFIGURATION_EXT);
+    sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    pgsql_ver_cmb->addItems(SchemaParser::getPgSQLVersions());
+    pgsql_ver_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
     connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
     connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -116,7 +111,7 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 {
-	dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
 	connect_tb->setEnabled(connections_cmb->isEnabled());
@@ -338,7 +333,7 @@ void ModelDatabaseDiffForm::importDatabase(void)
     //The import process will exclude built-in array array types, system and extension objects
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, "1"}});
+    catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
 
 		imported_model=new DatabaseModel;

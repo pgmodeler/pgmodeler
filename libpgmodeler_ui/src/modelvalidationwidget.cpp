@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
 
 		version_cmb->addItem(trUtf8("Autodetect"));
-		version_cmb->addItems(SchemaParser::getPgSQLVersions());
+    version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
 		options_frm->setVisible(false);
 		curr_step=0;
 
-		validation_thread=new QThread(this);
-		validation_helper.moveToThread(validation_thread);
+    validation_thread=new QThread(this);
+    validation_helper.moveToThread(validation_thread);
 
 		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
 		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
@@ -63,11 +63,16 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
 		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
-		connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
+
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
 		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+    connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)), Qt::QueuedConnection);
 
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
             [=](){ emit s_validationCanceled(); });
+
+    connect(&validation_helper, &ModelValidationHelper::s_fixApplied,
+            [=](){ emit s_fixApplied(); });
 
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
@@ -236,6 +241,10 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 									 .arg(val_info.getReferences().size()));
 
 	}
+  else if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+    label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and need to be rellocated.")
+                  .arg(Utf8String::create(val_info.getObject()->getName(true).remove("\"")))
+                  .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
     label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
 	else
@@ -349,7 +358,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 void ModelValidationWidget::validateModel(void)
 {
 	emitValidationInProgress();
-	validation_helper.switchToFixMode(false);
+  validation_helper.switchToFixMode(false);
 	validation_thread->start();
 }
 
@@ -357,9 +366,9 @@ void ModelValidationWidget::applyFixes(void)
 {
 	emitValidationInProgress();
 	validation_helper.switchToFixMode(true);
-	disconnect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
-	validation_thread->start();
-	connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
+  disconnect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
+  validation_thread->start();
+  connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd)
@@ -451,4 +460,18 @@ void ModelValidationWidget::swapObjectsIds(void)
 {
 	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
   swapobjectsids_wgt->show();
+}
+
+void ModelValidationWidget::validateRelationships(void)
+{
+  try
+  {
+    model_wgt->getDatabaseModel()->validateRelationships();
+    model_wgt->setModified(true);
+  }
+  catch(Exception &e)
+  {
+    Messagebox msg_box;
+    msg_box.show(e);
+  }
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@
 #ifndef GLOBAL_ATTRIBUTES_H
 #define GLOBAL_ATTRIBUTES_H
 
+/* Including QByteArray due to 'QByteArray has no toStdString()'
+   error on Qt 5.4 (Windows only) */
+#include <QByteArray>
 #include <cstdlib>
 #include <QString>
 #include <QDir>
@@ -34,7 +37,7 @@
 
 namespace GlobalAttributes {
 	static const QString
-  PGMODELER_VERSION="0.8.0-beta",
+  PGMODELER_VERSION="0.8.0-beta1",
 	PGMODELER_VER_CODENAME="Faithful Elephant",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
   PGMODELER_SITE="http://www.pgmodeler.com.br",
@@ -66,6 +69,7 @@ namespace GlobalAttributes {
 	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
 	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
 	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
+  SNIPPETS_CONF="snippets",//! \brief Default name for the code snippets configuration file
 
 	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
@@ -78,7 +82,6 @@ namespace GlobalAttributes {
 	the executable using -style option. This same style is applied to crash handler. */
 	DEFAULT_QT_STYLE="Fusion",
 	UI_STYLE_OPT="-style";
-
 
 	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
@@ -105,6 +108,8 @@ namespace GlobalAttributes {
 	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
 	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
 	SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString("./samples")),
+  SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
+  XML_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + XML_HIGHLIGHT_CONF + CONFIGURATION_EXT,
 
 	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
 	different location for pgmodeler-ch */
@@ -122,7 +127,7 @@ namespace GlobalAttributes {
 	#ifdef DEMO_VERSION
 	 //Maximum object creation counter for demo version
    static const unsigned MAX_OBJECT_COUNT=8;
-	#endif
+	#endif  
 }
 
 #endif

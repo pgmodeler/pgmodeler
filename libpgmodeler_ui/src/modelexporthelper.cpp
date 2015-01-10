@@ -232,7 +232,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(!pgsql_ver.isEmpty())
 		{
 			BaseObject::setPgSQLVersion(pgsql_ver);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1.").arg(pgsql_ver));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overridden. Using version %1.").arg(pgsql_ver));
 		}
 		else
 		{
@@ -628,8 +628,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
   if(!conn.isStablished())
   {
-    aux_conn=conn;
-
     if(!db_name.isEmpty())
       conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
 
@@ -776,6 +774,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       if(ts.atEnd() && !db_sql_cmds.empty())
       {
         conn.close();
+        aux_conn=conn;
         aux_conn.connect();
         for(QString cmd : db_sql_cmds)
           aux_conn.executeDDLCommand(cmd);

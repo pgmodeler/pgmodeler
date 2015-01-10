@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -414,8 +414,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-		ObjectType getObjectType(const QString &type_name);
-		void setBasicAttributes(BaseObject *object);
+    void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
 		PgSQLType createPgSQLType(void);

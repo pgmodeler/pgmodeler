@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Type::Type(void)
   attributes[ParsersAttributes::RANGE_TYPE]="";
   attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
   attributes[ParsersAttributes::ENUM_TYPE]="";
-  attributes[ParsersAttributes::ENUMARATIONS]="";
+  attributes[ParsersAttributes::ENUMERATIONS]="";
   attributes[ParsersAttributes::INPUT_FUNC]="";
   attributes[ParsersAttributes::OUTPUT_FUNC]="";
   attributes[ParsersAttributes::RECV_FUNC]="";
@@ -36,7 +36,7 @@ Type::Type(void)
   attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
   attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
   attributes[ParsersAttributes::ANALYZE_FUNC]="";
-  attributes[ParsersAttributes::INTERNAL_LENGHT]="";
+  attributes[ParsersAttributes::INTERNAL_LENGTH]="";
   attributes[ParsersAttributes::BY_VALUE]="";
   attributes[ParsersAttributes::ALIGNMENT]="";
   attributes[ParsersAttributes::STORAGE]="";
@@ -443,7 +443,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 		if(i < (count-1)) str_enum+=",";
 	}
 
-  attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
+  attributes[ParsersAttributes::ENUMERATIONS]=str_enum;
 }
 
 void Type::setCategory(CategoryType categ)
@@ -612,17 +612,17 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(config==ENUMERATION_TYPE)
 	{
-    attributes[ParsersAttributes::ENUM_TYPE]="1";
+    attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::_TRUE_;
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==COMPOSITE_TYPE)
 	{
-    attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
+    attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::_TRUE_;
 		setElementsAttribute(def_type);
 	}
 	else if(config==RANGE_TYPE)
 	{
-    attributes[ParsersAttributes::RANGE_TYPE]="1";
+    attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
       attributes[ParsersAttributes::SUBTYPE]=(*subtype);
@@ -639,14 +639,14 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 	else
 	{
-    attributes[ParsersAttributes::BASE_TYPE]="1";
+    attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
+      attributes[ParsersAttributes::INTERNAL_LENGTH]="VARIABLE";
 		else
-      attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
+      attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
-    attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
+    attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : "");
     attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
     attributes[ParsersAttributes::STORAGE]=(~storage);
     attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
@@ -659,8 +659,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     attributes[ParsersAttributes::CATEGORY]=~(category);
 
-    attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
-    attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
+    attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : "");
 
 		if(like_type!="any")
 		{
@@ -724,7 +724,7 @@ QString Type::getAlterDefinition(BaseObject *object)
             attribs[ParsersAttributes::BEFORE]="";
             if(prev_val.isEmpty())
             {
-              attribs[ParsersAttributes::BEFORE]="1";
+              attribs[ParsersAttributes::BEFORE]=ParsersAttributes::_TRUE_;
               prev_val=this->enumerations[0];
             }
 
@@ -745,7 +745,7 @@ QString Type::getAlterDefinition(BaseObject *object)
         {
           if(type->getAttributeIndex(attrib.getName()) < 0)
           {
-            attribs[ParsersAttributes::DROP]="1";
+            attribs[ParsersAttributes::DROP]=ParsersAttributes::_TRUE_;
             attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
             copyAttributes(attribs);
             alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
@@ -774,7 +774,7 @@ QString Type::getAlterDefinition(BaseObject *object)
           //Changing type attributes
           else
           {
-            attribs[ParsersAttributes::CHANGE]="1";
+            attribs[ParsersAttributes::CHANGE]=ParsersAttributes::_TRUE_;
 
             if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
             {

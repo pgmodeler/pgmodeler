@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,10 +26,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 
 		check_expr_hl=nullptr;
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false);
-		check_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    check_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);

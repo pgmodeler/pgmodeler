@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
+    QMenu snippets_menu;
+
 		FindReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
@@ -62,11 +64,13 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Stores the command on the sql command history
 		void registerSQLCommand(const QString &cmd);
 
+    //! brief Show the exception message in the output widget
 		void showError(Exception &e);
 
+    //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
-	public:
+  public:
 		SQLToolWidget(QWidget * parent = 0);
     ~SQLToolWidget(void);
 
@@ -86,7 +90,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
-	private slots:
+  public slots:
+    void configureSnippets(void);
+
+  private slots:
     //! brief Opens a connection to the selected server
     void connectToServer(void);
 
@@ -119,6 +126,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void closeDatabaseExplorer(int idx);
 
     void setCurrentDatabase(int idx);
+
+    void selectSnippet(QAction *act);
+
+    void handleSelectedWord(QString word);
 };
 
 #endif

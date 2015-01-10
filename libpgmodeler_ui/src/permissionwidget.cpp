@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,10 +35,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	Ui_PermissionWidget::setupUi(this);
 
   code_hl=new SyntaxHighlighter(code_txt, false);
-  code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-                                     GlobalAttributes::DIR_SEPARATOR +
-                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
-                                     GlobalAttributes::CONFIGURATION_EXT);
+  code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;

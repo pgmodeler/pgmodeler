@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,22 +36,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		operation_count=0;
 
 		expression_hl=new SyntaxHighlighter(expression_txt, false);
-		expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		code_hl=new SyntaxHighlighter(code_txt, false);
-		code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			 GlobalAttributes::DIR_SEPARATOR +
-																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			 GlobalAttributes::CONFIGURATION_EXT);
+    code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt, false);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			 GlobalAttributes::DIR_SEPARATOR +
-																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			 GlobalAttributes::CONFIGURATION_EXT);
+    cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
@@ -114,9 +105,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
     tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, OBJ_VIEW);
 
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(recursive_rb);
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(materialized_rb);
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(recursive_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(materialized_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(with_no_data_chk);
     frame=generateVersionWarningFrame(fields_map);
     view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
     frame->setParent(this);

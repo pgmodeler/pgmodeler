@@ -8,10 +8,10 @@
 
 <relationships> $br
 
-$tb [<connection mode=] "@{mode}" [/>] $br
-$tb [<foreign-keys deferrable=] "@{deferrable}" [ defer-type=] "@{defer-type}" [ upd-action=] "@{upd-action}" [ del-action=] "@{del-action}" [/>] $br
+$tb [<connection mode=] "{mode}" [/>] $br
+$tb [<foreign-keys deferrable=] "{deferrable}" [ defer-type=] "{defer-type}" [ upd-action=] "{upd-action}" [ del-action=] "{del-action}" [/>] $br
 $tb <name-patterns> $br
-@{patterns}    
+{patterns}    
 $tb </name-patterns> $br
 
 </relationships> $br
