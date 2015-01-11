@@ -21,11 +21,12 @@ The database explorer widget also brings a special control that lists object's p
 * [Change] Minor improvements on configuration widgets in order to detect if the settings was changed, this will avoid the unecessary load/save of the configuration files in ConfigurationForm.
 * [Change] Minor updates on sql-highlight.conf
 * [Change] Updated the version info on platform specific installer files.
+* [Fix] Fixed a bug that was crashing application when using special pks in relationshps.
 * [Fix] Minor fix on windeploy.sh to copy the correct libs.
 * [Fix] Minor fix on macdeploy.sh in order to use Qt 5.4.
 * [Fix] Fixes done in order to build pgModeler on Windows using Qt 5.4.
 * [Fix] Fixed a bug on SchemaParser that was wrongly reading %define instructions inside if's and creating attributes when it was not need to create them.
-* [Fix] Modifications done on attributes initialization at RelationshipWidget in order to fix some crashes. Now pgModeler runs without crashing when compiled in release mode using g++.
+* [Fix] Modifications done on attributes initialization at RelationshipWidget in order to fix some crashes. Now pgModeler runs without crashing when compiled in release mode using GCC.
 * [Fix] Minor fix on aggregates listing on Catalog class. Now the handled types are attached to aggregates' names.
 * [Fix] Minor fix on config pages indexes on ConfigurationForm.
 * [Fix] Minor fix on MainWindow when there are errors during configuration files loading.
@@ -35,4 +36,4 @@ The database explorer widget also brings a special control that lists object's p
 * [Fix] Minor fix on table.sch schema file.
 * [Fix] Fixed the object filter on database explorer.
 * [Fix] Typo correction on ModelExportHelper.
-* [Fix] Additional fix to remove g++ warnings.
+* [Fix] Additional fix to remove GCC warnings.

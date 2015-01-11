@@ -51,6 +51,7 @@ v0.8.0-beta1
 * [Change] Removed unused constructor on Connection class.
 * [Change] Minor improvement on DatabaseImportForm::listObjects, now it's possible to include a database root item.
 * [Change] Minor improvements on class DatabaseImportHelper.
+* [Fix] Fixed a bug that was crashing application when using special pks in relationshps.
 * [Fix] Minor fix on windeploy.sh to copy the correct libs.
 * [Fix] Minor fix on macdeploy.sh in order to use Qt 5.4.
 * [Fix] Fixes done in order to build pgModeler on Windows using Qt 5.4.
