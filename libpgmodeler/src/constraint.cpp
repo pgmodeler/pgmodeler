@@ -590,7 +590,10 @@ void Constraint::setColumnsNotNull(bool value)
   if(constr_type==ConstraintType::primary_key)
   {
     for(auto col : columns)
-      col->setNotNull(value);
+    {
+      if(!col->isAddedByRelationship())
+        col->setNotNull(value);
+    }
   }
 }
 

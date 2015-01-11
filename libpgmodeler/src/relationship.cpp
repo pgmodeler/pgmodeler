@@ -2037,6 +2037,12 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				list_idx++;
 			}
 
+      //Destroy the special pk before the generated columns to avoid crashes
+      if(pk_special)
+      {
+        delete(pk_special);
+        pk_special=nullptr;
+      }
 
 			itr=gen_columns.begin();
 			itr_end=gen_columns.end();
@@ -2056,17 +2062,11 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			gen_columns.clear();
 			pk_columns.clear();
 
-			if(table_relnn)
-			{
-				delete(table_relnn);
-				table_relnn=nullptr;
-			}
-
-			if(pk_special)
-			{
-				delete(pk_special);
-				pk_special=nullptr;
-			}
+      if(table_relnn)
+      {
+        delete(table_relnn);
+        table_relnn=nullptr;
+      }
 
 			BaseRelationship::disconnectRelationship();
 		}
