@@ -788,7 +788,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
     {
-      attributes[ParsersAttributes::DROP]=getDropDefinition(false);
+      attributes[ParsersAttributes::DROP]=getDropDefinition(true);
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
     }
 

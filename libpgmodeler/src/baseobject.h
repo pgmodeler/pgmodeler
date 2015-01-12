@@ -79,7 +79,7 @@ class BaseObject {
 		//! brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! brief Indicates the the cached code enabled
+    //! brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
 		//! \brief Stores the database wich the object belongs

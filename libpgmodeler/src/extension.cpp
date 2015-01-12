@@ -39,7 +39,12 @@ void Extension::setSchema(BaseObject *schema)
 
 		//Renames the PostgreSQL type represented by the extension
 		PgSQLType::renameUserType(prev_name, this, this->getName(true));
-	}
+  }
+}
+
+QString Extension::getSignature(bool format)
+{
+  return(getName(format, false));
 }
 
 void Extension::setHandlesType(bool value)
