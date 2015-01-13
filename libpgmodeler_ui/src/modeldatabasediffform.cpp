@@ -102,6 +102,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 {
 	destroyThreads();
+  destroyModel();
 }
 
 void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
@@ -296,6 +297,7 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
+  destroyModel();
 	clearOutput();
 	createThreads();
   importDatabase();
@@ -331,8 +333,8 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		catalog.setConnection(conn);
 
     //The import process will exclude built-in array array types, system and extension objects
-		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
-											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
+    catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
+                      Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
     catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
 
@@ -509,9 +511,8 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
   if(export_helper)
    export_helper->cancelExport();
 
-  destroyModel();
-	destroyThreads();
-	resetButtons();
+  destroyThreads();
+  resetButtons();
   process_paused=false;
 }
 
@@ -572,7 +573,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 {
   msg=PgModelerNS::formatString(msg);
 
-	if(import_thread->isRunning())
+  if(import_thread && import_thread->isRunning())
 	{
 		if(progress > 90)
 			step_pb->setValue(step_pb->value() + 5);
@@ -581,9 +582,9 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
                      QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
                      import_item);
 	}
-	else if(diff_thread->isRunning())
+  else if(diff_thread && diff_thread->isRunning())
     step_pb->setValue(diff_progress + (progress/3));
-  else if(export_thread->isRunning())
+  else if(export_thread && export_thread->isRunning())
   {
     QPixmap ico;
     step_pb->setValue(diff_progress + (progress/3));
@@ -621,7 +622,9 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
   item=createOutputItem(PgModelerNS::formatString(diff_info.getInfoMessage()),
                                       QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())), diff_item);
   item->setData(0, Qt::UserRole, diff_info.getDiffType());
-  btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
+
+  if(diff_helper)
+    btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 
   output_trw->setItemHidden(item, !btn->isChecked());
 }

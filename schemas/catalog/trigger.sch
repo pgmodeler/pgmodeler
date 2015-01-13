@@ -25,6 +25,10 @@
     [ AND tg.oid ] {oid-filter-op} $sp {last-sys-oid}
   %end
 
+  %if {not-ext-object} %then
+    [ AND ]( {not-ext-object} )
+  %end
+
 %else
     %if {attribs} %then
     # pg_trigger.tgtype datails:
@@ -92,5 +96,9 @@
 	%if {filter-oids} %then
 	  [ AND tg.oid IN (] {filter-oids} )
 	%end
+
+        %if {not-ext-object} %then
+          [ AND ]( {not-ext-object} )
+        %end
     %end
 %end

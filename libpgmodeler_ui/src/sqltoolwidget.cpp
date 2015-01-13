@@ -25,7 +25,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
   h_splitter->setSizes({0, 10000});

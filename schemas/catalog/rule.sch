@@ -30,6 +30,15 @@
     [ rl.oid ] {oid-filter-op} $sp {last-sys-oid}
   %end
 
+  %if {not-ext-object} %then
+    %if %not {last-sys-oid} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+      ( {not-ext-object} )
+  %end
+
 %else
     %if {attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,
@@ -83,6 +92,15 @@
         %end
         [ rl.oid IN (] {filter-oids} )
       %end
+
+        %if {not-ext-object} %then
+          %if %not {last-sys-oid} %and %not {filter-oids} %then
+            [ WHERE ]
+          %else
+            [ AND ]
+          %end
+          ( {not-ext-object} )
+        %end
 
     %end
 %end
