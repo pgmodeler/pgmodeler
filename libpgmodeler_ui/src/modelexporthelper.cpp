@@ -3,7 +3,7 @@
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
 	sql_gen_progress=progress=0;
-  db_created=ignore_dup=drop_db=export_canceled=false;
+  db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
   simulate=use_tmp_names=db_sql_reenabled=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 	db_model=nullptr;
@@ -178,17 +178,15 @@ void ModelExportHelper::sleepThread(unsigned msecs)
 		QThread::msleep(msecs);
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_tmp_names)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
 {
 	int type_id;
-  QString  version/*, sql_buf*/, sql_cmd; //, lin;
+  QString  version, sql_cmd;
 	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
 	vector<Exception> errors;
-  //QTextStream ts;
-  //bool ddl_tk_found=false;
 
 	/* Error codes treated in this method
 			42P04 	duplicate_database
@@ -212,8 +210,10 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
-		if(simulate && (ignore_dup || drop_db))
+    if(simulate && (ignore_dup || drop_db || drop_objs))
 			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else if(drop_db && drop_objs)
+      throw Exception(ERR_MIX_INCOMP_DROP_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -357,7 +357,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
       emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'.").arg(Utf8String::create(db_model->getName())));
 
       //Exporting the database model definition using the opened connection
-      exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn);
+      exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
     }
 
 		disconnect(db_model, nullptr, this, nullptr);
@@ -366,7 +366,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			restoreGenAtlerCmdsStatus();
 
 		//Closes the new opened connection
-    //if(new_db_conn.isStablished())
     new_db_conn.close();
 
 		/* If the process was a simulation or even canceled undo the export
@@ -374,7 +373,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(simulate || export_canceled)
       undoDBMSExport(db_model, conn, use_tmp_names);
 
-    //if(conn.isStablished())
     conn.close();
 
 		if(!export_canceled)
@@ -394,7 +392,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		try
 		{
 			//Closes the new opened connection
-      //if(new_db_conn.isStablished())
       new_db_conn.close();
 
 			//Undo the export removing the created objects
@@ -402,7 +399,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		}
 		catch(Exception &){}
 
-    //if(conn.isStablished())
     conn.close();
 
 		/* When running in a separated thread (other than the main application thread)
@@ -595,11 +591,12 @@ bool ModelExportHelper::isExportError(const QString &error_code)
   return(std::find(err_codes_vect.begin(), err_codes_vect.end(), error_code)==err_codes_vect.end());
 }
 
-void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn)
+void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
 {
   Connection aux_conn;
   QString sql_buf=buffer, sql_cmd, lin, msg,
-          obj_name, obj_tp_name, tab_name, alter_tab="ALTER TABLE";
+          obj_name, obj_tp_name, tab_name,
+          alter_tab="ALTER TABLE";
   vector<Exception> errors;
   vector<QString> db_sql_cmds;
   QTextStream ts;
@@ -607,11 +604,13 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   bool ddl_tk_found=false, is_create=false, is_drop=false;
   unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
            factor=(db_name.isEmpty() ? 70 : 100);
-  int pos=0, pos1=0;
+  int pos=0, pos1=0, comm_cnt=0;
 
   //Regexp used to extract the object being created
   QRegExp obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
           tab_obj_reg(QString("^(%1)(.)+(ADD)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
+          drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
+          drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
           reg_aux;
 
   vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
@@ -643,12 +642,34 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       curr_size+=lin.size();
       aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * factor);
 
-      ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
-      lin.remove(QRegExp("^(--)+(.)+$"));
+      /* If the simulation mode is off and the drop objects option is checked,
+         check if the current line matches one of the accepted drop commands
+         (DROP [OBJECT] or ALTER TABLE...DROP) */
+      if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
+      {
+        comm_cnt=lin.count("--");
+        lin=lin.remove("--").trimmed();
 
-      //If the line isn't empty after cleanup it will be included on sql command
-      if(!lin.isEmpty())
-        sql_cmd += lin + "\n";
+        /* If the count of comment indicators (--) is 1 indicates that the DDL of the
+           object related to the DROP is enabled, so the DROP is executed otherwise ignored */
+        if(comm_cnt==1)
+        {
+         sql_cmd=lin + "\n";
+         ddl_tk_found=true;
+        }
+        else
+         //Ignoring the drop command
+         emit s_progressUpdated(progress, trUtf8("Drop command ignored. Related object has its SQL disabled."), BASE_OBJECT, lin);
+      }
+      else
+      {
+        ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+        lin.remove(QRegExp("^(--)+(.)+$"));
+
+        //If the line isn't empty after cleanup it will be included on sql command
+        if(!lin.isEmpty())
+          sql_cmd += lin + "\n";
+      }
 
       //If the ddl end token is found
       if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
@@ -809,14 +830,15 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_rand_names)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
 {
 	this->db_model=db_model;
 	this->connection=conn;
 	this->pgsql_ver=pgsql_ver;
 	this->ignore_dup=ignore_dup;
 	this->simulate=simulate;
-	this->drop_db=drop_db;
+  this->drop_db=drop_db && !drop_objs;
+  this->drop_objs=drop_objs && !drop_db;
   this->use_tmp_names=use_rand_names;
   this->sql_buffer.clear();
   this->db_name.clear();
@@ -838,7 +860,7 @@ void ModelExportHelper::exportToDBMS(void)
 	if(connection)
   {
     if(sql_buffer.isEmpty())
-     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names);
+     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names, drop_objs);
     else
     {
       try

@@ -32,8 +32,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   pgsqlvers_ht=new HintTextWidget(pgsqlvers_hint, this);
   pgsqlvers_ht->setText(pgsqlvers_chk->statusTip());
 
-  drop_db_ht=new HintTextWidget(drop_db_hint, this);
-  drop_db_ht->setText(drop_db_chk->statusTip());
+  drop_ht=new HintTextWidget(drop_hint, this);
+  drop_ht->setText(drop_chk->statusTip());
 
   ignore_dup_ht=new HintTextWidget(ignore_dup_hint, this);
   ignore_dup_ht->setText(ignore_dup_chk->statusTip());
@@ -49,6 +49,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(select_file_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(select_img_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(export_btn, SIGNAL(clicked(void)), this, SLOT(exportModel(void)));
+  connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
+  connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
 	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
@@ -109,7 +111,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	image_edt->clear();
 	pgsqlvers_chk->setChecked(false);
 	ignore_dup_chk->setChecked(false);
-	drop_db_chk->setChecked(false);
+  drop_chk->setChecked(false);
   export_to_file_rb->setChecked(false);
 	export_btn->setEnabled(false);
 	export_to_dbms_rb->setChecked(true);
@@ -155,7 +157,9 @@ void ModelExportForm::exportModel(void)
 				if(pgsqlvers1_cmb->isEnabled())
 					version=pgsqlvers1_cmb->currentText();
 
-        export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(), drop_db_chk->isChecked());
+        export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(),
+                                         drop_chk->isChecked() && drop_db_rb->isChecked(),
+                                         drop_chk->isChecked() && drop_objs_rb->isChecked());
 				export_thread->start();
 				enableExportModes(false);
 				cancel_btn->setEnabled(true);
