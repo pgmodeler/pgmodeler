@@ -1093,6 +1093,12 @@ QString BaseObject::getDropDefinition(bool cascade)
       schparser.ignoreEmptyAttributes(true);
 
       attribs=attributes;
+
+      /* Creating an attribute that identifies the object type in order
+         to permit conditional code generation inside the DROP script */
+      if(attribs.count(this->getSchemaName())==0)
+        attribs[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+
       attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
 
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));

@@ -46,9 +46,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
     HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
 
-		QTimer timer;
-
-		void finishExport(const QString &msg);
+    void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
 		int exec(void){ return(QDialog::Rejected); }
@@ -61,11 +59,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void hideEvent(QHideEvent *);
 
 	private slots:
-		void enableExportMode(void);
+    void selectExportMode(void);
 		void exportModel(void);
 		void selectOutputFile(void);
-		void hideProgress(bool value=true);
-		void updateProgress(int progress, QString msg, ObjectType obj_type);
+    void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd);
 		void captureThreadError(Exception e);
 		void cancelExport(void);
 		void handleExportFinished(void);

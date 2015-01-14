@@ -17,8 +17,8 @@
 */
 
 #include "mainwindow.h"
+#include "pgmodeleruins.h"
 
-//ConfigurationForm *configuration_form=nullptr;
 bool MainWindow::confirm_validation=true;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -1702,7 +1702,9 @@ void MainWindow::executePendingOperation(bool valid_error)
   {
     static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
                                       QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
-    model_valid_wgt->insertInfoMessage(trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
+
+    PgModelerUiNS::createOutputTreeItem(model_valid_wgt->output_trw,
+                                        trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
 
     if(pending_op==PENDING_SAVE_OPER || pending_op==PENDING_SAVE_AS_OPER)
       saveModel();

@@ -22,11 +22,12 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		progress=sql_gen_progress=0;
 		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-													 trUtf8("PostgreSQL %1 version code generation.").arg(BaseObject::getPgSQLVersion()),
-													 OBJ_DATABASE);
+                           trUtf8("Generating SQL code for PostgreSQL %1").arg(BaseObject::getPgSQLVersion()),
+                           BASE_OBJECT);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
 
+    emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), BASE_OBJECT);
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -138,8 +139,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       painter.setRenderHint(QPainter::TextAntialiasing, true);
       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-      emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 100,
-                             trUtf8("Rendering objects onto the output pixmap."), BASE_OBJECT);
+      emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
+                             trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), BASE_OBJECT);
 
       //Render the entire viewport onto the pixmap
       viewp.render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -164,6 +165,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
     ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
     scene->update();
 
+    emit s_progressUpdated(100, trUtf8("Output image `%1' successfully written.").arg(filename), BASE_OBJECT);
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -594,7 +596,7 @@ bool ModelExportHelper::isExportError(const QString &error_code)
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
 {
   Connection aux_conn;
-  QString sql_buf=buffer, sql_cmd, lin, msg,
+  QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
           obj_name, obj_tp_name, tab_name,
           alter_tab="ALTER TABLE";
   vector<Exception> errors;
@@ -608,7 +610,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
   //Regexp used to extract the object being created
   QRegExp obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
-          tab_obj_reg(QString("^(%1)(.)+(ADD)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
+          tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
           drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
           drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
           reg_aux;
@@ -657,9 +659,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
          sql_cmd=lin + "\n";
          ddl_tk_found=true;
         }
-        else
-         //Ignoring the drop command
-         emit s_progressUpdated(progress, trUtf8("Drop command ignored. Related object has its SQL disabled."), BASE_OBJECT, lin);
       }
       else
       {
@@ -674,28 +673,39 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       //If the ddl end token is found
       if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
       {
-        //Checking if the command is a col or constraint creation via ALTER TABLE
-        pos=tab_obj_reg.indexIn(sql_cmd);
+        //Checking if the command is a column or constraint creation via ALTER TABLE
+        aux_cmd=sql_cmd;
+        pos=tab_obj_reg.indexIn(aux_cmd);
 
         if(pos >= 0)
-        {
-          sql_cmd.remove("\"");
-          obj_type=(sql_cmd.contains("COLUMN") ? OBJ_COLUMN : OBJ_CONSTRAINT);
+        {        
+          aux_cmd.remove("\"");
+          aux_cmd.remove("IF EXISTS ");
+          obj_type=(aux_cmd.contains("COLUMN") ? OBJ_COLUMN : OBJ_CONSTRAINT);
 
           pos+=tab_obj_reg.matchedLength();
-          pos1=sql_cmd.indexOf(' ', pos);
-          obj_name=sql_cmd.mid(pos, pos1 - pos);
+          pos1=aux_cmd.indexOf(' ', pos);
+          obj_name=aux_cmd.mid(pos, pos1 - pos);
 
           //Extracting the table name
-          pos=sql_cmd.indexOf(alter_tab) + alter_tab.size();
-          pos1=sql_cmd.indexOf("ADD");
-          tab_name=sql_cmd.mid(pos, pos1 - pos).simplified();
+          pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
+          pos1=aux_cmd.indexOf("ADD");
 
+          if(pos1 < 0)
+          {
+            pos1=aux_cmd.indexOf("DROP");
+            is_drop=true;
+          }
+
+          tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
           obj_name=tab_name + "." + obj_name;
 
-          emit s_progressUpdated(aux_prog,
-                                 trUtf8("Creating object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
-                                 obj_type, sql_cmd);
+          if(is_drop)
+            msg=trUtf8("Dropping object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+          else
+            msg=trUtf8("Creating object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+
+           emit s_progressUpdated(aux_prog, msg,obj_type, sql_cmd);
         }
         //Check if the regex matches the sql command
         else if(obj_reg.exactMatch(sql_cmd))
@@ -860,7 +870,7 @@ void ModelExportHelper::exportToDBMS(void)
 	if(connection)
   {
     if(sql_buffer.isEmpty())
-     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names, drop_objs);
+     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, drop_objs, simulate, use_tmp_names);
     else
     {
       try
