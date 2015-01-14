@@ -22,6 +22,9 @@ QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
 QT_IFW_ROOT=/opt/qt-if-1.5.0
 
+BUILD_DIR="$PWD/build"
+INSTALLER_DATA_DIR="$PWD/installer/linux/packages/br.com.pgmodeler/data"
+
 # Detecting current pgModeler version
 DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
 BUILD_NUM=$(date '+%Y%m%d')
@@ -92,7 +95,7 @@ else
            libicudata.so.5*"
 fi
 
-clear
+clear 
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
@@ -252,6 +255,18 @@ fi
 
 if [ $GEN_INST_PKG = 1 ]; then
   echo "Generating installer..."
+  
+ if ! [ -e "$INSTALLER_DATA_DIR" ]; then
+   ln -sf $BUILD_DIR $INSTALLER_DATA_DIR >> $LOG 2>&1
+   
+   if [ $? -ne 0 ]; then
+     echo
+     echo "** Failed to installer data dir!"
+     echo
+     exit 1
+   fi   
+ fi
+  
   $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
