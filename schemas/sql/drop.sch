@@ -5,7 +5,7 @@
 
 %if {collation} %and ({pgsql-ver} != "9.0") %or %not {collation} %then
 
- %if {constraint} %or {column} %then
+ %if %not {domain} %and {constraint} %or {column} %then
     %if %not {decl-in-table} %then
       [ALTER TABLE ] {table} [ DROP ] {sql-object} [ IF EXISTS ]
     %end

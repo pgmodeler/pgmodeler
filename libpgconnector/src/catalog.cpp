@@ -24,6 +24,7 @@ const QString Catalog::PGSQL_TRUE="t";
 const QString Catalog::PGSQL_FALSE="f";
 const QString Catalog::BOOL_FIELD="_bool";
 const QString Catalog::ARRAY_PATTERN="((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$";
+const QString Catalog::GET_EXT_OBJS_SQL="SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'";
 
 bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;
@@ -38,6 +39,13 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"},
 	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.oid"},
 	{OBJ_EVENT_TRIGGER, "et.oid"},
+};
+
+map<ObjectType, QString> Catalog::ext_oid_fields={
+  {OBJ_CONSTRAINT, "cs.conrelid"},
+  {OBJ_INDEX, "id.indexrelid"},
+  {OBJ_TRIGGER, "tg.tgrelid"},
+  {OBJ_RULE, "rl.ev_class"}
 };
 
 Catalog::Catalog(void)
@@ -72,7 +80,7 @@ void Catalog::setConnection(Connection &conn)
 		}
 
 		//Retrieving the list of objects created by extensions
-		this->connection.executeDMLCommand("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'", res);
+    this->connection.executeDMLCommand(GET_EXT_OBJS_SQL, res);
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			do
@@ -177,7 +185,12 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		}
 
 		if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
-			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+    {
+      if(ext_oid_fields.count(obj_type)==0)
+        attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+      else
+        attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
+    }
 
     loadCatalogQuery(BaseObject::getSchemaName(obj_type));
 		schparser.ignoreUnkownAttributes(true);

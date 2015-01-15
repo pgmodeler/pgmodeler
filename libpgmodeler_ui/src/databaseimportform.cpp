@@ -20,6 +20,8 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "taskprogresswidget.h"
+#include "pgmodeleruins.h"
+#include "pgmodelerns.h"
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -47,6 +49,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
   ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
   ignore_errors_ht->setText(ignore_errors_chk->statusTip());
 
+  settings_tbw->setTabEnabled(1, false);
+
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
@@ -65,7 +69,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
-	connect(&timer, SIGNAL(timeout(void)), this, SLOT(hideProgress()));
 
   connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
 	connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
@@ -73,19 +76,19 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-	msg.replace(msg.indexOf('`'), 1 ,"<strong>");
-	msg.replace(msg.indexOf('\''), 1,"</strong>");
-	msg.replace(msg.indexOf('`'), 1 ,"<em>");
-	msg.replace(msg.indexOf('\''), 1,"</em>");
+  QPixmap ico;
+
+  msg=PgModelerNS::formatString(msg);
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+    ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 	else
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+    ico=QPixmap(":/icones/icones/msgbox_info.png");
 
-	this->repaint();
+  ico_lbl->setPixmap(ico);
+  PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
@@ -121,6 +124,10 @@ void DatabaseImportForm::importDatabase(void)
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
 
+    output_trw->clear();
+    settings_tbw->setTabEnabled(1, true);
+    settings_tbw->setCurrentIndex(1);
+
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
 
@@ -132,12 +139,6 @@ void DatabaseImportForm::importDatabase(void)
 																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 
 		import_helper.setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
-
-		timer.stop();
-
-		if(!progress_pb->isVisible())
-			hideProgress(false);
-
 		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
@@ -280,22 +281,6 @@ void DatabaseImportForm::listDatabases(void)
   }
 }
 
-void DatabaseImportForm::hideProgress(bool value)
-{
-	ln2_frm->setHidden(value);
-	progress_lbl->setHidden(value);
-	progress_pb->setHidden(value);
-	cancel_btn->setHidden(value);
-	progress_pb->setValue(0);
-	ico_lbl->setHidden(value);
-
-	this->resize(this->width(),
-							 (value ? this->height() - 50 : this->height() + 50));
-
-  if(value)
-    timer.stop();
-}
-
 void DatabaseImportForm::showEvent(QShowEvent *)
 {
 	debug_mode_chk->setChecked(false);
@@ -313,7 +298,6 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 	db_objects_tw->setEnabled(false);
 
   ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
-	hideProgress();
 }
 
 void DatabaseImportForm::closeEvent(QCloseEvent *event)
@@ -333,9 +317,20 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 
 void DatabaseImportForm::captureThreadError(Exception e)
 {
-	destroyModelWidget();
+  QPixmap ico;
+  QTreeWidgetItem *item=nullptr;
+
+  destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+
+  ico=QPixmap(":/icones/icones/msgbox_erro.png");
+  ico_lbl->setPixmap(ico);
+
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), ico);
+
+  if(!e.getExtraInfo().isEmpty())
+   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), ico, item, true);
+
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
@@ -428,7 +423,6 @@ void DatabaseImportForm::handleImportFinished(Exception e)
   import_helper.closeConnection();
   import_thread->quit();
   import_thread->wait();
-  timer.stop();
 
 	this->accept();
 }
@@ -445,7 +439,6 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
-	timer.start(5000);
 }
 
 ModelWidget *DatabaseImportForm::getModelWidget(void)

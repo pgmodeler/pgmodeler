@@ -43,6 +43,9 @@ class Catalog {
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
 		BOOL_FIELD,     //! \brief Suffix for boolean fields.
 
+    //! \brief Query used to retrieve extension objects.
+    GET_EXT_OBJS_SQL,
+
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		ARRAY_PATTERN;
 
@@ -53,6 +56,11 @@ class Catalog {
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
+
+    /*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
+        (see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
+        there are different fields that tells if the object (or its parent) is part of extension. */
+    static map<ObjectType, QString> ext_oid_fields;
 
     //! brief Indicates is the use of cached catalog queries is enabled
     static bool use_cached_queries;

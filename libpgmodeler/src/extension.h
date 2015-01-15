@@ -46,6 +46,7 @@ class Extension: public BaseObject {
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
+    QString getSignature(bool format);
 
 		/*! \brief Defines if the extension handles a datatype. When setting to true
 		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when

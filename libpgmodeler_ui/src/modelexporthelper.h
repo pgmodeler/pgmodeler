@@ -54,6 +54,9 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates to the exporter to drop database before export
 		drop_db,
 
+    //! \brief Indicates to the exporter to drop the objects that are enabled and have a DROP command attached (see SQL source for objects)
+    drop_objs,
+
     //! \brief Indicates to the exporter to generate random names for database, roles and tablespaces before export (only in thread mode)
     use_tmp_names,
 
@@ -98,16 +101,17 @@ class ModelExportHelper: public QObject {
     void restoreObjectNames(void);
 
     //! brief Exports the contents of the buffer to a previously opened connection
-    void exportBufferToDBMS(const QString &buffer, Connection &conn);
+    void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
 
     //! brief Returns if the error code is one of the treated by the export process
     bool isExportError(const QString &error_code);
 
   protected:
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
-        This form receive a database model as input and the sql code to be exported will be generated from it */
+        This form receive a database model as input and the sql code to be exported will be generated from it.
+        \note The params drop_db and drop_objs can't be true at the same time. */
     void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
-                               bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
+                               bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
         This form receive a previously generated sql buffer to be exported the the helper */
@@ -126,9 +130,10 @@ class ModelExportHelper: public QObject {
 
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
-		make the helper to ignore object duplicity errors */
+    make the helper to ignore object duplicity errors.
+    \note The params drop_db and drop_objs can't be true at the same time. */
     void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
-                      bool drop_db=false, bool simulate=false, bool use_tmp_names=false);
+                      bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
 		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly

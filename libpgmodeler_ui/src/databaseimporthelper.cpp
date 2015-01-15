@@ -197,7 +197,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 		}
 
 		progress=(i/static_cast<float>(cnt))*10;
-		sleepThread(5);
+    sleepThread(10);
 	}
 }
 
@@ -234,7 +234,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		objects.clear();
 		progress=(i/static_cast<float>(object_oids.size()))*100;
 		oid_itr++; i++;
-		sleepThread(5);
+    sleepThread(10);
 	}
 
 	//Retrieving all selected table columns
@@ -247,11 +247,13 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 													 OBJ_COLUMN);
 
 		names=getObjectName(QString::number(col_itr->first)).split(".");
-    retrieveTableColumns(names[0], names[1], col_itr->second);
+
+    if(names.size() > 1)
+     retrieveTableColumns(names[0], names[1], col_itr->second);
 
 		progress=(i/static_cast<float>(column_oids.size()))*100;
 		col_itr++; i++;
-		sleepThread(5);
+    sleepThread(10);
   }
 }
 
@@ -316,7 +318,7 @@ void DatabaseImportHelper::createObjects(void)
 		}
 
 		progress=(i/static_cast<float>(creation_order.size())) * 100;
-		sleepThread(5);
+    sleepThread(10);
 	}
 
 	//Creating table inheiritances

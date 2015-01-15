@@ -788,7 +788,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
     {
-      attributes[ParsersAttributes::DROP]=getDropDefinition(false);
+      attributes[ParsersAttributes::DROP]=getDropDefinition(true);
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
     }
 
@@ -1093,6 +1093,12 @@ QString BaseObject::getDropDefinition(bool cascade)
       schparser.ignoreEmptyAttributes(true);
 
       attribs=attributes;
+
+      /* Creating an attribute that identifies the object type in order
+         to permit conditional code generation inside the DROP script */
+      if(attribs.count(this->getSchemaName())==0)
+        attribs[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+
       attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
 
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));

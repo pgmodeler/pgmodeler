@@ -131,9 +131,13 @@ void DatabaseWidget::applyConfiguration(void)
 
     if(lccollate_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
+    else
+      model->setLocalization(Collation::_LC_COLLATE, "");
 
     if(lcctype_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
+    else
+      model->setLocalization(Collation::_LC_CTYPE, "");
 
     model->setDefaultObject(def_schema_sel->getSelectedObject(), OBJ_SCHEMA);
     model->setDefaultObject(def_owner_sel->getSelectedObject(), OBJ_ROLE);

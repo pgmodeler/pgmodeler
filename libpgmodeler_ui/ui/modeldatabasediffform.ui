@@ -630,7 +630,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="statusTip">
-                  <string>Recreates only objects that formally can't be changed through ALTER commands. Constraints and casts are examples of these objects.</string>
+                  <string>Recreates only objects that formally can't be changed through ALTER commands according to pgModeler implementation not PostgreSQL. Currently, only constraints and casts are examples of these objects all other objects can be changed through ALTER command.</string>
                  </property>
                  <property name="text">
                   <string>Recreate only unmodifiable objects</string>

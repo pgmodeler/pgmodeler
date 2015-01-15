@@ -748,6 +748,9 @@
               <property name="tabChangesFocus">
                <bool>true</bool>
               </property>
+              <property name="lineWrapMode">
+               <enum>QTextEdit::NoWrap</enum>
+              </property>
              </widget>
              <widget class="QGroupBox" name="cmd_history_gb">
               <property name="sizePolicy">

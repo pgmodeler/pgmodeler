@@ -95,9 +95,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void saveDiffToFile(void);
     void finishDiff(void);
 
-    //! brief Creates and adds a tree item on the output
-    QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
-
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);

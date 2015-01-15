@@ -104,7 +104,8 @@ SOURCES += src/mainwindow.cpp \
            src/objectsdiffinfo.cpp \
            src/hinttextwidget.cpp \
            src/databaseexplorerwidget.cpp \
-           src/snippetsconfigwidget.cpp
+           src/snippetsconfigwidget.cpp \
+    src/pgmodeleruins.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -188,7 +189,8 @@ HEADERS += src/mainwindow.h \
            src/objectsdiffinfo.h \
            src/hinttextwidget.h \
            src/databaseexplorerwidget.h \
-           src/snippetsconfigwidget.h
+           src/snippetsconfigwidget.h \
+    src/pgmodeleruins.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \

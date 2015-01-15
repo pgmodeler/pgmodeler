@@ -39,6 +39,10 @@
 
    [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
+   %if {not-ext-object} %then
+     [ AND ]( {not-ext-object} )
+   %end
+
 %else
     %if {attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,
@@ -103,5 +107,10 @@
      %end
 
      [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+
+      %if {not-ext-object} %then
+        [ AND ]( {not-ext-object} )
+      %end
+
     %end
 %end
