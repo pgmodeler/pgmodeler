@@ -10,13 +10,18 @@
    LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
    WHERE cl.attisdropped IS FALSE AND relname=]'{table}' [ AND nspname= ] '{schema}'
-#    [ AND attnum >= 0  AND attinhcount = 0 ORDER BY attnum ASC ]
    [ AND attnum >= 0  ORDER BY attnum ASC ]
 %else
     %if {attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
 	     cl.attacl AS permission, df.adsrc AS default_value,
 	     ds.description AS comment, tb.oid AS table, ]
+
+       #Creating an attribute to indicate if the column is inherited or not
+       [ CASE
+         WHEN cl.attinhcount > 0 THEN TRUE
+         ELSE FALSE
+        END AS inherited_bool, ]
 
      # This subquery retrieve the schema name for the type when it is undeer public schema.
      # This is necessary because pgModeler identifies user-defined types by the complete
@@ -43,7 +48,6 @@
        LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
        WHERE  cl.attisdropped IS FALSE AND relname= ] '{table}'
        [ AND nspname= ] '{schema}'
-       #[ AND attnum >= 0  AND attinhcount = 0 ]
        [ AND attnum >= 0  ]
 
        %if {filter-oids} %then

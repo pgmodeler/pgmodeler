@@ -6044,11 +6044,8 @@ Permission *DatabaseModel::createPermission(void)
 					//Raises an error if the referenced role doesn't exists
 					if(!role)
 					{
-						//Dispara a exceção
 						throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
-														.arg(Utf8String::create(object->getName()))
-														.arg(object->getTypeName())
-														.arg(Utf8String::create(list[i]))
+                            .arg(Utf8String::create(list[i]))
 														.arg(BaseObject::getTypeName(OBJ_ROLE)),
 														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -7694,6 +7691,22 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Role *role_aux=nullptr;
 			Role *role=dynamic_cast<Role *>(object);
 			unsigned role_types[3]={Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE};
+      Permission *perm=nullptr;
+
+      //Check if the role is being referencend by permissions
+      itr=permissions.begin();
+      itr_end=permissions.end();
+      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+      {
+        perm=dynamic_cast<Permission *>(*itr);
+        itr++;
+
+        if(perm->isRoleExists(role))
+        {
+          refer=true;
+          refs.push_back(perm);
+        }
+      }
 
 			//Check if the role is being referenced in other roles
 			itr=roles.begin();

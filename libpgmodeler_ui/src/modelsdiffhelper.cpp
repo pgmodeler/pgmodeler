@@ -153,9 +153,10 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
         //If there are some differences on the XML code of the objects
         if(tab_obj->isCodeDiffersFrom(aux_obj))
           generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
-      }
-      //If the object does not exists it will generate a drop info
-      else if(!aux_obj)
+      }      
+      /* If the object does not exists it will generate a drop info and the original
+         one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
+      else if(!aux_obj && !tab_obj->isAddedByGeneralization())
         generateDiffInfo(diff_type, tab_obj);
     }
 
