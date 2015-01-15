@@ -192,6 +192,7 @@
         <file>icones/browsed.png</file>
         <file>icones/attribute.png</file>
         <file>icones/codesnippet.png</file>
+        <file>icones/disablesql.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

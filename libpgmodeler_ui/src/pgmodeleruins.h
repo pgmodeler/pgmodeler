@@ -27,6 +27,7 @@
 
 #include <QTreeWidget>
 #include <QPixmap>
+#include "baseobject.h"
 
 namespace PgModelerUiNS {
   /*! brief Creates an item in the specified QTreeWidget instance. Using the parameter 'word_wrap' as true then a QLabel widget will
@@ -34,6 +35,10 @@ namespace PgModelerUiNS {
       The new item is automatically inserted on the QTreeWidget object. */
   QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
                                         QTreeWidgetItem *parent=nullptr, bool word_wrap=false, bool expand_item=true);
+
+  void disableObjectSQL(BaseObject *object, bool value);
+
+  void disableReferencesSQL(BaseObject *object);
 }
 
 #endif

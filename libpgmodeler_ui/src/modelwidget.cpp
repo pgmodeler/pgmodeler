@@ -51,6 +51,7 @@
 #include "customsqlwidget.h"
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
+#include "pgmodeleruins.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -240,6 +241,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
 
+  action_enable_sql=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Enable SQL"), this);
+  action_disable_sql=new QAction(QIcon(QString(":/icones/icones/disablesql.png")), trUtf8("Disable SQL"), this);
+
 	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
@@ -315,6 +319,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceFromColumn(void)));
   connect(action_conv_int_serial, SIGNAL(triggered(bool)), this, SLOT(convertIntegerToSerial(void)));
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
+  connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
+  connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2648,6 +2654,8 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 {
 	if(obj)
 	{
+    ObjectType obj_type=obj->getObjectType();
+
 		if(obj->acceptsOwner() || obj->acceptsSchema())
 		{
 			QAction *act=nullptr;
@@ -2663,8 +2671,8 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 
 				if((i==0 && obj->acceptsSchema()) ||
            (i==1 && obj->acceptsOwner()) ||
-           (i==2 && (obj->getObjectType()==OBJ_TABLE ||
-                     obj->getObjectType()==OBJ_VIEW)))
+           (i==2 && (obj_type==OBJ_TABLE ||
+                     obj_type==OBJ_VIEW)))
 				{
 					obj_list=db_model->getObjects(types[i]);
 
@@ -2683,8 +2691,8 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 
 							act->setChecked(obj->getSchema()==obj_list.back() ||
                               obj->getOwner()==obj_list.back()  ||
-                              ((obj->getObjectType()==OBJ_TABLE ||
-                                obj->getObjectType()==OBJ_VIEW) &&
+                              ((obj_type==OBJ_TABLE ||
+                                obj_type==OBJ_VIEW) &&
                                dynamic_cast<BaseTable *>(obj)->getTag()==obj_list.back()));
 
 							act->setEnabled(!act->isChecked());
@@ -2715,7 +2723,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			}
 		}
 
-		if(obj->getObjectType()!=OBJ_CAST)
+    if(obj_type!=OBJ_CAST)
 		{
 			quick_actions_menu.addAction(action_rename);
 			action_rename->setData(QVariant::fromValue<void *>(obj));
@@ -2727,7 +2735,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 		if(obj->acceptsOwner())
 			quick_actions_menu.addAction(action_change_owner);
 
-    if(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW)
+    if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
       quick_actions_menu.addAction(action_set_tag);
 
 		if(Permission::objectAcceptsPermission(obj->getObjectType()))
@@ -2736,11 +2744,22 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		if(BaseObject::acceptsCustomSQL(obj->getObjectType()))
+    if(BaseObject::acceptsCustomSQL(obj_type))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(obj));
 			quick_actions_menu.addAction(action_append_sql);
 		}
+
+    if(obj_type!=OBJ_TEXTBOX && obj_type!=BASE_RELATIONSHIP)
+    {
+      action_enable_sql->setData(QVariant::fromValue<void *>(obj));
+      action_disable_sql->setData(QVariant::fromValue<void *>(obj));
+
+      if(obj->isSQLDisabled())
+        quick_actions_menu.addAction(action_enable_sql);
+      else
+        quick_actions_menu.addAction(action_disable_sql);
+    }
 
 		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
@@ -3140,6 +3159,17 @@ void ModelWidget::adjustOverlayPosition(void)
   px=(this->width()/2) - (new_obj_overlay_wgt->width()/2);
   py=(this->height()/2) - (new_obj_overlay_wgt->height()/2);
   new_obj_overlay_wgt->move(px, py);
+}
+
+void ModelWidget::toggleObjectSQL(void)
+{
+  QAction *action=dynamic_cast<QAction *>(sender());
+
+  if(action)
+  {
+    BaseObject *object=reinterpret_cast<BaseObject *>(action->data().value<void *>());
+    PgModelerUiNS::disableObjectSQL(object, !object->isSQLDisabled());
+  }
 }
 
 void ModelWidget::createSequenceFromColumn(void)

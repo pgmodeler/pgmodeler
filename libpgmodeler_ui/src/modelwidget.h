@@ -126,7 +126,7 @@ class ModelWidget: public QWidget {
     //! brief This timer controls the interval the zoom label is visible
     QTimer zoom_info_timer;
 
-	protected:
+  protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
 													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
@@ -157,7 +157,9 @@ class ModelWidget: public QWidget {
             *action_conv_int_serial,
             *action_break_rel_line,
             *action_remove_rel_points,
-            *action_set_tag;
+            *action_set_tag,
+            *action_disable_sql,
+            *action_enable_sql;
 
     //! \brief Actions used to create new objects on the model
     map<ObjectType, QAction *> actions_new_objects;
@@ -344,7 +346,10 @@ private slots:
 		void highlightObject(void);
 
     void toggleNewObjectOverlay(void);
+
     void adjustOverlayPosition(void);
+
+    void toggleObjectSQL(void);
 
 	public slots:
 		void loadModel(const QString &filename);

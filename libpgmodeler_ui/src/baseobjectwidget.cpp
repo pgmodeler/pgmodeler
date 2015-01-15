@@ -19,6 +19,7 @@
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
+#include "pgmodeleruins.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -687,21 +688,8 @@ void BaseObjectWidget::applyConfiguration(void)
 			bool new_obj;
       ObjectType obj_type=object->getObjectType();
 			QString obj_name;
-      Messagebox msgbox;
 
-
-      if(obj_type!=OBJ_DATABASE && disable_sql_chk->isChecked()!=object->isSQLDisabled())
-      {
-        msgbox.show(trUtf8("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.").arg(disable_sql_chk->isChecked() ? "disabling" : "enabling"),
-                    Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-        if(msgbox.result()==QDialog::Accepted)
-          disableReferencesSQL(object);
-      }
-
-			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
-
-			object->setSQLDisabled(disable_sql_chk->isChecked());
+      obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
 				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;
@@ -786,6 +774,8 @@ void BaseObjectWidget::applyConfiguration(void)
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
 				object->setSchema(esquema);
 			}
+
+      PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
 		}
 		catch(Exception &e)
 		{
