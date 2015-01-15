@@ -498,8 +498,11 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
   cancelOperation(false);
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, progress_lbl->text(), *progress_ico_lbl->pixmap(), nullptr);
-  PgModelerUiNS::createOutputTreeItem(output_trw, e.getErrorMessage(), *progress_ico_lbl->pixmap(), item, true);
+
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true);
+
+  if(!e.getExtraInfo().isEmpty())
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true);
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }

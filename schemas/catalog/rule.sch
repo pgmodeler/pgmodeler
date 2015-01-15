@@ -31,7 +31,7 @@
   %end
 
   %if {not-ext-object} %then
-    %if %not {last-sys-oid} %then
+    %if %not {last-sys-oid} %and %not {schema} %then
       [ WHERE ]
     %else
       [ AND ]
@@ -94,7 +94,7 @@
       %end
 
         %if {not-ext-object} %then
-          %if %not {last-sys-oid} %and %not {filter-oids} %then
+          %if %not {last-sys-oid} %and %not {filter-oids} %and %not {schema} %then
             [ WHERE ]
           %else
             [ AND ]

@@ -1090,7 +1090,7 @@
            </layout>
           </item>
           <item row="0" column="0" colspan="2">
-           <widget class="QTreeWidget" name="output_trw_3">
+           <widget class="QTreeWidget" name="output_trw">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1236,9 +1236,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>frame</zorder>
-  <zorder>label</zorder>
-  <zorder>splitter</zorder>
  </widget>
  <tabstops>
   <tabstop>connections_cmb</tabstop>

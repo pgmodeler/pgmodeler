@@ -34,8 +34,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 
-		QTimer timer;
-
     HintTextWidget *rand_color_ht, *auto_res_deps_ht, *imp_sys_objs_ht,
     *imp_ext_objs_ht, *debug_mode_ht, *ignore_errors_ht;
 
@@ -103,7 +101,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void importDatabase(void);
 		void listObjects(void);
 		void listDatabases(void);
-		void hideProgress(bool value=true);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void cancelImport(void);
 		void handleImportCanceled(void);

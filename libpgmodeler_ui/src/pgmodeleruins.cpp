@@ -12,6 +12,7 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
 
   item=new QTreeWidgetItem(parent);
   item->setIcon(0, ico);
+  label->setTextFormat(Qt::RichText);
   label->setText(text);
   label->setWordWrap(word_wrap);
   label->setTextInteractionFlags(Qt::TextSelectableByMouse);
