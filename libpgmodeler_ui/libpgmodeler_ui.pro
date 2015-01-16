@@ -1,26 +1,9 @@
-include(../pgmodeler.pro)
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS = $$DESTDIR/$$LIBUTILS \
-       $$DESTDIR/$$LIBPARSERS \
-       $$DESTDIR/$$LIBPGCONNECTOR \
-       $$DESTDIR/$$LIBOBJRENDERER \
-       $$DESTDIR/$$LIBPGMODELER
 
 SOURCES += src/mainwindow.cpp \
 	   src/modelwidget.cpp \
@@ -105,7 +88,7 @@ SOURCES += src/mainwindow.cpp \
            src/hinttextwidget.cpp \
            src/databaseexplorerwidget.cpp \
            src/snippetsconfigwidget.cpp \
-    src/pgmodeleruins.cpp
+           src/pgmodeleruins.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -190,7 +173,7 @@ HEADERS += src/mainwindow.h \
            src/hinttextwidget.h \
            src/databaseexplorerwidget.h \
            src/snippetsconfigwidget.h \
-    src/pgmodeleruins.h
+           src/pgmodeleruins.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -254,15 +237,36 @@ FORMS += ui/mainwindow.ui \
          ui/eventtriggerwidget.ui \
          ui/aboutwidget.ui \
          ui/colorpickerwidget.ui \
-    ui/modelnavigationwidget.ui \
-    ui/centralwidget.ui \
-    ui/relationshipconfigwidget.ui \
-    ui/datamanipulationform.ui \
-    ui/customsqlwidget.ui \
-    ui/findreplacewidget.ui \
-    ui/modeldatabasediffform.ui \
-    ui/hinttextwidget.ui \
-    ui/databaseexplorerwidget.ui \
-    ui/snippetsconfigwidget.ui
+         ui/modelnavigationwidget.ui \
+         ui/centralwidget.ui \
+         ui/relationshipconfigwidget.ui \
+         ui/datamanipulationform.ui \
+         ui/customsqlwidget.ui \
+         ui/findreplacewidget.ui \
+         ui/modeldatabasediffform.ui \
+         ui/hinttextwidget.ui \
+         ui/databaseexplorerwidget.ui \
+         ui/snippetsconfigwidget.ui
 
+unix|win32: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                    -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                    -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libobjrenderer/src \
+               $$PWD/../libpgconnector/src \
+               $$PWD/../libpgmodeler/src \
+               $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libobjrenderer \
+              $$PWD/../libpgconnector \
+              $$PWD/../libpgmodeler \
+              $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Installation
+target.path = $$PRIVATELIBDIR
+INSTALLS = target
 

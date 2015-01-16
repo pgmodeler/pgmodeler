@@ -1,24 +1,8 @@
-include(../pgmodeler.pro)
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgconnector
 OBJECTS_DIR = obj
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS += $$PGSQL_LIB \
-	$$DESTDIR/$$LIBUTILS \
-	$$DESTDIR/$$LIBPGMODELER \
-	$$DESTDIR/$$LIBPARSERS
 
 HEADERS += src/resultset.h \
 	   src/connection.h \
@@ -27,3 +11,20 @@ HEADERS += src/resultset.h \
 SOURCES += src/resultset.cpp \
 	   src/connection.cpp \
 	   src/catalog.cpp
+
+unix|win32: LIBS += $$PGSQL_LIB\
+                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                    -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libpgmodeler/src \
+               $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libpgmodeler \
+              $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Installation
+target.path = $$PRIVATELIBDIR
+INSTALLS = target

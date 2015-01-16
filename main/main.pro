@@ -1,4 +1,4 @@
-include(../pgmodeler.pro)
+include(../pgmodeler.pri)
 
 TEMPLATE = app
 TARGET = pgmodeler
@@ -10,33 +10,34 @@ macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$BASEDIR; \
                        cp $$PWD/res/PkgInfo $$BASEDIR; \
                        cp $$PWD/res/startapp $$DESTDIR"
 
-!macx {
- # Check if BINDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(BINDESTDIR, $$DESTDIR) {
-  target.path = $$BINDESTDIR
-  INSTALLS = target
- }
-
- LIBS += $$DESTDIR/$$LIBUTILS \
-         $$DESTDIR/$$LIBPARSERS \
-         $$DESTDIR/$$LIBPGCONNECTOR \
-         $$DESTDIR/$$LIBOBJRENDERER \
-         $$DESTDIR/$$LIBPGMODELER \
-         $$DESTDIR/$$LIBPGMODELERUI
-}
-
-macx {
- DESTDIR=$$BINDESTDIR
- LIBS += $$LIBDESTDIR/$$LIBUTILS \
-         $$LIBDESTDIR/$$LIBPARSERS \
-         $$LIBDESTDIR/$$LIBPGCONNECTOR \
-         $$LIBDESTDIR/$$LIBOBJRENDERER \
-         $$LIBDESTDIR/$$LIBPGMODELER \
-         $$LIBDESTDIR/$$LIBPGMODELERUI
-}
-
 HEADERS += src/application.h
 SOURCES += src/main.cpp \
-    src/application.cpp
+           src/application.cpp
+
+unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
+                    -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                    -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                    -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libpgmodeler_ui \
+               $$PWD/../libpgmodeler_ui/src \
+               $$PWD/../libobjrenderer/src \
+               $$PWD/../libpgconnector/src \
+               $$PWD/../libpgmodeler/src \
+               $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libpgmodeler_ui \
+              $$PWD/../libobjrenderer \
+              $$PWD/../libpgconnector \
+              $$PWD/../libpgmodeler \
+              $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Installation
+target.path = $$BINDIR
+INSTALLS = target
+
 

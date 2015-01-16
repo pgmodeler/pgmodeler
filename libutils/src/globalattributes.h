@@ -34,9 +34,12 @@
 #include <QString>
 #include <QDir>
 #include <QDate>
+#include <QStandardPaths>
 
 namespace GlobalAttributes {
 	static const QString
+  PGMODELER_APP_NAME="pgmodeler",
+  PGMODELER_URI="pgmodeler.com.br",
   PGMODELER_VERSION="0.8.0-beta2",
 	PGMODELER_VER_CODENAME="Faithful Elephant",
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
@@ -102,27 +105,45 @@ namespace GlobalAttributes {
 		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
 	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
-	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
-	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
-	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
-	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
-	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
-	SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString("./samples")),
+  SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString(SCHEMASDIR)),
+  LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString(LANGDIR)),
+  PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString(PLUGINSDIR)),
+  TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
+  SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString(SAMPLESDIR)),
+
+  #if defined(Q_OS_MAC)
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QStringLiteral("/br.com.pgmodeler")),
+  #elif defined(Q_OS_LINUX)
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QStringLiteral("/pgmodeler")),
+  #else
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))),
+  #endif
+
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
   XML_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + XML_HIGHLIGHT_CONF + CONFIGURATION_EXT,
 
 	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
 	different location for pgmodeler-ch */
-	#ifndef Q_OS_MAC
-		#ifdef Q_OS_LINUX
-			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("./pgmodeler-ch"));
-		#else
-      CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString(".\\pgmodeler-ch.exe"));
-		#endif
-	#else
-		//For MacOSX the crash handler path is fixed (inside bundle)
-		CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
-	#endif
+  #if defined(Q_OS_UNIX)
+    #if defined(Q_OS_MAC)
+      //For MacOSX the crash handler path is fixed (inside bundle)
+      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
+    #else
+      CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
+                         QString(getenv("PGMODELER_CHANDLER_PATH")) :
+                         QString(PRIVATEBINDIR"/pgmodeler-ch");
+    #endif
+  #else
+    CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
+                       QString(getenv("PGMODELER_CHANDLER_PATH")) :
+                       QString(PRIVATEBINDIR"\\pgmodeler-ch.exe"));
+  #endif
 
 	#ifdef DEMO_VERSION
 	 //Maximum object creation counter for demo version

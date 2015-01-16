@@ -48,6 +48,11 @@ QString PgModelerCLI::USE_TMP_NAMES="--use-tmp-names";
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
+  setOrganizationName(GlobalAttributes::PGMODELER_APP_NAME);
+  setOrganizationDomain(GlobalAttributes::PGMODELER_URI);
+  setApplicationName(GlobalAttributes::PGMODELER_APP_NAME);
+  setApplicationVersion(GlobalAttributes::PGMODELER_VERSION);
+
 	try
 	{
 		QString op, value;
