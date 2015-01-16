@@ -229,9 +229,13 @@ void DatabaseImportForm::listObjects(void)
 		bool enable=false;
 
 		if(database_cmb->currentIndex() > 0)
-		{
-			//Set the working database on import helper
-			import_helper.setCurrentDatabase(database_cmb->currentText());
+    {
+      Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+      //Set the working database on import helper
+      import_helper.closeConnection();
+      import_helper.setConnection(*conn);
+      import_helper.setCurrentDatabase(database_cmb->currentText());
 			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																		 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
@@ -400,9 +404,14 @@ void DatabaseImportForm::destroyModelWidget(void)
 
 void DatabaseImportForm::handleImportCanceled(void)
 {
+  QPixmap ico=QPixmap(":/icones/icones/msgbox_alerta.png");
+  QString msg=trUtf8("Importing process canceled by user!");
+
 	destroyModelWidget();
-	finishImport(trUtf8("Importing process canceled by user!"));
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+  finishImport(msg);
+  ico_lbl->setPixmap(ico);
+
+  PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::handleImportFinished(Exception e)
@@ -418,7 +427,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
   model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+  ico_lbl->setPixmap(QPixmap(":/icones/icones/msgbox_info.png"));
 
   import_helper.closeConnection();
   import_thread->quit();

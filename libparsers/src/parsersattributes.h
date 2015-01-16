@@ -229,6 +229,7 @@ namespace ParsersAttributes {
   INDEXES="indexes",
   INH_COLUMN="inh-column",
   INHERIT="inherit",
+  INHERITED="inherited",
   INITIAL_COND="initial-cond",
   INITIAL_EXP="initial-exp",
   INLINE_FUNC="inline",

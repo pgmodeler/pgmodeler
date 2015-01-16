@@ -191,8 +191,10 @@ void Connection::close(void)
 {
   if(connection)
   {
-    //Finalizes the connection
-    PQfinish(connection);
+    //Finalizes the connection if the status is OK
+    if(PQstatus(connection)==CONNECTION_OK)
+      PQfinish(connection);
+
     connection=nullptr;
   }
 }

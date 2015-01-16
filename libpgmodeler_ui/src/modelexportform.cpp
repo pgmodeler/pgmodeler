@@ -268,14 +268,22 @@ void ModelExportForm::cancelExport(void)
 
 void ModelExportForm::handleExportCanceled(void)
 {
-	finishExport(trUtf8("Exporting process canceled by user!"));
-  ico_lbl->setPixmap(QPixmap(":/icones/icones/msgbox_alerta.png"));
+  QPixmap ico=QPixmap(":/icones/icones/msgbox_alerta.png");
+  QString msg=trUtf8("Exporting process canceled by user!");
+
+  finishExport(msg);
+  ico_lbl->setPixmap(ico);
+  PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::handleExportFinished(void)
 {
-	finishExport(trUtf8("Exporting process sucessfuly ended!"));
-  ico_lbl->setPixmap(QPixmap(":/icones/icones/msgbox_info.png"));
+  QPixmap ico=QPixmap(":/icones/icones/msgbox_info.png");
+  QString msg=trUtf8("Exporting process sucessfuly ended!");
+
+  finishExport(msg);
+  ico_lbl->setPixmap(ico);
+  PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::finishExport(const QString &msg)

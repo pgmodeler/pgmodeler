@@ -140,7 +140,7 @@ class Catalog {
 		LIST_ALL_OBJS=16;
 
 		//! \brief Changes the current connection used by the catalog
-		void setConnection(Connection &conn);
+    void setConnection(Connection &conn);
 
     /*! brief Closes the connection used by the catalog.
     Once this method is called the user must call setConnection() again or the

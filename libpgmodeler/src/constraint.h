@@ -96,7 +96,7 @@ class Constraint: public TableObject{
                              UPDATE_ACTION=1;
 
 		Constraint(void);
-		~Constraint(void);
+    ~Constraint(void);
 
 		/*! \brief Adds one column to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS */

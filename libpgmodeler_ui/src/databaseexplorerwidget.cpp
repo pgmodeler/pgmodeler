@@ -80,7 +80,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
   {OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
   {UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")},                  {UNIQUE, QT_TR_NOOP("Unique")},
-  {PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")}
+  {PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")},
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -544,7 +544,8 @@ void DatabaseExplorerWidget::formatRuleAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 {
-  formatBooleanAttribs(attribs, { ParsersAttributes::NOT_NULL });
+  formatBooleanAttribs(attribs, { ParsersAttributes::NOT_NULL,
+                                  ParsersAttributes::INHERITED });
   attribs[ParsersAttributes::POSITION]=attribs[ParsersAttributes::OID];
   attribs.erase(ParsersAttributes::OID);
   attribs.erase(ParsersAttributes::TYPE_OID);

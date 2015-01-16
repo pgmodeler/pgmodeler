@@ -36,8 +36,8 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 {
 	try
 	{
-		connection=conn;
-		catalog.setConnection(conn);
+    connection.setConnectionParams(conn.getConnectionParams());
+    catalog.setConnection(connection);
 	}
 	catch(Exception &e)
 	{
@@ -47,7 +47,6 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 
 void DatabaseImportHelper::closeConnection(void)
 {
-  //if(connection.isStablished())
   connection.close();
   catalog.closeConnection();
 }
@@ -55,7 +54,7 @@ void DatabaseImportHelper::closeConnection(void)
 void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 {
 	try
-	{
+  {
 		connection.switchToDatabase(dbname);
 		catalog.setConnection(connection);
 	}
@@ -320,25 +319,6 @@ void DatabaseImportHelper::createObjects(void)
 		progress=(i/static_cast<float>(creation_order.size())) * 100;
     sleepThread(10);
 	}
-
-	//Creating table inheiritances
-	if(dbmodel->getObjectCount(OBJ_TABLE) > 0 && !import_canceled)
-	{
-		emit s_progressUpdated(100,
-													 trUtf8("Creating table inheritances..."),
-													 OBJ_RELATIONSHIP);
-		try
-		{
-			createTableInheritances();
-		}
-		catch(Exception &e)
-		{
-			if(ignore_errors)
-				errors.push_back(e);
-			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		}
-	}
 }
 
 void DatabaseImportHelper::createConstraints(void)
@@ -471,14 +451,15 @@ void DatabaseImportHelper::importDatabase(void)
 {
 	try
 	{
-		if(!dbmodel)
+    if(!dbmodel)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
-		createConstraints();
-		createPermissions();
+    createConstraints();
+    createTableInheritances();
+    createPermissions();
 		updateFKRelationships();
 
 		if(!import_canceled)
@@ -1404,9 +1385,10 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 	try
 	{
-    unsigned tab_oid=attribs[ParsersAttributes::OID].toUInt(), type_oid=0;
+    unsigned tab_oid=attribs[ParsersAttributes::OID].toUInt(), type_oid=0, col_idx=0;
     bool is_type_registered=false;
 		Column col;
+    vector<unsigned> inh_cols;
     QString type_def, unknown_obj_xml, type_name;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, "0" },
@@ -1438,6 +1420,9 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			if(itr->second.count(ParsersAttributes::PERMISSION) &&
 				 !itr->second.at(ParsersAttributes::PERMISSION).isEmpty())
 				col_perms[tab_oid].push_back(itr->second[ParsersAttributes::OID].toUInt());
+
+      if(itr->second[ParsersAttributes::INHERITED]==ParsersAttributes::_TRUE_)
+        inh_cols.push_back(col_idx);
 
 			col.setName(itr->second[ParsersAttributes::NAME]);
       type_oid=itr->second[ParsersAttributes::TYPE_OID].toUInt();
@@ -1483,11 +1468,16 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
       col.setCollation(dbmodel->getObject(getObjectName(itr->second[ParsersAttributes::COLLATION]),OBJ_COLLATION));
       attribs[ParsersAttributes::COLUMNS]+=col.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			itr++;
+      col_idx++;
 		}
 
 		loadObjectXML(OBJ_TABLE, attribs);
 		table=dbmodel->createTable();
-		dbmodel->addTable(table);
+
+    for(unsigned col_idx : inh_cols)
+      inherited_cols.push_back(table->getColumn(col_idx));
+
+    dbmodel->addTable(table);
 	}
 	catch(Exception &e)
 	{
@@ -1853,7 +1843,63 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTableInheritances()
+void DatabaseImportHelper::createTableInheritances(void)
+{
+  vector<BaseObject *> refs;
+  Table *parent_tab=nullptr;
+
+  if(!inherited_cols.empty())
+  {
+    emit s_progressUpdated(90,
+                           trUtf8("Destroying unused detached columns..."),
+                           OBJ_COLUMN);
+
+    //Destroying detached columns before create inheritances
+    for(Column *col : inherited_cols)
+    {
+      dbmodel->getObjectReferences(col, refs, true);
+
+      if(refs.empty())
+      {
+        try
+        {
+          //Removing the column from the parent table and destroying it
+          parent_tab=dynamic_cast<Table *>(col->getParentTable());
+          parent_tab->removeObject(col);
+          delete(col);
+        }
+        catch(Exception &e)
+        {
+          if(ignore_errors)
+            errors.push_back(e);
+          else
+            throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+        }
+      }
+    }
+  }
+
+  //Creating table inheiritances
+  if(dbmodel->getObjectCount(OBJ_TABLE) > 0 && !import_canceled)
+  {
+    try
+    {
+      emit s_progressUpdated(100,
+                             trUtf8("Creating table inheritances..."),
+                             OBJ_RELATIONSHIP);
+      __createTableInheritances();
+    }
+    catch(Exception &e)
+    {
+      if(ignore_errors)
+        errors.push_back(e);
+      else
+        throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+    }
+  }
+}
+
+void DatabaseImportHelper::__createTableInheritances(void)
 {
 	vector<unsigned>::iterator itr, itr_end;
 	Relationship *rel=nullptr;

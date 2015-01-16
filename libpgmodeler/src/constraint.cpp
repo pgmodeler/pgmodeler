@@ -52,7 +52,8 @@ Constraint::Constraint(void)
 
 Constraint::~Constraint(void)
 {
-	removeColumns();
+  columns.clear();
+  ref_columns.clear();
 }
 
 void Constraint::setConstraintType(ConstraintType constr_type)
