@@ -1,8 +1,4 @@
-################################################################################
-# pgModeler
-# General stuff
-################################################################################
-
+# General Qt settings
 QT += core widgets printsupport network
 CONFIG += ordered qt stl rtti exceptions warn_on c++11
 TEMPLATE = subdirs
@@ -10,62 +6,82 @@ TEMPLATE = subdirs
 # Setting up the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 
-unix {
+
+# Below, the user can specify where all generated file can be placed
+# through a set of variables, being them:
+#
+# PREFIX        -> the root directory where the files will be placed
+# PRIVATEBINDIR -> where executables not directly accessable to the user resides
+# PRIVATELIBDIR -> where libraries not directly shared through the system resides
+# PLUGINSDIR    -> where third party plugins are installed
+# SHAREDIR      -> where shared files and resources should be placed
+# CONFDIR       -> where the pgModeler's configuration folder (conf) resides
+# DOCDIR        -> where documentation related files are placed
+# LANGDIR       -> where the UI translation folder (lang) resides
+# SAMPLESDIR    -> where the sample models folder (samples) resides
+# SCHEMASDIR    -> where the object's schemas folder (schema) resides
+#
+# The values of each variable changes between supported platforms and are describe as follow
+
+linux {
   CONFIG += x11
 
-  # By default stuff gets installed into /usr/local
+   # The default prefix is ./build
   !defined(PREFIX, var): PREFIX = $$PWD/build
-
-  #BINDIR = $$PREFIX/bin
-  #PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
-  #PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
-  #PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
-  #SHAREDIR = $$PREFIX/share/pgmodeler
-  #CONFDIR = $$SHAREDIR/conf
-  #DOCDIR = $$SHAREDIR/doc
-  #LANGDIR = $$SHAREDIR/lang
-  #SAMPLESDIR = $$SHAREDIR/samples
-  #SCHEMASDIR = $$SHAREDIR/schemas
 
   BINDIR = $$PREFIX
   PRIVATEBINDIR = $$PREFIX
   PRIVATELIBDIR = $$PREFIX/lib
-  PLUGINSDIR = $$PREFIX/lib/plugins
-  SHAREDIR = $$PREFIX/share
-  CONFDIR = $$SHAREDIR/conf
-  DOCDIR = $$SHAREDIR/doc
-  LANGDIR = $$SHAREDIR/lang
-  SAMPLESDIR = $$SHAREDIR/samples
-  SCHEMASDIR = $$SHAREDIR/schemas
+  PLUGINSDIR = $$PREFIX/plugins
+  SHAREDIR = $$PREFIX
+  CONFDIR = $$PREFIX/conf
+  DOCDIR = $$PREFIX
+  LANGDIR = $$PREFIX/lang
+  SAMPLESDIR = $$PREFIX/samples
+  SCHEMASDIR = $$PREFIX/schemas
 
-  # Let the apps find the private libraries.
+  # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
-
-  macx {
-    CONFIG -= app_bundle
-  }
 }
 
 windows {
   CONFIG += windows
 
-  # On Windows we will install in deploy
-  !defined(PREFIX, var): PREFIX = deploy
+  # The default prefix is ./build
+  !defined(PREFIX, var): $$PWD/build
 
   BINDIR = $$PREFIX
   PRIVATEBINDIR = $$PREFIX
   PRIVATELIBDIR = $$PREFIX
-  PLUGINSDIR = $$PREFIX
+  PLUGINSDIR = $$PREFIX/plugins
   SHAREDIR = $$PREFIX
-  CONFDIR = conf
-  DOCDIR = doc
-  LANGDIR = lang
-  SAMPLESDIR = samples
-  SCHEMASDIR = schemas
+  CONFDIR = $$PREFIX/conf
+  DOCDIR = $$PREFIX
+  LANGDIR = $$PREFIX/lang
+  SAMPLESDIR = $$PREFIX/samples
+  SCHEMASDIR = $$PREFIX/schemas
 }
 
-# The paths are in globalattributes.h, which is a namespace, so we need to
-# define this globally.
+macx {
+  CONFIG -= app_bundle
+
+  # The default prefix is ./build/pgmodeler.app/Contents
+  !defined(PREFIX, var): $$PWD/build/pgmodeler.app/Contents
+
+  BINDIR = $$PREFIX/MacOS
+  PRIVATEBINDIR = $$BINDIR
+  PRIVATELIBDIR = $$PREFIX/Frameworks
+  PLUGINSDIR = $$BINDIR/plugins
+  SHAREDIR = $$BINDIR
+  CONFDIR = $$BINDIR/conf
+  DOCDIR = $$BINDIR
+  LANGDIR = $$BINDIR/lang
+  SAMPLESDIR = $$BINDIR/samples
+  SCHEMASDIR = $$BINDIR/schemas
+}
+
+# Creating constants based upon the custom paths so the GlobalAttributes
+# namespace can correctly configure the paths inside the code
 DEFINES += PLUGINSDIR=\\\"$${PLUGINSDIR}\\\" \
            PRIVATEBINDIR=\\\"$${PRIVATEBINDIR}\\\" \
            CONFDIR=\\\"$${CONFDIR}\\\" \
@@ -74,16 +90,16 @@ DEFINES += PLUGINSDIR=\\\"$${PLUGINSDIR}\\\" \
            SAMPLESDIR=\\\"$${SAMPLESDIR}\\\" \
            SCHEMASDIR=\\\"$${SCHEMASDIR}\\\"
 
-################################################################################
-# Dependencies
-#
+
+
+# pgModeler depends on libpq and libxml2 this way to variables
+# are define so the compiler can find the libs at link time.
 #
 # PGSQL_LIB -> Full path to libpq.(so | dll | dylib)
 # PGSQL_INC -> Root path where PgSQL includes can be found
 #
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)
 # XML_INC   -> Root path where XML2 includes can be found
-################################################################################
 
 unix:!macx {
   CONFIG += link_pkgconfig
@@ -102,8 +118,10 @@ macx {
 windows {
   PGSQL_LIB = C:/PostgreSQL/9.3/bin/libpq.dll
   PGSQL_INC = C:/PostgreSQL/9.3/include
-  XML_INC = C:/Qt/Qt5.3.2/5.3/mingw482_32/include
-  XML_LIB = C:/Qt/Qt5.3.2/5.3/mingw482_32/bin/libxml2-2.dll
+  XML_INC = C:/Qt/Qt5.4.0/5.4/mingw491_32/include
+  XML_LIB = C:/Qt/Qt5.4.0/5.4/mingw491_32/bin/libxml2-2.dll
+
+  # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 }
 

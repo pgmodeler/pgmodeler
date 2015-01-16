@@ -25,3 +25,7 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
               $$PWD/../libutils
+
+# Deployment settings
+target.path = $$BINDIR
+INSTALLS = target

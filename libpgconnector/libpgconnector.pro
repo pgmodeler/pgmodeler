@@ -25,6 +25,6 @@ DEPENDPATH += $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

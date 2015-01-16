@@ -27,6 +27,7 @@ INCLUDEPATH += $$PWD/../libpgmodeler_ui/src \
                $$PWD/../libpgmodeler/src \
                $$PWD/../libparsers/src \
                $$PWD/../libutils/src
+
 DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libobjrenderer \
               $$PWD/../libpgconnector \
@@ -34,6 +35,6 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATEBINDIR
 INSTALLS = target

@@ -106,6 +106,6 @@ INCLUDEPATH += $$PWD/../libparsers/src \
 DEPENDPATH += $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

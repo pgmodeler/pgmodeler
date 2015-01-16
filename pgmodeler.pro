@@ -1,9 +1,6 @@
 include(pgmodeler.pri)
 
-################################################################################
 # Subprojects
-################################################################################
-
 SUBDIRS = libutils \
           libparsers \
           libpgmodeler \
@@ -14,13 +11,11 @@ SUBDIRS = libutils \
           main-cli \
           main
 
-#Include the tests subproject only on debug mode
+# Include the tests and plugins subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests plugins
 
-################################################################################
-# Deployment
-################################################################################
 
+# Deployment settings
 pgmodeler_data.files = samples schemas lang conf
 pgmodeler_data.path = $$SHAREDIR
 

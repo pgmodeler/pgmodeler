@@ -266,7 +266,7 @@ DEPENDPATH += $$PWD/../libobjrenderer \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target
 

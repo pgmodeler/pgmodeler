@@ -29,7 +29,6 @@ SOURCES +=  src/baseobjectview.cpp \
             src/roundedrectitem.cpp \
             src/styledtextboxview.cpp
 
-
 unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
@@ -42,6 +41,6 @@ DEPENDPATH += $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

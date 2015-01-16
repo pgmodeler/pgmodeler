@@ -5,10 +5,11 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
-macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$BASEDIR; \
-                       cp $$PWD/res/Info.plist $$BASEDIR; \
-                       cp $$PWD/res/PkgInfo $$BASEDIR; \
-                       cp $$PWD/res/startapp $$DESTDIR"
+
+macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
+                       cp $$PWD/res/Info.plist $$PREFIX; \
+                       cp $$PWD/res/PkgInfo $$PREFIX; \
+                       cp $$PWD/res/startapp $$BINDIR"
 
 HEADERS += src/application.h
 SOURCES += src/main.cpp \
@@ -36,7 +37,7 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$BINDIR
 INSTALLS = target
 

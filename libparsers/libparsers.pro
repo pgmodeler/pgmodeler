@@ -16,6 +16,6 @@ unix|win32: LIBS += -L$$OUT_PWD/../libutils/ -lutils
 INCLUDEPATH += $$PWD/../libutils/src
 DEPENDPATH += $$PWD/../libutils
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

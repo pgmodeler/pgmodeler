@@ -10,6 +10,6 @@ HEADERS += src/exception.h \
 
 SOURCES += src/exception.cpp
 
-# Installation
+# Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

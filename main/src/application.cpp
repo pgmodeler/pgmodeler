@@ -155,7 +155,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
       copyFilesRecursively(new_src_path, new_dst_path);
     }
   }
-  else if(!QFile::copy(src_path, dst_path))
+  else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
   {
     throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(dst_path),
                     __PRETTY_FUNCTION__,__FILE__,__LINE__);
