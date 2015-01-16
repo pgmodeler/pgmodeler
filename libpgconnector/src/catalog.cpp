@@ -66,8 +66,9 @@ void Catalog::setConnection(Connection &conn)
 		ResultSet res;
 		QStringList ext_obj;
 
-		this->connection=conn;
-		this->connection.connect();
+    connection.close();
+    connection.setConnectionParams(conn.getConnectionParams());
+    connection.connect();
 
 		//Retrieving the last system oid
 		executeCatalogQuery(QUERY_LIST, OBJ_DATABASE, res, true,

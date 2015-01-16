@@ -111,7 +111,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatColumnAttribs(attribs_map &attribs);
     void formatConstraintAttribs(attribs_map &attribs);
     void formatIndexAttribs(attribs_map &attribs);
-
     void handleSelectedSnippet(const QString &snip_id);
 
   public:

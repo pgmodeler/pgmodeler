@@ -200,7 +200,7 @@ class DatabaseImportHelper: public QObject {
 		DatabaseImportHelper(QObject *parent=0);
 
 		//! \brief Set the connection used to access the PostgreSQL server
-		void setConnection(Connection &conn);
+    void setConnection(Connection &conn);
 
     /*! brief Closes all connections opened by this object including the catalog connection.
     Once this method is called the user must call setConnection() again or the import will fail */

@@ -453,7 +453,7 @@ void ModelDatabaseDiffForm::finishDiff(void)
 {
   cancelOperation(false);
 
-  step_lbl->setText(trUtf8("Diff process sucessfully end."));
+  step_lbl->setText(trUtf8("Diff process sucessfully ended!"));
   progress_lbl->setText(trUtf8("No operations left."));
 
   step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));

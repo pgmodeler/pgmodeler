@@ -36,8 +36,8 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 {
 	try
 	{
-		connection=conn;
-		catalog.setConnection(conn);
+    connection.setConnectionParams(conn.getConnectionParams());
+    catalog.setConnection(connection);
 	}
 	catch(Exception &e)
 	{
@@ -54,7 +54,7 @@ void DatabaseImportHelper::closeConnection(void)
 void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 {
 	try
-	{
+  {
 		connection.switchToDatabase(dbname);
 		catalog.setConnection(connection);
 	}

@@ -503,13 +503,13 @@ void ModelsDiffHelper::processDiffInfos(void)
   BaseObject *object=nullptr;
   Relationship *rel=nullptr;
   map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
-  vector<BaseObject *> drop_vect, create_vect;
+  vector<BaseObject *> drop_vect, create_vect, drop_cols;
   unsigned diff_type, schema_id=0;
   ObjectType obj_type;
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
   QString alter_def, no_inherit_def, inherit_def, set_perms,
-          unset_perms, fk_defs;
+          unset_perms, fk_defs, col_drop_def;
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
@@ -538,20 +538,38 @@ void ModelsDiffHelper::processDiffInfos(void)
       rel=dynamic_cast<Relationship *>(object);
       obj_type=object->getObjectType();
 
+      //Generating the DROP commands
       if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
       {
         if(rel)
+          //Undoing inheritances
           no_inherit_def+=rel->getInheritDefinition(true);
         else if(obj_type==OBJ_PERMISSION)
+          //Unsetting permissions
           unset_perms+=object->getDropDefinition(cascade_mode);
         else
-          drop_objs[object->getObjectId()]=getCodeDefinition(object, true);
+        {
+          //Ordinary drop commands for any object except columns
+          if(obj_type!=OBJ_COLUMN)
+            drop_objs[object->getObjectId()]=getCodeDefinition(object, true);
+          else
+          {
+            /* Special case for columns: due to cases like inheritance there is the
+               the need to drop the columns in the normal order of creation to avoid
+               error like 'drop inherited column' or wrong propagation of drop on all
+               child tables. */
+            drop_cols.push_back(object);
+          }
+        }
       }
+      //Generating the CREATE commands
       else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
       {
         if(rel)
+          //Creating inheritances
           inherit_def+=rel->getInheritDefinition(false);
         else if(obj_type==OBJ_PERMISSION)
+          //Setting permissions
           set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
         else
         {
@@ -563,6 +581,7 @@ void ModelsDiffHelper::processDiffInfos(void)
             create_objs[object->getObjectId()]=getCodeDefinition(object, false);
         }
       }
+      //Generating the ALTER commands
       else if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
       {
         //Recreating the object instead of generating an ALTER command for it
@@ -625,11 +644,15 @@ void ModelsDiffHelper::processDiffInfos(void)
       type->convertFunctionParameters(true);
     }
 
+    //Generating the drop command for columns
+    for(BaseObject *col : drop_cols)
+      col_drop_def+=getCodeDefinition(col, true);
+
     diff_def.clear();
 
     if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
        !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
-       !fk_defs.isEmpty())
+       !fk_defs.isEmpty() || !col_drop_def.isEmpty())
     {
       //Attributes used on the diff schema file
       attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
@@ -650,11 +673,16 @@ void ModelsDiffHelper::processDiffInfos(void)
       ritr_end=drop_objs.rend();
 
       attribs[ParsersAttributes::DROP_CMDS]+=no_inherit_def;
+
       while(ritr!=ritr_end)
       {
         attribs[ParsersAttributes::DROP_CMDS]+=ritr->second;
         ritr++;
       }
+
+      attribs[ParsersAttributes::DROP_CMDS]+=col_drop_def;
+
+
 
       for(auto itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
