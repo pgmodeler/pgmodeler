@@ -23,10 +23,10 @@ Conversion::Conversion(void)
 	obj_type=OBJ_CONVERSION;
 	conversion_func=nullptr;
 	is_default=false;
-	attributes[ParsersAttributes::DEFAULT]="";
-	attributes[ParsersAttributes::SRC_ENCODING]="";
-	attributes[ParsersAttributes::DST_ENCODING]="";
-	attributes[ParsersAttributes::FUNCTION]="";
+	attributes[ParsersAttributes::DEFAULT]=QString();
+	attributes[ParsersAttributes::SRC_ENCODING]=QString();
+	attributes[ParsersAttributes::DST_ENCODING]=QString();
+	attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
@@ -35,7 +35,7 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 	if(encoding_idx<=DST_ENCODING)
 	{
 		//If the passed enconding type is null an error is raised
-		if((~encoding_type)=="")
+    if((~encoding_type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
@@ -115,7 +115,7 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SRC_ENCODING]);
 	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DST_ENCODING]);
 

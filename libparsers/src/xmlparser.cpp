@@ -19,11 +19,11 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XMLParser::CHAR_AMP="&amp;";
-const QString XMLParser::CHAR_LT="&lt;";
-const QString XMLParser::CHAR_GT="&gt;";
-const QString XMLParser::CHAR_QUOT="&quot;";
-const QString XMLParser::CHAR_APOS="&apos;";
+const QString XMLParser::CHAR_AMP=QStringLiteral("&amp;");
+const QString XMLParser::CHAR_LT=QStringLiteral("&lt;");
+const QString XMLParser::CHAR_GT=QStringLiteral("&gt;");
+const QString XMLParser::CHAR_QUOT=QStringLiteral("&quot;");
+const QString XMLParser::CHAR_APOS=QStringLiteral("&apos;");
 
 XMLParser::XMLParser(void)
 {
@@ -66,7 +66,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 		QFile input;
 		QString buffer;
 
-		if(filename!="")
+    if(!filename.isEmpty())
 		{
 			//Opens a file stream using the file name
 			input.setFileName(filename);
@@ -253,12 +253,12 @@ void XMLParser::restartParser(void)
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
 	}
-	dtd_decl=xml_buffer=xml_decl="";
+  dtd_decl=xml_buffer=xml_decl=QString();
 
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-	xml_doc_filename="";
+  xml_doc_filename=QString();
   xmlResetLastError();
 }
 

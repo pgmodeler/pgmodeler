@@ -22,17 +22,17 @@ Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
 	with_oid=gen_alter_cmds=unlogged=false;
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::CONSTRAINTS]="";
-	attributes[ParsersAttributes::OIDS]="";
-	attributes[ParsersAttributes::COLS_COMMENT]="";
-	attributes[ParsersAttributes::COPY_TABLE]="";
-	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
-	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
-  attributes[ParsersAttributes::COL_INDEXES]="";
-  attributes[ParsersAttributes::CONSTR_INDEXES]="";
-	attributes[ParsersAttributes::UNLOGGED]="";
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+	attributes[ParsersAttributes::OIDS]=QString();
+	attributes[ParsersAttributes::COLS_COMMENT]=QString();
+	attributes[ParsersAttributes::COPY_TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=QString();
+	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=QString();
+  attributes[ParsersAttributes::COL_INDEXES]=QString();
+  attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
+	attributes[ParsersAttributes::UNLOGGED]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -118,8 +118,8 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
     attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : "");
-    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : "");
+    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : QString());
+    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : QString());
     attribs[ParsersAttributes::TABLE]=this->getName(true);
     attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
@@ -154,7 +154,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 
   for(idx=0; idx < size; idx++)
   {
-    attributes[attribs[idx]]="";
+    attributes[attribs[idx]]=QString();
 
     if(!obj_indexes[idx]->empty())
     {
@@ -194,7 +194,7 @@ void Table::setColumnsAttribute(unsigned def_type)
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
-		if(str_cols!="")
+    if(!str_cols.isEmpty())
 		{
 			count=str_cols.size();
 			if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
@@ -270,7 +270,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 				str_constr+=lines[i];
 			}
 
-			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : "");
+			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : QString());
 		}
 	}
 
@@ -951,7 +951,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 		{
 			column=dynamic_cast<Column *>(*itr);
 			itr++;
-			found=(name!="" && column->getOldName(format)==name);
+      found=(!name.isEmpty() && column->getOldName(format)==name);
 		}
 
 		if(!found) column=nullptr;
@@ -1341,12 +1341,12 @@ QString Table::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::COPY_TABLE]="";
-	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-  attributes[ParsersAttributes::TAG]="";
+	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::COPY_TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+  attributes[ParsersAttributes::TAG]=QString();
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1354,7 +1354,7 @@ QString Table::getCodeDefinition(unsigned def_type)
   if(tag && def_type==SchemaParser::XML_DEFINITION)
    attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
-	(copy_table ? copy_table->getName(true) : "");
+	(copy_table ? copy_table->getName(true) : QString());
 
 	setColumnsAttribute(def_type);
 	setConstraintsAttribute(def_type);
@@ -1572,8 +1572,8 @@ QString Table::getAlterDefinition(BaseObject *object)
     Table *tab=dynamic_cast<Table *>(object);
     QString alter_def;
 
-    attributes[ParsersAttributes::OIDS]="";
-    attributes[ParsersAttributes::HAS_CHANGES]="";
+    attributes[ParsersAttributes::OIDS]=QString();
+    attributes[ParsersAttributes::HAS_CHANGES]=QString();
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
     if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
@@ -1583,7 +1583,7 @@ QString Table::getAlterDefinition(BaseObject *object)
     }
 
     alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-    attributes[ParsersAttributes::OIDS]="";
+    attributes[ParsersAttributes::OIDS]=QString();
 
     return(alter_def);
   }
@@ -1598,7 +1598,7 @@ QString Table::getTruncateDefinition(bool cascade)
   try
   {
     BaseObject::setBasicAttributes(true);
-    attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
     return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
   }
   catch(Exception &e)

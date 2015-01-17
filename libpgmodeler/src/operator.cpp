@@ -34,17 +34,17 @@ Operator::Operator(void)
 	argument_types[LEFT_ARG]=PgSQLType("any");
 	argument_types[RIGHT_ARG]=PgSQLType("any");
 
-	attributes[ParsersAttributes::LEFT_TYPE]="";
-	attributes[ParsersAttributes::RIGHT_TYPE]="";
-	attributes[ParsersAttributes::COMMUTATOR_OP]="";
-	attributes[ParsersAttributes::NEGATOR_OP]="";
-	attributes[ParsersAttributes::RESTRICTION_FUNC]="";
-	attributes[ParsersAttributes::JOIN_FUNC]="";
-	attributes[ParsersAttributes::OPERATOR_FUNC]="";
-	attributes[ParsersAttributes::HASHES]="";
-	attributes[ParsersAttributes::MERGES]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::REF_TYPE]="";
+	attributes[ParsersAttributes::LEFT_TYPE]=QString();
+	attributes[ParsersAttributes::RIGHT_TYPE]=QString();
+	attributes[ParsersAttributes::COMMUTATOR_OP]=QString();
+	attributes[ParsersAttributes::NEGATOR_OP]=QString();
+	attributes[ParsersAttributes::RESTRICTION_FUNC]=QString();
+	attributes[ParsersAttributes::JOIN_FUNC]=QString();
+	attributes[ParsersAttributes::OPERATOR_FUNC]=QString();
+	attributes[ParsersAttributes::HASHES]=QString();
+	attributes[ParsersAttributes::MERGES]=QString();
+	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
 }
 
 bool Operator::isValidName(const QString &name)
@@ -81,7 +81,7 @@ bool Operator::isValidName(const QString &name)
 
 void Operator::setName(const QString &name)
 {
-	if(name=="")
+  if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else	if(!isValidName(name))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -330,8 +330,8 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[ParsersAttributes::HASHES]=(hashes ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::MERGES]=(merges ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::HASHES]=(hashes ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::MERGES]=(merges ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

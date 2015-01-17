@@ -24,11 +24,11 @@ Cast::Cast(void)
 	cast_function=nullptr;
 	cast_type=EXPLICIT;
 	is_in_out=false;
-	attributes[ParsersAttributes::SOURCE_TYPE]="";
-	attributes[ParsersAttributes::DEST_TYPE]="";
-	attributes[ParsersAttributes::CAST_TYPE]="";
-	attributes[ParsersAttributes::IO_CAST]="";
-  attributes[ParsersAttributes::FUNCTION]="";
+	attributes[ParsersAttributes::SOURCE_TYPE]=QString();
+	attributes[ParsersAttributes::DEST_TYPE]=QString();
+	attributes[ParsersAttributes::CAST_TYPE]=QString();
+	attributes[ParsersAttributes::IO_CAST]=QString();
+  attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
 void Cast::setDataType(unsigned type_idx, PgSQLType type)
@@ -37,7 +37,7 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 	if(type_idx<=DST_TYPE)
 	{
 		//Raises an error if the passed data type is null
-		if((*type)=="")
+    if((*type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
 											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
@@ -172,7 +172,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
       attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : QString());
 
 	if(cast_type==ASSIGNMENT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;

@@ -32,15 +32,15 @@ Sequence::Sequence(void)
 	setDefaultValues(PgSQLType("serial"));
 	owner_col=nullptr;
 
-	attributes[ParsersAttributes::INCREMENT]="";
-	attributes[ParsersAttributes::MIN_VALUE]="";
-	attributes[ParsersAttributes::MAX_VALUE]="";
-	attributes[ParsersAttributes::START]="";
-	attributes[ParsersAttributes::CACHE]="";
-	attributes[ParsersAttributes::CYCLE]="";
-	attributes[ParsersAttributes::OWNER_COLUMN]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::COLUMN]="";
+	attributes[ParsersAttributes::INCREMENT]=QString();
+	attributes[ParsersAttributes::MIN_VALUE]=QString();
+	attributes[ParsersAttributes::MAX_VALUE]=QString();
+	attributes[ParsersAttributes::START]=QString();
+	attributes[ParsersAttributes::CACHE]=QString();
+	attributes[ParsersAttributes::CYCLE]=QString();
+	attributes[ParsersAttributes::OWNER_COLUMN]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::COLUMN]=QString();
 }
 
 bool Sequence::isNullValue(const QString &value)
@@ -155,7 +155,7 @@ int Sequence::compareValues(QString value1, QString value2)
 				idx++;
 			}
 			(*vet_values[i])=aux_value;
-			aux_value="";
+			aux_value=QString();
 		}
 
 		if(ops[0]==ops[1] && value1==value2)
@@ -235,8 +235,8 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	cache=formatValue(cache);
 
 	//Raises an error when some values are empty
-	if(minv==""   || maxv=="" || inc=="" ||
-		 start=="" || cache=="")
+  if(minv.isEmpty()   || maxv.isEmpty() || inc.isEmpty() ||
+     start.isEmpty() ||  cache.isEmpty())
 		throw Exception(ERR_ASG_INV_VALUE_SEQ_ATTRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the min value is greater than max value
 	else if(compareValues(minv,maxv) > 0)
@@ -263,7 +263,7 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 
 void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 {
-	if(!table || col_name=="")
+  if(!table || col_name.isEmpty())
 		this->owner_col=nullptr;
 	else if(table)
 	{
@@ -391,15 +391,15 @@ QString Sequence::getCodeDefinition(unsigned def_type)
     table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
 
-  attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
-	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : "");
+  attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : QString());
+	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;
 	attributes[ParsersAttributes::MAX_VALUE]=max_value;
 	attributes[ParsersAttributes::START]=start;
 	attributes[ParsersAttributes::CACHE]=cache;
-	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::_TRUE_ : QString());
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

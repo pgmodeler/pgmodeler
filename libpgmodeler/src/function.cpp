@@ -30,23 +30,23 @@ Function::Function(void)
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[ParsersAttributes::PARAMETERS]="";
-	attributes[ParsersAttributes::EXECUTION_COST]="";
-	attributes[ParsersAttributes::ROW_AMOUNT]="";
-	attributes[ParsersAttributes::RETURN_TYPE]="";
-	attributes[ParsersAttributes::FUNCTION_TYPE]="";
-	attributes[ParsersAttributes::LANGUAGE]="";
-	attributes[ParsersAttributes::RETURNS_SETOF]="";
-	attributes[ParsersAttributes::SECURITY_TYPE]="";
-	attributes[ParsersAttributes::BEHAVIOR_TYPE]="";
-	attributes[ParsersAttributes::DEFINITION]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::REF_TYPE]="";
-	attributes[ParsersAttributes::WINDOW_FUNC]="";
-	attributes[ParsersAttributes::RETURN_TABLE]="";
-	attributes[ParsersAttributes::LIBRARY]="";
-	attributes[ParsersAttributes::SYMBOL]="";
-	attributes[ParsersAttributes::LEAKPROOF]="";
+	attributes[ParsersAttributes::PARAMETERS]=QString();
+	attributes[ParsersAttributes::EXECUTION_COST]=QString();
+	attributes[ParsersAttributes::ROW_AMOUNT]=QString();
+	attributes[ParsersAttributes::RETURN_TYPE]=QString();
+	attributes[ParsersAttributes::FUNCTION_TYPE]=QString();
+	attributes[ParsersAttributes::LANGUAGE]=QString();
+	attributes[ParsersAttributes::RETURNS_SETOF]=QString();
+	attributes[ParsersAttributes::SECURITY_TYPE]=QString();
+	attributes[ParsersAttributes::BEHAVIOR_TYPE]=QString();
+	attributes[ParsersAttributes::DEFINITION]=QString();
+	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
+	attributes[ParsersAttributes::WINDOW_FUNC]=QString();
+	attributes[ParsersAttributes::RETURN_TABLE]=QString();
+	attributes[ParsersAttributes::LIBRARY]=QString();
+	attributes[ParsersAttributes::SYMBOL]=QString();
+	attributes[ParsersAttributes::LEAKPROOF]=QString();
 }
 
 void Function::setName(const QString &name)
@@ -93,7 +93,7 @@ void Function::addParameter(Parameter param)
 void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
 	//Raises an error if the column name is empty
-	if(name=="")
+  if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr,itr_end;
@@ -477,9 +477,9 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;

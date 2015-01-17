@@ -23,11 +23,11 @@ Textbox::Textbox(void)
 	obj_type=OBJ_TEXTBOX;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[ParsersAttributes::ITALIC]="";
-	attributes[ParsersAttributes::BOLD]="";
-	attributes[ParsersAttributes::UNDERLINE]="";
-	attributes[ParsersAttributes::COLOR]="";
-	attributes[ParsersAttributes::FONT_SIZE]="";
+	attributes[ParsersAttributes::ITALIC]=QString();
+	attributes[ParsersAttributes::BOLD]=QString();
+	attributes[ParsersAttributes::UNDERLINE]=QString();
+	attributes[ParsersAttributes::COLOR]=QString();
+	attributes[ParsersAttributes::FONT_SIZE]=QString();
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)

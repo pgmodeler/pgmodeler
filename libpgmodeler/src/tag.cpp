@@ -28,7 +28,7 @@ Tag::Tag(void)
 
   obj_type=OBJ_TAG;
   object_id=Tag::tag_id++;
-  attributes[ParsersAttributes::STYLES]="";
+  attributes[ParsersAttributes::STYLES]=QString();
 
   for(auto attr : attribs)
   {
@@ -155,7 +155,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
       for(auto itr : color_config)
       {
         attribs[ParsersAttributes::ID]=itr.first;
-        attribs[ParsersAttributes::COLORS]="";
+        attribs[ParsersAttributes::COLORS]=QString();
 
         if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME)
           attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name();

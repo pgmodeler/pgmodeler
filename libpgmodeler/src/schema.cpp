@@ -23,8 +23,8 @@ Schema::Schema(void)
 	obj_type=OBJ_SCHEMA;
 	fill_color=QColor(225,225,225, 80);
 	rect_visible=false;
-	attributes[ParsersAttributes::FILL_COLOR]="";
-	attributes[ParsersAttributes::RECT_VISIBLE]="";
+	attributes[ParsersAttributes::FILL_COLOR]=QString();
+	attributes[ParsersAttributes::RECT_VISIBLE]=QString();
 }
 
 void Schema::setName(const QString &name)
@@ -68,6 +68,6 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
-	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : QString());
 	return(BaseObject::__getCodeDefinition(def_type));
 }

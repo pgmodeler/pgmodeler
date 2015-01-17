@@ -16,6 +16,8 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "application.h"
+#include "globalattributes.h"
+#include "messagebox.h"
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
@@ -26,11 +28,6 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
                  GlobalAttributes::CONFIGURATION_EXT);
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
-
-  setOrganizationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setOrganizationDomain(GlobalAttributes::PGMODELER_URI);
-  setApplicationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setApplicationVersion(GlobalAttributes::PGMODELER_VERSION);
 
   //Creating the initial user's configuration
   createUserConfiguration();

@@ -23,13 +23,13 @@ Aggregate::Aggregate(void)
 	obj_type=OBJ_AGGREGATE;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[ParsersAttributes::TYPES]="";
-	attributes[ParsersAttributes::TRANSITION_FUNC]="";
-	attributes[ParsersAttributes::STATE_TYPE]="";
-	attributes[ParsersAttributes::BASE_TYPE]="";
-	attributes[ParsersAttributes::FINAL_FUNC]="";
-	attributes[ParsersAttributes::INITIAL_COND]="";
-	attributes[ParsersAttributes::SORT_OP]="";
+	attributes[ParsersAttributes::TYPES]=QString();
+	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
+	attributes[ParsersAttributes::STATE_TYPE]=QString();
+	attributes[ParsersAttributes::BASE_TYPE]=QString();
+	attributes[ParsersAttributes::FINAL_FUNC]=QString();
+	attributes[ParsersAttributes::INITIAL_COND]=QString();
+	attributes[ParsersAttributes::SORT_OP]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
@@ -269,7 +269,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
-	if(initial_condition!="")
+  if(!initial_condition.isEmpty())
 		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)

@@ -50,7 +50,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 Reference::Reference(const QString &expression, const QString &expr_alias)
 {
 	//Raises an error if the user try to create an reference using an empty expression
-	if(expression=="")
+  if(expression.isEmpty())
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the expression alias has an invalid name
 	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
@@ -100,7 +100,7 @@ QString Reference::getExpression(void)
 
 unsigned Reference::getReferenceType(void)
 {
-	if(expression=="")
+  if(expression.isEmpty())
 		return(REFER_COLUMN);
 	else
 		return(REFER_EXPRESSION);
@@ -135,7 +135,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 				sql_def=tab_name + column->getName(true);
 
 				//Case there is a column alias concatenate it to the definition
-				if(column_alias!="")
+        if(!column_alias.isEmpty())
 					sql_def+=" AS " + BaseObject::formatName(column_alias);
 			}
 		}
@@ -145,7 +145,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			/* Generated SQL definition:
 			{expression} [AS ALIAS] */
 			sql_def=expression;
-			if(alias!="")
+      if(!alias.isEmpty())
 				sql_def+=" AS " + BaseObject::formatName(alias);
 		}
 		sql_def+=", ";
@@ -162,7 +162,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		{
 			sql_def+=table->getName(true);
 
-			if(alias!="")
+      if(!alias.isEmpty())
 				sql_def+=" AS " + BaseObject::formatName(alias);
 		}
 		else
@@ -179,7 +179,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			/* Generated SQL definition:
 			... WHERE {TABLE_NAME | ALIAS}.{COLUMN_NAME} */
 
-			if(alias=="")
+      if(alias.isEmpty())
 				sql_def=table->getName(true);
 			else
 				sql_def=BaseObject::formatName(alias);
@@ -201,8 +201,8 @@ QString Reference::getXMLDefinition(void)
 	attribs_map attribs;
 	SchemaParser schparser;
 
-	attribs[ParsersAttributes::TABLE]="";
-	attribs[ParsersAttributes::COLUMN]="";
+	attribs[ParsersAttributes::TABLE]=QString();
+	attribs[ParsersAttributes::COLUMN]=QString();
 
 	if(table)
 		attribs[ParsersAttributes::TABLE]=table->getName(true);

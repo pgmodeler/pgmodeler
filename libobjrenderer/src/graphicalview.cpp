@@ -250,7 +250,7 @@ void GraphicalView::configureObject(void)
 	BaseObjectView::configureObjectSelection();
 
 	this->table_tooltip=Utf8String::create(view->getName(true)) +
-											" (" + view->getTypeName() + ") \n" +
+                      QStringLiteral(" (") + view->getTypeName() + QStringLiteral(") \n") +
                       QString("Id: %1\n").arg(view->getObjectId()) +
 											TableObjectView::CONSTR_DELIM_START +
 											trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +

@@ -216,7 +216,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			widget->setPalette(pal);
 		}
 
-		str_aux=(!widget->toolTip().isEmpty() ? "\n" : "");
+    str_aux=(!widget->toolTip().isEmpty() ? QStringLiteral("\n") : QString());
 		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("Required field. Leaving this empty will raise errors!"));
 	}
 }

@@ -271,7 +271,7 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	unsigned idx,total;
 	bool found=false;
 
-	if(type_name=="")
+  if(type_name.isEmpty())
 		return(BaseType::null);
 	else
 	{
@@ -693,7 +693,7 @@ QString SpatialType::operator * (void)
 			case var_z: var_str+="Z"; break;
 			case var_m: var_str+="M"; break;
 			case var_zm: var_str+="ZM"; break;
-			default: var_str=""; break;
+      default: var_str=QString(); break;
 		}
 
 		if(srid > 0)
@@ -1101,7 +1101,7 @@ void PgSQLType::setUserType(void *ptype)
 
 void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
 {
-	if(type_name!="" && ptype && pmodel &&
+  if(!type_name.isEmpty() && ptype && pmodel &&
 		 (type_conf==UserTypeConfig::DOMAIN_TYPE ||
 			type_conf==UserTypeConfig::SEQUENCE_TYPE ||
 			type_conf==UserTypeConfig::TABLE_TYPE ||
@@ -1123,7 +1123,7 @@ void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 {
 	if(PgSQLType::user_types.size() > 0 &&
-		 type_name!="" && ptype)
+     !type_name.isEmpty() && ptype)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
@@ -1149,7 +1149,7 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
 {
 	if(PgSQLType::user_types.size() > 0 &&
-		 type_name!="" && ptype && type_name!=new_name)
+     !type_name.isEmpty() && ptype && type_name!=new_name)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
@@ -1205,7 +1205,7 @@ unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 
 unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
 {
-	if(PgSQLType::user_types.size() > 0 && (type_name!="" || ptype))
+  if(PgSQLType::user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 		int idx=0;
@@ -1216,7 +1216,7 @@ unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		while(itr!=itr_end)
 		{
 			if(!itr->invalidated &&
-				 (((type_name!="" && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
+         (((!type_name.isEmpty() && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
 					((pmodel && itr->pmodel==pmodel) || !pmodel)))
 				break;
 
@@ -1465,14 +1465,14 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs_map attribs;
 		SchemaParser schparser;
 
-		attribs[ParsersAttributes::LENGTH]="";
-		attribs[ParsersAttributes::DIMENSION]="";
-		attribs[ParsersAttributes::PRECISION]="";
-		attribs[ParsersAttributes::WITH_TIMEZONE]="";
-		attribs[ParsersAttributes::INTERVAL_TYPE]="";
-		attribs[ParsersAttributes::SPATIAL_TYPE]="";
-		attribs[ParsersAttributes::VARIATION]="";
-		attribs[ParsersAttributes::SRID]="";
+    attribs[ParsersAttributes::LENGTH]=QString();
+    attribs[ParsersAttributes::DIMENSION]=QString();
+    attribs[ParsersAttributes::PRECISION]=QString();
+    attribs[ParsersAttributes::WITH_TIMEZONE]=QString();
+    attribs[ParsersAttributes::INTERVAL_TYPE]=QString();
+    attribs[ParsersAttributes::SPATIAL_TYPE]=QString();
+    attribs[ParsersAttributes::VARIATION]=QString();
+    attribs[ParsersAttributes::SRID]=QString();
 		attribs[ParsersAttributes::REF_TYPE]=ref_type;
 
 		attribs[ParsersAttributes::NAME]=(~(*this));

@@ -23,7 +23,7 @@
 
 using namespace ParsersAttributes;
 
-const QString DatabaseExplorerWidget::DEP_NOT_DEFINED="";
+const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QStringLiteral("");
 const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ELEM_SEPARATOR="•";
 
@@ -924,7 +924,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
         Connection conn;
 
         attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-        attribs[ParsersAttributes::DECL_IN_TABLE]="";
+        attribs[ParsersAttributes::DECL_IN_TABLE]=QString();
         attribs[BaseObject::getSchemaName(obj_type)]=ParsersAttributes::_TRUE_;
 
         //For cast, operator and function is needed to extract the name and the params types

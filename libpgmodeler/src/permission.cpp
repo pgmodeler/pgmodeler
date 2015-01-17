@@ -18,7 +18,7 @@
 
 #include "permission.h"
 
-const QString Permission::priv_codes="rawdDxtCcTXU";
+const QString Permission::priv_codes=QStringLiteral("rawdDxtCcTXU");
 
 Permission::Permission(BaseObject *obj)
 {
@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=OBJ_PERMISSION;
 	revoke=cascade=false;
 
-	attributes[ParsersAttributes::OBJECT]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::PARENT]="";
-	attributes[ParsersAttributes::GRANT_OP]="";
-	attributes[ParsersAttributes::ROLES]="";
-	attributes[ParsersAttributes::PRIVILEGES]="";
-	attributes[ParsersAttributes::CASCADE]="";
-	attributes[ParsersAttributes::PRIVILEGES_GOP]="";
+  attributes[ParsersAttributes::OBJECT]=QString();
+  attributes[ParsersAttributes::TYPE]=QString();
+  attributes[ParsersAttributes::PARENT]=QString();
+  attributes[ParsersAttributes::GRANT_OP]=QString();
+  attributes[ParsersAttributes::ROLES]=QString();
+  attributes[ParsersAttributes::PRIVILEGES]=QString();
+  attributes[ParsersAttributes::CASCADE]=QString();
+  attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
 }
 
 bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
@@ -398,8 +398,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+  attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
   attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -423,7 +423,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			else if(privileges[i])
 				attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
 			else
-				attributes[priv_vect[i]]="";
+        attributes[priv_vect[i]]=QString();
 		}
 	}
 	else

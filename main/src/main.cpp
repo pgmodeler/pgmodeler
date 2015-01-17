@@ -16,8 +16,8 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "mainwindow.h"
 #include "application.h"
+#include "mainwindow.h"
 
 #ifndef Q_OS_WIN
 #include "execinfo.h"

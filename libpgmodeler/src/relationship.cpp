@@ -20,11 +20,11 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
-const QString Relationship::SUFFIX_SEPARATOR("_");
-const QString Relationship::SRC_TAB_TOKEN("{st}");
-const QString Relationship::DST_TAB_TOKEN("{dt}");
-const QString Relationship::GEN_TAB_TOKEN("{gt}");
-const QString Relationship::SRC_COL_TOKEN("{sc}");
+const QString Relationship::SUFFIX_SEPARATOR=QStringLiteral("_");
+const QString Relationship::SRC_TAB_TOKEN=QStringLiteral("{st}");
+const QString Relationship::DST_TAB_TOKEN=QStringLiteral("{dt}");
+const QString Relationship::GEN_TAB_TOKEN=QStringLiteral("{gt}");
+const QString Relationship::SRC_COL_TOKEN=QStringLiteral("{sc}");
 
 const unsigned Relationship::SRC_COL_PATTERN=0;
 const unsigned Relationship::DST_COL_PATTERN=1;
@@ -1450,7 +1450,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			name=PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN)));
 			column->setName(name);
 
-			if(prev_name!="")
+      if(!prev_name.isEmpty())
 			{
 				column->setName(prev_name);
 				column->setName(name);
@@ -2374,16 +2374,16 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? ParsersAttributes::_TRUE_ : "");
-    attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? ParsersAttributes::_TRUE_ : "");
-		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::IDENTIFIER]=(identifier ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
 		attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
 		attributes[ParsersAttributes::DEL_ACTION]=~del_action;
 
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
-		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? ParsersAttributes::_TRUE_ : "");
-		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? ParsersAttributes::_TRUE_ : QString());
 
 		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
 		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
@@ -2393,7 +2393,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
     attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PK_COL_PATTERN];
 
-		attributes[ParsersAttributes::COLUMNS]="";
+    attributes[ParsersAttributes::COLUMNS]=QString();
 		count=rel_attributes.size();
 		for(i=0; i < count; i++)
 		{
@@ -2401,7 +2401,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 																							getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 
-		attributes[ParsersAttributes::CONSTRAINTS]="";
+    attributes[ParsersAttributes::CONSTRAINTS]=QString();
 		count=rel_constraints.size();
 		for(i=0; i < count; i++)
 		{

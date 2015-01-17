@@ -24,22 +24,22 @@ Index::Index(void)
 	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
 	index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
 	fill_factor=90;
-	attributes[ParsersAttributes::UNIQUE]="";
-	attributes[ParsersAttributes::CONCURRENT]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::INDEX_TYPE]="";
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::FACTOR]="";
-  attributes[ParsersAttributes::PREDICATE]="";
-	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::NULLS_FIRST]="";
-	attributes[ParsersAttributes::ASC_ORDER]="";
-	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::FAST_UPDATE]="";
-	attributes[ParsersAttributes::BUFFERING]="";
-	attributes[ParsersAttributes::STORAGE_PARAMS]="";
+	attributes[ParsersAttributes::UNIQUE]=QString();
+	attributes[ParsersAttributes::CONCURRENT]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::INDEX_TYPE]=QString();
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::FACTOR]=QString();
+  attributes[ParsersAttributes::PREDICATE]=QString();
+	attributes[ParsersAttributes::OP_CLASS]=QString();
+	attributes[ParsersAttributes::NULLS_FIRST]=QString();
+	attributes[ParsersAttributes::ASC_ORDER]=QString();
+	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::ELEMENTS]=QString();
+	attributes[ParsersAttributes::FAST_UPDATE]=QString();
+	attributes[ParsersAttributes::BUFFERING]=QString();
+	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -305,11 +305,11 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
   attributes[ParsersAttributes::PREDICATE]=predicate;
-	attributes[ParsersAttributes::STORAGE_PARAMS]="";
+	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
 
   if(getParentTable())
   {
@@ -320,10 +320,10 @@ QString Index::getCodeDefinition(unsigned def_type)
   }
 
 	if(this->indexing_type==IndexingType::gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : QString());
 
 	if(this->indexing_type==IndexingType::gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : QString());
 
   if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{

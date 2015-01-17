@@ -38,53 +38,53 @@
 
 namespace GlobalAttributes {
 	static const QString
-  PGMODELER_APP_NAME="pgmodeler",
-  PGMODELER_URI="pgmodeler.com.br",
-  PGMODELER_VERSION="0.8.0-beta2",
-	PGMODELER_VER_CODENAME="Faithful Elephant",
+  PGMODELER_APP_NAME=QStringLiteral("pgmodeler"),
+  PGMODELER_URI=QStringLiteral("pgmodeler.com.br"),
+  PGMODELER_VERSION=QStringLiteral("0.8.0-beta2"),
+  PGMODELER_VER_CODENAME=QStringLiteral("Faithful Elephant"),
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
-  PGMODELER_SITE="http://www.pgmodeler.com.br",
+  PGMODELER_SITE=QStringLiteral("http://www.pgmodeler.com.br"),
   PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
-  PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
+  PGMODELER_SRC_URL=QStringLiteral("https://github.com/pgmodeler/pgmodeler/releases"),
   PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
   PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
-	CRASH_REPORT_EMAIL="bug@pgmodeler.com.br",
-	CRASH_REPORT_FILE="pgmodeler%1.crash",
-	STACKTRACE_FILE=".stacktrace",
-	MACOS_STARTUP_SCRIPT="startapp",
+  CRASH_REPORT_EMAIL=QStringLiteral("bug@pgmodeler.com.br"),
+  CRASH_REPORT_FILE=QStringLiteral("pgmodeler%1.crash"),
+  STACKTRACE_FILE=QStringLiteral(".stacktrace"),
+  MACOS_STARTUP_SCRIPT=QStringLiteral("startapp"),
 
-	DIR_SEPARATOR="/",
-	DEFAULT_CONFS_DIR="defaults", //! \brief Directory name which holds the default pgModeler configuration
-	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
-	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
-	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
-  ALTER_SCHEMA_DIR="alter", //! \brief Default name for the alter schemas directory
-	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
-	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
-	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
-	ROOT_DTD="dbmodel", //! \brief Root DTD of model xml files
-	CONFIGURATION_EXT=".conf", //! \brief Default extension for configuration files
-	HIGHLIGHT_FILE_SUF="-highlight", //! \brief Suffix of language highlight configuration files
+  DIR_SEPARATOR=QStringLiteral("/"),
+  DEFAULT_CONFS_DIR=QStringLiteral("defaults"), //! \brief Directory name which holds the default pgModeler configuration
+  SCHEMAS_DIR=QStringLiteral("schemas"), //! \brief Default name for the schemas directory
+  SQL_SCHEMA_DIR=QStringLiteral("sql"), //! \brief Default name for the sql schemas directory
+  XML_SCHEMA_DIR=QStringLiteral("xml"), //! \brief Default name for the xml schemas directory
+  ALTER_SCHEMA_DIR=QStringLiteral("alter"), //! \brief Default name for the alter schemas directory
+  SCHEMA_EXT=QStringLiteral(".sch"), //! \brief Default extension for schema files
+  OBJECT_DTD_DIR=QStringLiteral("dtd"), //! \brief Default directory for dtd files
+  OBJECT_DTD_EXT=QStringLiteral(".dtd"), //! \brief Default extension for dtd files
+  ROOT_DTD=QStringLiteral("dbmodel"), //! \brief Root DTD of model xml files
+  CONFIGURATION_EXT=QStringLiteral(".conf"), //! \brief Default extension for configuration files
+  HIGHLIGHT_FILE_SUF=QStringLiteral("-highlight"), //! \brief Suffix of language highlight configuration files
 
-	CODE_HIGHLIGHT_CONF="source-code-highlight", //! \brief Default name for the language highlight dtd
-	OBJECTS_STYLE_CONF="objects-style", //! \brief Default name for the object style configuration file
-	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
-	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
-	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
-  SNIPPETS_CONF="snippets",//! \brief Default name for the code snippets configuration file
+  CODE_HIGHLIGHT_CONF=QStringLiteral("source-code-highlight"), //! \brief Default name for the language highlight dtd
+  OBJECTS_STYLE_CONF=QStringLiteral("objects-style"), //! \brief Default name for the object style configuration file
+  GENERAL_CONF=QStringLiteral("pgmodeler"), //! \brief Default name for the general pgModeler configuration
+  CONNECTIONS_CONF=QStringLiteral("connections"), //! \brief Default name for the DBMS connection configuration file
+  RELATIONSHIPS_CONF=QStringLiteral("relationships"),//! \brief Default name for the relationships configuration file
+  SNIPPETS_CONF=QStringLiteral("snippets"),//! \brief Default name for the code snippets configuration file
 
-	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
-	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
-	PATTERN_HIGHLIGHT_CONF="pattern-highlight", //! \brief Configuration file for name patterns highlight (relationship editing form)
+  SQL_HIGHLIGHT_CONF=QStringLiteral("sql-highlight"), //! \brief Configuration file for SQL language highlight
+  XML_HIGHLIGHT_CONF=QStringLiteral("xml-highlight"), //! \brief Configuration file for XML language highlight
+  PATTERN_HIGHLIGHT_CONF=QStringLiteral("pattern-highlight"), //! \brief Configuration file for name patterns highlight (relationship editing form)
 
-	EXAMPLE_MODEL="example.dbm", //! \brief Default name for the sample model loaded on appearence configuration form
-	UI_STYLE_CONF="ui-style", //! \brief Configuration file ui style
+  EXAMPLE_MODEL=QStringLiteral("example.dbm"), //! \brief Default name for the sample model loaded on appearence configuration form
+  UI_STYLE_CONF=QStringLiteral("ui-style"), //! \brief Configuration file ui style
 
 	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 	the executable using -style option. This same style is applied to crash handler. */
-	DEFAULT_QT_STYLE="Fusion",
-	UI_STYLE_OPT="-style";
+  DEFAULT_QT_STYLE=QStringLiteral("Fusion"),
+  UI_STYLE_OPT=QStringLiteral("-style");
 
 	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
@@ -129,7 +129,7 @@ namespace GlobalAttributes {
   #if defined(Q_OS_UNIX)
     #if defined(Q_OS_MAC)
       //For MacOSX the crash handler path is fixed (inside bundle)
-      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
+      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + QStringLiteral(" pgmodeler-ch");
     #else
       CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
                          QString(getenv("PGMODELER_CHANDLER_PATH")) :

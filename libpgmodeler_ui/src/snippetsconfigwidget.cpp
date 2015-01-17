@@ -23,7 +23,6 @@
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
 const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(_)*)+", Qt::CaseInsensitive);
-const QString SnippetsConfigWidget::PARSE_SNIP_TOKEN=QString("%parse");
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -228,7 +227,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
     err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
   else if(attribs[ParsersAttributes::CONTENTS].isEmpty())
     err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-  else if(attribs[ParsersAttributes::CONTENTS].startsWith(PARSE_SNIP_TOKEN))
+  else if(attribs[ParsersAttributes::PARSABLE]==ParsersAttributes::_TRUE_)
   {
     try
     {
@@ -236,7 +235,6 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
       attribs_map attribs;
       SchemaParser schparser;
 
-      buf.remove(PARSE_SNIP_TOKEN);
       schparser.loadBuffer(buf);
       schparser.ignoreEmptyAttributes(true);
       schparser.ignoreUnkownAttributes(true);

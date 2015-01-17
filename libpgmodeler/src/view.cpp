@@ -22,16 +22,16 @@ View::View(void) : BaseTable()
 {
 	obj_type=OBJ_VIEW;
   materialized=recursive=with_no_data=false;
-	attributes[ParsersAttributes::DECLARATION]="";
-	attributes[ParsersAttributes::REFERENCES]="";
-	attributes[ParsersAttributes::SELECT_EXP]="";
-	attributes[ParsersAttributes::FROM_EXP]="";
-	attributes[ParsersAttributes::SIMPLE_EXP]="";
-	attributes[ParsersAttributes::CTE_EXPRESSION]="";
-  attributes[ParsersAttributes::MATERIALIZED]="";
-  attributes[ParsersAttributes::RECURSIVE]="";
-  attributes[ParsersAttributes::WITH_NO_DATA]="";
-  attributes[ParsersAttributes::COLUMNS]="";
+  attributes[ParsersAttributes::DECLARATION]=QString();
+  attributes[ParsersAttributes::REFERENCES]=QString();
+  attributes[ParsersAttributes::SELECT_EXP]=QString();
+  attributes[ParsersAttributes::FROM_EXP]=QString();
+  attributes[ParsersAttributes::SIMPLE_EXP]=QString();
+  attributes[ParsersAttributes::CTE_EXPRESSION]=QString();
+  attributes[ParsersAttributes::MATERIALIZED]=QString();
+  attributes[ParsersAttributes::RECURSIVE]=QString();
+  attributes[ParsersAttributes::WITH_NO_DATA]=QString();
+  attributes[ParsersAttributes::COLUMNS]=QString();
 }
 
 View::~View(void)
@@ -478,7 +478,7 @@ void View::setReferencesAttribute(void)
 
 	for(i=0; i < 3; i++)
 	{
-		str_aux="";
+    str_aux=QString();
 		qtd=vect_exp[i]->size();
 		for(i1=0; i1 < qtd; i1++)
 		{
@@ -558,14 +558,14 @@ QString View::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
-  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::_TRUE_ : "");
-  attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::_TRUE_ : "");
-  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : "");
-  attributes[ParsersAttributes::COLUMNS]="";
-  attributes[ParsersAttributes::TAG]="";
+  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::COLUMNS]=QString();
+  attributes[ParsersAttributes::TAG]=QString();
 
   if(materialized)
-    attributes[ParsersAttributes::SQL_OBJECT]="MATERIALIZED " + BaseObject::getSQLName(OBJ_VIEW);
+    attributes[ParsersAttributes::SQL_OBJECT]=QStringLiteral("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
 
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");

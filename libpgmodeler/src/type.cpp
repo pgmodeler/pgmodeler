@@ -23,35 +23,35 @@ Type::Type(void)
 	obj_type=OBJ_TYPE;
 	setConfiguration(ENUMERATION_TYPE);
 
-  attributes[ParsersAttributes::BASE_TYPE]="";
-  attributes[ParsersAttributes::COMPOSITE_TYPE]="";
-  attributes[ParsersAttributes::RANGE_TYPE]="";
-  attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
-  attributes[ParsersAttributes::ENUM_TYPE]="";
-  attributes[ParsersAttributes::ENUMERATIONS]="";
-  attributes[ParsersAttributes::INPUT_FUNC]="";
-  attributes[ParsersAttributes::OUTPUT_FUNC]="";
-  attributes[ParsersAttributes::RECV_FUNC]="";
-  attributes[ParsersAttributes::SEND_FUNC]="";
-  attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
-  attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
-  attributes[ParsersAttributes::ANALYZE_FUNC]="";
-  attributes[ParsersAttributes::INTERNAL_LENGTH]="";
-  attributes[ParsersAttributes::BY_VALUE]="";
-  attributes[ParsersAttributes::ALIGNMENT]="";
-  attributes[ParsersAttributes::STORAGE]="";
-  attributes[ParsersAttributes::DEFAULT_VALUE]="";
-  attributes[ParsersAttributes::ELEMENT]="";
-  attributes[ParsersAttributes::DELIMITER]="";
-  attributes[ParsersAttributes::REDUCED_FORM]="";
-  attributes[ParsersAttributes::CATEGORY]="";
-  attributes[ParsersAttributes::PREFERRED]="";
-  attributes[ParsersAttributes::LIKE_TYPE]="";
-  attributes[ParsersAttributes::COLLATABLE]="";
-  attributes[ParsersAttributes::SUBTYPE]="";
-  attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]="";
-  attributes[ParsersAttributes::CANONICAL_FUNC]="";
-  attributes[ParsersAttributes::OP_CLASS]="";
+  attributes[ParsersAttributes::BASE_TYPE]=QString();
+  attributes[ParsersAttributes::COMPOSITE_TYPE]=QString();
+  attributes[ParsersAttributes::RANGE_TYPE]=QString();
+  attributes[ParsersAttributes::TYPE_ATTRIBUTE]=QString();
+  attributes[ParsersAttributes::ENUM_TYPE]=QString();
+  attributes[ParsersAttributes::ENUMERATIONS]=QString();
+  attributes[ParsersAttributes::INPUT_FUNC]=QString();
+  attributes[ParsersAttributes::OUTPUT_FUNC]=QString();
+  attributes[ParsersAttributes::RECV_FUNC]=QString();
+  attributes[ParsersAttributes::SEND_FUNC]=QString();
+  attributes[ParsersAttributes::TPMOD_IN_FUNC]=QString();
+  attributes[ParsersAttributes::TPMOD_OUT_FUNC]=QString();
+  attributes[ParsersAttributes::ANALYZE_FUNC]=QString();
+  attributes[ParsersAttributes::INTERNAL_LENGTH]=QString();
+  attributes[ParsersAttributes::BY_VALUE]=QString();
+  attributes[ParsersAttributes::ALIGNMENT]=QString();
+  attributes[ParsersAttributes::STORAGE]=QString();
+  attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+  attributes[ParsersAttributes::ELEMENT]=QString();
+  attributes[ParsersAttributes::DELIMITER]=QString();
+  attributes[ParsersAttributes::REDUCED_FORM]=QString();
+  attributes[ParsersAttributes::CATEGORY]=QString();
+  attributes[ParsersAttributes::PREFERRED]=QString();
+  attributes[ParsersAttributes::LIKE_TYPE]=QString();
+  attributes[ParsersAttributes::COLLATABLE]=QString();
+  attributes[ParsersAttributes::SUBTYPE]=QString();
+  attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]=QString();
+  attributes[ParsersAttributes::CANONICAL_FUNC]=QString();
+  attributes[ParsersAttributes::OP_CLASS]=QString();
 }
 
 void Type::setName(const QString &name)
@@ -97,7 +97,7 @@ int Type::getAttributeIndex(const QString &attrib_name)
 void Type::addAttribute(TypeAttribute attrib)
 {
 	//Raises an error if the attribute has an empty name or null type
-	if(attrib.getName()=="" || attrib.getType()==PgSQLType::null)
+  if(attrib.getName().isEmpty() || attrib.getType()==PgSQLType::null)
 		throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the passed attribute has the same type as the defining type (this)
 	else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
@@ -147,7 +147,7 @@ bool Type::isEnumerationExists(const QString &enum_name)
 void Type::addEnumeration(const QString &enum_name)
 {
 	//Raises an error if the enumaration name is empty
-	if(enum_name=="")
+  if(enum_name.isEmpty())
 		throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration name is invalid (exceeds the maximum length)
 	else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
@@ -646,7 +646,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
       attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
-    attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : QString());
     attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
     attributes[ParsersAttributes::STORAGE]=(~storage);
     attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
@@ -659,8 +659,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     attributes[ParsersAttributes::CATEGORY]=~(category);
 
-    attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : "");
-    attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : QString());
 
 		if(like_type!="any")
 		{
@@ -721,7 +721,7 @@ QString Type::getAlterDefinition(BaseObject *object)
         {
           if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
           {
-            attribs[ParsersAttributes::BEFORE]="";
+            attribs[ParsersAttributes::BEFORE]=QString();
             if(prev_val.isEmpty())
             {
               attribs[ParsersAttributes::BEFORE]=ParsersAttributes::_TRUE_;
@@ -750,7 +750,7 @@ QString Type::getAlterDefinition(BaseObject *object)
             copyAttributes(attribs);
             alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
             attribs.clear();
-            attributes[ParsersAttributes::DROP]="";
+            attributes[ParsersAttributes::DROP]=QString();
           }
         }
 
@@ -763,7 +763,7 @@ QString Type::getAlterDefinition(BaseObject *object)
           {
             attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
             attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
-            attribs[ParsersAttributes::COLLATION]="";
+            attribs[ParsersAttributes::COLLATION]=QString();
 
             if(attrib.getCollation())
               attribs[ParsersAttributes::COLLATION]=attrib.getCollation()->getName(true);
@@ -784,7 +784,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 
             copyAttributes(attribs);
             alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
-            attributes[ParsersAttributes::CHANGE]="";
+            attributes[ParsersAttributes::CHANGE]=QString();
           }
 
           attribs.clear();

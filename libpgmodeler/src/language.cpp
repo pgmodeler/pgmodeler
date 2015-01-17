@@ -26,10 +26,10 @@ Language::Language(void)
 	for(unsigned i=VALIDATOR_FUNC; i <= INLINE_FUNC; i++)
 		functions[i]=nullptr;
 
-	attributes[ParsersAttributes::TRUSTED]="";
-	attributes[ParsersAttributes::HANDLER_FUNC]="";
-	attributes[ParsersAttributes::VALIDATOR_FUNC]="";
-	attributes[ParsersAttributes::INLINE_FUNC]="";
+	attributes[ParsersAttributes::TRUSTED]=QString();
+	attributes[ParsersAttributes::HANDLER_FUNC]=QString();
+	attributes[ParsersAttributes::VALIDATOR_FUNC]=QString();
+	attributes[ParsersAttributes::INLINE_FUNC]=QString();
 }
 
 void Language::setName(const QString &name)
@@ -120,7 +120,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 													 ParsersAttributes::HANDLER_FUNC,
 													 ParsersAttributes::INLINE_FUNC};
 
-	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : QString());
 
 	if(!reduced_form && def_type==SchemaParser::XML_DEFINITION)
 		reduced_form=(!functions[VALIDATOR_FUNC] && !functions[HANDLER_FUNC] && !functions[INLINE_FUNC] && !this->getOwner());

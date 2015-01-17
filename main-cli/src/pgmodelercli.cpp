@@ -19,40 +19,35 @@
 #include "pgmodelercli.h"
 
 QTextStream PgModelerCLI::out(stdout);
-QString PgModelerCLI::INPUT="--input";
-QString PgModelerCLI::OUTPUT="--output";
-QString PgModelerCLI::EXPORT_TO_FILE="--export-to-file";
-QString PgModelerCLI::EXPORT_TO_PNG="--export-to-png";
-QString PgModelerCLI::EXPORT_TO_DBMS="--export-to-dbms";
-QString PgModelerCLI::DROP_DATABASE="--drop-database";
-QString PgModelerCLI::DROP_OBJECTS="--drop-objects";
-QString PgModelerCLI::PGSQL_VER="--pgsql-ver";
-QString PgModelerCLI::HELP="--help";
-QString PgModelerCLI::SHOW_GRID="--show-grid";
-QString PgModelerCLI::SHOW_DELIMITERS="--show-delimiters";
-QString PgModelerCLI::PAGE_BY_PAGE="--page-by-page";
-QString PgModelerCLI::IGNORE_DUPLICATES="--ignore-duplicates";
-QString PgModelerCLI::CONN_ALIAS="--conn-alias";
-QString PgModelerCLI::HOST="--host";
-QString PgModelerCLI::PORT="--port";
-QString PgModelerCLI::USER="--user";
-QString PgModelerCLI::PASSWD="--passwd";
-QString PgModelerCLI::INITIAL_DB="--initial-db";
-QString PgModelerCLI::SILENT="--silent";
-QString PgModelerCLI::LIST_CONNS="--list-conns";
-QString PgModelerCLI::SIMULATE="--simulate";
-QString PgModelerCLI::FIX_MODEL="--fix-model";
-QString PgModelerCLI::FIX_TRIES="--fix-tries";
-QString PgModelerCLI::ZOOM_FACTOR="--zoom";
-QString PgModelerCLI::USE_TMP_NAMES="--use-tmp-names";
+const QString PgModelerCLI::INPUT=QStringLiteral("--input");
+const QString PgModelerCLI::OUTPUT=QStringLiteral("--output");
+const QString PgModelerCLI::EXPORT_TO_FILE=QStringLiteral("--export-to-file");
+const QString PgModelerCLI::EXPORT_TO_PNG=QStringLiteral("--export-to-png");
+const QString PgModelerCLI::EXPORT_TO_DBMS=QStringLiteral("--export-to-dbms");
+const QString PgModelerCLI::DROP_DATABASE=QStringLiteral("--drop-database");
+const QString PgModelerCLI::DROP_OBJECTS=QStringLiteral("--drop-objects");
+const QString PgModelerCLI::PGSQL_VER=QStringLiteral("--pgsql-ver");
+const QString PgModelerCLI::HELP=QStringLiteral("--help");
+const QString PgModelerCLI::SHOW_GRID=QStringLiteral("--show-grid");
+const QString PgModelerCLI::SHOW_DELIMITERS=QStringLiteral("--show-delimiters");
+const QString PgModelerCLI::PAGE_BY_PAGE=QStringLiteral("--page-by-page");
+const QString PgModelerCLI::IGNORE_DUPLICATES=QStringLiteral("--ignore-duplicates");
+const QString PgModelerCLI::CONN_ALIAS=QStringLiteral("--conn-alias");
+const QString PgModelerCLI::HOST=QStringLiteral("--host");
+const QString PgModelerCLI::PORT=QStringLiteral("--port");
+const QString PgModelerCLI::USER=QStringLiteral("--user");
+const QString PgModelerCLI::PASSWD=QStringLiteral("--passwd");
+const QString PgModelerCLI::INITIAL_DB=QStringLiteral("--initial-db");
+const QString PgModelerCLI::SILENT=QStringLiteral("--silent");
+const QString PgModelerCLI::LIST_CONNS=QStringLiteral("--list-conns");
+const QString PgModelerCLI::SIMULATE=QStringLiteral("--simulate");
+const QString PgModelerCLI::FIX_MODEL=QStringLiteral("--fix-model");
+const QString PgModelerCLI::FIX_TRIES=QStringLiteral("--fix-tries");
+const QString PgModelerCLI::ZOOM_FACTOR=QStringLiteral("--zoom");
+const QString PgModelerCLI::USE_TMP_NAMES=QStringLiteral("--use-tmp-names");
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
-  setOrganizationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setOrganizationDomain(GlobalAttributes::PGMODELER_URI);
-  setApplicationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setApplicationVersion(GlobalAttributes::PGMODELER_VERSION);
-
 	try
 	{
 		QString op, value;

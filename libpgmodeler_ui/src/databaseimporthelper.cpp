@@ -18,7 +18,7 @@
 
 #include "databaseimporthelper.h"
 
-const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML="\t<!--[ unknown object OID=%1 ]-->\n";
+const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML=QStringLiteral("\t<!--[ unknown object OID=%1 ]-->\n");
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
@@ -559,7 +559,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				 dbmodel->getObjectIndex(obj_name, obj_type) < 0)))
 		{
 			if(TableObject::isTableObject(obj_type))
-				attribs[ParsersAttributes::DECL_IN_TABLE]="";
+        attribs[ParsersAttributes::DECL_IN_TABLE]=QString();
 
 			//System objects will have the sql disabled by default
       attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? "" : ParsersAttributes::_TRUE_);
@@ -798,7 +798,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 
 	try
 	{
-		attribs[ParsersAttributes::RECT_VISIBLE]="";
+    attribs[ParsersAttributes::RECT_VISIBLE]=QString();
 		attribs[ParsersAttributes::FILL_COLOR]=QColor(dist(rand_num_engine),
 																									dist(rand_num_engine),
 																									dist(rand_num_engine)).name();
@@ -946,7 +946,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		if(getObjectName(attribs[ParsersAttributes::LANGUAGE])==~LanguageType("c"))
 		{
 			attribs[ParsersAttributes::SYMBOL]=attribs[ParsersAttributes::DEFINITION];
-			attribs[ParsersAttributes::DEFINITION]="";
+      attribs[ParsersAttributes::DEFINITION]=QString();
 		}
 
 		//Get the language reference code
@@ -999,7 +999,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 			if(func_oid < lang_oid)
 				attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true , true, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 			else
-				attribs[func_types[i]]="";
+        attribs[func_types[i]]=QString();
 		}
 
 		loadObjectXML(OBJ_LANGUAGE, attribs);
@@ -1242,7 +1242,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 										 ParsersAttributes::MAX_VALUE, ParsersAttributes::INCREMENT,
 										 ParsersAttributes::CACHE, ParsersAttributes::CYCLE };
 
-		attribs[ParsersAttributes::OWNER_COLUMN]="";
+    attribs[ParsersAttributes::OWNER_COLUMN]=QString();
 
 		/* If there are owner columns and the oid of sequence is greater that the owner column's table oid
 		stores the oid of both (sequence and table) in order to swap it's ids at the end of import to
@@ -1281,7 +1281,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 		types=getTypes(attribs[ParsersAttributes::TYPES], true);
 		if(!types.isEmpty())
 		{
-			attribs[ParsersAttributes::TYPES]="";
+      attribs[ParsersAttributes::TYPES]=QString();
 			for(int i=0; i < types.size(); i++)
 				attribs[ParsersAttributes::TYPES]+=types[i];
 		}
@@ -1318,7 +1318,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			TypeAttribute type_attrib;
 
 			comp_attribs=Catalog::parseArrayValues(attribs[ParsersAttributes::TYPE_ATTRIBUTE]);
-			attribs[ParsersAttributes::TYPE_ATTRIBUTE]="";
+      attribs[ParsersAttributes::TYPE_ATTRIBUTE]=QString();
 
 			for(int i=0; i < comp_attribs.size(); i++)
 			{
@@ -1395,7 +1395,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 														{ ParsersAttributes::Y_POS, "0" }};
 
 
-		attribs[ParsersAttributes::COLUMNS]="";
+    attribs[ParsersAttributes::COLUMNS]=QString();
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
     //Retrieving columns if they were not retrieved yet
@@ -1661,7 +1661,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				OperatorClass *opclass=nullptr;
 				Operator *oper=nullptr;
 
-				attribs[ParsersAttributes::SRC_COLUMNS]="";
+        attribs[ParsersAttributes::SRC_COLUMNS]=QString();
 				attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
 
 				cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
@@ -1704,7 +1704,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			{
 				//Clears the tablespace attribute when the constraint is fk avoiding errors
 				if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
-					attribs[ParsersAttributes::TABLESPACE]="";
+          attribs[ParsersAttributes::TABLESPACE]=QString();
 
 				attribs[ParsersAttributes::SRC_COLUMNS]=getColumnNames(attribs[ParsersAttributes::TABLE], attribs[ParsersAttributes::SRC_COLUMNS]).join(",");
 			}
@@ -1952,7 +1952,7 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 {
 	try
 	{
-		attribs[ParsersAttributes::APPEND_AT_EOD]="";
+    attribs[ParsersAttributes::APPEND_AT_EOD]=QString();
 
 		//Removing the encoding suffix from LC_COLLATE and LC_CTYPE attribs
 		attribs[ParsersAttributes::_LC_COLLATE_].remove(QRegExp("(\\.)(.)+"));
@@ -2147,7 +2147,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(generate_xml)
 			{
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
-				extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : "");
+        extra_attribs[ParsersAttributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : QString());
 
 				schparser.ignoreUnkownAttributes(true);
 				xml_def=schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XML_DEFINITION);

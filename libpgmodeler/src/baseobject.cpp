@@ -79,18 +79,18 @@ BaseObject::BaseObject(void)
 	tablespace=nullptr;
 	database=nullptr;
 	collation=nullptr;
-	attributes[ParsersAttributes::NAME]="";
-	attributes[ParsersAttributes::COMMENT]="";
-	attributes[ParsersAttributes::OWNER]="";
-	attributes[ParsersAttributes::TABLESPACE]="";
-	attributes[ParsersAttributes::SCHEMA]="";
-	attributes[ParsersAttributes::COLLATION]="";
-	attributes[ParsersAttributes::PROTECTED]="";
-	attributes[ParsersAttributes::SQL_DISABLED]="";
-	attributes[ParsersAttributes::APPENDED_SQL]="";
-  attributes[ParsersAttributes::PREPENDED_SQL]="";
-  attributes[ParsersAttributes::DROP]="";
-  attributes[ParsersAttributes::SIGNATURE]="";
+  attributes[ParsersAttributes::NAME]=QString();
+  attributes[ParsersAttributes::COMMENT]=QString();
+  attributes[ParsersAttributes::OWNER]=QString();
+  attributes[ParsersAttributes::TABLESPACE]=QString();
+  attributes[ParsersAttributes::SCHEMA]=QString();
+  attributes[ParsersAttributes::COLLATION]=QString();
+  attributes[ParsersAttributes::PROTECTED]=QString();
+  attributes[ParsersAttributes::SQL_DISABLED]=QString();
+  attributes[ParsersAttributes::APPENDED_SQL]=QString();
+  attributes[ParsersAttributes::PREPENDED_SQL]=QString();
+  attributes[ParsersAttributes::DROP]=QString();
+  attributes[ParsersAttributes::SIGNATURE]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -212,7 +212,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		}
 
     if(needs_fmt)
-			frmt_name="\"" + name + "\"";
+      frmt_name=QString("\"%1\"").arg(name);
 		else
 			frmt_name=name;
 	}
@@ -675,7 +675,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : QString());
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SQL_DEFINITION) ||
@@ -693,7 +693,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XML_DEFINITION)
-			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : "");
+      attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : QString());
 
 		if(tablespace)
 		{
@@ -735,7 +735,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[ParsersAttributes::OWNER]=owner->getCodeDefinition(def_type, true);
 		}
 
-		if(comment!="")
+    if(!comment.isEmpty())
 		{
 			attributes[ParsersAttributes::COMMENT]=comment;
 
@@ -792,7 +792,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
     }
 
-    attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : QString());
 
 		try
 		{
@@ -858,7 +858,7 @@ void BaseObject::clearAttributes(void)
 
 	while(itr!=itr_end)
 	{
-		itr->second="";
+    itr->second=QString();
 		itr++;
 	}
 }
@@ -1099,7 +1099,7 @@ QString BaseObject::getDropDefinition(bool cascade)
       if(attribs.count(this->getSchemaName())==0)
         attribs[this->getSchemaName()]=ParsersAttributes::_TRUE_;
 
-      attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+      attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
 
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
     }
@@ -1141,7 +1141,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
      attributes[itr.first]=itr.second;
   }
   else
-    attributes[ParsersAttributes::HAS_CHANGES]="";
+    attributes[ParsersAttributes::HAS_CHANGES]=QString();
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object)

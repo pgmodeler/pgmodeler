@@ -63,8 +63,6 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
     attribs_map getSnippetAttributes(void);
 
   public:
-    static const QString PARSE_SNIP_TOKEN;
-
     SnippetsConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);

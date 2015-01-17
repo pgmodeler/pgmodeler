@@ -782,7 +782,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           is_create=is_drop=false;
           msg.clear();
         }
-        else if(sql_cmd.trimmed()!="")
+        else if(!sql_cmd.trimmed().isEmpty())
         {
           //General commands like grant, revoke or set aren't explicitly shown
           emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);

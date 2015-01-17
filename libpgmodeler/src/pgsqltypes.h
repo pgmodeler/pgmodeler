@@ -315,7 +315,7 @@ class UserTypeConfig {
 													ALL_USER_TYPES=63;
 
 		UserTypeConfig(void)
-		{ name=""; ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
+    { name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
 
 		friend class PgSQLType;
 };

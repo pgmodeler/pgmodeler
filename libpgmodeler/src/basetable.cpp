@@ -22,7 +22,7 @@ BaseTable::BaseTable(void)
 {
  tag=nullptr;
  obj_type=BASE_TABLE;
- attributes[ParsersAttributes::TAG]="";
+ attributes[ParsersAttributes::TAG]=QString();
 }
 
 void BaseTable::setTag(Tag *tag)

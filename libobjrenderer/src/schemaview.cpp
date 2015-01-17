@@ -227,7 +227,7 @@ void SchemaView::configureObject(void)
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
+    this->setToolTip(Utf8String::create(schema->getName(true)) +  QStringLiteral(" (") + schema->getTypeName() + QStringLiteral(")"));
 		sch_name->setToolTip(this->toolTip());
 
     this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,

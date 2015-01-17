@@ -241,14 +241,14 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 		break;
 
 		default:
-			icon_name="";
+			icon_name=QString();
 		break;
 	}
 
 	cancelled=false;
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
-	if(icon_name!="")
+  if(!icon_name.isEmpty())
 		icon_lbl->setPixmap(QPixmap((":/icones/icones/" + icon_name)));
 
 	msg_lbl->setText(msg);

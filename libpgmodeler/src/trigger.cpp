@@ -32,23 +32,23 @@ Trigger::Trigger(void)
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[ParsersAttributes::ARGUMENTS]="";
-	attributes[ParsersAttributes::EVENTS]="";
-	attributes[ParsersAttributes::TRIGGER_FUNC]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::FIRING_TYPE]="";
-	attributes[ParsersAttributes::PER_ROW]="";
-	attributes[ParsersAttributes::INS_EVENT]="";
-	attributes[ParsersAttributes::DEL_EVENT]="";
-	attributes[ParsersAttributes::UPD_EVENT]="";
-	attributes[ParsersAttributes::TRUNC_EVENT]="";
-	attributes[ParsersAttributes::CONDITION]="";
-	attributes[ParsersAttributes::REF_TABLE]="";
-	attributes[ParsersAttributes::DEFER_TYPE]="";
-	attributes[ParsersAttributes::DEFERRABLE]="";
-	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	attributes[ParsersAttributes::CONSTRAINT]="";
+	attributes[ParsersAttributes::ARGUMENTS]=QString();
+	attributes[ParsersAttributes::EVENTS]=QString();
+	attributes[ParsersAttributes::TRIGGER_FUNC]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::FIRING_TYPE]=QString();
+	attributes[ParsersAttributes::PER_ROW]=QString();
+	attributes[ParsersAttributes::INS_EVENT]=QString();
+	attributes[ParsersAttributes::DEL_EVENT]=QString();
+	attributes[ParsersAttributes::UPD_EVENT]=QString();
+	attributes[ParsersAttributes::TRUNC_EVENT]=QString();
+	attributes[ParsersAttributes::CONDITION]=QString();
+	attributes[ParsersAttributes::REF_TABLE]=QString();
+	attributes[ParsersAttributes::DEFER_TYPE]=QString();
+	attributes[ParsersAttributes::DEFERRABLE]=QString();
+	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::CONSTRAINT]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -346,7 +346,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 			if(event_types[i]==EventType::on_update)
 			{
 				count=upd_columns.size();
-				attributes[ParsersAttributes::COLUMNS]="";
+				attributes[ParsersAttributes::COLUMNS]=QString();
 
 				for(i1=0; i1 < count; i1++)
 				{
@@ -358,7 +358,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		}
 	}
 
-	if(str_aux!="") str_aux.remove(str_aux.size()-3,3);
+  if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
 	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
 		str_aux+=" OF " + attributes[ParsersAttributes::COLUMNS];
@@ -389,18 +389,18 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
 	{
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
-		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	}
 

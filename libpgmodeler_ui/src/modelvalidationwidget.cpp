@@ -426,7 +426,7 @@ void ModelValidationWidget::configureValidation(void)
 		//Get the connection only the checkbox is checked.
 		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
 		{
-			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
+			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		}
 

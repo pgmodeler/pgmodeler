@@ -61,7 +61,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 				MultiLineInfo(void)
 				{
-					this->group="";
+					this->group=QString();
 					this->start_col=-1;
 					this->start_block=-1;
 					this->end_col=-1;

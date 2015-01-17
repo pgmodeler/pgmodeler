@@ -37,13 +37,13 @@ DatabaseModel::DatabaseModel(void)
 	conn_limit=-1;
   last_zoom=1;
   loading_model=invalidated=append_at_eod=prepend_at_bod=false;
-	attributes[ParsersAttributes::ENCODING]="";
-	attributes[ParsersAttributes::TEMPLATE_DB]="";
-	attributes[ParsersAttributes::CONN_LIMIT]="";
-	attributes[ParsersAttributes::_LC_COLLATE_]="";
-	attributes[ParsersAttributes::_LC_CTYPE_]="";
-	attributes[ParsersAttributes::APPEND_AT_EOD]="";
-  attributes[ParsersAttributes::PREPEND_AT_EOD]="";
+	attributes[ParsersAttributes::ENCODING]=QString();
+	attributes[ParsersAttributes::TEMPLATE_DB]=QString();
+	attributes[ParsersAttributes::CONN_LIMIT]=QString();
+	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
+	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
+	attributes[ParsersAttributes::APPEND_AT_EOD]=QString();
+  attributes[ParsersAttributes::PREPEND_AT_EOD]=QString();
 }
 
 DatabaseModel::~DatabaseModel(void)
@@ -2804,7 +2804,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 
 void DatabaseModel::loadModel(const QString &filename)
 {
-  if(filename!="")
+  if(!filename.isEmpty())
   {
     QString dtd_file, str_aux, elem_name;
     ObjectType obj_type;
@@ -6214,8 +6214,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::ENCODING]=(~encoding);
 		attributes[ParsersAttributes::_LC_COLLATE_]=localizations[1];
 		attributes[ParsersAttributes::_LC_CTYPE_]=localizations[0];
-		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? ParsersAttributes::_TRUE_ : "");
-    attributes[ParsersAttributes::PREPEND_AT_EOD]=(prepend_at_bod ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::PREPEND_AT_EOD]=(prepend_at_bod ? ParsersAttributes::_TRUE_ : QString());
 	}
 
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
@@ -6277,15 +6277,15 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     general_obj_cnt=this->getObjectCount();
     gen_defs_count=0;
 
-    attribs_aux[ParsersAttributes::SHELL_TYPES]="";
-    attribs_aux[ParsersAttributes::PERMISSION]="";
-    attribs_aux[ParsersAttributes::SCHEMA]="";
-    attribs_aux[ParsersAttributes::TABLESPACE]="";
-    attribs_aux[ParsersAttributes::ROLE]="";
+    attribs_aux[ParsersAttributes::SHELL_TYPES]=QString();
+    attribs_aux[ParsersAttributes::PERMISSION]=QString();
+    attribs_aux[ParsersAttributes::SCHEMA]=QString();
+    attribs_aux[ParsersAttributes::TABLESPACE]=QString();
+    attribs_aux[ParsersAttributes::ROLE]=QString();
 
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
-      attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::_TRUE_ : "");
+      attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::_TRUE_ : QString());
 
       for(auto type : types)
       {
@@ -6377,7 +6377,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       else
       {
         if(object->isSystemObject())
-          attribs_aux[attrib]+="";
+          attribs_aux[attrib]+=QString();
         else
           attribs_aux[attrib]+=object->getCodeDefinition(def_type);
       }
@@ -6399,13 +6399,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
     if(def_type==SchemaParser::XML_DEFINITION)
     {
-      attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::_TRUE_ : "");
+      attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::_TRUE_ : QString());
       attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
       attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
-      attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[OBJ_SCHEMA] ? default_objs[OBJ_SCHEMA]->getName(true) : "");
-      attribs_aux[ParsersAttributes::DEFAULT_OWNER]=(default_objs[OBJ_ROLE] ? default_objs[OBJ_ROLE]->getName(true) : "");
-      attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[OBJ_TABLESPACE] ? default_objs[OBJ_TABLESPACE]->getName(true) : "");
-      attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[OBJ_COLLATION] ? default_objs[OBJ_COLLATION]->getName(true) : "");
+      attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[OBJ_SCHEMA] ? default_objs[OBJ_SCHEMA]->getName(true) : QString());
+      attribs_aux[ParsersAttributes::DEFAULT_OWNER]=(default_objs[OBJ_ROLE] ? default_objs[OBJ_ROLE]->getName(true) : QString());
+      attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[OBJ_TABLESPACE] ? default_objs[OBJ_TABLESPACE]->getName(true) : QString());
+      attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[OBJ_COLLATION] ? default_objs[OBJ_COLLATION]->getName(true) : QString());
     }
     else
     {
@@ -6437,7 +6437,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 
-  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::_TRUE_ : "");
+  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::_TRUE_ : QString());
 	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
   if(prepend_at_bod && def_type==SchemaParser::SQL_DEFINITION)

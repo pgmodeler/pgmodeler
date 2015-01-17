@@ -30,20 +30,20 @@ Role::Role(void)
 
 	conn_limit=-1;
 
-	attributes[ParsersAttributes::SUPERUSER]="";
-	attributes[ParsersAttributes::CREATEDB]="";
-	attributes[ParsersAttributes::CREATEROLE]="";
-	attributes[ParsersAttributes::INHERIT]="";
-	attributes[ParsersAttributes::LOGIN]="";
-	attributes[ParsersAttributes::CONN_LIMIT]="";
-	attributes[ParsersAttributes::PASSWORD]="";
-	attributes[ParsersAttributes::ENCRYPTED]="";
-	attributes[ParsersAttributes::VALIDITY]="";
-	attributes[ParsersAttributes::REF_ROLES]="";
-	attributes[ParsersAttributes::MEMBER_ROLES]="";
-	attributes[ParsersAttributes::ADMIN_ROLES]="";
-	attributes[ParsersAttributes::REPLICATION]="";
-	attributes[ParsersAttributes::GROUP]="";
+	attributes[ParsersAttributes::SUPERUSER]=QString();
+	attributes[ParsersAttributes::CREATEDB]=QString();
+	attributes[ParsersAttributes::CREATEROLE]=QString();
+	attributes[ParsersAttributes::INHERIT]=QString();
+	attributes[ParsersAttributes::LOGIN]=QString();
+	attributes[ParsersAttributes::CONN_LIMIT]=QString();
+	attributes[ParsersAttributes::PASSWORD]=QString();
+	attributes[ParsersAttributes::ENCRYPTED]=QString();
+	attributes[ParsersAttributes::VALIDITY]=QString();
+	attributes[ParsersAttributes::REF_ROLES]=QString();
+	attributes[ParsersAttributes::MEMBER_ROLES]=QString();
+	attributes[ParsersAttributes::ADMIN_ROLES]=QString();
+	attributes[ParsersAttributes::REPLICATION]=QString();
+	attributes[ParsersAttributes::GROUP]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)
@@ -346,7 +346,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	setRoleAttribute(ADMIN_ROLE);
 
 	for(i=0; i <= OP_REPLICATION; i++)
-		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : "");
+		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;

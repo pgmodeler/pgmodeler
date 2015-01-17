@@ -30,11 +30,11 @@
 
 namespace PgSQLVersions {
   static const QString
-  PGSQL_VERSION_90="9.0",
-  PGSQL_VERSION_91="9.1",
-  PGSQL_VERSION_92="9.2",
-  PGSQL_VERSION_93="9.3",
-  PGSQL_VERSION_94="9.4",
+  PGSQL_VERSION_90=QStringLiteral("9.0"),
+  PGSQL_VERSION_91=QStringLiteral("9.1"),
+  PGSQL_VERSION_92=QStringLiteral("9.2"),
+  PGSQL_VERSION_93=QStringLiteral("9.3"),
+  PGSQL_VERSION_94=QStringLiteral("9.4"),
   DEFAULT_VERSION=PGSQL_VERSION_94;
 
   static const QStringList

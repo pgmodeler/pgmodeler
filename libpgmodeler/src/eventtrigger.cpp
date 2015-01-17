@@ -22,9 +22,9 @@ EventTrigger::EventTrigger(void)
 {
 	obj_type=OBJ_EVENT_TRIGGER;
 	function=nullptr;
-	attributes[ParsersAttributes::EVENT]="";
-	attributes[ParsersAttributes::FILTER]="";
-	attributes[ParsersAttributes::FUNCTION]="";
+	attributes[ParsersAttributes::EVENT]=QString();
+	attributes[ParsersAttributes::FILTER]=QString();
+	attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
 void EventTrigger::setEvent(EventTriggerType evnt_type)

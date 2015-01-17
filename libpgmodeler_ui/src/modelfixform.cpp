@@ -111,13 +111,13 @@ void ModelFixForm::enableFix(void)
 
 void ModelFixForm::fixModel(void)
 {
-	QString cmd="\"%1\"";
+  QString cmd=QStringLiteral("\"%1\"");
 
 	#ifdef Q_OS_MAC
 		cmd+=" pgmodeler-cli";
 	#endif
 
-  cmd+=" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
+  cmd+=QStringLiteral(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
   cmd=cmd.arg(pgmodeler_cli_edt->text())
          .arg(fix_tries_sb->value())
          .arg(input_file_edt->text())

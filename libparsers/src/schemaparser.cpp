@@ -34,30 +34,30 @@ const char SchemaParser::CHR_END_CEXPR=')';
 const char SchemaParser::CHR_VAL_DELIM='"';
 const char SchemaParser::CHR_VALUE_OF='@';
 
-const QString SchemaParser::TOKEN_IF="if";
-const QString SchemaParser::TOKEN_THEN="then";
-const QString SchemaParser::TOKEN_ELSE="else";
-const QString SchemaParser::TOKEN_END="end";
-const QString SchemaParser::TOKEN_OR="or";
-const QString SchemaParser::TOKEN_AND="and";
-const QString SchemaParser::TOKEN_NOT="not";
-const QString SchemaParser::TOKEN_SET="set";
-const QString SchemaParser::TOKEN_UNSET="unset";
+const QString SchemaParser::TOKEN_IF=QStringLiteral("if");
+const QString SchemaParser::TOKEN_THEN=QStringLiteral("then");
+const QString SchemaParser::TOKEN_ELSE=QStringLiteral("else");
+const QString SchemaParser::TOKEN_END=QStringLiteral("end");
+const QString SchemaParser::TOKEN_OR=QStringLiteral("or");
+const QString SchemaParser::TOKEN_AND=QStringLiteral("and");
+const QString SchemaParser::TOKEN_NOT=QStringLiteral("not");
+const QString SchemaParser::TOKEN_SET=QStringLiteral("set");
+const QString SchemaParser::TOKEN_UNSET=QStringLiteral("unset");
 
-const QString SchemaParser::TOKEN_META_SP="sp";
-const QString SchemaParser::TOKEN_META_BR="br";
-const QString SchemaParser::TOKEN_META_TB="tb";
-const QString SchemaParser::TOKEN_META_OB="ob";
-const QString SchemaParser::TOKEN_META_CB="cb";
-const QString SchemaParser::TOKEN_META_OC="oc";
-const QString SchemaParser::TOKEN_META_CC="cc";
+const QString SchemaParser::TOKEN_META_SP=QStringLiteral("sp");
+const QString SchemaParser::TOKEN_META_BR=QStringLiteral("br");
+const QString SchemaParser::TOKEN_META_TB=QStringLiteral("tb");
+const QString SchemaParser::TOKEN_META_OB=QStringLiteral("ob");
+const QString SchemaParser::TOKEN_META_CB=QStringLiteral("cb");
+const QString SchemaParser::TOKEN_META_OC=QStringLiteral("oc");
+const QString SchemaParser::TOKEN_META_CC=QStringLiteral("cc");
 
-const QString SchemaParser::TOKEN_EQ_OP="==";
-const QString SchemaParser::TOKEN_NE_OP="!=";
-const QString SchemaParser::TOKEN_GT_OP=">";
-const QString SchemaParser::TOKEN_LT_OP="<";
-const QString SchemaParser::TOKEN_GT_EQ_OP=">=";
-const QString SchemaParser::TOKEN_LT_EQ_OP="<=";
+const QString SchemaParser::TOKEN_EQ_OP=QStringLiteral("==");
+const QString SchemaParser::TOKEN_NE_OP=QStringLiteral("!=");
+const QString SchemaParser::TOKEN_GT_OP=QStringLiteral(">");
+const QString SchemaParser::TOKEN_LT_OP=QStringLiteral("<");
+const QString SchemaParser::TOKEN_GT_EQ_OP=QStringLiteral(">=");
+const QString SchemaParser::TOKEN_LT_EQ_OP=QStringLiteral("<=");
 
 const QRegExp SchemaParser::ATTR_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
 
@@ -147,7 +147,7 @@ void SchemaParser::loadBuffer(const QString &buf)
 
 		/* Since the method getline discards the \n when the line was just a line break
 		its needed to treat it in order to not lost it */
-		if(lin=="") lin+=CHR_LINE_END;
+    if(lin.isEmpty()) lin+=CHR_LINE_END;
 
 		//If the entire line is commented out increases the comment lines counter
 		if(lin[0]==CHR_COMMENT) comment_count++;
@@ -159,7 +159,7 @@ void SchemaParser::loadBuffer(const QString &buf)
 		if(pos >= 0)
 			lin.remove(pos, lin.size());
 
-		if(lin!="")
+    if(!lin.isEmpty())
 		{
 			//Add a line break in case the last character is not
 			if(lin[lin.size()-1]!=CHR_LINE_END)
@@ -173,7 +173,7 @@ void SchemaParser::loadBuffer(const QString &buf)
 
 void SchemaParser::loadFile(const QString &filename)
 {
-	if(filename!="")
+  if(!filename.isEmpty())
 	{
 		QFile input;
 		QString buf;
@@ -226,7 +226,7 @@ QString SchemaParser::getAttribute(void)
     {
       if(current_line[column]!=CHR_END_ATTRIB)
         atrib+=current_line[column];
-      else if(current_line[column]==CHR_END_ATTRIB && atrib!="")
+      else if(current_line[column]==CHR_END_ATTRIB && !atrib.isEmpty())
         end_attrib=true;
       else
         error=true;
@@ -359,7 +359,7 @@ QString SchemaParser::getConditional(void)
 		}
 
 		//If no word was extracted an error is raised
-		if(conditional=="") error=true;
+    if(conditional.isEmpty()) error=true;
 	}
 	else error=true;
 
@@ -396,7 +396,7 @@ QString SchemaParser::getMetaCharacter(void)
 		}
 
 		//If no metacharacter was extracted an error is raised
-		if(meta=="") error=true;
+    if(meta.isEmpty()) error=true;
 	}
 	else error=true;
 
@@ -672,7 +672,7 @@ void SchemaParser::unsetAttribute(void)
                              ERR_INV_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
           }
 
-          attributes[attrib]="";
+          attributes[attrib]=QString();
         break;
 
         default:
@@ -1042,7 +1042,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						//Converting the metacharacter drawn to the character that represents this
             chr=translateMetaCharacter(meta);
-						meta="";
+            meta=QString();
 						meta+=chr;
 
 						//If the parser is inside an 'if / else' extracting tokens
@@ -1083,7 +1083,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
                               ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
-              attributes[atrib]="";
+              attributes[atrib]=QString();
 					}
 
 					//If the parser is inside an 'if / else' extracting tokens
@@ -1093,7 +1093,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(!(!if_expr && vet_tk_if[if_level] && !vet_tk_then[if_level]))
 						{
 							word=atrib;
-							atrib="";
+              atrib=QString();
 							atrib+=CHR_INI_ATTRIB;
 							atrib+=word;
 							atrib+=CHR_END_ATTRIB;
@@ -1113,7 +1113,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						/* If the attribute has no value set and parser must not ignore empty values
 						raises an exception */
-            if(attributes[atrib]=="" && !ignore_empty_atribs)
+            if(attributes[atrib].isEmpty() && !ignore_empty_atribs)
 						{
               throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
                               .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
@@ -1284,7 +1284,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 										/* If the attribute has no value set and parser must not ignore empty values
 										raises an exception */
-										if(word=="" && !ignore_empty_atribs)
+                    if(word.isEmpty() && !ignore_empty_atribs)
 										{
                       throw Exception(QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
                                       .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),

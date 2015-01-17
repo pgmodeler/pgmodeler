@@ -76,42 +76,42 @@ void BaseRelationship::configureRelationship(void)
 {
 	obj_type=BASE_RELATIONSHIP;
 
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::SRC_REQUIRED]="";
-	attributes[ParsersAttributes::DST_REQUIRED]="";
-	attributes[ParsersAttributes::SRC_TABLE]="";
-	attributes[ParsersAttributes::DST_TABLE]="";
-	attributes[ParsersAttributes::POINTS]="";
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::CONSTRAINTS]="";
-	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::IDENTIFIER]="";
-	attributes[ParsersAttributes::REDUCED_FORM]="";
-	attributes[ParsersAttributes::DEFERRABLE]="";
-	attributes[ParsersAttributes::DEFER_TYPE]="";
-	attributes[ParsersAttributes::TABLE_NAME]="";
-	attributes[ParsersAttributes::SPECIAL_PK_COLS]="";
-	attributes[ParsersAttributes::RELATIONSHIP_NN]="";
-	attributes[ParsersAttributes::RELATIONSHIP_GEN]="";
-	attributes[ParsersAttributes::RELATIONSHIP_DEP]="";
-	attributes[ParsersAttributes::RELATIONSHIP_1N]="";
-	attributes[ParsersAttributes::RELATIONSHIP_11]="";
-	attributes[ParsersAttributes::CONSTRAINTS]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-	attributes[ParsersAttributes::COPY_OPTIONS]="";
-	attributes[ParsersAttributes::COPY_MODE]="";
-	attributes[ParsersAttributes::SRC_COL_PATTERN]="";
-	attributes[ParsersAttributes::DST_COL_PATTERN]="";
-	attributes[ParsersAttributes::PK_PATTERN]="";
-	attributes[ParsersAttributes::UQ_PATTERN]="";
-	attributes[ParsersAttributes::SRC_FK_PATTERN]="";
-	attributes[ParsersAttributes::DST_FK_PATTERN]="";
-  attributes[ParsersAttributes::PK_COL_PATTERN]="";
-  attributes[ParsersAttributes::SINGLE_PK_COLUMN]="";
-  attributes[ParsersAttributes::UPD_ACTION]="";
-  attributes[ParsersAttributes::DEL_ACTION]="";
-	attributes[ParsersAttributes::CUSTOM_COLOR]="";
+	attributes[ParsersAttributes::TYPE]=QString();
+	attributes[ParsersAttributes::SRC_REQUIRED]=QString();
+	attributes[ParsersAttributes::DST_REQUIRED]=QString();
+	attributes[ParsersAttributes::SRC_TABLE]=QString();
+	attributes[ParsersAttributes::DST_TABLE]=QString();
+	attributes[ParsersAttributes::POINTS]=QString();
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+	attributes[ParsersAttributes::ELEMENTS]=QString();
+	attributes[ParsersAttributes::IDENTIFIER]=QString();
+	attributes[ParsersAttributes::REDUCED_FORM]=QString();
+	attributes[ParsersAttributes::DEFERRABLE]=QString();
+	attributes[ParsersAttributes::DEFER_TYPE]=QString();
+	attributes[ParsersAttributes::TABLE_NAME]=QString();
+	attributes[ParsersAttributes::SPECIAL_PK_COLS]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_NN]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_GEN]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_DEP]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_1N]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_11]=QString();
+	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::COPY_OPTIONS]=QString();
+	attributes[ParsersAttributes::COPY_MODE]=QString();
+	attributes[ParsersAttributes::SRC_COL_PATTERN]=QString();
+	attributes[ParsersAttributes::DST_COL_PATTERN]=QString();
+	attributes[ParsersAttributes::PK_PATTERN]=QString();
+	attributes[ParsersAttributes::UQ_PATTERN]=QString();
+	attributes[ParsersAttributes::SRC_FK_PATTERN]=QString();
+	attributes[ParsersAttributes::DST_FK_PATTERN]=QString();
+  attributes[ParsersAttributes::PK_COL_PATTERN]=QString();
+  attributes[ParsersAttributes::SINGLE_PK_COLUMN]=QString();
+  attributes[ParsersAttributes::UPD_ACTION]=QString();
+  attributes[ParsersAttributes::DEL_ACTION]=QString();
+	attributes[ParsersAttributes::CUSTOM_COLOR]=QString();
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -347,8 +347,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 
 	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
-	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::_TRUE_ : QString());
 
 	if(src_table)
 		attributes[ParsersAttributes::SRC_TABLE]=src_table->getName(true);
@@ -366,7 +366,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	}
 	attributes[ParsersAttributes::POINTS]=str_aux;
 
-	str_aux="";
+	str_aux=QString();
 	for(i=0; i < 3; i++)
 	{
 		if(!std::isnan(lables_dist[i].x()))
@@ -380,7 +380,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	}
 
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
-	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : "");
+	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
 }
 
 QString BaseRelationship::getCachedCode(unsigned def_type)

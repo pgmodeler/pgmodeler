@@ -661,13 +661,13 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
       attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
       attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
-      attribs[ParsersAttributes::ALTER_CMDS]="";
-      attribs[ParsersAttributes::DROP_CMDS]="";
-      attribs[ParsersAttributes::CREATE_CMDS]="";
-      attribs[ParsersAttributes::TRUNCATE_CMDS]="";
+      attribs[ParsersAttributes::ALTER_CMDS]=QString();
+      attribs[ParsersAttributes::DROP_CMDS]=QString();
+      attribs[ParsersAttributes::CREATE_CMDS]=QString();
+      attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
       attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
       attribs[ParsersAttributes::SET_PERMS]=set_perms;
-      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : "");
+      attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : QString());
 
       ritr=drop_objs.rbegin();
       ritr_end=drop_objs.rend();
