@@ -13,12 +13,12 @@ SOURCES += src/main.cpp \
 
 HEADERS += src/crashhandler.h
 
-unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
-                    -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
-                    -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
-                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
-                    -L$$OUT_PWD/../libparsers/ -lparsers \
-                    -L$$OUT_PWD/../libutils/ -lutils
+unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
+                      -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                      -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                      -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                      -L$$OUT_PWD/../libparsers/ -lparsers \
+                      -L$$OUT_PWD/../libutils/ -lutils
 
 INCLUDEPATH += $$PWD/../libpgmodeler_ui/src \
                $$PWD/../libpgmodeler_ui \

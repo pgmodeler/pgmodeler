@@ -2,6 +2,9 @@
 QT += core widgets printsupport network
 CONFIG += ordered qt stl rtti exceptions warn_on c++11
 TEMPLATE = subdirs
+MOC_DIR = moc
+OBJECTS_DIR = obj
+UI_DIR = src
 
 # Setting up the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
@@ -50,7 +53,7 @@ windows {
   CONFIG += windows
 
   # The default prefix is ./build
-  !defined(PREFIX, var): $$PWD/build
+  !defined(PREFIX, var): PREFIX = $$PWD/build
 
   BINDIR = $$PREFIX
   PRIVATEBINDIR = $$PREFIX
@@ -69,7 +72,7 @@ macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var): $$PWD/build/pgmodeler.app/Contents
+  !defined(PREFIX, var): PREFIX = $$PWD/build/pgmodeler.app/Contents
 
   BINDIR = $$PREFIX/MacOS
   PRIVATEBINDIR = $$BINDIR
@@ -128,6 +131,8 @@ windows {
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
+
+  INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
 macx | windows {

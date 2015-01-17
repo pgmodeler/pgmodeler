@@ -105,24 +105,20 @@ namespace GlobalAttributes {
 		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
 	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
-  SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString(SCHEMASDIR)),
-  LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString(LANGDIR)),
-  PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString(PLUGINSDIR)),
-  TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString(TEMPDIR)),
-  SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString(SAMPLESDIR)),
+  SCHEMAS_ROOT_DIR=getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString(SCHEMASDIR),
+  LANGUAGES_DIR=getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString(LANGDIR),
+  PLUGINS_DIR=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString(PLUGINSDIR),
+  TEMPORARY_DIR=getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString(TEMPDIR),
+  SAMPLES_DIR=getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString(SAMPLESDIR),
 
   #if defined(Q_OS_MAC)
     CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
                        QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
                        QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QStringLiteral("/br.com.pgmodeler")),
-  #elif defined(Q_OS_LINUX)
-    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QStringLiteral("/pgmodeler")),
   #else
     CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
                        QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))),
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QStringLiteral("/pgmodeler")),
   #endif
 
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
@@ -142,7 +138,7 @@ namespace GlobalAttributes {
   #else
     CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
                        QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                       QString(PRIVATEBINDIR"\\pgmodeler-ch.exe"));
+                       QString(PRIVATEBINDIR"\\pgmodeler-ch.exe");
   #endif
 
 	#ifdef DEMO_VERSION

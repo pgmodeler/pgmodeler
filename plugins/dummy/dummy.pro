@@ -23,7 +23,9 @@ UI_DIR = src
 HEADERS += src/dummy.h
 SOURCES += src/dummy.cpp
 
-unix|win32: LIBS += -L$$OUT_PWD/../../libpgmodeler_ui/ -lpgmodeler_ui \
+windows: DESTDIR += $$PWD
+
+unix|windows: LIBS += -L$$OUT_PWD/../../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../../libobjrenderer/ -lobjrenderer \
                     -L$$OUT_PWD/../../libpgconnector/ -lpgconnector \
                     -L$$OUT_PWD/../../libpgmodeler/ -lpgmodeler \

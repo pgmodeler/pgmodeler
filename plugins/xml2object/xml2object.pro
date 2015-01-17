@@ -19,7 +19,9 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
-unix|win32: LIBS += -L$$OUT_PWD/../../libpgmodeler_ui/ -lpgmodeler_ui \
+windows: DESTDIR += $$PWD
+
+unix|windows: LIBS += -L$$OUT_PWD/../../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../../libobjrenderer/ -lobjrenderer \
                     -L$$OUT_PWD/../../libpgconnector/ -lpgconnector \
                     -L$$OUT_PWD/../../libpgmodeler/ -lpgmodeler \

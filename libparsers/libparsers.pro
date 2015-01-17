@@ -2,6 +2,7 @@ include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = parsers
+windows: DESTDIR = $$PWD
 
 HEADERS += src/schemaparser.h \
 	   src/xmlparser.h \
@@ -11,7 +12,7 @@ HEADERS += src/schemaparser.h \
 SOURCES += src/schemaparser.cpp \
 	   src/xmlparser.cpp
 
-unix|win32: LIBS += -L$$OUT_PWD/../libutils/ -lutils
+unix|windows: LIBS += -L$$OUT_PWD/../libutils/ -lutils $$XML_LIB
 
 INCLUDEPATH += $$PWD/../libutils/src
 DEPENDPATH += $$PWD/../libutils

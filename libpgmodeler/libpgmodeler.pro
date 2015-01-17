@@ -2,6 +2,7 @@ include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler
+windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
 	   src/cast.h \
@@ -97,7 +98,7 @@ SOURCES +=  src/textbox.cpp \
             src/tag.cpp \
             src/eventtrigger.cpp
 
-unix|win32: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
+unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
 INCLUDEPATH += $$PWD/../libparsers/src \

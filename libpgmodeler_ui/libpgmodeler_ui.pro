@@ -4,6 +4,7 @@ TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
+windows: DESTDIR = $$PWD
 
 SOURCES += src/mainwindow.cpp \
 	   src/modelwidget.cpp \
@@ -248,11 +249,11 @@ FORMS += ui/mainwindow.ui \
          ui/databaseexplorerwidget.ui \
          ui/snippetsconfigwidget.ui
 
-unix|win32: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
-                    -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
-                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
-                    -L$$OUT_PWD/../libparsers/ -lparsers \
-                    -L$$OUT_PWD/../libutils/ -lutils
+unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                      -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                      -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                      -L$$OUT_PWD/../libparsers/ -lparsers \
+                      -L$$OUT_PWD/../libutils/ -lutils
 
 INCLUDEPATH += $$PWD/../libobjrenderer/src \
                $$PWD/../libpgconnector/src \

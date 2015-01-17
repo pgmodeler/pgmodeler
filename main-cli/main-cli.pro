@@ -6,14 +6,15 @@ TARGET = pgmodeler-cli
 INCLUDEPATH += ../main/src
 
 windows:RC_FILE=../main/res/windows_ico.qrc
-windows:RCC_DIR=src/
+windows: RCC_DIR=src/
+windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
 	   src/pgmodelercli.cpp
 
 HEADERS += src/pgmodelercli.h
 
-unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
+unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                     -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
                     -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \

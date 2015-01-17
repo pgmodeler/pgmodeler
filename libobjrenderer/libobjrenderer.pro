@@ -2,6 +2,7 @@ include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = objrenderer
+windows: DESTDIR = $$PWD
 
 HEADERS +=  src/baseobjectview.h \
 	    src/textboxview.h \
@@ -29,7 +30,7 @@ SOURCES +=  src/baseobjectview.cpp \
             src/roundedrectitem.cpp \
             src/styledtextboxview.cpp
 
-unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 

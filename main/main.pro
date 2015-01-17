@@ -5,6 +5,7 @@ TARGET = pgmodeler
 
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
+windows: DESTDIR = $$PWD
 
 macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
                        cp $$PWD/res/Info.plist $$PREFIX; \
@@ -12,10 +13,11 @@ macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
                        cp $$PWD/res/startapp $$BINDIR"
 
 HEADERS += src/application.h
+
 SOURCES += src/main.cpp \
            src/application.cpp
 
-unix|win32: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
+unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                     -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
                     -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
