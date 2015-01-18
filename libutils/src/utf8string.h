@@ -41,6 +41,10 @@ class Utf8String {
 		static QString create(const QString &str) {
 			return QString::fromUtf8(str.toStdString().c_str(), qstrlen(str.toStdString().c_str()));
 		}
+
+    static QString create(const char *str) {
+      return QString::fromUtf8(str, qstrlen(str));
+    }
 };
 
 #endif

@@ -38,7 +38,7 @@ void Rule::setCommandsAttribute(void)
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-		if(i < (qtd-1)) str_cmds+=";";
+    if(i < (qtd-1)) str_cmds+=QStringLiteral(";");
 	}
 
 	attributes[ParsersAttributes::COMMANDS]=str_cmds;
@@ -70,7 +70,7 @@ void Rule::addCommand(const QString &cmd)
 	else
 	{
 		QString cmd_aux=cmd;
-		cmd_aux.remove(";");
+    cmd_aux.remove(';');
 		commands.push_back(cmd_aux);
 		setCodeInvalidated(true);
 	}

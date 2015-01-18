@@ -221,7 +221,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 				 (!inc_addedbyrel && !col->isAddedByRelationship()))))
 		{
 			str_cols+=col->getName(format);
-			str_cols+=",";
+      str_cols+=',';
 		}
 	}
 
@@ -620,7 +620,7 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=excl_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=",";
+    if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;

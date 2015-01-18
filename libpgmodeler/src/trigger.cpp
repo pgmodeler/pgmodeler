@@ -65,11 +65,11 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			str_args+="'" + arguments[i] + "'";
+      str_args+=QStringLiteral("'") + arguments[i] + QStringLiteral("'");
 		else
 			str_args+=arguments[i];
 
-		if(i < (count-1)) str_args+=",";
+    if(i < (count-1)) str_args+=QStringLiteral(",");
 	}
 
 	attributes[ParsersAttributes::ARGUMENTS]=str_args;
@@ -352,7 +352,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 				{
 					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-						attributes[ParsersAttributes::COLUMNS]+=",";
+            attributes[ParsersAttributes::COLUMNS]+=QStringLiteral(",");
 				}
 			}
 		}
@@ -361,7 +361,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
   if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
 	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
-		str_aux+=" OF " + attributes[ParsersAttributes::COLUMNS];
+    str_aux+=QStringLiteral(" OF ") + attributes[ParsersAttributes::COLUMNS];
 
 	attributes[ParsersAttributes::EVENTS]=str_aux;
 

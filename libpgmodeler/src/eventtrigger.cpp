@@ -116,9 +116,9 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
 
 		for(auto flt : filter)
-			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join("','")));
+      str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QStringLiteral("','"))));
 
-		attributes[ParsersAttributes::FILTER]=str_list.join("\n\t AND ");
+    attributes[ParsersAttributes::FILTER]=str_list.join(QStringLiteral("\n\t AND "));
 	}
 	else
 	{
@@ -130,7 +130,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 																						 .arg(ParsersAttributes::FILTER)
 																						 .arg(ParsersAttributes::VARIABLE).arg(flt.first)
-																						 .arg(ParsersAttributes::VALUES).arg(flt.second.join(","));
+                                             .arg(ParsersAttributes::VALUES).arg(flt.second.join(','));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

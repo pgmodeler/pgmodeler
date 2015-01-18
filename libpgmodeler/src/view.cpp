@@ -483,7 +483,7 @@ void View::setReferencesAttribute(void)
 		for(i1=0; i1 < qtd; i1++)
 		{
 			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-			if(i1 < qtd-1) str_aux+=",";
+      if(i1 < qtd-1) str_aux+=QStringLiteral(",");
 		}
 		attributes[attribs[i]]=str_aux;
 	}
@@ -568,7 +568,7 @@ QString View::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::SQL_OBJECT]=QStringLiteral("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
 
   if(recursive)
-    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
+    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
 
   if(tag && def_type==SchemaParser::XML_DEFINITION)
    attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
@@ -620,7 +620,7 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 	{
 		vector<TableObject *>::iterator itr, itr_end;
 		vector<TableObject *> *obj_list=getObjectList(obj_type);
-		bool found=false, format=name.contains("\"");
+    bool found=false, format=name.contains('"');
 
 		itr=obj_list->begin();
 		itr_end=obj_list->end();

@@ -463,9 +463,9 @@ class PgSQLType: public BaseType{
 		unsigned operator = (const QString &type_name);
 		bool operator == (unsigned type_idx);
 		bool operator == (PgSQLType type);
-		bool operator == (const QString &type_name);
+    bool operator == (const QString &type_name);
 		bool operator == (void *ptype);
-		bool operator != (const QString &type_name);
+    bool operator != (const QString &type_name);
 		bool operator != (PgSQLType type);
 		bool operator != (unsigned type_idx);
 

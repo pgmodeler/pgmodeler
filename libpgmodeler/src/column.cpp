@@ -89,9 +89,9 @@ bool Column::isNotNull(void)
 QString Column::getTypeReference(void)
 {
 	if(getParentTable())
-		return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
+    return(getParentTable()->getName(true) + QStringLiteral(".") + this->getName(true) + QStringLiteral("%TYPE"));
 	else
-		return("");
+    return(QString());
 }
 
 QString Column::getDefaultValue(void)
@@ -171,7 +171,7 @@ QString Column::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
   }
 
-  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : ParsersAttributes::_TRUE_);
+  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? QString() : ParsersAttributes::_TRUE_);
   attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : QString());
 
   return(BaseObject::__getCodeDefinition(def_type));
@@ -194,7 +194,7 @@ QString Column::getAlterDefinition(BaseObject *object)
       attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     if(col->sequence)
-      def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature().remove("\""));
+      def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature().remove('"'));
     else
       def_val=col->default_value;
 

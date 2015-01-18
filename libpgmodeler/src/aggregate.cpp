@@ -131,16 +131,15 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-      //str_types+=*(data_types[i]);
       str_types+=~data_types[i];
-			if(i < (count-1)) str_types+=",";
+      if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
   }
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-  if(str_types.isEmpty()) str_types="*";
+  if(str_types.isEmpty()) str_types='*';
 
   attributes[ParsersAttributes::TYPES]=str_types;
 }
@@ -304,13 +303,13 @@ QString Aggregate::getSignature(bool format)
   QStringList types;
 
   if(data_types.empty())
-    types.push_back("*");
+    types.push_back(QStringLiteral("*"));
   else
   {
     for(auto tp : data_types)
       types.push_back(~tp);
   }
 
-  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(",")));
+  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 

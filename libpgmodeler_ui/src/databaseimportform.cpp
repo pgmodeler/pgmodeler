@@ -85,7 +85,7 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 	if(obj_type!=BASE_OBJECT)
     ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 	else
-    ico=QPixmap(":/icones/icones/msgbox_info.png");
+    ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 
   ico_lbl->setPixmap(ico);
   PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
@@ -327,7 +327,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
   destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
 
-  ico=QPixmap(":/icones/icones/msgbox_erro.png");
+  ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
   ico_lbl->setPixmap(ico);
 
   item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), ico);
@@ -404,7 +404,7 @@ void DatabaseImportForm::destroyModelWidget(void)
 
 void DatabaseImportForm::handleImportCanceled(void)
 {
-  QPixmap ico=QPixmap(":/icones/icones/msgbox_alerta.png");
+  QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
   QString msg=trUtf8("Importing process canceled by user!");
 
 	destroyModelWidget();
@@ -427,7 +427,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
   model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
-  ico_lbl->setPixmap(QPixmap(":/icones/icones/msgbox_info.png"));
+  ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
   import_helper.closeConnection();
   import_thread->quit();
@@ -488,7 +488,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 
         for(int i=0; i < list.count(); i++)
         {
-          dbcombo->setItemIcon(i, QPixmap(":/icones/icones/" + BaseObject::getSchemaName(OBJ_DATABASE) + ".png"));
+          dbcombo->setItemIcon(i, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(OBJ_DATABASE) + QString(".png")));
           dbcombo->setItemData(i, oids[list[i]]);
         }
 
@@ -531,8 +531,8 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
         //Creating database item
         db_item=new QTreeWidgetItem;
         db_item->setText(0, import_helper.getCurrentDatabase());
-        db_item->setIcon(0, QPixmap(":/icones/icones/database.png"));
-        attribs=catalog.getObjectsAttributes(OBJ_DATABASE, "", "", {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
+        db_item->setIcon(0, QPixmap(QString(":/icones/icones/database.png")));
+        attribs=catalog.getObjectsAttributes(OBJ_DATABASE, QString(), QString(), {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
 
         db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID));
         db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
@@ -602,7 +602,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
     QFont grp_fnt=tree_wgt->font();
     attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
     attribs_map::iterator itr;
-		QString tooltip="OID: %1";
+    QString tooltip=QStringLiteral("OID: %1");
     bool child_checked=false;
 
     grp_fnt.setItalic(true);
@@ -674,7 +674,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           item->setData(OBJECT_ID, Qt::UserRole, itr->first.toUInt());
 
           if(!item->toolTip(0).isEmpty())
-            item->setToolTip(0,item->toolTip(0) + "\n" + tooltip.arg(itr->first));
+            item->setToolTip(0,item->toolTip(0) + QStringLiteral("\n") + tooltip.arg(itr->first));
           else
             item->setToolTip(0,tooltip.arg(itr->first));
 

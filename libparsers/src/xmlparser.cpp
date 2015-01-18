@@ -48,9 +48,9 @@ void XMLParser::removeDTD(void)
 		/* Removes the current DTD from document.
 		 If the user attempts to manipulate the structure of
 		 document damaging its integrity. */
-    pos1=xml_buffer.indexOf(QStringLiteral("<!DOCTYPE"));
-    pos2=xml_buffer.indexOf(QStringLiteral("]>\n"));
-    pos3=xml_buffer.indexOf(QStringLiteral("\">\n"));
+    pos1=xml_buffer.indexOf(QLatin1String("<!DOCTYPE"));
+    pos2=xml_buffer.indexOf(QLatin1String("]>\n"));
+    pos3=xml_buffer.indexOf(QLatin1String("\">\n"));
 		if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
 		{
 			len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
@@ -101,8 +101,8 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 		if(xml_buf.isEmpty())
 			throw Exception(ERR_ASG_EMPTY_XML_BUFFER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    pos1=xml_buf.indexOf(QStringLiteral("<?xml"));
-    pos2=xml_buf.indexOf(QStringLiteral("?>"));
+    pos1=xml_buf.indexOf(QLatin1String("<?xml"));
+    pos2=xml_buf.indexOf(QLatin1String("?>"));
 		xml_buffer=xml_buf;
 
 		if(pos1 >= 0 && pos2 >= 0)

@@ -50,7 +50,7 @@ Operator::Operator(void)
 bool Operator::isValidName(const QString &name)
 {
 	//Warning: Do not alter the sequence of characters or the validation will fail
-	QString valid_chars="+-*/<>=~!@#%^&|'?";
+  QString valid_chars=QStringLiteral("+-*/<>=~!@#%^&|'?");
 	int pos, len;
 	bool valid=true;
 
@@ -64,8 +64,8 @@ bool Operator::isValidName(const QString &name)
 		valid=!(valid_chars.indexOf(name[pos]) < 0);
 
 	//2) The name doesn't has sequences like -- or /* that defines SQL comments
-	if(valid) valid=(name.indexOf("--") < 0);
-	if(valid) valid=(name.indexOf("/*") < 0);
+  if(valid) valid=(name.indexOf(QLatin1String("--")) < 0);
+  if(valid) valid=(name.indexOf(QLatin1String("/*")) < 0);
 
 	//3) Case the name end with - or + it may own one or more chars in the set ~!@#%^&|'?
 	if(name[name.size()-1]=='-' || name[name.size()-1]=='+')
@@ -260,12 +260,12 @@ QString Operator::getSignature(bool format_name)
 	for(i=0; i < 2; i++)
 	{
 		if(argument_types[i]=="any")
-			args.push_back("NONE");
+      args.push_back(QStringLiteral("NONE"));
 		else
 			args.push_back(*argument_types[i]);
 	}
 
-	signature+="(" + args.join(",") + ")";
+  signature+=QStringLiteral("(") + args.join(',') + QStringLiteral(")");
 	return(signature);
 }
 

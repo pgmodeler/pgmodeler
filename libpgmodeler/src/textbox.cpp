@@ -33,7 +33,7 @@ Textbox::Textbox(void)
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SQL_DEFINITION)
-		return("");
+    return(QString());
 	else
 	{
 		QString code_def=getCachedCode(def_type, false);

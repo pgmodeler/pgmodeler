@@ -150,10 +150,10 @@ QString PgModelerNS::formatString(const QString &msg)
 {
   QString fmt_msg=msg;
 
-  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<strong>");
-  fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</strong>");
-  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,"<em>");
-  fmt_msg.replace(fmt_msg.indexOf('\''), 1,"</em>");
+  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,QStringLiteral("<strong>"));
+  fmt_msg.replace(fmt_msg.indexOf('\''), 1,QStringLiteral("</strong>"));
+  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,QStringLiteral("<em>"));
+  fmt_msg.replace(fmt_msg.indexOf('\''), 1,QStringLiteral("</em>"));
 
   return(fmt_msg);
 }

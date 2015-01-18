@@ -43,7 +43,7 @@ void Tablespace::setName(const QString &name)
 void Tablespace::setDirectory(const QString &dir)
 {
 	QString dir_aux=dir;
-	dir_aux.remove("'");
+  dir_aux.remove('\'');
 
 	//Raises an error if the directory is an empty path
   if(dir_aux.isEmpty())
@@ -64,7 +64,7 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
   if(!directory.isEmpty())
-		attributes[ParsersAttributes::DIRECTORY]="'" + directory + "'";
+    attributes[ParsersAttributes::DIRECTORY]=QStringLiteral("'") + directory + QStringLiteral("'");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

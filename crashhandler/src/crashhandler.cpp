@@ -69,7 +69,7 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 											GlobalAttributes::DIR_SEPARATOR + lista[0]);
 		input.open(QFile::ReadOnly);
 		buf.clear();
-		model_txt->setPlainText(Utf8String::create(input.readAll()));
+    model_txt->setPlainText(Utf8String::create(QString(input.readAll())));
 		input.close();
 	}
 }

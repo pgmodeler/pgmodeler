@@ -113,21 +113,21 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 				tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
 
-			setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
-			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
-			setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
-			setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + "uq");
+      setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
+      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
+      setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
+      setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("uq"));
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
-      setNamePattern(PK_COL_PATTERN, "id");
+      setNamePattern(PK_COL_PATTERN, QStringLiteral("id"));
 		}
 		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN)
-			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
+      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
 		else
 		{
-			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "pk");
-			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + "fk");
-			setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + "uq");
+      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
+      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
+      setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("uq"));
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 		}
 
@@ -177,7 +177,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col)
 	QString name;
 
 	name=name_patterns[pat_id];
-	name.replace(GEN_TAB_TOKEN, (rel_type==RELATIONSHIP_NN ? tab_name_relnn : ""));
+  name.replace(GEN_TAB_TOKEN, (rel_type==RELATIONSHIP_NN ? tab_name_relnn : QString()));
 
 	if(rel_type==RELATIONSHIP_NN)
 	{
@@ -190,7 +190,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col)
 		name.replace(DST_TAB_TOKEN, getReceiverTable()->getName());
 	}
 
-	name.replace(SRC_COL_TOKEN, (id_col ? id_col->getName() : ""));
+  name.replace(SRC_COL_TOKEN, (id_col ? id_col->getName() : QString()));
 
 	if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 		name.remove(BaseObject::OBJECT_NAME_MAX_LENGTH, name.size());
@@ -299,7 +299,7 @@ void Relationship::setTableNameRelNN(const QString &name)
 			throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		tab_name_relnn=name;
-		tab_name_relnn.remove("\"");
+    tab_name_relnn.remove('"');
 		this->invalidated=true;
 	}
 }

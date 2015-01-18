@@ -55,7 +55,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		parent_form->generalwidget_wgt->insertWidget(0, this);
 		parent_form->generalwidget_wgt->setCurrentIndex(0);
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-		parent_form->setObjectName("parent_form");
+    parent_form->setObjectName(QStringLiteral("parent_form"));
 
     connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
     connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(appendSQL(void)));
@@ -68,7 +68,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
     owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 
 		baseobject_grid = new QGridLayout;
-		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
+    baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
@@ -189,8 +189,8 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		QGroupBox *grp=dynamic_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
-		QString str_aux=" <span style='color: #ff0000;'>*</span> ";
-		QColor bgcolor=QColor("#ffffc0");
+    QString str_aux=QStringLiteral(" <span style='color: #ff0000;'>*</span> ");
+    QColor bgcolor=QColor(QStringLiteral("#ffffc0"));
 
 		QFont fnt=widget->font();
 
@@ -204,7 +204,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			if(!grp)
 				widget->setFont(fnt);
 			else
-				grp->setStyleSheet("QGroupBox {	font-weight: bold; }");
+        grp->setStyleSheet(QStringLiteral("QGroupBox {	font-weight: bold; }"));
 		}
 		else if(edt || txt || sel)
 		{
@@ -471,7 +471,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=BASE_OBJECT)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+    obj_icon_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QStringLiteral(".png")));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
@@ -509,13 +509,13 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
-		return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
+    return(XMLParser::CHAR_LT + QStringLiteral("= ") + ini_ver);
 	else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return(XMLParser::CHAR_GT + QString("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
+    return(XMLParser::CHAR_GT + QStringLiteral("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
 	else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
-		return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
+    return(XMLParser::CHAR_GT + QStringLiteral("= ") + ini_ver);
 	else
-		return("");
+    return(QString());
 }
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)

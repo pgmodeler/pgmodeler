@@ -1018,14 +1018,14 @@ bool PgSQLType::operator != (unsigned type_id)
 
 bool PgSQLType::operator == (PgSQLType type)
 {
-	return(this->type_idx==type.type_idx);
+  return(this->type_idx==type.type_idx);
 }
 
 bool PgSQLType::operator == (void *ptype)
 {
 	int idx;
 	idx=getUserTypeIndex("",ptype);
-	return(static_cast<int>(type_idx) == idx);
+  return(static_cast<int>(type_idx) == idx);
 }
 
 IntervalType PgSQLType::getIntervalType(void)

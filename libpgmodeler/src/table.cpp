@@ -126,7 +126,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
+      attributes[ParsersAttributes::COLS_COMMENT]+=QStringLiteral("-- ");
 
 		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
 		schparser.ignoreUnkownAttributes(false);
@@ -141,7 +141,7 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(',');
 }
 
 void Table::setRelObjectsIndexesAttribute(void)
@@ -257,7 +257,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 			unsigned dis_sql_cnt=0;
 
 			//If the last line starts with -- indicates that sql code for the constraint is disable
-			if(lines[i].startsWith("--") && i > 0)
+      if(lines[i].startsWith(QLatin1String("--")) && i > 0)
 				//Removes the comma from the above line in order to avoid bad sql
 				lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
 			else
@@ -266,7 +266,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 
 			for(i=0; i < lines.size(); i++)
 			{
-				if(lines[i].startsWith("--")) dis_sql_cnt++;
+        if(lines[i].startsWith(QLatin1String("--"))) dis_sql_cnt++;
 				str_constr+=lines[i];
 			}
 
@@ -836,7 +836,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	bool found=false, format=false;
 
 	//Checks if the name contains ", if so, the search will consider formatted names
-	format=name.contains("\"");
+  format=name.contains('"');
 
 	if(TableObject::isTableObject(obj_type))
 	{
@@ -867,7 +867,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 		vector<Table *>::iterator itr_tab, itr_end_tab;
 		QString tab_name, aux_name=name;
 
-		aux_name.remove("\"");
+    aux_name.remove('"');
 		itr_tab=ancestor_tables.begin();
 		itr_end_tab=ancestor_tables.end();
 
@@ -876,7 +876,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 			/* Unlike other object types, tables are always compared with the FORMATTED NAME
 			because they must be 'schema-qualified' preventing a table of the same name
 			but different schemas are confused */
-			tab_name=(*itr_tab)->getName(true).remove("\"");
+      tab_name=(*itr_tab)->getName(true).remove('"');
 			found=(tab_name==aux_name);
 			if(!found) itr_tab++;
 			else break;
@@ -942,7 +942,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 		vector<TableObject *>::iterator itr, itr_end;
 		bool found=false, format=false;
 
-		format=name.contains("\"");
+    format=name.contains('"');
 		itr=columns.begin();
 		itr_end=columns.end();
 

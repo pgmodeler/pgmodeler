@@ -18,12 +18,12 @@
 
 #include "sequence.h"
 
-const QString Sequence::MAX_POSITIVE_VALUE="+2147483647";
-const QString Sequence::MAX_NEGATIVE_VALUE="-2147483648";
-const QString Sequence::MAX_SMALL_POSITIVE_VALUE="+32767";
-const QString Sequence::MAX_SMALL_NEGATIVE_VALUE="-32768";
-const QString Sequence::MAX_BIG_POSITIVE_VALUE="+9223372036854775807";
-const QString Sequence::MAX_BIG_NEGATIVE_VALUE="-9223372036854775808";
+const QString Sequence::MAX_POSITIVE_VALUE=QStringLiteral("+2147483647");
+const QString Sequence::MAX_NEGATIVE_VALUE=QStringLiteral("-2147483648");
+const QString Sequence::MAX_SMALL_POSITIVE_VALUE=QStringLiteral("+32767");
+const QString Sequence::MAX_SMALL_NEGATIVE_VALUE=QStringLiteral("-32768");
+const QString Sequence::MAX_BIG_POSITIVE_VALUE=QStringLiteral("+9223372036854775807");
+const QString Sequence::MAX_BIG_NEGATIVE_VALUE=QStringLiteral("-9223372036854775808");
 
 Sequence::Sequence(void)
 {
@@ -111,7 +111,7 @@ QString Sequence::formatValue(const QString &value)
 		}
 
 		//When the negative signal count is odd the number is negative
-		if(neg_cnt % 2 != 0) fmt_value+="-";
+    if(neg_cnt % 2 != 0) fmt_value+=QStringLiteral("-");
 
 		fmt_value+=value.mid(i, count);
 	}
@@ -189,7 +189,7 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 		max=MAX_POSITIVE_VALUE;
 	}
 
-	setValues(min, max, "1", "1", "1");
+  setValues(min, max, QStringLiteral("1"), QStringLiteral("1"), QStringLiteral("1"));
 }
 
 

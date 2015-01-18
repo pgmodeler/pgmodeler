@@ -107,7 +107,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
 	else
-    return("");
+    return(QString());
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
@@ -149,7 +149,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	unsigned char chr, chr1, chr2;
 
 	//Checking if the name is already formated enclosed by quotes
-	is_formated=QRegExp("(\")(.)+(\")").exactMatch(name);
+  is_formated=QRegExp(QStringLiteral("(\")(.)+(\")")).exactMatch(name);
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -541,7 +541,7 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
 		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName(format)) + "." + aux_name;
+      aux_name=formatName(this->schema->getName(format)) + QStringLiteral(".") + aux_name;
 
 		if(!aux_name.isEmpty())
 			return(aux_name);
@@ -740,7 +740,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[ParsersAttributes::COMMENT]=comment;
 
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[ParsersAttributes::COMMENT].replace("'","''");
+        attributes[ParsersAttributes::COMMENT].replace(QStringLiteral("'"), QStringLiteral("''"));
 
 			if((def_type==SchemaParser::SQL_DEFINITION &&
 					obj_type!=OBJ_TABLESPACE &&
@@ -762,11 +762,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
-						schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove("-"), attributes, def_type);
+            schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove('-'), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::APPENDED_SQL]="\n-- Appended SQL commands --\n" +	appended_sql;
+        attributes[ParsersAttributes::APPENDED_SQL]=QStringLiteral("\n-- Appended SQL commands --\n") +	appended_sql;
 			}
 		}
 
@@ -778,18 +778,18 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       {
 				schparser.ignoreUnkownAttributes(true);
         attributes[ParsersAttributes::PREPENDED_SQL]=
-						schparser.getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove("-"), attributes, def_type);
+            schparser.getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove('-'), attributes, def_type);
       }
       else
       {
-				attributes[ParsersAttributes::PREPENDED_SQL]="\n-- Prepended SQL commands --\n" +	prepended_sql;
+        attributes[ParsersAttributes::PREPENDED_SQL]=QStringLiteral("\n-- Prepended SQL commands --\n") +	prepended_sql;
       }
     }
 
     if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
     {
       attributes[ParsersAttributes::DROP]=getDropDefinition(true);
-      attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + "\n");
+      attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + '\n');
     }
 
     attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : QString());
@@ -806,7 +806,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				QString buf;
 
 				while(!ts.atEnd())
-					buf+="-- " + ts.readLine() + "\n";
+          buf+=QString("-- %1\n").arg(ts.readLine());
 
 				//The entire commented buffer will be returned
 				code_def=buf;
@@ -1001,8 +1001,8 @@ bool BaseObject::isCodeInvalidated(void)
 bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
   QString xml, tag=QString("<%1").arg(this->getSchemaName()),
-      attr_regex="(%1=\")",
-      tag_regex="<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))";
+      attr_regex=QStringLiteral("(%1=\")"),
+      tag_regex=QStringLiteral("<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))");
   QStringList xml_defs{ xml_def1, xml_def2 };
   int start=0, end=-1, tag_end=-1;
   QRegExp regexp;
@@ -1019,9 +1019,9 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
       do
       {
         regexp=QRegExp(attr_regex.arg(attr));
-        tag_end=xml.indexOf(QRegExp("(\\\\)?(>)"));
+        tag_end=xml.indexOf(QRegExp(QStringLiteral("(\\\\)?(>)")));
         start=regexp.indexIn(xml);//, start);
-        end=xml.indexOf("\"", start + regexp.matchedLength());
+        end=xml.indexOf('"', start + regexp.matchedLength());
 
         if(end > tag_end)
           end=-1;
@@ -1076,7 +1076,7 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 			return(cached_code[def_type]);
 	}
 	else
-    return("");
+    return(QString());
 }
 
 QString BaseObject::getDropDefinition(bool cascade)
@@ -1104,7 +1104,7 @@ QString BaseObject::getDropDefinition(bool cascade)
       return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
     }
     else
-      return("");
+      return(QString());
   }
   catch(Exception &e)
   {
@@ -1119,7 +1119,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
     SchemaParser schparser;
     QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
                           GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-                          "%1" + GlobalAttributes::SCHEMA_EXT;
+                          QStringLiteral("%1") + GlobalAttributes::SCHEMA_EXT;
 
     schparser.setPgSQLVersion(BaseObject::pgsql_ver);
     schparser.ignoreEmptyAttributes(ignore_empty_attribs);
@@ -1152,7 +1152,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
   if(!object)
-   return("");
+   return(QString());
   else
   {
     QString alter;

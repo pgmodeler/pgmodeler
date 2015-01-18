@@ -218,14 +218,14 @@ void AppearanceConfigWidget::saveConfiguration(void)
 			if(item.obj_conf)
 			{
 				//Creates an attribute that stores the fill color
-				attrib_id=item.conf_id + QString("-color");
+        attrib_id=item.conf_id + QStringLiteral("-color");
 				if(item.colors[0]==item.colors[1])
 					attribs[attrib_id]=item.colors[0].name();
 				else
-					attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
+          attribs[attrib_id]=item.colors[0].name() + QStringLiteral(",") + item.colors[1].name();
 
 				//Creates an attribute that stores the border color
-				attrib_id=item.conf_id + QString("-bcolor");
+        attrib_id=item.conf_id + QStringLiteral("-bcolor");
 				attribs[attrib_id]=item.colors[2].name();
 			}
 			//If the item is a font config
@@ -234,23 +234,23 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				font=item.font_fmt.font();
 
 				//Creates an attribute to store the font color
-				attrib_id=item.conf_id + QString("-fcolor");
+        attrib_id=item.conf_id + QStringLiteral("-fcolor");
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
+        attrib_id=item.conf_id + QStringLiteral("-") + ParsersAttributes::ITALIC;
 				attribs[attrib_id]=(font.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::BOLD;
+        attrib_id=item.conf_id + QStringLiteral("-") + ParsersAttributes::BOLD;
 				attribs[attrib_id]=(font.bold() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
+        attrib_id=item.conf_id + QStringLiteral("-") + ParsersAttributes::UNDERLINE;
 				attribs[attrib_id]=(font.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 			}
 			//Special case: treating the global font element
 			else
 			{
-				attribs["font-name"]=QFontInfo(item.font_fmt.font()).family();
-				attribs["font-size"]=QString("%1").arg(item.font_fmt.font().pointSizeF());
+        attribs[QStringLiteral("font-name")]=QFontInfo(item.font_fmt.font()).family();
+        attribs[QStringLiteral("font-size")]=QString("%1").arg(item.font_fmt.font().pointSizeF());
 			}
 		}
 
