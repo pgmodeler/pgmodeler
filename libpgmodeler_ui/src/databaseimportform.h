@@ -95,7 +95,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
     static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
                                                        bool checkable_items=false, bool disable_empty_grps=true,
-                                                       QTreeWidgetItem *root=nullptr, const QString &schema="", const QString &table="");
+                                                       QTreeWidgetItem *root=nullptr, const QString &schema=QString(), const QString &table=QString());
 
 	private slots:
 		void importDatabase(void);

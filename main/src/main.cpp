@@ -40,9 +40,9 @@ void startCrashHandler(int signal)
 
 	#ifdef Q_OS_MAC
 		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
-				GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
+        GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
 	#else
-		cmd=GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
+    cmd=GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
 	#endif
 
 	//Creates the stacktrace file
@@ -55,7 +55,7 @@ void startCrashHandler(int signal)
 	{
     lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
         .arg(signal)
-        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+        .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
         .arg(GlobalAttributes::PGMODELER_VERSION)
         .arg(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 

@@ -591,7 +591,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   Connection aux_conn;
   QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
           obj_name, obj_tp_name, tab_name,
-          alter_tab="ALTER TABLE";
+          alter_tab=QString("ALTER TABLE");
   vector<Exception> errors;
   vector<QString> db_sql_cmds;
   QTextStream ts;
@@ -602,9 +602,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   int pos=0, pos1=0, comm_cnt=0;
 
   //Regexp used to extract the object being created
-  QRegExp obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
+  QRegExp obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
           tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-          drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
+          drop_reg(QString("^((\\-\\-)+( )*)+(DROP)(.)+")),
           drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
           reg_aux;
 
@@ -642,25 +642,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
          (DROP [OBJECT] or ALTER TABLE...DROP) */
       if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
       {
-        comm_cnt=lin.count("--");
-        lin=lin.remove("--").trimmed();
+        comm_cnt=lin.count(QString("--"));
+        lin=lin.remove(QString("--")).trimmed();
 
         /* If the count of comment indicators (--) is 1 indicates that the DDL of the
            object related to the DROP is enabled, so the DROP is executed otherwise ignored */
         if(comm_cnt==1)
         {
-         sql_cmd=lin + "\n";
+         sql_cmd=lin + QString("\n");
          ddl_tk_found=true;
         }
       }
       else
       {
         ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
-        lin.remove(QRegExp("^(--)+(.)+$"));
+        lin.remove(QRegExp(QString("^(--)+(.)+$")));
 
         //If the line isn't empty after cleanup it will be included on sql command
         if(!lin.isEmpty())
-          sql_cmd += lin + "\n";
+          sql_cmd += lin + QString("\n");
       }
 
       //If the ddl end token is found
@@ -672,9 +672,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
         if(pos >= 0)
         {        
-          aux_cmd.remove("\"");
-          aux_cmd.remove("IF EXISTS ");
-          obj_type=(aux_cmd.contains("COLUMN") ? OBJ_COLUMN : OBJ_CONSTRAINT);
+          aux_cmd.remove('"');
+          aux_cmd.remove(QString("IF EXISTS "));
+          obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
 
           pos+=tab_obj_reg.matchedLength();
           pos1=aux_cmd.indexOf(' ', pos);
@@ -682,16 +682,16 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
           //Extracting the table name
           pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
-          pos1=aux_cmd.indexOf("ADD");
+          pos1=aux_cmd.indexOf(QString("ADD"));
 
           if(pos1 < 0)
           {
-            pos1=aux_cmd.indexOf("DROP");
+            pos1=aux_cmd.indexOf(QString("DROP"));
             is_drop=true;
           }
 
           tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
-          obj_name=tab_name + "." + obj_name;
+          obj_name=tab_name + QString(".") + obj_name;
 
           if(is_drop)
             msg=trUtf8("Dropping object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
@@ -713,21 +713,21 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             obj_type=obj_tp;
 
             //Appeding special tokens when the object is an index or view
-            if(lin.startsWith("CREATE"))
+            if(lin.startsWith(QString("CREATE")))
             {
               if(obj_tp==OBJ_INDEX)
               {
-                lin.remove("UNIQUE");
-                lin.remove("CONCURRENTLY");
+                lin.remove(QString("UNIQUE"));
+                lin.remove(QString("CONCURRENTLY"));
               }
               else if(obj_tp==OBJ_VIEW)
               {
-                lin.remove("MATERIALIZED");
-                lin.remove("RECURSIVE");
+                lin.remove(QString("MATERIALIZED"));
+                lin.remove(QString("RECURSIVE"));
               }
             }
-            else if(lin.startsWith("DROP"))
-              lin.remove("IF EXISTS");
+            else if(lin.startsWith(QString("DROP")))
+              lin.remove(QString("IF EXISTS"));
 
             lin=lin.simplified();
 
@@ -738,12 +738,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
             if(pos >= 0)
             {
-              is_create=lin.startsWith("CREATE");
-              is_drop=(!is_create && lin.startsWith("DROP"));
+              is_create=lin.startsWith(QString("CREATE"));
+              is_drop=(!is_create && lin.startsWith(QString("DROP")));
 
               //Extracts from the line the string starting with the object's name
               lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
-              lin.remove("\"");
+              lin.remove('"');
 
               if(obj_tp!=OBJ_CAST)
               {
@@ -753,7 +753,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               }
               else
               {
-                obj_name="cast" + lin.replace(" AS ",",");
+                obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
               }
 
               //Stores the object type name

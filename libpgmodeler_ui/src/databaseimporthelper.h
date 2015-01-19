@@ -229,7 +229,7 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assigne the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
+		attribs_map getObjects(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), attribs_map extra_attribs=attribs_map());
 
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);

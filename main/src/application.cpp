@@ -47,7 +47,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
   //Trying to load plugins translations
   dir_list=QDir(GlobalAttributes::PLUGINS_DIR +
                 GlobalAttributes::DIR_SEPARATOR,
-                "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+                QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
   while(!dir_list.isEmpty())
   {
@@ -57,13 +57,13 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
     //Configure the path to "lang" subdir at current plugin directory
     plug_lang_dir=GlobalAttributes::PLUGINS_DIR +
                GlobalAttributes::DIR_SEPARATOR + plugin_name +
-               GlobalAttributes::DIR_SEPARATOR + "lang" +
+               GlobalAttributes::DIR_SEPARATOR + QString("lang") +
                GlobalAttributes::DIR_SEPARATOR;
 
-    plug_lang_file=plugin_name + "." + QLocale::system().name();
+    plug_lang_file=plugin_name + QString(".") + QLocale::system().name();
 
     //Check if the .qm file exists for the current plugin. If so create and install a translator
-    if(QFileInfo(plug_lang_dir + plug_lang_file + ".qm").exists())
+    if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
     {
       plugin_translator=new QTranslator;
       plugin_translator->load(plug_lang_file, plug_lang_dir);

@@ -452,7 +452,7 @@ class PgSQLType: public BaseType{
     bool isEquivalentTo(PgSQLType type);
 
 		PgSQLType getAliasType(void);
-		QString getCodeDefinition(unsigned def_type, QString ref_type="");
+		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
 
 		//! \brief Retorns the SQL definition for the type

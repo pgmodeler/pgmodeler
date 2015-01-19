@@ -19,7 +19,7 @@
 #include <QApplication>
 
 QString Exception::messages[ERROR_COUNT][2]={
-	{"ERR_CUSTOM", " "},
+  {"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
@@ -244,7 +244,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 
 Exception::Exception(void)
 {
-	configureException("",ERR_CUSTOM,"","",-1,"");
+  configureException(QString(),ERR_CUSTOM,QString(),QString(),-1,QString());
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -340,7 +340,7 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		 context (Exception) in the ts file and the text to be translated */
 		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", -1));
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getErrorCode(ErrorType error_type)
@@ -348,7 +348,7 @@ QString Exception::getErrorCode(ErrorType error_type)
 	if(error_type < ERROR_COUNT)
 		return(messages[error_type][ERROR_CODE]);
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getMethod(void)
@@ -424,7 +424,7 @@ QString Exception::getExceptionsText(void)
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-			exceptions_txt+="\n";
+      exceptions_txt+=QString("\n");
 
 		itr++; idx--;
 	}

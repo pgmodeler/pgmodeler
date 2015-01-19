@@ -281,7 +281,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	rels_menu=new QMenu(this);
 	actions_new_objects[OBJ_RELATIONSHIP]->setMenu(rels_menu);
 
-  for(i=0; i < rel_types_cod.size(); i++)
+  for(int i=0; i < rel_types_cod.size(); i++)
 	{
 		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i] +  QString(".png");
 		str_txt=rel_labels[i];

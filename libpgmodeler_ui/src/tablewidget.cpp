@@ -400,7 +400,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Column 3: Column attributes (constraints which belongs)
     str_aux=/*Utf8String::create(*/TableObjectView::getConstraintString(column);
-    for(i=0; i < constr_codes.size(); i++)
+    for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
 				str_aux1+=contr_types[i]  + QString(", ");
