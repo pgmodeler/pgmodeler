@@ -31,7 +31,6 @@
 #include <signal.h>
 #include <vector>
 #include <deque>
-#include "utf8string.h"
 
 using namespace std;
 
