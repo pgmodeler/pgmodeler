@@ -635,7 +635,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
   {
     if(attribs.empty() ||
        attribs[ParsersAttributes::OID].isEmpty() ||
-       attribs[ParsersAttributes::OID]=="0" ||
+       attribs[ParsersAttributes::OID]==QString("0") ||
        attribs[ParsersAttributes::NAME].isEmpty())
       return(DEP_NOT_DEFINED);
     else
@@ -652,7 +652,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 
       //Retrieving the schema name
       if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-         attribs[ParsersAttributes::SCHEMA]!="0")
+         attribs[ParsersAttributes::SCHEMA]!=QString("0"))
       {
         aux_attribs=catalog.getObjectAttributes(OBJ_SCHEMA, attribs[ParsersAttributes::SCHEMA].toUInt());
         sch_name=BaseObject::formatName(aux_attribs[ParsersAttributes::NAME], false);
@@ -741,7 +741,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 {
   try
   {
-    if(oid=="0" || oid.isEmpty())
+    if(oid==QString("0") || oid.isEmpty())
       return(DEP_NOT_DEFINED);
     else
     {

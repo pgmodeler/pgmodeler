@@ -471,7 +471,8 @@ void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
-										.arg(Utf8String::create(this->obj_name)).arg(this->getTypeName()),
+                    .arg(/*Utf8String::create(*/this->obj_name)
+                    .arg(this->getTypeName()),
 										ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
 		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -833,7 +834,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(Utf8String::create(this->getName(true)))
+                        .arg(/*Utf8String::create(*/this->getName(true))
 												.arg(this->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
@@ -874,11 +875,13 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 	//Raises an error if the some of the objects are system objects
 	else if(obj1->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-										.arg(obj1->getName()).arg(Utf8String::create(obj1->getTypeName())),
+                    .arg(obj1->getName())
+                    .arg(/*Utf8String::create(*/obj1->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj2->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-										.arg(obj2->getName()).arg(Utf8String::create(obj2->getTypeName())),
+                    .arg(obj2->getName())
+                    .arg(/*Utf8String::create(*/obj2->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
 	else if(!enable_cl_obj_swap &&
@@ -900,7 +903,8 @@ void BaseObject::updateObjectId(BaseObject *obj)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else  if(obj->isSystemObject())
     throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                    .arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
+                    .arg(obj->getName())
+                    .arg(/*Utf8String::create(*/obj->getTypeName()),
                     ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
     obj->object_id=++global_id;

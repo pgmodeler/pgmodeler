@@ -641,7 +641,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           if(checkable_items)
           {
             if((itr->first.toUInt() > import_helper.getLastSystemOID()) ||
-               (types[i]==OBJ_SCHEMA && itr->second=="public") ||
+               (types[i]==OBJ_SCHEMA && itr->second==QString("public")) ||
                (types[i]==OBJ_COLUMN && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID()))
             {
               item->setCheckState(0, Qt::Checked);
@@ -657,9 +657,9 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
               item->setToolTip(0, trUtf8("This is a PostgreSQL built-in data type and cannot be imported."));
             }
             //Disabling items that refers to pgModeler's built-in system objects
-            else if((types[i]==OBJ_TABLESPACE && (itr->second=="pg_default" || itr->second=="pg_global")) ||
-                    (types[i]==OBJ_ROLE && (itr->second=="postgres")) ||
-                    (types[i]==OBJ_SCHEMA && (itr->second=="pg_catalog" || itr->second=="public")) ||
+            else if((types[i]==OBJ_TABLESPACE && (itr->second==QString("pg_default") || itr->second==QString("pg_global"))) ||
+                    (types[i]==OBJ_ROLE && (itr->second==QString("postgres"))) ||
+                    (types[i]==OBJ_SCHEMA && (itr->second==QString("pg_catalog") || itr->second==QString("public"))) ||
                     (types[i]==OBJ_LANGUAGE && (itr->second==~LanguageType(LanguageType::c) ||
                                                 itr->second==~LanguageType(LanguageType::sql) ||
                                                 itr->second==~LanguageType(LanguageType::plpgsql))))

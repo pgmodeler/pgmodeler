@@ -594,7 +594,7 @@ void PgModelerCLI::extractObjectXML(void)
 			if(open_tag && close_tag)
 			{
 				//Pushes the extracted definition to the list (only if not empty)
-				if(def_xml!="\n")
+        if(def_xml!=QString("\n"))
 					objs_xml.push_back(def_xml);
 
 				def_xml.clear();

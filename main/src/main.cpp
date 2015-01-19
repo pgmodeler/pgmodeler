@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 
     //Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+    QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
 		splash.setPixmap(pix);
     splash.setMask(pix.mask());
 

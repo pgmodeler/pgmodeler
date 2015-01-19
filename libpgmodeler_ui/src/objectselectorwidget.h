@@ -57,9 +57,6 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		//! \brief Configures the selectors attributes at construction time
 		void configureSelector(bool install_highlighter);
 
-    //! brief Format and return the name of the object based on its type
-    //QString formatObjectName(BaseObject *object);
-
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:

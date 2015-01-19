@@ -35,7 +35,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
   hint_tb=new QToolButton(this);
   hint_tb->setCheckable(true);
   hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  hint_tb->setIcon(QPixmap(":/icones/icones/help.png"));
+  hint_tb->setIcon(QPixmap(QString(":/icones/icones/help.png")));
 
   shadow=new QGraphicsDropShadowEffect(this);
   shadow->setOffset(5,5);
@@ -91,7 +91,7 @@ void HintTextWidget::setText(const QString &text)
 {
   QFontMetrics f(text_lbl->font());
   QString txt=text;
-  QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt.remove(QRegExp("(<)(/)?([a-z]|[A-Z])+(>)")));
+  QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)"))));
 
   text_lbl->setText(text);
   this->setMinimumSize(QSize(ret.size().width(), ret.size().height() + (text_lbl->margin() * 1.5)));

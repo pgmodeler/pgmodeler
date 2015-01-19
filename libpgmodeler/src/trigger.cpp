@@ -95,18 +95,18 @@ void Trigger::setFunction(Function *func)
 	//Case the function is null an error is raised
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
-		if(func->getReturnType()!="trigger")
-			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg("trigger"),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    if(func->getReturnType()!=QString("trigger"))
+      throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

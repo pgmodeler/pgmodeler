@@ -88,7 +88,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
 
       //Configures the template filename for pages pixmaps
-      tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_p%1." + fi.completeSuffix();
+      tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
     }
     else
     {
@@ -156,7 +156,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
         ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
         scene->update();
 
-        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(file)),
+        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
                         ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
     }
@@ -189,20 +189,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
 	vector<Exception> errors;
-
-	/* Error codes treated in this method
-			42P04 	duplicate_database
-			42723 	duplicate_function
-			42P06 	duplicate_schema
-			42P07 	duplicate_table
-			42710 	duplicate_object
-			42701   duplicate_column
-			42P16   invalid_table_definition
-
-		 Reference:
-			http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-	QString error_codes[]={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
-	vector<QString> err_codes_vect(error_codes, error_codes + sizeof(error_codes) / sizeof(QString));
 
 	try
 	{
@@ -292,7 +278,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
-                                   trUtf8("Creating object `%1' (%2).").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
+                                   trUtf8("Creating object `%1' (%2).")
+                                   .arg(/*Utf8String::create(*/object->getName())
+                                   .arg(object->getTypeName()),
 																	 object->getObjectType());
 
 						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -304,8 +292,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
 					returned by the server is other than object duplicity */
 					if(!ignore_dup ||
-						 (ignore_dup &&
-							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
+             (ignore_dup && isExportError(e.getExtraInfo())))
 						throw Exception(e.getErrorMessage(),
 														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 					else
@@ -323,7 +310,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
-                               trUtf8("Creating database `%1'.").arg(Utf8String::create(db_model->getName())),
+                               trUtf8("Creating database `%1'.")
+                               .arg(/*Utf8String::create(*/db_model->getName()),
 															 OBJ_DATABASE);
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
@@ -335,9 +323,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
 			returned by the server is other than object duplicity */
 			if(!ignore_dup ||
-				 (ignore_dup &&
-					std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-				throw Exception(e.getErrorMessage(),
+         (ignore_dup && isExportError(e.getExtraInfo())))
+        throw Exception(e.getErrorMessage(),
 												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 			else
 				errors.push_back(e);
@@ -350,13 +337,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn=conn;
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
-                             trUtf8("Connecting to database `%1'.").arg(Utf8String::create(db_model->getName())));
+                             trUtf8("Connecting to database `%1'.")
+                             .arg(/*Utf8String::create(*/db_model->getName()));
 
 			new_db_conn.connect();
 			progress=30;
 
       //Creating the other object types
-      emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'.").arg(Utf8String::create(db_model->getName())));
+      emit s_progressUpdated(progress,
+                             trUtf8("Creating objects on database `%1'.")
+                             .arg(/*Utf8String::create(*/db_model->getName()));
 
       //Exporting the database model definition using the opened connection
       exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
@@ -529,9 +519,9 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   QTextStream stream(&tmp_name);
   QDateTime dt=QDateTime::currentDateTime();
   QCryptographicHash hash(QCryptographicHash::Md5);
-  map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, "db_" },
-																					{ OBJ_ROLE, "rl_"},
-																					{ OBJ_TABLESPACE, "tb_"} };
+  map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, QString("db_") },
+                                          { OBJ_ROLE, QString("rl_")},
+                                          { OBJ_TABLESPACE, QString("tb_")} };
 
   orig_obj_names.clear();
   orig_obj_names[db_model]=db_model->getName();
@@ -551,7 +541,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
   for(auto obj : orig_obj_names)
   {
-    stream << reinterpret_cast<unsigned *>(obj.first)  << "_" << dt.toTime_t();
+    stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
 
     //Generates an unique name for the object through md5 hash
     hash.addData(QByteArray(tmp_name.toStdString().c_str()));
@@ -588,9 +578,12 @@ bool ModelExportHelper::isExportError(const QString &error_code)
       42P16   invalid_table_definition
 
      Reference:
-      http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-  static vector<QString> err_codes_vect={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
-  return(std::find(err_codes_vect.begin(), err_codes_vect.end(), error_code)==err_codes_vect.end());
+      http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/ 
+  static QStringList err_codes = {QString("42P04"), QString("42723"), QString("42P06"),
+                                  QString("42P07"), QString("42710"), QString("42701"),
+                                  QString("42P16")};
+
+  return(!err_codes.contains(error_code));
 }
 
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
@@ -817,7 +810,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
       if(!ignore_dup ||
          (ignore_dup && isExportError(e.getExtraInfo())))
-        throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
+        throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE)
+                        .arg(/*Utf8String::create(*/sql_cmd),
                         ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
       else
       {

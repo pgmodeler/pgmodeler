@@ -33,7 +33,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels(void)
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+  return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 int ModelRestorationForm::exec(void)
@@ -50,7 +50,7 @@ int ModelRestorationForm::exec(void)
 		item=new QListWidgetItem;
 		item->setText(info.fileName() +
 									QString(" - ") +
-									trUtf8("Modified: %1").arg(info.lastModified().toString(tr("yyyy-MM-dd hh:mm:ss"))) +
+                  trUtf8("Modified: %1").arg(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss"))) +
 									QString(" - ") +
 									QString("%1 bytes").arg(info.size()));
 

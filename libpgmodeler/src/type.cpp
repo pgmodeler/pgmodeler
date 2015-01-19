@@ -101,7 +101,7 @@ void Type::addAttribute(TypeAttribute attrib)
 		throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the passed attribute has the same type as the defining type (this)
 	else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the attribute already exists
   else if(getAttributeIndex(attrib.getName()) >= 0)
@@ -226,7 +226,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 		because this function is mandatory for base types */
 	else if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_TYPE)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -248,7 +248,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 							func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
 							func_id==ANALYZE_FUNC  || func_id==CANONICAL_FUNC)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Checking the return types of function in relation to type.
@@ -258,17 +258,17 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 OUTPUT and TPMOD_OUT should return cstring.
 		 The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
 		 respectively. Raises an error if some of conditions above is not satisfied. */
-		else if((func_id==INPUT_FUNC && func->getReturnType()!="any") ||
-						(func_id==OUTPUT_FUNC && func->getReturnType()!="cstring") ||
-						(func_id==RECV_FUNC && func->getReturnType()!="any") ||
-						(func_id==SEND_FUNC && func->getReturnType()!="bytea") ||
-						(func_id==TPMOD_IN_FUNC && func->getReturnType()!="integer") ||
-						(func_id==TPMOD_OUT_FUNC && func->getReturnType()!="cstring") ||
-						(func_id==ANALYZE_FUNC && func->getReturnType()!="boolean") ||
-						(func_id==CANONICAL_FUNC && func->getReturnType()!="any") ||
-						(func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!="double precision"))
+    else if((func_id==INPUT_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==OUTPUT_FUNC && func->getReturnType()!=QString("cstring")) ||
+            (func_id==RECV_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==SEND_FUNC && func->getReturnType()!=QString("bytea")) ||
+            (func_id==TPMOD_IN_FUNC && func->getReturnType()!=QString("integer")) ||
+            (func_id==TPMOD_OUT_FUNC && func->getReturnType()!=QString("cstring")) ||
+            (func_id==ANALYZE_FUNC && func->getReturnType()!=QString("boolean")) ||
+            (func_id==CANONICAL_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!=QString("double precision")))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -282,25 +282,25 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 The ANALYZE function must have a parameter of type (internal).
 		 Raises an error if some of above conditions is not satisfied.*/
 		else if((func_id==INPUT_FUNC &&
-						 (func->getParameter(0).getType()!="cstring" ||
+             (func->getParameter(0).getType()!=QString("cstring") ||
 							(param_count==3 &&
-							 (func->getParameter(1).getType()!="oid" ||
-								func->getParameter(2).getType()!="integer")))) ||
+               (func->getParameter(1).getType()!=QString("oid") ||
+                func->getParameter(2).getType()!=QString("integer"))))) ||
 						(func_id==RECV_FUNC &&
-						 (func->getParameter(0).getType()!="internal" ||
+             (func->getParameter(0).getType()!=QString("internal") ||
 							(param_count==3 &&
-							 (func->getParameter(1).getType()!="oid" ||
-								func->getParameter(2).getType()!="integer")))) ||
-						((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!="any") ||
-						(func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!="cstring[]") ||
-						(func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!="integer") ||
-						(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!="internal") ||
+               (func->getParameter(1).getType()!=QString("oid") ||
+                func->getParameter(2).getType()!=QString("integer"))))) ||
+            ((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!=QString("any")) ||
+            (func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
+            (func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!=QString("integer")) ||
+            (func_id==ANALYZE_FUNC && func->getParameter(0).getType()!=QString("internal")) ||
 						(func_id==SUBTYPE_DIFF_FUNC &&
 							(func->getParameter(0).getType()!=this->subtype ||
 							 func->getParameter(1).getType()!=this->subtype)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-											.arg(Utf8String::create(this->getName()))
-											.arg(Utf8String::create(this->getTypeName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/this->getTypeName()),
 											ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		func->setProtected(false);
@@ -335,7 +335,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				}
 				else
 				{
-					param.setType(PgSQLType("any"));
+          param.setType(PgSQLType(QString("any")));
 					func->addParameter(param);
 				}
 			}
@@ -344,7 +344,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				if(!inverse_conv)
 					func->setReturnType(PgSQLType(this));
 				else
-					func->setReturnType(PgSQLType("any"));
+          func->setReturnType(PgSQLType(QString("any")));
 			}
 		}
 	}
@@ -369,8 +369,8 @@ void Type::setAlignment(PgSQLType type)
 	QString tp=(*type);
 
 	//Raises an error if the type assigned to the alignment is invalid according to the rule
-	if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(Utf8String::create(this->getName(true))),
+  if(tp!=QString("char") && tp!=QString("smallint") && tp!=QString("integer") && tp!=QString("double precision"))
+    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(alignment != type);
@@ -394,12 +394,12 @@ void Type::setDefaultValue(const QString &value)
 void Type::setElement(PgSQLType elem)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem!="any" &&
+  else if(elem!=QString("any") &&
 					(elem.isOIDType() || elem.isPseudoType() ||
 					 elem.isUserType() || elem.isArrayType()))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(element != elem);
@@ -467,7 +467,7 @@ void Type::setCollatable(bool value)
 void Type::setLikeType(PgSQLType like_type)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->like_type != like_type);
@@ -477,7 +477,7 @@ void Type::setLikeType(PgSQLType like_type)
 void Type::setSubtype(PgSQLType subtype)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !subtype)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->subtype != subtype);
@@ -488,8 +488,8 @@ void Type::setSubtypeOpClass(OperatorClass *opclass)
 {
 	if(opclass && opclass->getIndexingType()!=IndexingType::btree)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OPCLASS_OBJ)
-										.arg(Utf8String::create(this->getName(true)))
-										.arg(Utf8String::create(this->getTypeName())),
+                    .arg(/*Utf8String::create(*/this->getName(true))
+                    .arg(/*Utf8String::create(*/this->getTypeName()),
 										ERR_ASG_INV_OPCLASS_OBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(subtype_opclass != opclass);
@@ -651,7 +651,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
     attributes[ParsersAttributes::STORAGE]=(~storage);
     attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
-		if(element!="any")
+    if(element!=QString("any"))
       attributes[ParsersAttributes::ELEMENT]=(*element);
 
 		if(delimiter!='\0')
@@ -662,7 +662,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
     attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : QString());
     attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : QString());
 
-		if(like_type!="any")
+    if(like_type!=QString("any"))
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
         attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);

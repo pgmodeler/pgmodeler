@@ -31,8 +31,8 @@ Operator::Operator(void)
 		operators[i]=nullptr;
 
 	hashes=merges=false;
-	argument_types[LEFT_ARG]=PgSQLType("any");
-	argument_types[RIGHT_ARG]=PgSQLType("any");
+  argument_types[LEFT_ARG]=PgSQLType(QString("any"));
+  argument_types[RIGHT_ARG]=PgSQLType(QString("any"));
 
 	attributes[ParsersAttributes::LEFT_TYPE]=QString();
 	attributes[ParsersAttributes::RIGHT_TYPE]=QString();
@@ -99,20 +99,20 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		//Raises an error if the function is not allocated
 		if(!func)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-											.arg(Utf8String::create(this->getName(true)))
+                      .arg(/*Utf8String::create(*/this->getName(true))
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Raises an error if the parameter count is invalid. To be used by the operator
 		 the function must own 1 or 2 parameters */
 		else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			unsigned param_count=func->getParameterCount();
-			PgSQLType param_type1=PgSQLType("any"), param_type2=PgSQLType("any");
+      PgSQLType param_type1=PgSQLType(QString("any")), param_type2=PgSQLType(QString("any"));
 
 			//Get the function parameter to make validations
 			param_type1=func->getParameter(0).getType();
@@ -121,27 +121,27 @@ void Operator::setFunction(Function *func, unsigned func_type)
 			//Validates the function parameters according to the operator arguments
 
 			//ERROR 1: The function have parameters of the type 'any'
-			if((param_type1=="any" || (param_count==2 && param_type2=="any")) ||
+      if((param_type1==QString("any") || (param_count==2 && param_type2==QString("any"))) ||
 
 				 //ERROR 2: The function parameter count is 1 and the type of operator argument is not 'any'
-				 (param_count==1 && argument_types[0]!="any" && argument_types[1]!="any") ||
+         (param_count==1 && argument_types[0]!=QString("any") && argument_types[1]!=QString("any")) ||
 
 				 //ERROR 3: The function parameter count is 2 and the operator arguments is not 'any'
-				 (param_count==2 && ((argument_types[0]=="any" && argument_types[1]!="any") ||
-														 (argument_types[0]!="any" && argument_types[1]=="any"))) ||
+         (param_count==2 && ((argument_types[0]==QString("any") && argument_types[1]!=QString("any")) ||
+                             (argument_types[0]!=QString("any") && argument_types[1]==QString("any")))) ||
 
 				 /* ERROR 4:  The function parameter count is 2 and the argument types differs from
 											parameters type */
 				 (param_count==2 &&
-					((argument_types[0]=="any" || argument_types[1]=="any") ||
+          ((argument_types[0]==QString("any") || argument_types[1]==QString("any")) ||
 					 (argument_types[0]!=param_type1 || argument_types[1]!=param_type2))) ||
 
 				 //ERROR 5:  When the function has 1 parameter the type differ from the operator argument
 				 (param_count==1 &&
-					((argument_types[0]!="any" && argument_types[0]!=param_type1) ||
-					 (argument_types[1]!="any" && argument_types[1]!=param_type1))))
+          ((argument_types[0]!=QString("any") && argument_types[0]!=param_type1) ||
+           (argument_types[1]!=QString("any") && argument_types[1]!=param_type1))))
 				throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-												.arg(Utf8String::create(this->getName()))
+                        .arg(/*Utf8String::create(*/this->getName())
 												.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 												ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -177,8 +177,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
-											.arg(Utf8String::create(oper->getSignature(true)))
-											.arg(Utf8String::create(this->getSignature(true))),
+                      .arg(/*Utf8String::create(*/oper->getSignature(true))
+                      .arg(/*Utf8String::create(*/this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		/* Validating Negator OP: According to the PostgreSQL documentation the negator
@@ -191,8 +191,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 						 argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
-											.arg(Utf8String::create(oper->getSignature(true)))
-											.arg(Utf8String::create(this->getSignature(true))),
+                      .arg(/*Utf8String::create(*/oper->getSignature(true))
+                      .arg(/*Utf8String::create(*/this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
@@ -259,7 +259,7 @@ QString Operator::getSignature(bool format_name)
 
 	for(i=0; i < 2; i++)
 	{
-		if(argument_types[i]=="any")
+    if(argument_types[i]==QString("any"))
       args.push_back(QString("NONE"));
 		else
 			args.push_back(*argument_types[i]);
@@ -292,7 +292,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			if(argument_types[i]!="any")
+      if(argument_types[i]!=QString("any"))
 				attributes[type_attribs[i]]=(*argument_types[i]);
 		}
 		else

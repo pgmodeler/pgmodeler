@@ -72,9 +72,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QLabel *label=nullptr;
 	QGridLayout *grid=nullptr;
 	QAction *action=nullptr;
-	QString str_ico, str_txt,
-			rel_types_cod[]={"11", "1n", "nn", "dep", "gen" },
-			rel_labels[]={"One to One (1-1)", "One to Many (1-n)", "Many to Many (n-n)", trUtf8("Copy"), trUtf8("Generalization")};
+  QString str_ico, str_txt;
+  QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen") },
+      rel_labels={ trUtf8("One to One (1-1)"), trUtf8("One to Many (1-n)"),
+                   trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Generalization") };
 	ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP,
 											 OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 											 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
@@ -111,7 +112,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label=new QLabel(protected_model_frm);
 	label->setMinimumSize(QSize(32, 32));
 	label->setMaximumSize(QSize(32, 32));
-	label->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
+  label->setPixmap(QPixmap(/*Utf8String::create(*/QString(":/icones/icones/msgbox_alerta.png")));
 
   grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -157,11 +158,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   zoom_info_lbl=new QLabel(this);
   zoom_info_lbl->raise();
   zoom_info_lbl->setAutoFillBackground(false);
-  zoom_info_lbl->setText("Zoom: 100%");
+  zoom_info_lbl->setText(QString("Zoom: 100%"));
   zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-  zoom_info_lbl->setStyleSheet("color: #C8000000; \
+  zoom_info_lbl->setStyleSheet(QString("color: #C8000000; \
                                background-color: #C8FFFF80;\
-                               border: 1px solid #C8B16351;");
+                               border: 1px solid #C8B16351;"));
 
   font=zoom_info_lbl->font();
   font.setBold(true);
@@ -280,7 +281,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	rels_menu=new QMenu(this);
 	actions_new_objects[OBJ_RELATIONSHIP]->setMenu(rels_menu);
 
-	for(i=0; i < 5; i++)
+  for(i=0; i < rel_types_cod.size(); i++)
 	{
 		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i] +  QString(".png");
 		str_txt=rel_labels[i];
@@ -295,7 +296,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	}
 
   new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
-  new_obj_overlay_wgt->setObjectName("new_obj_overlay_wgt");
+  new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
   new_obj_overlay_wgt->setVisible(false);
 
   connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
@@ -559,7 +560,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 			case OBJ_SCHEMA:
         if(!graph_obj->isSystemObject() ||
-           (graph_obj->isSystemObject() && graph_obj->getName()=="public"))
+           (graph_obj->isSystemObject() && graph_obj->getName()==QString("public")))
         {
           item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
         }
@@ -1018,7 +1019,7 @@ void ModelWidget::convertRelationshipNN(void)
 							for(QString pk_col : pk_cols)
 								aux_constr->addColumn(tab->getColumn(pk_col), Constraint::SOURCE_COLS);
 
-							aux_constr->setName(PgModelerNS::generateUniqueName(tab, *tab->getObjectList(OBJ_CONSTRAINT), false, "_pk"));
+              aux_constr->setName(PgModelerNS::generateUniqueName(tab, *tab->getObjectList(OBJ_CONSTRAINT), false, QString("_pk")));
 							tab->addConstraint(aux_constr);
 
 							op_list->registerObject(aux_constr, Operation::OBJECT_CREATED, -1, tab);
@@ -1336,9 +1337,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
     /* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
 		that can be edited only on its fill color an rectangle attributes */
-    if(object && object->isSystemObject() && object->getName()!="public")
+    if(object && object->isSystemObject() && object->getName()!=QString("public"))
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-											.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+                      .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type== OBJ_PERMISSION)
@@ -1655,7 +1656,7 @@ void ModelWidget::renameObject(void)
 
 	if(obj->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-										.arg(obj->getName()).arg(Utf8String::create(obj->getTypeName())),
+                    .arg(obj->getName()).arg(/*Utf8String::create(*/obj->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectRenameWidget objectrename_wgt(this);
@@ -1753,7 +1754,7 @@ void ModelWidget::changeOwner(void)
 
 	if(selected_objects[0]->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-										.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+                    .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
@@ -1877,7 +1878,7 @@ void ModelWidget::protectObject(void)
 				//Raise an error if the user try to modify a reserved object protection
 				if(this->selected_objects[0]->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-													.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+                          .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
@@ -1906,7 +1907,7 @@ void ModelWidget::protectObject(void)
 
 				if(object->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-													.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+                          .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
@@ -1966,7 +1967,7 @@ void ModelWidget::copyObjects(void)
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-											.arg(selected_objects[0]->getName()).arg(Utf8String::create(selected_objects[0]->getTypeName())),
+                      .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -2148,7 +2149,7 @@ void ModelWidget::pasteObjects(void)
           if(obj_type==OBJ_FUNCTION)
           {
             func=dynamic_cast<Function *>(object);
-            func->setName(PgModelerNS::generateUniqueName(func, (*db_model->getObjectList(OBJ_FUNCTION)), false, "_cp"));
+            func->setName(PgModelerNS::generateUniqueName(func, (*db_model->getObjectList(OBJ_FUNCTION)), false, QString("_cp")));
             copy_obj_name=func->getName();
             func->setName(orig_obj_names[object]);
           }
@@ -2162,9 +2163,9 @@ void ModelWidget::pasteObjects(void)
           else
           {
             if(tab_obj)
-              tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, "_cp"));
+              tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp")));
             else
-              object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, "_cp"));
+              object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp")));
 
             copy_obj_name=object->getName();
             object->setName(orig_obj_names[object]);
@@ -2470,7 +2471,7 @@ void ModelWidget::removeObjects(void)
 					//Raises an error if the user try to remove a reserved object
 					if(object->isSystemObject())
 						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-														.arg(object->getName()).arg(Utf8String::create(object->getTypeName())),
+                            .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
@@ -2685,7 +2686,7 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 					{
 						while(!obj_list.empty())
 						{
-							act=new QAction(Utf8String::create(obj_list.back()->getName()), menus[i]);
+              act=new QAction(/*Utf8String::create(*/obj_list.back()->getName(), menus[i]);
 							act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
 							act->setCheckable(true);
 
@@ -3014,7 +3015,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					submenu=new QMenu(&popup_menu);
 					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
 																	 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
-					submenu->setTitle(Utf8String::create(constr->getName()));
+          submenu->setTitle(/*Utf8String::create(*/constr->getName());
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
 					action->setIcon(QPixmap(QString(":/icones/icones/editar.png")));
@@ -3185,7 +3186,7 @@ void ModelWidget::createSequenceFromColumn(void)
 
         //Creates a sequence which name is like the ones auto generated by PostgreSQL
 		seq=new Sequence;
-		seq->setName(BaseObject::formatName(tab->getName() + "_" + col->getName() + "_seq"));
+    seq->setName(BaseObject::formatName(tab->getName() + QString("_") + col->getName() + QString("_seq")));
 		seq->setSchema(tab->getSchema());
 		seq->setDefaultValues(col->getType());
 
@@ -3221,7 +3222,7 @@ void ModelWidget::convertIntegerToSerial(void)
     Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
     Table *tab=dynamic_cast<Table *>(col->getParentTable());
     PgSQLType col_type=col->getType();
-    QRegExp regexp("^nextval\\(.+\\:\\:regclass\\)");
+    QRegExp regexp(QString("^nextval\\(.+\\:\\:regclass\\)"));
     QString serial_tp;
 
     if(!col_type.isIntegerType() || !col->getDefaultValue().contains(regexp))
@@ -3230,15 +3231,15 @@ void ModelWidget::convertIntegerToSerial(void)
 
     op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
 
-    if(col_type=="integer" || col_type=="int4")
-      serial_tp="serial";
-    else if(col_type=="smallint" || col_type=="int2")
-      serial_tp="smallserial";
+    if(col_type==QString("integer") || col_type==QString("int4"))
+      serial_tp=QString("serial");
+    else if(col_type==QString("smallint") || col_type==QString("int2"))
+      serial_tp=QString("smallserial");
     else
-      serial_tp="bigserial";
+      serial_tp=QString("bigserial");
 
     col->setType(PgSQLType(serial_tp));
-    col->setDefaultValue("");
+    col->setDefaultValue(QString());
 
     //Revalidate the relationships since the modified column can be a primary key
     if(tab->getPrimaryKey()->isColumnReferenced(col))

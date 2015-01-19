@@ -111,7 +111,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FINAL_FUNC));
 		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TRANSITION_FUNC));
 		sort_op_sel->setSelectedObject(aggregate->getSortOperator());
-		initial_cond_txt->setPlainText(Utf8String::create(aggregate->getInitialCondition()));
+    initial_cond_txt->setPlainText(/*Utf8String::create(*/aggregate->getInitialCondition());
 
 		input_types_tab->blockSignals(true);
 		count=aggregate->getDataTypeCount();
@@ -121,7 +121,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 			input_types_tab->addRow();
 			type=aggregate->getDataType(i);
 			input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), i);
-			input_types_tab->setCellText(Utf8String::create(*type),i,0);
+      input_types_tab->setCellText(/*Utf8String::create(*/*type,i,0);
 		}
 		input_types_tab->blockSignals(false);
 		input_types_tab->clearSelection();
@@ -136,7 +136,7 @@ void AggregateWidget::handleDataType(int linha)
 
 	type=input_type->getPgSQLType();
 	input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), linha);
-	input_types_tab->setCellText(Utf8String::create(*type),linha,0);
+  input_types_tab->setCellText(/*Utf8String::create(*/*type,linha,0);
 }
 
 void AggregateWidget::applyConfiguration(void)

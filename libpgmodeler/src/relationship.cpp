@@ -59,15 +59,15 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 				!this->getReferenceTable()->getPrimaryKey()) ||
 			 (rel_type==RELATIONSHIP_NN && (!src_tab->getPrimaryKey() || !dst_tab->getPrimaryKey())))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-											.arg(Utf8String::create(obj_name))
-											.arg(Utf8String::create(src_tab->getName(true)))
-											.arg(Utf8String::create(dst_tab->getName(true))),
+                      .arg(/*Utf8String::create(*/obj_name)
+                      .arg(/*Utf8String::create(*/src_tab->getName(true))
+                      .arg(/*Utf8String::create(*/dst_tab->getName(true)),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(rel_type==RELATIONSHIP_DEP && src_tab->getCopyTable())
 				throw Exception(Exception::getErrorMessage(ERR_COPY_REL_TAB_DEFINED)
-												.arg(Utf8String::create(src_tab->getName(true)))
-												.arg(Utf8String::create(dst_tab->getName(true)))
-												.arg(Utf8String::create(src_tab->getCopyTable()->getName(true))),
+                        .arg(/*Utf8String::create(*/src_tab->getName(true))
+                        .arg(/*Utf8String::create(*/dst_tab->getName(true))
+                        .arg(/*Utf8String::create(*/src_tab->getCopyTable()->getName(true)),
 												ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		copy_options=copy_op;
@@ -154,10 +154,10 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 
     if(pat_id > PK_COL_PATTERN)
 			throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
-											.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      .arg(/*Utf8String::create(*/this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!BaseObject::isValidName(aux_name))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NAME_PATTERN)
-											.arg(Utf8String::create(this->getName())),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      .arg(/*Utf8String::create(*/this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		name_patterns[pat_id]=pattern;
 		this->invalidated=true;
@@ -232,7 +232,7 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 		relationship type is identifier or self relationship */
 	if(!cols.empty() && (isSelfRelationship() || isIdentifier()))
 		throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
-										.arg(Utf8String::create(this->getName())),
+                    .arg(/*Utf8String::create(*/this->getName()),
 										ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->column_ids_pk_rel=cols;
@@ -480,7 +480,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	{
 		if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-											.arg(Utf8String::create(tab_obj->getName()))
+                      .arg(/*Utf8String::create(*/tab_obj->getName())
 											.arg(tab_obj->getTypeName()),
 											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		else
@@ -548,11 +548,11 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		//Raises an error if the column to be removed is referenced by a relationship constraint
 		if(refer)
 			throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-											.arg(Utf8String::create(col->getName()))
+                      .arg(/*Utf8String::create(*/col->getName())
 											.arg(col->getTypeName())
-											.arg(Utf8String::create(constr->getName()))
+                      .arg(/*Utf8String::create(*/constr->getName())
 											.arg(constr->getTypeName())
-											.arg(Utf8String::create(this->getName(true)))
+                      .arg(/*Utf8String::create(*/this->getName(true))
 											.arg(this->getTypeName()),
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -837,9 +837,9 @@ void Relationship::addColumnsRelGen(void)
 			relationship foreign key */
 			dst_type=dst_col->getType();
 
-			if(dst_type=="serial") dst_type="integer";
-			else if(dst_type=="bigserial") dst_type="bigint";
-			else if(dst_type=="smallserial") dst_type="smallint";
+      if(dst_type==QString("serial")) dst_type=QString("integer");
+      else if(dst_type==QString("bigserial")) dst_type=QString("bigint");
+      else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
 
 			/* This flag indicates that the column name is registered
 			in the other table column (duplication). This situation need
@@ -853,9 +853,9 @@ void Relationship::addColumnsRelGen(void)
 				src_col=src_tab->getColumn(i1);
 				src_type=src_col->getType();
 
-				if(src_type=="serial") src_type="integer";
-				else if(src_type=="bigserial") src_type="bigint";
-				else if(dst_type=="smallserial") dst_type="smallint";
+        if(src_type==QString("serial")) src_type=QString("integer");
+        else if(src_type==QString("bigserial")) src_type=QString("bigint");
+        else if(dst_type==QString("smallserial")) dst_type=QString("smallint");
 
 				//Check the duplication on the column names
 				duplic=(src_col->getName()==dst_col->getName());
@@ -962,12 +962,12 @@ void Relationship::addColumnsRelGen(void)
 					column->setParentRelationship(this);
 
 					//Converts the type
-					if(column->getType()=="serial")
-						column->setType(PgSQLType("integer"));
-					else if(column->getType()=="bigserial")
-						column->setType(PgSQLType("bigint"));
-					else if(column->getType()=="smallserial")
-						column->setType(PgSQLType("smallint"));
+          if(column->getType()==QString("serial"))
+            column->setType(PgSQLType(QString("integer")));
+          else if(column->getType()==QString("bigserial"))
+            column->setType(PgSQLType(QString("bigint")));
+          else if(column->getType()==QString("smallserial"))
+            column->setType(PgSQLType(QString("smallint")));
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
@@ -1396,9 +1396,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 		if((!src_pk && (rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)) ||
 			 (!src_pk && !dst_pk && rel_type==RELATIONSHIP_NN))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-											.arg(Utf8String::create(this->obj_name))
-											.arg(Utf8String::create(ref_tab->getName(true)))
-											.arg(Utf8String::create(recv_tab->getName(true))),
+                      .arg(/*Utf8String::create(*/this->obj_name)
+                      .arg(/*Utf8String::create(*/ref_tab->getName(true))
+                      .arg(/*Utf8String::create(*/recv_tab->getName(true)),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		count=pk->getColumnCount(Constraint::SOURCE_COLS);
@@ -1439,12 +1439,12 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 			column->setParentRelationship(this);
 
 			//Converting the serial like types
-			if(column->getType()=="serial")
-				column->setType(PgSQLType("integer"));
-			else if(column->getType()=="bigserial")
-				column->setType(PgSQLType("bigint"));
-			else if(column->getType()=="smallserial")
-				column->setType(PgSQLType("smallint"));
+      if(column->getType()==QString("serial"))
+        column->setType(PgSQLType(QString("integer")));
+      else if(column->getType()==QString("bigserial"))
+        column->setType(PgSQLType(QString("bigint")));
+      else if(column->getType()==QString("smallserial"))
+        column->setType(PgSQLType(QString("smallint")));
 
 			column->setName(name);
 			name=PgModelerNS::generateUniqueName(column, (*recv_tab->getObjectList(OBJ_COLUMN)));
@@ -1674,7 +1674,7 @@ void Relationship::addColumnsRelNn(void)
     {
       pk_col=new Column;
       pk_col->setName(generateObjectName(PK_COL_PATTERN));
-      pk_col->setType(PgSQLType("serial"));
+      pk_col->setType(PgSQLType(QString("serial")));
       pk_col->setAddedByLinking(true);
       table_relnn->addColumn(pk_col);
     }
@@ -2205,9 +2205,9 @@ bool Relationship::isInvalidated(void)
 								 (gen_col->getName()==col_name ||
 									gen_col->getName().contains(pk_col->getName())) &&
 								 (rel_pk_col->getType()==gen_col->getType() ||
-									(rel_pk_col->getType()=="serial" && gen_col->getType()=="integer") ||
-									(rel_pk_col->getType()=="bigserial" && gen_col->getType()=="bigint") ||
-									(rel_pk_col->getType()=="smallserial" && gen_col->getType()=="smallint")));
+                  (rel_pk_col->getType()==QString("serial") && gen_col->getType()==QString("integer")) ||
+                  (rel_pk_col->getType()==QString("bigserial") && gen_col->getType()==QString("bigint")) ||
+                  (rel_pk_col->getType()==QString("smallserial") && gen_col->getType()==QString("smallint"))));
 				}
 			}
 		}

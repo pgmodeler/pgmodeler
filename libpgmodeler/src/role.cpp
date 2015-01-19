@@ -72,7 +72,7 @@ void Role::addRole(unsigned role_type, Role *role)
 	//Raises an error if the role to be added is the 'this' role
 	else if(role && this==role)
 		throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
-										.arg(Utf8String::create(role->getName())),
+                    .arg(/*Utf8String::create(*/role->getName()),
 										ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -95,8 +95,8 @@ void Role::addRole(unsigned role_type, Role *role)
 			 (role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
 			 (role_type==ADMIN_ROLE && (role_adm || role_mem)))
 			throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-											.arg(Utf8String::create(role->getName()))
-											.arg(Utf8String::create(this->getName())),
+                      .arg(/*Utf8String::create(*/role->getName())
+                      .arg(/*Utf8String::create(*/this->getName()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Checking for redundant reference between roles.
@@ -125,8 +125,8 @@ void Role::addRole(unsigned role_type, Role *role)
 						(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
 						(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
 			throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-											.arg(Utf8String::create(this->getName()))
-											.arg(Utf8String::create(role->getName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/role->getName()),
 											ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{

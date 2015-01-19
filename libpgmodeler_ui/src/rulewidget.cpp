@@ -36,7 +36,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-		commands_tab->setHeaderIcon(QPixmap(":/icones/icones/codigosql.png"),0);
+    commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
@@ -106,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-		cond_expr_txt->setPlainText(Utf8String::create(rule->getConditionalExpression()));
+    cond_expr_txt->setPlainText(/*Utf8String::create(*/rule->getConditionalExpression());
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-			commands_tab->setCellText(Utf8String::create(rule->getCommand(i)),i,0);
+      commands_tab->setCellText(/*Utf8String::create(*/rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}

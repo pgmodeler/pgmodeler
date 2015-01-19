@@ -72,7 +72,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	for(unsigned i=0; i < cnt; i++)
 		zoom_cmb->addItem(QString("%1%").arg(values[i] * 100), QVariant(values[i]));
 
-	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
+  zoom_cmb->setCurrentText(QString("100%"));
 
   settings_tbw->setTabEnabled(1, false);
 }
@@ -100,7 +100,7 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	if(obj_type!=BASE_OBJECT)
     ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 	else
-    ico=QPixmap(":/icones/icones/msgbox_info.png");
+    ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 
   ico_lbl->setPixmap(ico);
   item=PgModelerUiNS::createOutputTreeItem(output_trw, text, ico, nullptr, false, false);
@@ -135,7 +135,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
 	show_grid_chk->setChecked(false);
   page_by_page_chk->setChecked(false);
 	connections_cmb->setCurrentIndex(0);
-	zoom_cmb->setCurrentIndex(zoom_cmb->findText("100%"));
+  zoom_cmb->setCurrentText(QString("100%"));
 }
 
 void ModelExportForm::exportModel(void)
@@ -221,12 +221,12 @@ void ModelExportForm::selectOutputFile(void)
 	if(export_to_file_rb->isChecked())
 	{
 		file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
-		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".sql");
+    file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".sql"));
 	}
 	else
 	{
 		file_dlg.setNameFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
-		file_dlg.selectFile(model->getDatabaseModel()->getName() + ".png");
+    file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".png"));
 	}
 
 
@@ -249,7 +249,7 @@ void ModelExportForm::selectOutputFile(void)
 void ModelExportForm::captureThreadError(Exception e)
 {
   QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()),
-                                                            QPixmap(":/icones/icones/msgbox_erro.png"), nullptr, true);
+                                                            QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr, true);
 
   if(!e.getExtraInfo().isEmpty())
     PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), QPixmap(), item, true);
@@ -268,7 +268,7 @@ void ModelExportForm::cancelExport(void)
 
 void ModelExportForm::handleExportCanceled(void)
 {
-  QPixmap ico=QPixmap(":/icones/icones/msgbox_alerta.png");
+  QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
   QString msg=trUtf8("Exporting process canceled by user!");
 
   finishExport(msg);
@@ -278,7 +278,7 @@ void ModelExportForm::handleExportCanceled(void)
 
 void ModelExportForm::handleExportFinished(void)
 {
-  QPixmap ico=QPixmap(":/icones/icones/msgbox_info.png");
+  QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
   QString msg=trUtf8("Exporting process sucessfuly ended!");
 
   finishExport(msg);

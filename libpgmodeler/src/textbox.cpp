@@ -50,7 +50,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(text_attributes[UNDERLINE_TXT])
       attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
 
-		if(text_color.name()!="#000000")
+    if(text_color.name()!=QString("#000000"))
 			attributes[ParsersAttributes::COLOR]=text_color.name();
 
 		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);

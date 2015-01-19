@@ -275,7 +275,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::PARAM_CONN_TIMEOUT).toInt());
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::PARAM_KERBEROS_SERVER));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)=="gssapi");
+    gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)==QString("gssapi"));
 		options_edt->setText(conn->getConnectionParam(Connection::PARAM_OPTIONS));
 
 		if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_DESABLE)

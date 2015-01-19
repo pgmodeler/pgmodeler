@@ -428,7 +428,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
           //Configure an auxiliary column with the same values of the original one
           (*aux_col)=(*col);
-          aux_col->setDefaultValue("");
+          aux_col->setDefaultValue(QString());
           //Setting the type as the alias of the serial type
           aux_col->setType(aux_col->getType().getAliasType());
           //Assigns the sequence to the column in order to configure the default value correctly

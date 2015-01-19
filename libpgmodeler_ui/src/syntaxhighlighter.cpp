@@ -18,7 +18,7 @@
 
 #include "syntaxhighlighter.h"
 
-QFont SyntaxHighlighter::default_font=QFont("DejaVu Sans Mono", 9);
+QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {

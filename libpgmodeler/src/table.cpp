@@ -361,8 +361,8 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					if(col && col->getType()==this)
 					{
 						throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_TABLE_TYPE)
-														.arg(Utf8String::create(col->getName()))
-														.arg(Utf8String::create(this->getName())),
+                            .arg(/*Utf8String::create(*/col->getName())
+                            .arg(/*Utf8String::create(*/this->getName()),
 														ERR_INV_COLUMN_TABLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_CONSTRAINT)
@@ -422,7 +422,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(Utf8String::create(obj->getName()))
+                        .arg(/*Utf8String::create(*/obj->getName())
 												.arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
@@ -627,14 +627,14 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-												.arg(Utf8String::create(column->getName()))
-												.arg(column->getTypeName())
-												.arg(Utf8String::create(refs[0]->getName()))
-						.arg(refs[0]->getTypeName())
-						.arg(Utf8String::create(this->getName(true)))
-						.arg(this->getTypeName()),
-						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
+                        .arg(/*Utf8String::create(*/column->getName())
+                        .arg(column->getTypeName())
+                        .arg(/*Utf8String::create(*/refs[0]->getName())
+                        .arg(refs[0]->getTypeName())
+                        .arg(/*Utf8String::create(*/this->getName(true))
+                        .arg(this->getTypeName()),
+                        ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			column->setParentTable(nullptr);

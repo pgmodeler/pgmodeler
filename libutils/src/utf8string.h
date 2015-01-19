@@ -37,7 +37,7 @@ class Utf8String {
 				\note if you have the following code:
 				\note <code>QString::fromUtf8(someStr.toStdString().c_str())</code>
 				\note You can easily replace it by:
-				\note  <code>Utf8String::create(someStr)</code> */
+        \note  <code>Utf8String::create(someStr)</code> */
 		static QString create(const QString &str) {
 			return QString::fromUtf8(str.toStdString().c_str(), qstrlen(str.toStdString().c_str()));
 		}

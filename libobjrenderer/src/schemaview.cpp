@@ -185,7 +185,7 @@ void SchemaView::configureObject(void)
 		}
 
     //Configures the schema name at the top
-    sch_name->setText(Utf8String::create(schema->getName()));
+    sch_name->setText(/*Utf8String::create(*/schema->getName());
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
@@ -227,7 +227,7 @@ void SchemaView::configureObject(void)
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-    this->setToolTip(Utf8String::create(schema->getName(true)) +  QString(" (") + schema->getTypeName() + QString(")"));
+    this->setToolTip(/*Utf8String::create(*/schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
 		sch_name->setToolTip(this->toolTip());
 
     this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,

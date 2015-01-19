@@ -65,11 +65,11 @@ void SequenceWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	else
 	{
 		cyclic_chk->setChecked(false);
-		start_edt->setText("1");
+    start_edt->setText(QString("1"));
 		maximum_edt->setText(Sequence::MAX_POSITIVE_VALUE);
-		minimum_edt->setText("0");
-		cache_edt->setText("1");
-		increment_edt->setText("1");
+    minimum_edt->setText(QString("0"));
+    cache_edt->setText(QString("1"));
+    increment_edt->setText(QString("1"));
 	}
 
 	BaseObjectWidget::setAttributes(model,op_list,sequence,schema);

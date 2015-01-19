@@ -29,7 +29,7 @@ Sequence::Sequence(void)
 {
 	obj_type=OBJ_SEQUENCE;
 	cycle=false;
-	setDefaultValues(PgSQLType("serial"));
+  setDefaultValues(PgSQLType(QString("serial")));
 	owner_col=nullptr;
 
 	attributes[ParsersAttributes::INCREMENT]=QString();
@@ -173,12 +173,12 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 {
 	QString min, max;
 
-	if(serial_type=="smallserial")
+  if(serial_type==QString("smallserial"))
 	{
 		min=MAX_SMALL_NEGATIVE_VALUE;
 		max=MAX_SMALL_POSITIVE_VALUE;
 	}
-	else if(serial_type=="bigserial")
+  else if(serial_type==QString("bigserial"))
 	{
 		min=MAX_BIG_NEGATIVE_VALUE;
 		max=MAX_BIG_POSITIVE_VALUE;
@@ -270,13 +270,13 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Gets the column with the passed name
@@ -285,7 +285,7 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 		//Raises an error if the column doesn't exists
 		if(!this->owner_col)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the onwer column was added by relationship and the column id is greater than
@@ -311,19 +311,19 @@ void Sequence::setOwnerColumn(Column *column)
 		//Raises an error when the column doesn't has a parent table
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OWNER_COL_SEQ)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_INV_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->owner_col=column;

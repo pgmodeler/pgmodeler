@@ -20,7 +20,7 @@
 #include "configurationform.h"
 
 #ifndef Q_OS_MAC
-	const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
+  const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
 #else
 	const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
 #endif
@@ -73,7 +73,7 @@ int ModelFixForm::exec(void)
 	QString pgmodeler_cli=qApp->applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + PGMODELER_CLI;
 
 	#ifdef Q_OS_WIN
-		pgmodeler_cli+=".exe";
+    pgmodeler_cli+=QString(".exe");
 	#endif
 
 	QFileInfo fi(pgmodeler_cli);
@@ -114,7 +114,7 @@ void ModelFixForm::fixModel(void)
   QString cmd=QString("\"%1\"");
 
 	#ifdef Q_OS_MAC
-		cmd+=" pgmodeler-cli";
+    cmd+=QString(" pgmodeler-cli");
 	#endif
 
   cmd+=QString(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
@@ -140,13 +140,13 @@ void ModelFixForm::selectFile(void)
     txt=pgmodeler_cli_edt;
 
     #ifdef Q_OS_WIN
-      cli_cmd+=".exe";
+      cli_cmd+=QString(".exe");
     #endif
 
     file_dlg.selectFile(cli_cmd);
     file_dlg.setFileMode(QFileDialog::ExistingFile);
     file_dlg.setNameFilter(trUtf8("pgModeler command line tool (%1)").arg(cli_cmd));
-    file_dlg.setWindowTitle("Browse pgmodeler-cli command...");
+    file_dlg.setWindowTitle(QString("Browse pgmodeler-cli command..."));
   }
   else
   {
@@ -155,7 +155,7 @@ void ModelFixForm::selectFile(void)
     else
       txt=output_file_edt;
 
-    file_dlg.setWindowTitle("Select model file...");
+    file_dlg.setWindowTitle(QString("Select model file..."));
   }
 
   file_dlg.exec();

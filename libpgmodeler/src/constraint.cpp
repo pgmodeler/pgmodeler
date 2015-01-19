@@ -148,7 +148,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	//Raises an error if the column is not allocated
 	if(!column)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)
@@ -548,7 +548,8 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		//Case the column is not allocated raises an error
 		if(!column)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-											.arg(Utf8String::create(this->getName())).arg(Utf8String::create(this->getTypeName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/this->getTypeName()),
 											ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element

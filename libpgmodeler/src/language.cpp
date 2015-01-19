@@ -37,7 +37,7 @@ void Language::setName(const QString &name)
 	//Raises an error if the user try to set an system reserved language name (C, SQL)
 	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
 										ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -59,30 +59,30 @@ void  Language::setFunction(Function *func, unsigned func_type)
 			/* The handler function must be written in C and have
 						 'language_handler' as return type */
 			((func_type==HANDLER_FUNC &&
-				func->getReturnType()=="language_handler" &&
+        func->getReturnType()==QString("language_handler") &&
 				func->getParameterCount()==0 &&
 				func->getLanguage()->getName()==(~lang)) ||
 			 /* The validator function must be written in C and return 'void' also
 							 must have only one parameter of the type 'oid' */
 			 (func_type==VALIDATOR_FUNC &&
-				func->getReturnType()=="void" &&
+        func->getReturnType()==QString("void") &&
 				func->getParameterCount()==1 &&
-				func->getParameter(0).getType() == "oid" &&
+        func->getParameter(0).getType() == QString("oid") &&
 				func->getLanguage()->getName()==(~lang)) ||
 			 /* The inline function must be written in C and return 'void' also
 							 must have only one parameter of the type 'internal' */
 			 (func_type==INLINE_FUNC &&
-				func->getReturnType()=="void" &&
+        func->getReturnType()==QString("void") &&
 				func->getParameterCount()==1 &&
-				func->getParameter(0).getType() == "internal" &&
+        func->getParameter(0).getType() == QString("internal") &&
 				func->getLanguage()->getName()==(~lang)) )))
 	{
 		setCodeInvalidated(functions[func_type] != func);
 		this->functions[func_type]=func;
 	}
 	//Raises an error in case the function return type doesn't matches the required by each rule
-	else if((func_type==HANDLER_FUNC && func->getReturnType()!="language_handler") ||
-					((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!="void"))
+  else if((func_type==HANDLER_FUNC && func->getReturnType()!=QString("language_handler")) ||
+          ((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!=QString("void")))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
 										.arg(this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
