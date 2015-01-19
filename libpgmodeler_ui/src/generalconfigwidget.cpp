@@ -44,33 +44,33 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
 	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
 
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]="";
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]="";
-  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]="";
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::FILE_ASSOCIATED]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=QString();
 
   simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
   simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -178,8 +178,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		portrait_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
 		landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
 
-		margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
-		custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(",");
+    margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
+    custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
 		left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
 		top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
@@ -244,14 +244,14 @@ void GeneralConfigWidget::saveConfiguration(void)
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
     unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -260,29 +260,29 @@ void GeneralConfigWidget::saveConfiguration(void)
                                                                                      .arg(bottom_marg->value());
 
     if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
-      config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]="";
+      config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString();
     else
       config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
 
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
 
     itr=config_params.begin();
     itr_end=config_params.end();
 
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]="";
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]="";
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]=QString();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 
     while(itr!=itr_end)
     {
@@ -400,27 +400,27 @@ void GeneralConfigWidget::updateFileAssociation(void)
 
 			 //Configures the path to the application logo
 			 exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-											GlobalAttributes::DIR_SEPARATOR + "pgmodeler_logo.png").absolutePath(),
+                      GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_logo.png")).absolutePath(),
 
 			 //Configures the path to the document logo
 			 dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-										 GlobalAttributes::DIR_SEPARATOR + "pgmodeler_dbm.png").absolutePath(),
+                     GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_dbm.png")).absolutePath(),
 
 			 //Path to directory that register mime types
-			 mime_db_dir=QDir::homePath() + "/.local/share/mime",
+       mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
 
 			 //Path to the file that associates apps to mimetypes
-			 mimeapps=QDir::homePath() + "/.local/share/applications/mimeapps.list",
+       mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
 
 			 base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
 										 GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR,
 
 			 //Files generated after update file association (application-dbm.xml and pgModeler.desktop)
-			 files[] = { QDir::homePath() + "/.local/share/applications/pgModeler.desktop",
-									 mime_db_dir + "/packages/application-dbm.xml" },
+       files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
+                   mime_db_dir + QString("/packages/application-dbm.xml") },
 
-			 schemas[] = { base_conf_dir + "desktop" + GlobalAttributes::SCHEMA_EXT,
-										 base_conf_dir + "application-dbm" + GlobalAttributes::SCHEMA_EXT };
+       schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SCHEMA_EXT,
+                     base_conf_dir + QString("application-dbm") + GlobalAttributes::SCHEMA_EXT };
 	QByteArray buf, buf_aux;
 	QFile out;
 
@@ -440,7 +440,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			{
 				schparser.loadFile(schemas[i]);
 				buf.append(schparser.getCodeDefinition(attribs));
-				QDir(".").mkpath(QFileInfo(files[i]).absolutePath());
+        QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				out.setFileName(files[i]);
 				out.open(QFile::WriteOnly);
@@ -482,15 +482,15 @@ void GeneralConfigWidget::updateFileAssociation(void)
 				{
 					//Remove any reference to application/dbm mime from file
 					str_aux=ts.readLine();
-					str_aux.replace(QRegExp("application/dbm*",Qt::CaseSensitive,QRegExp::Wildcard),"");
+          str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
 
 					if(!str_aux.isEmpty())
 					{
 						//Updates the application/dbm mime association
-						if(str_aux.contains("[Added Associations]"))
-							str_aux.append("\napplication/dbm=pgModeler.desktop;\n");
+            if(str_aux.contains(QString("[Added Associations]")))
+              str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
 						else
-							str_aux+="\n";
+              str_aux+=QString("\n");
 
 						buf_aux.append(str_aux);
 					}
@@ -503,7 +503,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 			}
 
 			//Update the mime database
-			QProcess::execute("update-mime-database", QStringList { mime_db_dir });
+      QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
 		}
 		catch(Exception &e)
 		{
@@ -513,25 +513,25 @@ void GeneralConfigWidget::updateFileAssociation(void)
  #else
 		#ifdef Q_OS_WIN
      //Checking if the .dbm registry key exists
-     QSettings dbm_ext("HKEY_CURRENT_USER\\Software\\Classes\\.dbm", QSettings::NativeFormat);
-     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + "\\pgmodeler.exe");
+     QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
+     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe");
 
      //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
-     if(dbm_ext.value("Default").toString().isEmpty())
+     if(dbm_ext.value(QString("Default")).toString().isEmpty())
        msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)
       {
         //Write the default value for .dbm registry key
-        dbm_ext.setValue("Default", "dbm_auto_file");
+        dbm_ext.setValue(QString("Default"), QString("dbm_auto_file");
         dbm_ext.sync();
 
         //Other registry keys values
         map<QString, QStringList> confs = {
-          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file", { "FriendlyTypeName" , "pgModeler Database Model" } },
-          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon", { "Default" , QString("%1,1").arg(exe_path) } },
-          { "\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command", { "Default" , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-          { "\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm", { "OpenWithList/a", "pgmodeler.exe", "OpenWithList/MRUList","a"} }
+          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
+          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
+          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+          { QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
         };
 
         map<QString, QStringList>::iterator itr;

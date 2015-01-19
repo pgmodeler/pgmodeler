@@ -118,7 +118,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void dropDatabase(void);
 
 		//! brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
+    void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
 
     //! brief Open the current database in a database explorer instance
     void browseDatabase(void);

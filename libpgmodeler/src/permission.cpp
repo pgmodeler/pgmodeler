@@ -18,7 +18,7 @@
 
 #include "permission.h"
 
-const QString Permission::priv_codes="rawdDxtCcTXU";
+const QString Permission::priv_codes=QString("rawdDxtCcTXU");
 
 Permission::Permission(BaseObject *obj)
 {
@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=OBJ_PERMISSION;
 	revoke=cascade=false;
 
-	attributes[ParsersAttributes::OBJECT]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::PARENT]="";
-	attributes[ParsersAttributes::GRANT_OP]="";
-	attributes[ParsersAttributes::ROLES]="";
-	attributes[ParsersAttributes::PRIVILEGES]="";
-	attributes[ParsersAttributes::CASCADE]="";
-	attributes[ParsersAttributes::PRIVILEGES_GOP]="";
+  attributes[ParsersAttributes::OBJECT]=QString();
+  attributes[ParsersAttributes::TYPE]=QString();
+  attributes[ParsersAttributes::PARENT]=QString();
+  attributes[ParsersAttributes::GRANT_OP]=QString();
+  attributes[ParsersAttributes::ROLES]=QString();
+  attributes[ParsersAttributes::PRIVILEGES]=QString();
+  attributes[ParsersAttributes::CASCADE]=QString();
+  attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
 }
 
 bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
@@ -366,7 +366,7 @@ void Permission::generatePermissionId(void)
 		for(i=0; i < count; i++)
 		{
 			str_aux+=QString("%1").arg(addr_vect[i]);
-			if(i < count-1) str_aux+=".";
+      if(i < count-1) str_aux+='.';
 		}
 
 	}
@@ -374,12 +374,12 @@ void Permission::generatePermissionId(void)
 		generates an identifier with zeros indicating that permission
 		is not linked directly to any role on the model */
 	else
-		str_aux+="000000";
+    str_aux+=QString("000000");
 
 	//Generates an unique name for the permission through md5 hash
 	hash.addData(QByteArray(str_aux.toStdString().c_str()));
 	str_aux=hash.result().toHex();
-	this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
+  this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)
@@ -398,8 +398,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+  attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
   attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -423,7 +423,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			else if(privileges[i])
 				attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
 			else
-				attributes[priv_vect[i]]="";
+        attributes[priv_vect[i]]=QString();
 		}
 	}
 	else
@@ -431,9 +431,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && !grant_option[i])
-				attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + ",";
+        attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QString(",");
 			else if(grant_option[i])
-				attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + ",";
+        attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QString(",");
 		}
 
 		attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
@@ -443,7 +443,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + ",";
+    attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QString(",");
 
 	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
@@ -459,17 +459,17 @@ QString Permission::getSignature(bool format)
     rol_names.push_back(role->getName(format));
 
   rol_names.sort();
-  signature="=" + getPermissionString();
+  signature=QString("=") + getPermissionString();
 
   if(roles.empty())
-    signature="PUBLIC" + signature;
+    signature=QString("PUBLIC") + signature;
   else
-    signature=rol_names.join(",") + signature;
+    signature=rol_names.join(',') + signature;
 
   if(revoke)
-    signature="revoke:" + signature;
+    signature=QString("revoke:") + signature;
   else
-    signature="grant:" + signature;
+    signature=QString("grant:") + signature;
 
   return(signature);
 }

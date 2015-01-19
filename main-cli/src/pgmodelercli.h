@@ -81,7 +81,7 @@ class PgModelerCLI: public QApplication {
 		float zoom;
 
 		//! \brief Option names constants
-		static QString INPUT,
+    static const QString INPUT,
 		OUTPUT,
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,

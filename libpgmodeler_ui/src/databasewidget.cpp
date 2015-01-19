@@ -86,8 +86,8 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		int idx;
 
 		connlim_sb->setValue(model->getConnectionLimit());
-		templatedb_edt->setText(Utf8String::create(model->getTemplateDB()));
-		author_edt->setText(Utf8String::create(model->getAuthor()));
+    templatedb_edt->setText(/*Utf8String::create(*/model->getTemplateDB());
+    author_edt->setText(/*Utf8String::create(*/model->getAuthor());
 
 		idx=encoding_cmb->findText(~model->getEncoding());
 		if(idx < 0) idx=0;
@@ -132,12 +132,12 @@ void DatabaseWidget::applyConfiguration(void)
     if(lccollate_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
     else
-      model->setLocalization(Collation::_LC_COLLATE, "");
+      model->setLocalization(Collation::_LC_COLLATE, QString());
 
     if(lcctype_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
     else
-      model->setLocalization(Collation::_LC_CTYPE, "");
+      model->setLocalization(Collation::_LC_CTYPE, QString());
 
     model->setDefaultObject(def_schema_sel->getSelectedObject(), OBJ_SCHEMA);
     model->setDefaultObject(def_owner_sel->getSelectedObject(), OBJ_ROLE);

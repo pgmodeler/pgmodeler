@@ -267,7 +267,7 @@ void ModelValidationHelper::validateModel(void)
 		Relationship *rel=nullptr;
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
-    QString name, signal_msg="`%1' `(%2)'";
+    QString name, signal_msg=QString("`%1' `(%2)'");
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -427,7 +427,7 @@ void ModelValidationHelper::validateModel(void)
 
 			//Emit a signal containing the validation progress
 			progress=((i+1)/static_cast<float>(count))*20;
-			emit s_progressUpdated(progress, "");
+      emit s_progressUpdated(progress, QString());
 			sleepThread(5);
 		}
 
@@ -455,8 +455,8 @@ void ModelValidationHelper::validateModel(void)
 					tab_obj=dynamic_cast<TableObject *>(table->getObject(i1, tab_obj_types[i]));
 
 					//Configures the full name of the object including the parent name
-					name=tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
-					name.remove("\"");
+          name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
+          name.remove('"');
 
 					//Trying to convert the object to constraint
 					constr=dynamic_cast<Constraint *>(tab_obj);
@@ -482,7 +482,7 @@ void ModelValidationHelper::validateModel(void)
 			itr=obj_list->begin();
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
-				dup_objects[(*itr)->getName(true).remove("\"")].push_back(*itr);
+        dup_objects[(*itr)->getName(true).remove('"')].push_back(*itr);
 				itr++;
 			}
 
@@ -505,7 +505,7 @@ void ModelValidationHelper::validateModel(void)
 
 			//Emit a signal containing the validation progress
 			progress=20 + ((i/static_cast<float>(dup_objects.size()))*20);
-			emit s_progressUpdated(progress, "");
+      emit s_progressUpdated(progress, QString());
 
 			i++; mitr++;
 			sleepThread(5);
@@ -644,5 +644,5 @@ void ModelValidationHelper::emitValidationFinished(void)
 	emit s_validationFinished();
 
 	progress=100;
-	emit s_progressUpdated(progress,"");
+  emit s_progressUpdated(progress,QString());
 }

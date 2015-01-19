@@ -94,7 +94,7 @@ class CodeCompletionWidget: public QWidget
 
 		/*! \brief Insert the objects of the vector into the name listing. The filter parameter is used to
 		insert only the object which names matches the filter */
-		void populateNameList(vector<BaseObject *> &objects, QString filter="");
+		void populateNameList(vector<BaseObject *> &objects, QString filter=QString());
 
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);
@@ -105,7 +105,7 @@ class CodeCompletionWidget: public QWidget
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-    void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords", bool persistent=false);
+    void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"), bool persistent=false);
 
 		//! brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
     void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);

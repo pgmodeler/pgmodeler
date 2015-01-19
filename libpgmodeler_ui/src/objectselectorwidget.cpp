@@ -93,37 +93,8 @@ BaseObject *ObjectSelectorWidget::getSelectedObject(void)
   return(selected_obj);
 }
 
-/*QString ObjectSelectorWidget::formatObjectName(BaseObject *object)
-{
-  ObjectType obj_type;
-  QString obj_name;
-
-  if(object)
-  {
-    obj_type=object->getObjectType();
-
-    if(obj_type==OBJ_FUNCTION)
-      obj_name=dynamic_cast<Function *>(object)->getSignature();
-    else if(obj_type==OBJ_OPERATOR)
-      obj_name=dynamic_cast<Operator *>(object)->getSignature();
-    else if(TableObject::isTableObject(obj_type))
-    {
-      BaseObject *tab_pai=dynamic_cast<TableObject *>(object)->getParentTable();
-      if(tab_pai)
-        obj_name+=tab_pai->getName(true) + ".";
-
-      obj_name+=object->getName();
-    }
-    else
-      obj_name=object->getName(true);
-  }
-
-  return(obj_name);
-} */
-
 QString ObjectSelectorWidget::getSelectedObjectName(void)
 {
-  //return(formatObjectName(selected_obj));
   return(selected_obj->getSignature());
 }
 
@@ -138,7 +109,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
-    obj_name_txt->setPlainText(Utf8String::create(selected_obj->getSignature()));
+    obj_name_txt->setPlainText(/*Utf8String::create(*/selected_obj->getSignature());
 		emit s_objectSelected();
 	}
 	else

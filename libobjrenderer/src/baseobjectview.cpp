@@ -246,7 +246,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 					else if(elem==ParsersAttributes::OBJECT)
 					{
-						list=attribs[ParsersAttributes::FILL_COLOR].split(",");
+            list=attribs[ParsersAttributes::FILL_COLOR].split(',');
 						colors=new QColor[3];
 						colors[0]=(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
 						colors[1]=(list.size()==2 ? QColor(list[1]) : colors[0]);
@@ -558,8 +558,9 @@ void BaseObjectView::__configureObject(void)
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-		this->setToolTip(Utf8String::create(graph_obj->getName(true)) +
-                     " (" + graph_obj->getTypeName() + ") " + QString("\nId: %1").arg(graph_obj->getObjectId()));
+    this->setToolTip(/*Utf8String::create(*/graph_obj->getName(true) +
+                     QString(" (") + graph_obj->getTypeName() +
+                     QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}

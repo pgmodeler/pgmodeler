@@ -88,7 +88,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 	{
 		type=column->getType();
 		notnull_chk->setChecked(column->isNotNull());
-		def_value_txt->setPlainText(Utf8String::create(column->getDefaultValue()));
+    def_value_txt->setPlainText(/*Utf8String::create(*/column->getDefaultValue());
 
     if(column->getSequence())
     {

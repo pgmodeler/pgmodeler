@@ -19,40 +19,35 @@
 #include "pgmodelercli.h"
 
 QTextStream PgModelerCLI::out(stdout);
-QString PgModelerCLI::INPUT="--input";
-QString PgModelerCLI::OUTPUT="--output";
-QString PgModelerCLI::EXPORT_TO_FILE="--export-to-file";
-QString PgModelerCLI::EXPORT_TO_PNG="--export-to-png";
-QString PgModelerCLI::EXPORT_TO_DBMS="--export-to-dbms";
-QString PgModelerCLI::DROP_DATABASE="--drop-database";
-QString PgModelerCLI::DROP_OBJECTS="--drop-objects";
-QString PgModelerCLI::PGSQL_VER="--pgsql-ver";
-QString PgModelerCLI::HELP="--help";
-QString PgModelerCLI::SHOW_GRID="--show-grid";
-QString PgModelerCLI::SHOW_DELIMITERS="--show-delimiters";
-QString PgModelerCLI::PAGE_BY_PAGE="--page-by-page";
-QString PgModelerCLI::IGNORE_DUPLICATES="--ignore-duplicates";
-QString PgModelerCLI::CONN_ALIAS="--conn-alias";
-QString PgModelerCLI::HOST="--host";
-QString PgModelerCLI::PORT="--port";
-QString PgModelerCLI::USER="--user";
-QString PgModelerCLI::PASSWD="--passwd";
-QString PgModelerCLI::INITIAL_DB="--initial-db";
-QString PgModelerCLI::SILENT="--silent";
-QString PgModelerCLI::LIST_CONNS="--list-conns";
-QString PgModelerCLI::SIMULATE="--simulate";
-QString PgModelerCLI::FIX_MODEL="--fix-model";
-QString PgModelerCLI::FIX_TRIES="--fix-tries";
-QString PgModelerCLI::ZOOM_FACTOR="--zoom";
-QString PgModelerCLI::USE_TMP_NAMES="--use-tmp-names";
+const QString PgModelerCLI::INPUT=QString("--input");
+const QString PgModelerCLI::OUTPUT=QString("--output");
+const QString PgModelerCLI::EXPORT_TO_FILE=QString("--export-to-file");
+const QString PgModelerCLI::EXPORT_TO_PNG=QString("--export-to-png");
+const QString PgModelerCLI::EXPORT_TO_DBMS=QString("--export-to-dbms");
+const QString PgModelerCLI::DROP_DATABASE=QString("--drop-database");
+const QString PgModelerCLI::DROP_OBJECTS=QString("--drop-objects");
+const QString PgModelerCLI::PGSQL_VER=QString("--pgsql-ver");
+const QString PgModelerCLI::HELP=QString("--help");
+const QString PgModelerCLI::SHOW_GRID=QString("--show-grid");
+const QString PgModelerCLI::SHOW_DELIMITERS=QString("--show-delimiters");
+const QString PgModelerCLI::PAGE_BY_PAGE=QString("--page-by-page");
+const QString PgModelerCLI::IGNORE_DUPLICATES=QString("--ignore-duplicates");
+const QString PgModelerCLI::CONN_ALIAS=QString("--conn-alias");
+const QString PgModelerCLI::HOST=QString("--host");
+const QString PgModelerCLI::PORT=QString("--port");
+const QString PgModelerCLI::USER=QString("--user");
+const QString PgModelerCLI::PASSWD=QString("--passwd");
+const QString PgModelerCLI::INITIAL_DB=QString("--initial-db");
+const QString PgModelerCLI::SILENT=QString("--silent");
+const QString PgModelerCLI::LIST_CONNS=QString("--list-conns");
+const QString PgModelerCLI::SIMULATE=QString("--simulate");
+const QString PgModelerCLI::FIX_MODEL=QString("--fix-model");
+const QString PgModelerCLI::FIX_TRIES=QString("--fix-tries");
+const QString PgModelerCLI::ZOOM_FACTOR=QString("--zoom");
+const QString PgModelerCLI::USE_TMP_NAMES=QString("--use-tmp-names");
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
-  setOrganizationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setOrganizationDomain(GlobalAttributes::PGMODELER_URI);
-  setApplicationName(GlobalAttributes::PGMODELER_APP_NAME);
-  setApplicationVersion(GlobalAttributes::PGMODELER_VERSION);
-
 	try
 	{
 		QString op, value;
@@ -77,7 +72,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				if(op[0]=='-')
 				{
 					value.clear();
-					eq_pos=op.indexOf("=");
+          eq_pos=op.indexOf('=');
 
 					// if the option has a = attached strip the string, assuming as value the	right part of it
 					if(eq_pos >= 0)
@@ -198,32 +193,32 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[ZOOM_FACTOR]=true;
   long_opts[USE_TMP_NAMES]=false;
 
-	short_opts[INPUT]="-i";
-	short_opts[OUTPUT]="-o";
-	short_opts[EXPORT_TO_FILE]="-f";
-	short_opts[EXPORT_TO_PNG]="-p";
-	short_opts[EXPORT_TO_DBMS]="-d";
-	short_opts[DROP_DATABASE]="-T";
-  short_opts[DROP_OBJECTS]="-J";
-	short_opts[PGSQL_VER]="-v";
-	short_opts[HELP]="-h";
-	short_opts[SHOW_GRID]="-g";
-	short_opts[SHOW_DELIMITERS]="-l";
-  short_opts[PAGE_BY_PAGE]="-b";
-	short_opts[IGNORE_DUPLICATES]="-I";
-	short_opts[CONN_ALIAS]="-c";
-	short_opts[HOST]="-H";
-	short_opts[PORT]="-P";
-	short_opts[USER]="-u";
-	short_opts[PASSWD]="-w";
-	short_opts[INITIAL_DB]="-D";
-	short_opts[SILENT]="-s";
-	short_opts[LIST_CONNS]="-L";
-	short_opts[SIMULATE]="-S";
-	short_opts[FIX_MODEL]="-F";
-	short_opts[FIX_TRIES]="-t";
-	short_opts[ZOOM_FACTOR]="-z";
-  short_opts[USE_TMP_NAMES]="-n";
+  short_opts[INPUT]=QString("-i");
+  short_opts[OUTPUT]=QString("-o");
+  short_opts[EXPORT_TO_FILE]=QString("-f");
+  short_opts[EXPORT_TO_PNG]=QString("-p");
+  short_opts[EXPORT_TO_DBMS]=QString("-d");
+  short_opts[DROP_DATABASE]=QString("-T");
+  short_opts[DROP_OBJECTS]=QString("-J");
+  short_opts[PGSQL_VER]=QString("-v");
+  short_opts[HELP]=QString("-h");
+  short_opts[SHOW_GRID]=QString("-g");
+  short_opts[SHOW_DELIMITERS]=QString("-l");
+  short_opts[PAGE_BY_PAGE]=QString("-b");
+  short_opts[IGNORE_DUPLICATES]=QString("-I");
+  short_opts[CONN_ALIAS]=QString("-c");
+  short_opts[HOST]=QString("-H");
+  short_opts[PORT]=QString("-P");
+  short_opts[USER]=QString("-u");
+  short_opts[PASSWD]=QString("-w");
+  short_opts[INITIAL_DB]=QString("-D");
+  short_opts[SILENT]=QString("-s");
+  short_opts[LIST_CONNS]=QString("-L");
+  short_opts[SIMULATE]=QString("-S");
+  short_opts[FIX_MODEL]=QString("-F");
+  short_opts[FIX_TRIES]=QString("-t");
+  short_opts[ZOOM_FACTOR]=QString("-z");
+  short_opts[USE_TMP_NAMES]=QString("-n");
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -246,7 +241,7 @@ void PgModelerCLI::showMenu(void)
 {
 	out << endl;
 	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl;
-	out << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
+  out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
   out << trUtf8("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
 	out << endl;
@@ -318,7 +313,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			out << endl << trUtf8("Available connections (alias : conn. string)") << endl;
 			while(itr != connections.end())
 			{
-				out << "[" << id++ <<  "] " << itr->first << " : " << itr->second->getConnectionString() << endl;
+        out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") << itr->second->getConnectionString() << endl;
 				itr++;
 			}
 			out << endl;
@@ -374,7 +369,7 @@ int PgModelerCLI::exec(void)
     {
 			if(!silent_mode)
 			{
-				out << endl << "pgModeler " << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
+        out << endl << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
 
 				if(parsed_opts.count(FIX_MODEL))
 					out << trUtf8("Starting model fixing...") << endl;
@@ -454,7 +449,7 @@ int PgModelerCLI::exec(void)
 void PgModelerCLI::updateProgress(int progress, QString msg)
 {
 	if(progress > 0)
-		out << msg <<  "(" << progress << "%)" << endl;
+    out << msg <<  QString("(") << progress << QString("%)") << endl;
 	else
 		out << msg << endl;
 }
@@ -530,7 +525,7 @@ void PgModelerCLI::extractObjectXML(void)
 	{
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
-		buf.remove(0, buf.indexOf("\n"));
+    buf.remove(0, buf.indexOf(QString("\n")));
 		buf.remove(QString("<\\%1>").arg(ParsersAttributes::DB_MODEL));
 		ts.setString(&buf);
 
@@ -539,13 +534,13 @@ void PgModelerCLI::extractObjectXML(void)
 		{
 			lin=ts.readLine();
 
-			if(is_rel && (((short_tag && lin.contains("/>")) ||
-					 (lin.contains("[a-z]+") && !containsRelAttributes(lin)))))
+      if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
+           (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
 			else
 			{
 				//If the line contains an objects open tag
-				if((lin.startsWith('<') || lin.startsWith("\n<")) && !open_tag)
+        if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
         {
 					//Check the flag indicating an open tag
 					open_tag=true;
@@ -556,10 +551,10 @@ void PgModelerCLI::extractObjectXML(void)
 
 					//Configures the end tag with the same word extracted from open tag
 					end_tag=lin.mid(start, end-start+1).trimmed();
-					end_tag.replace("<","</");
+          end_tag.replace(QString("<"),QString("</"));
 
 					if(!end_tag.endsWith('>'))
-						end_tag+=">";
+            end_tag+=QString(">");
 
 					/* Checking if the line start a relationship. Relationships are treated
 					a little different because they can be empty <relationship attribs /> or
@@ -572,11 +567,11 @@ void PgModelerCLI::extractObjectXML(void)
 
             while(!end_extract_rel && !ts.atEnd())
             {
-              def_xml+=lin + "\n";
+              def_xml+=lin + QString("\n");
               lin=lin.trimmed();
 
               //Checking if the current line is the end of a short-tag relationship
-              if(!short_tag && !lin.startsWith("<") && lin.endsWith("/>"))
+              if(!short_tag && !lin.startsWith('<') && lin.endsWith(QString("/>")))
                 short_tag=true;
 
               end_extract_rel=((!short_tag && lin.contains(end_tag)) || short_tag);
@@ -593,13 +588,13 @@ void PgModelerCLI::extractObjectXML(void)
 			}
 
       if(!is_rel && !lin.isEmpty())
-        def_xml+=lin + "\n";
+        def_xml+=lin + QString("\n");
 
 			//If the iteration reached the end of the object's definition
 			if(open_tag && close_tag)
 			{
 				//Pushes the extracted definition to the list (only if not empty)
-				if(def_xml!="\n")
+        if(def_xml!=QString("\n"))
 					objs_xml.push_back(def_xml);
 
 				def_xml.clear();
@@ -729,7 +724,8 @@ void PgModelerCLI::recreateObjects(void)
 
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
-  QString tag="<%1", end_tag="</%1", att_regexp="(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")"; //"(%1)( )*(=)(\")(.)*(\")";
+  QString tag=QString("<%1"), end_tag=QString("</%1"),
+      att_regexp=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")");
 
 	//Placing objects <index>, <rule>, <trigger> outside of <table>
 	if(!obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
@@ -738,8 +734,8 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		int start_idx=-1, end_idx=-1, len=0;
 		ObjectType obj_types[3]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX  };
 		QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
-				name_attr="name=\"",
-				sch_name_attr=tag.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + " " + name_attr;
+        name_attr=QString("name=\""),
+        sch_name_attr=tag.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString(" ") + name_attr;
 
 		//Extracting the table's name
 		start_idx=obj_xml.indexOf(name_attr);
@@ -748,7 +744,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
 		//Extracting the table's schema name
 		start_idx=obj_xml.indexOf(sch_name_attr);
-		end_idx=obj_xml.indexOf("\"", start_idx + sch_name_attr.size());
+    end_idx=obj_xml.indexOf('"', start_idx + sch_name_attr.size());
 		sch_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(sch_name_attr);
 
 		//Configuring the table=[name] attribute to be included on rule objects
@@ -757,21 +753,21 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		for(unsigned idx=0; idx < 3; idx++)
 		{
 			curr_tag=tag.arg(BaseObject::getSchemaName(obj_types[idx]));
-			curr_end_tag=end_tag.arg(BaseObject::getSchemaName(obj_types[idx])) + ">";
+      curr_end_tag=end_tag.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
 			start_idx=obj_xml.indexOf(curr_tag);
 
 			while(start_idx >=0)
 			{
 				end_idx=obj_xml.indexOf(curr_end_tag);
 				len=(end_idx - start_idx) + curr_end_tag.size();
-				def=obj_xml.mid(start_idx, len) + "\n\n";
+        def=obj_xml.mid(start_idx, len) + QString("\n\n");
 				obj_xml.remove(start_idx, len);
 
 				//If the object is a rule include the table attribute
 				if(def.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_RULE))))
 				{
 					start_idx=def.indexOf('>');
-					def.replace(start_idx, 1, " " + tab_name + ">");
+          def.replace(start_idx, 1, QString(" ") + tab_name + QString(">"));
 				}
 
 				start_idx=obj_xml.indexOf(curr_tag);
@@ -785,15 +781,15 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
 	//Remove recheck attribute from <element> tags.
 	if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
-		obj_xml.remove(QRegExp(att_regexp.arg("recheck")));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_OPERATOR))))
 	{
-		obj_xml.remove("greater-op");
-		obj_xml.remove("less-op");
-		obj_xml.remove("sort-op");
-		obj_xml.remove("sort2-op");
+    obj_xml.remove(QString("greater-op"));
+    obj_xml.remove(QString("less-op"));
+    obj_xml.remove(QString("sort-op"));
+    obj_xml.remove(QString("sort2-op"));
 	}
 
 	//Replacing attribute owner by onwer-col for sequences
@@ -802,10 +798,10 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
 	//Remove sysid attribute from <role> tags.
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_ROLE))))
-		obj_xml.remove(QRegExp(att_regexp.arg("sysid")));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("sysid"))));
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
-	if(obj_xml.contains(tag.arg("usertype")))
+  if(obj_xml.contains(tag.arg(QString("usertype"))))
 	{
 		obj_xml.replace(tag.arg(ParsersAttributes::PARAMETER), tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 		obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
@@ -814,14 +810,14 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
 	{
 		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
-		obj_xml.remove(QRegExp(att_regexp.arg("auto-sufix")));
-		obj_xml.remove(QRegExp(att_regexp.arg("src-sufix")));
-		obj_xml.remove(QRegExp(att_regexp.arg("dst-sufix")));
-    obj_xml.remove(QRegExp(att_regexp.arg("col-indexes")));
-    obj_xml.remove(QRegExp(att_regexp.arg("constr-indexes")));
-    obj_xml.remove(QRegExp(att_regexp.arg("attrib-indexes")));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("auto-sufix"))));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("src-sufix"))));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("dst-sufix"))));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("col-indexes"))));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("constr-indexes"))));
+    obj_xml.remove(QRegExp(att_regexp.arg(QString("attrib-indexes"))));
 
-		obj_xml.replace("line-color", ParsersAttributes::CUSTOM_COLOR);
+    obj_xml.replace(QString("line-color"), ParsersAttributes::CUSTOM_COLOR);
 	}
 
   //Renaming the tag <condition> to <predicate> on indexes
@@ -836,10 +832,10 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
 
 	//Renaming the tag <grant> to <permission>
-	if(obj_xml.contains(tag.arg("grant")))
+  if(obj_xml.contains(tag.arg(QString("grant"))))
 	{
-		obj_xml.replace(tag.arg("grant"), tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
-		obj_xml.replace(end_tag.arg("grant"), end_tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+    obj_xml.replace(tag.arg(QString("grant")), tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+    obj_xml.replace(end_tag.arg(QString("grant")), end_tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
 	}
 }
 

@@ -23,11 +23,11 @@ OperatorClass::OperatorClass(void)
 	obj_type=OBJ_OPCLASS;
 	family=nullptr;
 	is_default=false;
-	attributes[ParsersAttributes::FAMILY]="";
-	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::INDEX_TYPE]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::DEFAULT]="";
+	attributes[ParsersAttributes::FAMILY]=QString();
+	attributes[ParsersAttributes::ELEMENTS]=QString();
+	attributes[ParsersAttributes::INDEX_TYPE]=QString();
+	attributes[ParsersAttributes::TYPE]=QString();
+	attributes[ParsersAttributes::DEFAULT]=QString();
 }
 
 OperatorClass::~OperatorClass(void)
@@ -75,7 +75,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 	{
 		str_elems+=elements[i].getCodeDefinition(def_type);
 		if(def_type==SchemaParser::SQL_DEFINITION &&
-			 i < count-1) str_elems+=",\n";
+       i < count-1) str_elems+=QString(",\n");
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elems;
@@ -173,7 +173,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setElementsAttribute(def_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::TYPE]=(*data_type);

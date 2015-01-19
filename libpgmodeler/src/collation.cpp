@@ -23,10 +23,10 @@ Collation::Collation(void)
 	obj_type=OBJ_COLLATION;
 	encoding=BaseType::null;
 
-	attributes[ParsersAttributes::_LC_CTYPE_]="";
-	attributes[ParsersAttributes::_LC_COLLATE_]="";
-	attributes[ParsersAttributes::LOCALE]="";
-	attributes[ParsersAttributes::ENCODING]="";
+	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
+	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
+	attributes[ParsersAttributes::LOCALE]=QString();
+	attributes[ParsersAttributes::ENCODING]=QString();
 }
 
 void Collation::setLocale(const QString &locale)
@@ -61,15 +61,15 @@ void Collation::setCollation(BaseObject *collation)
 {
 	if(collation==this)
 		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
-										.arg(Utf8String::create(this->getName(true)))
-										.arg(Utf8String::create(this->getTypeName())),
+                    .arg(/*Utf8String::create(*/this->getName(true))
+                    .arg(/*Utf8String::create(*/this->getTypeName()),
 										ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setCollation(collation);
 
 	encoding=BaseType::null;
 	locale.clear();
-	localization[0]=localization[1]="";
+	localization[0]=localization[1]=QString();
 }
 
 QString Collation::getLocale(void)

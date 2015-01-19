@@ -110,7 +110,7 @@ class ModelExportHelper: public QObject {
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
         This form receive a database model as input and the sql code to be exported will be generated from it.
         \note The params drop_db and drop_objs can't be true at the same time. */
-    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
+    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
                                bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
@@ -132,7 +132,7 @@ class ModelExportHelper: public QObject {
 		version is optional, since the helper identifies the version from the server. The boolean parameter
     make the helper to ignore object duplicity errors.
     \note The params drop_db and drop_objs can't be true at the same time. */
-    void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
+    void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
                       bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
@@ -142,7 +142,7 @@ class ModelExportHelper: public QObject {
 
   signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd="");
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString());
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished(void);

@@ -13,7 +13,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		src_object_sel=new ObjectSelectorWidget(types, true, this);
 		dst_object_sel=new ObjectSelectorWidget(types, true, this);
 
-		parent_form.setWindowTitle("Change objects creation order");
+    parent_form.setWindowTitle(QString("Change objects creation order"));
 		parent_form.generalwidget_wgt->insertWidget(0, this);
 		parent_form.generalwidget_wgt->setCurrentIndex(0);
 		parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);

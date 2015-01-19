@@ -26,9 +26,6 @@
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-
-  import_thread=new QThread(this);
-	import_helper.moveToThread(import_thread);
 	model_wgt=nullptr;
 
   rand_color_ht=new HintTextWidget(rand_color_hint, this);
@@ -63,15 +60,52 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
-	connect(&import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
-	connect(&import_helper, SIGNAL(s_importCanceled(void)), this, SLOT(handleImportCanceled(void)));
-	connect(&import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(&import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 
-  connect(import_thread, SIGNAL(started(void)), &import_helper, SLOT(importDatabase(void)));
-	connect(import_thread, &QThread::started, [=](){ import_thread->setPriority(QThread::HighPriority); });
+  connect(database_cmb, &QComboBox::currentTextChanged,
+          [=]() {
+                  if(database_cmb->currentIndex()==0)
+                    db_objects_tw->clear();
+
+                  import_btn->setEnabled(database_cmb->currentIndex() > 0);
+                  objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
+                });
+
+  objs_parent_wgt->setEnabled(false);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
+  createThread();
+}
+
+DatabaseImportForm::~DatabaseImportForm(void)
+{
+  destroyThread();
+}
+
+void DatabaseImportForm::createThread(void)
+{
+  import_thread=new QThread;
+  import_helper=new DatabaseImportHelper;
+  import_helper->moveToThread(import_thread);
+
+  connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
+  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
+}
+
+void DatabaseImportForm::destroyThread(void)
+{
+  if(import_thread)
+  {
+    import_thread->quit();
+    import_thread->wait();
+    delete(import_thread);
+    import_thread=nullptr;
+    delete(import_helper);
+    import_helper=nullptr;
+  }
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -85,7 +119,7 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 	if(obj_type!=BASE_OBJECT)
     ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 	else
-    ico=QPixmap(":/icones/icones/msgbox_info.png");
+    ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 
   ico_lbl->setPixmap(ico);
   PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
@@ -122,7 +156,7 @@ void DatabaseImportForm::importDatabase(void)
 	try
 	{
 		map<ObjectType, vector<unsigned>> obj_oids;
-		map<unsigned, vector<unsigned>> col_oids;
+		map<unsigned, vector<unsigned>> col_oids;   
 
     output_trw->clear();
     settings_tbw->setTabEnabled(1, true);
@@ -134,16 +168,15 @@ void DatabaseImportForm::importDatabase(void)
 		model_wgt=new ModelWidget;
 		model_wgt->getDatabaseModel()->createSystemObjects(true);
 
-		import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
+    import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 
-		import_helper.setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
+    import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
-		database_gb->setEnabled(false);
-		options_gb->setEnabled(false);
+    options_gb->setEnabled(false);
 	}
 	catch(Exception &e)
 	{	
@@ -233,26 +266,20 @@ void DatabaseImportForm::listObjects(void)
       Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
       //Set the working database on import helper
-      import_helper.closeConnection();
-      import_helper.setConnection(*conn);
-      import_helper.setCurrentDatabase(database_cmb->currentText());
-			import_helper.setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
+      import_helper->closeConnection();
+      import_helper->setConnection(*conn);
+      import_helper->setCurrentDatabase(database_cmb->currentText());
+      import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																		 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
 
       //List the objects using the static helper method
-      DatabaseImportForm::listObjects(import_helper, db_objects_tw, true, true, false);
+      DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);
 		}
 
 		//Enable the control buttons only when objects were retrieved
 		enable=(db_objects_tw->topLevelItemCount() > 0);
-		select_all_tb->setEnabled(enable);
-		clear_all_tb->setEnabled(enable);
-		expand_all_tb->setEnabled(enable);
-		collapse_all_tb->setEnabled(enable);
-		filter_lbl->setEnabled(enable);
-		filter_edt->setEnabled(enable);
-		by_oid_chk->setEnabled(enable);
+    objs_parent_wgt->setEnabled(enable);
 		import_btn->setEnabled(hasCheckedItems());
 	}
 	catch(Exception &e)
@@ -268,40 +295,19 @@ void DatabaseImportForm::listDatabases(void)
     Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
     //Close a previous connection opened by the import helper
-    import_helper.closeConnection();
+    import_helper->closeConnection();
 
     //List the available databases using the selected connection
-    import_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(import_helper, database_cmb);
+    import_helper->setConnection(*conn);
+    DatabaseImportForm::listDatabases(*import_helper, database_cmb);
 
     db_objects_tw->clear();
-    database_gb->setEnabled(database_cmb->count() > 1);
-    database_cmb->setEnabled(database_gb->isEnabled());
-    db_objects_tw->setEnabled(database_gb->isEnabled());
+    database_cmb->setEnabled(database_cmb->count() > 1);
   }
   catch(Exception &e)
   {
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
-}
-
-void DatabaseImportForm::showEvent(QShowEvent *)
-{
-	debug_mode_chk->setChecked(false);
-	ignore_errors_chk->setChecked(false);
-	import_sys_objs_chk->blockSignals(true);
-	import_sys_objs_chk->setChecked(false);
-	import_sys_objs_chk->blockSignals(false);
-	obj_spacing_sb->setValue(50);
-	origin_sb->setValue(50);
-	tabs_per_row_sb->setValue(5);
-	sch_per_row_sb->setValue(3);
-	database_cmb->clear();
-	db_objects_tw->clear();
-	database_cmb->setEnabled(false);
-	db_objects_tw->setEnabled(false);
-
-  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
 }
 
 void DatabaseImportForm::closeEvent(QCloseEvent *event)
@@ -315,7 +321,7 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 		if(!model_wgt)
 			this->setResult(QDialog::Rejected);
 
-    import_helper.closeConnection();
+    import_helper->closeConnection();
 	}
 }
 
@@ -327,7 +333,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
   destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
 
-  ico=QPixmap(":/icones/icones/msgbox_erro.png");
+  ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
   ico_lbl->setPixmap(ico);
 
   item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), ico);
@@ -335,6 +341,13 @@ void DatabaseImportForm::captureThreadError(Exception e)
   if(!e.getExtraInfo().isEmpty())
    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), ico, item, true);
 
+  //Destroy the current import thread and helper to avoid reuse
+  destroyThread();
+
+  //Recreates a new import thread and helper to force user to reconfigure the import
+  createThread();
+
+  database_cmb->setCurrentIndex(0);
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
@@ -389,8 +402,9 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 
 void DatabaseImportForm::cancelImport(void)
 {
-	import_helper.cancelImport();
+  import_helper->cancelImport();
 	cancel_btn->setEnabled(false);
+  database_cmb->setCurrentIndex(0);
 }
 
 void DatabaseImportForm::destroyModelWidget(void)
@@ -404,7 +418,7 @@ void DatabaseImportForm::destroyModelWidget(void)
 
 void DatabaseImportForm::handleImportCanceled(void)
 {
-  QPixmap ico=QPixmap(":/icones/icones/msgbox_alerta.png");
+  QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
   QString msg=trUtf8("Importing process canceled by user!");
 
 	destroyModelWidget();
@@ -427,9 +441,9 @@ void DatabaseImportForm::handleImportFinished(Exception e)
   model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
-  ico_lbl->setPixmap(QPixmap(":/icones/icones/msgbox_info.png"));
+  ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
-  import_helper.closeConnection();
+  import_helper->closeConnection();
   import_thread->quit();
   import_thread->wait();
 
@@ -438,13 +452,12 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 void DatabaseImportForm::finishImport(const QString &msg)
 {
-	if(import_thread->isRunning())
-		import_thread->quit();
+  if(import_thread->isRunning())
+    import_thread->quit();
 
 	import_btn->setEnabled(true);
 	cancel_btn->setEnabled(false);
 	options_gb->setEnabled(true);
-	database_gb->setEnabled(true);
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
@@ -488,7 +501,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 
         for(int i=0; i < list.count(); i++)
         {
-          dbcombo->setItemIcon(i, QPixmap(":/icones/icones/" + BaseObject::getSchemaName(OBJ_DATABASE) + ".png"));
+          dbcombo->setItemIcon(i, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(OBJ_DATABASE) + QString(".png")));
           dbcombo->setItemData(i, oids[list[i]]);
         }
 
@@ -531,8 +544,8 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
         //Creating database item
         db_item=new QTreeWidgetItem;
         db_item->setText(0, import_helper.getCurrentDatabase());
-        db_item->setIcon(0, QPixmap(":/icones/icones/database.png"));
-        attribs=catalog.getObjectsAttributes(OBJ_DATABASE, "", "", {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
+        db_item->setIcon(0, QPixmap(QString(":/icones/icones/database.png")));
+        attribs=catalog.getObjectsAttributes(OBJ_DATABASE, QString(), QString(), {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
 
         db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID));
         db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
@@ -602,7 +615,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
     QFont grp_fnt=tree_wgt->font();
     attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
     attribs_map::iterator itr;
-		QString tooltip="OID: %1";
+    QString tooltip=QString("OID: %1");
     bool child_checked=false;
 
     grp_fnt.setItalic(true);
@@ -641,7 +654,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           if(checkable_items)
           {
             if((itr->first.toUInt() > import_helper.getLastSystemOID()) ||
-               (types[i]==OBJ_SCHEMA && itr->second=="public") ||
+               (types[i]==OBJ_SCHEMA && itr->second==QString("public")) ||
                (types[i]==OBJ_COLUMN && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID()))
             {
               item->setCheckState(0, Qt::Checked);
@@ -657,9 +670,9 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
               item->setToolTip(0, trUtf8("This is a PostgreSQL built-in data type and cannot be imported."));
             }
             //Disabling items that refers to pgModeler's built-in system objects
-            else if((types[i]==OBJ_TABLESPACE && (itr->second=="pg_default" || itr->second=="pg_global")) ||
-                    (types[i]==OBJ_ROLE && (itr->second=="postgres")) ||
-                    (types[i]==OBJ_SCHEMA && (itr->second=="pg_catalog" || itr->second=="public")) ||
+            else if((types[i]==OBJ_TABLESPACE && (itr->second==QString("pg_default") || itr->second==QString("pg_global"))) ||
+                    (types[i]==OBJ_ROLE && (itr->second==QString("postgres"))) ||
+                    (types[i]==OBJ_SCHEMA && (itr->second==QString("pg_catalog") || itr->second==QString("public"))) ||
                     (types[i]==OBJ_LANGUAGE && (itr->second==~LanguageType(LanguageType::c) ||
                                                 itr->second==~LanguageType(LanguageType::sql) ||
                                                 itr->second==~LanguageType(LanguageType::plpgsql))))
@@ -674,7 +687,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           item->setData(OBJECT_ID, Qt::UserRole, itr->first.toUInt());
 
           if(!item->toolTip(0).isEmpty())
-            item->setToolTip(0,item->toolTip(0) + "\n" + tooltip.arg(itr->first));
+            item->setToolTip(0,item->toolTip(0) + QString("\n") + tooltip.arg(itr->first));
           else
             item->setToolTip(0,tooltip.arg(itr->first));
 

@@ -49,17 +49,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 																			 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-		return_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-		return_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																					 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/parameter.png"),0);
+    parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/parameter.png")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
@@ -195,9 +195,9 @@ Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
 			if(tab==parameters_tab)
 			{
 				str_aux=tab->getCellText(row, 2);
-				param.setIn(str_aux.contains("IN"));
-				param.setOut(str_aux.contains("OUT"));
-				param.setVariadic(str_aux=="VARIADIC");
+        param.setIn(str_aux.contains(QString("IN")));
+        param.setOut(str_aux.contains(QString("OUT")));
+        param.setVariadic(str_aux==QString("VARIADIC"));
 				param.setDefaultValue(tab->getCellText(row,3));
 			}
 		}
@@ -216,22 +216,22 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 	{
 		QString str_aux;
 
-		tab->setCellText(Utf8String::create(param.getName()),row,0);
-		tab->setCellText(Utf8String::create(*param.getType()),row,1);
+    tab->setCellText(/*Utf8String::create(*/param.getName(),row,0);
+    tab->setCellText(/*Utf8String::create(*/*param.getType(),row,1);
 		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
 			if(param.isVariadic())
-				str_aux="VARIADIC";
+        str_aux=QString("VARIADIC");
 			else
 			{
-				if(param.isIn()) str_aux="IN";
-				if(param.isOut()) str_aux+="OUT";
+        if(param.isIn()) str_aux=QString("IN");
+        if(param.isOut()) str_aux+=QString("OUT");
 			}
 
 			tab->setCellText(str_aux,row,2);
-			tab->setCellText(Utf8String::create(param.getDefaultValue()),row,3);
+      tab->setCellText(/*Utf8String::create(*/param.getDefaultValue(),row,3);
 		}
 	}
 }
@@ -314,7 +314,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-			source_code_txt->setPlainText(Utf8String::create(func->getSourceCode()));
+      source_code_txt->setPlainText(/*Utf8String::create(*/func->getSourceCode());
 		}
 
 		parameters_tab->blockSignals(false);
@@ -474,7 +474,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
-										.arg(Utf8String::create(object->getName(true)))
+                    .arg(/*Utf8String::create(*/object->getName(true))
 										.arg(object->getTypeName()),
 										ERR_FUNC_CONFIG_INV_OBJECT,
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -512,9 +512,9 @@ void FunctionWidget::applyConfiguration(void)
 			param.setType(parameters_tab->getRowData(i).value<PgSQLType>());
 
 			str_aux=parameters_tab->getCellText(i,2);
-			param.setIn(str_aux.indexOf("IN") >= 0);
-			param.setOut(str_aux.indexOf("OUT") >= 0);
-			param.setVariadic(str_aux.indexOf("VARIADIC") >= 0);
+      param.setIn(str_aux.indexOf(QString("IN")) >= 0);
+      param.setOut(str_aux.indexOf(QString("OUT")) >= 0);
+      param.setVariadic(str_aux.indexOf(QString("VARIADIC")) >= 0);
 
 			param.setDefaultValue(parameters_tab->getCellText(i,3));
 

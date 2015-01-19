@@ -175,7 +175,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-    void addModel(const QString &filename="");
+    void addModel(const QString &filename=QString());
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -267,7 +267,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
-		void fixModel(const QString &filename="");
+		void fixModel(const QString &filename=QString());
     void showRightWidgetsBar(void);
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);

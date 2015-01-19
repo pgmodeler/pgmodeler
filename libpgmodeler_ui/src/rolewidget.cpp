@@ -58,19 +58,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
+    obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),0);
 
 		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/validade.png"),1);
+    obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/validade.png")),1);
 
 		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),2);
+    obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),2);
 
 		obj_tab->setHeaderLabel(trUtf8("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),3);
+    obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),3);
 
 		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),4);
+    obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -157,7 +157,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		passwd_edt->setText(role->getPassword());
 
 		validity_chk->setChecked(!role->getValidity().isEmpty());
-		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(),"yyyy-MM-dd hh:mm:ss"));
+    validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), QString("yyyy-MM-dd hh:mm:ss")));
 
 		superusr_chk->setChecked(role->getOption(Role::OP_SUPERUSER));
 		create_db_chk->setChecked(role->getOption(Role::OP_CREATEDB));
@@ -187,7 +187,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
-		members_tab[table_id]->setCellText(Utf8String::create(role->getName()), row, 0);
+    members_tab[table_id]->setCellText(/*Utf8String::create(*/role->getName(), row, 0);
 		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
 		for(type_id=0; type_id < 3; type_id++)
@@ -198,10 +198,10 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 			{
 				aux_role=role->getRole(role_types[type_id], i);
 				str_aux+=aux_role->getName();
-				if(i < count-1) str_aux+=", ";
+        if(i < count-1) str_aux+=QString(", ");
 			}
 
-			members_tab[table_id]->setCellText(Utf8String::create(str_aux), row, 2 + type_id);
+      members_tab[table_id]->setCellText(/*Utf8String::create(*/str_aux, row, 2 + type_id);
 			str_aux.clear();
 		}
 	}
@@ -261,8 +261,8 @@ void RoleWidget::showSelectedRoleData(void)
 			members_tab[idx_tab]->removeRow(lin);
 
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-										.arg(Utf8String::create(obj_sel->getName()))
-										.arg(Utf8String::create(name_edt->text())),
+                    .arg(/*Utf8String::create(*/obj_sel->getName())
+                    .arg(/*Utf8String::create(*/name_edt->text()),
 										ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
@@ -279,8 +279,8 @@ void RoleWidget::showSelectedRoleData(void)
 		if(obj_sel && idx_lin >= 0)
 		{
 			msg_box.show( Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-											.arg(Utf8String::create(obj_sel->getName()))
-											.arg(Utf8String::create(name_edt->text())),
+                      .arg(/*Utf8String::create(*/obj_sel->getName())
+                      .arg(/*Utf8String::create(*/name_edt->text()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
@@ -302,9 +302,9 @@ void RoleWidget::applyConfiguration(void)
 		role->setPassword(passwd_edt->text());
 
 		if(validity_chk->isChecked())
-			role->setValidity(validity_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
+      role->setValidity(validity_dte->dateTime().toString(QString("yyyy-MM-dd hh:mm")));
 		else
-			role->setValidity("");
+      role->setValidity(QString());
 
 		role->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
 		role->setOption(Role::OP_CREATEDB, create_db_chk->isChecked());

@@ -49,16 +49,16 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->setColumnCount(2);
 		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		ref_columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		ref_columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
@@ -187,8 +187,8 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 		else
 			table_wgt=ref_columns_tab;
 
-		table_wgt->setCellText(Utf8String::create(column->getName()),row,0);
-		table_wgt->setCellText(Utf8String::create(~column->getType()),row,1);
+    table_wgt->setCellText(/*Utf8String::create(*/column->getName(),row,0);
+    table_wgt->setCellText(/*Utf8String::create(*/~column->getType(),row,1);
 		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
 
 		//Change the table row background color if the column is protected or added by relationship
@@ -256,7 +256,10 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 			//If the column does not exists on the column's table, adds it
 			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-				combo->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")", QVariant::fromValue<void *>(column));
+        combo->addItem(/*Utf8String::create(*/column->getName() +
+                       QString(" (") +
+                       ~column->getType() +
+                       QString(")"), QVariant::fromValue<void *>(column));
 		}
 
 		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
@@ -426,7 +429,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
 
-    expression_txt->setPlainText(Utf8String::create(constr->getExpression()));
+    expression_txt->setPlainText(/*Utf8String::create(*/constr->getExpression());
 		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));

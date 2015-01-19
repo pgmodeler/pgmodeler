@@ -24,11 +24,11 @@ Cast::Cast(void)
 	cast_function=nullptr;
 	cast_type=EXPLICIT;
 	is_in_out=false;
-	attributes[ParsersAttributes::SOURCE_TYPE]="";
-	attributes[ParsersAttributes::DEST_TYPE]="";
-	attributes[ParsersAttributes::CAST_TYPE]="";
-	attributes[ParsersAttributes::IO_CAST]="";
-  attributes[ParsersAttributes::FUNCTION]="";
+	attributes[ParsersAttributes::SOURCE_TYPE]=QString();
+	attributes[ParsersAttributes::DEST_TYPE]=QString();
+	attributes[ParsersAttributes::CAST_TYPE]=QString();
+	attributes[ParsersAttributes::IO_CAST]=QString();
+  attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
 void Cast::setDataType(unsigned type_idx, PgSQLType type)
@@ -37,9 +37,9 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 	if(type_idx<=DST_TYPE)
 	{
 		//Raises an error if the passed data type is null
-		if((*type)=="")
+    if((*type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
 											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -77,7 +77,7 @@ void Cast::setCastFunction(Function *cast_func)
 
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -87,7 +87,7 @@ void Cast::setCastFunction(Function *cast_func)
 	//Raises an error if the function don't have at least 1 parameter or a maximum of 3
 	if(param_count==0 || param_count > 3)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
@@ -99,17 +99,17 @@ void Cast::setCastFunction(Function *cast_func)
 		/* Error condition 2: Check if the second function parameter data type
 		 is different from 'integer' */
 		if(!error && param_count>=2)
-			error=(cast_func->getParameter(1).getType()!="integer");
+      error=(cast_func->getParameter(1).getType()!=QString("integer"));
 
 		/* Error condition 3: Check if the third function parameter data type is
 		 different from 'boolean' */
 		if(!error && param_count==3)
-			error=(cast_func->getParameter(2).getType()!="boolean");
+      error=(cast_func->getParameter(2).getType()!=QString("boolean"));
 
 		//In case some error condition is reached raises an error
 		if(error)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
 											ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -117,7 +117,7 @@ void Cast::setCastFunction(Function *cast_func)
 	//Raises an error if the return type of the function differs from the destination data type
 	if(cast_func->getReturnType()!=this->types[DST_TYPE])
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -172,7 +172,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
       attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : QString());
 
 	if(cast_type==ASSIGNMENT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
@@ -189,7 +189,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 QString Cast::getSignature(bool)
 {
-  attributes[ParsersAttributes::SIGNATURE]=this->getName().remove("cast");
+  attributes[ParsersAttributes::SIGNATURE]=this->getName().remove(QString("cast"));
   return(BaseObject::getSignature(false));
 }
 

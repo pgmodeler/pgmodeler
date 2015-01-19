@@ -68,7 +68,7 @@ QString CopyOptions::getSQLDefinition(void)
 									INDEXES, STORAGE, COMMENTS },
 					 cnt = sizeof(ids) / sizeof(unsigned);
 
-	mode = (copy_mode == INCLUDING ? " INCLUDING" : " EXCLUDING");
+  mode = (copy_mode == INCLUDING ? QString(" INCLUDING") : QString(" EXCLUDING"));
 	if(copy_mode!=0 && copy_op_ids!=0)
 	{
 		for(unsigned i=0; i < cnt; i++)
@@ -77,12 +77,12 @@ QString CopyOptions::getSQLDefinition(void)
 
 			switch(op_id)
 			{
-				case ALL: op_name=" ALL"; break;
-				case DEFAULTS: op_name=" DEFAULTS"; break;
-				case CONSTRAINTS: op_name=" CONSTRAINTS"; break;
-				case INDEXES: op_name=" INDEXES"; break;
-				case STORAGE: op_name=" STORAGE"; break;
-				case COMMENTS: op_name=" COMMENTS"; break;
+        case ALL: op_name=QString(" ALL"); break;
+        case DEFAULTS: op_name=QString(" DEFAULTS"); break;
+        case CONSTRAINTS: op_name=QString(" CONSTRAINTS"); break;
+        case INDEXES: op_name=QString(" INDEXES"); break;
+        case STORAGE: op_name=QString(" STORAGE"); break;
+        case COMMENTS: op_name=QString(" COMMENTS"); break;
 			}
 
 			if(!op_name.isEmpty())
