@@ -212,6 +212,26 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
   BaseConfigWidget::addConfigurationParam(config_params, param, attribs);
 }
 
+void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
+{
+  map<QString, attribs_map>::iterator itr, itr_end;
+
+  itr=config_params.begin();
+  itr_end=config_params.end();
+
+  while(itr!=itr_end)
+  {
+    if(param_reg.exactMatch(itr->first))
+    {
+      config_params.erase(itr);
+      itr=config_params.begin();
+      itr_end=config_params.end();
+    }
+
+    itr++;
+  }
+}
+
 map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
 {
   return(config_params);
