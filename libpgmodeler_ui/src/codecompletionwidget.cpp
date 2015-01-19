@@ -207,7 +207,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	QListWidgetItem *item=nullptr;
 	QString obj_name;
   ObjectType obj_type;
-  QRegExp regexp(filter.remove('"') + QStringLiteral("*"), Qt::CaseInsensitive, QRegExp::Wildcard);
+  QRegExp regexp(filter.remove('"') + QString("*"), Qt::CaseInsensitive, QRegExp::Wildcard);
 
 	name_list->clear();
 	for(unsigned i=0; i < objects.size(); i++)
@@ -229,7 +229,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		//The object will be inserted if its name matches the filter or there is no filter set
 		if(filter.isEmpty() || regexp.exactMatch(obj_name))
 		{
-      item=new QListWidgetItem(QPixmap(QStringLiteral(":/icones/icones/") + objects[i]->getSchemaName() + QStringLiteral(".png")), obj_name);
+      item=new QListWidgetItem(QPixmap(QString(":/icones/icones/") + objects[i]->getSchemaName() + QString(".png")), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
 			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
       item->setToolTip(BaseObject::getTypeName(obj_type));
@@ -314,7 +314,7 @@ void CodeCompletionWidget::updateList(void)
 	}
 
 	if(!word.isEmpty() && !auto_triggered)
-    pattern=QStringLiteral("(^") + word.simplified() + QStringLiteral(")");
+    pattern=QString("(^") + word.simplified() + QString(")");
 	else if(auto_triggered)
 		pattern=word;
 
@@ -353,7 +353,7 @@ void CodeCompletionWidget::updateList(void)
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)
 		{
-      item=new QListWidgetItem(QPixmap(QStringLiteral(":/icones/icones/keyword.png")), list[i]);
+      item=new QListWidgetItem(QPixmap(QString(":/icones/icones/keyword.png")), list[i]);
       item->setToolTip(trUtf8("SQL Keyword"));
 			name_list->addItem(item);
 		}
@@ -429,7 +429,7 @@ void CodeCompletionWidget::selectItem(void)
 		}
 		else
 		{
-      code_field_txt->insertPlainText(item->text() + QStringLiteral(" "));
+      code_field_txt->insertPlainText(item->text() + QString(" "));
 			setQualifyingLevel(nullptr);
 		}
 
@@ -481,12 +481,12 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 		{
 			Table *tab=dynamic_cast<Table *>(obj);
 
-      name+=QStringLiteral("(");
+      name+=QString("(");
 			for(unsigned i=0; i < tab->getColumnCount(); i++)
-        name+=tab->getColumn(i)->getName(true) + QStringLiteral(",");
+        name+=tab->getColumn(i)->getName(true) + QString(",");
 
 			name.remove(name.size()-1, 1);
-      name+=QStringLiteral(")");
+      name+=QString(")");
 		}
 		else
 		{
@@ -513,7 +513,7 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 	{
 		Aggregate *agg;
 		agg=dynamic_cast<Aggregate *>(obj);
-    name+=QStringLiteral("(");
+    name+=QString("(");
 
 		if(agg->getDataTypeCount()==0)
       name+='*';

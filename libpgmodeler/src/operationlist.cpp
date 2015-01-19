@@ -478,7 +478,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 
 	if(TableObject::isTableObject(obj_type))
 	{
-    obj_name=operation->parent_obj->getName(true) + QStringLiteral(".") + obj_name;
+    obj_name=operation->parent_obj->getName(true) + QString(".") + obj_name;
 	}
 }
 

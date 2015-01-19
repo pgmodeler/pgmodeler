@@ -190,7 +190,7 @@ void Role::setRoleAttribute(unsigned role_type)
 	for(i=0; i < count; i++)
 	{
 		str_roles+=roles_vect->at(i)->getName(true);
-    if(i < (count-1)) str_roles+=QStringLiteral(",");
+    if(i < (count-1)) str_roles+=QString(",");
 	}
 
 	attributes[attrib]=str_roles;

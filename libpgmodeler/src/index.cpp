@@ -331,7 +331,7 @@ QString Index::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
 	}
 	else if(def_type==SchemaParser::XML_DEFINITION)
-    attributes[ParsersAttributes::FACTOR]=QStringLiteral("0");
+    attributes[ParsersAttributes::FACTOR]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */

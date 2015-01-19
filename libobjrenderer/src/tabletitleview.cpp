@@ -87,9 +87,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
     schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
 
 	if(schema->isRectVisible())
-    schema_name->setText(QStringLiteral(" "));
+    schema_name->setText(QString(" "));
 	else
-    schema_name->setText(Utf8String::create(schema->getName() + QStringLiteral(".")));
+    schema_name->setText(Utf8String::create(schema->getName() + QString(".")));
 
   fmt=font_config[name_attrib];
   font=fmt.font();
@@ -130,7 +130,7 @@ void TableTitleView::resizeTitle(float width, float height)
 {
   box->setRect(QRectF(0,0, width, height));
 
-  if(schema_name->text()==QStringLiteral(" "))
+  if(schema_name->text()==QString(" "))
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);
 	else
 	{

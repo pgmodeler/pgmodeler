@@ -18,14 +18,14 @@
 
 #include "tableobjectview.h"
 
-const QString TableObjectView::TYPE_SEPARATOR=QStringLiteral(" ");
-const QString TableObjectView::CONSTR_SEPARATOR=QStringLiteral(" ");
-const QString TableObjectView::TXT_UNIQUE=QStringLiteral("uq");
-const QString TableObjectView::TXT_EXCLUDE=QStringLiteral("ex");
-const QString TableObjectView::TXT_CHECK=QStringLiteral("ck");
-const QString TableObjectView::TXT_PRIMARY_KEY=QStringLiteral("pk");
-const QString TableObjectView::TXT_FOREIGN_KEY=QStringLiteral("fk");
-const QString TableObjectView::TXT_NOT_NULL=QStringLiteral("nn");
+const QString TableObjectView::TYPE_SEPARATOR=QString(" ");
+const QString TableObjectView::CONSTR_SEPARATOR=QString(" ");
+const QString TableObjectView::TXT_UNIQUE=QString("uq");
+const QString TableObjectView::TXT_EXCLUDE=QString("ex");
+const QString TableObjectView::TXT_CHECK=QString("ck");
+const QString TableObjectView::TXT_PRIMARY_KEY=QString("pk");
+const QString TableObjectView::TXT_FOREIGN_KEY=QString("fk");
+const QString TableObjectView::TXT_NOT_NULL=QString("nn");
 const QString TableObjectView::CONSTR_DELIM_START=QString("«");
 const QString TableObjectView::CONSTR_DELIM_END=QString("»");
 
@@ -226,19 +226,19 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
 			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_UNIQUE)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
 
       if(str_constr.indexOf(TXT_NOT_NULL)>=0)
-        atribs_tip+=QStringLiteral("not null");
+        atribs_tip+=QString("not null");
 		}
 		else
 		{
@@ -293,7 +293,7 @@ void TableObjectView::configureObject(void)
 			if(rule)
 			{
 				str_constr+=(~rule->getExecutionType()).mid(0,1);
-        atribs_tip+=(~rule->getExecutionType()).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
 
 				str_constr+=CONSTR_SEPARATOR;
 
@@ -306,14 +306,14 @@ void TableObjectView::configureObject(void)
 				str_constr+=(~trigger->getFiringType()).mid(0,1);
 				str_constr+=CONSTR_SEPARATOR;
 
-        atribs_tip+=(~trigger->getFiringType()).toLower() + QStringLiteral(", ");
+        atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
 
 				for(unsigned i=EventType::on_insert; i <= EventType::on_truncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
 					{
 						str_constr+=(~EventType(i)).mid(3,1);
-            atribs_tip+=(~EventType(i)).toLower() + QStringLiteral(", ");
+            atribs_tip+=(~EventType(i)).toLower() + QString(", ");
 					}
 				}
 				str_constr=str_constr.toLower();
@@ -322,32 +322,32 @@ void TableObjectView::configureObject(void)
 			{
 				if(index->getIndexAttribute(Index::UNIQUE))
 				{
-          str_constr+=QStringLiteral("u");
-          atribs_tip += QString("unique") + QStringLiteral(", ");
+          str_constr+=QString("u");
+          atribs_tip += QString("unique") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::CONCURRENT))
 				{
-          str_constr+=QStringLiteral("c");
-          atribs_tip += QString("concurrent") + QStringLiteral(", ");
+          str_constr+=QString("c");
+          atribs_tip += QString("concurrent") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::FAST_UPDATE))
 				{
-          str_constr+=QStringLiteral("f");
-          atribs_tip += QStringLiteral("fast updated");
+          str_constr+=QString("f");
+          atribs_tip += QString("fast updated");
 				}
 
 				if(index->getIndexAttribute(Index::BUFFERING))
 				{
-          str_constr+=QStringLiteral("b");
-          atribs_tip += QStringLiteral("buffering");
+          str_constr+=QString("b");
+          atribs_tip += QString("buffering");
 				}
 			}
 
 			if(!str_constr.isEmpty())
-        lables[2]->setText(Utf8String::create(CONSTR_DELIM_START + QStringLiteral(" ") +
-                                             str_constr + QStringLiteral(" ") +
+        lables[2]->setText(Utf8String::create(CONSTR_DELIM_START + QString(" ") +
+                                             str_constr + QString(" ") +
 																						 CONSTR_DELIM_END));
 		}
 
@@ -356,8 +356,8 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-      atribs_tip=Utf8String::create(QStringLiteral("\n") + CONSTR_DELIM_START +
-                                    QStringLiteral(" ") + atribs_tip + QStringLiteral(" ") + CONSTR_DELIM_END);
+      atribs_tip=Utf8String::create(QString("\n") + CONSTR_DELIM_START +
+                                    QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END);
 		}
 
 		lables[2]->setFont(fmt.font());
@@ -414,8 +414,8 @@ void TableObjectView::configureObject(Reference reference)
 		fmt=font_config[ParsersAttributes::REF_TABLE];
 
 		str_aux=reference.getExpression().simplified().mid(0,25);
-    if(reference.getExpression().size() > 25) str_aux+=QStringLiteral("...");
-    str_aux.replace(QStringLiteral("\n"), QStringLiteral(" "));
+    if(reference.getExpression().size() > 25) str_aux+=QString("...");
+    str_aux.replace(QString("\n"), QString(" "));
 
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
@@ -434,7 +434,7 @@ void TableObjectView::configureObject(Reference reference)
 		else
 			str_aux=reference.getColumnAlias();
 
-    str_aux=QStringLiteral(" (") + str_aux + QStringLiteral(") ");
+    str_aux=QString(" (") + str_aux + QString(") ");
 		fmt=font_config[ParsersAttributes::ALIAS];
 		lables[2]->setText(Utf8String::create(str_aux));
 		lables[2]->setFont(fmt.font());

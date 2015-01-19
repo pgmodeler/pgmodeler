@@ -483,7 +483,7 @@ void View::setReferencesAttribute(void)
 		for(i1=0; i1 < qtd; i1++)
 		{
 			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-      if(i1 < qtd-1) str_aux+=QStringLiteral(",");
+      if(i1 < qtd-1) str_aux+=QString(",");
 		}
 		attributes[attribs[i]]=str_aux;
 	}
@@ -565,7 +565,7 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::TAG]=QString();
 
   if(materialized)
-    attributes[ParsersAttributes::SQL_OBJECT]=QStringLiteral("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
 
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');

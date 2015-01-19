@@ -149,7 +149,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	unsigned char chr, chr1, chr2;
 
 	//Checking if the name is already formated enclosed by quotes
-  is_formated=QRegExp(QStringLiteral("(\")(.)+(\")")).exactMatch(name);
+  is_formated=QRegExp(QString("(\")(.)+(\")")).exactMatch(name);
 
 	/* If the name is not formatted or it symbolizes the name of an operator
 		(which has characters invalid according to the rule and is the only exception
@@ -541,7 +541,7 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
 		if(this->schema && prepend_schema)
-      aux_name=formatName(this->schema->getName(format)) + QStringLiteral(".") + aux_name;
+      aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
 
 		if(!aux_name.isEmpty())
 			return(aux_name);
@@ -740,7 +740,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[ParsersAttributes::COMMENT]=comment;
 
 			if(def_type==SchemaParser::SQL_DEFINITION)
-        attributes[ParsersAttributes::COMMENT].replace(QStringLiteral("'"), QStringLiteral("''"));
+        attributes[ParsersAttributes::COMMENT].replace(QString("'"), QString("''"));
 
 			if((def_type==SchemaParser::SQL_DEFINITION &&
 					obj_type!=OBJ_TABLESPACE &&
@@ -766,7 +766,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			}
 			else
 			{
-        attributes[ParsersAttributes::APPENDED_SQL]=QStringLiteral("\n-- Appended SQL commands --\n") +	appended_sql;
+        attributes[ParsersAttributes::APPENDED_SQL]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
 			}
 		}
 
@@ -782,7 +782,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       }
       else
       {
-        attributes[ParsersAttributes::PREPENDED_SQL]=QStringLiteral("\n-- Prepended SQL commands --\n") +	prepended_sql;
+        attributes[ParsersAttributes::PREPENDED_SQL]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
       }
     }
 
@@ -1001,8 +1001,8 @@ bool BaseObject::isCodeInvalidated(void)
 bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
   QString xml, tag=QString("<%1").arg(this->getSchemaName()),
-      attr_regex=QStringLiteral("(%1=\")"),
-      tag_regex=QStringLiteral("<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))");
+      attr_regex=QString("(%1=\")"),
+      tag_regex=QString("<%1[^>]*((/>)|(>((?:(?!</%1>).)*)</%1>))");
   QStringList xml_defs{ xml_def1, xml_def2 };
   int start=0, end=-1, tag_end=-1;
   QRegExp regexp;
@@ -1019,7 +1019,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
       do
       {
         regexp=QRegExp(attr_regex.arg(attr));
-        tag_end=xml.indexOf(QRegExp(QStringLiteral("(\\\\)?(>)")));
+        tag_end=xml.indexOf(QRegExp(QString("(\\\\)?(>)")));
         start=regexp.indexIn(xml);//, start);
         end=xml.indexOf('"', start + regexp.matchedLength());
 
@@ -1119,7 +1119,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
     SchemaParser schparser;
     QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
                           GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-                          QStringLiteral("%1") + GlobalAttributes::SCHEMA_EXT;
+                          QString("%1") + GlobalAttributes::SCHEMA_EXT;
 
     schparser.setPgSQLVersion(BaseObject::pgsql_ver);
     schparser.ignoreEmptyAttributes(ignore_empty_attribs);

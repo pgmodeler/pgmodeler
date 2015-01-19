@@ -88,18 +88,18 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   setupUi(this);
 
   snippets_menu.setTitle(trUtf8("Snippets"));
-  snippets_menu.setIcon(QIcon(QStringLiteral(":icones/icones/codesnippet.png")));
+  snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
 
-  drop_action=new QAction(QIcon(QStringLiteral(":icones/icones/excluir.png")), trUtf8("Drop object"), &handle_menu);
+  drop_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), trUtf8("Drop object"), &handle_menu);
   drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
-  drop_cascade_action=new QAction(QIcon(QStringLiteral(":icones/icones/excluir.png")), trUtf8("Drop cascade"), &handle_menu);
+  drop_cascade_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), trUtf8("Drop cascade"), &handle_menu);
   drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
 
-  show_data_action=new QAction(QIcon(QStringLiteral(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
-  properties_action=new QAction(QIcon(QStringLiteral(":icones/icones/editar.png")), trUtf8("Properties"), &handle_menu);
+  show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
+  properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Properties"), &handle_menu);
 
-  refresh_action=new QAction(QIcon(QStringLiteral(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
+  refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
   objects_trw->installEventFilter(this);
 
@@ -146,7 +146,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
   ObjectType obj_type=BASE_OBJECT;
   attribs_map fmt_attribs;
   QString attr_name, attr_value;
-  QRegExp oid_regexp=QRegExp(QStringLiteral("^[0-9]+"));
+  QRegExp oid_regexp=QRegExp(QString("^[0-9]+"));
   map<QString, ObjectType> dep_types={{ParsersAttributes::OWNER, OBJ_ROLE},
                                       {ParsersAttributes::SCHEMA, OBJ_SCHEMA},
                                       {ParsersAttributes::TABLESPACE, OBJ_TABLESPACE},
@@ -417,7 +417,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
     conn.executeDMLCommand(QString("SELECT last_value FROM %1.%2").arg(sch_name).arg(attribs[ParsersAttributes::NAME]), res);
 
     if(res.accessTuple(ResultSet::FIRST_TUPLE))
-     attribs[ParsersAttributes::LAST_VALUE]=res.getColumnValue(QStringLiteral("last_value"));
+     attribs[ParsersAttributes::LAST_VALUE]=res.getColumnValue(QString("last_value"));
 
     conn.close();
   }
@@ -658,7 +658,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
         sch_name=BaseObject::formatName(aux_attribs[ParsersAttributes::NAME], false);
 
         if(!sch_name.isEmpty())
-          obj_name=sch_name + QStringLiteral(".") + obj_name;
+          obj_name=sch_name + QString(".") + obj_name;
       }
 
       //Formatting paramenter types for function
@@ -686,7 +686,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
           names=getObjectName(OBJ_TYPE, attribs[attr]).split('.');
           type_name=names[names.size()-1];
 
-          if(type_name.isEmpty()) type_name=QStringLiteral("-");
+          if(type_name.isEmpty()) type_name=QString("-");
           arg_types.push_back(type_name);
         }
 
@@ -862,7 +862,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 
     //Formatting a schema qualified "table" attribute for table children objects
     if(TableObject::isTableObject(obj_type) && !sch_name.isEmpty() && !tab_name.isEmpty())
-      attribs[ParsersAttributes::TABLE]=BaseObject::formatName(sch_name) + QStringLiteral(".") + BaseObject::formatName(tab_name);
+      attribs[ParsersAttributes::TABLE]=BaseObject::formatName(sch_name) + QString(".") + BaseObject::formatName(tab_name);
   }
   //Formatting the "name" attribute if it is not schema qualified
   else if(attribs.count(ParsersAttributes::SCHEMA) &&
@@ -876,7 +876,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
     else
       obj_name=attribs[ParsersAttributes::NAME];
 
-    attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + QStringLiteral(".") + obj_name;
+    attribs[ParsersAttributes::NAME]=BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]) + QString(".") + obj_name;
   }
 
   if(attribs.count(ParsersAttributes::SQL_OBJECT)==0)
@@ -944,17 +944,17 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
         //For table objects the "table" attribute must be schema qualified
         if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QStringLiteral(".") + attribs[ParsersAttributes::TABLE];
+          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
         //For operators and functions there must exist the signature attribute
         else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QStringLiteral(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
+          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
         else if(obj_type==OBJ_CAST)
           attribs[ParsersAttributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
         else
         {
           if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-             attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QStringLiteral(".")) < 0)
-            attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QStringLiteral(".") + attribs[ParsersAttributes::NAME];
+             attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QString(".")) < 0)
+            attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME];
           else
             attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
         }
@@ -965,7 +965,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
         drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
 
         if(cascade)
-          drop_cmd.replace(';', QStringLiteral(" CASCADE;"));
+          drop_cmd.replace(';', QString(" CASCADE;"));
 
         //Executes the drop cmd
         conn=connection;
@@ -1187,7 +1187,7 @@ void DatabaseExplorerWidget::showObjectProperties(void)
           font.setItalic(true);
           tab_item->setText(attrib.first);
           tab_item->setFont(font);
-          tab_item->setIcon(QPixmap(QStringLiteral(":/icones/icones/attribute.png")));
+          tab_item->setIcon(QPixmap(QString(":/icones/icones/attribute.png")));
           properties_tbw->setItem(row, 0, tab_item);
 
           values=attrib.second.split(ELEM_SEPARATOR);
@@ -1197,7 +1197,7 @@ void DatabaseExplorerWidget::showObjectProperties(void)
           {
             //If the values contatins more the one item, the a combo box will be placed instead of the text
             QComboBox *combo=new QComboBox;
-            combo->setStyleSheet(QStringLiteral("border: 0px"));
+            combo->setStyleSheet(QString("border: 0px"));
             combo->addItems(values);
             properties_tbw->setCellWidget(row, 1, combo);
           }

@@ -17,14 +17,14 @@
 */
 #include "catalog.h"
 
-const QString Catalog::QUERY_LIST=QStringLiteral("list");
-const QString Catalog::QUERY_ATTRIBS=QStringLiteral("attribs");
-const QString Catalog::CATALOG_SCH_DIR=QStringLiteral("catalog");
-const QString Catalog::PGSQL_TRUE=QStringLiteral("t");
-const QString Catalog::PGSQL_FALSE=QStringLiteral("f");
-const QString Catalog::BOOL_FIELD=QStringLiteral("_bool");
-const QString Catalog::ARRAY_PATTERN=QStringLiteral("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
-const QString Catalog::GET_EXT_OBJS_SQL=QStringLiteral("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::QUERY_LIST=QString("list");
+const QString Catalog::QUERY_ATTRIBS=QString("attribs");
+const QString Catalog::CATALOG_SCH_DIR=QString("catalog");
+const QString Catalog::PGSQL_TRUE=QString("t");
+const QString Catalog::PGSQL_FALSE=QString("f");
+const QString Catalog::BOOL_FIELD=QString("_bool");
+const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
+const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 
 bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;
@@ -86,7 +86,7 @@ void Catalog::setConnection(Connection &conn)
 		{
 			do
 			{
-        ext_obj.push_back(res.getColumnValue(QStringLiteral("oid")));
+        ext_obj.push_back(res.getColumnValue(QString("oid")));
 			}
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 
@@ -170,9 +170,9 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 			attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
 
 		if(list_only_sys_objs)
-      attribs[ParsersAttributes::OID_FILTER_OP]=QStringLiteral("<=");
+      attribs[ParsersAttributes::OID_FILTER_OP]=QString("<=");
 		else
-      attribs[ParsersAttributes::OID_FILTER_OP]=QStringLiteral(">");
+      attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
 
 		if(obj_type==OBJ_TYPE && exclude_array_types)
       attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
@@ -202,8 +202,8 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		//Appeding the custom filter to the whole catalog query
 		if(!custom_filter.isEmpty())
 		{
-      if(!sql.contains(QStringLiteral("WHERE"), Qt::CaseInsensitive))
-        sql+=QStringLiteral(" WHERE ");
+      if(!sql.contains(QString("WHERE"), Qt::CaseInsensitive))
+        sql+=QString(" WHERE ");
 			else
 				sql+=QString(" AND (%1)").arg(custom_filter);
 		}
@@ -212,7 +212,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 		if(single_result)
 		{
 			if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-      sql+=QStringLiteral(" LIMIT 1");
+      sql+=QString(" LIMIT 1");
 		}
 
 		connection.executeDMLCommand(sql, result);
@@ -379,7 +379,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
-  QString query_id=QStringLiteral("get") + ParsersAttributes::COMMENT;
+  QString query_id=QString("get") + ParsersAttributes::COMMENT;
 
 	try
 	{
@@ -398,7 +398,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 
 QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 {
-  QString query_id=QStringLiteral("notextobject");
+  QString query_id=QString("notextobject");
 
 	try
 	{
@@ -506,7 +506,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		QString value=array_val.mid(start, (end - start)+1);
 
     if(value.contains('"'))
-      list=parseDefaultValues(value, QStringLiteral("\""), QStringLiteral(","));
+      list=parseDefaultValues(value, QString("\""), QString(","));
 		else
 			list=value.split(',', QString::SkipEmptyParts);
 	}
@@ -573,7 +573,7 @@ QStringList Catalog::parseDefaultValues(const QString &def_vals, const QString &
 QStringList Catalog::parseRuleCommands(const QString &cmds)
 {
   int start=-1, end=-1;
-  QRegExp cmd_regexp(QStringLiteral("(DO)( )*(INSTEAD)*( )+"));
+  QRegExp cmd_regexp(QString("(DO)( )*(INSTEAD)*( )+"));
 
   start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
   end=cmds.lastIndexOf(';');

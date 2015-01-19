@@ -602,7 +602,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
     QFont grp_fnt=tree_wgt->font();
     attribs_map objects, extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
     attribs_map::iterator itr;
-    QString tooltip=QStringLiteral("OID: %1");
+    QString tooltip=QString("OID: %1");
     bool child_checked=false;
 
     grp_fnt.setItalic(true);
@@ -674,7 +674,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
           item->setData(OBJECT_ID, Qt::UserRole, itr->first.toUInt());
 
           if(!item->toolTip(0).isEmpty())
-            item->setToolTip(0,item->toolTip(0) + QStringLiteral("\n") + tooltip.arg(itr->first));
+            item->setToolTip(0,item->toolTip(0) + QString("\n") + tooltip.arg(itr->first));
           else
             item->setToolTip(0,tooltip.arg(itr->first));
 

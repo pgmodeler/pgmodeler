@@ -126,7 +126,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-      attributes[ParsersAttributes::COLS_COMMENT]+=QStringLiteral("-- ");
+      attributes[ParsersAttributes::COLS_COMMENT]+=QString("-- ");
 
 		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
 		schparser.ignoreUnkownAttributes(false);

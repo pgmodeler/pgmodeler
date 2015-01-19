@@ -18,7 +18,7 @@
 
 #include "permission.h"
 
-const QString Permission::priv_codes=QStringLiteral("rawdDxtCcTXU");
+const QString Permission::priv_codes=QString("rawdDxtCcTXU");
 
 Permission::Permission(BaseObject *obj)
 {
@@ -374,12 +374,12 @@ void Permission::generatePermissionId(void)
 		generates an identifier with zeros indicating that permission
 		is not linked directly to any role on the model */
 	else
-    str_aux+=QStringLiteral("000000");
+    str_aux+=QString("000000");
 
 	//Generates an unique name for the permission through md5 hash
 	hash.addData(QByteArray(str_aux.toStdString().c_str()));
 	str_aux=hash.result().toHex();
-  this->obj_name=(!revoke ? QStringLiteral("grant_") : QStringLiteral("revoke_")) + str_aux.mid(0,10);
+  this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)
@@ -431,9 +431,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && !grant_option[i])
-        attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QStringLiteral(",");
+        attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QString(",");
 			else if(grant_option[i])
-        attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QStringLiteral(",");
+        attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QString(",");
 		}
 
 		attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
@@ -443,7 +443,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-    attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QStringLiteral(",");
+    attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QString(",");
 
 	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
@@ -459,17 +459,17 @@ QString Permission::getSignature(bool format)
     rol_names.push_back(role->getName(format));
 
   rol_names.sort();
-  signature=QStringLiteral("=") + getPermissionString();
+  signature=QString("=") + getPermissionString();
 
   if(roles.empty())
-    signature=QStringLiteral("PUBLIC") + signature;
+    signature=QString("PUBLIC") + signature;
   else
     signature=rol_names.join(',') + signature;
 
   if(revoke)
-    signature=QStringLiteral("revoke:") + signature;
+    signature=QString("revoke:") + signature;
   else
-    signature=QStringLiteral("grant:") + signature;
+    signature=QString("grant:") + signature;
 
   return(signature);
 }

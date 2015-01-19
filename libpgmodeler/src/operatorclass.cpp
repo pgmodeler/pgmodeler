@@ -75,7 +75,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 	{
 		str_elems+=elements[i].getCodeDefinition(def_type);
 		if(def_type==SchemaParser::SQL_DEFINITION &&
-       i < count-1) str_elems+=QStringLiteral(",\n");
+       i < count-1) str_elems+=QString(",\n");
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elems;

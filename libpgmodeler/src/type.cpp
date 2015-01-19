@@ -436,11 +436,11 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-      str_enum+=QStringLiteral("'") + enumerations[i] + QStringLiteral("'");
+      str_enum+=QString("'") + enumerations[i] + QString("'");
 		else
 			str_enum+=enumerations[i];
 
-    if(i < (count-1)) str_enum+=QStringLiteral(",");
+    if(i < (count-1)) str_enum+=QString(",");
 	}
 
   attributes[ParsersAttributes::ENUMERATIONS]=str_enum;
@@ -642,7 +642,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
     attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::INTERNAL_LENGTH]=QStringLiteral("VARIABLE");
+      attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("VARIABLE");
 		else
       attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 

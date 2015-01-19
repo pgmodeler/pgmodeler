@@ -257,9 +257,9 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 			//If the column does not exists on the column's table, adds it
 			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
         combo->addItem(Utf8String::create(column->getName()) +
-                       QStringLiteral(" (") +
+                       QString(" (") +
                        ~column->getType() +
-                       QStringLiteral(")"), QVariant::fromValue<void *>(column));
+                       QString(")"), QVariant::fromValue<void *>(column));
 		}
 
 		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));

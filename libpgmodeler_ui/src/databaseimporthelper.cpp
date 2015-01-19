@@ -18,7 +18,7 @@
 
 #include "databaseimporthelper.h"
 
-const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML=QStringLiteral("\t<!--[ unknown object OID=%1 ]-->\n");
+const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML=QString("\t<!--[ unknown object OID=%1 ]-->\n");
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {

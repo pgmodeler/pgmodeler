@@ -210,17 +210,17 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		label_id=DST_CARD_LABEL;
 	}
 
-  if(!value) cmin=QStringLiteral("0");
-  else cmin=QStringLiteral("1");
+  if(!value) cmin=QString("0");
+  else cmin=QString("1");
 
 	if(lables[label_id])
 	{
 		if(rel_type==RELATIONSHIP_11)
-      lables[label_id]->setComment(cmin + QStringLiteral(":1"));
+      lables[label_id]->setComment(cmin + QString(":1"));
 		else if(rel_type==RELATIONSHIP_1N)
 		{
-      aux=(table_id==SRC_TABLE ? QStringLiteral("1") : QStringLiteral("n"));
-      lables[label_id]->setComment(cmin + QStringLiteral(":") + aux);
+      aux=(table_id==SRC_TABLE ? QString("1") : QString("n"));
+      lables[label_id]->setComment(cmin + QString(":") + aux);
 		}
 		else if(rel_type==RELATIONSHIP_FK)
 		{
@@ -230,17 +230,17 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 			{
 				if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
 					 (!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
-          aux=QStringLiteral("n");
+          aux=QString("n");
 				else
-          aux=QStringLiteral("1");
+          aux=QString("1");
 
         lables[label_id]->setComment(aux);
 			}
 			else
-        lables[label_id]->setComment(QStringLiteral("1:n"));
+        lables[label_id]->setComment(QString("1:n"));
 		}
 		else if(rel_type==RELATIONSHIP_NN)
-      lables[label_id]->setComment(QStringLiteral("n"));
+      lables[label_id]->setComment(QString("n"));
 
 		lables[label_id]->setModified(true);
 	}

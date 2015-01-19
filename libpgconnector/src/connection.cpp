@@ -19,28 +19,28 @@
 #include "connection.h"
 #include <QTextStream>
 
-const QString Connection::SSL_DESABLE=QStringLiteral("disable");
-const QString Connection::SSL_ALLOW=QStringLiteral("allow");
-const QString Connection::SSL_PREFER=QStringLiteral("prefer");
-const QString Connection::SSL_REQUIRE=QStringLiteral("require");
-const QString Connection::SSL_CA_VERIF=QStringLiteral("verify-ca");
-const QString Connection::SSL_FULL_VERIF=QStringLiteral("verify-full");
-const QString Connection::PARAM_ALIAS=QStringLiteral("alias");
-const QString Connection::PARAM_SERVER_FQDN=QStringLiteral("host");
-const QString Connection::PARAM_SERVER_IP=QStringLiteral("hostaddr");
-const QString Connection::PARAM_PORT=QStringLiteral("port");
-const QString Connection::PARAM_DB_NAME=QStringLiteral("dbname");
-const QString Connection::PARAM_USER=QStringLiteral("user");
-const QString Connection::PARAM_PASSWORD=QStringLiteral("password");
-const QString Connection::PARAM_CONN_TIMEOUT=QStringLiteral("connect_timeout");
-const QString Connection::PARAM_OPTIONS=QStringLiteral("options");
-const QString Connection::PARAM_SSL_MODE=QStringLiteral("sslmode");
-const QString Connection::PARAM_SSL_CERT=QStringLiteral("sslcert");
-const QString Connection::PARAM_SSL_KEY=QStringLiteral("sslkey");
-const QString Connection::PARAM_SSL_ROOT_CERT=QStringLiteral("sslrootcert");
-const QString Connection::PARAM_SSL_CRL=QStringLiteral("sslcrl");
-const QString Connection::PARAM_KERBEROS_SERVER=QStringLiteral("krbsrvname");
-const QString Connection::PARAM_LIB_GSSAPI=QStringLiteral("gsslib");
+const QString Connection::SSL_DESABLE=QString("disable");
+const QString Connection::SSL_ALLOW=QString("allow");
+const QString Connection::SSL_PREFER=QString("prefer");
+const QString Connection::SSL_REQUIRE=QString("require");
+const QString Connection::SSL_CA_VERIF=QString("verify-ca");
+const QString Connection::SSL_FULL_VERIF=QString("verify-full");
+const QString Connection::PARAM_ALIAS=QString("alias");
+const QString Connection::PARAM_SERVER_FQDN=QString("host");
+const QString Connection::PARAM_SERVER_IP=QString("hostaddr");
+const QString Connection::PARAM_PORT=QString("port");
+const QString Connection::PARAM_DB_NAME=QString("dbname");
+const QString Connection::PARAM_USER=QString("user");
+const QString Connection::PARAM_PASSWORD=QString("password");
+const QString Connection::PARAM_CONN_TIMEOUT=QString("connect_timeout");
+const QString Connection::PARAM_OPTIONS=QString("options");
+const QString Connection::PARAM_SSL_MODE=QString("sslmode");
+const QString Connection::PARAM_SSL_CERT=QString("sslcert");
+const QString Connection::PARAM_SSL_KEY=QString("sslkey");
+const QString Connection::PARAM_SSL_ROOT_CERT=QString("sslrootcert");
+const QString Connection::PARAM_SSL_CRL=QString("sslcrl");
+const QString Connection::PARAM_KERBEROS_SERVER=QString("krbsrvname");
+const QString Connection::PARAM_LIB_GSSAPI=QString("gsslib");
 
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
@@ -165,7 +165,7 @@ void Connection::connect(void)
     {
       QTextStream err(stderr);
       err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << endl
-          << QStringLiteral("Conn. info: [ ") << connection_str << QStringLiteral("]") << endl;
+          << QString("Conn. info: [ ") << connection_str << QString("]") << endl;
       this->close();
     }
   }
@@ -275,7 +275,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
   {
     QTextStream out(stdout);
-    out << QStringLiteral("\n---\n") << sql << endl;
+    out << QString("\n---\n") << sql << endl;
   }
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -311,7 +311,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
   {
     QTextStream out(stdout);
-    out << QStringLiteral("\n---\n") << sql << endl;
+    out << QString("\n---\n") << sql << endl;
   }
 
 	//Raise an error in case the command sql execution is not sucessful

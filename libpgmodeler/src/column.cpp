@@ -89,7 +89,7 @@ bool Column::isNotNull(void)
 QString Column::getTypeReference(void)
 {
 	if(getParentTable())
-    return(getParentTable()->getName(true) + QStringLiteral(".") + this->getName(true) + QStringLiteral("%TYPE"));
+    return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
 	else
     return(QString());
 }

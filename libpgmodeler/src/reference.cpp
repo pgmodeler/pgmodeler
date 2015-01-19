@@ -123,12 +123,12 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
 
 			if(!alias.isEmpty())
-        tab_name=BaseObject::formatName(alias) + QStringLiteral(".");
+        tab_name=BaseObject::formatName(alias) + QString(".");
 
 			/* Case there is no column definede the default behavior is consider
 			all the table columns (e.g. table.*) */
 			if(!column)
-        sql_def=tab_name + QStringLiteral("*");
+        sql_def=tab_name + QString("*");
 			else
 			{
 				//Case there is an column concatenates its name to the code definition
@@ -136,7 +136,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 				//Case there is a column alias concatenate it to the definition
         if(!column_alias.isEmpty())
-          sql_def+=QStringLiteral(" AS ") + BaseObject::formatName(column_alias);
+          sql_def+=QString(" AS ") + BaseObject::formatName(column_alias);
 			}
 		}
 		//Case the reference is linked to an expression
@@ -146,9 +146,9 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			{expression} [AS ALIAS] */
 			sql_def=expression;
       if(!alias.isEmpty())
-        sql_def+=QStringLiteral(" AS ") + BaseObject::formatName(alias);
+        sql_def+=QString(" AS ") + BaseObject::formatName(alias);
 		}
-    sql_def+=QStringLiteral(", ");
+    sql_def+=QString(", ");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
 	else if(sql_type==SQL_REFER_FROM)
@@ -163,12 +163,12 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			sql_def+=table->getName(true);
 
       if(!alias.isEmpty())
-        sql_def+=QStringLiteral(" AS ") + BaseObject::formatName(alias);
+        sql_def+=QString(" AS ") + BaseObject::formatName(alias);
 		}
 		else
 			sql_def=expression;
 
-    sql_def+=QStringLiteral(", ");
+    sql_def+=QString(", ");
 	}
 	//Case the reference is after [JOIN | WHERE] keywords
 	else
@@ -184,7 +184,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			else
 				sql_def=BaseObject::formatName(alias);
 
-      sql_def+=QStringLiteral(".");
+      sql_def+=QString(".");
 
 			if(column)
 				sql_def+=column->getName(true);

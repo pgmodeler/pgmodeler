@@ -585,7 +585,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
          Their signature comes with a "USING index_mode" string
          that must be removed */
       if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
-        signature.remove(QRegExp(QStringLiteral("( )+(USING)(.)+")));
+        signature.remove(QRegExp(QString("( )+(USING)(.)+")));
 
       found=(signature==aux_name1);
       if(!found) itr++;
@@ -1608,7 +1608,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 						recv_table=rel_aux->getReceiverTable();
 
 						//Stores the relationship name to raise an error in case of closing cycle
-            str_aux+=rel_aux->getName() + QStringLiteral(", ");
+            str_aux+=rel_aux->getName() + QString(", ");
 
 						//Checking the closing cycle
 						found_cycle=(recv_table==ref_table);
@@ -3715,10 +3715,10 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 	/* A small tweak to detect a timestamp/date type which name contains the time zone modifier.
 		 This situation can occur mainly on reverse engineering operation where the data type of objects
 		 in most of times came as string form and need to be parsed */
-  if(!with_timezone && attribs[ParsersAttributes::NAME].contains(QStringLiteral("with time zone"), Qt::CaseInsensitive))
+  if(!with_timezone && attribs[ParsersAttributes::NAME].contains(QString("with time zone"), Qt::CaseInsensitive))
 	{
 		with_timezone=true;
-    name.remove(QStringLiteral(" with time zone"), Qt::CaseInsensitive);
+    name.remove(QString(" with time zone"), Qt::CaseInsensitive);
 	}
 
 	type_idx=PgSQLType::getBaseTypeIndex(name);
@@ -5347,7 +5347,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 			if(count==3)
 			{
-        tab_name=elem_list[0] + QStringLiteral(".") + elem_list[1];
+        tab_name=elem_list[0] + QString(".") + elem_list[1];
 				col_name=elem_list[2];
 			}
 			else if(count==2)
@@ -5460,7 +5460,7 @@ View *DatabaseModel::createView(void)
 									str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
 													.arg(Utf8String::create(view->getName()))
 													.arg(BaseObject::getTypeName(OBJ_VIEW))
-                          .arg(Utf8String::create(attribs[ParsersAttributes::TABLE]) + QStringLiteral(".") +
+                          .arg(Utf8String::create(attribs[ParsersAttributes::TABLE]) + QString(".") +
 													Utf8String::create(attribs[ParsersAttributes::COLUMN]))
 											.arg(BaseObject::getTypeName(OBJ_COLUMN));
 
@@ -6122,7 +6122,7 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
 			throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
-                      .arg(Utf8String::create(column->getParentTable()->getName(true)) + QStringLiteral(".") + Utf8String::create(column->getName(true)))
+                      .arg(Utf8String::create(column->getParentTable()->getName(true)) + QString(".") + Utf8String::create(column->getName(true)))
 											.arg(column->getTypeName())
 											.arg(Utf8String::create(refs[0]->getName(true)))
 				.arg(refs[0]->getTypeName()),
@@ -6202,7 +6202,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 				attributes[loc_attribs[i]]=localizations[i];
 
 				if(localizations[i]!="C" && encoding!=BaseType::null)
-          attributes[loc_attribs[i]]+= QStringLiteral(".") + ~encoding;
+          attributes[loc_attribs[i]]+= QString(".") + ~encoding;
 
         attributes[loc_attribs[i]]=QString("'%1'").arg(attributes[loc_attribs[i]]);
 			}
@@ -6263,10 +6263,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   float general_obj_cnt, gen_defs_count;
   bool sql_disabled=false;
   BaseObject *object=nullptr;
-  QString def, search_path=QStringLiteral("pg_catalog,public"),
+  QString def, search_path=QString("pg_catalog,public"),
       msg=trUtf8("Generating %1 of the object `%2' `(%3)'"),
       attrib=ParsersAttributes::OBJECTS, attrib_aux,
-      def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? QStringLiteral("SQL") : QStringLiteral("XML"));
+      def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? QString("SQL") : QString("XML"));
   Type *usr_type=nullptr;
   map<unsigned, BaseObject *> objects_map;
   ObjectType obj_type;
@@ -6368,7 +6368,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
                   (object->getName()!="public" && object->getName()!="pg_catalog"))))
         {
           if(object->getObjectType()==OBJ_SCHEMA)
-            search_path+=QStringLiteral(",") + object->getName(true);
+            search_path+=QString(",") + object->getName(true);
 
           //Generates the code definition and concatenates to the others
           attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
@@ -6441,10 +6441,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
   if(prepend_at_bod && def_type==SchemaParser::SQL_DEFINITION)
-    def=QStringLiteral("-- Prepended SQL commands --\n") +	this->prepended_sql + QStringLiteral("\n---\n\n") + def;
+    def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + QString("\n---\n\n") + def;
 
   if(append_at_eod && def_type==SchemaParser::SQL_DEFINITION)
-    def+=QStringLiteral("-- Appended SQL commands --\n") +	this->appended_sql + QStringLiteral("\n---\n");
+    def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QString("\n---\n");
 
   return(def);
 }
@@ -8330,7 +8330,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 		if(obj->getObjectType()!=OBJ_VIEW)
 		{
 			//Configures the previous type name
-      prev_name=BaseObject::formatName(prev_sch_name) + QStringLiteral(".") +
+      prev_name=BaseObject::formatName(prev_sch_name) + QString(".") +
 								BaseObject::formatName(obj->getName(), false);
 
 			/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
@@ -8362,17 +8362,17 @@ void DatabaseModel::createSystemObjects(bool create_public)
   /* The particular case is for public schema that is created only when the flag
 	is set. This because the public schema is written on model file even being
 	a system object. This strategy permits the user controls the schema rectangle behavior */
-  if(create_public && getObjectIndex(QStringLiteral("public"), OBJ_SCHEMA) < 0)
+  if(create_public && getObjectIndex(QString("public"), OBJ_SCHEMA) < 0)
 	{
 		public_sch=new Schema;
-    public_sch->setName(QStringLiteral("public"));
+    public_sch->setName(QString("public"));
     public_sch->setSystemObject(true);
 		addSchema(public_sch);
   }
 
   //Create the pg_catalog schema in order to insert default collations in
   pg_catalog=new Schema;
-  pg_catalog->BaseObject::setName(QStringLiteral("pg_catalog"));
+  pg_catalog->BaseObject::setName(QString("pg_catalog"));
   pg_catalog->setSystemObject(true);
   addSchema(pg_catalog);
 
@@ -8382,8 +8382,8 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		collation=new Collation;
 		collation->setName(collnames[i]);
 		collation->setSchema(pg_catalog);
-    collation->setEncoding(EncodingType(QStringLiteral("UTF8")));
-    collation->setLocale(QStringLiteral("C"));
+    collation->setEncoding(EncodingType(QString("UTF8")));
+    collation->setLocale(QString("C"));
 		collation->setSystemObject(true);
 		addCollation(collation);
 	}
@@ -8400,25 +8400,25 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	}
 
 	tbspace=new Tablespace;
-  tbspace->BaseObject::setName(QStringLiteral("pg_global"));
-  tbspace->setDirectory(QStringLiteral("_pg_global_dir_"));
+  tbspace->BaseObject::setName(QString("pg_global"));
+  tbspace->setDirectory(QString("_pg_global_dir_"));
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	tbspace=new Tablespace;
-  tbspace->BaseObject::setName(QStringLiteral("pg_default"));
-  tbspace->setDirectory(QStringLiteral("_pg_default_dir_"));
+  tbspace->BaseObject::setName(QString("pg_default"));
+  tbspace->setDirectory(QString("_pg_default_dir_"));
 	tbspace->setSystemObject(true);
 	addTablespace(tbspace);
 
 	postgres=new Role;
-  postgres->setName(QStringLiteral("postgres"));
+  postgres->setName(QString("postgres"));
 	postgres->setOption(Role::OP_SUPERUSER, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
 
   setDefaultObject(postgres);
-  setDefaultObject(getObject(QStringLiteral("public"), OBJ_SCHEMA), OBJ_SCHEMA);
+  setDefaultObject(getObject(QString("public"), OBJ_SCHEMA), OBJ_SCHEMA);
 }
 
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)

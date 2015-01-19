@@ -50,7 +50,7 @@ Operator::Operator(void)
 bool Operator::isValidName(const QString &name)
 {
 	//Warning: Do not alter the sequence of characters or the validation will fail
-  QString valid_chars=QStringLiteral("+-*/<>=~!@#%^&|'?");
+  QString valid_chars=QString("+-*/<>=~!@#%^&|'?");
 	int pos, len;
 	bool valid=true;
 
@@ -260,12 +260,12 @@ QString Operator::getSignature(bool format_name)
 	for(i=0; i < 2; i++)
 	{
 		if(argument_types[i]=="any")
-      args.push_back(QStringLiteral("NONE"));
+      args.push_back(QString("NONE"));
 		else
 			args.push_back(*argument_types[i]);
 	}
 
-  signature+=QStringLiteral("(") + args.join(',') + QStringLiteral(")");
+  signature+=QString("(") + args.join(',') + QString(")");
 	return(signature);
 }
 

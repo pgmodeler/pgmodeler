@@ -38,7 +38,7 @@ void Rule::setCommandsAttribute(void)
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-    if(i < (qtd-1)) str_cmds+=QStringLiteral(";");
+    if(i < (qtd-1)) str_cmds+=QString(";");
 	}
 
 	attributes[ParsersAttributes::COMMANDS]=str_cmds;

@@ -34,30 +34,30 @@ const char SchemaParser::CHR_END_CEXPR=')';
 const char SchemaParser::CHR_VAL_DELIM='"';
 const char SchemaParser::CHR_VALUE_OF='@';
 
-const QString SchemaParser::TOKEN_IF=QStringLiteral("if");
-const QString SchemaParser::TOKEN_THEN=QStringLiteral("then");
-const QString SchemaParser::TOKEN_ELSE=QStringLiteral("else");
-const QString SchemaParser::TOKEN_END=QStringLiteral("end");
-const QString SchemaParser::TOKEN_OR=QStringLiteral("or");
-const QString SchemaParser::TOKEN_AND=QStringLiteral("and");
-const QString SchemaParser::TOKEN_NOT=QStringLiteral("not");
-const QString SchemaParser::TOKEN_SET=QStringLiteral("set");
-const QString SchemaParser::TOKEN_UNSET=QStringLiteral("unset");
+const QString SchemaParser::TOKEN_IF=QString("if");
+const QString SchemaParser::TOKEN_THEN=QString("then");
+const QString SchemaParser::TOKEN_ELSE=QString("else");
+const QString SchemaParser::TOKEN_END=QString("end");
+const QString SchemaParser::TOKEN_OR=QString("or");
+const QString SchemaParser::TOKEN_AND=QString("and");
+const QString SchemaParser::TOKEN_NOT=QString("not");
+const QString SchemaParser::TOKEN_SET=QString("set");
+const QString SchemaParser::TOKEN_UNSET=QString("unset");
 
-const QString SchemaParser::TOKEN_META_SP=QStringLiteral("sp");
-const QString SchemaParser::TOKEN_META_BR=QStringLiteral("br");
-const QString SchemaParser::TOKEN_META_TB=QStringLiteral("tb");
-const QString SchemaParser::TOKEN_META_OB=QStringLiteral("ob");
-const QString SchemaParser::TOKEN_META_CB=QStringLiteral("cb");
-const QString SchemaParser::TOKEN_META_OC=QStringLiteral("oc");
-const QString SchemaParser::TOKEN_META_CC=QStringLiteral("cc");
+const QString SchemaParser::TOKEN_META_SP=QString("sp");
+const QString SchemaParser::TOKEN_META_BR=QString("br");
+const QString SchemaParser::TOKEN_META_TB=QString("tb");
+const QString SchemaParser::TOKEN_META_OB=QString("ob");
+const QString SchemaParser::TOKEN_META_CB=QString("cb");
+const QString SchemaParser::TOKEN_META_OC=QString("oc");
+const QString SchemaParser::TOKEN_META_CC=QString("cc");
 
-const QString SchemaParser::TOKEN_EQ_OP=QStringLiteral("==");
-const QString SchemaParser::TOKEN_NE_OP=QStringLiteral("!=");
-const QString SchemaParser::TOKEN_GT_OP=QStringLiteral(">");
-const QString SchemaParser::TOKEN_LT_OP=QStringLiteral("<");
-const QString SchemaParser::TOKEN_GT_EQ_OP=QStringLiteral(">=");
-const QString SchemaParser::TOKEN_LT_EQ_OP=QStringLiteral("<=");
+const QString SchemaParser::TOKEN_EQ_OP=QString("==");
+const QString SchemaParser::TOKEN_NE_OP=QString("!=");
+const QString SchemaParser::TOKEN_GT_OP=QString(">");
+const QString SchemaParser::TOKEN_LT_OP=QString("<");
+const QString SchemaParser::TOKEN_GT_EQ_OP=QString(">=");
+const QString SchemaParser::TOKEN_LT_EQ_OP=QString("<=");
 
 const QRegExp SchemaParser::ATTR_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
 

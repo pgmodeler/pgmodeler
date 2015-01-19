@@ -19,11 +19,11 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XMLParser::CHAR_AMP=QStringLiteral("&amp;");
-const QString XMLParser::CHAR_LT=QStringLiteral("&lt;");
-const QString XMLParser::CHAR_GT=QStringLiteral("&gt;");
-const QString XMLParser::CHAR_QUOT=QStringLiteral("&quot;");
-const QString XMLParser::CHAR_APOS=QStringLiteral("&apos;");
+const QString XMLParser::CHAR_AMP=QString("&amp;");
+const QString XMLParser::CHAR_LT=QString("&lt;");
+const QString XMLParser::CHAR_GT=QString("&gt;");
+const QString XMLParser::CHAR_QUOT=QString("&quot;");
+const QString XMLParser::CHAR_APOS=QString("&apos;");
 
 XMLParser::XMLParser(void)
 {
@@ -112,7 +112,7 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
       xml_buffer.replace(pos1,tam,QString());
 		}
 		else
-      xml_decl=QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+      xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
 		removeDTD();
 		readBuffer();
@@ -134,17 +134,17 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	#ifndef Q_OS_WIN
-    fmt_dtd_file=QStringLiteral("file://");
+    fmt_dtd_file=QString("file://");
 	#else
-    fmt_dtd_file=QStringLiteral("file:///");
+    fmt_dtd_file=QString("file:///");
 	#endif
 
 	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
 	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
-  dtd_decl=QStringLiteral("<!DOCTYPE ") + dtd_name +
-           QStringLiteral(" SYSTEM ") +
-           QStringLiteral("\"") +
-           fmt_dtd_file + QStringLiteral("\">\n");
+  dtd_decl=QString("<!DOCTYPE ") + dtd_name +
+           QString(" SYSTEM ") +
+           QString("\"") +
+           fmt_dtd_file + QString("\">\n");
 }
 
 void XMLParser::readBuffer(void)

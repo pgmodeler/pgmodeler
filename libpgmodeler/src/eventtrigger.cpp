@@ -116,9 +116,9 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
 
 		for(auto flt : filter)
-      str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QStringLiteral("','"))));
+      str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
-    attributes[ParsersAttributes::FILTER]=str_list.join(QStringLiteral("\n\t AND "));
+    attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
 	}
 	else
 	{

@@ -189,7 +189,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 QString Cast::getSignature(bool)
 {
-  attributes[ParsersAttributes::SIGNATURE]=this->getName().remove(QStringLiteral("cast"));
+  attributes[ParsersAttributes::SIGNATURE]=this->getName().remove(QString("cast"));
   return(BaseObject::getSignature(false));
 }
 

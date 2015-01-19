@@ -64,7 +64,7 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
   if(!directory.isEmpty())
-    attributes[ParsersAttributes::DIRECTORY]=QStringLiteral("'") + directory + QStringLiteral("'");
+    attributes[ParsersAttributes::DIRECTORY]=QString("'") + directory + QString("'");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

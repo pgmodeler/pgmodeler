@@ -19,7 +19,7 @@
 #include "crashhandler.h"
 
 const char CrashHandler::CHR_DELIMITER=static_cast<char>(3);
-const QString CrashHandler::ANALYSIS_MODE=QStringLiteral("-analysis-mode");
+const QString CrashHandler::ANALYSIS_MODE=QString("-analysis-mode");
 
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -58,7 +58,7 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	hl_model_txt=new SyntaxHighlighter(model_txt, false);
   hl_model_txt->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
-  QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, QStringLiteral("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+  QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
 	tmp_dir.setSorting(QDir::Time);
 	QStringList lista=tmp_dir.entryList();
 
@@ -141,7 +141,7 @@ void CrashHandler::generateReport(void)
 	//Configures the path to the .crash file generated
   QString crash_file=QFileInfo((GlobalAttributes::TEMPORARY_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
-                                GlobalAttributes::CRASH_REPORT_FILE).arg(QDateTime::currentDateTime().toString(QStringLiteral("_yyyyMMdd_hhmm")))).absoluteFilePath();
+                                GlobalAttributes::CRASH_REPORT_FILE).arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm")))).absoluteFilePath();
 
 	//Opens the file for writting
 	output.setFileName(crash_file);
@@ -181,7 +181,7 @@ void CrashHandler::loadReport(void)
 	try
 	{
 		file_dlg.setNameFilter(trUtf8("pgModeler crash report (*.crash);;All files (*.*)"));
-    file_dlg.setWindowIcon(QPixmap(QStringLiteral(":/icones/icones/pgsqlModeler48x48.png")));
+    file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
 		file_dlg.setWindowTitle(trUtf8("Load report"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -202,7 +202,7 @@ void CrashHandler::saveModel(void)
 
 	try
 	{
-    file_dlg.setDefaultSuffix(QStringLiteral("dbm"));
+    file_dlg.setDefaultSuffix(QString("dbm"));
 		file_dlg.setWindowTitle(trUtf8("Save model"));
     file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setFileMode(QFileDialog::AnyFile);

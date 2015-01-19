@@ -20,11 +20,11 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
-const QString Relationship::SUFFIX_SEPARATOR=QStringLiteral("_");
-const QString Relationship::SRC_TAB_TOKEN=QStringLiteral("{st}");
-const QString Relationship::DST_TAB_TOKEN=QStringLiteral("{dt}");
-const QString Relationship::GEN_TAB_TOKEN=QStringLiteral("{gt}");
-const QString Relationship::SRC_COL_TOKEN=QStringLiteral("{sc}");
+const QString Relationship::SUFFIX_SEPARATOR=QString("_");
+const QString Relationship::SRC_TAB_TOKEN=QString("{st}");
+const QString Relationship::DST_TAB_TOKEN=QString("{dt}");
+const QString Relationship::GEN_TAB_TOKEN=QString("{gt}");
+const QString Relationship::SRC_COL_TOKEN=QString("{sc}");
 
 const unsigned Relationship::SRC_COL_PATTERN=0;
 const unsigned Relationship::DST_COL_PATTERN=1;
@@ -113,21 +113,21 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 				tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
 
-      setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
-      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
-      setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
-      setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("uq"));
+      setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
+      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
+      setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
+      setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QString("uq"));
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
-      setNamePattern(PK_COL_PATTERN, QStringLiteral("id"));
+      setNamePattern(PK_COL_PATTERN, QString("id"));
 		}
 		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN)
-      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
+      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
 		else
 		{
-      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("pk"));
-      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("fk"));
-      setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QStringLiteral("uq"));
+      setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
+      setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
+      setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("uq"));
 			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
 		}
 

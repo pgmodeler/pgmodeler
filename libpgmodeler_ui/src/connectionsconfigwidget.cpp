@@ -160,10 +160,10 @@ void ConnectionsConfigWidget::newConnection(void)
 	options_edt->clear();
 
 	ssl_mode_cmb->setCurrentIndex(0);
-  client_cert_edt->setText(QStringLiteral("~/.postgresql/postgresql.crt"));
-  root_cert_edt->setText(QStringLiteral("~/.postgresql/root.crt"));
-  crl_edt->setText(QStringLiteral("~/.postgresql/root.crl"));
-  client_key_edt->setText(QStringLiteral("~/.postgresql/postgresql.key"));
+  client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
+  root_cert_edt->setText(QString("~/.postgresql/root.crt"));
+  crl_edt->setText(QString("~/.postgresql/root.crl"));
+  client_key_edt->setText(QString("~/.postgresql/postgresql.key"));
 
 	gssapi_auth_chk->setChecked(false);
 	krb_server_edt->clear();
@@ -349,7 +349,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 		}
 
 		if(gssapi_auth_chk->isChecked())
-      conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, QStringLiteral("gssapi"));
+      conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, QString("gssapi"));
 
 		if(!krb_server_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, krb_server_edt->text());
@@ -422,7 +422,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
     if(connections.empty())
-      config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]=QStringLiteral("  ");
+      config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]=QString("  ");
 		else
 		{
       for(Connection *conn : connections)
@@ -465,7 +465,7 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
     alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-      alias.remove(QRegExp(QStringLiteral(" \\((.)*\\)")));
+      alias.remove(QRegExp(QString(" \\((.)*\\)")));
 
     conns[alias]=conn;
 	}
