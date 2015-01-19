@@ -113,12 +113,16 @@ namespace GlobalAttributes {
 
   #if defined(Q_OS_MAC)
     CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
                        QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
+  #elif defined(Q_OS_LINUX)
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
   #else
     CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
   #endif
 
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,

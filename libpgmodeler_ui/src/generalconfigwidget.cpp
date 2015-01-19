@@ -534,7 +534,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
 		#ifdef Q_OS_WIN
      //Checking if the .dbm registry key exists
      QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe");
+     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe"));
 
      //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
      if(dbm_ext.value(QString("Default")).toString().isEmpty())
@@ -543,7 +543,7 @@ void GeneralConfigWidget::updateFileAssociation(void)
       if(msg_box.result()==QDialog::Accepted)
       {
         //Write the default value for .dbm registry key
-        dbm_ext.setValue(QString("Default"), QString("dbm_auto_file");
+        dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
         dbm_ext.sync();
 
         //Other registry keys values
