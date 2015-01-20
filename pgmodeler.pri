@@ -89,7 +89,8 @@ macx {
 
 # Creating constants based upon the custom paths so the GlobalAttributes
 # namespace can correctly configure the paths inside the code
-DEFINES += PLUGINSDIR=\\\"$${PLUGINSDIR}\\\" \
+DEFINES += BINDIR=\\\"$${BINDIR}\\\" \
+           PLUGINSDIR=\\\"$${PLUGINSDIR}\\\" \
            PRIVATEBINDIR=\\\"$${PRIVATEBINDIR}\\\" \
            CONFDIR=\\\"$${CONFDIR}\\\" \
            DOCDIR=\\\"$${DOCDIR}\\\" \

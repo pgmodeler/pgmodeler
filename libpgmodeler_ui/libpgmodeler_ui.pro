@@ -267,6 +267,13 @@ DEPENDPATH += $$PWD/../libobjrenderer \
               $$PWD/../libparsers \
               $$PWD/../libutils
 
+#Adding crash handle code dependency
+FORMS+=$$PWD/../crashhandler/ui/crashhandler.ui
+SOURCES+=$$PWD/../crashhandler/src/crashhandler.cpp
+HEADERS+=$$PWD/../crashhandler/src/crashhandler.h
+DEPENDPATH+=$$PWD/../crashhandler
+INCLUDEPATH+=$$PWD/../crashhandler/src
+
 # Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

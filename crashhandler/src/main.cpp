@@ -31,9 +31,7 @@ int main(int argc, char **argv)
 		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 		app.installTranslator(&translator);
 
-		CrashHandler crashhandler;
-
-		crashhandler.setAnalysisMode(argc > 1 && argv[1]==CrashHandler::ANALYSIS_MODE);
+    CrashHandler crashhandler(argc > 1 && argv[1]==CrashHandler::ANALYSIS_MODE);
 		crashhandler.show();
 		app.exec();
 

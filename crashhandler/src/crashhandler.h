@@ -26,11 +26,8 @@
 #define CRASH_HANDLER_H
 
 #include <QDialog>
-#include "exception.h"
-#include "globalattributes.h"
 #include "ui_crashhandler.h"
 #include "syntaxhighlighter.h"
-#include "messagebox.h"
 
 class CrashHandler : public QDialog, Ui::CrashHandler
 {
@@ -46,17 +43,26 @@ class CrashHandler : public QDialog, Ui::CrashHandler
 		//! \brief Load a report file showing its contents on the form
 		void loadReport(const QString &filename);
 
+    void setAnalysisMode(bool value);
+
 	public:
-		const static QString ANALYSIS_MODE;
+    const static QString ANALYSIS_MODE;
+    CrashHandler(bool analysis_mode=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-		CrashHandler(QWidget * parent = 0, Qt::WindowFlags f = 0);
-		void setAnalysisMode(bool value);
+    void setTitle(const QString &title);
+    void setInfoText(const QString &msg);
+    void setLogo(const QPixmap &logo);
 
-	public slots:
+  public slots:
 		void generateReport(void);
 		void enableGeneration(void);
+
+  private slots:
 		void loadReport(void);
-		void saveModel(void);
+    void saveModel(void);
+    void attachModel(void);
+    void selectOutput(void);
+
 };
 
 #endif

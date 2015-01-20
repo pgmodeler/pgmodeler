@@ -258,7 +258,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateConnections(void);
 
 		//! \brief Save the temp files for all opened models
-    void saveTemporaryModels(void);//(bool force=false);
+    void saveTemporaryModels(bool force=false);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
@@ -267,6 +267,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
+    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
+    void executePendingOperation(bool valid_error);
+
 		void fixModel(const QString &filename=QString());
     void showRightWidgetsBar(void);
     void showBottomWidgetsBar(void);
@@ -274,14 +277,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
 		void removeModelActions(void);
-
 		void showDemoVersionWarning(void);
 		void quitDemoVersion(void);
-
-    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
-    void executePendingOperation(bool valid_error);
-
     void changeCurrentView(bool checked);
+    void reportBug(void);
 };
 
 #endif

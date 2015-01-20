@@ -22,7 +22,7 @@
 #ifndef Q_OS_MAC
   const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
 #else
-	const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
+  const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
 #endif
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
@@ -70,25 +70,20 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-	QString pgmodeler_cli=qApp->applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + PGMODELER_CLI;
-
-	#ifdef Q_OS_WIN
-    pgmodeler_cli+=QString(".exe");
-	#endif
-
-	QFileInfo fi(pgmodeler_cli);
+  QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH + "bla");
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-		msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%1</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.").arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
+    msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+                     .arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_edt->setVisible(true);
 		sel_cli_exe_tb->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(fi.absoluteFilePath());
+    pgmodeler_cli_edt->setText(GlobalAttributes::PGMODELER_CLI_PATH);
 
   return(QDialog::exec());
 }
@@ -98,10 +93,16 @@ void ModelFixForm::enableFix(void)
   if(!pgmodeler_cli_edt->text().isEmpty())
   {
      QFileInfo fi(pgmodeler_cli_edt->text());
-     invalid_cli_lbl->setVisible(!fi.exists() || fi.baseName()!=PGMODELER_CLI);
+     bool visible=!fi.exists() || fi.baseName()!=PGMODELER_CLI;
+
+     invalid_cli_lbl->setVisible(visible);
+     message_frm->setVisible(visible);
   }
   else
+  {
     invalid_cli_lbl->setVisible(false);
+    message_frm->setVisible(false);
+  }
 
   fix_btn->setEnabled(!input_file_edt->text().isEmpty() &&
                       !output_file_edt->text().isEmpty() &&

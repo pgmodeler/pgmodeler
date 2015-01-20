@@ -86,6 +86,7 @@ namespace GlobalAttributes {
   DEFAULT_QT_STYLE=QString("Fusion"),
   UI_STYLE_OPT=QString("-style");
 
+
 	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
 	 the working dir. But these values ​​can be overwritten using the
@@ -96,7 +97,13 @@ namespace GlobalAttributes {
 		 PGMODELER_LANG_DIR
 		 PGMODELER_PLUGINS_DIR
 		 PGMODELER_TMP_DIR
-		 PGMODELER_SAMPLES_DIR*/
+     PGMODELER_SAMPLES_DIR
+
+   Additional var are used to specify where to find crash handler and command line interface
+   application.
+
+     PGMODELER_CHANDLER_PATH
+     PGMODELER_CLI_PATH */
 
 	static const QString
 	/*! \brief According to the libxml documentation , the paths used by the parser are
@@ -128,21 +135,31 @@ namespace GlobalAttributes {
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
   XML_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + XML_HIGHLIGHT_CONF + CONFIGURATION_EXT,
 
-	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
-	different location for pgmodeler-ch */
+
+  /*! \brief Crash handler and CLI executables path configuration, the user can use the below envvar to set a
+       different location for pgmodeler-ch as well pgmodeler-cli */
   #if defined(Q_OS_UNIX)
     #if defined(Q_OS_MAC)
       //For MacOSX the crash handler path is fixed (inside bundle)
-      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-ch");
+      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-ch"),
+      PGMODELER_CLI_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-cli");
     #else
       CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
                          QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                         QString(PRIVATEBINDIR) + QString("/pgmodeler-ch");
+                         QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
+
+      PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
+                           QString(getenv("PGMODELER_CLI_PATH")) :
+                           QString(BINDIR) + QString("/pgmodeler-cli");
     #endif
   #else
     CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
                        QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe");
+                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe"),
+
+    PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
+                       QString(getenv("PGMODELER_CLI_PATH")) :
+                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-cli.exe");
   #endif
 
 	#ifdef DEMO_VERSION

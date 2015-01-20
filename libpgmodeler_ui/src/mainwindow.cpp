@@ -18,6 +18,7 @@
 
 #include "mainwindow.h"
 #include "pgmodeleruins.h"
+#include "crashhandler.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -124,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
     control_tb->addAction(action_about);
+    control_tb->addAction(action_bug_report);
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
@@ -196,6 +198,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   connect(action_welcome, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
   connect(action_design, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
   connect(action_manage, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
+
+  connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
 
   window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -322,8 +326,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
 
 					//Set the model as modified forcing the user to save when the autosave timer ends
-					model->modified=true;
-					model->filename.clear();
+          model->setModified(true);
+          model->filename.clear();
 					restoration_form->removeTemporaryModel(model_file);
 				}
 				catch(Exception &e)
@@ -336,11 +340,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					msg_box.show(e);
 				}
 			}
+
+      saveTemporaryModels();
 		}
 	}
 
-	//If a previous session was restored save the temp models
-  saveTemporaryModels();
+  //If a previous session was restored save the temp models
 	updateConnections();
 	updateRecentModelsMenu();
 	configureSamplesMenu();
@@ -415,7 +420,7 @@ void MainWindow::restoreLastSession(void)
 				prev_session_files.pop_front();
 			}
 
-      saveTemporaryModels();
+      saveTemporaryModels(true);
 			action_restore_session->setEnabled(false);
 			central_wgt->last_session_tb->setEnabled(false);
 		}
@@ -651,7 +656,7 @@ void MainWindow::updateConnections(void)
   }
 }
 
-void MainWindow::saveTemporaryModels(void)
+void MainWindow::saveTemporaryModels(bool force)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: temporary model saving disabled."
@@ -673,7 +678,7 @@ void MainWindow::saveTemporaryModels(void)
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-        if(model->isModified())
+        if(force || model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
 
 				QThread::msleep(200);
@@ -730,7 +735,7 @@ void MainWindow::loadModelFromAction(void)
 		addModel(act->data().toString());
 		recent_models.push_back(act->data().toString());
 		updateRecentModelsMenu();
-    saveTemporaryModels();
+    saveTemporaryModels(true);
 	}
 }
 
@@ -1452,7 +1457,7 @@ void MainWindow::loadModels(const QStringList &list)
 		}
 
 		updateRecentModelsMenu();
-    saveTemporaryModels();
+    saveTemporaryModels(true);
 	}
 	catch(Exception &e)
 	{	
@@ -1776,4 +1781,16 @@ void MainWindow::changeCurrentView(bool checked)
     curr_act->setChecked(true);
     curr_act->blockSignals(false);
   }
+}
+
+void MainWindow::reportBug(void)
+{
+  CrashHandler crashhandler(false);
+
+  crashhandler.setLogo(QPixmap(QString(":imagens/imagens/bugreport.png")));
+  crashhandler.setTitle(trUtf8("Bug report"));
+  crashhandler.setInfoText(trUtf8("Use the form below to generate a complete bug report.\
+ Please, try to be as clear as possible when describing the actions that can reproduce the bug.\
+ Additionally, it's important to attach a sample database model so that the bug can be quickly discovered and fixed!"));
+  crashhandler.exec();
 }

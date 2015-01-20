@@ -17,11 +17,14 @@
 */
 
 #include "crashhandler.h"
+#include "exception.h"
+#include "globalattributes.h"
+#include "messagebox.h"
 
 const char CrashHandler::CHR_DELIMITER=static_cast<char>(3);
 const QString CrashHandler::ANALYSIS_MODE=QString("-analysis-mode");
 
-CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+CrashHandler::CrashHandler(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	QFile input;
 	QString buf;
@@ -32,6 +35,11 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(actions_txt, SIGNAL(textChanged(void)), this, SLOT(enableGeneration(void)));
 	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadReport(void)));
 	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveModel(void)));
+  connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
+  connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));
+  connect(output_tb, SIGNAL(clicked()), this, SLOT(selectOutput()));
+
+  output_edt->setText(QFileInfo(GlobalAttributes::TEMPORARY_DIR).absolutePath());
 
 	//Open for reading the stack trace file generated on the last crash
 	input.setFileName(GlobalAttributes::TEMPORARY_DIR +
@@ -72,6 +80,23 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
     model_txt->setPlainText(/*Utf8String::create(*/QString(input.readAll()));
 		input.close();
 	}
+
+  setAnalysisMode(analysis_mode);
+}
+
+void CrashHandler::setTitle(const QString &title)
+{
+  title_lbl->setText(title);
+}
+
+void CrashHandler::setInfoText(const QString &msg)
+{
+  msg_lbl->setText(msg);
+}
+
+void CrashHandler::setLogo(const QPixmap &logo)
+{
+  logo_lbl->setPixmap(logo);
 }
 
 void CrashHandler::enableGeneration(void)
@@ -229,14 +254,60 @@ void CrashHandler::saveModel(void)
 	{
 		Messagebox msgbox;
 		msgbox.show(e);
-	}
+  }
+}
+
+void CrashHandler::attachModel(void)
+{
+  QFileDialog file_dlg;
+
+  try
+  {
+    file_dlg.setDefaultSuffix(QString("dbm"));
+    file_dlg.setWindowTitle(trUtf8("Load model"));
+    file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+    file_dlg.setFileMode(QFileDialog::AnyFile);
+    file_dlg.setModal(true);
+
+    if(file_dlg.exec()==QFileDialog::Accepted)
+    {
+      QFile input(file_dlg.selectedFiles().at(0));
+      QByteArray buf;
+
+      input.open(QFile::ReadOnly);
+
+      if(!input.isOpen())
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_dlg.selectedFiles().at(0)),
+                        ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+      buf=input.readAll();
+      model_txt->setPlainText(QString(buf));
+      input.close();
+    }
+  }
+  catch(Exception &e)
+  {
+    Messagebox msgbox;
+    msgbox.show(e);
+  }
+}
+
+void CrashHandler::selectOutput(void)
+{
+  QFileDialog file_dlg;
+
+  file_dlg.setWindowTitle(trUtf8("Select report output folder"));
+  file_dlg.setFileMode(QFileDialog::DirectoryOnly);
+  file_dlg.setModal(true);
+
+  if(file_dlg.exec()==QFileDialog::Accepted)
+    output_edt->setText(file_dlg.selectedFiles().at(0));
 }
 
 void CrashHandler::setAnalysisMode(bool value)
 {
-	create_btn->setVisible(!value);
-	load_tb->setVisible(value);
-	save_tb->setVisible(value);
+	create_btn->setVisible(!value);	
+  btns_parent_wgt->setVisible(value);
 
 	if(value)
 	{

@@ -193,6 +193,7 @@
         <file>icones/attribute.png</file>
         <file>icones/codesnippet.png</file>
         <file>icones/disablesql.png</file>
+        <file>icones/bugreport.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -207,6 +208,7 @@
         <file>imagens/rel_fk_to_pk.png</file>
         <file>imagens/diff2db.png</file>
         <file>imagens/diff2sql.png</file>
+        <file>imagens/bugreport.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>
