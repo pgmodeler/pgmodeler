@@ -234,10 +234,10 @@ void ModelDatabaseDiffForm::clearOutput(void)
 	step_pb->setValue(0);
 	progress_pb->setValue(0);
 
-  create_tb->setText("0");
-  alter_tb->setText("0");
-  drop_tb->setText("0");
-  ignore_tb->setText("0");
+  create_tb->setText(QString("0"));
+  alter_tb->setText(QString("0"));
+  drop_tb->setText(QString("0"));
+  ignore_tb->setText(QString("0"));
 }
 
 void ModelDatabaseDiffForm::listDatabases(void)
@@ -364,8 +364,8 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
     msg_box.show(trUtf8("Confirmation"),
                  trUtf8(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
                  Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-                 trUtf8("Apply diff"), trUtf8("Preview diff"), "",
-                 ":/icones/icones/diff.png", ":/icones/icones/codigosql.png");
+                 trUtf8("Apply diff"), trUtf8("Preview diff"), QString(),
+                 QString(":/icones/icones/diff.png"), QString(":/icones/icones/codigosql.png"));
 
   if(!confirm || msg_box.result()==QDialog::Accepted)
   {
@@ -396,7 +396,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
     output_trw->collapseItem(diff_item);
     PgModelerUiNS::createOutputTreeItem(output_trw,
                                         trUtf8("Diff process paused. Waiting user action..."),
-                                        QPixmap(":/icones/icones/msgbox_alerta.png"), nullptr);
+                                        QPixmap(QString(":/icones/icones/msgbox_alerta.png")), nullptr);
   }
 }
 
@@ -453,7 +453,7 @@ void ModelDatabaseDiffForm::finishDiff(void)
 {
   cancelOperation(false);
 
-  step_lbl->setText(trUtf8("Diff process sucessfully end."));
+  step_lbl->setText(trUtf8("Diff process sucessfully ended!"));
   progress_lbl->setText(trUtf8("No operations left."));
 
   step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
@@ -617,7 +617,7 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
   file_dlg.setAcceptMode(QFileDialog::AcceptSave);
   file_dlg.setModal(true);
   file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
-  file_dlg.selectFile(source_model->getName() + "-diff.sql");
+  file_dlg.selectFile(source_model->getName() + QString("-diff.sql"));
 
   if(file_dlg.exec()==QFileDialog::Accepted)
   {

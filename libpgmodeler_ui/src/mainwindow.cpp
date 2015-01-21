@@ -18,6 +18,7 @@
 
 #include "mainwindow.h"
 #include "pgmodeleruins.h"
+#include "bugreportform.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -123,6 +124,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
+    control_tb->addAction(action_bug_report);
     control_tb->addAction(action_about);
     control_tb->addAction(action_update_found);
 
@@ -197,7 +199,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   connect(action_design, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
   connect(action_manage, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
 
-	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
+  connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
+
+  window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
 	#ifdef DEMO_VERSION
 		window_title+=trUtf8(" (Demo)");
@@ -322,8 +326,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
 
 					//Set the model as modified forcing the user to save when the autosave timer ends
-					model->modified=true;
-					model->filename.clear();
+          model->setModified(true);
+          model->filename.clear();
 					restoration_form->removeTemporaryModel(model_file);
 				}
 				catch(Exception &e)
@@ -336,11 +340,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					msg_box.show(e);
 				}
 			}
+
+      saveTemporaryModels();
 		}
 	}
 
-	//If a previous session was restored save the temp models
-  saveTemporaryModels();
+  //If a previous session was restored save the temp models
 	updateConnections();
 	updateRecentModelsMenu();
 	configureSamplesMenu();
@@ -415,7 +420,7 @@ void MainWindow::restoreLastSession(void)
 				prev_session_files.pop_front();
 			}
 
-      saveTemporaryModels();
+      saveTemporaryModels(true);
 			action_restore_session->setEnabled(false);
 			central_wgt->last_session_tb->setEnabled(false);
 		}
@@ -452,7 +457,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_fixed." + fi.suffix());
+    model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
 	model_fix_form.exec();
@@ -561,25 +566,34 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
       confs=conf_wgt->getConfigurationParams();
 
-      attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : "";
+      attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : QString();
 			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
 			attribs.clear();
 
-			//Saving the session
 			count=models_tbw->count();
-			for(i=0; i < count; i++)
-			{
-				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 
-				if(!model->getFilename().isEmpty())
-				{
-					param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
-					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=model->getFilename();
-					conf_wgt->addConfigurationParam(param_id, attribs);
-					attribs.clear();
-				}
-			}
+      //Saving the session
+      if(count > 0)
+      {
+        for(i=0; i < count; i++)
+        {
+          model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+          if(!model->getFilename().isEmpty())
+          {
+            param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+            attribs[ParsersAttributes::ID]=param_id;
+            attribs[ParsersAttributes::PATH]=model->getFilename();
+            conf_wgt->addConfigurationParam(param_id, attribs);
+            attribs.clear();
+          }
+        }
+      }
+      else
+      {
+          //Remove the reference for old session
+         conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(ParsersAttributes::_FILE_)));
+      }
 
 			//Saving recent models list
 			if(!recent_models.isEmpty())
@@ -611,7 +625,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QDir dir(GlobalAttributes::TEMPORARY_DIR);
 			QStringList log_files;
 
-			dir.setNameFilters({"*.log"});
+      dir.setNameFilters({QString("*.log")});
 			log_files=dir.entryList(QDir::Files);
 
 			while(!log_files.isEmpty())
@@ -642,7 +656,7 @@ void MainWindow::updateConnections(void)
   }
 }
 
-void MainWindow::saveTemporaryModels(void)
+void MainWindow::saveTemporaryModels(bool force)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: temporary model saving disabled."
@@ -664,7 +678,7 @@ void MainWindow::saveTemporaryModels(void)
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-        if(model->isModified())
+        if(force || model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
 
 				QThread::msleep(200);
@@ -721,7 +735,7 @@ void MainWindow::loadModelFromAction(void)
 		addModel(act->data().toString());
 		recent_models.push_back(act->data().toString());
 		updateRecentModelsMenu();
-    saveTemporaryModels();
+    saveTemporaryModels(true);
 	}
 }
 
@@ -749,18 +763,18 @@ void MainWindow::addModel(const QString &filename)
 
     //Set a name for the tab widget
     str_aux=QString("%1").arg(models_tbw->count());
-    obj_name="model_";
+    obj_name=QString("model_");
     obj_name+=str_aux;
     tab_name=obj_name;
 
     model_tab=new ModelWidget;
-    model_tab->setObjectName(Utf8String::create(obj_name));
+    model_tab->setObjectName(/*Utf8String::create(*/obj_name);
 
     //Add the tab to the tab widget
     obj_name=model_tab->db_model->getName();
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_tab, Utf8String::create(obj_name));
+    models_tbw->addTab(model_tab, /*Utf8String::create(*/obj_name);
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
@@ -776,7 +790,7 @@ void MainWindow::addModel(const QString &filename)
         model_tab->loadModel(filename);
         models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
         //Get the "public" schema and set as system object
-        public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", OBJ_SCHEMA));
+        public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), OBJ_SCHEMA));
         if(public_sch)	public_sch->setSystemObject(true);
 
         models_tbw->setVisible(true);
@@ -828,7 +842,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
     model_nav_wgt->addModel(model_wgt);
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_wgt, Utf8String::create(model_wgt->getDatabaseModel()->getName()));
+    models_tbw->addTab(model_wgt, /*Utf8String::create(*/model_wgt->getDatabaseModel()->getName());
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     setCurrentModel();
@@ -943,7 +957,7 @@ void MainWindow::setCurrentModel(void)
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
 		else
-			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
+      this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
@@ -1105,7 +1119,7 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-		model_nav_wgt->updateModelText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()), current_model->getFilename());
+    model_nav_wgt->updateModelText(models_tbw->currentIndex(), /*Utf8String::create(*/current_model->db_model->getName(), current_model->getFilename());
 }
 
 void MainWindow::applyConfigurations(void)
@@ -1187,8 +1201,8 @@ void MainWindow::saveModel(ModelWidget *model)
         msg_box.show(trUtf8("Confirmation"),
                      trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 										 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-										 trUtf8("Save anyway"), trUtf8("Validate"), "",
-										 ":/icones/icones/salvar.png", ":/icones/icones/validation.png");
+                     trUtf8("Save anyway"), trUtf8("Validate"),QString(),
+                     QString(":/icones/icones/salvar.png"), QString(":/icones/icones/validation.png"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1215,9 +1229,9 @@ void MainWindow::saveModel(ModelWidget *model)
 				{
 					QFileDialog file_dlg;
 
-					file_dlg.setDefaultSuffix("dbm");
+          file_dlg.setDefaultSuffix(QString("dbm"));
 					file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-					file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
+          file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
 					file_dlg.setFileMode(QFileDialog::AnyFile);
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
@@ -1233,7 +1247,7 @@ void MainWindow::saveModel(ModelWidget *model)
 				else
 					model->saveModel();
 
-				this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
+        this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
       }
 		}
@@ -1273,8 +1287,8 @@ void MainWindow::exportModel(void)
     msg_box.show(trUtf8("Confirmation"),
                  trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
                  Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-                 trUtf8("Export anyway"), trUtf8("Validate"), "",
-                 ":/icones/icones/exportar.png", ":/icones/icones/validation.png");
+                 trUtf8("Export anyway"), trUtf8("Validate"), QString(),
+                 QString(":/icones/icones/exportar.png"), QString(":/icones/icones/validation.png"));
 
     if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
     {
@@ -1326,8 +1340,8 @@ void MainWindow::compareModelDatabase(void)
       msg_box.show(trUtf8("Confirmation"),
                    trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
                    Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-                   trUtf8("Diff anyway"), trUtf8("Validate"), "",
-                   ":/icones/icones/diff.png", ":/icones/icones/validation.png");
+                   trUtf8("Diff anyway"), trUtf8("Validate"), QString(),
+                   QString(":/icones/icones/diff.png"), QString(":/icones/icones/validation.png"));
 
       if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
       {
@@ -1443,7 +1457,7 @@ void MainWindow::loadModels(const QStringList &list)
 		}
 
 		updateRecentModelsMenu();
-    saveTemporaryModels();
+    saveTemporaryModels(true);
 	}
 	catch(Exception &e)
 	{	
@@ -1453,8 +1467,8 @@ void MainWindow::loadModels(const QStringList &list)
 													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
 								 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
-								 trUtf8("Fix model"), trUtf8("Cancel"), "",
-								 ":/icones/icones/fixobject.png", ":/icones/icones/msgbox_erro.png");
+                 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+                 QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
 
 		if(msg_box.result()==QDialog::Accepted)
 			fixModel(list[i]);
@@ -1602,7 +1616,7 @@ QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
 void MainWindow::configureSamplesMenu(void)
 {
 	QDir dir(GlobalAttributes::SAMPLES_DIR);
-	QStringList files=dir.entryList({"*.dbm"});
+  QStringList files=dir.entryList({QString("*.dbm")});
 	QAction *act=nullptr;
 	QString path;
 
@@ -1630,17 +1644,17 @@ void MainWindow::storeDockWidgetsSettings(void)
 	attribs_map params;
 
   params[ParsersAttributes::VALIDATOR]=ParsersAttributes::_TRUE_;
-  params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-  params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+  params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
 	params.clear();
 
   params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::_TRUE_;
-  params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : "");
-  params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-  params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
-  params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : "");
+  params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+  params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+  params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+  params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
 	params.clear();
 }
@@ -1700,7 +1714,7 @@ void MainWindow::executePendingOperation(bool valid_error)
 {
   if(!valid_error && pending_op!=NO_PENDING_OPER)
   {
-    static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
+    static const QString op_names[]={ QString(), QT_TR_NOOP("save"), QT_TR_NOOP("save"),
                                       QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
     PgModelerUiNS::createOutputTreeItem(model_valid_wgt->output_trw,
@@ -1767,4 +1781,10 @@ void MainWindow::changeCurrentView(bool checked)
     curr_act->setChecked(true);
     curr_act->blockSignals(false);
   }
+}
+
+void MainWindow::reportBug(void)
+{
+  BugReportForm bugrep_frm;
+  bugrep_frm.exec();
 }

@@ -45,7 +45,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	if(!simplified_view)
 	{
-		widgets_conf.setValue("splitterSize", splitter->saveState());
+    widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
 		connect(options_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
 		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
@@ -154,7 +154,7 @@ void ModelObjectsWidget::selectObject(void)
 			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
-									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), nullptr);
+                  trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
@@ -221,20 +221,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
   {
     Function *func=dynamic_cast<Function *>(object);
     func->createSignature(false);
-    item->setText(0,Utf8String::create(func->getSignature()));
-		obj_name=Utf8String::create(func->getSignature());
+    item->setText(0,/*Utf8String::create(*/func->getSignature());
+    obj_name=/*Utf8String::create(*/func->getSignature();
     func->createSignature(true);
   }
   else if(obj_type==OBJ_OPERATOR)
   {
     Operator *oper=dynamic_cast<Operator *>(object);
-    item->setText(0, Utf8String::create(oper->getSignature(false)));
-		obj_name=Utf8String::create(oper->getSignature(false));
+    item->setText(0, /*Utf8String::create(*/oper->getSignature(false));
+    obj_name=/*Utf8String::create(*/oper->getSignature(false);
   }
   else
   {
-    item->setText(0,Utf8String::create(object->getName()));
-		obj_name=Utf8String::create(object->getName());
+    item->setText(0,/*Utf8String::create(*/object->getName());
+    obj_name=/*Utf8String::create(*/object->getName();
   }
 
 	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
@@ -267,20 +267,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
     if(obj_type==BASE_RELATIONSHIP)
     {
       if(rel_type==BaseRelationship::RELATIONSHIP_FK)
-        str_aux="fk";
+        str_aux=QString("fk");
       else
-        str_aux="tv";
+        str_aux=QString("tv");
     }
     else if(rel_type==BaseRelationship::RELATIONSHIP_11)
-      str_aux="11";
+      str_aux=QString("11");
     else if(rel_type==BaseRelationship::RELATIONSHIP_1N)
-      str_aux="1n";
+      str_aux=QString("1n");
     else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
-      str_aux="nn";
+      str_aux=QString("nn");
     else if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
-      str_aux="dep";
+      str_aux=QString("dep");
     else if(rel_type==BaseRelationship::RELATIONSHIP_GEN)
-      str_aux="gen";
+      str_aux=QString("gen");
   }
   else if(obj_type==OBJ_CONSTRAINT)
   {
@@ -370,7 +370,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 
 		//Restore the splitter state if the options toolbutton is not toggled
 		if(!options_tb->isChecked())
-			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
+      splitter->restoreState(widgets_conf.value(QString("splitterSize")).toByteArray());
 	}
 
 	expand_all_tb->setEnabled(tree_view_tb->isChecked());
@@ -430,7 +430,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 				visible_types.push_back(tp.first);
 		}
 
-		objects=db_model->findObjects("", visible_types,true, false, false, false);
+    objects=db_model->findObjects(QString(), visible_types,true, false, false, false);
 
 	}
 
@@ -687,12 +687,12 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(":/icones/icones/permission_grp.png"));
+      item->setIcon(0,QPixmap(QString(":/icones/icones/permission_grp.png")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
 			item->setText(0, QString("%1 (%2)")
-										.arg(Utf8String::create(BaseObject::getTypeName(OBJ_PERMISSION)))
+                    .arg(/*Utf8String::create(*/BaseObject::getTypeName(OBJ_PERMISSION))
 										.arg(perms.size()));
 
 			item->setData(0, Qt::UserRole, generateItemValue(object));

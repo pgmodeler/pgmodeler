@@ -132,10 +132,10 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]=deferral_cmb->currentText();
-		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : "");
-		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : "");
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
-		config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]="";
+		config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]=QString();
 
 		for(auto itr : patterns)
 		{

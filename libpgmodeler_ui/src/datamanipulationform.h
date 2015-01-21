@@ -65,7 +65,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		map<int, QBrush> prev_row_colors;
 
 		//! brief Fills a combobox with the names of objects retrieved from catalog
-		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
+		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
 
 		//! brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
@@ -87,7 +87,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 		//! brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table="");
+    void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString());
 
 	private slots:
 		//! brief List the tables based upon the current schema

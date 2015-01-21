@@ -21,7 +21,7 @@
 OperatorFamily::OperatorFamily(void)
 {
 	obj_type=OBJ_OPFAMILY;
-	attributes[ParsersAttributes::INDEX_TYPE]="";
+	attributes[ParsersAttributes::INDEX_TYPE]=QString();
 }
 
 void OperatorFamily::setIndexingType(IndexingType idx_type)

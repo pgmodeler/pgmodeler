@@ -16,6 +16,8 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "application.h"
+#include "globalattributes.h"
+#include "messagebox.h"
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
@@ -26,6 +28,9 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
                  GlobalAttributes::CONFIGURATION_EXT);
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
+
+  //Creating the initial user's configuration
+  createUserConfiguration();
 
   //Changing the current working dir to the executable's directory in
   QDir::setCurrent(this->applicationDirPath());
@@ -42,7 +47,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
   //Trying to load plugins translations
   dir_list=QDir(GlobalAttributes::PLUGINS_DIR +
                 GlobalAttributes::DIR_SEPARATOR,
-                "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+                QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
   while(!dir_list.isEmpty())
   {
@@ -52,13 +57,13 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
     //Configure the path to "lang" subdir at current plugin directory
     plug_lang_dir=GlobalAttributes::PLUGINS_DIR +
                GlobalAttributes::DIR_SEPARATOR + plugin_name +
-               GlobalAttributes::DIR_SEPARATOR + "lang" +
+               GlobalAttributes::DIR_SEPARATOR + QString("lang") +
                GlobalAttributes::DIR_SEPARATOR;
 
-    plug_lang_file=plugin_name + "." + QLocale::system().name();
+    plug_lang_file=plugin_name + QString(".") + QLocale::system().name();
 
     //Check if the .qm file exists for the current plugin. If so create and install a translator
-    if(QFileInfo(plug_lang_dir + plug_lang_file + ".qm").exists())
+    if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
     {
       plugin_translator=new QTranslator;
       plugin_translator->load(plug_lang_file, plug_lang_dir);
@@ -97,5 +102,59 @@ bool Application::notify(QObject *receiver, QEvent *event)
 		Messagebox msg_box;
     msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
     return(false);
+  }
+}
+
+void Application::createUserConfiguration(void)
+{
+  QDir config_dir(GlobalAttributes::CONFIGURATIONS_DIR);
+
+  try
+  {
+    //If the directory not exists or is empty
+    if(!config_dir.exists() ||
+        config_dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot).isEmpty())
+      copyFilesRecursively(CONFDIR, GlobalAttributes::CONFIGURATIONS_DIR);
+  }
+  catch(Exception &e)
+  {
+    Messagebox msg_box;
+    msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::CONFIGURATIONS_DIR, CONFDIR));
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+void Application::copyFilesRecursively(const QString &src_path, const QString &dst_path)
+{
+  QFileInfo src_file(src_path);
+
+  if(!src_file.exists())
+    throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(src_path),
+                    __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  if(src_file.isDir())
+  {
+    QString new_src_path, new_dst_path;
+    QStringList filenames;
+    QDir dst_dir(dst_path),
+         src_dir(src_path);
+
+    if(!dst_dir.exists() && !dst_dir.mkpath(dst_path))
+      throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(dst_path),
+                      __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    filenames = src_dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for(QString filename : filenames)
+    {
+      new_src_path = src_path + src_dir.separator() + filename,
+      new_dst_path = dst_path + dst_dir.separator() + filename;
+      copyFilesRecursively(new_src_path, new_dst_path);
+    }
+  }
+  else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
+  {
+    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(dst_path),
+                    __PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 }

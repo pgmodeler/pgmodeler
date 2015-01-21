@@ -22,11 +22,11 @@ Rule::Rule(void)
 {
 	execution_type=BaseType::null;
 	obj_type=OBJ_RULE;
-	attributes[ParsersAttributes::EVENT_TYPE]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::CONDITION]="";
-	attributes[ParsersAttributes::EXEC_TYPE]="";
-	attributes[ParsersAttributes::COMMANDS]="";
+	attributes[ParsersAttributes::EVENT_TYPE]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::CONDITION]=QString();
+	attributes[ParsersAttributes::EXEC_TYPE]=QString();
+	attributes[ParsersAttributes::COMMANDS]=QString();
 }
 
 void Rule::setCommandsAttribute(void)
@@ -38,7 +38,7 @@ void Rule::setCommandsAttribute(void)
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-		if(i < (qtd-1)) str_cmds+=";";
+    if(i < (qtd-1)) str_cmds+=QString(";");
 	}
 
 	attributes[ParsersAttributes::COMMANDS]=str_cmds;
@@ -65,12 +65,12 @@ void Rule::setConditionalExpression(const QString &expr)
 void Rule::addCommand(const QString &cmd)
 {
 	//Raises an error if the command is empty
-	if(cmd=="")
+  if(cmd.isEmpty())
 		throw Exception(ERR_INS_EMPTY_RULE_COMMAND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		QString cmd_aux=cmd;
-		cmd_aux.remove(";");
+    cmd_aux.remove(';');
 		commands.push_back(cmd_aux);
 		setCodeInvalidated(true);
 	}

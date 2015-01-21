@@ -20,7 +20,7 @@
 
 Function::Function(void)
 {
-	return_type=PgSQLType("void");
+  return_type=PgSQLType(QString("void"));
 	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
@@ -30,23 +30,23 @@ Function::Function(void)
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[ParsersAttributes::PARAMETERS]="";
-	attributes[ParsersAttributes::EXECUTION_COST]="";
-	attributes[ParsersAttributes::ROW_AMOUNT]="";
-	attributes[ParsersAttributes::RETURN_TYPE]="";
-	attributes[ParsersAttributes::FUNCTION_TYPE]="";
-	attributes[ParsersAttributes::LANGUAGE]="";
-	attributes[ParsersAttributes::RETURNS_SETOF]="";
-	attributes[ParsersAttributes::SECURITY_TYPE]="";
-	attributes[ParsersAttributes::BEHAVIOR_TYPE]="";
-	attributes[ParsersAttributes::DEFINITION]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::REF_TYPE]="";
-	attributes[ParsersAttributes::WINDOW_FUNC]="";
-	attributes[ParsersAttributes::RETURN_TABLE]="";
-	attributes[ParsersAttributes::LIBRARY]="";
-	attributes[ParsersAttributes::SYMBOL]="";
-	attributes[ParsersAttributes::LEAKPROOF]="";
+	attributes[ParsersAttributes::PARAMETERS]=QString();
+	attributes[ParsersAttributes::EXECUTION_COST]=QString();
+	attributes[ParsersAttributes::ROW_AMOUNT]=QString();
+	attributes[ParsersAttributes::RETURN_TYPE]=QString();
+	attributes[ParsersAttributes::FUNCTION_TYPE]=QString();
+	attributes[ParsersAttributes::LANGUAGE]=QString();
+	attributes[ParsersAttributes::RETURNS_SETOF]=QString();
+	attributes[ParsersAttributes::SECURITY_TYPE]=QString();
+	attributes[ParsersAttributes::BEHAVIOR_TYPE]=QString();
+	attributes[ParsersAttributes::DEFINITION]=QString();
+	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
+	attributes[ParsersAttributes::WINDOW_FUNC]=QString();
+	attributes[ParsersAttributes::RETURN_TABLE]=QString();
+	attributes[ParsersAttributes::LIBRARY]=QString();
+	attributes[ParsersAttributes::SYMBOL]=QString();
+	attributes[ParsersAttributes::LEAKPROOF]=QString();
 }
 
 void Function::setName(const QString &name)
@@ -81,8 +81,8 @@ void Function::addParameter(Parameter param)
 	//If a duplicated parameter is found an error is raised
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-										.arg(Utf8String::create(param.getName()))
-										.arg(Utf8String::create(this->signature)),
+                    .arg(/*Utf8String::create(*/param.getName())
+                    .arg(/*Utf8String::create(*/this->signature),
 										ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
@@ -93,7 +93,7 @@ void Function::addParameter(Parameter param)
 void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
 	//Raises an error if the column name is empty
-	if(name=="")
+  if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr,itr_end;
@@ -114,8 +114,8 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	//Raises an error if the column is duplicated
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-										.arg(Utf8String::create(name))
-										.arg(Utf8String::create(this->signature)),
+                    .arg(/*Utf8String::create(*/name)
+                    .arg(/*Utf8String::create(*/this->signature),
 										ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
@@ -175,7 +175,7 @@ void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->library != library);
@@ -186,7 +186,7 @@ void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->symbol != symbol);
@@ -252,7 +252,7 @@ void Function::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->source_code != src_code);
@@ -441,7 +441,7 @@ void Function::createSignature(bool format, bool prepend_schema)
 	str_param.remove(str_param.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+  signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
 	this->setCodeInvalidated(true);
 }
 
@@ -477,9 +477,9 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;

@@ -1,21 +1,8 @@
-include(../pgmodeler.pro)
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS += $$DESTDIR/$$LIBUTILS \
-	$$DESTDIR/$$LIBPARSERS
+windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
 	   src/cast.h \
@@ -111,3 +98,15 @@ SOURCES +=  src/textbox.cpp \
             src/tag.cpp \
             src/eventtrigger.cpp
 
+unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Deployment settings
+target.path = $$PRIVATELIBDIR
+INSTALLS = target

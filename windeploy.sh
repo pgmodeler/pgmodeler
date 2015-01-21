@@ -12,7 +12,7 @@ INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 BUILD_NUM=$(date '+%Y%m%d')
@@ -116,8 +116,8 @@ if [ $DEMO_VERSION = 1 ]; then
 fi
 
 echo "Cleaning previous compilation..."
-rm -r build/* > $LOG 2>&1
-$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
+#rm -r build/* > $LOG 2>&1
+#$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
 
 echo "Running qmake..."
 $QMAKE_ROOT/qmake.exe $QMAKE_ARGS >> $LOG 2>&1
@@ -176,10 +176,10 @@ $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
 #Fixing the pgModeler plugin deployment.
 #Moving dlls from build/plugins/[PLUGIN]/build to build/plugins/[PLUGIN]
-for plugin in $PLUGINS; do
-	mv build/plugins/$plugin/build/* build/plugins/$plugin >> $LOG 2>&1
-	rm -r build/plugins/$plugin/build/  >> $LOG 2>&1
-done
+#for plugin in $PLUGINS; do
+#	mv build/plugins/$plugin/build/* build/plugins/$plugin >> $LOG 2>&1
+#	rm -r build/plugins/$plugin/build/  >> $LOG 2>&1
+#done
 
 if [ $? -ne 0 ]; then
   echo

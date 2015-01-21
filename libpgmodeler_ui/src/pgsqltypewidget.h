@@ -43,7 +43,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		SyntaxHighlighter *format_hl;
 
 	public:
-		PgSQLTypeWidget(QWidget * parent = 0, const QString &label="");
+		PgSQLTypeWidget(QWidget * parent = 0, const QString &label=QString());
 
 		/*! \brief Lists the PostgreSQL types on the specified combo. The user can configure which types
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to

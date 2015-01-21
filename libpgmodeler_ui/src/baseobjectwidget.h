@@ -141,7 +141,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		virtual ~BaseObjectWidget(void);
 
 		//! \brief Generates a string containing the specified version interval
-		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
+		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver=QString());
 
 		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and

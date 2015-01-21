@@ -34,54 +34,58 @@
 #include <QString>
 #include <QDir>
 #include <QDate>
+#include <QStandardPaths>
 
 namespace GlobalAttributes {
 	static const QString
-  PGMODELER_VERSION="0.8.0-beta2",
-	PGMODELER_VER_CODENAME="Faithful Elephant",
+  PGMODELER_APP_NAME=QString("pgmodeler"),
+  PGMODELER_URI=QString("pgmodeler.com.br"),
+  PGMODELER_VERSION=QString("0.8.0-beta2"),
+  PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
   PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
-  PGMODELER_SITE="http://www.pgmodeler.com.br",
+  PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
   PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
-  PGMODELER_SRC_URL="https://github.com/pgmodeler/pgmodeler/releases",
+  PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
   PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
   PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
-	CRASH_REPORT_EMAIL="bug@pgmodeler.com.br",
-	CRASH_REPORT_FILE="pgmodeler%1.crash",
-	STACKTRACE_FILE=".stacktrace",
-	MACOS_STARTUP_SCRIPT="startapp",
+  BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
+  BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
+  STACKTRACE_FILE=QString(".stacktrace"),
+  MACOS_STARTUP_SCRIPT=QString("startapp"),
 
-	DIR_SEPARATOR="/",
-	DEFAULT_CONFS_DIR="defaults", //! \brief Directory name which holds the default pgModeler configuration
-	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
-	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
-	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
-  ALTER_SCHEMA_DIR="alter", //! \brief Default name for the alter schemas directory
-	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
-	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
-	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
-	ROOT_DTD="dbmodel", //! \brief Root DTD of model xml files
-	CONFIGURATION_EXT=".conf", //! \brief Default extension for configuration files
-	HIGHLIGHT_FILE_SUF="-highlight", //! \brief Suffix of language highlight configuration files
+  DIR_SEPARATOR=QString("/"),
+  DEFAULT_CONFS_DIR=QString("defaults"), //! \brief Directory name which holds the default pgModeler configuration
+  SCHEMAS_DIR=QString("schemas"), //! \brief Default name for the schemas directory
+  SQL_SCHEMA_DIR=QString("sql"), //! \brief Default name for the sql schemas directory
+  XML_SCHEMA_DIR=QString("xml"), //! \brief Default name for the xml schemas directory
+  ALTER_SCHEMA_DIR=QString("alter"), //! \brief Default name for the alter schemas directory
+  SCHEMA_EXT=QString(".sch"), //! \brief Default extension for schema files
+  OBJECT_DTD_DIR=QString("dtd"), //! \brief Default directory for dtd files
+  OBJECT_DTD_EXT=QString(".dtd"), //! \brief Default extension for dtd files
+  ROOT_DTD=QString("dbmodel"), //! \brief Root DTD of model xml files
+  CONFIGURATION_EXT=QString(".conf"), //! \brief Default extension for configuration files
+  HIGHLIGHT_FILE_SUF=QString("-highlight"), //! \brief Suffix of language highlight configuration files
 
-	CODE_HIGHLIGHT_CONF="source-code-highlight", //! \brief Default name for the language highlight dtd
-	OBJECTS_STYLE_CONF="objects-style", //! \brief Default name for the object style configuration file
-	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
-	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
-	RELATIONSHIPS_CONF="relationships",//! \brief Default name for the relationships configuration file
-  SNIPPETS_CONF="snippets",//! \brief Default name for the code snippets configuration file
+  CODE_HIGHLIGHT_CONF=QString("source-code-highlight"), //! \brief Default name for the language highlight dtd
+  OBJECTS_STYLE_CONF=QString("objects-style"), //! \brief Default name for the object style configuration file
+  GENERAL_CONF=QString("pgmodeler"), //! \brief Default name for the general pgModeler configuration
+  CONNECTIONS_CONF=QString("connections"), //! \brief Default name for the DBMS connection configuration file
+  RELATIONSHIPS_CONF=QString("relationships"),//! \brief Default name for the relationships configuration file
+  SNIPPETS_CONF=QString("snippets"),//! \brief Default name for the code snippets configuration file
 
-	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
-	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
-	PATTERN_HIGHLIGHT_CONF="pattern-highlight", //! \brief Configuration file for name patterns highlight (relationship editing form)
+  SQL_HIGHLIGHT_CONF=QString("sql-highlight"), //! \brief Configuration file for SQL language highlight
+  XML_HIGHLIGHT_CONF=QString("xml-highlight"), //! \brief Configuration file for XML language highlight
+  PATTERN_HIGHLIGHT_CONF=QString("pattern-highlight"), //! \brief Configuration file for name patterns highlight (relationship editing form)
 
-	EXAMPLE_MODEL="example.dbm", //! \brief Default name for the sample model loaded on appearence configuration form
-	UI_STYLE_CONF="ui-style", //! \brief Configuration file ui style
+  EXAMPLE_MODEL=QString("example.dbm"), //! \brief Default name for the sample model loaded on appearence configuration form
+  UI_STYLE_CONF=QString("ui-style"), //! \brief Configuration file ui style
 
 	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 	the executable using -style option. This same style is applied to crash handler. */
-	DEFAULT_QT_STYLE="Fusion",
-	UI_STYLE_OPT="-style";
+  DEFAULT_QT_STYLE=QString("Fusion"),
+  UI_STYLE_OPT=QString("-style");
+
 
 	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/, tmp/ and samples/ on
@@ -93,7 +97,13 @@ namespace GlobalAttributes {
 		 PGMODELER_LANG_DIR
 		 PGMODELER_PLUGINS_DIR
 		 PGMODELER_TMP_DIR
-		 PGMODELER_SAMPLES_DIR*/
+     PGMODELER_SAMPLES_DIR
+
+   Additional var are used to specify where to find crash handler and command line interface
+   application.
+
+     PGMODELER_CHANDLER_PATH
+     PGMODELER_CLI_PATH */
 
 	static const QString
 	/*! \brief According to the libxml documentation , the paths used by the parser are
@@ -102,27 +112,55 @@ namespace GlobalAttributes {
 		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
 	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
-	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
-	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
-	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
-	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
-	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp")),
-	SAMPLES_DIR=(getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace("\\","/") : QString("./samples")),
+  SCHEMAS_ROOT_DIR=getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace('\\','/') : QString(SCHEMASDIR),
+  LANGUAGES_DIR=getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace('\\','/') : QString(LANGDIR),
+  PLUGINS_DIR=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : QString(PLUGINSDIR),
+  TEMPORARY_DIR=getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace('\\','/') : QString(TEMPDIR),
+  SAMPLES_DIR=getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace('\\','/') : QString(SAMPLESDIR),
+
+  #if defined(Q_OS_MAC)
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
+  #elif defined(Q_OS_LINUX)
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
+  #else
+    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
+                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
+                       QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
+  #endif
+
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
   XML_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + XML_HIGHLIGHT_CONF + CONFIGURATION_EXT,
 
-	/*! \brief Crash handler executable path configuration, the user can use the below envvar to set a
-	different location for pgmodeler-ch */
-	#ifndef Q_OS_MAC
-		#ifdef Q_OS_LINUX
-			CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString("./pgmodeler-ch"));
-		#else
-      CRASH_HANDLER_PATH=(getenv("PGMODELER_CHANDLER_PATH") ? QString(getenv("PGMODELER_CHANDLER_PATH")) : QString(".\\pgmodeler-ch.exe"));
-		#endif
-	#else
-		//For MacOSX the crash handler path is fixed (inside bundle)
-		CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + " pgmodeler-ch";
-	#endif
+
+  /*! \brief Crash handler and CLI executables path configuration, the user can use the below envvar to set a
+       different location for pgmodeler-ch as well pgmodeler-cli */
+  #if defined(Q_OS_UNIX)
+    #if defined(Q_OS_MAC)
+      //For MacOSX the crash handler path is fixed (inside bundle)
+      CRASH_HANDLER_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-ch"),
+      PGMODELER_CLI_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-cli");
+    #else
+      CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
+                         QString(getenv("PGMODELER_CHANDLER_PATH")) :
+                         QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
+
+      PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
+                           QString(getenv("PGMODELER_CLI_PATH")) :
+                           QString(BINDIR) + QString("/pgmodeler-cli");
+    #endif
+  #else
+    CRASH_HANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
+                       QString(getenv("PGMODELER_CHANDLER_PATH")) :
+                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe"),
+
+    PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
+                       QString(getenv("PGMODELER_CLI_PATH")) :
+                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-cli.exe");
+  #endif
 
 	#ifdef DEMO_VERSION
 	 //Maximum object creation counter for demo version

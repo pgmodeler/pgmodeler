@@ -162,7 +162,7 @@ void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 {
  try
 	{
-		setCellText("", row_idx, col_idx);
+    setCellText(QString(), row_idx, col_idx);
 	}
 	catch(Exception &e)
 	{

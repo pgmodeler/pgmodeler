@@ -22,6 +22,7 @@ QMAKE_ROOT=/usr/bin
 LOG=linuxdeploy.log
 QT_IFW_ROOT=/opt/qt-if-1.5.0
 
+STARTUP_SCRIPT="start-pgmodeler.sh"
 BUILD_DIR="$PWD/build"
 INSTALLER_DATA_DIR="$PWD/installer/linux/packages/br.com.pgmodeler/data"
 
@@ -69,7 +70,7 @@ if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz
 else
   QT_CONF=build/qt.conf
-  DEP_PLUGINS_DIR=build/qtplugins
+  DEP_PLUGINS_DIR=build/lib/qtplugins
   
   #Dependency qt plugins copied to build dir
   DEP_PLUGINS="imageformats/libqgif.so \
@@ -160,7 +161,7 @@ if [ $DEMO_VERSION = 1 ]; then
 fi
 
 echo "Cleaning previous compilation..."
-rm -r build/* &> $LOG
+rm -r $BUILD_DIR/* &> $LOG
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
@@ -199,7 +200,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
  for lib in $QT_LIBS; do
-  cp $QT_ROOT/lib/$lib build/ >> $LOG 2>&1
+  cp $QT_ROOT/lib/$lib $BUILD_DIR/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
@@ -215,7 +216,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  mkdir $DEP_PLUGINS_DIR
  echo "[Paths]" > $QT_CONF
  echo "Prefix=." >> $QT_CONF
- echo "Plugins=qtplugins" >> $QT_CONF
+ echo "Plugins=lib/qtplugins" >> $QT_CONF
  echo "Libraries=." >> $QT_CONF
 
  #Copies the qt plugins to build/qtplugins
@@ -232,6 +233,16 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
   fi
  done
 
+fi
+
+echo "Copying startup script..."
+cp $STARTUP_SCRIPT $BUILD_DIR >> $LOG 2>&1
+
+if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to copy startup script!"
+    echo
+    exit 1
 fi
 
 if [ $DEMO_VERSION = 0 ]; then

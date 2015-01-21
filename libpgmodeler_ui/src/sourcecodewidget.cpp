@@ -79,9 +79,9 @@ void SourceCodeWidget::setSourceCodeTab(int)
   ObjectType obj_type=object->getObjectType();
 
 	if(sourcecode_twg->currentIndex()==0)
-		code_icon="codigosql.png";
+    code_icon=QString("codigosql.png");
 	else
-		code_icon="codigoxml.png";
+    code_icon=QString("codigoxml.png");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
            ((obj_type==BASE_RELATIONSHIP &&
@@ -124,7 +124,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
-			sqlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+      sqlcode_txt->setPlainText(/*Utf8String::create(*/object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
 
 			//Generating the sql for table's children objects
 			if(table && incl_refs_sql_chk->isChecked())
@@ -145,7 +145,7 @@ void SourceCodeWidget::generateSourceCode(int)
 								 constr->getConstraintType()!=ConstraintType::primary_key &&
 								 constr->isReferRelationshipAddedColumn())))
 						{
-							aux_def+=Utf8String::create(obj->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+              aux_def+=/*Utf8String::create(*/obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 						}
 					}
 					else
@@ -161,7 +161,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			if(incl_refs_sql_chk->isChecked())
 			{
 				for(auto perm : perms)
-					aux_def+=Utf8String::create(perm->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+          aux_def+=/*Utf8String::create(*/perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 			}
 
 			if(!aux_def.isEmpty())
@@ -193,7 +193,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			#warning "DEMO VERSION: XML code preview disabled."
 			xmlcode_txt->setPlainText(trUtf8("<!-- XML code preview disabled in demonstration version -->"));
 		#else
-			xmlcode_txt->setPlainText(Utf8String::create(object->getCodeDefinition(SchemaParser::XML_DEFINITION)));
+      xmlcode_txt->setPlainText(/*Utf8String::create(*/object->getCodeDefinition(SchemaParser::XML_DEFINITION));
 		#endif
 
 		setSourceCodeTab();

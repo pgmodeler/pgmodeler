@@ -6,7 +6,8 @@ QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
+#DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 DEPLOY_VER=${DEPLOY_VER/\",/}
 BUILD_NUM=$(date '+%Y%m%d')
 
@@ -72,7 +73,7 @@ if [ $DEMO_VERSION = 1 ]; then
 fi
 
 echo "Cleaning previous compilation..."
-rm -r build/* &> $LOG
+rm -r build/* &> $LOG
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."

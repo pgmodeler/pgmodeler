@@ -15,7 +15,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 
 void Xml2ObjectWidget::clearSource(void)
 {
-	code_txt->setText("<dbmodel>\n\n</dbmodel>");
+  code_txt->setText(QString("<dbmodel>\n\n</dbmodel>"));
 }
 
 void Xml2ObjectWidget::loadXML(void)

@@ -324,7 +324,7 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
       //The QTBUG-33645 is fixed on Qt 5.3
       QPageLayout pl;
       QPageSize ps;
-      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
+      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
       pl.setPageSize(ps);
       pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
       printer->setPageSize(pl.pageSize());

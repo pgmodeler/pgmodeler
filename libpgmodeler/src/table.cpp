@@ -22,17 +22,17 @@ Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
 	with_oid=gen_alter_cmds=unlogged=false;
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::CONSTRAINTS]="";
-	attributes[ParsersAttributes::OIDS]="";
-	attributes[ParsersAttributes::COLS_COMMENT]="";
-	attributes[ParsersAttributes::COPY_TABLE]="";
-	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]="";
-	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]="";
-  attributes[ParsersAttributes::COL_INDEXES]="";
-  attributes[ParsersAttributes::CONSTR_INDEXES]="";
-	attributes[ParsersAttributes::UNLOGGED]="";
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+	attributes[ParsersAttributes::OIDS]=QString();
+	attributes[ParsersAttributes::COLS_COMMENT]=QString();
+	attributes[ParsersAttributes::COPY_TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=QString();
+	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=QString();
+  attributes[ParsersAttributes::COL_INDEXES]=QString();
+  attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
+	attributes[ParsersAttributes::UNLOGGED]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -118,15 +118,15 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
     attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : "");
-    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : "");
+    attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : QString());
+    attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : QString());
     attribs[ParsersAttributes::TABLE]=this->getName(true);
     attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-			attributes[ParsersAttributes::COLS_COMMENT]+="-- ";
+      attributes[ParsersAttributes::COLS_COMMENT]+=QString("-- ");
 
 		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
 		schparser.ignoreUnkownAttributes(false);
@@ -141,7 +141,7 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(",");
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(',');
 }
 
 void Table::setRelObjectsIndexesAttribute(void)
@@ -154,7 +154,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 
   for(idx=0; idx < size; idx++)
   {
-    attributes[attribs[idx]]="";
+    attributes[attribs[idx]]=QString();
 
     if(!obj_indexes[idx]->empty())
     {
@@ -194,7 +194,7 @@ void Table::setColumnsAttribute(unsigned def_type)
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
-		if(str_cols!="")
+    if(!str_cols.isEmpty())
 		{
 			count=str_cols.size();
 			if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
@@ -257,7 +257,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 			unsigned dis_sql_cnt=0;
 
 			//If the last line starts with -- indicates that sql code for the constraint is disable
-			if(lines[i].startsWith("--") && i > 0)
+      if(lines[i].startsWith(QLatin1String("--")) && i > 0)
 				//Removes the comma from the above line in order to avoid bad sql
 				lines[i-1].remove(lines[i-1].lastIndexOf(','),1);
 			else
@@ -266,11 +266,11 @@ void Table::setConstraintsAttribute(unsigned def_type)
 
 			for(i=0; i < lines.size(); i++)
 			{
-				if(lines[i].startsWith("--")) dis_sql_cnt++;
+        if(lines[i].startsWith(QLatin1String("--"))) dis_sql_cnt++;
 				str_constr+=lines[i];
 			}
 
-			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : "");
+			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : QString());
 		}
 	}
 
@@ -361,8 +361,8 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					if(col && col->getType()==this)
 					{
 						throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_TABLE_TYPE)
-														.arg(Utf8String::create(col->getName()))
-														.arg(Utf8String::create(this->getName())),
+                            .arg(/*Utf8String::create(*/col->getName())
+                            .arg(/*Utf8String::create(*/this->getName()),
 														ERR_INV_COLUMN_TABLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_CONSTRAINT)
@@ -422,7 +422,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(Utf8String::create(obj->getName()))
+                        .arg(/*Utf8String::create(*/obj->getName())
 												.arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
@@ -627,14 +627,14 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-												.arg(Utf8String::create(column->getName()))
-												.arg(column->getTypeName())
-												.arg(Utf8String::create(refs[0]->getName()))
-						.arg(refs[0]->getTypeName())
-						.arg(Utf8String::create(this->getName(true)))
-						.arg(this->getTypeName()),
-						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
+                        .arg(/*Utf8String::create(*/column->getName())
+                        .arg(column->getTypeName())
+                        .arg(/*Utf8String::create(*/refs[0]->getName())
+                        .arg(refs[0]->getTypeName())
+                        .arg(/*Utf8String::create(*/this->getName(true))
+                        .arg(this->getTypeName()),
+                        ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			column->setParentTable(nullptr);
@@ -836,7 +836,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	bool found=false, format=false;
 
 	//Checks if the name contains ", if so, the search will consider formatted names
-	format=name.contains("\"");
+  format=name.contains('"');
 
 	if(TableObject::isTableObject(obj_type))
 	{
@@ -867,7 +867,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 		vector<Table *>::iterator itr_tab, itr_end_tab;
 		QString tab_name, aux_name=name;
 
-		aux_name.remove("\"");
+    aux_name.remove('"');
 		itr_tab=ancestor_tables.begin();
 		itr_end_tab=ancestor_tables.end();
 
@@ -876,7 +876,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 			/* Unlike other object types, tables are always compared with the FORMATTED NAME
 			because they must be 'schema-qualified' preventing a table of the same name
 			but different schemas are confused */
-			tab_name=(*itr_tab)->getName(true).remove("\"");
+      tab_name=(*itr_tab)->getName(true).remove('"');
 			found=(tab_name==aux_name);
 			if(!found) itr_tab++;
 			else break;
@@ -942,7 +942,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 		vector<TableObject *>::iterator itr, itr_end;
 		bool found=false, format=false;
 
-		format=name.contains("\"");
+    format=name.contains('"');
 		itr=columns.begin();
 		itr_end=columns.end();
 
@@ -951,7 +951,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 		{
 			column=dynamic_cast<Column *>(*itr);
 			itr++;
-			found=(name!="" && column->getOldName(format)==name);
+      found=(!name.isEmpty() && column->getOldName(format)==name);
 		}
 
 		if(!found) column=nullptr;
@@ -1341,12 +1341,12 @@ QString Table::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::COPY_TABLE]="";
-	attributes[ParsersAttributes::ANCESTOR_TABLE]="";
-  attributes[ParsersAttributes::TAG]="";
+	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::COPY_TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+  attributes[ParsersAttributes::TAG]=QString();
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1354,7 +1354,7 @@ QString Table::getCodeDefinition(unsigned def_type)
   if(tag && def_type==SchemaParser::XML_DEFINITION)
    attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
-	(copy_table ? copy_table->getName(true) : "");
+	(copy_table ? copy_table->getName(true) : QString());
 
 	setColumnsAttribute(def_type);
 	setConstraintsAttribute(def_type);
@@ -1572,8 +1572,8 @@ QString Table::getAlterDefinition(BaseObject *object)
     Table *tab=dynamic_cast<Table *>(object);
     QString alter_def;
 
-    attributes[ParsersAttributes::OIDS]="";
-    attributes[ParsersAttributes::HAS_CHANGES]="";
+    attributes[ParsersAttributes::OIDS]=QString();
+    attributes[ParsersAttributes::HAS_CHANGES]=QString();
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
     if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
@@ -1583,7 +1583,7 @@ QString Table::getAlterDefinition(BaseObject *object)
     }
 
     alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-    attributes[ParsersAttributes::OIDS]="";
+    attributes[ParsersAttributes::OIDS]=QString();
 
     return(alter_def);
   }
@@ -1598,7 +1598,7 @@ QString Table::getTruncateDefinition(bool cascade)
   try
   {
     BaseObject::setBasicAttributes(true);
-    attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+    attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
     return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
   }
   catch(Exception &e)

@@ -6,35 +6,36 @@ TARGET = pgmodeler-cli
 INCLUDEPATH += ../main/src
 
 windows:RC_FILE=../main/res/windows_ico.qrc
-windows:RCC_DIR=src/
-
-!macx {
- # Check if BINDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(BINDESTDIR, $$DESTDIR) {
-  target.path = $$BINDESTDIR
-  INSTALLS = target
- }
-
- LIBS += $$DESTDIR/$$LIBUTILS \
-         $$DESTDIR/$$LIBPARSERS \
-         $$DESTDIR/$$LIBPGCONNECTOR \
-         $$DESTDIR/$$LIBOBJRENDERER \
-         $$DESTDIR/$$LIBPGMODELER \
-         $$DESTDIR/$$LIBPGMODELERUI
-}
-
-macx {
- DESTDIR=$$BINDESTDIR
- LIBS += $$LIBDESTDIR/$$LIBUTILS \
-         $$LIBDESTDIR/$$LIBPARSERS \
-         $$LIBDESTDIR/$$LIBPGCONNECTOR \
-         $$LIBDESTDIR/$$LIBOBJRENDERER \
-         $$LIBDESTDIR/$$LIBPGMODELER \
-         $$LIBDESTDIR/$$LIBPGMODELERUI
-}
+windows: RCC_DIR=src/
+windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
 	   src/pgmodelercli.cpp
 
 HEADERS += src/pgmodelercli.h
+
+unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
+                    -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                    -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                    -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                    -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libpgmodeler_ui \
+               $$PWD/../libpgmodeler_ui/src \
+               $$PWD/../libobjrenderer/src \
+               $$PWD/../libpgconnector/src \
+               $$PWD/../libpgmodeler/src \
+               $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libpgmodeler_ui \
+              $$PWD/../libobjrenderer \
+              $$PWD/../libpgconnector \
+              $$PWD/../libpgmodeler \
+              $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Deployment settings
+target.path = $$BINDIR
+INSTALLS = target

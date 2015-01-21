@@ -54,13 +54,13 @@ class Messagebox: public QDialog, public Ui::Messagebox {
     User can specify custom button labels as well custom icons. The icons can be a path to a local file
     or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
     void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON,
-              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+              const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
+              const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
 
     //! brief Shows the message box using an excpetion as message
-    void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
-              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+    void show(Exception e, const QString &msg=QString(), unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
+              const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
+              const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
 
     //! brief Shows a simple message box with the title automatically defined by the icon type
     void show(const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);

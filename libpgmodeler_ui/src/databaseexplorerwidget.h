@@ -70,11 +70,11 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     /*! brief Returns the properly format object name by querying it using its OID and type.
         Optional schema and table names can be specified to filter the results */
-    QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
+    QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name=QString(), const QString tab_name=QString());
 
     /*! brief Returns the properly format list of object names by querying them using their OIDs and type.
         Optional schema and table names can be specified to filter the results */
-    QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
+    QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name=QString(), const QString tab_name=QString());
 
     //! brief Format the object's name based upon the passed attributes
     QString formatObjectName(attribs_map &attribs);
@@ -111,7 +111,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatColumnAttribs(attribs_map &attribs);
     void formatConstraintAttribs(attribs_map &attribs);
     void formatIndexAttribs(attribs_map &attribs);
-
     void handleSelectedSnippet(const QString &snip_id);
 
   public:

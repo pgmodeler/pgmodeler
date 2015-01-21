@@ -18,7 +18,7 @@
 
 #include "syntaxhighlighter.h"
 
-QFont SyntaxHighlighter::default_font=QFont("DejaVu Sans Mono", 9);
+QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
@@ -319,7 +319,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			}
 		}
 
-		if(!match) group="";
+    if(!match) group=QString();
 		return(group);
 	}
 }
@@ -424,7 +424,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				if(match_idx >=0 &&  aux_len != word.length())
 					i-=word.length() - aux_len;
 
-				word="";
+        word=QString();
 			}
 		}
 		while(i < len);
@@ -455,7 +455,7 @@ void SyntaxHighlighter::clearConfiguration(void)
 
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
-	if(filename!="")
+  if(!filename.isEmpty())
   {
 		attribs_map attribs;
 		QString elem, expr_type, group;
@@ -630,7 +630,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);
 
-										if(expr_type=="" ||
+                    if(expr_type.isEmpty() ||
 											 expr_type==ParsersAttributes::SIMPLE_EXP ||
 											 expr_type==ParsersAttributes::INITIAL_EXP)
 											initial_exprs[group].push_back(regexp);

@@ -1,21 +1,8 @@
-include(../pgmodeler.pro)
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = parsers
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS += $$DESTDIR/$$LIBUTILS \
-	$$XML_LIB
+windows: DESTDIR = $$PWD
 
 HEADERS += src/schemaparser.h \
 	   src/xmlparser.h \
@@ -25,3 +12,11 @@ HEADERS += src/schemaparser.h \
 SOURCES += src/schemaparser.cpp \
 	   src/xmlparser.cpp
 
+unix|windows: LIBS += -L$$OUT_PWD/../libutils/ -lutils $$XML_LIB
+
+INCLUDEPATH += $$PWD/../libutils/src
+DEPENDPATH += $$PWD/../libutils
+
+# Deployment settings
+target.path = $$PRIVATELIBDIR
+INSTALLS = target

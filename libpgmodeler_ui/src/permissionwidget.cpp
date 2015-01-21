@@ -63,7 +63,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 																	ObjectTableWidget::EDIT_BUTTON, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(trUtf8("Role"),0);
-	roles_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
+  roles_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
@@ -75,11 +75,11 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 																				ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
-	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	permissions_tab->setHeaderLabel(trUtf8("Roles"),1);
-	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),1);
+  permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),1);
 	permissions_tab->setHeaderLabel(trUtf8("Privileges"),2);
-	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/grant.png"),2);
+  permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/grant.png")),2);
 
 	grid=new QGridLayout;
 	grid->addWidget(permissions_tab,0,0,1,1);
@@ -95,7 +95,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 
 		check=new QCheckBox;
-		check->setText("GRANT OPTION");
+    check->setText(QString("GRANT OPTION"));
 		check->setEnabled(false);
 		privileges_tbw->setCellWidget(i,1,check);
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
@@ -165,8 +165,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
-		name_edt->setText(Utf8String::create(object->getName(true)));
-		comment_edt->setText(Utf8String::create(object->getTypeName()));
+    name_edt->setText(/*Utf8String::create(*/object->getName(true));
+    comment_edt->setText(/*Utf8String::create(*/object->getTypeName());
 
 		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
 		{
@@ -253,8 +253,8 @@ void PermissionWidget::listPermissions(void)
 			count1=perm->getRoleCount();
 			for(i1=0; i1 < count1; i1++)
 			{
-				str_aux+=Utf8String::create(perm->getRole(i1)->getName());
-				str_aux+=",";
+        str_aux+=/*Utf8String::create(*/perm->getRole(i1)->getName();
+        str_aux+=QString(",");
 			}
 			str_aux.remove(str_aux.size()-1,1);
 			permissions_tab->setCellText(str_aux,i,1);
@@ -279,7 +279,7 @@ void PermissionWidget::showSelectedRoleData(void)
 
 	if(role && row_idx < 0)
 	{
-		roles_tab->setCellText(Utf8String::create(role->getName()), row, 0);
+    roles_tab->setCellText(/*Utf8String::create(*/role->getName(), row, 0);
 		roles_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<void *>(role)), row);
 	}
 	else
@@ -291,7 +291,7 @@ void PermissionWidget::showSelectedRoleData(void)
 		if(role && row_idx >= 0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
-											.arg(Utf8String::create(role->getName()))
+                      .arg(/*Utf8String::create(*/role->getName())
 											.arg(role->getTypeName())
 											.arg(roles_gb->title()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -355,7 +355,7 @@ void PermissionWidget::updatePermission(void)
 		{
 			//Raises an error if the configured permission already exists
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-											.arg(Utf8String::create(permission->getObject()->getName()))
+                      .arg(/*Utf8String::create(*/permission->getObject()->getName())
 											.arg(permission->getObject()->getTypeName()),
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -398,7 +398,7 @@ void PermissionWidget::editPermission(void)
 			roles_tab->addRow();
 			role=permission->getRole(i);
 			roles_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(role)), i);
-			roles_tab->setCellText(Utf8String::create(role->getName()),i,0);
+      roles_tab->setCellText(/*Utf8String::create(*/role->getName(),i,0);
 		}
 
 		roles_tab->blockSignals(false);

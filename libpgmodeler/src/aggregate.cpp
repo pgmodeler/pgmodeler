@@ -23,13 +23,13 @@ Aggregate::Aggregate(void)
 	obj_type=OBJ_AGGREGATE;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[ParsersAttributes::TYPES]="";
-	attributes[ParsersAttributes::TRANSITION_FUNC]="";
-	attributes[ParsersAttributes::STATE_TYPE]="";
-	attributes[ParsersAttributes::BASE_TYPE]="";
-	attributes[ParsersAttributes::FINAL_FUNC]="";
-	attributes[ParsersAttributes::INITIAL_COND]="";
-	attributes[ParsersAttributes::SORT_OP]="";
+	attributes[ParsersAttributes::TYPES]=QString();
+	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
+	attributes[ParsersAttributes::STATE_TYPE]=QString();
+	attributes[ParsersAttributes::BASE_TYPE]=QString();
+	attributes[ParsersAttributes::FINAL_FUNC]=QString();
+	attributes[ParsersAttributes::INITIAL_COND]=QString();
+	attributes[ParsersAttributes::SORT_OP]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
@@ -41,7 +41,7 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 	//Checks if the function is valid, if not the case raises an error
 	if(!isValidFunction(func_idx, func))
 		throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
 										ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -131,16 +131,15 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-      //str_types+=*(data_types[i]);
       str_types+=~data_types[i];
-			if(i < (count-1)) str_types+=",";
+      if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
   }
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-  if(str_types.isEmpty()) str_types="*";
+  if(str_types.isEmpty()) str_types='*';
 
   attributes[ParsersAttributes::TYPES]=str_types;
 }
@@ -150,8 +149,8 @@ void Aggregate::addDataType(PgSQLType type)
 	//Case the data type already exists in the aggregate raise an exception
 	if(isDataTypeExist(type))
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
-										.arg(Utf8String::create(~type))
-										.arg(Utf8String::create(this->getName(true))),
+                    .arg(/*Utf8String::create(*/~type)
+                    .arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	data_types.push_back(type);
@@ -269,7 +268,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
-	if(initial_condition!="")
+  if(!initial_condition.isEmpty())
 		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -304,13 +303,13 @@ QString Aggregate::getSignature(bool format)
   QStringList types;
 
   if(data_types.empty())
-    types.push_back("*");
+    types.push_back(QString("*"));
   else
   {
     for(auto tp : data_types)
       types.push_back(~tp);
   }
 
-  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(",")));
+  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 

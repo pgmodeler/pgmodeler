@@ -18,16 +18,16 @@
 
 #include "tableobjectview.h"
 
-const QString TableObjectView::TYPE_SEPARATOR(" ");
-const QString TableObjectView::CONSTR_SEPARATOR(" ");
-const QString TableObjectView::TXT_UNIQUE("uq");
-const QString TableObjectView::TXT_EXCLUDE("ex");
-const QString TableObjectView::TXT_CHECK("ck");
-const QString TableObjectView::TXT_PRIMARY_KEY("pk");
-const QString TableObjectView::TXT_FOREIGN_KEY("fk");
-const QString TableObjectView::TXT_NOT_NULL("nn");
-const QString TableObjectView::CONSTR_DELIM_START("«");
-const QString TableObjectView::CONSTR_DELIM_END("»");
+const QString TableObjectView::TYPE_SEPARATOR=QString(" ");
+const QString TableObjectView::CONSTR_SEPARATOR=QString(" ");
+const QString TableObjectView::TXT_UNIQUE=QString("uq");
+const QString TableObjectView::TXT_EXCLUDE=QString("ex");
+const QString TableObjectView::TXT_CHECK=QString("ck");
+const QString TableObjectView::TXT_PRIMARY_KEY=QString("pk");
+const QString TableObjectView::TXT_FOREIGN_KEY=QString("fk");
+const QString TableObjectView::TXT_NOT_NULL=QString("nn");
+const QString TableObjectView::CONSTR_DELIM_START=QString("«");
+const QString TableObjectView::CONSTR_DELIM_END=QString("»");
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
@@ -189,14 +189,14 @@ void TableObjectView::configureObject(void)
 		ConstraintType constr_type=ConstraintType::null;
 		bool sql_disabled=false;
 
-		tooltip=Utf8String::create(tab_obj->getName()) + " (" + tab_obj->getTypeName() + ")";
+    tooltip=/*Utf8String::create(*/tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
     tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
 		sql_disabled=tab_obj->isSQLDisabled();
 
 		if(column)
 		{
 			if(column->isAddedByRelationship())
-				tooltip+=trUtf8("\nRelationship: %1").arg(Utf8String::create(column->getParentRelationship()->getName()));
+        tooltip+=trUtf8("\nRelationship: %1").arg(/*Utf8String::create(*/column->getParentRelationship()->getName());
 
 			str_constr=this->getConstraintString(column);
 
@@ -226,19 +226,19 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
 			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + ", ";
+        atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + ", ";
+        atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_UNIQUE)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + ", ";
+        atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + ", ";
+        atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
 
       if(str_constr.indexOf(TXT_NOT_NULL)>=0)
-				atribs_tip+="not null";
+        atribs_tip+=QString("not null");
 		}
 		else
 		{
@@ -256,7 +256,7 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		//Configuring tha name label
-		lables[0]->setText(Utf8String::create(tab_obj->getName()));
+    lables[0]->setText(/*Utf8String::create(*/tab_obj->getName());
 
 		//Strikeout the column name when its SQL is disabled
 		QFont font=fmt.font();
@@ -271,9 +271,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the type label
 		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
 		if(column)
-			lables[1]->setText(Utf8String::create(TYPE_SEPARATOR + (*column->getType())));
+      lables[1]->setText(/*Utf8String::create(*/TYPE_SEPARATOR + (*column->getType()));
 		else
-			lables[1]->setText(Utf8String::create(TYPE_SEPARATOR + tab_obj->getSchemaName()));
+      lables[1]->setText(/*Utf8String::create(*/TYPE_SEPARATOR + tab_obj->getSchemaName());
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -283,7 +283,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
 		if(column)
-			lables[2]->setText(Utf8String::create(str_constr));
+      lables[2]->setText(/*Utf8String::create(*/str_constr);
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -293,7 +293,7 @@ void TableObjectView::configureObject(void)
 			if(rule)
 			{
 				str_constr+=(~rule->getExecutionType()).mid(0,1);
-				atribs_tip+=(~rule->getExecutionType()).toLower() + ", ";
+        atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
 
 				str_constr+=CONSTR_SEPARATOR;
 
@@ -306,14 +306,14 @@ void TableObjectView::configureObject(void)
 				str_constr+=(~trigger->getFiringType()).mid(0,1);
 				str_constr+=CONSTR_SEPARATOR;
 
-				atribs_tip+=(~trigger->getFiringType()).toLower() + ", ";
+        atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
 
 				for(unsigned i=EventType::on_insert; i <= EventType::on_truncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
 					{
 						str_constr+=(~EventType(i)).mid(3,1);
-						atribs_tip+=(~EventType(i)).toLower() + ", ";
+            atribs_tip+=(~EventType(i)).toLower() + QString(", ");
 					}
 				}
 				str_constr=str_constr.toLower();
@@ -322,33 +322,33 @@ void TableObjectView::configureObject(void)
 			{
 				if(index->getIndexAttribute(Index::UNIQUE))
 				{
-					str_constr+="u";
-					atribs_tip += QString("unique") + ", ";
+          str_constr+=QString("u");
+          atribs_tip += QString("unique") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::CONCURRENT))
 				{
-					str_constr+="c";
-					atribs_tip += QString("concurrent") + ", ";
+          str_constr+=QString("c");
+          atribs_tip += QString("concurrent") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::FAST_UPDATE))
 				{
-					str_constr+="f";
-					atribs_tip += "fast updated";
+          str_constr+=QString("f");
+          atribs_tip += QString("fast updated");
 				}
 
 				if(index->getIndexAttribute(Index::BUFFERING))
 				{
-					str_constr+="b";
-					atribs_tip += "buffering";
+          str_constr+=QString("b");
+          atribs_tip += QString("buffering");
 				}
 			}
 
 			if(!str_constr.isEmpty())
-				lables[2]->setText(Utf8String::create(CONSTR_DELIM_START + " " +
-																						 str_constr + " " +
-																						 CONSTR_DELIM_END));
+        lables[2]->setText(/*Utf8String::create(*/CONSTR_DELIM_START + QString(" ") +
+                                             str_constr + QString(" ") +
+                                             CONSTR_DELIM_END);
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -356,7 +356,8 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-			atribs_tip=Utf8String::create("\n" + CONSTR_DELIM_START + " " + atribs_tip + " " + CONSTR_DELIM_END);
+      atribs_tip=/*Utf8String::create(*/QString("\n") + CONSTR_DELIM_START +
+                                    QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
 		}
 
 		lables[2]->setFont(fmt.font());
@@ -391,7 +392,7 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
-		lables[0]->setText(Utf8String::create(reference.getTable()->getName() + "."));
+    lables[0]->setText(/*Utf8String::create(*/reference.getTable()->getName() + ".");
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
@@ -399,7 +400,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(reference.getColumn())
-			lables[1]->setText(Utf8String::create(reference.getColumn()->getName()));
+      lables[1]->setText(/*Utf8String::create(*/reference.getColumn()->getName());
 		else
 			lables[1]->setText("*");
 
@@ -413,29 +414,29 @@ void TableObjectView::configureObject(Reference reference)
 		fmt=font_config[ParsersAttributes::REF_TABLE];
 
 		str_aux=reference.getExpression().simplified().mid(0,25);
-		if(reference.getExpression().size() > 25) str_aux+="...";
-		str_aux.replace("\n", " ");
+    if(reference.getExpression().size() > 25) str_aux+=QString("...");
+    str_aux.replace(QString("\n"), QString(" "));
 
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText("");
+    lables[1]->setText(QString());
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
 
 	//Configures a label for the alias (if there is one)
-	if((reference.getColumn() && reference.getColumnAlias()!="") ||
-		 (reference.getAlias()!="" && reference.getReferenceType()==Reference::REFER_EXPRESSION))
+  if((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
+     (!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION))
 	{
 		if(reference.getReferenceType()==Reference::REFER_EXPRESSION)
 			str_aux=reference.getAlias();
 		else
 			str_aux=reference.getColumnAlias();
 
-		str_aux=" (" + str_aux + ") ";
+    str_aux=QString(" (") + str_aux + QString(") ");
 		fmt=font_config[ParsersAttributes::ALIAS];
-		lables[2]->setText(Utf8String::create(str_aux));
+    lables[2]->setText(/*Utf8String::create(*/str_aux);
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
@@ -512,13 +513,13 @@ QString TableObjectView::getConstraintString(Column *column)
 		if(column->isNotNull() && !str_constr.contains(TXT_PRIMARY_KEY))
 			str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
 
-		if(str_constr!="")
+    if(!str_constr.isEmpty())
 			str_constr= CONSTR_DELIM_START +
 									CONSTR_SEPARATOR + str_constr +
 									CONSTR_DELIM_END;
 
 		return(str_constr);
 	}
-	else return("");
+  else return(QString());
 }
 

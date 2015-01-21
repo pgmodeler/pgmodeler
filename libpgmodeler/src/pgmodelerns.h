@@ -47,7 +47,7 @@ namespace PgModelerNS {
   User can specify a suffix for the generated name as well if the comparison inside the method must be done with
   formated names */
   template <class Class>
-  QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,  bool fmt_name=false, const QString &suffix="")
+  QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,  bool fmt_name=false, const QString &suffix=QString())
   {
     unsigned counter=1;
     int len=0;
@@ -80,7 +80,7 @@ namespace PgModelerNS {
 
       //Append the id of the object on its name (this is not applied to operators)
       if(obj_type!=OBJ_OPERATOR)
-        obj_name+="_" + id;
+        obj_name+=QString("_") + id;
     }
 
     aux_name=obj_name;

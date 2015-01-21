@@ -117,6 +117,11 @@ class DatabaseImportHelper: public QObject {
 				is referenced by it in order to avoid reference breaking */
 		map<QString, QString> seq_tab_swap;
 
+    /*! brief Stores all columns that are inherited on the database. Since these columns are created
+        dettached from parent columns on the resulting model before the inheritances creation they
+        will be removed from their related tables if there is no object referencing them */
+    vector<Column *> inherited_cols;
+
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
 
@@ -148,9 +153,10 @@ class DatabaseImportHelper: public QObject {
 		void createTrigger(attribs_map &attribs);
 		void createIndex(attribs_map &attribs);
 		void createConstraint(attribs_map &attribs);
-		void createPermission(attribs_map &attribs);
-		void createTableInheritances(void);
+		void createPermission(attribs_map &attribs);		
 		void createEventTrigger(attribs_map &attribs);
+    void __createTableInheritances(void);
+    void createTableInheritances(void);
 
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */
@@ -190,11 +196,11 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Clears the vectors and maps used in the import process
 		void resetImportParameters(void);
 
-	public:
+  public:
 		DatabaseImportHelper(QObject *parent=0);
 
 		//! \brief Set the connection used to access the PostgreSQL server
-		void setConnection(Connection &conn);
+    void setConnection(Connection &conn);
 
     /*! brief Closes all connections opened by this object including the catalog connection.
     Once this method is called the user must call setConnection() again or the import will fail */
@@ -223,7 +229,7 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assigne the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
+		attribs_map getObjects(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), attribs_map extra_attribs=attribs_map());
 
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
