@@ -101,6 +101,8 @@ begin
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',true);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',true);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',true);
+      SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',true);
+      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',true);
     end;
 end;
 
@@ -114,5 +116,7 @@ if CurUninstallStep = usUninstall then
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',false);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',false);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',false);
+      SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',false);
+      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',false);
     end;
 end;

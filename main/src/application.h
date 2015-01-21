@@ -16,6 +16,14 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
+/*
+# The original implementation of createUserConfiguration() and copyFilesRecursively() was
+# originally written by Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com> and is
+# available at: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+#
+# The current code was reviewed and minimally changed by Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+*/
+
 /**
 \ingroup main
 \class Application

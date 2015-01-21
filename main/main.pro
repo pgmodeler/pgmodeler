@@ -1,3 +1,12 @@
+# main.pro (reviewed version)
+#
+# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
+#
+# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
+# refactored code, containing almost all changes done by the refactoring author.
+
 include(../pgmodeler.pri)
 
 TEMPLATE = app
@@ -6,11 +15,6 @@ TARGET = pgmodeler
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 windows: DESTDIR = $$PWD
-
-#macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
-#                       cp $$PWD/res/Info.plist $$PREFIX; \
-#                       cp $$PWD/res/PkgInfo $$PREFIX; \
-#                       cp $$PWD/res/startapp $$BINDIR"
 
 HEADERS += src/application.h
 

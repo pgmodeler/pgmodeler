@@ -1,3 +1,13 @@
+# This file contains the main variables settings to build pgModeler on all supported platforms
+# Thanks to Lisandro Damián Nicanor Pérez Meyer, pgModeler is able to be package in most of
+# Linux distros.
+#
+# Original version by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+# Original code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+#
+# Refactored version by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
+# Refactored code: https://github.com/pgmodeler/pgmodeler
+
 # General Qt settings
 QT += core widgets printsupport network
 CONFIG += ordered qt stl rtti exceptions warn_on c++11
@@ -30,7 +40,30 @@ defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 linux {
   CONFIG += x11
 
-   # The default prefix is ./build
+  # !!! NOTE TO PACKAGE MAINTAINERS !!!
+  #
+  # The values defined for variables below are configured in a way that the installer generation
+  # process (see linuxdeploy.sh) can find the files and compress them all together.
+  #
+  # THIS IS NOT THE STANDARD STRUCTURE FOR MOST LINUX DISTRO!
+  # Uncomment the lines below to use the Linux standard directory structure.
+
+  # !defined(PREFIX, var): PREFIX = /usr/local
+  # BINDIR = $$PREFIX/bin
+  # PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
+  # PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
+  # PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+  # SHAREDIR = $$PREFIX/share/pgmodeler
+  # CONFDIR = $$SHAREDIR/conf
+  # DOCDIR = $$SHAREDIR/doc
+  # LANGDIR = $$SHAREDIR/lang
+  # SAMPLESDIR = $$SHAREDIR/samples
+  # SCHEMASDIR = $$SHAREDIR/schemas
+  # TEMPDIR = $$PREFIX/tmp
+
+
+  # Default configuration for package pgModeler using linuxdeploy.sh
+  # The default prefix is ./build
   !defined(PREFIX, var): PREFIX = $$PWD/build
 
   BINDIR = $$PREFIX

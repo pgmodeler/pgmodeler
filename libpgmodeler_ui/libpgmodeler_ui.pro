@@ -1,10 +1,19 @@
+# libpgmodeler_ui.pro (reviewed version)
+#
+# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
+#
+# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
+# refactored code, containing almost all changes done by the refactoring author.
+
 include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
-windows: DESTDIR = $$PWD
+windows:DESTDIR = $$PWD
 
 SOURCES += src/mainwindow.cpp \
 	   src/modelwidget.cpp \
@@ -90,7 +99,7 @@ SOURCES += src/mainwindow.cpp \
            src/databaseexplorerwidget.cpp \
            src/snippetsconfigwidget.cpp \
            src/pgmodeleruins.cpp \
-    src/bugreportform.cpp
+           src/bugreportform.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
