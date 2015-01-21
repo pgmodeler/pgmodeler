@@ -678,7 +678,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
           pos+=tab_obj_reg.matchedLength();
           pos1=aux_cmd.indexOf(' ', pos);
-          obj_name=aux_cmd.mid(pos, pos1 - pos);
 
           //Extracting the table name
           pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
@@ -750,6 +749,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
                 int spc_idx=lin.indexOf(' ');
                 obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
                 obj_name=obj_name.remove('(').simplified();
+                obj_name=obj_name.remove(')').simplified();
               }
               else
               {

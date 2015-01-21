@@ -165,10 +165,12 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
-    needs_fmt=(name.indexOf('-')>=0 && !is_operator) ||
-              (name.indexOf('.')>=0 && !is_operator) ||
-              (name.indexOf('@')>=0 && !is_operator) ||
-              (name.indexOf(' ')>=0 && !is_operator);
+    needs_fmt=(!is_operator &&
+               (name.indexOf('-')>=0 ||
+                name.indexOf('.')>=0 ||
+                name.indexOf('@')>=0 ||
+                name.indexOf(' ')>=0 ||
+                name.indexOf('$')>=0));
 
 		i=0;
     while(i < qtd && !needs_fmt)

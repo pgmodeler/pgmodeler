@@ -27,7 +27,8 @@ BUILD_DIR="$PWD/build"
 INSTALLER_DATA_DIR="$PWD/installer/linux/packages/br.com.pgmodeler/data"
 
 # Detecting current pgModeler version
-DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
+#DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
 WITH_BUILD_NUM='-with-build-num'
