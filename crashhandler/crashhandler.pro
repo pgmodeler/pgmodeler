@@ -6,12 +6,10 @@ TARGET = pgmodeler-ch
 windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 
-FORMS += ui/crashhandler.ui
-
 SOURCES += src/main.cpp \
-           src/crashhandler.cpp
+           src/crashhandlerform.cpp
 
-HEADERS += src/crashhandler.h
+HEADERS += src/crashhandlerform.h
 
 unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                       -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \

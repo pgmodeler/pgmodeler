@@ -533,7 +533,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	info_frm->setFont(font);
 
   info_frm->setObjectName(/*Utf8String::create(*/"info_frm");
-	info_frm->setFrameShape(QFrame::StyledPanel);
+  info_frm->setFrameShape(QFrame::StyledPanel);
 	info_frm->setFrameShadow(QFrame::Raised);
 	info_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -627,7 +627,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	alert_frm->setFont(font);
 
   alert_frm->setObjectName(/*Utf8String::create(*/"alerta_frm");
-	alert_frm->setFrameShape(QFrame::StyledPanel);
+  alert_frm->setFrameShape(QFrame::StyledPanel);
 	alert_frm->setFrameShadow(QFrame::Raised);
 	alert_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 

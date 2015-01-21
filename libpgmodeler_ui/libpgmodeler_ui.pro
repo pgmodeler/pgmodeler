@@ -89,7 +89,8 @@ SOURCES += src/mainwindow.cpp \
            src/hinttextwidget.cpp \
            src/databaseexplorerwidget.cpp \
            src/snippetsconfigwidget.cpp \
-           src/pgmodeleruins.cpp
+           src/pgmodeleruins.cpp \
+    src/bugreportform.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -174,7 +175,8 @@ HEADERS += src/mainwindow.h \
            src/hinttextwidget.h \
            src/databaseexplorerwidget.h \
            src/snippetsconfigwidget.h \
-           src/pgmodeleruins.h
+           src/pgmodeleruins.h \
+           src/bugreportform.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -247,7 +249,8 @@ FORMS += ui/mainwindow.ui \
          ui/modeldatabasediffform.ui \
          ui/hinttextwidget.ui \
          ui/databaseexplorerwidget.ui \
-         ui/snippetsconfigwidget.ui
+         ui/snippetsconfigwidget.ui \
+         ui/bugreportform.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
@@ -266,13 +269,6 @@ DEPENDPATH += $$PWD/../libobjrenderer \
               $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
               $$PWD/../libutils
-
-#Adding crash handle code dependency
-FORMS+=$$PWD/../crashhandler/ui/crashhandler.ui
-SOURCES+=$$PWD/../crashhandler/src/crashhandler.cpp
-HEADERS+=$$PWD/../crashhandler/src/crashhandler.h
-DEPENDPATH+=$$PWD/../crashhandler
-INCLUDEPATH+=$$PWD/../crashhandler/src
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

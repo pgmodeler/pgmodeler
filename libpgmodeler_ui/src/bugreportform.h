@@ -17,52 +17,45 @@
 */
 
 /**
-\ingroup crashhandler
-\class CrashHandler
-\brief Implements the pgModeler's crash handler enabling the generation an analysis of crash report files.
+\ingroup libpgmodeler_ui
+\class BugReportForm
+\brief Implements operations to permit user generate bug reports without use the crash handler application.
 */
 
-#ifndef CRASH_HANDLER_H
-#define CRASH_HANDLER_H
+#ifndef BUG_REPORT_FORM_H
+#define BUG_REPORT_FORM_H
 
 #include <QDialog>
-#include "ui_crashhandler.h"
+#include "ui_bugreportform.h"
 #include "syntaxhighlighter.h"
 
-class CrashHandler : public QDialog, Ui::CrashHandler
-{
+class BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:
 		Q_OBJECT
 
 		//! \brief Syntax highlight for model text widget
 		SyntaxHighlighter *hl_model_txt;
 
+  protected:
 		//! \brief Delimiter character which separates the sections of the compressed file
 		const static char CHR_DELIMITER;
 
-		//! \brief Load a report file showing its contents on the form
-		void loadReport(const QString &filename);
+    //! brief Generates an uncompressed buffer based upon the data in fields
+    virtual QByteArray generateReportBuffer(void);
 
-    void setAnalysisMode(bool value);
+    //! brief Generates the bug report file from uncompressed buffer
+    void generateReport(const QByteArray &buf);
 
-	public:
-    const static QString ANALYSIS_MODE;
-    CrashHandler(bool analysis_mode=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
-
-    void setTitle(const QString &title);
-    void setInfoText(const QString &msg);
-    void setLogo(const QPixmap &logo);
+  public:
+    BugReportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
   public slots:
 		void generateReport(void);
-		void enableGeneration(void);
 
   private slots:
-		void loadReport(void);
-    void saveModel(void);
+    void enableGeneration(void);
     void attachModel(void);
     void selectOutput(void);
-
 };
 
 #endif

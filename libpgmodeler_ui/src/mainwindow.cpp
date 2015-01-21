@@ -18,7 +18,7 @@
 
 #include "mainwindow.h"
 #include "pgmodeleruins.h"
-#include "crashhandler.h"
+#include "bugreportform.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -124,8 +124,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
-    control_tb->addAction(action_about);
     control_tb->addAction(action_bug_report);
+    control_tb->addAction(action_about);
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
@@ -1785,12 +1785,6 @@ void MainWindow::changeCurrentView(bool checked)
 
 void MainWindow::reportBug(void)
 {
-  CrashHandler crashhandler(false);
-
-  crashhandler.setLogo(QPixmap(QString(":imagens/imagens/bugreport.png")));
-  crashhandler.setTitle(trUtf8("Bug report"));
-  crashhandler.setInfoText(trUtf8("Use the form below to generate a complete bug report.\
- Please, try to be as clear as possible when describing the actions that can reproduce the bug.\
- Additionally, it's important to attach a sample database model so that the bug can be quickly discovered and fixed!"));
-  crashhandler.exec();
+  BugReportForm bugrep_frm;
+  bugrep_frm.exec();
 }

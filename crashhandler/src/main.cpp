@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "crashhandler.h"
+#include "crashhandlerform.h"
 #include <QApplication>
 #include <QTranslator>
 
@@ -31,8 +31,8 @@ int main(int argc, char **argv)
 		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 		app.installTranslator(&translator);
 
-    CrashHandler crashhandler(argc > 1 && argv[1]==CrashHandler::ANALYSIS_MODE);
-		crashhandler.show();
+    CrashHandlerForm crashhandler(argc > 1 && argv[1]==CrashHandlerForm::ANALYSIS_MODE);
+    crashhandler.show();
 		app.exec();
 
 		return(0);

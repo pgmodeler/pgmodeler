@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CrashHandler</class>
- <widget class="QDialog" name="CrashHandler">
+ <class>BugReportForm</class>
+ <widget class="QDialog" name="BugReportForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
+    <width>521</width>
     <height>504</height>
    </rect>
   </property>
@@ -32,10 +32,10 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>pgModeler Crash Handler</string>
+   <string>Bug Report</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
+   <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -64,21 +64,21 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>96</width>
-       <height>96</height>
+       <width>100</width>
+       <height>100</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>96</width>
-       <height>96</height>
+       <width>100</width>
+       <height>100</height>
       </size>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../../libpgmodeler_ui/res/resources.qrc">:/imagens/imagens/crashhandler.png</pixmap>
+      <pixmap resource="../res/resources.qrc">:/imagens/imagens/bugreport.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -104,7 +104,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Oops! pgModeler just crashed!</string>
+      <string>Bug report</string>
      </property>
      <property name="margin">
       <number>4</number>
@@ -156,7 +156,7 @@
         <string>Create</string>
        </property>
        <property name="icon">
-        <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
+        <iconset resource="../res/resources.qrc">
          <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
        </property>
        <property name="iconSize">
@@ -188,7 +188,7 @@
         <string>&amp;Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
+        <iconset resource="../res/resources.qrc">
          <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
        </property>
        <property name="iconSize">
@@ -235,7 +235,7 @@
       </size>
      </property>
      <property name="text">
-      <string>We apologize for what happened! It is clear that a nasty bug caused it. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</string>
+      <string>Use the form below to generate a complete bug report. Please, try to be as clear as possible when describing the actions that can reproduce the bug. Additionally, it's important to attach a sample database model so that the bug can be quickly discovered and fixed!</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
@@ -258,7 +258,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="report_twg">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -272,7 +272,7 @@
       <attribute name="title">
        <string>Report</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="report_tab_lt">
        <property name="leftMargin">
         <number>4</number>
        </property>
@@ -286,49 +286,9 @@
         <number>4</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="output_lbl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Output</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="output_edt"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="output_tb">
-           <property name="toolTip">
-            <string>Select the report's output folder</string>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
-             <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="details_gb">
          <property name="title">
-          <string>Issue causes</string>
+          <string>Issue details</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="leftMargin">
@@ -343,88 +303,65 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item row="1" column="0">
+          <item row="0" column="0">
            <widget class="QTextEdit" name="actions_txt">
             <property name="acceptRichText">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QWidget" name="btns_parent_wgt" native="true">
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="output_wgt" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="output_lbl">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QToolButton" name="load_tb">
-               <property name="toolTip">
-                <string>Load crash report.</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
-                 <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="save_tb">
-               <property name="toolTip">
-                <string>Save the model embedded on the crash report onto filesystem</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
-                 <normaloff>:/icones/icones/salvar_como.png</normaloff>:/icones/icones/salvar_como.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <property name="text">
+             <string>Output:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="output_edt"/>
+          </item>
+          <item>
+           <widget class="QToolButton" name="output_tb">
+            <property name="toolTip">
+             <string>Select the report's output folder</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
            </widget>
           </item>
          </layout>
@@ -445,7 +382,7 @@
           </size>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -464,7 +401,7 @@
            <number>2</number>
           </property>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="hint_ico_lbl">
             <property name="minimumSize">
              <size>
               <width>24</width>
@@ -484,7 +421,7 @@
              <enum>Qt::AutoText</enum>
             </property>
             <property name="pixmap">
-             <pixmap resource="../../libpgmodeler_ui/res/resources.qrc">:/icones/icones/msgbox_info.png</pixmap>
+             <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_info.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -492,7 +429,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="hint_lbl">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -505,7 +442,7 @@
              </font>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remember that you can report this issue anytime on pgModeler's project repository at &lt;a href=&quot; https://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you prefer it's possible to report this issue anytime on pgModeler's project repository at &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="textFormat">
              <enum>Qt::AutoText</enum>
@@ -600,36 +537,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="attach_mod_chk">
-         <property name="text">
-          <string>Attach the below database model file to be debugged.</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="attach_tb">
-         <property name="toolTip">
-          <string>Attach a different database model</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libpgmodeler_ui/res/resources.qrc">
-           <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0" colspan="2">
         <widget class="QTextEdit" name="model_txt">
          <property name="enabled">
@@ -653,48 +560,62 @@
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Stack trace</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <property name="leftMargin">
-        <number>4</number>
-       </property>
-       <property name="topMargin">
-        <number>4</number>
-       </property>
-       <property name="rightMargin">
-        <number>4</number>
-       </property>
-       <property name="bottomMargin">
-        <number>4</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QTextEdit" name="stack_txt">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans Mono</family>
-           <pointsize>8</pointsize>
-           <weight>50</weight>
-           <italic>false</italic>
-           <bold>false</bold>
-          </font>
+       <item row="0" column="0" colspan="2">
+        <widget class="QWidget" name="attach_wgt" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
          </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
-         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="attach_mod_chk">
+            <property name="text">
+             <string>Attach the below database model file to be debugged.</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="attach_tb">
+            <property name="toolTip">
+             <string>Attach a different database model</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+         <zorder>attach_tb</zorder>
+         <zorder>attach_mod_chk</zorder>
+         <zorder>attach_tb</zorder>
+         <zorder>attach_mod_chk</zorder>
         </widget>
        </item>
       </layout>
@@ -704,7 +625,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../libpgmodeler_ui/res/resources.qrc"/>
+  <include location="../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -49,8 +49,8 @@ namespace GlobalAttributes {
   PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
   PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
-  CRASH_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
-  CRASH_REPORT_FILE=QString("pgmodeler%1.crash"),
+  BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
+  BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
   STACKTRACE_FILE=QString(".stacktrace"),
   MACOS_STARTUP_SCRIPT=QString("startapp"),
 
