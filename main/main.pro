@@ -7,10 +7,10 @@ windows:RC_FILE=res/windows_ico.qrc
 windows:RCC_DIR=src/
 windows: DESTDIR = $$PWD
 
-macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
-                       cp $$PWD/res/Info.plist $$PREFIX; \
-                       cp $$PWD/res/PkgInfo $$PREFIX; \
-                       cp $$PWD/res/startapp $$BINDIR"
+#macx:QMAKE_POST_LINK+="cp -r $$PWD/res/Resources $$PREFIX; \
+#                       cp $$PWD/res/Info.plist $$PREFIX; \
+#                       cp $$PWD/res/PkgInfo $$PREFIX; \
+#                       cp $$PWD/res/startapp $$BINDIR"
 
 HEADERS += src/application.h
 
@@ -42,5 +42,16 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
 # Deployment settings
 target.path = $$BINDIR
 INSTALLS = target
+
+macx {
+  macdeps.files = $$PWD/res/Resources $$PWD/res/Info.plist $$PWD/res/PkgInfo
+  macdeps.path = $$PREFIX
+
+  macscript.files = $$PWD/res/startapp
+  macscript.path = $$BINDIR
+
+  INSTALLS += macdeps macscript
+}
+
 
 

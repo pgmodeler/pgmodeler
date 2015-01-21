@@ -122,6 +122,8 @@ macx {
   PGSQL_INC = /Library/PostgreSQL/9.3/include
   XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2
   XML_LIB = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libxml2.dylib
+
+  INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
 windows {
