@@ -102,7 +102,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
   output.open(QFile::WriteOnly);
 
   if(!output.isOpen())
-    msgbox.show(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(filename), Messagebox::ERROR_ICON);
+    msgbox.show(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename), Messagebox::ERROR_ICON);
   else
   {
     QByteArray comp_buf;

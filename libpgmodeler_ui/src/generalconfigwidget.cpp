@@ -466,8 +466,8 @@ void GeneralConfigWidget::updateFileAssociation(void)
 				out.open(QFile::WriteOnly);
 
 				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(files[i]),
-													ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
+													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				out.write(buf.data(), buf.size());
 				out.close();
@@ -490,8 +490,8 @@ void GeneralConfigWidget::updateFileAssociation(void)
 				out.open(QFile::ReadOnly);
 
 				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(mimeapps),
-													ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(mimeapps),
+													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
 				buf=out.readAll();

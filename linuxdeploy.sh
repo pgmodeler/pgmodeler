@@ -19,15 +19,20 @@ esac
 #QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
-LOG=linuxdeploy.log
+LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-if-1.5.0
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
+ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
-INSTALLER_DATA_DIR="$PWD/installer/linux/packages/br.com.pgmodeler/data"
-
+INSTALL_ROOT="/opt/pgmodeler"
+INSTALLER_CONF_DIR="$PWD/installer/linux/config"
+INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/br.com.pgmodeler/data"
+QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
+DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
+  
 # Detecting current pgModeler version
-#DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
 DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
@@ -69,10 +74,7 @@ PKGFILE=$PKGNAME.tar.gz
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz
-else
-  QT_CONF=build/qt.conf
-  DEP_PLUGINS_DIR=build/lib/qtplugins
-  
+else 
   #Dependency qt plugins copied to build dir
   DEP_PLUGINS="imageformats/libqgif.so \
                imageformats/libqico.so \
@@ -176,7 +178,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make -j5  >> $LOG 2>&1
+make -j7  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -186,7 +188,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing dependencies..."
-make install  >> $LOG 2>&1
+make install INSTALL_ROOT=$BUILD_DIR  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -201,7 +203,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
  for lib in $QT_LIBS; do
-  cp $QT_ROOT/lib/$lib $BUILD_DIR/lib >> $LOG 2>&1
+  cp $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
@@ -236,8 +238,9 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-echo "Copying startup script..."
-cp $STARTUP_SCRIPT $BUILD_DIR >> $LOG 2>&1
+echo "Copying scripts..."
+cp $STARTUP_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
+cp $ENV_VARS_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
     echo
@@ -249,10 +252,13 @@ fi
 if [ $DEMO_VERSION = 0 ]; then
   echo "Generating tarball..."
   rm -r $PKGNAME  >> $LOG 2>&1
-  mkdir $PKGNAME  >> $LOG 2>&1
-  cp -r build/* $PKGNAME  >> $LOG 2>&1
+  mkdir $BUILD_DIR/$PKGNAME  >> $LOG 2>&1
+  cp -r $BUILD_DIR/$INSTALL_ROOT/* $BUILD_DIR/$PKGNAME  >> $LOG 2>&1
+  
+  cd $BUILD_DIR >> $LOG 2>&1
   tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
   rm -r $PKGNAME  >> $LOG 2>&1
+  cd .. >> $LOG 2>&1
 
   if [ $? -ne 0 ]; then
     echo
@@ -267,19 +273,18 @@ fi
 
 if [ $GEN_INST_PKG = 1 ]; then
   echo "Generating installer..."
-  
- if ! [ -e "$INSTALLER_DATA_DIR" ]; then
-   ln -sf $BUILD_DIR $INSTALLER_DATA_DIR >> $LOG 2>&1
+ 
+  rm $INSTALLER_DATA_DIR >> $LOG 2>&1
+  ln -sf "$BUILD_DIR/$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
    
-   if [ $? -ne 0 ]; then
-     echo
-     echo "** Failed to installer data dir!"
-     echo
-     exit 1
-   fi   
- fi
-  
-  $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to configure installer data dir!"
+    echo
+    exit 1
+  fi   
+ 
+  $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$BUILD_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
    echo

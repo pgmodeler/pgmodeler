@@ -1,4 +1,5 @@
-# This file contains the main variables settings to build pgModeler on all supported platforms
+# This file contains the main variables settings to build pgModeler on all supported platforms.
+#
 # Thanks to Lisandro Damián Nicanor Pérez Meyer, pgModeler is able to be package in most of
 # Linux distros.
 #
@@ -66,18 +67,18 @@ linux {
 
 
   # Default configuration for package pgModeler using linuxdeploy.sh
-  # The default prefix is ./build
-  !defined(PREFIX, var):        PREFIX = $$PWD/build
+  # The default prefix is /opt/pgmodeler
+  !defined(PREFIX, var):        PREFIX = /opt/pgmodeler
   !defined(BINDIR, var):        BINDIR = $$PREFIX
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib
   !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
   !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
-  !defined(CONFDIR, var):       CONFDIR = $$PREFIX/conf
-  !defined(DOCDIR, var):        DOCDIR = $$PREFIX
-  !defined(LANGDIR, var):       LANGDIR = $$PREFIX/lang
-  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$PREFIX/samples
-  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$PREFIX/schemas
+  !defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
+  !defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
+  !defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
+  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
+  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
 
   # Specifies where to find the libraries at runtime

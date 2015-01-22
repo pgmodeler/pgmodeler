@@ -156,8 +156,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
         ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
         scene->update();
 
-        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
-                        ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
+                        ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
     }
 

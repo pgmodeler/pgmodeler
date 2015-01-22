@@ -5,7 +5,7 @@
     <Title>pgModeler</Title>
     <Publisher>Raphael A. Silva (raphael@pgmodeler.com.br)</Publisher>
     <StartMenuDir>pgModeler</StartMenuDir>
-    <TargetDir>@HomeDir@/pgmodeler</TargetDir>
+    <TargetDir>/opt/pgmodeler</TargetDir>
     <InstallerApplicationIcon>installer_icon</InstallerApplicationIcon>
     <InstallerWindowIcon>installer_icon</InstallerWindowIcon>
     <Logo>installer_logo.png</Logo>

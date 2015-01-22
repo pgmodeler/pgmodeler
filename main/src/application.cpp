@@ -140,7 +140,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
          src_dir(src_path);
 
     if(!dst_dir.exists() && !dst_dir.mkpath(dst_path))
-      throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(dst_path),
+      throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(dst_path),
                       __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     filenames = src_dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
@@ -154,7 +154,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
   }
   else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
   {
-    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(dst_path),
+    throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(dst_path),
                     __PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 }

@@ -439,8 +439,8 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
     output.setFileName(file_edt->text());
 
     if(!output.open(QFile::WriteOnly))
-      captureThreadError(Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(file_edt->text()),
-                                   ERR_FILE_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+      captureThreadError(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file_edt->text()),
+                                   ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 
     output.write(sqlcode_txt->toPlainText().toUtf8());
     output.close();

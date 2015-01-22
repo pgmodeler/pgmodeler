@@ -6651,8 +6651,8 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(filename),
-										ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
+										ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

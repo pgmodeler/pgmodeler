@@ -82,8 +82,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
-      throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(/*Utf8String::create(*/cfg_filename),
-											ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/cfg_filename),
+											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());

@@ -209,8 +209,8 @@ void CrashHandlerForm::saveModel(void)
 			output.open(QFile::WriteOnly);
 
 			if(!output.isOpen())
-				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(file_dlg.selectedFiles().at(0)),
-												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file_dlg.selectedFiles().at(0)),
+												ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf.append(model_txt->toPlainText());
 			output.write(buf.data(),buf.size());
