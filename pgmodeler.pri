@@ -111,7 +111,7 @@ macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var):        PREFIX = $$PWD/build/pgmodeler.app/Contents
+  !defined(PREFIX, var):        PREFIX = /Applications/pgmodeler.app/Contents
   !defined(BINDIR, var):        BINDIR = $$PREFIX/MacOS
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$BINDIR
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/Frameworks
@@ -123,6 +123,9 @@ macx {
   !defined(SAMPLESDIR, var):    SAMPLESDIR = $$BINDIR/samples
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
+
+  # Specifies where to find the libraries at runtime
+  QMAKE_RPATHDIR += $$PRIVATELIBDIR
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes

@@ -70,7 +70,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-  QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH + "bla");
+  QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH);
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
@@ -114,9 +114,9 @@ void ModelFixForm::fixModel(void)
 {
   QString cmd=QString("\"%1\"");
 
-	#ifdef Q_OS_MAC
+  #ifdef Q_OS_MAC
     cmd+=QString(" pgmodeler-cli");
-	#endif
+  #endif
 
   cmd+=QString(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
   cmd=cmd.arg(pgmodeler_cli_edt->text())
