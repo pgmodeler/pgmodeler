@@ -24,6 +24,7 @@ defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 # through a set of variables, being them:
 #
 # PREFIX        -> the root directory where the files will be placed
+# BINDIR        -> where executables accessable to the user resides
 # PRIVATEBINDIR -> where executables not directly accessable to the user resides
 # PRIVATELIBDIR -> where libraries not directly shared through the system resides
 # PLUGINSDIR    -> where third party plugins are installed
@@ -37,6 +38,8 @@ defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 #
 # The values of each variable changes between supported platforms and are describe as follow
 
+ 
+# Linux custom variables settings
 linux {
   CONFIG += x11
 
@@ -64,60 +67,61 @@ linux {
 
   # Default configuration for package pgModeler using linuxdeploy.sh
   # The default prefix is ./build
-  !defined(PREFIX, var): PREFIX = $$PWD/build
-
-  BINDIR = $$PREFIX
-  PRIVATEBINDIR = $$PREFIX
-  PRIVATELIBDIR = $$PREFIX/lib
-  PLUGINSDIR = $$PREFIX/plugins
-  SHAREDIR = $$PREFIX
-  CONFDIR = $$PREFIX/conf
-  DOCDIR = $$PREFIX
-  LANGDIR = $$PREFIX/lang
-  SAMPLESDIR = $$PREFIX/samples
-  SCHEMASDIR = $$PREFIX/schemas
-  TEMPDIR = $$PREFIX/tmp
+  !defined(PREFIX, var):        PREFIX = $$PWD/build
+  !defined(BINDIR, var):        BINDIR = $$PREFIX
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib
+  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
+  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
+  !defined(CONFDIR, var):       CONFDIR = $$PREFIX/conf
+  !defined(DOCDIR, var):        DOCDIR = $$PREFIX
+  !defined(LANGDIR, var):       LANGDIR = $$PREFIX/lang
+  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$PREFIX/samples
+  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$PREFIX/schemas
+  !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
 
   # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
 }
 
+
+# Windows custom variables settings
 windows {
   CONFIG += windows
 
   # The default prefix is ./build
-  !defined(PREFIX, var): PREFIX = $$PWD/build
-
-  BINDIR = $$PREFIX
-  PRIVATEBINDIR = $$PREFIX
-  PRIVATELIBDIR = $$PREFIX
-  PLUGINSDIR = $$PREFIX/plugins
-  SHAREDIR = $$PREFIX
-  CONFDIR = $$PREFIX/conf
-  DOCDIR = $$PREFIX
-  LANGDIR = $$PREFIX/lang
-  SAMPLESDIR = $$PREFIX/samples
-  SCHEMASDIR = $$PREFIX/schemas
-  TEMPDIR = $$PREFIX/tmp
+  !defined(PREFIX, var):        PREFIX = $$PWD/build
+  !defined(BINDIR, var):        BINDIR = $$PREFIX
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX
+  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
+  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
+  !defined(CONFDIR, var):       CONFDIR = $$PREFIX/conf
+  !defined(DOCDIR, var):        DOCDIR = $$PREFIX
+  !defined(LANGDIR, var):       LANGDIR = $$PREFIX/lang
+  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$PREFIX/samples
+  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$PREFIX/schemas
+  !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
 }
 
+
+# MacOS X custom variables settings
 macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var): PREFIX = $$PWD/build/pgmodeler.app/Contents
-
-  BINDIR = $$PREFIX/MacOS
-  PRIVATEBINDIR = $$BINDIR
-  PRIVATELIBDIR = $$PREFIX/Frameworks
-  PLUGINSDIR = $$BINDIR/plugins
-  SHAREDIR = $$BINDIR
-  CONFDIR = $$BINDIR/conf
-  DOCDIR = $$BINDIR
-  LANGDIR = $$BINDIR/lang
-  SAMPLESDIR = $$BINDIR/samples
-  SCHEMASDIR = $$BINDIR/schemas
-  TEMPDIR = $$PREFIX/tmp
+  !defined(PREFIX, var):        PREFIX = $$PWD/build/pgmodeler.app/Contents
+  !defined(BINDIR, var):        BINDIR = $$PREFIX/MacOS
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$BINDIR
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/Frameworks
+  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$BINDIR/plugins
+  !defined(SHAREDIR, var):      SHAREDIR = $$BINDIR
+  !defined(CONFDIR, var):       CONFDIR = $$BINDIR/conf
+  !defined(DOCDIR, var):        DOCDIR = $$BINDIR
+  !defined(LANGDIR, var):       LANGDIR = $$BINDIR/lang
+  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$BINDIR/samples
+  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
+  !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes
@@ -131,7 +135,6 @@ DEFINES += BINDIR=\\\"$${BINDIR}\\\" \
            SAMPLESDIR=\\\"$${SAMPLESDIR}\\\" \
            SCHEMASDIR=\\\"$${SCHEMASDIR}\\\" \
            TEMPDIR=\\\"$${TEMPDIR}\\\"
-
 
 
 # pgModeler depends on libpq and libxml2 this way to variables
@@ -203,3 +206,27 @@ macx | windows {
   }
 }
 
+# Define a custom function to print build details
+defineTest(printBuildDetails) {
+ LB=$$escape_expand(\n)
+ log($$LB)
+ log("** pgModeler build details ** $$LB $$LB")
+ log("  PREFIX        = $$PREFIX $$LB")
+ log("  BINDIR        = $$BINDIR $$LB")
+ log("  PRIVATEBINDIR = $$PRIVATEBINDIR $$LB")
+ log("  PRIVATELIBDIR = $$PRIVATELIBDIR $$LB")
+ log("  PLUGINSDIR    = $$PLUGINSDIR $$LB")
+ log("  SHAREDIR      = $$SHAREDIR $$LB")
+ log("  CONFDIR       = $$SHAREDIR/conf $$LB")
+ log("  DOCDIR        = $$SHAREDIR/doc $$LB")
+ log("  LANGDIR       = $$SHAREDIR/lang $$LB")
+ log("  SAMPLESDIR    = $$SHAREDIR/samples $$LB")
+ log("  SCHEMASDIR    = $$SHAREDIR/schemas $$LB")
+ log("  TEMPDIR       = $$PREFIX/tmp $$LB $$LB")
+ log("* To change a variable value run qmake again setting the desired value e.g.: $$LB")
+ log("  > qmake PREFIX+=/usr/local -r pgmodeler.pro $$LB $$LB")
+ log("* Proceed with build process by running: $$LB")
+ log("  >  make && make install $$LB")
+ log($$LB)
+ return(true)
+}

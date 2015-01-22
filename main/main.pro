@@ -57,5 +57,5 @@ macx {
   INSTALLS += macdeps macscript
 }
 
-
-
+# Print the current build settins (see pgmodeler.pri)
+printBuildDetails()

@@ -11,20 +11,21 @@
 
 include(pgmodeler.pri)
 
-# Subprojects
+# Subprojects (libraries only)
 SUBDIRS = libutils \
           libparsers \
           libpgmodeler \
           libpgconnector \
           libobjrenderer \
-          libpgmodeler_ui \
-          crashhandler \
-          main-cli \
-          main
+          libpgmodeler_ui
 
 # Include the tests and plugins subprojects only on debug mode
 CONFIG(debug, debug|release): SUBDIRS += tests plugins
 
+# Including executables subprojects (libraries only)
+SUBDIRS += crashhandler \
+           main-cli \
+           main
 
 # Deployment settings
 pgmodeler_data.files = samples schemas lang conf
