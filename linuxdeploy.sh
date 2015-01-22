@@ -267,7 +267,7 @@ if [ $DEMO_VERSION = 0 ]; then
     exit 1
   fi
 
-  echo "File created: $PKGFILE"
+  echo "File created: build/$PKGFILE"
 fi
 
 
@@ -293,7 +293,7 @@ if [ $GEN_INST_PKG = 1 ]; then
    exit 1
  fi
 
- echo "File created: $PKGNAME.run"
+ echo "File created: build/$PKGNAME.run"
 fi
 
 
