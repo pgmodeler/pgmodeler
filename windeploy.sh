@@ -40,9 +40,10 @@ fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
+INSTALL_ROOT="$PWD/build"
 ISSFILE=./installer/windows/pgmodeler.iss
-QT_CONF=build/qt.conf
-DEP_PLUGINS_DIR=build/lib/qtplugins
+QT_CONF="$INSTALL_ROOT/qt.conf"
+DEP_PLUGINS_DIR="$INSTALL_ROOT/lib/qtplugins"
 PLUGINS="dummy xml2object"
   
 DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
@@ -144,7 +145,7 @@ echo "Installing dependencies..."
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
 for dll in $DEP_LIBS; do
-	cp $dll build/lib >> $LOG 2>&1
+	cp $dll $INSTALL_ROOT/lib >> $LOG 2>&1
 	if [ $? -ne 0 ]; then
 		echo
 		echo "** Installation failed!"
@@ -192,7 +193,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm -r $PKGNAME >> $LOG 2>&1
 
 "$INNOSETUP_CMD" $ISSFILE >> $LOG 2>&1
 
@@ -202,7 +202,8 @@ if [ $? -ne 0 ]; then
   echo "** Proceeding with basic deployment."
   
   mkdir $PKGNAME >> $LOG 2>&1
-  mv build/* $PKGNAME >> $LOG 2>&1
+  mv $INSTALL_ROOT/* $PKGNAME >> $LOG 2>&1
+  mv $PKGNAME $INSTALL_ROOT >> $LOG 2>&1
 
   if [ $? -ne 0 ]; then
 	echo "** Failed to execute basic deployment!"
@@ -212,8 +213,8 @@ if [ $? -ne 0 ]; then
   echo
   echo "Directory created: $PKGNAME"
 else
-  mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
-  echo "File created: $PKGFILE"
+  mv $GENINSTALLER build/$PKGFILE >> $LOG 2>&1
+  echo "File created: $INSTALL_ROOT/$PKGFILE"
 fi
 
 echo "pgModeler successfully deployed!"
