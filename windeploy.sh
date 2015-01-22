@@ -7,7 +7,7 @@ QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw491_32/"
 QMAKE_ROOT=$QT_ROOT/bin
 MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw491_32/bin"
 PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-QMAKE_ARGS="-r -spec win32-g++"
+QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -42,7 +42,7 @@ PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
 ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF=build/qt.conf
-DEP_PLUGINS_DIR=build/qtplugins
+DEP_PLUGINS_DIR=build/lib/qtplugins
 PLUGINS="dummy xml2object"
   
 DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
@@ -116,8 +116,8 @@ if [ $DEMO_VERSION = 1 ]; then
 fi
 
 echo "Cleaning previous compilation..."
-#rm -r build/* > $LOG 2>&1
-#$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
+rm -r build/* > $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
 
 echo "Running qmake..."
 $QMAKE_ROOT/qmake.exe $QMAKE_ARGS >> $LOG 2>&1
@@ -141,8 +141,10 @@ fi
 
 echo "Installing dependencies..."
 
+$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
+
 for dll in $DEP_LIBS; do
-	cp $dll build/ >> $LOG 2>&1
+	cp $dll build/lib >> $LOG 2>&1
 	if [ $? -ne 0 ]; then
 		echo
 		echo "** Installation failed!"
@@ -152,10 +154,10 @@ for dll in $DEP_LIBS; do
 done
 
 #Creates the file build/qt.conf to bind qt plugins
-mkdir $DEP_PLUGINS_DIR
+mkdir -p $DEP_PLUGINS_DIR
 echo "[Paths]" > $QT_CONF
 echo "Prefix=." >> $QT_CONF
-echo "Plugins=qtplugins" >> $QT_CONF
+echo "Plugins=lib/qtplugins" >> $QT_CONF
 echo "Libraries=." >> $QT_CONF
 
 #Copies the qt plugins to build/qtplugins
@@ -173,6 +175,7 @@ for plug in $DEP_PLUGINS; do
 done
 
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
+
 
 #Fixing the pgModeler plugin deployment.
 #Moving dlls from build/plugins/[PLUGIN]/build to build/plugins/[PLUGIN]

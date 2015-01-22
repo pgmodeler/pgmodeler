@@ -94,7 +94,7 @@ windows {
   !defined(PREFIX, var):        PREFIX = $$PWD/build
   !defined(BINDIR, var):        BINDIR = $$PREFIX
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib
   !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
   !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
   !defined(CONFDIR, var):       CONFDIR = $$PREFIX/conf

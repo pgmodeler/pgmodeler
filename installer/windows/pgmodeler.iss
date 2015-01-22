@@ -95,7 +95,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep=ssInstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}'),true);
+      SetEnv('Path',ExpandConstant('{app}') + '\lib',true);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',true);
       SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',true);
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',true);
@@ -110,7 +110,7 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 if CurUninstallStep = usUninstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}'),false);
+      SetEnv('Path',ExpandConstant('{app}') + '\lib',false);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',false);
       SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',false);
