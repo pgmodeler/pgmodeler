@@ -499,7 +499,8 @@ void PgModelerCLI::extractObjectXML(void)
 	QFile input;
   QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
-	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL));
+  QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL)),
+      default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)"));
   int start=-1, end=-1;
   bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
 
@@ -537,7 +538,11 @@ void PgModelerCLI::extractObjectXML(void)
       if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
            (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
-			else
+      else if(lin.contains(default_obj))
+      {
+        lin.clear();
+      }
+      else
 			{
 				//If the line contains an objects open tag
         if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
