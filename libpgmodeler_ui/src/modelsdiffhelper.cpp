@@ -403,54 +403,52 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
     }
     else if(!isDiffInfoExists(diff_type, object, old_object))
     {
+      Column *col=dynamic_cast<Column *>(object),
+             *old_col=dynamic_cast<Column *>(old_object);
+
       /* Special case for columns marked with ALTER.
          If the type of them is "serial" or similar then a sequence will be created and the
          type of the column changed to "integer" or similar, this because the ALTER command
          for columns don't accept the type "serial" */
-      if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && object->getObjectType()==OBJ_COLUMN)
+      if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && col && old_col &&
+         (col->getType()!=old_col->getType() && col->getType().isSerialType()))
       {
-        Column *col=dynamic_cast<Column *>(object),
-               *old_col=dynamic_cast<Column *>(old_object);
+        Column *aux_col=new Column;
+        Sequence *seq=new Sequence;
+        BaseTable *tab=col->getParentTable();
+        QString seq_name;
 
-        if(col->getType()!=old_col->getType() && col->getType().isSerialType())
-        {
-          Column *aux_col=new Column;
-          Sequence *seq=new Sequence;
-          BaseTable *tab=col->getParentTable();
-          QString seq_name;
+        //Configures the sequence
+        seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
+        seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
+        seq->setName(seq_name);
+        seq->setOwner(tab->getOwner());
+        seq->setSchema(tab->getSchema());
 
-          //Configures the sequence
-          seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
-          seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
-          seq->setName(seq_name);
-          seq->setOwner(tab->getOwner());
-          seq->setSchema(tab->getSchema());
+        //Configure an auxiliary column with the same values of the original one
+        (*aux_col)=(*col);
+        aux_col->setDefaultValue(QString());
+        //Setting the type as the alias of the serial type
+        aux_col->setType(aux_col->getType().getAliasType());
+        //Assigns the sequence to the column in order to configure the default value correctly
+        aux_col->setSequence(seq);
 
-          //Configure an auxiliary column with the same values of the original one
-          (*aux_col)=(*col);
-          aux_col->setDefaultValue(QString());
-          //Setting the type as the alias of the serial type
-          aux_col->setType(aux_col->getType().getAliasType());
-          //Assigns the sequence to the column in order to configure the default value correctly
-          aux_col->setSequence(seq);
+        //Creates a new ALTER info with the created column
+        diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
+        diff_infos.push_back(diff_info);
+        diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+        emit s_objectsDiffInfoGenerated(diff_info);
 
-          //Creates a new ALTER info with the created column
-          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
-          diff_infos.push_back(diff_info);
-          diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
-          emit s_objectsDiffInfoGenerated(diff_info);
+        //Creates a CREATE info with the sequence
+        diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
+        diff_infos.push_back(diff_info);
+        diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+        emit s_objectsDiffInfoGenerated(diff_info);
 
-          //Creates a CREATE info with the sequence
-          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
-          diff_infos.push_back(diff_info);
-          diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
-          emit s_objectsDiffInfoGenerated(diff_info);
-
-          /* Stores the created objects in the temp list in order to be destroyed at the
+        /* Stores the created objects in the temp list in order to be destroyed at the
              end of the process. */
-          tmp_objects.push_back(aux_col);
-          tmp_objects.push_back(seq);
-        }
+        tmp_objects.push_back(aux_col);
+        tmp_objects.push_back(seq);
       }
       else
       {
@@ -623,7 +621,7 @@ void ModelsDiffHelper::processDiffInfos(void)
               Table *tab=dynamic_cast<Table *>(src_col->getParentTable());
 
               //If the truncate was not generated previously
-              if(src_col->getType()!=imp_col->getType() && truncate_tabs.count(tab->getObjectId())==0)
+              if((*src_col->getType())!=(*imp_col->getType()) && truncate_tabs.count(tab->getObjectId())==0)
                 truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(cascade_mode);
             }
           }
