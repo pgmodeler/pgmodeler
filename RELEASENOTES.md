@@ -1,39 +1,38 @@
 v0.8.0-beta
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: January 10, 2015</em>
-<em>Changes since: <strong>v0.8.0-beta</strong></em><br/>
-<strong>Summary:</strong> after six weeks of work this release brings a great set of improvements. A new feature brought is the SQL snippet support on SQL tool as a little facility for the lack of forms to handle database objects. The snippets are quite customizable (see settings dialog) and can be constructed from static SQL commands or from dynamic codes by using the pgModeler's <em>schema micro language</em>.<br/>
-Still in snippets, they are accessible by the code completion on SQL input field or Snippets button both located on SQL Tool. Another shortcut for snippets is on database explorer by right-click some object and selecting the Snippets menu item.<br/>
-The database explorer widget also brings a special control that lists object's properties, the main goal of this control is to help the user to identify some key attributes that may be useful when writing SQL commands or manage the database.<br/>
+<em>Release date: ???, 2015</em>
+<em>Changes since: <strong>v0.8.0-beta1</strong></em><br/>
+<strong>Summary:</strong> this last beta release brings several bug fixes mainly for import and diff processes. Some changes were done in order to improve the modeling experience (see below).<br/>
+One important change made was the refectoring of build scripts that will permit pgModeler to be packaged more easily. The new build mode is still being shaped and tested but is already functional.<br/>
+Below some key changes/fixes of this release, more details can be found on CHANGELOG.md file.
 
-* [New] Created the widget SnippetConfigWidget in order to handle SQL snippets on SQLTool and DatabaseExplorerWidget.
-* [New] Introduced a new expression %unset on SchemaParser to clear the named attributes.
-* [New] Added support for permission on objects Type and Domain.
-* [New] Added methods to handle snippet selection in DatabaseExplorerWidget and SQLToolWidget.
-* [New] Added an option to enable/disable code completion widget on sql code input fields (linked to CodeCompletionWidget instances).
-* [New] Introduced a new step on model validation: relationship configuration checking.
-* [New] Added a panel related to object's properties on database explorer widget.
-* [Change] Minor change on ColorPickerWidget in order to change color of pickers using stylesheet instead of QPallete.
-* [Change] Minor improvements on ModelNavigationWidget to show the filename associated to a hovered item on combobox.
-* [Change] Simplified the syntax for attributes on .sch files from @{attrb} to {attrib}.
-* [Change] Updated all .sch files with the new attribute syntax.
-* [Change] Minor improvements on configuration widgets in order to detect if the settings was changed, this will avoid the unecessary load/save of the configuration files in ConfigurationForm.
-* [Change] Minor updates on sql-highlight.conf
-* [Change] Updated the version info on platform specific installer files.
-* [Fix] Fixed a bug that was crashing application when using special pks in relationshps.
-* [Fix] Minor fix on windeploy.sh to copy the correct libs.
-* [Fix] Minor fix on macdeploy.sh in order to use Qt 5.4.
-* [Fix] Fixes done in order to build pgModeler on Windows using Qt 5.4.
-* [Fix] Fixed a bug on SchemaParser that was wrongly reading %define instructions inside if's and creating attributes when it was not need to create them.
-* [Fix] Modifications done on attributes initialization at RelationshipWidget in order to fix some crashes. Now pgModeler runs without crashing when compiled in release mode using GCC.
-* [Fix] Minor fix on aggregates listing on Catalog class. Now the handled types are attached to aggregates' names.
-* [Fix] Minor fix on config pages indexes on ConfigurationForm.
-* [Fix] Minor fix on MainWindow when there are errors during configuration files loading.
-* [Fix] Minor fix on object name formatting at DatabaseExplorerWidget.
-* [Fix] Minor fix on SQLToolWidget to set the current database explorer instance properly.
-* [Fix] Minor fix on rule catalog query.
-* [Fix] Minor fix on table.sch schema file.
-* [Fix] Fixed the object filter on database explorer.
-* [Fix] Typo correction on ModelExportHelper.
-* [Fix] Additional fix to remove GCC warnings.
+* [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
+* [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
+* [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.
+* [Change] Improvements on crash handler to reuse the code from bug report form.
+* [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux
+* [Change] Several adjustments on deployments scripts to use the new build variable settings.
+* [Change] Additional improvements on start-pgmodeler.sh and startapp.
+* [Change] Crash/bug report files now have extensions .bug instead of .crash
+* [Change] Modifications done on .pro files that will permit custom output paths when building pgModeler from source, enabling it to be package to several linux distros.
+* [Change] Modifications done on DatabaseImportForm in order to be in the same standard as ModelExportForm and ModelDatabaseDiffForm.
+* [Change] Minor improvements on ModelExportHelper in order to show the correct actions (commands) being executed.
+* [Change] Improvements on ModelExportForm by including an output tab in order to display all actions taken during the export process.
+* [Change] Adjustments on PgModelerCLI, ModelExportForm and ModelExportHelper to accept the "drop objects" option.
+* [Change] Minor adjustment on ModelDatabaseDiffForm in order to lower the chances to crash the app if user try to repeatedly cancel and start over the diff process.
+* [Change] Minor change on the generation of DROP statements attached to object's SQL.
+* [Fix] Minor fix on CLI that was wrongly considering <dbmodel> tag attributes default-* as xml code for database objects causing errors on fix process.
+* [Fix] Minor fix on diff process that was ignoring column's data type changes.
+* [Fix] Minor fix on column SQL generation that was removing quotation on sequences names when using nextval() function call as default value.
+* [Fix] Minor fix on ModelFixForm to correctly find the startapp script on MacOSX.
+* [Fix] Fixed bug when import/diff user defined types that contains $ in the middle of their names. Now the names are quoted to avoid errors when referencing those types.
+* [Fix] Minor fix when saving/restoring sessions. Now, empty sessions (without loaded files) are correctly saved.
+* [Fix] Fixed a crash when importing a database in a second time after some error has occurred previously.
+* [Fix] First version of a fix to solve problems related to inheritance diff/import. Now pgModeler does not try to drop inherited columns on diff process.
+* [Fix] Fixed a crash when destroying constraints stored on operation history.
+* [Fix] Fix on the import process to correctly identify and create inherited columns that aren't linked to constraints or other objects. For those referenced by other objects they will be created as detached columns.
+* [Fix] Fixed a bug on rule.sch catalog query.
+* [Fix] Minor fix on generation of DROP commands.
+* [Fix] Fixed some catalog query schema files and the Catalog class itself in order to correctly select/discard objects linked directly or not to extensions.
+* [Fix] Minor fix on generation of commands related to extensions. According to the rule, extensions names can't be schema qualified.
