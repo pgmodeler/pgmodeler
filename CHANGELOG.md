@@ -6,6 +6,7 @@ v0.8.0-beta2
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: ???, 2015</em><br/>
 
+* [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
 * [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.

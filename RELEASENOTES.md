@@ -1,12 +1,14 @@
-v0.8.0-beta
+v0.8.0-beta2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
 <em>Release date: ???, 2015</em>
 <em>Changes since: <strong>v0.8.0-beta1</strong></em><br/>
 <strong>Summary:</strong> this last beta release brings several bug fixes mainly for import and diff processes. Some changes were done in order to improve the modeling experience (see below).<br/>
+pgModeler now counts with per-user configurations meaning that each user on the system will have his configuration folder separated from the global one (installation default).<br/>
 One important change made was the refectoring of build scripts that will permit pgModeler to be packaged more easily. The new build mode is still being shaped and tested but is already functional.<br/>
 Below some key changes/fixes of this release, more details can be found on CHANGELOG.md file.
 
+* [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
 * [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.
