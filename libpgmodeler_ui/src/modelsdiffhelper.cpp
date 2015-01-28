@@ -179,7 +179,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     /* For DROP detection, we must gather the objects from the database in order to check
        if they exists on the model. The object drop order here is the inverse of the creation order
        on the database */
-		obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+    obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
     aux_model=source_model;
     factor=25;
 	}
@@ -188,7 +188,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	{
     /* For creation or modification of objects the order followed is the same
        as the creation order on the source model */
-		obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+    obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
 		aux_model=imported_model;
     factor=50;
     prog=50;

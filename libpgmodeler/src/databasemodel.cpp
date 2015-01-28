@@ -6449,7 +6449,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   return(def);
 }
 
-map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
+map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs)
 {
   BaseObject *object=nullptr;
   vector<BaseObject *> fkeys;
@@ -6508,7 +6508,20 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
           fk_rels.push_back(object);
         }
         else
-          objects_map[object->getObjectId()]=object;
+        {
+          if(def_type==SchemaParser::XML_DEFINITION || !incl_relnn_objs)
+            objects_map[object->getObjectId()]=object;
+          else
+          {
+            rel=dynamic_cast<Relationship *>(object);
+
+            /* Avoiding many-to-many relationships to be included in the map.
+             They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
+             need to be compared to other tables not the relationship itself */
+            if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
+              objects_map[object->getObjectId()]=object;
+          }
+        }
       }
     }
   }
@@ -6605,7 +6618,27 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type)
         rel=dynamic_cast<Relationship *>(object);
         objs[0]=rel->getTable(Relationship::SRC_TABLE);
         objs[1]=rel->getTable(Relationship::DST_TABLE);
-        objs[2]=rel;
+
+        /* For many-to-many relationship, the generated table and the foreign keys that represents
+           the link are included on the creation order map instead of the relationship itself. This is
+           done to permit the table to be accessed and compared on the diff process */
+        if(incl_relnn_objs &&
+           rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
+           rel->getGeneratedTable())
+        {
+          table=rel->getGeneratedTable();
+          objs[2]=table;
+
+          for(BaseObject *tab_obj : *table->getObjectList(OBJ_CONSTRAINT))
+          {
+            constr=dynamic_cast<Constraint *>(tab_obj);
+
+            if(constr->getConstraintType()==ConstraintType::foreign_key)
+              fkeys.push_back(constr);
+          }
+        }
+        else
+          objs[2]=rel;
 
         for(i=0; i < 3; i++)
         {

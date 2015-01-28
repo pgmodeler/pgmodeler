@@ -675,6 +675,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           aux_cmd.remove('"');
           aux_cmd.remove(QString("IF EXISTS "));
           obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
+          reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
 
           pos+=tab_obj_reg.matchedLength();
           pos1=aux_cmd.indexOf(' ', pos);
@@ -688,8 +689,16 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             pos1=aux_cmd.indexOf(QString("DROP"));
             is_drop=true;
           }
-
           tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
+
+          //Extracting the child object name (column | constraint) the one between
+          pos=reg_aux.indexIn(aux_cmd, pos1);
+          pos+=reg_aux.matchedLength();
+
+          pos1=aux_cmd.indexOf(" ", pos);
+          obj_name=aux_cmd.mid(pos, pos1 - pos).simplified();
+
+          //Creating a fully qualified name for the object (schema.table.name)
           obj_name=tab_name + QString(".") + obj_name;
 
           if(is_drop)
@@ -697,7 +706,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           else
             msg=trUtf8("Creating object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
-           emit s_progressUpdated(aux_prog, msg,obj_type, sql_cmd);
+           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
         }
         //Check if the regex matches the sql command
         else if(obj_reg.exactMatch(sql_cmd))
@@ -748,8 +757,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               {
                 int spc_idx=lin.indexOf(' ');
                 obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
-                obj_name=obj_name.remove('(').simplified();
-                obj_name=obj_name.remove(')').simplified();
+
+                if(obj_tp!=OBJ_FUNCTION)
+                {
+                  obj_name=obj_name.remove('(').simplified();
+                  obj_name=obj_name.remove(')').simplified();
+                }
               }
               else
               {

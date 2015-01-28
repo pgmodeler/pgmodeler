@@ -278,7 +278,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
-    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type);
+    /*! brief Returns the creation order of objects in each definition type (SQL or XML).
+        The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
+        of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
+        is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
+    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
