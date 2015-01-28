@@ -59,7 +59,13 @@ class ModelsDiffHelper: public QObject {
     trucante_tables,
 
     //! brief Indicates if permissions must be preserved on database
-    keep_obj_perms;
+    keep_obj_perms,
+
+    /*! brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
+        into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
+        if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
+        value will be reused */
+    reuse_sequences;
 
     //! brief Stores the count of objects to be dropped, changed or created
     unsigned diffs_counter[4];
@@ -125,7 +131,8 @@ class ModelsDiffHelper: public QObject {
 
     //! brief Configures the set of diff options before start the process
     void setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables,
-                        bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms);
+                        bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms,
+                        bool reuse_sequences);
 
     //! brief Configures the PostgreSQL version used in the diff generation
     void setPgSQLVersion(const QString pgsql_ver);

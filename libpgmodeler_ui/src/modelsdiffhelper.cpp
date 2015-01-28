@@ -26,7 +26,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
-  setDiffOptions(true, true, false, false, false, true);
+  setDiffOptions(true, true, false, false, false, true, true);
 }
 
 ModelsDiffHelper::~ModelsDiffHelper(void)
@@ -34,7 +34,7 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
   destroyTempObjects();
 }
 
-void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms)
+void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms, bool reuse_sequences)
 {
   this->keep_cluster_objs=keep_cluster_objs;
   this->cascade_mode=cascade_mode;
@@ -42,6 +42,7 @@ void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode,
   this->trucante_tables=truncate_tables;
   this->recreate_unchangeble=(force_recreation && recreate_unchangeble);
   this->keep_obj_perms=keep_obj_perms;
+  this->reuse_sequences=reuse_sequences;
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -416,12 +417,13 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         Column *aux_col=new Column;
         Sequence *seq=new Sequence;
         BaseTable *tab=col->getParentTable();
-        QString seq_name;
+        //QString seq_name;
 
         //Configures the sequence
         seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
-        seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
-        seq->setName(seq_name);
+        //seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
+        //seq->setName(seq_name);
+
         seq->setOwner(tab->getOwner());
         seq->setSchema(tab->getSchema());
 
@@ -439,11 +441,33 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
         emit s_objectsDiffInfoGenerated(diff_info);
 
-        //Creates a CREATE info with the sequence
-        diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
-        diff_infos.push_back(diff_info);
-        diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
-        emit s_objectsDiffInfoGenerated(diff_info);
+        if(!reuse_sequences || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
+        {
+          //Creates a CREATE info with the sequence
+          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
+          diff_infos.push_back(diff_info);
+          diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+          emit s_objectsDiffInfoGenerated(diff_info);
+        }
+        else if(reuse_sequences)
+        {
+          //Removing DROP infos related to the sequence that will be reused
+          vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
+              itr_end=diff_infos.end();
+
+          while(itr!=itr_end)
+          {
+            if(itr->getDiffType()==ObjectsDiffInfo::DROP_OBJECT &&
+               itr->getObject()->getObjectType()==OBJ_SEQUENCE &&
+               itr->getObject()->getSignature()==seq->getSignature())
+            {
+              diff_infos.erase(itr);
+              break;
+            }
+
+            itr++;
+          }
+        }
 
         /* Stores the created objects in the temp list in order to be destroyed at the
              end of the process. */

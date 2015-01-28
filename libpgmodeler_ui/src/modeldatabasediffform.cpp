@@ -75,6 +75,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     ignore_duplic_ht=new HintTextWidget(ignore_duplic_hint, this);
     ignore_duplic_ht->setText(ignore_duplic_chk->statusTip());
 
+    reuse_sequences_ht=new HintTextWidget(reuse_sequences_hint, this);
+    reuse_sequences_ht->setText(reuse_sequences_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -344,7 +347,8 @@ void ModelDatabaseDiffForm::diffModels(void)
                               trunc_tables_chk->isChecked(),
                               force_recreation_chk->isChecked(),
                               recreate_unmod_chk->isChecked(),
-                              keep_obj_perms_chk->isChecked());
+                              keep_obj_perms_chk->isChecked(),
+                              reuse_sequences_chk->isChecked());
 
   diff_helper->setModels(source_model, imported_model);
 
