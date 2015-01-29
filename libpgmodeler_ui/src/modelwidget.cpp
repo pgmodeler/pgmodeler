@@ -853,7 +853,7 @@ void ModelWidget::convertRelationshipNN(void)
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
 			Messagebox msg_box;
-      msg_box.show(trUtf8("Do you really want to convert the relationship?"),
+      msg_box.show(trUtf8("Do you really want to convert the relationship into an intermediate table?"),
 									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -983,6 +983,9 @@ void ModelWidget::convertRelationshipNN(void)
 
           op_list->startOperationChain();
 
+          //Removes the many-to-many relationship from the model
+          op_list->registerObject(rel, Operation::OBJECT_REMOVED);
+
           //The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
 					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
@@ -1033,13 +1036,10 @@ void ModelWidget::convertRelationshipNN(void)
 						op_list->registerObject(rel2, Operation::OBJECT_CREATED);
 					}
 
-          //Removes the many-to-many relationship from the model
-          op_list->registerObject(rel, Operation::OBJECT_REMOVED);
+          op_list->finishOperationChain();
 
           //Removes the n:n relationship after convert it
           db_model->removeObject(rel);
-
-          op_list->finishOperationChain();
 
 					emit s_objectCreated();
 				}

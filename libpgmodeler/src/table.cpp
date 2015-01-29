@@ -813,7 +813,8 @@ int Table::getObjectIndex(BaseObject *obj)
 
 		while(itr!=itr_end && !found)
 		{
-			found=((*itr)==tab_obj);
+      found=((tab_obj->getParentTable()==this && (*itr)==tab_obj) ||
+             (tab_obj->getName()==(*itr)->getName()));
 			if(!found) itr++;
 		}
 
