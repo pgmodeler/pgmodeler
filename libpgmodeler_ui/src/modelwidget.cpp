@@ -853,7 +853,7 @@ void ModelWidget::convertRelationshipNN(void)
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
 			Messagebox msg_box;
-      msg_box.show(trUtf8("Do you really want to convert the relationship?"),
+      msg_box.show(trUtf8("Do you really want to convert the relationship into an intermediate table?"),
 									 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -978,19 +978,15 @@ void ModelWidget::convertRelationshipNN(void)
 					}
 
 					//Renames the table if there is other with the same name on the model avoiding conflicts
-					while(db_model->getObject(tab->getName(true), OBJ_TABLE))
-					{
-						tab->setName(tab_name + QString("_%1").arg(i));
-						i++;
-					}
+          tab->setName(tab_name);
+          tab->setName(PgModelerNS::generateUniqueName(tab, *db_model->getObjectList(OBJ_TABLE)));
 
-					op_list->startOperationChain();
+          op_list->startOperationChain();
 
-					//Removes the many-to-many relationship from the model
-					op_list->registerObject(rel, Operation::OBJECT_REMOVED);
-					db_model->removeObject(rel);
+          //Removes the many-to-many relationship from the model
+          op_list->registerObject(rel, Operation::OBJECT_REMOVED);
 
-					//The default position for the table will be the middle point between the relationship participant tables
+          //The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
 					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
 					tab->setPosition(pnt);
@@ -1004,13 +1000,13 @@ void ModelWidget::convertRelationshipNN(void)
 						//For self relationships register the created foreign keys on the operation list
 						while(!fks.empty())
 						{
-							op_list->registerObject(fks.back(), Operation::OBJECT_CREATED, -1, fks.back()->getParentTable());
+              op_list->registerObject(fks.back(), Operation::OBJECT_CREATED, -1, fks.back()->getParentTable());
 							fks.pop_back();
-						}
+            }
 					}
 					//If not self relationship creates two 1:n relationships
 					else
-					{				
+          {
 						//Creating the pk based upon the attributes of the relationship
 						if(!pk_cols.empty())
 						{
@@ -1040,7 +1036,11 @@ void ModelWidget::convertRelationshipNN(void)
 						op_list->registerObject(rel2, Operation::OBJECT_CREATED);
 					}
 
-					op_list->finishOperationChain();
+          op_list->finishOperationChain();
+
+          //Removes the n:n relationship after convert it
+          db_model->removeObject(rel);
+
 					emit s_objectCreated();
 				}
 				catch(Exception &e)

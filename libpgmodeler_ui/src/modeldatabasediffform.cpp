@@ -147,6 +147,7 @@ void ModelDatabaseDiffForm::createThreads(void)
 
   export_thread=new QThread;
   export_helper=new ModelExportHelper;
+  export_helper->setIgnoredErrors({ QString("0A000") });
   export_helper->moveToThread(export_thread);
 
   connect(apply_on_server_btn, &QPushButton::clicked,
@@ -166,6 +167,7 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::QueuedConnection);
 
+  connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
@@ -549,6 +551,23 @@ void ModelDatabaseDiffForm::handleExportFinished(void)
   export_thread->wait();
   listDatabases();
   finishDiff();
+}
+
+void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg, QString cmd)
+{
+  QTreeWidgetItem *item=nullptr;
+
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
+                 QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+                 export_item, false, false);
+
+  PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(err_msg),
+                 QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+                 item, true, false);
+
+  PgModelerUiNS::createOutputTreeItem(output_trw, cmd,
+                 QPixmap(),
+                 item, true, false);
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
