@@ -1646,7 +1646,7 @@ void ModelWidget::cancelObjectAddition(void)
 	//Hide the line that simulates the relationship creation
 	scene->showRelationshipLine(false);
 
-	this->configurePopupMenu(this->selected_objects);
+  //this->configurePopupMenu(this->selected_objects);
 }
 
 void ModelWidget::renameObject(void)
@@ -1674,74 +1674,91 @@ void ModelWidget::moveToSchema(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
-			*prev_schema=dynamic_cast<Schema *>(selected_objects[0]->getSchema());
+      *prev_schema=nullptr;
 	BaseGraphicObject *obj_graph=nullptr;
   vector<BaseObject *> ref_objs;
   vector<BaseRelationship *>rels;
+  int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
 	try
 	{
-		op_list->registerObject(selected_objects[0], Operation::OBJECT_MODIFIED, -1);
-		selected_objects[0]->setSchema(schema);
-		obj_graph=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+    op_list->startOperationChain();
 
-		if(obj_graph)
-		{
-      SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
-      QPointF p;
-
-      if(dst_schema && dst_schema->isVisible())
-      {
-        p.setX(dst_schema->pos().x());
-        p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
-        dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
-      }
-
-      obj_graph->setModified(true);
-      schema->setModified(true);
-      prev_schema->setModified(true);
-		}
-
-    //Invalidating the code of the object's references
-    db_model->getObjectReferences(selected_objects[0], ref_objs);
-    for(auto obj : ref_objs)
+    for(BaseObject *obj : selected_objects)
     {
-      obj->setCodeInvalidated(true);
-
-      //If the ref object is an table child object
-      if(TableObject::isTableObject(obj->getObjectType()))
+      //Change the object's schema only if the new schema is different from the current
+      if(obj->acceptsSchema() && obj->getSchema()!=schema)
       {
-        //Updates the parent table instead of the object
-        obj_graph=dynamic_cast<BaseGraphicObject *>(dynamic_cast<TableObject *>(obj)->getParentTable());
+        prev_schema=dynamic_cast<Schema *>(obj->getSchema());
+        op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 
-        //Get the relationships that the table participate
-        rels=db_model->getRelationships(dynamic_cast<BaseTable *>(obj_graph));
+        obj->setSchema(schema);
+        obj_graph=dynamic_cast<BaseGraphicObject *>(obj);
 
-        obj_graph->setModified(true);
-
-        if(!rels.empty())
+        //If the object is a graphical one, move it to a position near to the new schema box
+        if(obj_graph)
         {
-          //Updating the tables from relationships
-          for(auto rel : rels)
-          {
-            if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
-              rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
+          SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+          QPointF p;
 
-            if(rel->getTable(BaseRelationship::DST_TABLE)!=obj_graph)
-              rel->getTable(BaseRelationship::DST_TABLE)->setModified(true);
+          if(dst_schema && dst_schema->isVisible())
+          {
+            p.setX(dst_schema->pos().x());
+            p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+            dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
           }
+
+          obj_graph->setModified(true);
+          schema->setModified(true);
+          prev_schema->setModified(true);
+        }
+
+        //Invalidating the code of the object's references
+        db_model->getObjectReferences(obj, ref_objs);
+        for(BaseObject *ref_obj : ref_objs)
+        {
+          ref_obj->setCodeInvalidated(true);
+
+          //If the ref object is an table child object
+          if(TableObject::isTableObject(ref_obj->getObjectType()))
+          {
+            //Updates the parent table instead of the object
+            obj_graph=dynamic_cast<BaseGraphicObject *>(dynamic_cast<TableObject *>(ref_obj)->getParentTable());
+
+            //Get the relationships that the table participate
+            rels=db_model->getRelationships(dynamic_cast<BaseTable *>(obj_graph));
+
+            obj_graph->setModified(true);
+
+            if(!rels.empty())
+            {
+              //Updating the tables from relationships
+              for(auto rel : rels)
+              {
+                if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
+                  rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
+
+                if(rel->getTable(BaseRelationship::DST_TABLE)!=obj_graph)
+                  rel->getTable(BaseRelationship::DST_TABLE)->setModified(true);
+              }
+            }
+          }
+          else
+            dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
         }
       }
-      else
-       dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
     }
+
+    op_list->finishOperationChain();
 
     this->setModified(true);
 		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
-		op_list->removeLastOperation();
+    if(op_id >=0 && op_id > op_curr_idx)
+      op_list->removeLastOperation();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1749,25 +1766,43 @@ void ModelWidget::moveToSchema(void)
 void ModelWidget::changeOwner(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
-	BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
-			*obj=(!selected_objects.empty() ? selected_objects[0] : this->db_model);
+  BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+  vector<BaseObject *> sel_objs;
+  int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
-	if(selected_objects[0]->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                    .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
-										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	try
+  try
 	{
-		if(obj->getObjectType()!=OBJ_DATABASE)
-			op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+    if(selected_objects.empty())
+      sel_objs.push_back(this->db_model);
+    else
+      sel_objs=selected_objects;
 
-		obj->setOwner(owner);
+    op_list->startOperationChain();
+
+    for(BaseObject *obj : sel_objs)
+    {
+      if(obj->acceptsOwner() && obj->getOwner()!=owner)
+      {
+        if(obj->isSystemObject())
+          throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+                          .arg(obj->getName())
+                          .arg(obj->getTypeName()),
+                          ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+        //Register an operation only if the object is not the database itself
+        if(obj->getObjectType()!=OBJ_DATABASE)
+          op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+
+        obj->setOwner(owner);
+      }
+    }
+
+    op_list->finishOperationChain();
 		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
-		if(obj->getObjectType()!=OBJ_DATABASE)
+    if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -1777,23 +1812,34 @@ void ModelWidget::changeOwner(void)
 void ModelWidget::setTag(void)
 {
   QAction *act=dynamic_cast<QAction *>(sender());
-  BaseObject *tag=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
-      *obj=(!selected_objects.empty() ? selected_objects[0] : this->db_model);
-  BaseTable *tab=dynamic_cast<BaseTable *>(obj);
-
+  BaseObject *tag=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+  BaseTable *tab=nullptr;
+  int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
   try
-  {
-    op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+  {    
+    op_list->startOperationChain();
 
-    tab->setTag(dynamic_cast<Tag *>(tag));
-    tab->setModified(true);
+    for(BaseObject *obj : selected_objects)
+    {
+      tab=dynamic_cast<BaseTable *>(obj);
 
+      if(tab)
+      {
+        op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+        tab->setTag(dynamic_cast<Tag *>(tag));
+        tab->setModified(true);
+      }
+    }
+
+    op_list->finishOperationChain();
     emit s_objectModified();
   }
   catch(Exception &e)
   {
-    op_list->removeLastOperation();
+    if(op_id >=0 &&  op_id > op_curr_idx)
+      op_list->removeLastOperation();
+
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
@@ -2651,13 +2697,39 @@ void ModelWidget::enableModelActions(bool value)
 	action_quick_actions->setEnabled(value);
 }
 
-void ModelWidget::configureSubmenu(BaseObject *obj)
+void ModelWidget::configureSubmenu(BaseObject *object)
 {
-	if(obj)
-	{
-    ObjectType obj_type=obj->getObjectType();
+  vector<BaseObject *> sel_objs;
+  ObjectType obj_type=BASE_OBJECT;
+  bool tab_or_view=false, accepts_owner=false, accepts_schema=false;
 
-		if(obj->acceptsOwner() || obj->acceptsSchema())
+  if(object)
+    sel_objs.push_back(object);
+  else
+    sel_objs=selected_objects;
+
+  /* Determining if one or more selected objects accepts schema, owner or are table/views,
+     this is done to correctly show the actions to the user */
+  for(BaseObject *obj : sel_objs)
+  {
+    obj_type=obj->getObjectType();
+
+    if(!tab_or_view)
+      tab_or_view=(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+
+    if(!accepts_owner)
+      accepts_owner=obj->acceptsOwner();
+
+    if(!accepts_schema)
+      accepts_schema=obj->acceptsSchema();
+
+    if(tab_or_view && accepts_owner && accepts_schema)
+      break;
+  }
+
+  if(!sel_objs.empty())
+	{
+    if(accepts_owner || accepts_schema)
 		{
 			QAction *act=nullptr;
 			vector<BaseObject *> obj_list;
@@ -2670,10 +2742,10 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			{
 				menus[i]->clear();
 
-				if((i==0 && obj->acceptsSchema()) ||
-           (i==1 && obj->acceptsOwner()) ||
-           (i==2 && (obj_type==OBJ_TABLE ||
-                     obj_type==OBJ_VIEW)))
+        //Configuring actions "Move to schema", "Change Owner" and "Set tag"
+        if((i==0 && accepts_schema) ||
+           (i==1 && accepts_owner) ||
+           (i==2 && tab_or_view))
 				{
 					obj_list=db_model->getObjects(types[i]);
 
@@ -2686,15 +2758,16 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 					{
 						while(!obj_list.empty())
 						{
-              act=new QAction(/*Utf8String::create(*/obj_list.back()->getName(), menus[i]);
+              act=new QAction(obj_list.back()->getName(), menus[i]);
 							act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
-							act->setCheckable(true);
 
-							act->setChecked(obj->getSchema()==obj_list.back() ||
-                              obj->getOwner()==obj_list.back()  ||
-                              ((obj_type==OBJ_TABLE ||
-                                obj_type==OBJ_VIEW) &&
-                               dynamic_cast<BaseTable *>(obj)->getTag()==obj_list.back()));
+              /* Check the current action only if there is only one selected object and the object representing
+                 the action is assigned to the selected object */
+              act->setCheckable(sel_objs.size()==1);
+              act->setChecked(sel_objs.size()==1 &&
+                              (object->getSchema()==obj_list.back() ||
+                               object->getOwner()==obj_list.back() ||
+                               (tab_or_view && dynamic_cast<BaseTable *>(sel_objs[0])->getTag()==obj_list.back())));
 
 							act->setEnabled(!act->isChecked());
 							act->setData(QVariant::fromValue<void *>(obj_list.back()));
@@ -2724,44 +2797,48 @@ void ModelWidget::configureSubmenu(BaseObject *obj)
 			}
 		}
 
-    if(obj_type!=OBJ_CAST)
+    //Display the quick rename action is a single object is selected
+    if(object && obj_type!=OBJ_CAST)
 		{
 			quick_actions_menu.addAction(action_rename);
-			action_rename->setData(QVariant::fromValue<void *>(obj));
+      action_rename->setData(QVariant::fromValue<void *>(object));
 		}
 
-		if(obj->acceptsSchema())
+    if(accepts_schema)
 			quick_actions_menu.addAction(action_moveto_schema);
 
-		if(obj->acceptsOwner())
+    if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);
 
-    if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+    if(tab_or_view)
       quick_actions_menu.addAction(action_set_tag);
 
-		if(Permission::objectAcceptsPermission(obj->getObjectType()))
+    //Display the "Edit permissions" action a single object is selected and it accepts permissions
+    if(object && Permission::objectAcceptsPermission(obj_type))
 		{
 			quick_actions_menu.addAction(action_edit_perms);
-			action_edit_perms->setData(QVariant::fromValue<void *>(obj));
+      action_edit_perms->setData(QVariant::fromValue<void *>(object));
 		}
 
-    if(BaseObject::acceptsCustomSQL(obj_type))
+    //Display the "Edit permissions" action a single object is selected and it accepts permissions
+    if(object && BaseObject::acceptsCustomSQL(obj_type))
 		{
-			action_append_sql->setData(QVariant::fromValue<void *>(obj));
+      action_append_sql->setData(QVariant::fromValue<void *>(object));
 			quick_actions_menu.addAction(action_append_sql);
 		}
 
-    if(obj_type!=OBJ_TEXTBOX && obj_type!=BASE_RELATIONSHIP)
+    if(object && obj_type!=OBJ_TEXTBOX && obj_type!=BASE_RELATIONSHIP)
     {
-      action_enable_sql->setData(QVariant::fromValue<void *>(obj));
-      action_disable_sql->setData(QVariant::fromValue<void *>(obj));
+      action_enable_sql->setData(QVariant::fromValue<void *>(object));
+      action_disable_sql->setData(QVariant::fromValue<void *>(object));
 
-      if(obj->isSQLDisabled())
+      if(object->isSQLDisabled())
         quick_actions_menu.addAction(action_enable_sql);
       else
         quick_actions_menu.addAction(action_disable_sql);
     }
 
+    //Include the quick actions if it is not empty and the model is not protected
 		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
 	}
@@ -2941,6 +3018,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				popup_menu.addAction(action_deps_refs);
 		}
 	}
+  else
+  {
+    configureSubmenu(nullptr);
+  }
 
 	/* Adds the protect/unprotect action when the selected object was not included by relationship
 	and if its a table object and the parent table is not protected. */
