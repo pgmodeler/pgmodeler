@@ -820,11 +820,44 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
     //Get all references to the retrieved object on the database
     imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
 
-    //Register a drop info for the object found on the database
-    if(aux_obj)
+    /* If the to-be recreate object is a constraint check if it's a pk,
+       if so, the fk's linked to it need to be recreated as well */
+    if(aux_obj->getObjectType()==OBJ_CONSTRAINT)
+    {
+      Constraint *constr=dynamic_cast<Constraint *>(aux_obj);
+
+      if(constr->getConstraintType()==ConstraintType::primary_key)
+      {
+        unsigned i=0, col_cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
+        vector<BaseObject *> ref_aux;
+        Constraint *aux_constr=nullptr;
+
+        for(i=0; i < col_cnt; i++)
+        {
+          //Get the objects referencing the source columns of the pk
+          imported_model->getObjectReferences(constr->getColumn(i, Constraint::SOURCE_COLS), ref_aux, false, true);
+
+          //Selecting only fks from the references list
+          for(BaseObject *obj : ref_aux)
+          {
+            aux_constr=dynamic_cast<Constraint *>(obj);
+            if(aux_constr && aux_constr->getConstraintType()==ConstraintType::foreign_key)
+              ref_objs.push_back(aux_constr);
+          }
+        }
+      }
+    }
+
+    /* Register a drop info for the object only if there is no drop registered previously,
+       avoiding multiple drop statments for the same object */
+    if(aux_obj && !isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, aux_obj, nullptr))
       drop_objs.push_back(aux_obj);
 
-    create_objs.push_back(object);
+    /* Register a create info for the object only if there is no drop or create registered previously,
+       avoiding wrongly recreating the object */
+    if(!isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, aux_obj, nullptr) &&
+       !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, aux_obj, nullptr))
+      create_objs.push_back(object);
 
     //Executing the recreation of the object's references
     for(auto obj : ref_objs)
