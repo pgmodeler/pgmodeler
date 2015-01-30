@@ -327,6 +327,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
                                trUtf8("Creating database `%1'.")
                                .arg(/*Utf8String::create(*/db_model->getName()),
 															 OBJ_DATABASE);
+
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;

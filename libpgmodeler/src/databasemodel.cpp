@@ -6185,6 +6185,10 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 {
   QString def, bkp_appended_sql, bkp_prepended_sql;
 
+  //Forcing the name/signature cleanup due to the validation temp. names feature
+  attributes[ParsersAttributes::NAME]=QString();
+  attributes[ParsersAttributes::SIGNATURE]=QString();
+
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
 
