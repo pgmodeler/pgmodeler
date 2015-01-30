@@ -253,7 +253,9 @@ class Table: public BaseTable {
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-		//! \brief Returns the index for the specified table object
+    /*! \brief Returns the index for the specified table object.
+        If the object specified on the parameter owns to another table other than 'this'
+        then the name of the objects are compared instead of the memory address */
 		int getObjectIndex(BaseObject *obj);
 
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists

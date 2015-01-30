@@ -604,13 +604,12 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		{
 			itr=obj_list->begin() + obj_idx;
 			TableObject *tab_obj=(*itr);
+      Constraint *constr=dynamic_cast<Constraint *>(tab_obj);
 
-			if(tab_obj)
-			 tab_obj->setParentTable(nullptr);
-
+      tab_obj->setParentTable(nullptr);
 			obj_list->erase(itr);
 
-      if(obj_type==OBJ_CONSTRAINT)
+      if(constr && constr->getConstraintType()==ConstraintType::primary_key)
         dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
 		}
 		else
@@ -813,7 +812,8 @@ int Table::getObjectIndex(BaseObject *obj)
 
 		while(itr!=itr_end && !found)
 		{
-			found=((*itr)==tab_obj);
+      found=((tab_obj->getParentTable()==this && (*itr)==tab_obj) ||
+             (tab_obj->getName()==(*itr)->getName()));
 			if(!found) itr++;
 		}
 

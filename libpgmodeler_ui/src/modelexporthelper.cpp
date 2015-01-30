@@ -7,7 +7,13 @@ ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
   simulate=use_tmp_names=db_sql_reenabled=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 	db_model=nullptr;
-	connection=nullptr;
+  connection=nullptr;
+}
+
+void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
+{
+  ignored_errors=err_codes;
+  ignored_errors.removeDuplicates();
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
@@ -188,7 +194,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
-	vector<Exception> errors;
+  //vector<Exception> errors;
 
 	try
 	{
@@ -241,7 +247,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
     {
       db_model->setSQLDisabled(false);
       db_sql_reenabled=true;
-      emit s_progressUpdated(progress, trUtf8("Enabling the SQL code for database `%1'' to avoid errors.").arg(db_model->getName()));
+      emit s_progressUpdated(progress, trUtf8("Enabling the SQL code for database `%1' to avoid errors.").arg(db_model->getName()));
     }
 
 
@@ -252,6 +258,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Save the current status for ALTER command generation for table columns/constraints
 			saveGenAtlerCmdsStatus(db_model);
 		}
+
+    if(!ignored_errors.isEmpty())
+      emit s_progressUpdated(progress, trUtf8("Ignoring the following error code(s): %1.").arg(ignored_errors.join(", ")));
 
 		if(drop_db)
 		{
@@ -289,15 +298,20 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				}
 				catch(Exception &e)
 				{
+          //Ignoring the error if it is in the ignored list
+          if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+            emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+
 					/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
 					returned by the server is other than object duplicity */
-					if(!ignore_dup ||
-             (ignore_dup && isExportError(e.getExtraInfo())))
+          else if(ignored_errors.indexOf(e.getExtraInfo()) < 0 ||
+                  !ignore_dup ||
+                  (ignore_dup && isDuplicationError(e.getExtraInfo())))
 						throw Exception(e.getErrorMessage(),
 														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 					else
 						//If the object is duplicated store the error on a vector
-						errors.push_back(e);
+            errors.push_back(e);
 				}
 
 				created_objs[types[type_id]]++;
@@ -320,14 +334,18 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		}
 		catch(Exception &e)
 		{
+      //Ignoring the error if it is in the ignored list
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+        emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+
 			/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
 			returned by the server is other than object duplicity */
-			if(!ignore_dup ||
-         (ignore_dup && isExportError(e.getExtraInfo())))
+      else if(!ignore_dup ||
+              (ignore_dup && isDuplicationError(e.getExtraInfo())))
         throw Exception(e.getErrorMessage(),
 												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 			else
-				errors.push_back(e);
+        errors.push_back(e);
 		}
 
 		if(!export_canceled)
@@ -397,17 +415,17 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		redirects the error in form of signal */
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
-			errors.push_back(e);
+      errors.push_back(e);
 			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
 		}
 		else
 		{
-			//Redirects any error to the user
-			if(errors.empty())
+      //Redirects any error to terrorsr
+      if(errors.empty())
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 			{
-				errors.push_back(e);
+        errors.push_back(e);
 				throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 			}
 		}
@@ -566,7 +584,7 @@ void ModelExportHelper::restoreObjectNames(void)
   db_model->setCodesInvalidated();
 }
 
-bool ModelExportHelper::isExportError(const QString &error_code)
+bool ModelExportHelper::isDuplicationError(const QString &error_code)
 {
   /* Error codes treated in this method
       42P04 	duplicate_database
@@ -592,7 +610,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
           obj_name, obj_tp_name, tab_name,
           alter_tab=QString("ALTER TABLE");
-  vector<Exception> errors;
+  //vector<Exception> errors;
   vector<QString> db_sql_cmds;
   QTextStream ts;
   ObjectType obj_type=BASE_OBJECT;
@@ -821,17 +839,22 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
     {
       if(ddl_tk_found) ddl_tk_found=false;
 
-      if(!ignore_dup ||
-         (ignore_dup && isExportError(e.getExtraInfo())))
+      //Ignoring the error if it is in the ignored list
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+        emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+
+      else if(!ignore_dup ||
+              (ignore_dup && isDuplicationError(e.getExtraInfo())))
         throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE)
                         .arg(/*Utf8String::create(*/sql_cmd),
                         ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
       else
       {
-        sql_cmd.clear();
         errors.push_back(e);
         sleepThread(20);
       }
+
+      sql_cmd.clear();
     }
   }
 

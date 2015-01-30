@@ -73,6 +73,11 @@ class ModelExportHelper: public QObject {
 
     QString sql_buffer, db_name;
 
+    //! brief List of ignored error codes
+    QStringList ignored_errors;
+
+    vector<Exception> errors;
+
 		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
 		This attribute is used to drop the created roles / tablespaces from server */
 		map<ObjectType, int> created_objs;
@@ -103,8 +108,8 @@ class ModelExportHelper: public QObject {
     //! brief Exports the contents of the buffer to a previously opened connection
     void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
 
-    //! brief Returns if the error code is one of the treated by the export process
-    bool isExportError(const QString &error_code);
+    //! brief Returns if the error code is one of the treated by the export process as object duplication error
+    bool isDuplicationError(const QString &error_code);
 
   protected:
     /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
@@ -119,6 +124,12 @@ class ModelExportHelper: public QObject {
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
+
+    /*! brief Determines which error codes must be ignored during the export process.
+        There must be some caution when ignore some error codes because the export may
+        create an incomplete database or even reach unknown behaviors.
+        Error catalog is available at: postgresql.org/docs/current/static/errcodes-appendix.html */
+    void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
@@ -152,6 +163,9 @@ class ModelExportHelper: public QObject {
 
 		//! \brief This signal is emited when the export has encountered a critical error (only in thread mode)
 		void s_exportAborted(Exception e);
+
+    //! \brief This signal is emited when the export has encountered a ignorable error (only in thread mode)
+    void s_errorIgnored(QString err_code, QString err_msg, QString cmd);
 
 	protected slots:
 		void exportToDBMS(void);

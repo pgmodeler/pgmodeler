@@ -385,11 +385,6 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			else
 				parent_tab=dynamic_cast<BaseTable *>(parent_obj);
 
-			/* Specific case to columns: on removal operations the permissions of the objects
-			must be removed too */
-			//if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
-				//model->removePermissions(tab_obj);
-			//else
 				if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 							 (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 							 (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
@@ -556,12 +551,12 @@ void OperationList::undoOperation(void)
 
 			try
 			{
-				if(/*!this->signalsBlocked() &&*/ chain_size > 0)
+        if(chain_size > 0)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
 					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-																	 trUtf8("Undoing operation on object: %1 (%2)")
+                                   trUtf8("Undoing change on: `%1' (%2)")
 																	 .arg(operation->pool_obj->getName())
 																	 .arg(operation->pool_obj->getTypeName()),
 																	 operation->pool_obj->getObjectType());
@@ -624,7 +619,7 @@ void OperationList::redoOperation(void)
 					//Emits a signal with the current progress of operation execution
 					pos++;
 					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-																	 trUtf8("Redoing operation on object:: %1 (%2)")
+                                   trUtf8("Redoing change: `%1' (%2)")
 																	 .arg(operation->pool_obj->getName())
 																	 .arg(operation->pool_obj->getTypeName()),
 																	 operation->pool_obj->getObjectType());
