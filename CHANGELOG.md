@@ -4,12 +4,16 @@ Change Log
 v0.8.0-beta2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: ???, 2015</em><br/>
+<em>Release date: February 03, 2015</em><br/>
 
+* [New] Added the ability to set owner, schema and tag for several objects at once through the quick actions menu.
+* [New] Added an option to diff process to reuse sequences if the source model has serial columns in which the generated sequence name matches a sequence's name on the imported model.
 * [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
 * [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.
+* [New] Added the ability to execute the DROP statements attached to object's SQL when exporting model to DBMS.
+* [Change] Improvements on ModelExportHelper adding the ability to ignore certain error triggered by PostgreSQL referencing their codes.
 * [Change] Improvements on crash handler to reuse the code from bug report form.
 * [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux
 * [Change] Several adjustments on deployments scripts to use the new build variable settings.
@@ -27,6 +31,11 @@ v0.8.0-beta2
 * [Change] Adjustments on PgModelerCLI, ModelExportForm and ModelExportHelper to accept the "drop objects" option.
 * [Change] Minor adjustment on ModelDatabaseDiffForm in order to lower the chances to crash the app if user try to repeatedly cancel and start over the diff process.
 * [Change] Minor change on the generation of DROP statements attached to object's SQL.
+* [Fix] Minor fix on validation process that was failing sometimes to use temporary names feature.
+* [Fix] Minor fix on ModelsDiffHelper to correctly recreate foreign keys that references recreated primary keys.
+* [Fix] Minor fix on Table::removeObject to change not-null state of columns only when the removed object is a primary key.
+* [Fix] Fixed a bug when converting many-to-many self-relationship and trying to undo the operation.
+* [Fix] Fixed the query to retrieve the last_value field of sequences on DatabaseExplorerWidget.
 * [Fix] Minor fix on CLI that was wrongly considering <dbmodel> tag attributes default-* as xml code for database objects causing errors on fix process.
 * [Fix] Minor fix on diff process that was ignoring column's data type changes.
 * [Fix] Minor fix on column SQL generation that was removing quotation on sequences names when using nextval() function call as default value.

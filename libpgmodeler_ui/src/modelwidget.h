@@ -49,7 +49,7 @@ class ModelWidget: public QWidget {
     bool modified;
 
 		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *obj);
+    void configureSubmenu(BaseObject *object);
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
