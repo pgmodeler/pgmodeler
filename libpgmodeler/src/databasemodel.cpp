@@ -8234,7 +8234,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
         }
       }
     }
-	}
+  }
+}
+
+void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms)
+{
+  vector<BaseObject *> refs_aux;
+
+  getObjectReferences(object, refs_aux, exclude_perms);
+  refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
+
+  for(BaseObject *obj : refs_aux)
+    __getObjectReferences(obj, refs, exclude_perms);
 }
 
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)

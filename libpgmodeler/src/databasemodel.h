@@ -484,6 +484,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
 
+    /*! brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
+        meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
+    void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
+
     /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
      graphical objects to be marked */
     void setObjectsModified(vector<ObjectType> types={});

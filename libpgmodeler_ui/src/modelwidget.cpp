@@ -2463,6 +2463,25 @@ void ModelWidget::removeObjects(void)
           rel=nullptr;
 				}
 
+
+        if(!object)
+        {
+          vector<BaseObject *> refs;
+
+          for(BaseObject *obj : selected_objects)
+          {
+            db_model->__getObjectReferences(obj, refs);
+
+            for(BaseObject *obj : refs)
+            {
+              tab_obj=dynamic_cast<TableObject *>(obj);
+
+              if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+                objs_map[obj->getObjectId()]=obj;
+            }
+          }
+        }
+
 				op_count=op_list->getCurrentSize();
 				op_list->startOperationChain();
 
