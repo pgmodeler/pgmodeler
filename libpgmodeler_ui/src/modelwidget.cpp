@@ -2039,7 +2039,7 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
-    copied_objects.clear();
+  copied_objects.clear();
 	obj_itr=objs_map.begin();
 	while(obj_itr!=objs_map.end())
 	{
@@ -2096,7 +2096,7 @@ void ModelWidget::pasteObjects(void)
 		itr++;
 		pos++;
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
-																	trUtf8("Validating object: %1 (%2)").arg(object->getName())
+                                  trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
 
@@ -2186,46 +2186,54 @@ void ModelWidget::pasteObjects(void)
 	while(itr!=itr_end)
 	{
 		object=(*itr);
+    object->setCodeInvalidated(true);
+
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 
 		pos++;
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
-																	trUtf8("Generating XML code of object: %1 (%2)").arg(object->getName())
+                                  trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
 
-		//Store the original parent table of the object
-		if(tab_obj && (sel_table || sel_view))
-		{
-			if(sel_table)
-				parent=sel_table;
-			else
-				parent=sel_view;
-
-			/* Only generates the XML for a table object when the selected receiver object
-			is a table or is a view and the current object is a trigger or rule (because
-			view's only accepts this two types) */
-			if(sel_table ||
-				 (sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
-											 tab_obj->getObjectType()==OBJ_RULE)))
-			{
-				//Backups the original parent table
-				orig_parent_tab=tab_obj->getParentTable();
-
-				//Set the parent table as the selected table/view
-				tab_obj->setParentTable(parent);
-
-				//Generates the XML code with the new parent table
-				xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
-
-				//Restore the original parent table
-				tab_obj->setParentTable(orig_parent_tab);
-			}
-		}
-		else if(!tab_obj)
+    if(!tab_obj)
 			//Stores the XML definition on a xml buffer map
 			xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+
+    //Store the original parent table of the object
+    else if(tab_obj && (sel_table || sel_view))
+    {
+      if(sel_table)
+        parent=sel_table;
+      else
+        parent=sel_view;
+
+      /* Only generates the XML for a table object when the selected receiver object
+      is a table or is a view and the current object is a trigger or rule (because
+      view's only accepts this two types) */
+      if(sel_table ||
+         (sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
+                       tab_obj->getObjectType()==OBJ_RULE)))
+      {
+        //Backups the original parent table
+        orig_parent_tab=tab_obj->getParentTable();
+
+        //Set the parent table as the selected table/view
+        tab_obj->setParentTable(parent);
+
+        //Generates the XML code with the new parent table
+        xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+
+        //Restore the original parent table
+        tab_obj->setParentTable(orig_parent_tab);
+      }
+    }
+    else if(tab_obj)
+    {
+      //Generates the XML code with the new parent table
+      xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
+    }
 	}
 
 	//The fourth step is the restoration of original names of the copied objects
@@ -2257,19 +2265,19 @@ void ModelWidget::pasteObjects(void)
 
 			try
 			{
-				//Creates the object from the XML
+        pos++;
+        task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+                                      trUtf8("Pasting object: `%1' (%2)").arg(object->getName())
+                                      .arg(object->getTypeName()),
+                                      object->getObjectType());
+
+        //Creates the object from the XML
         object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
 				tab_obj=dynamic_cast<TableObject *>(object);
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
-				pos++;
-				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
-																			trUtf8("Pasting object: %1 (%2)").arg(object->getName())
-																			.arg(object->getTypeName()),
-																			object->getObjectType());
-
-				/* Once created, the object is added on the model, except for relationships and table objects
-			because they are inserted automatically */
+        /* Once created, the object is added on the model, except for relationships and table objects
+        because they are inserted automatically */
 				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
 					db_model->addObject(object);
 
