@@ -2522,7 +2522,8 @@ void ModelWidget::removeObjects(void)
             {
               tab_obj=dynamic_cast<TableObject *>(obj);
 
-              if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+              if(obj->getObjectType()!=BASE_RELATIONSHIP &&
+                 (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
                 objs_map[obj->getObjectId()]=obj;
             }
           }
@@ -2554,7 +2555,7 @@ void ModelWidget::removeObjects(void)
 														.arg(object->getTypeName()),
 														ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(obj_type!=BASE_RELATIONSHIP)
+          else // if(obj_type!=BASE_RELATIONSHIP)
 					{
 						tab_obj=dynamic_cast<TableObject *>(object);
 
