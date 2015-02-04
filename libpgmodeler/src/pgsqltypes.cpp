@@ -1138,7 +1138,6 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 
 		if(itr!=itr_end)
 		{
-			//PgSQLType::user_types.erase(itr);
       itr->name=QString("__invalidated_type__");
 			itr->ptype=nullptr;
 			itr->invalidated=true;

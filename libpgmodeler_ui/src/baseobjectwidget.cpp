@@ -775,7 +775,8 @@ void BaseObjectWidget::applyConfiguration(void)
 				object->setSchema(esquema);
 			}
 
-      PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
+      if(!object->isProtected() && !object->isSystemObject())
+        PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
 		}
 		catch(Exception &e)
 		{

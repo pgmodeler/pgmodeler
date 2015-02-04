@@ -486,7 +486,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 				}
 			}
 
-			if(obj_idx < 0)
+      if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
          getObject(object->getSignature(), obj_type, obj_idx);
 
 			if(obj_idx >= 0)
@@ -496,7 +496,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 		}
 
-		object->setDatabase(nullptr);
+    object->setDatabase(nullptr);
 		emit s_objectRemoved(object);
 	}
 }
@@ -2555,9 +2555,9 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 	}
 }
 
-void DatabaseModel::addPermissions(vector<Permission *> &perms)
+void DatabaseModel::addPermissions(const vector<Permission *> &perms)
 {
-	vector<Permission *>::iterator itr=perms.begin(), itr_end=perms.end();
+  vector<Permission *>::const_iterator itr=perms.cbegin(), itr_end=perms.cend();
 
 	try
 	{
@@ -8234,7 +8234,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
         }
       }
     }
-	}
+  }
+}
+
+void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms)
+{
+  vector<BaseObject *> refs_aux;
+
+  getObjectReferences(object, refs_aux, exclude_perms);
+  refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
+
+  for(BaseObject *obj : refs_aux)
+    __getObjectReferences(obj, refs, exclude_perms);
 }
 
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)

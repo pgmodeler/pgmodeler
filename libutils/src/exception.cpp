@@ -149,7 +149,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_NAME_TABLE_RELNN",  QT_TR_NOOP("Assignment of invalid name to the table generated from N-N relationship!")},
 	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"ERR_OPR_REL_INCL_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
-	{"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
+  {"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
 	{"ERR_REDECL_HL_GROUP", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"ERR_DEF_INV_GROUP_DECL", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
 	{"ERR_DEF_NOT_DECL_GROUP", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},

@@ -105,7 +105,8 @@ SOURCES +=  src/textbox.cpp \
 	    src/extension.cpp \
 	    src/pgmodelerns.cpp \
             src/tag.cpp \
-            src/eventtrigger.cpp
+            src/eventtrigger.cpp \
+    src/operation.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils

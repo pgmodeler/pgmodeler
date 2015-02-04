@@ -186,7 +186,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
-  action_remove->setShortcut(QKeySequence(trUtf8("Del")));
+  action_remove->setMenu(&del_menu);
+
+  action_single_del=new QAction(trUtf8("Selected only"), this);
+  action_single_del->setShortcut(QKeySequence(trUtf8("Del")));
+  del_menu.addAction(action_single_del);
+
+  action_cascade_del=new QAction(trUtf8("Cascade"), this);
+  action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
+  del_menu.addAction(action_cascade_del);
 
 	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
   action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
@@ -304,7 +312,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
 	connect(action_protect, SIGNAL(triggered(bool)),this,SLOT(protectObject(void)));
 	connect(action_unprotect, SIGNAL(triggered(bool)),this,SLOT(protectObject(void)));
-	connect(action_remove, SIGNAL(triggered(bool)),this,SLOT(removeObjects(void)));
 	connect(action_select_all, SIGNAL(triggered(bool)),this,SLOT(selectAllObjects(void)));
 	connect(action_convert_relnn, SIGNAL(triggered(bool)), this, SLOT(convertRelationshipNN(void)));
 	connect(action_deps_refs, SIGNAL(triggered(bool)), this, SLOT(showDependenciesReferences(void)));
@@ -322,6 +329,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
   connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
   connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
+
+  connect(action_single_del, &QAction::triggered, [=](){ removeObjects(false); });
+  connect(action_cascade_del, &QAction::triggered, [=](){ removeObjects(true); });
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -2386,7 +2396,7 @@ void ModelWidget::pasteObjects(void)
 	{
 		//Remove the objects from the source model
 		ModelWidget::src_model->selected_objects=ModelWidget::cutted_objects;
-		ModelWidget::src_model->removeObjects();
+    ModelWidget::src_model->removeObjects(false);
 
 		//Uncheck the cut operation flag
 		ModelWidget::cut_operation=false;
@@ -2403,31 +2413,38 @@ void ModelWidget::pasteObjects(void)
 	this->modified=true;
 }
 
-void ModelWidget::removeObjects(void)
+void ModelWidget::removeObjects(bool cascade)
 {
 	int obj_idx=-1;
-	unsigned count, op_count=0;
+  unsigned count, op_count=0, obj_id=0;
 	Table *aux_table=nullptr;
 	BaseTable *table=nullptr, *src_table=nullptr, *dst_table=nullptr;
 	BaseRelationship *rel=nullptr;
 	TableObject *tab_obj=nullptr;
-	ObjectType obj_type;
-	BaseObject *object=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
+  ObjectType obj_type=BASE_OBJECT, parent_type=BASE_OBJECT;
+  BaseObject *object=nullptr, *aux_obj=nullptr;
+  vector<BaseObject *> sel_objs, aux_sel_objs;
 	vector<Constraint *> constrs;
-	map<unsigned, BaseObject *> objs_map;
-	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
+  map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>> objs_map;
+  map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>>::reverse_iterator ritr, ritr_end;
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
+  QString obj_name, parent_name;
+  vector<Exception> errors;
 
 	if(obj_sender)
-		object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
+    object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
-	if(!selected_objects.empty() || object)
+  if(!object)
+    sel_objs=selected_objects;
+  else
+    sel_objs.push_back(object);
+
+  if(!sel_objs.empty())
 	{
 		Messagebox msg_box;
 
 		//Cancel the cut operation if the user try to delete an object in the middle of the process
-		if(ModelWidget::cut_operation && sender()==action_remove)
+    if(ModelWidget::cut_operation && (sender()==action_single_del || sender()==action_cascade_del))
 		{
 			ModelWidget::cut_operation=false;
 			copied_objects.clear();
@@ -2436,16 +2453,19 @@ void ModelWidget::removeObjects(void)
 		//If the removal is not due to a cut operation, ask for permission to remove the objects
 		if(!ModelWidget::cut_operation)
 		{
-			if(selected_objects.size() > 1)
+      if(cascade)
+          msg_box.show(trUtf8("<strong>CAUTION:</strong> You are about to delete objects in cascade mode which means more objects than the selected will be dropped too. Do you really want to proceed?"),
+                       Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+      else if(sel_objs.size() > 1)
 			{
-        msg_box.show(trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?"),
-                     Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+         msg_box.show(trUtf8("<strong>CAUTION:</strong> Remove multiple objects at once can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?"),
+                      Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 			else
 			{
-				if(selected_objects[0]->getObjectType()==OBJ_RELATIONSHIP)
-          msg_box.show(trUtf8("CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?"),
-                       Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+        if(sel_objs[0]->getObjectType()==OBJ_RELATIONSHIP)
+          msg_box.show(trUtf8("<strong>CAUTION:</strong> Remove a relationship can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?"),
+                       Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 				else
           msg_box.show(trUtf8("Do you really want to delete the selected object?"),
                        Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
@@ -2457,85 +2477,149 @@ void ModelWidget::removeObjects(void)
 		{
 			try
 			{
-				if(!object)
-				{
-					itr=selected_objects.begin();
-					itr_end=selected_objects.end();
+        //If in cascade mode, retrieve all references to the object (direct and indirect)
+        if(cascade)
+        {
+          vector<BaseObject *> refs;
 
-					while(itr!=itr_end)
-					{
-						object=(*itr);
+          for(BaseObject *sel_obj : sel_objs)
+          {
+            refs.clear();
+            db_model->__getObjectReferences(sel_obj, refs);
 
-						//If the object is as FK relationship remove the foreign keys that generates it
-						if(object->getObjectType()==BASE_RELATIONSHIP)
-						{
-							if(object->isProtected())
-								throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
-																.arg(object->getName(true))
-																.arg(object->getTypeName()),
-																ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            for(BaseObject *ref_obj : refs)
+            {
+              obj_id=ref_obj->getObjectId();
+              tab_obj=dynamic_cast<TableObject *>(ref_obj);
 
-							rel=dynamic_cast<BaseRelationship *>(object);
-							if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-							{
-								aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
-								dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false, aux_table);
+              //Store the base relationships in a auxiliary list to be processed ahead
+              if(ref_obj->getObjectType()==BASE_RELATIONSHIP)
+              {
+                aux_sel_objs.push_back(ref_obj);
+              }
+              //Insert the reference object to the list of objects to be removed
+              else if(objs_map.count(obj_id)==0 &&
+                      (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
+              {
+                parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : OBJ_DATABASE);
+                parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : QString());
+                obj_name=(tab_obj ? tab_obj->getName() : ref_obj->getSignature());
 
-								if(!rel->isSelfRelationship())
-								{
-									aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
-									dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false, aux_table);
-								}
+                objs_map[ref_obj->getObjectId()]=std::make_tuple(ref_obj,
+                                                             obj_name,
+                                                             ref_obj->getObjectType(),
+                                                             parent_name,
+                                                             parent_type);
+              }
+            }
+          }
+        }
 
-								//Adds the fks to the map of objects to be removed
-								while(!constrs.empty())
-								{
-									tab_obj=constrs.back();
-									objs_map[tab_obj->getObjectId()]=tab_obj;
-									constrs.pop_back();
-								}
-							}
-						}
-						else
-						{
-							objs_map[object->getObjectId()]=object;
-						}
-						itr++;
-					}
+        sel_objs.insert(sel_objs.end(), aux_sel_objs.begin(), aux_sel_objs.end());
 
-					ritr=objs_map.rbegin();
-					ritr_end=objs_map.rend();
-					object=nullptr;
-          rel=nullptr;
-				}
+        for(BaseObject *object : sel_objs)
+        {
+          obj_type=object->getObjectType();
+          obj_id=object->getObjectId();
+
+          //If the object is as FK relationship remove the foreign keys that generates it
+          if(obj_type==BASE_RELATIONSHIP)
+          {
+            rel=dynamic_cast<BaseRelationship *>(object);
+            if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+            {
+              aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+              dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false, aux_table);
+
+              if(!rel->isSelfRelationship())
+              {
+                aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
+                dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false, aux_table);
+              }
+
+              //Adds the fks to the map of objects to be removed
+              while(!constrs.empty())
+              {
+                tab_obj=constrs.back();
+                obj_id=tab_obj->getObjectId();
+
+                if(objs_map.count(obj_id)==0)
+                {
+                  objs_map[tab_obj->getObjectId()]=std::make_tuple(tab_obj,
+                                                                   tab_obj->getName(true),
+                                                                   tab_obj->getObjectType(),
+                                                                   tab_obj->getParentTable()->getName(true),
+                                                                   tab_obj->getParentTable()->getObjectType());
+
+                }
+                constrs.pop_back();
+              }
+            }
+          }
+          else if(objs_map.count(obj_id)==0)
+          {
+            tab_obj=dynamic_cast<TableObject *>(object);
+            obj_name=(tab_obj ? object->getName(true) : object->getSignature());
+
+            parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : QString());
+            parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : OBJ_DATABASE);
+
+            objs_map[object->getObjectId()]=std::make_tuple(object,
+                                                            obj_name,
+                                                            obj_type,
+                                                            parent_name,
+                                                            parent_type);
+          }
+        }
+
+        rel=nullptr;
+        ritr=objs_map.rbegin();
+        ritr_end=objs_map.rend();
 
 				op_count=op_list->getCurrentSize();
-				op_list->startOperationChain();
+        op_list->startOperationChain();
 
 				do
 				{
-					if(!object)
-					{
-						object=ritr->second;
-						ritr++;
-					}
+          object=std::get<0>(ritr->second);
+          obj_name=std::get<1>(ritr->second);
+          obj_type=std::get<2>(ritr->second);
+          parent_name=std::get<3>(ritr->second);
+          parent_type=std::get<4>(ritr->second);
+          ritr++;
 
-					obj_type=object->getObjectType();
+          if(obj_type==BASE_RELATIONSHIP)
+            continue;
+          else if(parent_type!=OBJ_DATABASE)
+          {
+            /* If the parent table does not exist on the model of the object to be removed
+               does not exists in parent table, it'll not be processed */
+            table=dynamic_cast<BaseTable *>(db_model->getObject(parent_name, parent_type));
+            if(!table || (table && table->getObjectIndex(obj_name, obj_type) < 0))
+              continue;
+          }
+          else
+          {
+            //If the object does not exists on the model it'll not be processed.
+            aux_obj=db_model->getObject(obj_name, obj_type);
+            if(aux_obj!=object)
+              continue;
+          }
 
-					//Raises an error if the user try to remove a reserved object
-					if(object->isSystemObject())
+          //Raises an error if the user try to remove a reserved object
+          if(!cascade && object->isSystemObject())
 						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                             .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
-					else if(object->isProtected())
+          else if(!cascade && object->isProtected())
 					{
 						throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
 														.arg(object->getName(true))
 														.arg(object->getTypeName()),
 														ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(obj_type!=BASE_RELATIONSHIP)
+          else
 					{
 						tab_obj=dynamic_cast<TableObject *>(object);
 
@@ -2547,12 +2631,12 @@ void ModelWidget::removeObjects(void)
 							try
 							{
 								//If the object is a column validates the column removal before remove it
-								if(obj_type==OBJ_COLUMN)
+                if(!cascade && obj_type==OBJ_COLUMN)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								//Register the removed object on the operation list
-								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
                 table->removeObject(obj_idx, obj_type);
+                op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
 
 								db_model->removePermissions(tab_obj);
 
@@ -2569,7 +2653,14 @@ void ModelWidget::removeObjects(void)
 							}
 							catch(Exception &e)
 							{
-								throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+                if(cascade && (e.getErrorType()==ERR_INVALIDATED_OBJECTS ||
+                               e.getErrorType()==ERR_REM_DIRECT_REFERENCE ||
+                               e.getErrorType()==ERR_REM_INDIRECT_REFERENCE ||
+                               e.getErrorType()==ERR_REM_PROTECTED_OBJECT ||
+                               e.getErrorType()==ERR_OPR_RESERVED_OBJECT))
+                  errors.push_back(e);
+                else
+                  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 							}
 						}
 						else
@@ -2587,12 +2678,19 @@ void ModelWidget::removeObjects(void)
 
 								try
 								{
-									op_list->registerObject(object, Operation::OBJECT_REMOVED, obj_idx);
-									db_model->removeObject(object, obj_idx);
+                  db_model->removeObject(object, obj_idx);
+                  op_list->registerObject(object, Operation::OBJECT_REMOVED, obj_idx);
 								}
 								catch(Exception &e)
 								{
-									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+                  if(cascade && (e.getErrorType()==ERR_INVALIDATED_OBJECTS ||
+                                 e.getErrorType()==ERR_REM_DIRECT_REFERENCE ||
+                                 e.getErrorType()==ERR_REM_INDIRECT_REFERENCE ||
+                                 e.getErrorType()==ERR_REM_PROTECTED_OBJECT ||
+                                 e.getErrorType()==ERR_OPR_RESERVED_OBJECT))
+                    errors.push_back(e);
+                  else
+                    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 								}
 
 								if(rel)
@@ -2605,38 +2703,45 @@ void ModelWidget::removeObjects(void)
 							}
 						}
 					}
-					object=nullptr;
-				}
+        }
 				while(ritr!=ritr_end);
 
-				op_list->finishOperationChain();
+        op_list->finishOperationChain();
 				scene->clearSelection();
 				this->configurePopupMenu();
 				this->modified=true;
 				emit s_objectRemoved();
+
+        if(!errors.empty())
+        {
+          msg_box.show(Exception(ERR_INVALIDATED_OBJECTS, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
+                       trUtf8("The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation's history! Please, refer to error stack for more details."),
+                       Messagebox::ALERT_ICON);
+        }
 			}
 			catch(Exception &e)
 			{
-				if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-					op_list->removeOperations();
+        //if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
+        //  op_list->removeOperations();
 
-				if(op_list->isOperationChainStarted())
-					op_list->finishOperationChain();
+        if(op_list->isOperationChainStarted())
+          op_list->finishOperationChain();
 
-				if(op_count < op_list->getCurrentSize())
-				{
-					count=op_list->getCurrentSize()-op_count;
-					op_list->ignoreOperationChain(true);
+        if(op_count < op_list->getCurrentSize())
+        {
+          count=op_list->getCurrentSize()-op_count;
+          op_list->ignoreOperationChain(true);
 
-					for(unsigned i=0; i < count; i++)
-						op_list->removeLastOperation();
+          for(unsigned i=0; i < count; i++)
+            op_list->removeLastOperation();
 
-					op_list->ignoreOperationChain(false);
-				}
+          op_list->ignoreOperationChain(false);
+        }
 
-				scene->clearSelection();
-				emit s_objectRemoved();
-				msg_box.show(e);
+        scene->clearSelection();
+        this->modified=true;
+        emit s_objectRemoved();
+        msg_box.show(e);
 			}
 		}
 	}
@@ -2701,7 +2806,7 @@ void ModelWidget::enableModelActions(bool value)
 	action_copy->setEnabled(value);
 	action_paste->setEnabled(value);
 	action_cut->setEnabled(value);
-	action_remove->setEnabled(value);
+  //action_remove->setEnabled(value);
 	action_quick_actions->setEnabled(value);
 }
 
@@ -3075,7 +3180,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		 (objects.size()==1 && objects[0]->getObjectType()==BASE_RELATIONSHIP &&
 			dynamic_cast<BaseRelationship *>(objects[0])->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK) ||
 		 objects.size() > 1)
-		popup_menu.addAction(action_remove);
+    //popup_menu.addAction(action_remove);
+    popup_menu.addMenu(&del_menu);
 
 	//If the table object is a column creates a special menu to acess the constraints that is applied to the column
 	if(tab_obj)
@@ -3141,12 +3247,25 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 							}
 						}
 
+            QMenu *aux_menu=new QMenu(submenu);
+
 						action=new QAction(dynamic_cast<QObject *>(submenu));
-						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 						action->setIcon(QPixmap(QString(":/icones/icones/excluir.png")));
 						action->setText(trUtf8("Delete"));
-						connect(action, SIGNAL(triggered(bool)), this, SLOT(removeObjects(void)));
-						submenu->addAction(action);
+            action->setMenu(aux_menu);
+            submenu->addAction(action);
+
+            action=new QAction(dynamic_cast<QObject *>(submenu));
+            action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+            action->setText(trUtf8("Selected only"));
+            aux_menu->addAction(action);
+            connect(action, &QAction::triggered, [=](){ removeObjects(false); });
+
+            action=new QAction(dynamic_cast<QObject *>(submenu));
+            action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+            action->setText(trUtf8("Cascade"));
+            aux_menu->addAction(action);
+            connect(action, &QAction::triggered, [=](){ removeObjects(true); });
 					}
 					submenus.push_back(submenu);
 				}

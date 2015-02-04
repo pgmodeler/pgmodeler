@@ -45,10 +45,10 @@ void PgModelerUiNS::disableObjectSQL(BaseObject *object, bool value)
     bool curr_val=object->isSQLDisabled();
 
     if(object->isSystemObject())
-      throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
+      throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                       .arg(object->getName(true))
                       .arg(object->getTypeName()),
-                      ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     object->setSQLDisabled(value);
 

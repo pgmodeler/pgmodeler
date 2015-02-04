@@ -106,6 +106,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		friend class BaseObjectView;
 		friend class DatabaseModel;
+    friend class OperationList;
 };
 
 #endif

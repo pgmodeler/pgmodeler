@@ -20,7 +20,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+  connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
 	sch_name=new QGraphicsSimpleTextItem;
   sch_name->setZValue(1);
@@ -43,15 +43,15 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
-SchemaView::~SchemaView()
+SchemaView::~SchemaView(void)
 {
+  disconnectSourceObject();
+
   this->removeFromGroup(box);
   this->removeFromGroup(sch_name);
 
   delete(box);
   delete(sch_name);
-
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)

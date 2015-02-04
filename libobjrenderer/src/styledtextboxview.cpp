@@ -17,6 +17,8 @@ StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : Tex
 
 StyledTextboxView::~StyledTextboxView(void)
 {
+  disconnectSourceObject();
+
   this->removeFromGroup(fold);
   delete(fold);
 }

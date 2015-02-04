@@ -46,7 +46,8 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 
 TextboxView::~TextboxView(void)
 {
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
+  disconnectSourceObject();
+
 	this->removeFromGroup(box);
 	this->removeFromGroup(text);
 	delete(box);
