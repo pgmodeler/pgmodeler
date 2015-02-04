@@ -31,6 +31,16 @@
 
 class Operation {
 	protected:
+    /*! brief Stores the object's name. This attribute is used in cases when the object stored in the
+        operation info for some reason is invalidated (special object/relationship validation) and deleted
+        before being removed from the operation list. To avoid seg. faults this attribute is used instead
+        of the object itself when the name is needed */
+    QString obj_name;
+
+    /*! brief Stores the object's type. The reason to use this attribute instead of get the type directly from the
+        object is the same as 'obj_name' is used */
+    ObjectType obj_type;
+
 		/*! \brief Reference to the parent object of the original object that has suffered the operation,
 		This attribute is used only in the case of table objects such as columns, indexes,
 		constraints, rules. For other object types there is no need to use this attribute
@@ -79,8 +89,13 @@ class Operation {
 
 
 		Operation(void)
-		{ parent_obj=nullptr; pool_obj=nullptr; original_obj=nullptr;
-			object_idx=-1; chain_type=NO_CHAIN; }
+    {
+      parent_obj=nullptr;
+      pool_obj=nullptr;
+      original_obj=nullptr;
+      object_idx=-1;
+      chain_type=NO_CHAIN;
+    }
 
 		friend class OperationList;
 };

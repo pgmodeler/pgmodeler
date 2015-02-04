@@ -486,7 +486,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 				}
 			}
 
-			if(obj_idx < 0)
+      if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
          getObject(object->getSignature(), obj_type, obj_idx);
 
 			if(obj_idx >= 0)
@@ -496,7 +496,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 		}
 
-		object->setDatabase(nullptr);
+    object->setDatabase(nullptr);
 		emit s_objectRemoved(object);
 	}
 }

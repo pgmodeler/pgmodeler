@@ -360,6 +360,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		operation->op_type=op_type;
 		operation->chain_type=next_op_chain;
 		operation->original_obj=object;
+    operation->obj_type=object->getObjectType();
 
 		//Adds the object on te pool
 		addToPool(object, op_type);
@@ -369,7 +370,14 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 
 		//Stores the object's permission befor its removal
 		if(op_type==Operation::OBJECT_REMOVED)
+    {
+      BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
 			model->getPermissions(object, operation->permissions);
+
+      if(graph_obj)
+        graph_obj->setReceiverObject(nullptr);
+    }
 
 		if(next_op_chain==Operation::CHAIN_START)
 			next_op_chain=Operation::CHAIN_MIDDLE;
@@ -386,7 +394,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				parent_tab=dynamic_cast<BaseTable *>(parent_obj);
 
 				if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-							 (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+               (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 							 (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
 			{
 				if(op_type==Operation::OBJECT_REMOVED)
@@ -427,6 +435,10 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		}
 		else
 		{
+      if((obj_type==OBJ_SEQUENCE && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
+         (obj_type==OBJ_VIEW && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()))
+       operation->xml_definition=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+
 			//Case a specific index wasn't specified
 			if(object_idx < 0)
 				//Stores on the operation the object index on the model
@@ -435,6 +447,11 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				//Assigns the specific index to object
 				obj_idx=object_idx;
 		}
+
+    if(TableObject::isTableObject(operation->obj_type))
+      operation->obj_name=operation->parent_obj->getName(true) + QString(".") + object->getName(true);
+    else
+      operation->obj_name=object->getName(true);
 
 		operation->object_idx=obj_idx;
 		operations.push_back(operation);
@@ -463,10 +480,10 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 
 	operation=operations[oper_idx];
 	oper_type=operation->op_type;
+  obj_type=operation->obj_type; //operation->pool_obj->getObjectType();
+  obj_name=operation->obj_name;
 
-	obj_type=operation->pool_obj->getObjectType();
-
-	if(obj_type==OBJ_CAST)
+  /*if(obj_type==OBJ_CAST)
 		obj_name=operation->pool_obj->getName();
 	else
 		obj_name=operation->pool_obj->getName(true);
@@ -474,7 +491,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	if(TableObject::isTableObject(obj_type))
 	{
     obj_name=operation->parent_obj->getName(true) + QString(".") + obj_name;
-	}
+  }*/
 }
 
 unsigned OperationList::getChainSize(void)
@@ -556,10 +573,10 @@ void OperationList::undoOperation(void)
 					//Emits a signal with the current progress of operation execution
 					pos++;
 					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-                                   trUtf8("Undoing change on: `%1' (%2)")
-																	 .arg(operation->pool_obj->getName())
-																	 .arg(operation->pool_obj->getTypeName()),
-																	 operation->pool_obj->getObjectType());
+                                   trUtf8("Undoing change on object `%1' (%2).")
+                                   .arg(operation->obj_name)
+                                   .arg(BaseObject::getTypeName(operation->obj_type)),
+                                   operation->obj_type);
 				}
 
 				//Executes the undo operation
@@ -619,10 +636,10 @@ void OperationList::redoOperation(void)
 					//Emits a signal with the current progress of operation execution
 					pos++;
 					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-                                   trUtf8("Redoing change: `%1' (%2)")
-																	 .arg(operation->pool_obj->getName())
-																	 .arg(operation->pool_obj->getTypeName()),
-																	 operation->pool_obj->getObjectType());
+                                   trUtf8("Redoing change on object `%1' (%2).")
+                                   .arg(operation->obj_name)
+                                   .arg(BaseObject::getTypeName(operation->obj_type)),
+                                   operation->obj_type);
 				}
 
 				//Executes the redo operation (second argument as 'true')
@@ -682,13 +699,15 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			xmlparser->loadXMLBuffer(oper->xml_definition);
 
 			if(obj_type==OBJ_TRIGGER)
-				aux_obj=model->createTrigger();//parent_tab);
+        aux_obj=model->createTrigger();
 			else if(obj_type==OBJ_INDEX)
-				aux_obj=model->createIndex();//dynamic_cast<Table *>(parent_tab));
+        aux_obj=model->createIndex();
 			else if(obj_type==OBJ_CONSTRAINT)
 				aux_obj=model->createConstraint(oper->parent_obj);
 			else if(obj_type==OBJ_SEQUENCE)
 				aux_obj=model->createSequence();
+      else if(obj_type==OBJ_VIEW)
+        aux_obj=model->createView();
 		}
 
 		/* If the operation is a modified/moved object, the object copy
@@ -759,9 +778,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			}
 			else if(parent_rel)
 				parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
-			else
-				if(dynamic_cast<Table *>(object))
-					dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+      else if(object->getObjectType()==OBJ_TABLE)
+        dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
 			model->addObject(object, oper->object_idx);
 
 			if(oper->op_type==Operation::OBJECT_REMOVED)
@@ -774,9 +793,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 						(oper->op_type==Operation::OBJECT_REMOVED && redo))
 		{
 			if(parent_tab)
-				parent_tab->removeObject(object/*oper->object_idx,obj_type*/);
+        parent_tab->removeObject(object);
 			else if(parent_rel)
-				parent_rel->removeObject(dynamic_cast<TableObject *>(object)/*oper->object_idx,obj_type*/);
+        parent_rel->removeObject(dynamic_cast<TableObject *>(object));
 			else
 				model->removeObject(object, oper->object_idx);
 		}

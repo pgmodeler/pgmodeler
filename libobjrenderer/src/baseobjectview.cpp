@@ -57,7 +57,7 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
-	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
 	disconnect(this, SLOT(toggleProtectionIcon(bool)));
 
