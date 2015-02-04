@@ -2555,9 +2555,9 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 	}
 }
 
-void DatabaseModel::addPermissions(vector<Permission *> &perms)
+void DatabaseModel::addPermissions(const vector<Permission *> &perms)
 {
-	vector<Permission *>::iterator itr=perms.begin(), itr_end=perms.end();
+  vector<Permission *>::const_iterator itr=perms.cbegin(), itr_end=perms.cend();
 
 	try
 	{

@@ -38,7 +38,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 }
 
 BaseObjectView::~BaseObjectView(void)
-{
+{  
 	setSourceObject(nullptr);
 }
 
@@ -55,14 +55,21 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		QGraphicsItemGroup::mousePressEvent(event);
 }
 
+void BaseObjectView::disconnectSourceObject(void)
+{
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(getSourceObject());
+  this->disconnect();
+
+  if(graph_obj)
+  {
+    graph_obj->disconnect();
+    graph_obj->setReceiverObject(nullptr);
+  }
+}
+
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
   BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
-
-	disconnect(this, SLOT(toggleProtectionIcon(bool)));
-
-	if(graph_obj)
-		graph_obj->setReceiverObject(nullptr);
 
 	//Stores the reference to the source object as the data of graphical object
 	this->setData(0, QVariant::fromValue<void *>(object));
@@ -116,8 +123,9 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 	{
 		QGraphicsPolygonItem *pol_item=nullptr;
 
-		connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
-		graph_obj->setReceiverObject(this);
+    graph_obj->disconnect();
+    graph_obj->setReceiverObject(this);
+    connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
 
 		//By default the item can be selected and send geometry changes to the scene
 		this->setFlags(QGraphicsItem::ItemIsSelectable |

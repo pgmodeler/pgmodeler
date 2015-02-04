@@ -26,7 +26,7 @@ TableView::TableView(Table *table) : BaseTableView(table)
 
 TableView::~TableView(void)
 {
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
+
 }
 
 void TableView::configureObject(void)

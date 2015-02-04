@@ -153,7 +153,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		method calculates the center point based upon the current object's position */
 		virtual QPointF getCenter(void);
 
-	protected slots:
+    void disconnectSourceObject(void);
+
+    protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);
 

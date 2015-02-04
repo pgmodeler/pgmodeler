@@ -412,26 +412,21 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 {
 	if(item)
 	{
-		BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
+    BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 
-		if(rel)
-		{
-			disconnect(rel, nullptr, this, nullptr);
-			rel->disconnectTables();
-		}
-		else if(tab)
-			disconnect(tab, nullptr, this, nullptr);
-		else if(object)
-			disconnect(object, nullptr, this, nullptr);
+    if(rel)
+      rel->disconnectTables();
 
 		item->setVisible(false);
 		item->setActive(false);
 		QGraphicsScene::removeItem(item);
 
-		if(object)
-		 delete(item);
+    if(object)
+    {
+      disconnect(object, nullptr, this, nullptr);
+      delete(item);
+    }
 	}
 }
 

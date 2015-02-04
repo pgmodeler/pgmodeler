@@ -67,7 +67,7 @@ RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
 
-	disconnect(this, nullptr, this->getSourceObject(), nullptr);
+  disconnectSourceObject();
 
 	for(int i=0; i < 3; i++)
 	{
