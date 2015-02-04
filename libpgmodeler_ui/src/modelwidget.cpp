@@ -188,7 +188,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
   action_remove->setMenu(&del_menu);
 
-  action_single_del=new QAction(trUtf8("Selection only"), this);
+  action_single_del=new QAction(trUtf8("Selected only"), this);
   action_single_del->setShortcut(QKeySequence(trUtf8("Del")));
   del_menu.addAction(action_single_del);
 
@@ -2721,8 +2721,8 @@ void ModelWidget::removeObjects(bool cascade)
 			}
 			catch(Exception &e)
 			{
-        if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-          op_list->removeOperations();
+        //if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
+        //  op_list->removeOperations();
 
         if(op_list->isOperationChainStarted())
           op_list->finishOperationChain();

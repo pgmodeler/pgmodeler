@@ -176,11 +176,21 @@ void OperationList::removeOperations(void)
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
 	BaseTable *tab=nullptr;
+  Operation *oper=nullptr;
+  vector<BaseObject *> invalid_objs;
 
 	//Destroy the operations
 	while(!operations.empty())
 	{
-		delete(operations.back());
+    oper=operations.back();
+
+    /* If the operation is not valid means that in some moment the pool object inside it
+       was destroyed (by a relationship invalidation for instance) and to avoid crashes
+       this object is stored in a invalid objects list */
+    if(!oper->isOperationValid())
+      invalid_objs.push_back(oper->getPoolObject());
+
+    delete(oper);
 		operations.pop_back();
 	}
 
@@ -193,40 +203,44 @@ void OperationList::removeOperations(void)
 	{
 		object=not_removed_objs.back();
 
-		if(unallocated_objs.count(object)==0)
-			tab_obj=dynamic_cast<TableObject *>(object);
+    //If the object is not an invalid one, proceed with its deallocation
+    if(std::find(invalid_objs.begin(), invalid_objs.end(), object)==invalid_objs.end())
+    {
+      if(unallocated_objs.count(object)==0)
+        tab_obj=dynamic_cast<TableObject *>(object);
 
-		//Deletes the object if its not unallocated already or referenced on the model
-		if(unallocated_objs.count(object)==0 &&
-			 (!tab_obj && model->getObjectIndex(object) < 0))
-		{    
-      if(object->getObjectType()==OBJ_TABLE)
+      //Deletes the object if its not unallocated already or referenced on the model
+      if(unallocated_objs.count(object)==0 &&
+         (!tab_obj && model->getObjectIndex(object) < 0))
       {
-        vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
-
-        while(!list.empty())
+        if(object->getObjectType()==OBJ_TABLE)
         {
-          unallocated_objs[list.back()]=true;
-          list.pop_back();
+          vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
+
+          while(!list.empty())
+          {
+            unallocated_objs[list.back()]=true;
+            list.pop_back();
+          }
+        }
+
+        unallocated_objs[object]=true;
+        delete(object);
+      }
+      else if(tab_obj && unallocated_objs.count(tab_obj)==0)
+      {
+        tab=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
+
+        //Deletes the object if its not unallocated already or referenced by some table
+        if(!tab ||
+           (unallocated_objs.count(tab)==1) ||
+           (tab && unallocated_objs.count(tab)==0 && tab->getObjectIndex(tab_obj) < 0))
+        {
+          unallocated_objs[tab_obj]=true;
+          delete(tab_obj);
         }
       }
-
-			unallocated_objs[object]=true;
-			delete(object);
-		}
-		else if(tab_obj && unallocated_objs.count(tab_obj)==0)
-		{
-			tab=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
-
-			//Deletes the object if its not unallocated already or referenced by some table
-			if(!tab ||
-				 (unallocated_objs.count(tab)==1) ||
-				 (tab && unallocated_objs.count(tab)==0 && tab->getObjectIndex(tab_obj) < 0))
-			{
-				unallocated_objs[tab_obj]=true;
-				delete(tab_obj);
-			}
-		}
+    }
 
 		not_removed_objs.pop_back();
 		tab_obj=nullptr;
