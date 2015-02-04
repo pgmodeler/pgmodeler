@@ -37,6 +37,8 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+    vector<BaseObjectView *> removed_objs;
+
     //! brief Indicates if the corner move is enabled for the scene
     static bool corner_move,
 

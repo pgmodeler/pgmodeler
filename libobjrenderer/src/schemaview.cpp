@@ -45,8 +45,6 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 SchemaView::~SchemaView(void)
 {
-  disconnectSourceObject();
-
   this->removeFromGroup(box);
   this->removeFromGroup(sch_name);
 

@@ -99,6 +99,13 @@ ObjectsScene::~ObjectsScene(void)
 			items.pop_front();
 		}
 	}
+
+  std::sort(removed_objs.begin(), removed_objs.end());
+  while(!removed_objs.empty())
+  {
+    delete(removed_objs.back());
+    removed_objs.pop_back();
+  }
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
@@ -420,12 +427,15 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 
 		item->setVisible(false);
 		item->setActive(false);
-		QGraphicsScene::removeItem(item);
+    QGraphicsScene::removeItem(item);
 
     if(object)
     {
       disconnect(object, nullptr, this, nullptr);
-      delete(item);
+      disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
+      disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
+      removed_objs.push_back(object);
+      //delete(item);
     }
 	}
 }

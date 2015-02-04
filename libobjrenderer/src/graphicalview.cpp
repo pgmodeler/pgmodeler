@@ -30,7 +30,7 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 
 GraphicalView::~GraphicalView(void)
 {
-  disconnectSourceObject();
+
 }
 
 void GraphicalView::configureObject(void)
