@@ -29,7 +29,8 @@
 
 %else
     %if {attribs} %then
-      [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner, vw.reltablespace AS tablespace,
+      [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,
+              vw.reltablespace AS tablespace,
 	      vw.relacl AS permission, pg_get_viewdef(vw.oid) AS definition, ]  
 	      
       [ CASE

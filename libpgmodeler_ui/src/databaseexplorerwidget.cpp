@@ -58,7 +58,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {PREFERRED, QT_TR_NOOP("Preferred")},                {RANGE_ATTRIBS, QT_TR_NOOP("Range attributes")},       {RECV_FUNC, QT_TR_NOOP("Receive func.")},
   {REF_ROLES, QT_TR_NOOP("Ref. roles")},               {REPLICATION, QT_TR_NOOP("Replication")},              {RESTRICTION_FUNC, QT_TR_NOOP("Restriction func.")},
   {RETURN_TYPE, QT_TR_NOOP("Return type")},            {RETURNS_SETOF, QT_TR_NOOP("Returns SETOF")},          {RIGHT_TYPE, QT_TR_NOOP("Right type")},
-  {ROW_AMOUNT, QT_TR_NOOP("Row amount")},              {SCHEMA, QT_TR_NOOP("Schema")},                        {SECURITY_TYPE, QT_TR_NOOP("Security type")},
+  {ROW_AMOUNT, QT_TR_NOOP("Rows amount")},              {SCHEMA, QT_TR_NOOP("Schema")},                        {SECURITY_TYPE, QT_TR_NOOP("Security type")},
   {SEND_FUNC, QT_TR_NOOP("Send func.")},               {SORT_OP, QT_TR_NOOP("Sort op.")},                     {SOURCE_TYPE, QT_TR_NOOP("Source type")},
   {SRC_ENCODING, QT_TR_NOOP("Src. encoding")},         {STATE_TYPE, QT_TR_NOOP("State type")},                {STORAGE, QT_TR_NOOP("Storage")},
   {SUPERUSER, QT_TR_NOOP("Superuser")},                {TABLESPACE, QT_TR_NOOP("Tablespace")},                {TPMOD_IN_FUNC, QT_TR_NOOP("Type mod. in func.")},
@@ -80,7 +80,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
   {FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
   {OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
   {UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")},                  {UNIQUE, QT_TR_NOOP("Unique")},
-  {PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")},
+  {PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
