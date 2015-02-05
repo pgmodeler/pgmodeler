@@ -100,6 +100,7 @@ ObjectsScene::~ObjectsScene(void)
 		}
 	}
 
+  //The graphical representation of db objects must be destroyed in a sorted way
   std::sort(removed_objs.begin(), removed_objs.end());
   while(!removed_objs.empty())
   {
