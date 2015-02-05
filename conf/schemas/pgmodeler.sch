@@ -32,7 +32,8 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               show-main-menu="] %if {show-main-menu} %then true %else false %end ["] $br
 [               disable-smoothness="] %if {disable-smoothness} %then true %else false %end ["] $br
 [               simplified-obj-creation="] %if {simplified-obj-creation} %then true %else false %end ["] $br
-[               confirm-validation="] %if {confirm-validation} %then true %else false %end ["]
+[               confirm-validation="] %if {confirm-validation} %then true %else false %end ["] $br
+[               code-completion="] %if {code-completion} %then true %else false %end ["]
 [/>] $br
 
 %if {file} %then
