@@ -65,9 +65,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
 RelationshipView::~RelationshipView(void)
 {
-	QGraphicsItem *item=nullptr;
-
-  disconnectSourceObject();
+	QGraphicsItem *item=nullptr;  
 
 	for(int i=0; i < 3; i++)
 	{

@@ -55,18 +55,6 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		QGraphicsItemGroup::mousePressEvent(event);
 }
 
-void BaseObjectView::disconnectSourceObject(void)
-{
-  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(getSourceObject());
-  this->disconnect();
-
-  if(graph_obj)
-  {
-    graph_obj->disconnect();
-    graph_obj->setReceiverObject(nullptr);
-  }
-}
-
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
   BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);

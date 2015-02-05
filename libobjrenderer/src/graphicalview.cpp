@@ -28,11 +28,6 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	this->configureObject();
 }
 
-GraphicalView::~GraphicalView(void)
-{
-  disconnectSourceObject();
-}
-
 void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());

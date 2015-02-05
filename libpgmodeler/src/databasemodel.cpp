@@ -8240,12 +8240,20 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms)
 {
   vector<BaseObject *> refs_aux;
+  vector<BaseObject *>::iterator end;
 
   getObjectReferences(object, refs_aux, exclude_perms);
-  refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
 
-  for(BaseObject *obj : refs_aux)
-    __getObjectReferences(obj, refs, exclude_perms);
+  if(!refs_aux.empty())
+  {
+    refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
+    std::sort(refs.begin(), refs.end());
+    end=std::unique(refs.begin(), refs.end());
+    refs.assign(refs.begin(), end);
+
+    for(BaseObject *obj : refs_aux)
+      __getObjectReferences(obj, refs, exclude_perms);
+  }
 }
 
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)
@@ -8472,7 +8480,8 @@ void DatabaseModel::createSystemObjects(bool create_public)
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match)
 {
 	vector<BaseObject *> list, objs;
-	vector<ObjectType>::iterator itr_tp=types.begin();
+  vector<BaseObject *>::iterator end;
+  vector<ObjectType>::iterator itr_tp=types.begin();
 	vector<BaseObject *> tables;
 	bool inc_tabs=false, inc_views=false;
 	ObjectType obj_type;
@@ -8568,9 +8577,12 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		obj_name.clear();
 	}
 
-	//Removing the duplicate items on the list
-	std::unique(list.begin(), list.end());
-	return(list);
+  //Removing the duplicate items on the list
+  std::sort(list.begin(), list.end());
+  end=std::unique(list.begin(), list.end());
+  list.assign(list.begin(), end);
+
+  return(list);
 }
 
 void DatabaseModel::setInvalidated(bool value)

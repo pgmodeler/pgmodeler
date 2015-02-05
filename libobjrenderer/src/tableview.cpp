@@ -24,11 +24,6 @@ TableView::TableView(Table *table) : BaseTableView(table)
 	this->configureObject();
 }
 
-TableView::~TableView(void)
-{
-
-}
-
 void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());

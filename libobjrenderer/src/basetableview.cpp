@@ -68,8 +68,6 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 BaseTableView::~BaseTableView(void)
 {
-  disconnectSourceObject();
-
 	this->removeFromGroup(body);
 	this->removeFromGroup(title);
 	this->removeFromGroup(ext_attribs_body);
