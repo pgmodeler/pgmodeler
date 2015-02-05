@@ -1656,7 +1656,7 @@ void ModelWidget::cancelObjectAddition(void)
 	//Hide the line that simulates the relationship creation
 	scene->showRelationshipLine(false);
 
-  //this->configurePopupMenu(this->selected_objects);
+  this->configurePopupMenu(this->selected_objects);
 }
 
 void ModelWidget::renameObject(void)
@@ -2806,7 +2806,7 @@ void ModelWidget::enableModelActions(bool value)
 	action_copy->setEnabled(value);
 	action_paste->setEnabled(value);
 	action_cut->setEnabled(value);
-  //action_remove->setEnabled(value);
+  action_remove->setEnabled(value);
 	action_quick_actions->setEnabled(value);
 }
 
