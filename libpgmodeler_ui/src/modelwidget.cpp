@@ -105,6 +105,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	protected_model_frm->setGeometry(QRect(20, 10, 511, 48));
 	protected_model_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	protected_model_frm->setMinimumSize(QSize(0, 48));
+  protected_model_frm->setMaximumHeight(48);
 	protected_model_frm->setFrameShape(QFrame::StyledPanel);
 	protected_model_frm->setFrameShadow(QFrame::Raised);
 	protected_model_frm->setVisible(false);
@@ -2607,12 +2608,12 @@ void ModelWidget::removeObjects(bool cascade)
           }
 
           //Raises an error if the user try to remove a reserved object
-          if(!cascade && object->isSystemObject())
+          if(object->isSystemObject())
 						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                             .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
-          else if(!cascade && object->isProtected())
+          else if(object->isProtected())
 					{
 						throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
 														.arg(object->getName(true))

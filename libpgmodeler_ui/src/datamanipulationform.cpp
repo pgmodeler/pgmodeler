@@ -45,6 +45,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 
+  //Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
+  h_splitter->setSizes({500, 250, 500});
+  v_splitter->setVisible(false);
+
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
 	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
@@ -65,6 +69,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
+  connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
@@ -136,6 +141,7 @@ void DataManipulationForm::listTables(void)
 	table_cmb->setEnabled(table_cmb->count() > 0);
 	row_cnt_lbl->setVisible(false);
 	rows_ret_lbl->setVisible(false);
+  limit_lbl->setVisible(false);
 }
 
 void DataManipulationForm::listColumns(void)
@@ -161,6 +167,7 @@ void DataManipulationForm::listColumns(void)
 	}
 
 	add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+  filter_tb->setEnabled(ord_column_cmb->count() > 0);
 }
 
 void DataManipulationForm::retrieveData(void)
@@ -205,6 +212,8 @@ void DataManipulationForm::retrieveData(void)
 		rows_ret_lbl->setVisible(results_tbw->rowCount() > 0);
 		row_cnt_lbl->setVisible(results_tbw->rowCount() > 0);
 		row_cnt_lbl->setText(QString::number(results_tbw->rowCount()));
+    limit_lbl->setVisible(results_tbw->rowCount() > 0);
+    limit_lbl->setText(trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_edt->text()));
 
 		//Reset the changed rows state
 		clearChangedRows();
@@ -219,7 +228,6 @@ void DataManipulationForm::retrieveData(void)
 	}
 	catch(Exception &e)
 	{
-    //if(connection.isStablished())
     connection.close();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
