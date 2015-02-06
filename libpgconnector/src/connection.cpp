@@ -42,6 +42,10 @@ const QString Connection::PARAM_SSL_CRL=QString("sslcrl");
 const QString Connection::PARAM_KERBEROS_SERVER=QString("krbsrvname");
 const QString Connection::PARAM_LIB_GSSAPI=QString("gsslib");
 
+const QString Connection::SERVER_PID=QString("server-pid");
+const QString Connection::SERVER_PROTOCOL=QString("server-protocol");
+const QString Connection::SERVER_VERSION=QString("server-version");
+
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
@@ -216,7 +220,21 @@ QString Connection::getConnectionParam(const QString &param)
 
 attribs_map Connection::getConnectionParams(void) const
 {
-	return(connection_params);
+  return(connection_params);
+}
+
+attribs_map Connection::getServerInfo(void)
+{
+  attribs_map info;
+
+  if(!connection)
+    throw Exception(ERR_OPR_NOT_ALOC_CONN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  info[SERVER_PID]=QString::number(PQbackendPID(connection));
+  info[SERVER_VERSION]=getPgSQLVersion();
+  info[SERVER_PROTOCOL]=QString::number(PQprotocolVersion(connection));
+
+  return(info);
 }
 
 QString Connection::getConnectionString(void)

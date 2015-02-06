@@ -17,6 +17,7 @@
 */
 
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -157,19 +158,9 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 	}
 
 	if(msg.isEmpty())
-		str_aux=e.getErrorMessage();
+    str_aux=PgModelerUiNS::formatMessage(e.getErrorMessage());
 	else
-		str_aux=msg;
-
-  if(str_aux.contains('`') && str_aux.contains('\''))
-	{
-    str_aux.replace('`', QString("<strong>"));
-    str_aux.replace('\'', QString("</strong>"));
-    str_aux.replace('(', QString("<em>("));
-    str_aux.replace(')', QString(")</em>"));
-	}
-
-  str_aux.replace('\n', QString("<br/>"));
+    str_aux=PgModelerUiNS::formatMessage(msg);
 
   this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }

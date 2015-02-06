@@ -2885,7 +2885,7 @@ void DatabaseModel::loadModel(const QString &filename)
                     addObject(object);
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
-                                      trUtf8("Loading: `%1' `(%2)'")
+                                      trUtf8("Loading: `%1' (%2)")
                                       .arg(/*Utf8String::create(*/object->getName())
                                       .arg(object->getTypeName()),
                                       obj_type);
@@ -6268,7 +6268,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   bool sql_disabled=false;
   BaseObject *object=nullptr;
   QString def, search_path=QString("pg_catalog,public"),
-      msg=trUtf8("Generating %1 of the object `%2' `(%3)'"),
+      msg=trUtf8("Generating %1 of the object `%2' (%3)"),
       attrib=ParsersAttributes::OBJECTS, attrib_aux,
       def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? QString("SQL") : QString("XML"));
   Type *usr_type=nullptr;

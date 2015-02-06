@@ -385,7 +385,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
     ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
     object_lbl->setText(trUtf8("Running SQL validation..."));
 
-    msg=PgModelerNS::formatString(msg);
+    msg=PgModelerUiNS::formatMessage(msg);
 
 		if(obj_type!=BASE_OBJECT)
       ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
@@ -412,7 +412,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-  object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerNS::formatString(obj_name)));
+  object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerUiNS::formatMessage(obj_name)));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 }
 

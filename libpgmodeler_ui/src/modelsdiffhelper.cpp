@@ -213,7 +213,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Processing object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Processing object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
 
       //Processing objects that are not database, table child object (they are processed further)
@@ -309,7 +309,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     {
       generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Skipping object `%1' `(%2)'...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Skipping object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
     }
 

@@ -18,7 +18,7 @@
 
 #include "taskprogresswidget.h"
 #include "baseobject.h"
-#include "pgmodelerns.h"
+#include "pgmodeleruins.h"
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -65,7 +65,7 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 	progress_pb->setValue(progress);
 
 	if(!text.isEmpty())
-    text_lbl->setText(PgModelerNS::formatString(text));
+    text_lbl->setText(PgModelerUiNS::formatMessage(text));
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));

@@ -505,10 +505,10 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true);
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true);
 
   if(!e.getExtraInfo().isEmpty())
-    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true);
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true);
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
@@ -561,7 +561,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
                  export_item, false, false);
 
-  PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(err_msg),
+  PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
                  item, true, false);
 
@@ -572,7 +572,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
 {
-  msg=PgModelerNS::formatString(msg);
+  msg=PgModelerUiNS::formatMessage(msg);
 
   if(import_thread && import_thread->isRunning())
 	{
@@ -621,7 +621,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
   QTreeWidgetItem *item=nullptr;
 
   item=PgModelerUiNS::createOutputTreeItem(output_trw,
-                                           PgModelerNS::formatString(diff_info.getInfoMessage()),
+                                           PgModelerUiNS::formatMessage(diff_info.getInfoMessage()),
                                            QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())), diff_item);
   item->setData(0, Qt::UserRole, diff_info.getDiffType());
 

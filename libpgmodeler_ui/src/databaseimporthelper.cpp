@@ -298,7 +298,7 @@ void DatabaseImportHelper::createObjects(void)
 			if(obj_type!=OBJ_CONSTRAINT)
 			{
 				emit s_progressUpdated(progress,
-															 trUtf8("Creating object `%1' `(%2)'...")
+                               trUtf8("Creating object `%1' (%2)...")
 															 .arg(attribs[ParsersAttributes::NAME])
 															 .arg(BaseObject::getTypeName(obj_type)),
 															 obj_type);
@@ -335,7 +335,7 @@ void DatabaseImportHelper::createConstraints(void)
 		try
 		{
 			emit s_progressUpdated(progress,
-														 trUtf8("Creating object `%1' `(%2)'...")
+                             trUtf8("Creating object `%1' (%2)...")
 														 .arg(attribs[ParsersAttributes::NAME])
 														 .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 														 OBJ_CONSTRAINT);
@@ -423,7 +423,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-														 trUtf8("Update relationships of `%1' `(%2)'...")
+                             trUtf8("Update relationships of `%1' (%2)...")
 														 .arg(tab->getName())
 														 .arg(BaseObject::getTypeName(OBJ_TABLE)),
 														 OBJ_TABLE);

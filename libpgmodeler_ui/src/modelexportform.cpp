@@ -19,7 +19,6 @@
 #include "modelexportform.h"
 #include "taskprogresswidget.h"
 #include "configurationform.h"
-#include "pgmodelerns.h"
 #include "pgmodeleruins.h"
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
@@ -91,7 +90,7 @@ void ModelExportForm::exec(ModelWidget *model)
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
 {
   QTreeWidgetItem *item=nullptr;
-  QString text=PgModelerNS::formatString(msg);
+  QString text=PgModelerUiNS::formatMessage(msg);
   QPixmap ico;
 
   progress_lbl->setText(text);
@@ -248,11 +247,11 @@ void ModelExportForm::selectOutputFile(void)
 
 void ModelExportForm::captureThreadError(Exception e)
 {
-  QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()),
+  QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()),
                                                             QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr, true);
 
   if(!e.getExtraInfo().isEmpty())
-    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), QPixmap(), item, true);
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), QPixmap(), item, true);
 
   finishExport(trUtf8("Exporting process aborted!"));
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));

@@ -36,9 +36,15 @@ namespace PgModelerUiNS {
   QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
                                         QTreeWidgetItem *parent=nullptr, bool word_wrap=false, bool expand_item=true);
 
+  /*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
+      related to the input object */
   void disableObjectSQL(BaseObject *object, bool value);
 
+  //! brief Recursively toggles the specified object's references SQL
   void disableReferencesSQL(BaseObject *object);
+
+  //! brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
+  QString formatMessage(const QString &msg);
 }
 
 #endif

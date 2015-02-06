@@ -112,7 +112,7 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 {
   QPixmap ico;
 
-  msg=PgModelerNS::formatString(msg);
+  msg=PgModelerUiNS::formatMessage(msg);
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
@@ -336,10 +336,10 @@ void DatabaseImportForm::captureThreadError(Exception e)
   ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
   ico_lbl->setPixmap(ico);
 
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getErrorMessage()), ico);
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico);
 
   if(!e.getExtraInfo().isEmpty())
-   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerNS::formatString(e.getExtraInfo()), ico, item, true);
+   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true);
 
   //Destroy the current import thread and helper to avoid reuse
   destroyThread();

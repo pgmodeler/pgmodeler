@@ -145,15 +145,3 @@ void PgModelerNS::copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, Object
 		break;
 	}
 }
-
-QString PgModelerNS::formatString(const QString &msg)
-{
-  QString fmt_msg=msg;
-
-  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,QString("<strong>"));
-  fmt_msg.replace(fmt_msg.indexOf('\''), 1,QString("</strong>"));
-  fmt_msg.replace(fmt_msg.indexOf('`'), 1 ,QString("<em>"));
-  fmt_msg.replace(fmt_msg.indexOf('\''), 1,QString("</em>"));
-
-  return(fmt_msg);
-}

@@ -28,7 +28,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		progress=sql_gen_progress=0;
 		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-                           trUtf8("Generating SQL code for PostgreSQL %1").arg(BaseObject::getPgSQLVersion()),
+                           trUtf8("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
                            BASE_OBJECT);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
@@ -226,12 +226,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(!pgsql_ver.isEmpty())
 		{
 			BaseObject::setPgSQLVersion(pgsql_ver);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overridden. Using version %1.").arg(pgsql_ver));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overridden. Using version `%1'.").arg(pgsql_ver));
 		}
 		else
 		{
 			BaseObject::setPgSQLVersion(version);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected.").arg(version));
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL `%1' server detected.").arg(version));
 		}
 
     if(simulate && use_tmp_names)
@@ -260,7 +260,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		}
 
     if(!ignored_errors.isEmpty())
-      emit s_progressUpdated(progress, trUtf8("Ignoring the following error code(s): %1.").arg(ignored_errors.join(", ")));
+      emit s_progressUpdated(progress, trUtf8("Ignoring the following error code(s): `%1'.").arg(ignored_errors.join(", ")));
 
 		if(drop_db)
 		{
@@ -721,9 +721,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           obj_name=tab_name + QString(".") + obj_name;
 
           if(is_drop)
-            msg=trUtf8("Dropping object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+            msg=trUtf8("Dropping object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
           else
-            msg=trUtf8("Creating object `%1' `(%2)'.").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+            msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
            emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
         }
@@ -793,11 +793,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               obj_name.remove(';');
 
               if(is_create)
-                msg=trUtf8("Creating object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
               else if(is_drop)
-                msg=trUtf8("Dropping object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
               else
-                msg=trUtf8("Changing object `%1' `(%2)'").arg(obj_name).arg(obj_tp_name);
+                msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 
               break;
             }
