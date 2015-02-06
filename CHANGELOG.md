@@ -4,8 +4,12 @@ Change Log
 v0.8.0-beta2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: February 03, 2015</em><br/>
+<em>Release date: February 07, 2015</em><br/>
 
+* [New] Added the method Connection::getServerInfo that returns some informations about the connected server.
+* [New] Added an attribute to DatabaseExplorerWidget to show the estimated rows amount for selected table.
+* [New] Added the ability to cascade delete objects from database model.
+* [New] Created missing getters and setters for Operation class.
 * [New] Added the ability to set owner, schema and tag for several objects at once through the quick actions menu.
 * [New] Added an option to diff process to reuse sequences if the source model has serial columns in which the generated sequence name matches a sequence's name on the imported model.
 * [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
@@ -13,9 +17,14 @@ v0.8.0-beta2
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Created a new namespace PgModelerUiNS to store shared constants and function in libpgmodeler_ui subproject.
 * [New] Added the ability to execute the DROP statements attached to object's SQL when exporting model to DBMS.
+* [Change] The method PgModelerNS::formatString was moved to PgModelerUiNS::formatMessage.
+* [Change] Simplified the layout of DataManipulationForm making the Advanced tab (filter) be moved to the same tab of result set facilitating the access to filtering features.
+* [Change] Restored previous behavior of ModelWidget::cancelObjectAddition and ModelWidget::enableModelActions methods.
+* [Change] Removed empty destructors from classes TableView and GraphicalView.
+* [Change] Minor changes on destructors of classes that represents graphical objects on libobjrenderer to correctly undo the link between the graphical object and the source object.
 * [Change] Improvements on ModelExportHelper adding the ability to ignore certain error triggered by PostgreSQL referencing their codes.
 * [Change] Improvements on crash handler to reuse the code from bug report form.
-* [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux
+* [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux.
 * [Change] Several adjustments on deployments scripts to use the new build variable settings.
 * [Change] Minor adjustments on main.pro, pgmodeler.pro and pgmodeler.pri files.
 * [Change] Additional improvements on start-pgmodeler.sh and startapp.
@@ -31,6 +40,11 @@ v0.8.0-beta2
 * [Change] Adjustments on PgModelerCLI, ModelExportForm and ModelExportHelper to accept the "drop objects" option.
 * [Change] Minor adjustment on ModelDatabaseDiffForm in order to lower the chances to crash the app if user try to repeatedly cancel and start over the diff process.
 * [Change] Minor change on the generation of DROP statements attached to object's SQL.
+* [Fix] Minor fixes on html formatted messages.
+* [Fix] Fix on GeneralConfigWidget that was not saving code completion enabling status.
+* [Fix] Fixed some bugs on libobjrenderer classes that was causing crashes in some models arrangements. Now graphical objects are effectively deallocated only when the whole scene is destroyed.
+* [Fix] Minor improvement on OperationList::removeOperations to avoid crashes if a pool object is destroyed outside the operation history (e.g. relationship invalidation).
+* [Fix] Several fixes on OperationList to minimize the crashes when undoing/redoing operations. 
 * [Fix] Minor fix on validation process that was failing sometimes to use temporary names feature.
 * [Fix] Minor fix on ModelsDiffHelper to correctly recreate foreign keys that references recreated primary keys.
 * [Fix] Minor fix on Table::removeObject to change not-null state of columns only when the removed object is a primary key.

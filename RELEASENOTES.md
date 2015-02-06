@@ -1,21 +1,23 @@
 v0.8.0-beta2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: February 03, 2015</em>
+<em>Release date: February 07, 2015</em>
 <em>Changes since: <strong>v0.8.0-beta1</strong></em><br/>
-<strong>Summary:</strong> this last beta release brings several bug fixes mainly for import and diff processes. Some changes were done in order to improve the modeling experience give more stability to the application.<br/>
-pgModeler now counts with per-user configurations meaning that each user on the system will have his/her configuration folder separated from the global one (installation default).<br/>
-One important change made was the refectoring of build scripts that will permit pgModeler to be packaged more easily on Linux distros. The new build mode is still being shaped and tested but is already functional.<br/>
-Below some key changes/fixes of this release, more details can be found on CHANGELOG.md file.
+<strong>Summary:</strong> this last beta release brings several bug fixes mainly for import and diff processes. Some changes were done in order to improve the modeling experience giving more stability to the application.<br/>
+pgModeler now counts with per-user configurations meaning that each user on the system will have his/her own configuration folder separated from the global one (installation default).<br/>
+One important change made was the refectoring of build scripts that will permit pgModeler to be packaged more easily on Linux distros. The new build mode is still being shaped and tested but is already quite functional.<br/>
+Below some key changes/fixes of this release, the full change history is available on file CHANGELOG.md.
 
+* [New] Added the ability to cascade delete objects from database model.
 * [New] Added the ability to set owner, schema and tag for several objects at once through the quick actions menu.
 * [New] Added an option to diff process to reuse sequences if the source model has serial columns in which the generated sequence's name matches a sequence's name on the imported model.
 * [New] Added the support to per-user configuration. Now each user on the system will have his separated configuration folder.
 * [New] Added a bug report form on main window to give user the chance to report a bug without use crash handler.
 * [New] Added action to enable/disable an object's sql from quick actions menu at ModelWidget.
 * [New] Added the ability to execute the DROP statements attached to object's SQL when exporting model to DBMS.
+* [Change] Simplified the layout of DataManipulationForm making the Advanced tab (filter) be moved to the same tab of result set facilitating the access to filtering features.
 * [Change] Improvements on crash handler to reuse the code from bug report form.
-* [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux
+* [Change] Changed the default PREFIX on pgmodeler.pri to /opt/pgmodeler when building on Linux.
 * [Change] Several adjustments on deployments scripts to use the new build variable settings.
 * [Change] Additional improvements on start-pgmodeler.sh and startapp.
 * [Change] Crash/bug report files now have extensions .bug instead of .crash.
@@ -26,6 +28,9 @@ Below some key changes/fixes of this release, more details can be found on CHANG
 * [Change] Adjustments on PgModelerCLI, ModelExportForm and ModelExportHelper to accept the "drop objects" option.
 * [Change] Minor adjustment on ModelDatabaseDiffForm in order to lower the chances to crash the app if user try to repeatedly cancel and start over the diff process.
 * [Change] Minor change on the generation of DROP statements attached to object's SQL.
+* [Fix] Fixed some bugs on libobjrenderer classes that was causing crashes in some models arrangements. Now graphical objects are effectively deallocated only when the whole scene is destroyed.
+* [Fix] Minor improvement on OperationList::removeOperations to avoid crashes if a pool object is destroyed outside the operation history (e.g. relationship invalidation).
+* [Fix] Several fixes on OperationList to minimize the crashes when undoing/redoing operations. 
 * [Fix] Minor fix on validation process that was failing sometimes to use temporary names feature.
 * [Fix] Minor fix on ModelsDiffHelper to correctly recreate foreign keys that references recreated primary keys.
 * [Fix] Fixed a bug when converting many-to-many self-relationship and trying to undo the operation.
