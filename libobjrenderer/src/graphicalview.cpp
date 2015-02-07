@@ -28,11 +28,6 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	this->configureObject();
 }
 
-GraphicalView::~GraphicalView(void)
-{
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
-}
-
 void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
@@ -249,8 +244,8 @@ void GraphicalView::configureObject(void)
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-	this->table_tooltip=Utf8String::create(view->getName(true)) +
-											" (" + view->getTypeName() + ") \n" +
+  this->table_tooltip=/*Utf8String::create(*/view->getName(true) +
+                      QString(" (") + view->getTypeName() + QString(") \n") +
                       QString("Id: %1\n").arg(view->getObjectId()) +
 											TableObjectView::CONSTR_DELIM_START +
 											trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +

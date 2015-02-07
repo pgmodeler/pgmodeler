@@ -30,7 +30,12 @@
 #include <QString>
 
 class Operation {
-	protected:
+  private:
+    /*! brief Uniquely identifies the object. This id is used to check if the operation object's somehow
+        where delete (changing their addresses). This will avoid the operation list to try to execute
+        an invalid operation */
+    QString operation_id;
+
 		/*! \brief Reference to the parent object of the original object that has suffered the operation,
 		This attribute is used only in the case of table objects such as columns, indexes,
 		constraints, rules. For other object types there is no need to use this attribute
@@ -60,29 +65,48 @@ class Operation {
 		//! \brief Stores the object's permission before it's removal
 		vector<Permission *> permissions;
 
+    //! brief Generate an unique id for the operation based upon the memory addresses of objects held by it
+    QString generateOperationId(void);
+
 	public:
 		//! \brief Constants used to reference the type of operations
-		static const unsigned OBJECT_MODIFIED=0,
-															OBJECT_CREATED=1,
-															OBJECT_REMOVED=2,
-															/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
-															except that it not (re)validate relationships as happens with operations.
-															This type of operation (OBJECT_MOVED) is useful to undo position changes of
-															graphical objects without executing unnecessary revalidations of relationships */
-															OBJECT_MOVED=3;
+    static const unsigned NO_OPERATION=0,
+                          OBJECT_MODIFIED=1,
+                          OBJECT_CREATED=2,
+                          OBJECT_REMOVED=3,
+                          /*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
+                            except that it not (re)validate relationships as happens with operations.
+                            This type of operation (OBJECT_MOVED) is useful to undo position changes of
+                            graphical objects without executing unnecessary revalidations of relationships */
+                          OBJECT_MOVED=4;
 
 		//! \brief Operation chain types
-		static const unsigned NO_CHAIN=10, //! \brief The operation is not part of a chain
-															CHAIN_START=11, //! \brief The operation is the head of the chain
-															CHAIN_MIDDLE=12, //! \brief The operation is in the middle of the chain
-															CHAIN_END=13; //! \brief The operation is the last on the chain
+    static const unsigned NO_CHAIN=0, //! \brief The operation is not part of a chain
+                          CHAIN_START=1, //! \brief The operation is the head of the chain
+                          CHAIN_MIDDLE=2, //! \brief The operation is in the middle of the chain
+                          CHAIN_END=3; //! \brief The operation is the last on the chain
 
 
-		Operation(void)
-		{ parent_obj=nullptr; pool_obj=nullptr; original_obj=nullptr;
-			object_idx=-1; chain_type=NO_CHAIN; }
+    Operation(void);
 
-		friend class OperationList;
+    void setObjectIndex(int idx);
+    void setChainType(unsigned type);
+    void setOperationType(unsigned type);
+    void setOriginalObject(BaseObject *object);
+    void setPoolObject(BaseObject *object);
+    void setParentObject(BaseObject *object);
+    void setPermissions(const vector<Permission *> &perms);
+    void setXMLDefinition(const QString &xml_def);
+
+    int getObjectIndex(void);
+    unsigned getChainType(void);
+    unsigned getOperationType(void);
+    BaseObject *getOriginalObject(void);
+    BaseObject *getPoolObject(void);
+    BaseObject *getParentObject(void);
+    vector<Permission *> getPermissions(void);
+    QString getXMLDefinition(void);
+    bool isOperationValid(void);
 };
 
 #endif

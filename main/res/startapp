@@ -24,6 +24,8 @@ export PGMODELER_CONF_DIR=$PWD/conf
 export PGMODELER_LANG_DIR=$PWD/lang
 export PGMODELER_PLUGINS_DIR=$PWD/plugins
 export PGMODELER_TMP_DIR=$PWD/tmp
+export PGMODELER_CHANDLER_PATH=$PWD/pgmodeler-ch
+export PGMODELER_CLI_PATH=$PWD/pgmodeler-cli
 
 #Calls the executable redirecting the parameters to it
 $EXE ${@:2:20}

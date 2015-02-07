@@ -21,9 +21,9 @@
 BaseGraphicObject::BaseGraphicObject(void)
 {
 	is_modified=true;
-	attributes[ParsersAttributes::X_POS]="";
-	attributes[ParsersAttributes::Y_POS]="";
-	attributes[ParsersAttributes::POSITION]="";
+	attributes[ParsersAttributes::X_POS]=QString();
+	attributes[ParsersAttributes::Y_POS]=QString();
+	attributes[ParsersAttributes::POSITION]=QString();
 	receiver_object=nullptr;
 }
 
@@ -44,7 +44,17 @@ void BaseGraphicObject::setModified(bool value)
 	is_modified=value;
 
 	if(is_modified)
-		emit s_objectModified();
+    emit s_objectModified();
+}
+
+void BaseGraphicObject::setSQLDisabled(bool value)
+{
+  bool curr_val=sql_disabled;
+
+  BaseObject::setSQLDisabled(value);
+
+  if(value != curr_val)
+    emit s_objectModified();
 }
 
 bool BaseGraphicObject::isModified(void)

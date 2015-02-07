@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
-#include "utf8string.h"
 
 using namespace std;
 

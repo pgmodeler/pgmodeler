@@ -315,7 +315,7 @@ class UserTypeConfig {
 													ALL_USER_TYPES=63;
 
 		UserTypeConfig(void)
-		{ name=""; ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
+    { name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
 
 		friend class PgSQLType;
 };
@@ -452,7 +452,7 @@ class PgSQLType: public BaseType{
     bool isEquivalentTo(PgSQLType type);
 
 		PgSQLType getAliasType(void);
-		QString getCodeDefinition(unsigned def_type, QString ref_type="");
+		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
 
 		//! \brief Retorns the SQL definition for the type
@@ -463,9 +463,9 @@ class PgSQLType: public BaseType{
 		unsigned operator = (const QString &type_name);
 		bool operator == (unsigned type_idx);
 		bool operator == (PgSQLType type);
-		bool operator == (const QString &type_name);
+    bool operator == (const QString &type_name);
 		bool operator == (void *ptype);
-		bool operator != (const QString &type_name);
+    bool operator != (const QString &type_name);
 		bool operator != (PgSQLType type);
 		bool operator != (unsigned type_idx);
 

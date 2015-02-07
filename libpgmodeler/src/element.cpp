@@ -32,7 +32,7 @@ void Element::setColumn(Column *column)
 	if(column)
 	{
 		this->column=column;
-		this->expression="";
+		this->expression=QString();
 	}
 }
 
@@ -93,12 +93,12 @@ OperatorClass *Element::getOperatorClass(void)
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
-	attributes[ParsersAttributes::COLUMN]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::COLUMN]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::OP_CLASS]=QString();
+	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : QString());
 
 
 	if(column)

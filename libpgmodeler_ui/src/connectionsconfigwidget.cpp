@@ -17,6 +17,7 @@
 */
 
 #include "connectionsconfigwidget.h"
+#include "pgmodeleruins.h"
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
@@ -160,10 +161,10 @@ void ConnectionsConfigWidget::newConnection(void)
 	options_edt->clear();
 
 	ssl_mode_cmb->setCurrentIndex(0);
-	client_cert_edt->setText("~/.postgresql/postgresql.crt");
-	root_cert_edt->setText("~/.postgresql/root.crt");
-	crl_edt->setText("~/.postgresql/root.crl");
-	client_key_edt->setText("~/.postgresql/postgresql.key");
+  client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
+  root_cert_edt->setText(QString("~/.postgresql/root.crt"));
+  crl_edt->setText(QString("~/.postgresql/root.crl"));
+  client_key_edt->setText(QString("~/.postgresql/postgresql.key"));
 
 	gssapi_auth_chk->setChecked(false);
 	krb_server_edt->clear();
@@ -275,7 +276,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::PARAM_CONN_TIMEOUT).toInt());
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::PARAM_KERBEROS_SERVER));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)=="gssapi");
+    gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)==QString("gssapi"));
 		options_edt->setText(conn->getConnectionParam(Connection::PARAM_OPTIONS));
 
 		if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_DESABLE)
@@ -349,7 +350,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 		}
 
 		if(gssapi_auth_chk->isChecked())
-			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, "gssapi");
+      conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, QString("gssapi"));
 
 		if(!krb_server_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, krb_server_edt->text());
@@ -363,12 +364,18 @@ void ConnectionsConfigWidget::testConnection(void)
 {
 	Connection conn;
 	Messagebox msg_box;
+  attribs_map srv_info;
 
 	try
 	{
 		this->configureConnection(&conn);
 		conn.connect();
-		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), Messagebox::INFO_ICON);
+    srv_info=conn.getServerInfo();
+    msg_box.show(trUtf8("Success"),
+                 PgModelerUiNS::formatMessage(trUtf8("Connection successfuly stablished!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+                 .arg(srv_info[Connection::SERVER_PID])
+                 .arg(srv_info[Connection::SERVER_PROTOCOL])
+                 .arg(srv_info[Connection::SERVER_VERSION]), Messagebox::INFO_ICON);
 	}
 	catch(Exception &e)
 	{
@@ -422,7 +429,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
     if(connections.empty())
-			config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
+      config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]=QString("  ");
 		else
 		{
       for(Connection *conn : connections)
@@ -465,7 +472,7 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
     alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-      alias.remove(QRegExp(" \\((.)*\\)"));
+      alias.remove(QRegExp(QString(" \\((.)*\\)")));
 
     conns[alias]=conn;
 	}

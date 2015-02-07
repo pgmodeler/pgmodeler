@@ -30,7 +30,7 @@ Dummy::Dummy(void)
 											GlobalAttributes::PLUGINS_DIR +
 											GlobalAttributes::DIR_SEPARATOR +
 											QString("dummy") +
-											GlobalAttributes::DIR_SEPARATOR + "dummy.png");
+                      GlobalAttributes::DIR_SEPARATOR + QString("dummy.png"));
 }
 
 QString Dummy::getPluginTitle(void)
@@ -41,12 +41,12 @@ QString Dummy::getPluginTitle(void)
 
 QString Dummy::getPluginVersion(void)
 {
-	return("0.1");
+  return(QString("0.1"));
 }
 
 QString Dummy::getPluginAuthor(void)
 {
-	return("Raphael A. Silva");
+  return(QString("Raphael A. Silva"));
 }
 
 QString Dummy::getPluginDescription(void)
@@ -69,5 +69,5 @@ void Dummy::executePlugin(ModelWidget *)
 
 QKeySequence Dummy::getPluginShortcut(void)
 {
-	return(QKeySequence("Ctrl+J"));
+  return(QKeySequence(QString("Ctrl+J")));
 }

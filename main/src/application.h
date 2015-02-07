@@ -16,6 +16,14 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
+/*
+# The original implementation of createUserConfiguration() and copyFilesRecursively() was
+# originally written by Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com> and is
+# available at: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+#
+# The current code was reviewed and minimally changed by Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+*/
+
 /**
 \ingroup main
 \class Application
@@ -31,11 +39,15 @@
 #include <QTextStream>
 #include <QTranslator>
 #include <QFile>
-#include "globalattributes.h"
-#include "messagebox.h"
 
 class Application: public QApplication {
 	private:
+    /*! brief Creates the pgModeler's configuration dir on user's home folder.
+        The output path is platform dependant and is ruled by GlobalAttributes::CONFIGURATIONS_DIR */
+    void createUserConfiguration(void);
+
+    //! brief Copy files from a path to another recursively
+    void copyFilesRecursively(const QString &src_path, const QString &dst_path);
 
   public:
     Application(int & argc, char ** argv);

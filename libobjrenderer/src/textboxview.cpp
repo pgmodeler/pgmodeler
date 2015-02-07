@@ -46,7 +46,6 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 
 TextboxView::~TextboxView(void)
 {
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 	this->removeFromGroup(box);
 	this->removeFromGroup(text);
 	delete(box);
@@ -98,7 +97,7 @@ void TextboxView::__configureObject(void)
     text->setBrush(txtbox->getTextColor());
 	}
 
-  text->setText(Utf8String::create(txtbox->getComment()));
+  text->setText(/*Utf8String::create(*/txtbox->getComment());
 
   if(text->font().italic())
     text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);

@@ -22,11 +22,11 @@ Domain::Domain(void)
 {
 	obj_type=OBJ_DOMAIN;
 	not_null=false;
-	attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	attributes[ParsersAttributes::NOT_NULL]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::CONSTRAINT]="";
+	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+	attributes[ParsersAttributes::NOT_NULL]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::TYPE]=QString();
+	attributes[ParsersAttributes::CONSTRAINT]=QString();
 }
 
 void Domain::setName(const QString &name)
@@ -118,7 +118,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::EXPRESSION]=expression;
 	attributes[ParsersAttributes::CONSTRAINT]=BaseObject::formatName(constraint_name);
@@ -153,12 +153,12 @@ QString Domain::getAlterDefinition(BaseObject *object)
     QString alter_def=BaseObject::getAlterDefinition(object);
     Domain *domain=dynamic_cast<Domain *>(object);
 
-    attributes[ParsersAttributes::DEFAULT_VALUE]="";
-    attributes[ParsersAttributes::NOT_NULL]="";
-    attributes[ParsersAttributes::CONSTRAINT]="";
-    attributes[ParsersAttributes::EXPRESSION]="";
-    attributes[ParsersAttributes::OLD_NAME]="";
-    attributes[ParsersAttributes::NEW_NAME]="";
+    attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+    attributes[ParsersAttributes::NOT_NULL]=QString();
+    attributes[ParsersAttributes::CONSTRAINT]=QString();
+    attributes[ParsersAttributes::EXPRESSION]=QString();
+    attributes[ParsersAttributes::OLD_NAME]=QString();
+    attributes[ParsersAttributes::NEW_NAME]=QString();
 
     if(this->default_value!=domain->default_value)
       attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);

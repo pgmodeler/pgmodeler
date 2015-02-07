@@ -69,7 +69,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     shortcut=std::get<0>(itr.second);
     obj_type=std::get<1>(itr.second);
 
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
     connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
     connect(button, SIGNAL(clicked()), this, SLOT(hide()));
@@ -81,7 +81,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     shortcut=std::get<0>(itr.second);
     action_idx=std::get<1>(itr.second);
 
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
 
     if(action_idx < rel_actions.size())
@@ -94,7 +94,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
   for(auto itr : permission_btns)
   {
     button=itr;
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
 
     connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));

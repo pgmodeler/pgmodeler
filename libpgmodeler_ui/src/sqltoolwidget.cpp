@@ -25,7 +25,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
   h_splitter->setSizes({0, 10000});
@@ -33,9 +33,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
 
-	sql_file_dlg.setDefaultSuffix("sql");
+  sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
+  sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
   snippets_tb->setMenu(&snippets_menu);
@@ -221,7 +221,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 		//Retrieving the data type names for each column
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
 		std::unique(type_ids.begin(), type_ids.end());
-		types=catalog.getObjectsAttributes(OBJ_TYPE, "", "", type_ids);
+    types=catalog.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
 
 		for(auto tp : types)
 			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
@@ -283,7 +283,7 @@ void SQLToolWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWid
 
 void SQLToolWidget::showError(Exception &e)
 {
-	QListWidgetItem *item=new QListWidgetItem(QIcon(":/icones/icones/msgbox_erro.png"), e.getErrorMessage());
+  QListWidgetItem *item=new QListWidgetItem(QIcon(QString(":/icones/icones/msgbox_erro.png")), e.getErrorMessage());
 	msgoutput_lst->clear();
 	msgoutput_lst->addItem(item);
 	msgoutput_lst->setVisible(true);
@@ -299,7 +299,7 @@ void SQLToolWidget::registerSQLCommand(const QString &cmd)
 		item->setData(Qt::UserRole, QVariant(cmd));
 
 		if(cmd.size() > 500)
-			item->setText(cmd.mid(0, 500) + "...");
+      item->setText(cmd.mid(0, 500) + QString("..."));
 		else
 			item->setText(cmd);
 
@@ -342,7 +342,7 @@ void SQLToolWidget::runSQLCommand(void)
 			QLabel *label=new QLabel(trUtf8("[<strong>%1</strong>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString()).arg(res.getTupleCount()));
 			QListWidgetItem *item=new QListWidgetItem;
 
-			item->setIcon(QIcon(":/icones/icones/msgbox_info.png"));
+      item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
 			msgoutput_lst->clear();
 			msgoutput_lst->addItem(item);
 			msgoutput_lst->setItemWidget(item, label);
@@ -405,10 +405,10 @@ void SQLToolWidget::exportResults(QTableWidget *results_tbw)
 
 	QFileDialog csv_file_dlg;
 
-	csv_file_dlg.setDefaultSuffix("csv");
+  csv_file_dlg.setDefaultSuffix(QString("csv"));
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
 	csv_file_dlg.setWindowTitle(trUtf8("Save CSV file"));
-	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
+  csv_file_dlg.setNameFilter(trUtf8("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -479,7 +479,7 @@ void SQLToolWidget::clearAll(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
-		sql_cmd_txt->setText("");
+    sql_cmd_txt->setText(QString());
 		msgoutput_lst->clear();
 		msgoutput_lst->setVisible(true);
 		results_parent->setVisible(false);
@@ -655,7 +655,7 @@ void SQLToolWidget::configureSnippets(void)
   code_compl_wgt->clearCustomItems();
   code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
                                     SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-                                    QPixmap(":/icones/icones/codesnippet.png"));
+                                    QPixmap(QString(":/icones/icones/codesnippet.png")));
 }
 
 void SQLToolWidget::enableSQLExecution(bool enable)

@@ -23,17 +23,17 @@ Textbox::Textbox(void)
 	obj_type=OBJ_TEXTBOX;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[ParsersAttributes::ITALIC]="";
-	attributes[ParsersAttributes::BOLD]="";
-	attributes[ParsersAttributes::UNDERLINE]="";
-	attributes[ParsersAttributes::COLOR]="";
-	attributes[ParsersAttributes::FONT_SIZE]="";
+	attributes[ParsersAttributes::ITALIC]=QString();
+	attributes[ParsersAttributes::BOLD]=QString();
+	attributes[ParsersAttributes::UNDERLINE]=QString();
+	attributes[ParsersAttributes::COLOR]=QString();
+	attributes[ParsersAttributes::FONT_SIZE]=QString();
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SQL_DEFINITION)
-		return("");
+    return(QString());
 	else
 	{
 		QString code_def=getCachedCode(def_type, false);
@@ -50,7 +50,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(text_attributes[UNDERLINE_TXT])
       attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
 
-		if(text_color.name()!="#000000")
+    if(text_color.name()!=QString("#000000"))
 			attributes[ParsersAttributes::COLOR]=text_color.name();
 
 		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);

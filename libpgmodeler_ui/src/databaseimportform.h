@@ -34,8 +34,6 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 
-		QTimer timer;
-
     HintTextWidget *rand_color_ht, *auto_res_deps_ht, *imp_sys_objs_ht,
     *imp_ext_objs_ht, *debug_mode_ht, *ignore_errors_ht;
 
@@ -44,7 +42,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ModelWidget *model_wgt;
 
 		//! \brief Database importer helper
-		DatabaseImportHelper import_helper;
+    DatabaseImportHelper *import_helper;
 
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
@@ -64,11 +62,16 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
 		void finishImport(const QString &msg);
-		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *event);
 		void destroyModelWidget(void);
 
-	public:
+    //! brief Allocates the import thread and helper
+    void createThread(void);
+
+    //! brief Destroys both import thread and helper
+    void destroyThread(void);
+
+  public:
     //! brief Constants used to access the tree widget items data
     static const unsigned OBJECT_ID=1,
                           OBJECT_TYPE=2,
@@ -79,6 +82,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
                           OBJECT_COUNT=7; //Only for gropus
 
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ~DatabaseImportForm(void);
 
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
@@ -97,13 +101,12 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
     static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
                                                        bool checkable_items=false, bool disable_empty_grps=true,
-                                                       QTreeWidgetItem *root=nullptr, const QString &schema="", const QString &table="");
+                                                       QTreeWidgetItem *root=nullptr, const QString &schema=QString(), const QString &table=QString());
 
 	private slots:
 		void importDatabase(void);
 		void listObjects(void);
 		void listDatabases(void);
-		void hideProgress(bool value=true);
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
 		void cancelImport(void);
 		void handleImportCanceled(void);

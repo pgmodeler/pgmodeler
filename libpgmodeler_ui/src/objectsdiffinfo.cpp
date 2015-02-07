@@ -44,7 +44,7 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-  QString msg="%1 `%2' `(%3)'", obj_name;
+  QString msg=QString("%1 `%2' (%3)"), obj_name;
   BaseObject *ref_obj=nullptr;
   ObjectType obj_type=BASE_OBJECT;
 
@@ -66,29 +66,29 @@ QString ObjectsDiffInfo::getInfoMessage(void)
     obj_name=ref_obj->getSignature();
 
   if(diff_type==NO_DIFFERENCE)
-    return("");
+    return(QString());
   else if(diff_type==DROP_OBJECT)
 	{
-    msg=msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
+    msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
            .arg(obj_name)
            .arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
-    msg=msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
+    msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
            .arg(obj_name)
            .arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==ALTER_OBJECT)
 	{   
-    msg=msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
+    msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
            .arg(obj_name)
            .arg(ref_obj->getTypeName());
 
 	}
   else if(diff_type==IGNORE_OBJECT)
   {
-    msg=msg.arg("<font color=\"#606060\"><strong>IGNORE</strong></font>")
+    msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
            .arg(obj_name)
            .arg(ref_obj->getTypeName());
 

@@ -24,22 +24,22 @@ Index::Index(void)
 	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
 	index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
 	fill_factor=90;
-	attributes[ParsersAttributes::UNIQUE]="";
-	attributes[ParsersAttributes::CONCURRENT]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::INDEX_TYPE]="";
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::FACTOR]="";
-  attributes[ParsersAttributes::PREDICATE]="";
-	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::NULLS_FIRST]="";
-	attributes[ParsersAttributes::ASC_ORDER]="";
-	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	attributes[ParsersAttributes::ELEMENTS]="";
-	attributes[ParsersAttributes::FAST_UPDATE]="";
-	attributes[ParsersAttributes::BUFFERING]="";
-	attributes[ParsersAttributes::STORAGE_PARAMS]="";
+	attributes[ParsersAttributes::UNIQUE]=QString();
+	attributes[ParsersAttributes::CONCURRENT]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::INDEX_TYPE]=QString();
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::FACTOR]=QString();
+  attributes[ParsersAttributes::PREDICATE]=QString();
+	attributes[ParsersAttributes::OP_CLASS]=QString();
+	attributes[ParsersAttributes::NULLS_FIRST]=QString();
+	attributes[ParsersAttributes::ASC_ORDER]=QString();
+	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::ELEMENTS]=QString();
+	attributes[ParsersAttributes::FAST_UPDATE]=QString();
+	attributes[ParsersAttributes::BUFFERING]=QString();
+	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -51,7 +51,7 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=idx_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=",";
+    if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;
@@ -121,7 +121,8 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		//Case the column is not allocated raises an error
 		if(!column)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-											.arg(Utf8String::create(this->getName())).arg(Utf8String::create(this->getTypeName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/this->getTypeName()),
 											ERR_ASG_NOT_ALOC_COLUMN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
@@ -305,11 +306,11 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : "");
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
   attributes[ParsersAttributes::PREDICATE]=predicate;
-	attributes[ParsersAttributes::STORAGE_PARAMS]="";
+	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
 
   if(getParentTable())
   {
@@ -320,10 +321,10 @@ QString Index::getCodeDefinition(unsigned def_type)
   }
 
 	if(this->indexing_type==IndexingType::gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : QString());
 
 	if(this->indexing_type==IndexingType::gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : "");
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : QString());
 
   if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
@@ -331,7 +332,7 @@ QString Index::getCodeDefinition(unsigned def_type)
     attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
 	}
 	else if(def_type==SchemaParser::XML_DEFINITION)
-		attributes[ParsersAttributes::FACTOR]="0";
+    attributes[ParsersAttributes::FACTOR]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */

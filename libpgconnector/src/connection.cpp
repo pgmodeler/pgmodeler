@@ -19,28 +19,32 @@
 #include "connection.h"
 #include <QTextStream>
 
-const QString Connection::SSL_DESABLE="disable";
-const QString Connection::SSL_ALLOW="allow";
-const QString Connection::SSL_PREFER="prefer";
-const QString Connection::SSL_REQUIRE="require";
-const QString Connection::SSL_CA_VERIF="verify-ca";
-const QString Connection::SSL_FULL_VERIF="verify-full";
-const QString Connection::PARAM_ALIAS="alias";
-const QString Connection::PARAM_SERVER_FQDN="host";
-const QString Connection::PARAM_SERVER_IP="hostaddr";
-const QString Connection::PARAM_PORT="port";
-const QString Connection::PARAM_DB_NAME="dbname";
-const QString Connection::PARAM_USER="user";
-const QString Connection::PARAM_PASSWORD="password";
-const QString Connection::PARAM_CONN_TIMEOUT="connect_timeout";
-const QString Connection::PARAM_OPTIONS="options";
-const QString Connection::PARAM_SSL_MODE="sslmode";
-const QString Connection::PARAM_SSL_CERT="sslcert";
-const QString Connection::PARAM_SSL_KEY="sslkey";
-const QString Connection::PARAM_SSL_ROOT_CERT="sslrootcert";
-const QString Connection::PARAM_SSL_CRL="sslcrl";
-const QString Connection::PARAM_KERBEROS_SERVER="krbsrvname";
-const QString Connection::PARAM_LIB_GSSAPI="gsslib";
+const QString Connection::SSL_DESABLE=QString("disable");
+const QString Connection::SSL_ALLOW=QString("allow");
+const QString Connection::SSL_PREFER=QString("prefer");
+const QString Connection::SSL_REQUIRE=QString("require");
+const QString Connection::SSL_CA_VERIF=QString("verify-ca");
+const QString Connection::SSL_FULL_VERIF=QString("verify-full");
+const QString Connection::PARAM_ALIAS=QString("alias");
+const QString Connection::PARAM_SERVER_FQDN=QString("host");
+const QString Connection::PARAM_SERVER_IP=QString("hostaddr");
+const QString Connection::PARAM_PORT=QString("port");
+const QString Connection::PARAM_DB_NAME=QString("dbname");
+const QString Connection::PARAM_USER=QString("user");
+const QString Connection::PARAM_PASSWORD=QString("password");
+const QString Connection::PARAM_CONN_TIMEOUT=QString("connect_timeout");
+const QString Connection::PARAM_OPTIONS=QString("options");
+const QString Connection::PARAM_SSL_MODE=QString("sslmode");
+const QString Connection::PARAM_SSL_CERT=QString("sslcert");
+const QString Connection::PARAM_SSL_KEY=QString("sslkey");
+const QString Connection::PARAM_SSL_ROOT_CERT=QString("sslrootcert");
+const QString Connection::PARAM_SSL_CRL=QString("sslcrl");
+const QString Connection::PARAM_KERBEROS_SERVER=QString("krbsrvname");
+const QString Connection::PARAM_LIB_GSSAPI=QString("gsslib");
+
+const QString Connection::SERVER_PID=QString("server-pid");
+const QString Connection::SERVER_PROTOCOL=QString("server-protocol");
+const QString Connection::SERVER_VERSION=QString("server-version");
 
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
@@ -66,7 +70,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 
 	//Raise an error in case the param name is empty
-	if(param=="")
+  if(param.isEmpty())
 		throw Exception(ERR_ASG_INV_CONN_PARAM, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	/* Set the value to the specified param on the map.
@@ -76,7 +80,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	if(param==PARAM_SERVER_FQDN && ip_regexp.exactMatch(value))
 	{
 		connection_params[Connection::PARAM_SERVER_IP]=value;
-		connection_params[Connection::PARAM_SERVER_FQDN]="";
+    connection_params[Connection::PARAM_SERVER_FQDN]=QString();
 	}
   else
     connection_params[param]=value;
@@ -99,7 +103,7 @@ void Connection::generateConnectionString(void)
 	itr=connection_params.begin();
 
 	//Scans the parameter map concatening the params (itr->first) / values (itr->second)
-	connection_str="";
+  connection_str=QString();
 	while(itr!=connection_params.end())
 	{
     if(itr->first!=PARAM_ALIAS)
@@ -155,7 +159,7 @@ void Connection::connect(void)
 	/* If the connection string is not established indicates that the user
 		is trying to connect without configuring connection parameters,
 		thus an error is raised */
-	if(connection_str=="")
+  if(connection_str.isEmpty())
 		throw Exception(ERR_CONNECTION_NOT_CONFIGURED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   else if(connection)
   {
@@ -165,7 +169,7 @@ void Connection::connect(void)
     {
       QTextStream err(stderr);
       err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << endl
-          << "Conn. info: [ " << connection_str << "]" << endl;
+          << QString("Conn. info: [ ") << connection_str << QString("]") << endl;
       this->close();
     }
   }
@@ -191,8 +195,10 @@ void Connection::close(void)
 {
   if(connection)
   {
-    //Finalizes the connection
-    PQfinish(connection);
+    //Finalizes the connection if the status is OK
+    if(PQstatus(connection)==CONNECTION_OK)
+      PQfinish(connection);
+
     connection=nullptr;
   }
 }
@@ -214,7 +220,21 @@ QString Connection::getConnectionParam(const QString &param)
 
 attribs_map Connection::getConnectionParams(void) const
 {
-	return(connection_params);
+  return(connection_params);
+}
+
+attribs_map Connection::getServerInfo(void)
+{
+  attribs_map info;
+
+  if(!connection)
+    throw Exception(ERR_OPR_NOT_ALOC_CONN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  info[SERVER_PID]=QString::number(PQbackendPID(connection));
+  info[SERVER_VERSION]=getPgSQLVersion();
+  info[SERVER_PROTOCOL]=QString::number(PQprotocolVersion(connection));
+
+  return(info);
 }
 
 QString Connection::getConnectionString(void)
@@ -273,7 +293,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
   {
     QTextStream out(stdout);
-    out << "\n---\n" << sql << endl;
+    out << QString("\n---\n") << sql << endl;
   }
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -309,7 +329,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
   {
     QTextStream out(stdout);
-    out << "\n---\n" << sql << endl;
+    out << QString("\n---\n") << sql << endl;
   }
 
 	//Raise an error in case the command sql execution is not sucessful

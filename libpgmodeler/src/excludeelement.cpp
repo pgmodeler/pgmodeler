@@ -20,7 +20,7 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 	attribs_map attributes;
 
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
-	attributes[ParsersAttributes::OPERATOR]="";
+	attributes[ParsersAttributes::OPERATOR]=QString();
 	configureAttributes(attributes, def_type);
 
 	if(_operator)

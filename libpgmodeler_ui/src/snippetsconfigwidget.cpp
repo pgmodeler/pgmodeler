@@ -22,8 +22,7 @@
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp("^([a-z])([a-z]*|(\\d)*|(_)*)+", Qt::CaseInsensitive);
-const QString SnippetsConfigWidget::PARSE_SNIP_TOKEN=QString("%parse");
+const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -203,7 +202,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
     }
   }
   else
-    return("");
+    return(QString());
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -228,7 +227,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
     err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
   else if(attribs[ParsersAttributes::CONTENTS].isEmpty())
     err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-  else if(attribs[ParsersAttributes::CONTENTS].startsWith(PARSE_SNIP_TOKEN))
+  else if(attribs[ParsersAttributes::PARSABLE]==ParsersAttributes::_TRUE_)
   {
     try
     {
@@ -236,7 +235,6 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
       attribs_map attribs;
       SchemaParser schparser;
 
-      buf.remove(PARSE_SNIP_TOKEN);
       schparser.loadBuffer(buf);
       schparser.ignoreEmptyAttributes(true);
       schparser.ignoreUnkownAttributes(true);
@@ -274,7 +272,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
     //Check if there are invalid snippets loaded
     for(auto snip : config_params)
     {
-      if(!isSnippetValid(snip.second,""))
+      if(!isSnippetValid(snip.second,QString()))
         inv_snippets.push_back(snip.first);
     }
 
@@ -547,7 +545,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
     }
 
     //Creating the action for the current snippet
-    act=new QAction(QPixmap(":/icones/icones/codesnippet.png"), snip_id, submenus[object]);
+    act=new QAction(QPixmap(QString(":/icones/icones/codesnippet.png")), snip_id, submenus[object]);
     act->setToolTip(snip[ParsersAttributes::LABEL]);
     submenus[object]->addAction(act);
   }

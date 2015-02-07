@@ -79,7 +79,7 @@ class BaseObject {
 		//! brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! brief Indicates the the cached code enabled
+    //! brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
 		//! \brief Stores the database wich the object belongs
@@ -294,7 +294,7 @@ class BaseObject {
 		virtual void setCollation(BaseObject *collation);
 
 		//! \brief Disables the SQL code commenting it on generation
-		void setSQLDisabled(bool value);
+    virtual void setSQLDisabled(bool value);
 
 		//! \brief Assign to the object a set of SQL commands to be appended to it's definition
 		void setAppendedSQL(const QString &sql);

@@ -38,7 +38,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 }
 
 BaseObjectView::~BaseObjectView(void)
-{
+{  
 	setSourceObject(nullptr);
 }
 
@@ -57,12 +57,7 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
-	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
-
-	disconnect(this, SLOT(toggleProtectionIcon(bool)));
-
-	if(graph_obj)
-		graph_obj->setReceiverObject(nullptr);
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
 	//Stores the reference to the source object as the data of graphical object
 	this->setData(0, QVariant::fromValue<void *>(object));
@@ -116,8 +111,9 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 	{
 		QGraphicsPolygonItem *pol_item=nullptr;
 
-		connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
-		graph_obj->setReceiverObject(this);
+    graph_obj->disconnect();
+    graph_obj->setReceiverObject(this);
+    connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
 
 		//By default the item can be selected and send geometry changes to the scene
 		this->setFlags(QGraphicsItem::ItemIsSelectable |
@@ -246,7 +242,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 					else if(elem==ParsersAttributes::OBJECT)
 					{
-						list=attribs[ParsersAttributes::FILL_COLOR].split(",");
+            list=attribs[ParsersAttributes::FILL_COLOR].split(',');
 						colors=new QColor[3];
 						colors[0]=(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
 						colors[1]=(list.size()==2 ? QColor(list[1]) : colors[0]);
@@ -558,8 +554,9 @@ void BaseObjectView::__configureObject(void)
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-		this->setToolTip(Utf8String::create(graph_obj->getName(true)) +
-                     " (" + graph_obj->getTypeName() + ") " + QString("\nId: %1").arg(graph_obj->getObjectId()));
+    this->setToolTip(/*Utf8String::create(*/graph_obj->getName(true) +
+                     QString(" (") + graph_obj->getTypeName() +
+                     QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}

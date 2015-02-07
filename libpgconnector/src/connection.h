@@ -86,7 +86,12 @@ class Connection {
 													SSL_PREFER,
 													SSL_REQUIRE,
 													SSL_CA_VERIF,
-													SSL_FULL_VERIF;
+                          SSL_FULL_VERIF;
+
+    //! \brief Constants used to reference the server info details (see getServerInfo())
+    static const QString	SERVER_VERSION,
+                          SERVER_PROTOCOL,
+                          SERVER_PID;
 
     Connection(void);
 		~Connection(void);
@@ -132,6 +137,9 @@ class Connection {
 
 		//! \brief Returns the full parameter map
     attribs_map getConnectionParams(void) const;
+
+    //! brief Returns a map containing some server's info
+    attribs_map getServerInfo(void);
 
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);

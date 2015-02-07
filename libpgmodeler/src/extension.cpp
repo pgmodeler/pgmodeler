@@ -4,9 +4,9 @@ Extension::Extension(void)
 {
 	obj_type=OBJ_EXTENSION;
 	handles_type=false;
-	attributes[ParsersAttributes::HANDLES_TYPE]="";
-	attributes[ParsersAttributes::CUR_VERSION]="";
-	attributes[ParsersAttributes::OLD_VERSION]="";
+	attributes[ParsersAttributes::HANDLES_TYPE]=QString();
+	attributes[ParsersAttributes::CUR_VERSION]=QString();
+	attributes[ParsersAttributes::OLD_VERSION]=QString();
 }
 
 void Extension::setName(const QString &name)
@@ -39,7 +39,12 @@ void Extension::setSchema(BaseObject *schema)
 
 		//Renames the PostgreSQL type represented by the extension
 		PgSQLType::renameUserType(prev_name, this, this->getName(true));
-	}
+  }
+}
+
+QString Extension::getSignature(bool format)
+{
+  return(getName(format, false));
 }
 
 void Extension::setHandlesType(bool value)
@@ -49,8 +54,8 @@ void Extension::setHandlesType(bool value)
 	on table columns/functions or any other objects that references PgSQLType */
 	if(!value && PgSQLType::getUserTypeIndex(this->getName(true), this) != BaseType::null)
 		throw Exception(Exception::getErrorMessage(ERR_REG_EXT_NOT_HANDLING_TYPE)
-										.arg(Utf8String::create(this->getName(true)))
-										,ERR_REG_EXT_NOT_HANDLING_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    .arg(/*Utf8String::create(*/this->getName(true)),
+                    ERR_REG_EXT_NOT_HANDLING_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->handles_type=value;
 }
@@ -83,7 +88,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::NAME]=this->getName(true, false);
-	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : "");
+	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];
 	attributes[ParsersAttributes::OLD_VERSION]=versions[OLD_VERSION];
   attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SQL_DEFINITION, false);
@@ -97,7 +102,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
     Extension *ext=dynamic_cast<Extension *>(object);
 
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
-    attributes[ParsersAttributes::NEW_VERSION]="";
+    attributes[ParsersAttributes::NEW_VERSION]=QString();
 
     if(!this->versions[CUR_VERSION].isEmpty() && !ext->versions[CUR_VERSION].isEmpty() &&
        this->versions[CUR_VERSION].isEmpty() < ext->versions[CUR_VERSION].isEmpty())

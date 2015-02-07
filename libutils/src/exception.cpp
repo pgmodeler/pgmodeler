@@ -19,7 +19,7 @@
 #include <QApplication>
 
 QString Exception::messages[ERROR_COUNT][2]={
-	{"ERR_CUSTOM", " "},
+  {"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
@@ -125,7 +125,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
 	{"ERR_ASG_INV_MAX_SIZE_OP_LIST", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
-  {"ERR_FILE_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file `%1'! Make sure the directory exists, or if the user has access permissions on it!")},
+  {"ERR_FILE_DIR_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
   {"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the model in the file `%1'' due to one or more errors in the definition generation process!")},
 	{"ERR_DUPLIC_RELATIONSHIP", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model!")},
 	{"ERR_INS_REL_GENS_REDUNDACY", QT_TR_NOOP("The configuration of the relationship `%1' generates a redundancy between the relationships `%2'. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!")},
@@ -149,7 +149,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_NAME_TABLE_RELNN",  QT_TR_NOOP("Assignment of invalid name to the table generated from N-N relationship!")},
 	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"ERR_OPR_REL_INCL_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
-	{"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
+  {"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
 	{"ERR_REDECL_HL_GROUP", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"ERR_DEF_INV_GROUP_DECL", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
 	{"ERR_DEF_NOT_DECL_GROUP", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},
@@ -223,8 +223,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_NAME_PATTERN", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
 	{"ERR_INV_USE_VARIADIC_PARAM_MODE", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with array data types!")},
-	{"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications' and `drop database' cannot be used with `simulate export'!")},
-	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
+  {"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
+  {"ERR_MIX_INCOMP_DROP_OPTS", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
+  {"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
 	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2) could not be imported due to one or more errors! Check the exception stack for more details.")},
@@ -243,7 +244,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 
 Exception::Exception(void)
 {
-	configureException("",ERR_CUSTOM,"","",-1,"");
+  configureException(QString(),ERR_CUSTOM,QString(),QString(),-1,QString());
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -339,7 +340,7 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		 context (Exception) in the ts file and the text to be translated */
 		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", -1));
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getErrorCode(ErrorType error_type)
@@ -347,7 +348,7 @@ QString Exception::getErrorCode(ErrorType error_type)
 	if(error_type < ERROR_COUNT)
 		return(messages[error_type][ERROR_CODE]);
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getMethod(void)
@@ -423,7 +424,7 @@ QString Exception::getExceptionsText(void)
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-			exceptions_txt+="\n";
+      exceptions_txt+=QString("\n");
 
 		itr++; idx--;
 	}

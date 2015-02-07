@@ -99,6 +99,14 @@ ObjectsScene::~ObjectsScene(void)
 			items.pop_front();
 		}
 	}
+
+  //The graphical representation of db objects must be destroyed in a sorted way
+  std::sort(removed_objs.begin(), removed_objs.end());
+  while(!removed_objs.empty())
+  {
+    delete(removed_objs.back());
+    removed_objs.pop_back();
+  }
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
@@ -324,7 +332,7 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
       //The QTBUG-33645 is fixed on Qt 5.3
       QPageLayout pl;
       QPageSize ps;
-      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
+      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
       pl.setPageSize(ps);
       pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
       printer->setPageSize(pl.pageSize());
@@ -412,26 +420,24 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 {
 	if(item)
 	{
-		BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
+    BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
 
-		if(rel)
-		{
-			disconnect(rel, nullptr, this, nullptr);
-			rel->disconnectTables();
-		}
-		else if(tab)
-			disconnect(tab, nullptr, this, nullptr);
-		else if(object)
-			disconnect(object, nullptr, this, nullptr);
+    if(rel)
+      rel->disconnectTables();
 
 		item->setVisible(false);
 		item->setActive(false);
-		QGraphicsScene::removeItem(item);
+    QGraphicsScene::removeItem(item);
 
-		if(object)
-		 delete(item);
+    if(object)
+    {
+      disconnect(object, nullptr, this, nullptr);
+      disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
+      disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
+      removed_objs.push_back(object);
+      //delete(item);
+    }
 	}
 }
 

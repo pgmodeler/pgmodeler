@@ -42,7 +42,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
     *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
-    *keep_obj_perms_ht, *ignore_duplic_ht;
+    *keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht;
 
     //! brief Syntax highlighter used on the diff preview tab
     SyntaxHighlighter *sqlcode_hl;
@@ -95,9 +95,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void saveDiffToFile(void);
     void finishDiff(void);
 
-    //! brief Creates and adds a tree item on the output
-    QTreeWidgetItem *createOutputItem(const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap=false);
-
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);
@@ -115,6 +112,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void handleImportFinished(Exception e);
     void handleDiffFinished(void);
     void handleExportFinished(void);
+    void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
     void selectOutputFile(void);
 		void importDatabase(void);
 		void diffModels(void);

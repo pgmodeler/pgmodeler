@@ -175,7 +175,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-    void addModel(const QString &filename="");
+    void addModel(const QString &filename=QString());
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -258,7 +258,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateConnections(void);
 
 		//! \brief Save the temp files for all opened models
-    void saveTemporaryModels(void);//(bool force=false);
+    void saveTemporaryModels(void);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
@@ -267,21 +267,20 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
-		void fixModel(const QString &filename="");
+    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
+    void executePendingOperation(bool valid_error);
+
+		void fixModel(const QString &filename=QString());
     void showRightWidgetsBar(void);
     void showBottomWidgetsBar(void);
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
 		void removeModelActions(void);
-
 		void showDemoVersionWarning(void);
 		void quitDemoVersion(void);
-
-    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
-    void executePendingOperation(bool valid_error);
-
     void changeCurrentView(bool checked);
+    void reportBug(void);
 };
 
 #endif

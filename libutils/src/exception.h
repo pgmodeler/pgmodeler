@@ -31,11 +31,10 @@
 #include <signal.h>
 #include <vector>
 #include <deque>
-#include "utf8string.h"
 
 using namespace std;
 
-static const int ERROR_COUNT=220;
+static const int ERROR_COUNT=221;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -156,7 +155,7 @@ enum ErrorType {
 	ERR_REF_OBJ_INEXISTS_MODEL,
 	ERR_REF_INEXIST_USER_TYPE,
 	ERR_ASG_INV_MAX_SIZE_OP_LIST,
-	ERR_FILE_NOT_WRITTEN,
+  ERR_FILE_DIR_NOT_WRITTEN,
 	ERR_FILE_NOT_WRITTER_INV_DEF,
 	ERR_DUPLIC_RELATIONSHIP,
 	ERR_INS_REL_GENS_REDUNDACY,
@@ -255,6 +254,7 @@ enum ErrorType {
 	ERR_REF_INV_NAME_PATTERN_ID,
 	ERR_INV_USE_VARIADIC_PARAM_MODE,
 	ERR_MIX_INCOMP_EXPORT_OPTS,
+  ERR_MIX_INCOMP_DROP_OPTS,
 	ERR_INV_ID_SWAP_SAME_OBJECT,
 	ERR_INV_ID_SWAP_INV_OBJ_TYPE,
 	ERR_ASG_WGT_ALREADY_HAS_PARENT,
@@ -315,12 +315,12 @@ class Exception {
 
 	public:
 		Exception(void);
-		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
-		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
-		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+    Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+    Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 
 		~Exception(void){}
 		QString getErrorMessage(void);

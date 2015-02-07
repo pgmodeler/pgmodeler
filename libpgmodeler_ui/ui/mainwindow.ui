@@ -651,7 +651,9 @@
      <string>Help</string>
     </property>
     <addaction name="action_wiki"/>
+    <addaction name="action_bug_report"/>
     <addaction name="action_check_update"/>
+    <addaction name="separator"/>
     <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="show_menu">
@@ -1385,6 +1387,15 @@
    </property>
    <property name="toolTip">
     <string>Manage existent databases</string>
+   </property>
+  </action>
+  <action name="action_bug_report">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/bugreport.png</normaloff>:/icones/icones/bugreport.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bug report</string>
    </property>
   </action>
  </widget>

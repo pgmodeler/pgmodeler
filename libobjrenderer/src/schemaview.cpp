@@ -20,7 +20,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+  connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
 	sch_name=new QGraphicsSimpleTextItem;
   sch_name->setZValue(1);
@@ -43,15 +43,13 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
-SchemaView::~SchemaView()
+SchemaView::~SchemaView(void)
 {
   this->removeFromGroup(box);
   this->removeFromGroup(sch_name);
 
   delete(box);
   delete(sch_name);
-
-	disconnect(this, nullptr, dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), nullptr);
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -185,7 +183,7 @@ void SchemaView::configureObject(void)
 		}
 
     //Configures the schema name at the top
-    sch_name->setText(Utf8String::create(schema->getName()));
+    sch_name->setText(/*Utf8String::create(*/schema->getName());
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
@@ -227,7 +225,7 @@ void SchemaView::configureObject(void)
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
+    this->setToolTip(/*Utf8String::create(*/schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
 		sch_name->setToolTip(this->toolTip());
 
     this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,

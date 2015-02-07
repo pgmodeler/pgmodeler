@@ -278,7 +278,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
-    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type);
+    /*! brief Returns the creation order of objects in each definition type (SQL or XML).
+        The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
+        of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
+        is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
+    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
@@ -403,7 +407,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		int getPermissionIndex(Permission *perm);
 
 		//! \brief Inserts a list of permissions into the model
-		void addPermissions(vector<Permission *> &perms);
+    void addPermissions(const vector<Permission *> &perms);
 
 		//! \brief Removes all the permission related to the passed object
 		void removePermissions(BaseObject *object);
@@ -479,6 +483,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 generally applied when excluding objects, this means that the method will stop the search when the first
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
+
+    /*! brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
+        meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
+    void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
     /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
      graphical objects to be marked */

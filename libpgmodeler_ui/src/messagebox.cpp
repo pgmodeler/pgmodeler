@@ -17,6 +17,7 @@
 */
 
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -123,19 +124,19 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 
 		item1=new QTreeWidgetItem(item);
 		item1->setIcon(0,QPixmap(QString(":/icones/icones/codigofonte.png")));
-		item1->setText(0,ex->getFile() + " (" + ex->getLine() + ")");
+    item1->setText(0,ex->getFile() + QString(" (") + ex->getLine() + QString(")"));
 
 		item2=new QTreeWidgetItem(item);
 		item2->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 		item2->setText(0,Exception::getErrorCode(ex->getErrorType()) +
-									 " (" + QString("%1").arg(ex->getErrorType()) + ")");
+                   QString(" (") + QString("%1").arg(ex->getErrorType()) + QString(")"));
 
 		item1=new QTreeWidgetItem(item);
-		item1->setIcon(0,QPixmap(":/icones/icones/msgbox_erro.png"));
+    item1->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 		label=new QLabel;
 		label->setWordWrap(true);
 		label->setFont(font);
-		label->setStyleSheet("color: #ff0000;");
+    label->setStyleSheet(QString("color: #ff0000;"));
 		exceptions_trw->setItemWidget(item1, 0, label);
 		label->setText(ex->getErrorMessage());
 
@@ -146,7 +147,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 			label=new QLabel;
 			label->setWordWrap(true);
 			label->setFont(font);
-			label->setStyleSheet("color: #000080;");
+      label->setStyleSheet(QString("color: #000080;"));
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			exceptions_trw->setItemWidget(item1, 0, label);
 			label->setText(ex->getExtraInfo());
@@ -157,26 +158,16 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 	}
 
 	if(msg.isEmpty())
-		str_aux=e.getErrorMessage();
+    str_aux=PgModelerUiNS::formatMessage(e.getErrorMessage());
 	else
-		str_aux=msg;
-
-	if(str_aux.contains("`") && str_aux.contains("'"))
-	{
-		str_aux.replace("`", "<strong>");
-		str_aux.replace("\'","</strong>");
-		str_aux.replace("(", "<em>(");
-		str_aux.replace(")", ")</em>");
-	}
-
-	str_aux.replace("\n", "<br/>");
+    str_aux=PgModelerUiNS::formatMessage(msg);
 
   this->show(title, str_aux, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
 void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
 {
-  this->show("", msg,  icon_type, buttons);
+  this->show(QString(), msg,  icon_type, buttons);
 }
 
 void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,
@@ -189,13 +180,13 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
   else
     yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
 
-  yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(":/icones/icones/confirmar.png"));
+  yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(QString(":/icones/icones/confirmar.png")));
 
   no_btn->setText(!no_lbl.isEmpty() ? no_lbl : trUtf8("&No"));
-  no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) :QPixmap(":/icones/icones/fechar1.png") );
+  no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(QString(":/icones/icones/fechar1.png")));
 
   cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : trUtf8("&Cancel"));
-  cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(":/icones/icones/cancelar.png"));
+  cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(QString(":/icones/icones/cancelar.png")));
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
@@ -225,35 +216,35 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	switch(icon_type)
 	{
 		case ERROR_ICON:
-			icon_name="msgbox_erro.png";
+      icon_name=QString("msgbox_erro.png");
 		break;
 
 		case INFO_ICON:
-			icon_name="msgbox_info.png";
+      icon_name=QString("msgbox_info.png");
 		break;
 
 		case ALERT_ICON:
-			icon_name="msgbox_alerta.png";
+      icon_name=QString("msgbox_alerta.png");
 		break;
 
 		case CONFIRM_ICON:
-			icon_name="msgbox_quest.png";
+      icon_name=QString("msgbox_quest.png");
 		break;
 
 		default:
-			icon_name="";
+			icon_name=QString();
 		break;
 	}
 
 	cancelled=false;
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
-	if(icon_name!="")
-		icon_lbl->setPixmap(QPixmap((":/icones/icones/" + icon_name)));
+  if(!icon_name.isEmpty())
+    icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + icon_name));
 
 	msg_lbl->setText(msg);
 
-  this->setWindowTitle("pgModeler - " + aux_title);
+  this->setWindowTitle(QString("pgModeler - ") + aux_title);
 	this->objs_group_wgt->setCurrentIndex(0);
 	this->show_errors_tb->setChecked(false);
 	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
@@ -263,8 +254,8 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
   QFontMetrics fm(msg_lbl->font());
   QString aux_msg=msg;
-	aux_msg.replace(QRegExp("(<)(br)(/)?(>)", Qt::CaseInsensitive),"\n");
-	QSize size=QSize(msg_lbl->width(), fm.height() * (aux_msg.count("\n") + 1));
+  aux_msg.replace(QRegExp(QString("(<)(br)(/)?(>)"), Qt::CaseInsensitive), QString("\n"));
+  QSize size=QSize(msg_lbl->width(), fm.height() * (aux_msg.count('\n') + 1));
 	int max_h=msg_lbl->minimumHeight() * 3;
 
 	//Resizing the message box if the text height is greater than the default size

@@ -54,6 +54,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void saveConfiguration(void);
 		void loadConfiguration(void);
     static void addConfigurationParam(const QString &param, const attribs_map &attribs);
+    static void removeConfigurationParam(const QRegExp &param_reg);
     static map<QString, attribs_map> getConfigurationParams(void);
 
 	public slots:

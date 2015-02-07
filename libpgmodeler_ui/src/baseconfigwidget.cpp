@@ -82,8 +82,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(cfg_filename)),
-											ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/cfg_filename),
+											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());
@@ -93,7 +93,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(Utf8String::create(cfg_filename)),
+    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(/*Utf8String::create(*/cfg_filename),
 										ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -118,7 +118,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
-		throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(Utf8String::create(default_file)),
+    throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(/*Utf8String::create(*/default_file),
 										ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{

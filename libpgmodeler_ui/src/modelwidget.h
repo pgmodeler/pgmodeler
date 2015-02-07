@@ -49,7 +49,7 @@ class ModelWidget: public QWidget {
     bool modified;
 
 		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *obj);
+    void configureSubmenu(BaseObject *object);
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -100,7 +100,9 @@ class ModelWidget: public QWidget {
           //! \brief Stores the tags used by the "set tag" operation
           tags_menu,
 
-					break_rel_menu;
+          break_rel_menu,
+
+          del_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -126,7 +128,7 @@ class ModelWidget: public QWidget {
     //! brief This timer controls the interval the zoom label is visible
     QTimer zoom_info_timer;
 
-	protected:
+  protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
 													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
@@ -137,6 +139,8 @@ class ModelWidget: public QWidget {
             *action_protect,
             *action_unprotect,
             *action_remove,
+            *action_single_del,
+            *action_cascade_del,
             *action_select_all,
             *action_convert_relnn,
             *action_copy,
@@ -157,7 +161,9 @@ class ModelWidget: public QWidget {
             *action_conv_int_serial,
             *action_break_rel_line,
             *action_remove_rel_points,
-            *action_set_tag;
+            *action_set_tag,
+            *action_disable_sql,
+            *action_enable_sql;
 
     //! \brief Actions used to create new objects on the model
     map<ObjectType, QAction *> actions_new_objects;
@@ -296,7 +302,7 @@ private slots:
 		void selectSchemaChildren(void);
 
 		//! \brief Removes the selected objects
-		void removeObjects(void);
+    void removeObjects(bool cascade);
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects(void);
@@ -344,7 +350,10 @@ private slots:
 		void highlightObject(void);
 
     void toggleNewObjectOverlay(void);
+
     void adjustOverlayPosition(void);
+
+    void toggleObjectSQL(void);
 
 	public slots:
 		void loadModel(const QString &filename);
