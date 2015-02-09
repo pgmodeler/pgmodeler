@@ -178,6 +178,12 @@
      <height>48</height>
     </size>
    </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>48</height>
+    </size>
+   </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
    </property>
@@ -255,6 +261,9 @@
    </layout>
   </widget>
   <widget class="QToolButton" name="swap_values_tb">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>424</x>
