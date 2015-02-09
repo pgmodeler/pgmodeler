@@ -100,9 +100,7 @@ class ModelWidget: public QWidget {
           //! \brief Stores the tags used by the "set tag" operation
           tags_menu,
 
-          break_rel_menu,
-
-          del_menu;
+          break_rel_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -139,7 +137,6 @@ class ModelWidget: public QWidget {
             *action_protect,
             *action_unprotect,
             *action_remove,
-            *action_single_del,
             *action_cascade_del,
             *action_select_all,
             *action_convert_relnn,

@@ -187,15 +187,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
-  action_remove->setMenu(&del_menu);
+  action_remove->setShortcut(QKeySequence(trUtf8("Del")));
 
-  action_single_del=new QAction(trUtf8("Selected only"), this);
-  action_single_del->setShortcut(QKeySequence(trUtf8("Del")));
-  del_menu.addAction(action_single_del);
-
-  action_cascade_del=new QAction(trUtf8("Cascade"), this);
+  action_cascade_del=new QAction(QIcon(QString(":/icones/icones/delcascade.png")), trUtf8("Del. cascade"), this);
   action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
-  del_menu.addAction(action_cascade_del);
 
 	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
   action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
@@ -331,7 +326,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
   connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
   connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 
-  connect(action_single_del, &QAction::triggered, [=](){ removeObjects(false); });
+  connect(action_remove, &QAction::triggered, [=](){ removeObjects(false); });
   connect(action_cascade_del, &QAction::triggered, [=](){ removeObjects(true); });
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
@@ -2445,7 +2440,7 @@ void ModelWidget::removeObjects(bool cascade)
 		Messagebox msg_box;
 
 		//Cancel the cut operation if the user try to delete an object in the middle of the process
-    if(ModelWidget::cut_operation && (sender()==action_single_del || sender()==action_cascade_del))
+    if(ModelWidget::cut_operation && (sender()==action_remove || sender()==action_cascade_del))
 		{
 			ModelWidget::cut_operation=false;
 			copied_objects.clear();
@@ -2808,6 +2803,7 @@ void ModelWidget::enableModelActions(bool value)
 	action_paste->setEnabled(value);
 	action_cut->setEnabled(value);
   action_remove->setEnabled(value);
+  action_cascade_del->setEnabled(value);
 	action_quick_actions->setEnabled(value);
 }
 
@@ -3181,8 +3177,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		 (objects.size()==1 && objects[0]->getObjectType()==BASE_RELATIONSHIP &&
 			dynamic_cast<BaseRelationship *>(objects[0])->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK) ||
 		 objects.size() > 1)
-    //popup_menu.addAction(action_remove);
-    popup_menu.addMenu(&del_menu);
+  {
+    popup_menu.addAction(action_remove);
+    popup_menu.addAction(action_cascade_del);
+  }
 
 	//If the table object is a column creates a special menu to acess the constraints that is applied to the column
 	if(tab_obj)
@@ -3248,24 +3246,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 							}
 						}
 
-            QMenu *aux_menu=new QMenu(submenu);
-
 						action=new QAction(dynamic_cast<QObject *>(submenu));
 						action->setIcon(QPixmap(QString(":/icones/icones/excluir.png")));
-						action->setText(trUtf8("Delete"));
-            action->setMenu(aux_menu);
-            submenu->addAction(action);
-
-            action=new QAction(dynamic_cast<QObject *>(submenu));
             action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-            action->setText(trUtf8("Selected only"));
-            aux_menu->addAction(action);
+						action->setText(trUtf8("Delete"));
+            submenu->addAction(action);
             connect(action, &QAction::triggered, [=](){ removeObjects(false); });
 
             action=new QAction(dynamic_cast<QObject *>(submenu));
+            action->setIcon(QPixmap(QString(":/icones/icones/delcascade.png")));
             action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-            action->setText(trUtf8("Cascade"));
-            aux_menu->addAction(action);
+            action->setText(trUtf8("Del. cascade"));
+            submenu->addAction(action);
             connect(action, &QAction::triggered, [=](){ removeObjects(true); });
 					}
 					submenus.push_back(submenu);
@@ -3379,6 +3371,7 @@ void ModelWidget::toggleObjectSQL(void)
   {
     BaseObject *object=reinterpret_cast<BaseObject *>(action->data().value<void *>());
     PgModelerUiNS::disableObjectSQL(object, !object->isSQLDisabled());
+    this->modified=true;
   }
 }
 
