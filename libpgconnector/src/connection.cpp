@@ -53,6 +53,7 @@ bool Connection::silence_conn_err=true;
 Connection::Connection(void)
 {
   connection=nullptr;
+  auto_browse_db=false;
 }
 
 Connection::~Connection(void)
@@ -93,6 +94,11 @@ void Connection::setConnectionParams(const attribs_map &params)
 {
   this->connection_params=params;
   generateConnectionString();
+}
+
+void Connection::setAutoBrowseDB(bool value)
+{
+  auto_browse_db=value;
 }
 
 void Connection::generateConnectionString(void)
@@ -256,7 +262,12 @@ QString Connection::getConnectionId(void)
 
 bool Connection::isStablished(void)
 {
-	return(connection!=nullptr);
+  return(connection!=nullptr);
+}
+
+bool Connection::isAutoBrowseDB(void)
+{
+  return(auto_browse_db);
 }
 
 QString  Connection::getPgSQLVersion(bool major_only)
@@ -373,6 +384,7 @@ void Connection::operator = (const Connection &conn)
   if(this->isStablished())
    this->close();
 
+  this->auto_browse_db=conn.auto_browse_db;
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
 	this->connection=nullptr;

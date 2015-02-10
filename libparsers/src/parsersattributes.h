@@ -59,6 +59,7 @@ namespace ParsersAttributes {
   ASC_ORDER=QString("asc-order"),
   ASSIGNMENT=QString("assignment"),
   ATTRIBUTE=QString("attribute"),
+  AUTO_BROWSE_DB=QString("auto-browse-db"),
   AUTOSAVE_INTERVAL=QString("autosave-interval"),
   BACKGROUND_COLOR=QString("background-color"),
   BASE_TYPE=QString("base"),

@@ -134,6 +134,12 @@ void SQLToolWidget::connectToServer(void)
 		connect_tb->setEnabled(false);
 		disconnect_tb->setEnabled(true);
     refresh_tb->setEnabled(true);
+
+    if(sender()==connect_tb && conn->isAutoBrowseDB())
+    {
+      database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
+      browseDatabase();
+    }
 	}
 	catch(Exception &e)
 	{

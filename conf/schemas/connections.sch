@@ -37,9 +37,14 @@ $tb $tb [sslmode=] "{sslmode}" $br
  %end
 %end
 
+%if {auto-browse-db} %then
+ $br $tb $tb auto-browse-db="true"
+%end
+
 %if {options} %then
  $br $tb $tb options="{options}"
 %end
+
 
 /> $br
 %end

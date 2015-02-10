@@ -26,6 +26,9 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 {
   Ui_ConnectionsConfigWidget::setupUi(this);
 
+  auto_browse_ht=new HintTextWidget(auto_browse_hint, this);
+  auto_browse_ht->setText(auto_browse_chk->statusTip());
+
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
 
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
@@ -112,6 +115,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
 			conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
+      conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
 
       connections.push_back(conn);
       connections_cmb->addItem(conn->getConnectionId());
@@ -159,6 +163,8 @@ void ConnectionsConfigWidget::newConnection(void)
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
 	options_edt->clear();
+
+  auto_browse_chk->setChecked(false);
 
 	ssl_mode_cmb->setCurrentIndex(0);
   client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
@@ -263,6 +269,7 @@ void ConnectionsConfigWidget::editConnection(void)
 
     conn=connections.at(connections_cmb->currentIndex());
     alias_edt->setText(conn->getConnectionParam(Connection::PARAM_ALIAS));
+    auto_browse_chk->setChecked(conn->isAutoBrowseDB());
 
 		if(!conn->getConnectionParam(Connection::PARAM_SERVER_FQDN).isEmpty())
 			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_FQDN));
@@ -313,6 +320,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 {
 	if(conn)
 	{
+    conn->setAutoBrowseDB(auto_browse_chk->isChecked());
     conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
 		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
@@ -440,6 +448,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
 
         attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
+        attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=

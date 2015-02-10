@@ -63,6 +63,10 @@ class Connection {
     //! \brief Indicates if error silence is enabled
     silence_conn_err;
 
+    /*! brief Indicates that the initial database configured in the connection can be automatically
+        browsed after connect the server. This attribute is useful only in SQLTool */
+    bool auto_browse_db;
+
 	public:
 		//! \brief Constants used to reference the connections parameters
     static const QString	PARAM_ALIAS,
@@ -80,7 +84,7 @@ class Connection {
 													PARAM_SSL_ROOT_CERT,
 													PARAM_SSL_CRL,
 													PARAM_KERBEROS_SERVER,
-													PARAM_LIB_GSSAPI,
+                          PARAM_LIB_GSSAPI,
 													SSL_DESABLE,
 													SSL_ALLOW,
 													SSL_PREFER,
@@ -123,6 +127,9 @@ class Connection {
     //! brief Sets all the connection parameters at once
     void setConnectionParams(const attribs_map &params);
 
+    //! brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
+    void setAutoBrowseDB(bool value);
+
 		//! \brief Open the connection to the database
 		void connect(void);
 
@@ -159,6 +166,9 @@ class Connection {
 
 		//! \brief Returns if the connections is stablished
 		bool isStablished(void);
+
+    //! brief Returns if the db configured in the connection can be automatically browsed in SQLTool
+    bool isAutoBrowseDB(void);
 
 		/*! \brief Executes a DML command on the server using the opened connection.
 		 Its mandatory to specify the object to receive the returned resultset. */
