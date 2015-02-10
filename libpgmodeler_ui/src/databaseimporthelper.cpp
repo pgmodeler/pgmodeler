@@ -1776,7 +1776,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 				if(obj_type==OBJ_DATABASE)
 					object=dbmodel;
 				else
-					object=dbmodel->getObject(getObjectName(attribs[ParsersAttributes::OID]), obj_type);
+          object=dbmodel->getObject(getObjectName(attribs[ParsersAttributes::OID], true), obj_type);
 			}
 			else
 			{
