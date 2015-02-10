@@ -874,6 +874,23 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>settings_twg</tabstop>
+  <tabstop>fk_to_pk_chk</tabstop>
+  <tabstop>center_pnts_chk</tabstop>
+  <tabstop>deferrable_chk</tabstop>
+  <tabstop>deferral_cmb</tabstop>
+  <tabstop>del_action_cmb</tabstop>
+  <tabstop>upd_action_cmb</tabstop>
+  <tabstop>rel_type_cmb</tabstop>
+  <tabstop>src_col_pattern_txt</tabstop>
+  <tabstop>dst_col_pattern_txt</tabstop>
+  <tabstop>src_fk_pattern_txt</tabstop>
+  <tabstop>dst_fk_pattern_txt</tabstop>
+  <tabstop>pk_pattern_txt</tabstop>
+  <tabstop>uq_pattern_txt</tabstop>
+  <tabstop>pk_col_pattern_txt</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>
  </resources>

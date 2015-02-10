@@ -50,6 +50,17 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
   center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
   center_pnts_ht->setText(center_pnts_chk->statusTip());
 
+  DeferralType::getTypes(list);
+  deferral_cmb->addItems(list);
+
+  ActionType::getTypes(list);
+  list.push_front(trUtf8("Default"));
+  del_action_cmb->addItems(list);
+  upd_action_cmb->addItems(list);
+
+  for(int i=0; i < rel_types.size(); i++)
+    rel_type_cmb->setItemData(i, rel_types[i]);
+
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
   connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
@@ -58,18 +69,12 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
-	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
+  connect(deferrable_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
-	DeferralType::getTypes(list);
-	deferral_cmb->addItems(list);
-
-	ActionType::getTypes(list);
-	list.push_front(trUtf8("Default"));
-	del_action_cmb->addItems(list);
-	upd_action_cmb->addItems(list);
-
-	for(int i=0; i < rel_types.size(); i++)
-		rel_type_cmb->setItemData(i, rel_types[i]);
+	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));  
+  connect(del_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
+  connect(upd_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
+  connect(deferral_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
 }
 
 map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
@@ -230,6 +235,7 @@ void RelationshipConfigWidget::updatePattern(void)
                                          { pk_col_pattern_txt, ParsersAttributes::PK_COL_PATTERN   } };
 
 
+  setConfigurationChanged(true);
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();
 }
 
