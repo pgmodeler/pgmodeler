@@ -34,7 +34,7 @@
 
 using namespace std;
 
-static const int ERROR_COUNT=221;
+static const int ERROR_COUNT=222;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -269,7 +269,8 @@ enum ErrorType {
 	ERR_INV_CONV_INTEGER_TO_SERIAL,
 	ERR_ASG_INV_EVENT_TRIGGER_VARIABLE,
 	ERR_ROW_DATA_NOT_MANIPULATED,
-	ERR_MALFORMED_UNESCAPED_VALUE
+  ERR_MALFORMED_UNESCAPED_VALUE,
+  ERR_UNDO_REDO_OPR_INV_OBJECT
 };
 
 class Exception {

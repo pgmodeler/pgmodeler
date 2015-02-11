@@ -1700,12 +1700,12 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>150</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
             <property name="text">
-             <string>&amp;Apply on Server</string>
+             <string>&amp;Apply diff</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -1742,6 +1742,19 @@
              <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>

@@ -612,8 +612,8 @@ void OperationList::undoOperation(void)
     while(!ignore_chain && isUndoAvailable() &&
           operation->getChainType()!=Operation::NO_CHAIN);
 
-		if(error.getErrorType()!=ERR_CUSTOM)
-			throw Exception(error.getErrorMessage(), error.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    if(error.getErrorType()!=ERR_CUSTOM)
+      throw Exception(ERR_UNDO_REDO_OPR_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
 
@@ -676,7 +676,7 @@ void OperationList::redoOperation(void)
           operation->getChainType()!=Operation::NO_CHAIN);
 
 		if(error.getErrorType()!=ERR_CUSTOM)
-			throw Exception(error.getErrorMessage(), error.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(ERR_UNDO_REDO_OPR_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
 

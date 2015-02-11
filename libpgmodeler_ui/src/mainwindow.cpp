@@ -573,27 +573,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			count=models_tbw->count();
 
-      //Saving the session
-      if(count > 0)
-      {
-        for(i=0; i < count; i++)
-        {
-          model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+      //Remove the references to old session
+      conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(ParsersAttributes::_FILE_)));
 
-          if(!model->getFilename().isEmpty())
-          {
-            param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
-            attribs[ParsersAttributes::ID]=param_id;
-            attribs[ParsersAttributes::PATH]=model->getFilename();
-            conf_wgt->addConfigurationParam(param_id, attribs);
-            attribs.clear();
-          }
-        }
-      }
-      else
+      //Saving the session
+      for(i=0; i < count; i++)
       {
-          //Remove the reference for old session
-         conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(ParsersAttributes::_FILE_)));
+        model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+
+        if(!model->getFilename().isEmpty())
+        {
+          param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
+          attribs[ParsersAttributes::ID]=param_id;
+          attribs[ParsersAttributes::PATH]=model->getFilename();
+          conf_wgt->addConfigurationParam(param_id, attribs);
+          attribs.clear();
+        }
       }
 
 			//Saving recent models list

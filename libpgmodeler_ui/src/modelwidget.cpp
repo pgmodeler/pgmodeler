@@ -680,7 +680,7 @@ void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
 void ModelWidget::handleObjectsMovement(bool end_moviment)
 {
 	vector<BaseObject *>::iterator itr, itr_end;
-	vector<BaseObject *> reg_tables;
+  vector<BaseObject *> reg_tables;
 	QList<BaseObjectView *> tables;
 
 	BaseGraphicObject *obj=nullptr;
@@ -708,13 +708,13 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
 					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
-					for(auto tab : tables)
+          for(auto tab : tables)
 					{
 						op_list->registerObject(tab->getSourceObject(), Operation::OBJECT_MOVED);
 
 						//Registers the table on a auxiliary list to avoid multiple registration on operation history
 						reg_tables.push_back(tab->getSourceObject());
-					}
+          }
 				}
 			}
 

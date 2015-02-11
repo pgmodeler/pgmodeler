@@ -174,7 +174,14 @@ void OperationListWidget::undoOperation(void)
 		task_prog_wgt.close();
 		this->updateOperationList();
 		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+
+    if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+    {
+      Messagebox msg_box;
+      msg_box.show(e, "", Messagebox::ALERT_ICON);
+    }
+    else
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -202,7 +209,14 @@ void OperationListWidget::redoOperation(void)
 		task_prog_wgt.close();
 		this->updateOperationList();
 		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+
+    if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+    {
+      Messagebox msg_box;
+      msg_box.show(e, "", Messagebox::ALERT_ICON);
+    }
+    else
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
