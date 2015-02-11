@@ -716,9 +716,10 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
           {
             base_rel=dynamic_cast<BaseRelationship *>(rel);
 
-            /* If the relationship contains points it will be included on the list in order to
-             move their custom line points */
-            if(!base_rel->getPoints().empty())
+            /* If the relationship contains points and it is not selected then it will be included on the list
+               in order to move their custom line points */
+            if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+               !base_rel->getPoints().empty())
               rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
           }
         }
