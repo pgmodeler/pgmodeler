@@ -46,7 +46,8 @@ namespace GlobalAttributes {
   PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
   PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
   PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
-  PGMODELER_BIN_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
+  PGMODELER_PURCHASE_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
+  PGMODELER_RECOVER_URL=QString("%1/recover.php").arg(PGMODELER_SITE),
   PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
 
   BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),

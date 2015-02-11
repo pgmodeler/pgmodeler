@@ -323,7 +323,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Show raw text errors or information.</string>
+           <string>Redirects to purchase page.</string>
           </property>
           <property name="text">
            <string>Get binary package</string>
@@ -341,6 +341,9 @@
           <property name="checkable">
            <bool>false</bool>
           </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
           <property name="toolButtonStyle">
            <enum>Qt::ToolButtonTextBesideIcon</enum>
           </property>
@@ -355,7 +358,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Show raw text errors or information.</string>
+           <string>Redirects to GitHub source repository.</string>
           </property>
           <property name="text">
            <string>Get source code</string>
