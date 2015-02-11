@@ -8137,14 +8137,16 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
             unsigned count, idx, count1, i1;
 						Trigger *trig=nullptr;
             Index *index=nullptr;
+            Constraint *constr=nullptr;
 
             count=tab->getConstraintCount();
             for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
-							if(tab->getConstraint(idx)->isColumnReferenced(column))
+              constr=tab->getConstraint(idx);
+              if(constr->isColumnReferenced(column))
 							{
 								refer=true;
-								refs.push_back(tab->getConstraint(idx));
+                refs.push_back(constr);
 							}
 						}
 
