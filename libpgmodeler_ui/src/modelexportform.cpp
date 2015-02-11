@@ -98,6 +98,8 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 
 	if(obj_type!=BASE_OBJECT)
     ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
+  else if(!cmd.isEmpty())
+    ico=QPixmap(QString(":/icones/icones/codigosql.png"));
 	else
     ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 

@@ -287,17 +287,38 @@ bool Index::isReferCollation(Collation *collation)
 	vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
+  if(!collation) return(false);
+
 	itr=idx_elements.begin();
 	itr_end=idx_elements.end();
 
 	//Checks if some of the elements is referencing the collation
 	while(itr!=itr_end && !found)
 	{
-		found=(collation && (*itr).getCollation());
+    found=((*itr).getCollation()==collation);
 		itr++;
 	}
 
 	return(found);
+}
+
+bool Index::isReferColumn(Column *column)
+{
+  vector<IndexElement>::iterator itr, itr_end;
+  bool found=false;
+
+  if(!column) return(false);
+
+  itr=idx_elements.begin();
+  itr_end=idx_elements.end();
+
+  while(itr!=itr_end && !found)
+  {
+    found=((*itr).getColumn()==column);
+    itr++;
+  }
+
+  return(found);
 }
 
 QString Index::getCodeDefinition(unsigned def_type)

@@ -134,6 +134,9 @@ class Index: public TableObject{
 
 		//! \brief Returns if some index element is referencing the specified collation
     bool isReferCollation(Collation *collation);
+
+    //! brief Returns if some index element is referencing the specified column
+    bool isReferColumn(Column *column);
 };
 
 #endif
