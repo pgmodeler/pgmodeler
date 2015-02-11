@@ -8134,22 +8134,33 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					else if(obj_types[i]==OBJ_TABLE)
 					{
 						Table *tab=dynamic_cast<Table *>(*itr);
-						unsigned trig_cnt, constr_cnt, idx, count1, i1;
+            unsigned count, idx, count1, i1;
 						Trigger *trig=nullptr;
+            Index *index=nullptr;
 
-						constr_cnt=tab->getConstraintCount();
-						for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+            count=tab->getConstraintCount();
+            for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
 							if(tab->getConstraint(idx)->isColumnReferenced(column))
 							{
 								refer=true;
 								refs.push_back(tab->getConstraint(idx));
 							}
-
 						}
 
-						trig_cnt=tab->getTriggerCount();
-						for(idx=0; idx < trig_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+            count=tab->getIndexCount();
+            for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+            {
+              index=tab->getIndex(idx);
+              if(index->isReferColumn(column))
+              {
+                refer=true;
+                refs.push_back(index);
+              }
+            }
+
+            count=tab->getTriggerCount();
+            for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
 							trig=tab->getTrigger(idx);
 							count1=trig->getColumnCount();
