@@ -95,7 +95,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 AppearanceConfigWidget::~AppearanceConfigWidget(void)
 {
-	delete(viewp);
+  delete(viewp);
 	delete(scene);
 	delete(model);
 }
