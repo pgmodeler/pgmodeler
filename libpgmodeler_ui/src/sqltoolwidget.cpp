@@ -538,8 +538,6 @@ void SQLToolWidget::dropDatabase(void)
 
 		try
 		{
-			enableSQLExecution(false);
-
       //Closing tabs related to the database to be dropped
       for(int i=0; i < databases_tbw->count(); i++)
       {
@@ -555,6 +553,8 @@ void SQLToolWidget::dropDatabase(void)
 			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(database_cmb->currentText()));
 			aux_conn.close();
       connectToServer();
+
+      setCurrentDatabase(databases_tbw->currentIndex());
 		}
 		catch(Exception &e)
 		{
@@ -627,10 +627,9 @@ void SQLToolWidget::setCurrentDatabase(int idx)
     sql_cmd_conn.close();
 
     if(db_explorer)
-    {
       sql_cmd_conn=db_explorer->getConnection();
-      enableSQLExecution(true);
-    }
+
+    enableSQLExecution(db_explorer!=nullptr);
   }
   catch(Exception &e)
   {
