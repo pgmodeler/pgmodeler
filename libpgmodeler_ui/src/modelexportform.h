@@ -58,7 +58,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void exec(ModelWidget *model);
 		void hideEvent(QHideEvent *);
 
-	private slots:
+  private slots:
     void selectExportMode(void);
 		void exportModel(void);
 		void selectOutputFile(void);
@@ -67,6 +67,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void cancelExport(void);
 		void handleExportFinished(void);
 		void handleExportCanceled(void);
+    void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
 };
 
 #endif

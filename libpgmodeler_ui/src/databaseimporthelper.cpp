@@ -283,7 +283,7 @@ void DatabaseImportHelper::createObjects(void)
 	int progress=0;
 	attribs_map attribs;
 	ObjectType obj_type;
-	unsigned i=0, oid=0;
+  unsigned i=0, oid=0, prev_size=0;
   vector<unsigned> not_created_objs, oids;
   vector<unsigned>::iterator itr, itr_end;
   vector<Exception> aux_errors;
@@ -313,10 +313,7 @@ void DatabaseImportHelper::createObjects(void)
 		}
     catch(Exception &)
 		{
-      /*if(ignore_errors)
-				errors.push_back(e);
-			else
-        throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);*/
+      //Storing the object id when some error occurs in order to try to create it again below
       not_created_objs.push_back(oid);
 		}
 
@@ -324,35 +321,43 @@ void DatabaseImportHelper::createObjects(void)
     sleepThread(10);
 	}
 
-
+  //Trying to recreate objects that failed to be created previously
   if(!not_created_objs.empty())
   {
     do
     {
+      /* Store the current size of the objects list. If this size is the same after
+         scan the list recreating the objects means that any object was not created
+         which determines an unrecoverable errors, e.g., objects that references
+         system objects and this ones was not imported */
+      prev_size=not_created_objs.size();
+
       progress=0;
       oids=not_created_objs;
       not_created_objs.clear();
-
       itr=oids.begin();
       itr_end=oids.end();
 
-      emit s_progressUpdated(progress,
-                             trUtf8("Found errors during creation of `%1' objects! Trying again.")
-                             .arg(oids.size()),
-                             BASE_OBJECT);
-
+      //Scan the oid list recreating the objects
       while(itr!=itr_end && !import_canceled)
       {
         attribs=user_objs[*itr];
+        obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
         itr++;
 
-        try
-        {
-          createObject(attribs);
+        emit s_progressUpdated(progress,
+                               trUtf8("Trying to recreate object `%1' (%2)...")
+                               .arg(attribs[ParsersAttributes::NAME])
+                               .arg(BaseObject::getTypeName(obj_type)),
+                               obj_type);
 
+        try
+        {   
+          createObject(attribs);
         }
         catch(Exception &e)
         {
+          //In case of some error store the oid and the error in separated lists
           not_created_objs.push_back(*itr);
           aux_errors.push_back(e);
         }
@@ -361,7 +366,18 @@ void DatabaseImportHelper::createObjects(void)
         sleepThread(10);
       }
 
+      if(!import_canceled)
+      {
+        /* If the previous list size is the same as the not_created_object list means
+           that no object was created in this interaction which means error */
+        if(prev_size==not_created_objs.size() && !ignore_errors)
+          throw Exception(aux_errors.back().getErrorMessage(), aux_errors.back().getErrorType(),
+                          __PRETTY_FUNCTION__,__FILE__,__LINE__, aux_errors);
+        else if(ignore_errors)
+           errors.insert(errors.end(), aux_errors.begin(), aux_errors.end());
 
+        aux_errors.clear();
+      }
     }
     while(!not_created_objs.empty() && !import_canceled);
   }

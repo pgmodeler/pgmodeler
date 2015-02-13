@@ -56,6 +56,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
 	connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
 	connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
+  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
@@ -85,6 +86,23 @@ void ModelExportForm::exec(ModelWidget *model)
     selectExportMode();
 		QDialog::exec();
 	}
+}
+
+void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QString cmd)
+{
+  QTreeWidgetItem *item=nullptr;
+
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
+                 QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+                 nullptr, false, false);
+
+  PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
+                 QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+                 item, true, false);
+
+  PgModelerUiNS::createOutputTreeItem(output_trw, cmd,
+                 QPixmap(),
+                 item, true, false);
 }
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)

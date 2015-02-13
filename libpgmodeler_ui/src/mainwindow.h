@@ -228,7 +228,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void importDatabase(void);
 
 		//! \brief Executes the model <> database comparison
-		void compareModelDatabase(void);
+		void diffModelDatabase(void);
 
 		//! \brief Updates the opened models with new configurations
 		void applyConfigurations(void);
