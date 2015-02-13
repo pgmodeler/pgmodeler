@@ -284,6 +284,9 @@ void DatabaseImportHelper::createObjects(void)
 	attribs_map attribs;
 	ObjectType obj_type;
 	unsigned i=0, oid=0;
+  vector<unsigned> not_created_objs, oids;
+  vector<unsigned>::iterator itr, itr_end;
+  vector<Exception> aux_errors;
 
 	for(i=0; i < creation_order.size() && !import_canceled; i++)
 	{
@@ -308,17 +311,60 @@ void DatabaseImportHelper::createObjects(void)
 			else
 				constr_creation_order.push_back(oid);
 		}
-		catch(Exception &e)
+    catch(Exception &)
 		{
-			if(ignore_errors)
+      /*if(ignore_errors)
 				errors.push_back(e);
 			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+        throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);*/
+      not_created_objs.push_back(oid);
 		}
 
 		progress=(i/static_cast<float>(creation_order.size())) * 100;
     sleepThread(10);
 	}
+
+
+  if(!not_created_objs.empty())
+  {
+    do
+    {
+      progress=0;
+      oids=not_created_objs;
+      not_created_objs.clear();
+
+      itr=oids.begin();
+      itr_end=oids.end();
+
+      emit s_progressUpdated(progress,
+                             trUtf8("Found errors during creation of `%1' objects! Trying again.")
+                             .arg(oids.size()),
+                             BASE_OBJECT);
+
+      while(itr!=itr_end && !import_canceled)
+      {
+        attribs=user_objs[*itr];
+        itr++;
+
+        try
+        {
+          createObject(attribs);
+
+        }
+        catch(Exception &e)
+        {
+          not_created_objs.push_back(*itr);
+          aux_errors.push_back(e);
+        }
+
+        progress=(i/static_cast<float>(not_created_objs.size())) * 100;
+        sleepThread(10);
+      }
+
+
+    }
+    while(!not_created_objs.empty() && !import_canceled);
+  }
 }
 
 void DatabaseImportHelper::createConstraints(void)
