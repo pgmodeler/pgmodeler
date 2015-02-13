@@ -948,6 +948,7 @@ void MainWindow::setCurrentModel(void)
 		edit_menu->addAction(current_model->action_cut);
 		edit_menu->addAction(current_model->action_paste);
 		edit_menu->addAction(current_model->action_remove);
+    edit_menu->addAction(current_model->action_cascade_del);
 
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
