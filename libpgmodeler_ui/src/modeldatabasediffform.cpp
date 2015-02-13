@@ -162,7 +162,7 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
 
-  connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
+  connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
   connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::QueuedConnection);
@@ -170,7 +170,7 @@ void ModelDatabaseDiffForm::createThreads(void)
   connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()), Qt::QueuedConnection);
   connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
-  connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
+  connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::QueuedConnection);
 
   connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
   connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
@@ -570,7 +570,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
                  item, true, false);
 }
 
-void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type)
+void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
 {
   msg=PgModelerUiNS::formatMessage(msg);
 
@@ -584,9 +584,19 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
                    import_item);
 	}
   else if(diff_thread && diff_thread->isRunning())
+  {
+    if(progress >= 90 && obj_type==BASE_OBJECT)
+    {
+      PgModelerUiNS::createOutputTreeItem(output_trw, msg,
+                                          QPixmap(QString(":/icones/icones/msgbox_info.png")),
+                                          diff_item);
+    }
+
     step_pb->setValue(diff_progress + (progress/3));
+  }
   else if(export_thread && export_thread->isRunning())
   {
+    QTreeWidgetItem *item=nullptr;
     QPixmap ico;
     step_pb->setValue(diff_progress + (progress/3));
 
@@ -595,7 +605,10 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
     else
       ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
-    PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item);
+    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false, false);
+
+    if(!cmd.isEmpty())
+      PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
   }
 
   progress_lbl->setText(msg);

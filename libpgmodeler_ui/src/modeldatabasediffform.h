@@ -106,7 +106,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void enableDiffMode(void);
 		void generateDiff(void);
     void cancelOperation(bool cancel_by_user);
-		void updateProgress(int progress, QString msg, ObjectType obj_type);
+    void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd=QString());
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
 		void handleImportFinished(Exception e);

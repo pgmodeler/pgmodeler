@@ -194,7 +194,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
-  //vector<Exception> errors;
 
 	try
 	{
@@ -299,18 +298,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				catch(Exception &e)
 				{
           //Ignoring the error if it is in the ignored list
-          if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+          if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+             (ignore_dup && isDuplicationError(e.getExtraInfo())))
             emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-
-					/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
-					returned by the server is other than object duplicity */
-          else if(ignored_errors.indexOf(e.getExtraInfo()) < 0 ||
-                  !ignore_dup ||
-                  (ignore_dup && isDuplicationError(e.getExtraInfo())))
+          //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+          else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
 						throw Exception(e.getErrorMessage(),
 														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 					else
-						//If the object is duplicated store the error on a vector
             errors.push_back(e);
 				}
 
@@ -336,16 +331,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		catch(Exception &e)
 		{
       //Ignoring the error if it is in the ignored list
-      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+         (ignore_dup && isDuplicationError(e.getExtraInfo())))
         emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-
-			/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
-			returned by the server is other than object duplicity */
-      else if(!ignore_dup ||
-              (ignore_dup && isDuplicationError(e.getExtraInfo())))
+      //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+      else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
         throw Exception(e.getErrorMessage(),
-												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-			else
+                        e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+      else
         errors.push_back(e);
 		}
 
@@ -602,7 +595,7 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
                                   QString("42P07"), QString("42710"), QString("42701"),
                                   QString("42P16")};
 
-  return(!err_codes.contains(error_code));
+  return(err_codes.contains(error_code));
 }
 
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
@@ -841,19 +834,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
       if(ddl_tk_found) ddl_tk_found=false;
 
       //Ignoring the error if it is in the ignored list
-      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0)
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+         (ignore_dup && isDuplicationError(e.getExtraInfo())))
         emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-
-      else if(!ignore_dup ||
-              (ignore_dup && isDuplicationError(e.getExtraInfo())))
-        throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE)
-                        .arg(/*Utf8String::create(*/sql_cmd),
-                        ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+      //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+      else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
+        throw Exception(e.getErrorMessage(),
+                        e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
       else
-      {
         errors.push_back(e);
-        sleepThread(20);
-      }
 
       sql_cmd.clear();
     }

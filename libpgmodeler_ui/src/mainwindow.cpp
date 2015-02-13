@@ -197,7 +197,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 	connect(action_import, SIGNAL(triggered(bool)), this, SLOT(importDatabase(void)));
-	connect(action_diff, SIGNAL(triggered(bool)), this, SLOT(compareModelDatabase(void)));
+  connect(action_diff, SIGNAL(triggered(bool)), this, SLOT(diffModelDatabase(void)));
 
   connect(action_welcome, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
   connect(action_design, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
@@ -354,7 +354,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	applyConfigurations();
 
 	//Temporary models are saved every two minutes
-	tmpmodel_save_timer.setInterval(120000);
+  tmpmodel_save_timer.setInterval(120000);
 
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
@@ -1295,7 +1295,11 @@ void MainWindow::exportModel(void)
 
   if(!confirm_validation ||
      (!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
+  {
+    stopTimers(true);
     model_export_form.exec(current_model);
+    stopTimers(false);
+  }
 }
 
 void MainWindow::importDatabase(void)
@@ -1308,14 +1312,18 @@ void MainWindow::importDatabase(void)
 							 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
  #else
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	db_import_form.exec();
+
+  stopTimers(true);
+  db_import_form.exec();
+  stopTimers(false);
 
   if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
     this->addModel(db_import_form.getModelWidget());
+
  #endif
 }
 
-void MainWindow::compareModelDatabase(void)
+void MainWindow::diffModelDatabase(void)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: model diff feature disabled."
@@ -1350,7 +1358,10 @@ void MainWindow::compareModelDatabase(void)
        (!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
     {
       modeldb_diff_frm.setDatabaseModel(db_model);
+
+      stopTimers(true);
       modeldb_diff_frm.exec();
+      stopTimers(false);
     }
 	#endif
 }
@@ -1719,7 +1730,7 @@ void MainWindow::executePendingOperation(bool valid_error)
     else if(pending_op==PENDING_EXPORT_OPER)
       exportModel();
     else if(pending_op==PENDING_DIFF_OPER)
-      compareModelDatabase();
+      diffModelDatabase();
 
     pending_op=NO_PENDING_OPER;
   }
