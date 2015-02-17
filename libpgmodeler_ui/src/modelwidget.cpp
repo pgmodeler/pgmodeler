@@ -351,6 +351,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 ModelWidget::~ModelWidget(void)
 {
+  /* If there are copied/cutted objects that belongs to the database model
+     being destroyed, then the cut/copy operation are cancelled by emptying
+     the lists, avoiding crashes when trying to paste them */
+  if((!copied_objects.empty() && copied_objects[0]->getDatabase()==db_model) ||
+     (!cutted_objects.empty() && cutted_objects[0]->getDatabase()==db_model))
+  {
+    cut_operation=false;
+    copied_objects.clear();
+    cutted_objects.clear();
+  }
+
 	popup_menu.clear();
 	new_object_menu.clear();
 	quick_actions_menu.clear();
@@ -2399,6 +2410,7 @@ void ModelWidget::pasteObjects(void)
 
 		copied_objects.clear();
 		cutted_objects.clear();
+
 		if(this!=ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
 
