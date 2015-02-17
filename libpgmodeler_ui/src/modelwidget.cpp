@@ -1359,10 +1359,16 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
                       .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(obj_type== OBJ_PERMISSION)
+    if(obj_type==OBJ_PERMISSION)
 		{
 			PermissionWidget permission_wgt;
-			permission_wgt.setAttributes(db_model, nullptr, object);
+      Permission *perm=dynamic_cast<Permission *>(object);
+
+      if(!perm)
+        permission_wgt.setAttributes(db_model, nullptr, object);
+      else
+        permission_wgt.setAttributes(db_model, nullptr, perm->getObject());
+
 			permission_wgt.show();
 		}
 		else if(obj_type== OBJ_SCHEMA)
