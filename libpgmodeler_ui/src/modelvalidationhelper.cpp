@@ -287,7 +287,7 @@ void ModelValidationHelper::validateModel(void)
 				refs_aux.clear();
 				itr++;
 
-				sleepThread(5);
+        sleepThread(10);
 
 				//Excluding the validation of system objects (created automatically)
 				if(!object->isSystemObject())
@@ -345,7 +345,7 @@ void ModelValidationHelper::validateModel(void)
 							refs.pop_back();
 						}
 
-						sleepThread(5);
+            sleepThread(10);
 
             /* Validating a special object. The validation made here is to check if the special object
             (constraint/index/trigger/view) references a column added by a relationship and
@@ -428,7 +428,7 @@ void ModelValidationHelper::validateModel(void)
 			//Emit a signal containing the validation progress
 			progress=((i+1)/static_cast<float>(count))*20;
       emit s_progressUpdated(progress, QString());
-			sleepThread(5);
+      sleepThread(10);
 		}
 
 
@@ -471,7 +471,7 @@ void ModelValidationHelper::validateModel(void)
 				}
 			}
 
-			sleepThread(5);
+      sleepThread(10);
 		}
 
     /* Inserting the tables and views to the map in order to check if there are table objects
@@ -486,7 +486,7 @@ void ModelValidationHelper::validateModel(void)
 				itr++;
 			}
 
-			sleepThread(5);
+      sleepThread(10);
 		}
 
 		//Checking the map of duplicated objects
@@ -508,7 +508,7 @@ void ModelValidationHelper::validateModel(void)
       emit s_progressUpdated(progress, QString());
 
 			i++; mitr++;
-			sleepThread(5);
+      sleepThread(10);
 		}
 
     /* Step 3: Checking if there are some invalidated relationship. In some cases, specially with identifier relationship,
@@ -523,7 +523,7 @@ void ModelValidationHelper::validateModel(void)
         generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
 
       itr++;
-      sleepThread(5);
+      sleepThread(10);
     }
 
 
@@ -576,7 +576,7 @@ void ModelValidationHelper::applyFixes(void)
                          val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
                          val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
 
-				sleepThread(5);
+        sleepThread(10);
 
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
