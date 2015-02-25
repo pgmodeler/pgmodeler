@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 #include "schema.h"
 #include "databasemodel.h"
 #include "baseobjectview.h"
+#include "textboxview.h"
+#include "roundedrectitem.h"
 
 class SchemaView: public BaseObjectView
 {
@@ -36,7 +38,9 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsSimpleTextItem *sch_name;
 
-		QGraphicsPolygonItem *box;
+    RoundedRectItem *box;
+
+		QPointF last_pos;
 
 		//! \brief Indicates if all children objects are selected
 		bool all_selected;
@@ -53,6 +57,8 @@ class SchemaView: public BaseObjectView
 		//! \brief Returns if all children are selected
 		bool isChildrenSelected(void);
 
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
 	public:
 		SchemaView(Schema *schema);
 		~SchemaView(void);
@@ -60,6 +66,7 @@ class SchemaView: public BaseObjectView
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
 		unsigned getChildrenCount(void);
+    QList<BaseObjectView *> getChildren(void);
 
 	public slots:
 		void configureObject(void);

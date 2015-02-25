@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,6 +71,8 @@ class BaseTable: public BaseGraphicObject {
 		virtual vector<BaseObject *> getObjects(void)=0;
 
     virtual QString getCodeDefinition(unsigned tipo_def)=0;
+
+    virtual QString getAlterDefinition(BaseObject *object);
 
     //! \brief Copy the attributes between two tables
     void operator = (BaseTable &tab);

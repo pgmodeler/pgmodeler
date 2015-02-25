@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>277</width>
-    <height>33</height>
+    <height>27</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,16 +36,16 @@
   </property>
   <layout class="QGridLayout" name="obj_selector_grid">
    <property name="leftMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="spacing">
     <number>4</number>

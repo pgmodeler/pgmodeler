@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
-    <height>131</height>
+    <width>449</width>
+    <height>139</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="appearanceconfig_grid">
+  <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="topMargin">
     <number>0</number>
@@ -26,467 +26,405 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
-    <number>6</number>
-   </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="element_lbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="QFrame" name="appearance_frm">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="text">
-      <string>Element:</string>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="4">
-    <widget class="QComboBox" name="element_cmb">
-     <item>
-      <property name="text">
-       <string>Global: Font style</string>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>4</number>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Constraints descriptor</string>
+      <property name="topMargin">
+       <number>4</number>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Object selection</string>
+      <property name="rightMargin">
+       <number>4</number>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Position hint text</string>
+      <property name="bottomMargin">
+       <number>4</number>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Position hint box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Objects type</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Lock arc</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Global: Lock body</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Table: Schema name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Table: Table name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Table: Columns box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Table: Extended attributes box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Table: Title box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Rule: Name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Rule: Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Index: Name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Index: Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Trigger: Name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Trigger: Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Schema name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: View name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: References box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Extended attributes box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Title box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Table / columns alias</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Referenced column</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Referenced table</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>View: Reference descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Textbox: Body</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column: Column name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column: Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column: Included / Inherited by relationship</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column: Protected</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (pk): Column name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (pk): Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (fk): Column name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (fk): Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (uq): Column name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (uq): Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (nn): Column name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Column (nn): Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Relationship: Descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Relationship: Label text</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Relationship: Label box</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Relationship: Attribute text</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Relationship: Attribute descriptor</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Tag: Name</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Tag: Body</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="font_lbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Font:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="4">
-    <widget class="QFontComboBox" name="font_cmb">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QDoubleSpinBox" name="font_size_spb">
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>5.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.500000000000000</double>
-       </property>
-       <property name="value">
-        <double>8.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="unity_lbl">
-       <property name="text">
-        <string> pt</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="2">
-    <widget class="QCheckBox" name="bold_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Bold</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QCheckBox" name="italic_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Italic</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="colors_lbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Colors:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" colspan="4">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QToolButton" name="color1_tb">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Font color / Fill color 1</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="color2_tb">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Fill color 2</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="color3_tb">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Border color</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>188</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="4">
-    <widget class="QCheckBox" name="underline_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Underline</string>
-     </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="element_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Element:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="4">
+       <widget class="QComboBox" name="element_cmb">
+        <item>
+         <property name="text">
+          <string>Global: Font style</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Constraints descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Object selection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Position hint text</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Position hint box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Objects type</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Lock arc</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Global: Lock body</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Schema name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Table name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Columns box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Extended attributes box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Table: Title box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rule: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rule: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Index: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Index: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trigger: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trigger: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Schema name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: View name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: References box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Extended attributes box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Title box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Table / columns alias</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Referenced column</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Referenced table</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>View: Reference descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Textbox: Body</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column: Column name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column: Included / Inherited by relationship</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column: Protected</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (pk): Column name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (pk): Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (fk): Column name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (fk): Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (uq): Column name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (uq): Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (nn): Column name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Column (nn): Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Relationship: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Relationship: Label text</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Relationship: Label box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Relationship: Attribute text</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Relationship: Attribute descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tag: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tag: Body</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="font_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Font:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="colors_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Colors:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="4">
+       <widget class="QFontComboBox" name="font_cmb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QDoubleSpinBox" name="font_size_spb">
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="value">
+           <double>8.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="unity_lbl">
+          <property name="text">
+           <string> pt</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="4">
+       <widget class="QCheckBox" name="underline_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Underline</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QCheckBox" name="italic_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Italic</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="bold_chk">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Bold</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -498,9 +436,6 @@
   <tabstop>bold_chk</tabstop>
   <tabstop>italic_chk</tabstop>
   <tabstop>underline_chk</tabstop>
-  <tabstop>color1_tb</tabstop>
-  <tabstop>color2_tb</tabstop>
-  <tabstop>color3_tb</tabstop>
  </tabstops>
  <resources/>
  <connections/>

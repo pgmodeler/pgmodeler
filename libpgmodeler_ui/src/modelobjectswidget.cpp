@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "modelobjectswidget.h"
+#include "databaseimportform.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -44,7 +45,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	if(!simplified_view)
 	{
-		widgets_conf.setValue("splitterSize", splitter->saveState());
+    widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
 		connect(options_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
 		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
@@ -55,9 +56,12 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
+		objectslist_tbw->installEventFilter(this);
+		objectstree_tw->installEventFilter(this);
 	}
 	else
 	{
+		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
@@ -68,9 +72,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
-
-  objectslist_tbw->installEventFilter(this);
-  objectstree_tw->installEventFilter(this);
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
+	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
@@ -84,7 +87,10 @@ bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
     {
       objectslist_tbw->clearSelection();
       objectstree_tw->clearSelection();
-      model_wgt->configurePopupMenu({});
+
+			if(model_wgt)
+				model_wgt->configurePopupMenu({});
+
       return(true);
     }
   }
@@ -148,7 +154,7 @@ void ModelObjectsWidget::selectObject(void)
 			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
-									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), nullptr);
+                  trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
@@ -202,6 +208,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
   ConstraintType constr_type;
   ObjectType obj_type;
   TableObject *tab_obj=nullptr;
+	QString obj_name;
 
   if(!object)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -214,24 +221,25 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
   {
     Function *func=dynamic_cast<Function *>(object);
     func->createSignature(false);
-    item->setText(0,Utf8String::create(func->getSignature()));
-    item->setToolTip(0,Utf8String::create(func->getSignature()));
+    item->setText(0,/*Utf8String::create(*/func->getSignature());
+    obj_name=/*Utf8String::create(*/func->getSignature();
     func->createSignature(true);
   }
   else if(obj_type==OBJ_OPERATOR)
   {
     Operator *oper=dynamic_cast<Operator *>(object);
-    item->setText(0, Utf8String::create(oper->getSignature(false)));
-    item->setToolTip(0, Utf8String::create(oper->getSignature(false)));
+    item->setText(0, /*Utf8String::create(*/oper->getSignature(false));
+    obj_name=/*Utf8String::create(*/oper->getSignature(false);
   }
   else
   {
-    item->setText(0,Utf8String::create(object->getName()));
-    item->setToolTip(0,Utf8String::create(object->getName()));
+    item->setText(0,/*Utf8String::create(*/object->getName());
+    obj_name=/*Utf8String::create(*/object->getName();
   }
 
-  item->setToolTip(0,Utf8String::create(object->getName()));
+	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
   item->setData(0, Qt::UserRole, generateItemValue(object));
+	item->setText(1, QString::number(object->getObjectId()));
 
   if(update_perms)
     updatePermissionTree(item, object);
@@ -259,20 +267,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
     if(obj_type==BASE_RELATIONSHIP)
     {
       if(rel_type==BaseRelationship::RELATIONSHIP_FK)
-        str_aux="fk";
+        str_aux=QString("fk");
       else
-        str_aux="tv";
+        str_aux=QString("tv");
     }
     else if(rel_type==BaseRelationship::RELATIONSHIP_11)
-      str_aux="11";
+      str_aux=QString("11");
     else if(rel_type==BaseRelationship::RELATIONSHIP_1N)
-      str_aux="1n";
+      str_aux=QString("1n");
     else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
-      str_aux="nn";
+      str_aux=QString("nn");
     else if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
-      str_aux="dep";
+      str_aux=QString("dep");
     else if(rel_type==BaseRelationship::RELATIONSHIP_GEN)
-      str_aux="gen";
+      str_aux=QString("gen");
   }
   else if(obj_type==OBJ_CONSTRAINT)
   {
@@ -348,25 +356,12 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 
 void ModelObjectsWidget::changeObjectsView(void)
 {
-	if(sender()==list_view_tb)
+	if(sender()==tree_view_tb || sender()==list_view_tb)
 	{
-		if(!list_view_tb->isChecked())
-			list_view_tb->setChecked(true);
-		else
-		{
-			tree_view_tb->setChecked(false);
-			visaoobjetos_stw->setCurrentIndex(1);
-		}
-	}
-	else if(sender()==tree_view_tb)
-	{
-		if(!tree_view_tb->isChecked())
-			tree_view_tb->setChecked(true);
-		else
-		{
-			list_view_tb->setChecked(false);
-			visaoobjetos_stw->setCurrentIndex(0);
-		}
+		visaoobjetos_stw->setCurrentIndex(sender()==tree_view_tb ? 0 : 1);
+		tree_view_tb->setChecked(sender()==tree_view_tb);
+		list_view_tb->setChecked(sender()==list_view_tb);
+		by_id_chk->setEnabled(sender()==tree_view_tb);
 	}
 	else if(sender()==options_tb)
 	{
@@ -375,7 +370,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 
 		//Restore the splitter state if the options toolbutton is not toggled
 		if(!options_tb->isChecked())
-			splitter->restoreState(widgets_conf.value("splitterSize").toByteArray());
+      splitter->restoreState(widgets_conf.value(QString("splitterSize")).toByteArray());
 	}
 
 	expand_all_tb->setEnabled(tree_view_tb->isChecked());
@@ -391,6 +386,30 @@ void ModelObjectsWidget::collapseAll(void)
 		root->setExpanded(true);
 }
 
+void ModelObjectsWidget::filterObjects(void)
+{
+	if(tree_view_tb->isChecked())
+	{
+		DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0));
+	}
+	else
+	{
+		QList<QTableWidgetItem*> items=objectslist_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+
+		objectslist_tbw->blockSignals(true);
+		for(int row=0; row < objectslist_tbw->rowCount(); row++)
+			objectslist_tbw->setRowHidden(row, true);
+
+		while(!items.isEmpty())
+		{
+			objectslist_tbw->setRowHidden(items.front()->row(), false);
+			items.pop_front();
+		}
+
+		objectslist_tbw->blockSignals(false);
+	}
+}
+
 void ModelObjectsWidget::updateObjectsView(void)
 {
 	updateDatabaseTree();
@@ -399,23 +418,23 @@ void ModelObjectsWidget::updateObjectsView(void)
 
 void ModelObjectsWidget::updateObjectsList(void)
 {
-    vector<BaseObject *> objects;
+	vector<BaseObject *> objects;
 
-    if(db_model)
-    {
-        vector<ObjectType> visible_types;
+	if(db_model)
+	{
+		vector<ObjectType> visible_types;
 
-        for(auto tp : visible_objs_map)
-        {
-            if(tp.second)
-                visible_types.push_back(tp.first);
-        }
+		for(auto tp : visible_objs_map)
+		{
+			if(tp.second)
+				visible_types.push_back(tp.first);
+		}
 
-        objects=db_model->findObjects("", visible_types,true, false, false, false);
+    objects=db_model->findObjects(QString(), visible_types,true, false, false, false);
 
-    }
+	}
 
-    ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
+	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -668,12 +687,12 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(":/icones/icones/permission_grp.png"));
+      item->setIcon(0,QPixmap(QString(":/icones/icones/permission_grp.png")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
 			item->setText(0, QString("%1 (%2)")
-										.arg(Utf8String::create(BaseObject::getTypeName(OBJ_PERMISSION)))
+                    .arg(/*Utf8String::create(*/BaseObject::getTypeName(OBJ_PERMISSION))
 										.arg(perms.size()));
 
 			item->setData(0, Qt::UserRole, generateItemValue(object));
@@ -764,8 +783,6 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 				if(save_tree_state)
 					restoreTreeState(tree_state);
-				else if(simplified_view)
-					objectstree_tw->expandAll();
 			}
 		}
 		catch(Exception &e)
@@ -809,6 +826,8 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 
 	if(model_wgt)
 		setModel(model_wgt->db_model);
+	else
+		setModel(static_cast<DatabaseModel *>(nullptr));
 }
 
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)
@@ -821,9 +840,12 @@ void ModelObjectsWidget::setModel(DatabaseModel *db_model)
 	visaoobjetos_stw->setEnabled(true);
 	expand_all_tb->setEnabled(enable && tree_view_tb->isChecked());
 	collapse_all_tb->setEnabled(enable && tree_view_tb->isChecked());
-    tree_view_tb->setEnabled(enable);
-    list_view_tb->setEnabled(enable);
-    options_tb->setEnabled(enable);
+	tree_view_tb->setEnabled(enable);
+	list_view_tb->setEnabled(enable);
+	options_tb->setEnabled(enable);
+	filter_lbl->setEnabled(enable);
+	filter_edt->setEnabled(enable);
+	by_id_chk->setEnabled(enable);
 }
 
 void ModelObjectsWidget::showEvent(QShowEvent *)
@@ -831,6 +853,14 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 	if(simplified_view)
 	{
 		QWidget *wgt=QApplication::activeWindow();
+
+		filter_edt->setFocus();
+		filter_edt->blockSignals(true);
+		by_id_chk->blockSignals(true);
+		filter_edt->clear();
+		by_id_chk->setChecked(false);
+		filter_edt->blockSignals(false);
+		by_id_chk->blockSignals(false);
 
 		if(wgt)
 		{
@@ -841,12 +871,6 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 		}
   }
 }
-
-/* void ModelObjectsWidget::focusOutEvent(QFocusEvent *)
-{
-  objectslist_tbw->clearSelection();
-  objectstree_tw->clearSelection();
-} */
 
 void ModelObjectsWidget::closeEvent(QCloseEvent *)
 {
@@ -899,6 +923,12 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 
 		this->move(px,py);
 	}
+}
+
+void ModelObjectsWidget::resizeEvent(QResizeEvent *)
+{
+	objectstree_tw->header()->setMinimumSectionSize(objectstree_tw->width());
+	objectstree_tw->header()->setDefaultSectionSize(objectstree_tw->width());
 }
 
 void ModelObjectsWidget::saveTreeState(bool value)

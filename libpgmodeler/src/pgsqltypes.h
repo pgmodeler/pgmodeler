@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ class UserTypeConfig {
 													ALL_USER_TYPES=63;
 
 		UserTypeConfig(void)
-		{ name=""; ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
+    { name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
 
 		friend class PgSQLType;
 };
@@ -410,6 +410,10 @@ class PgSQLType: public BaseType{
 		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
+    /*! brief Returns if the type is registered in the list of valid types (built-in one and user defined).
+        The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
+    static bool isRegistered(const QString &type, void *pmodel=nullptr);
+
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
 		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
 		static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);
@@ -441,8 +445,14 @@ class PgSQLType: public BaseType{
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
+    /*! brief Returns if the "this" type is equivalent to the specified type.
+        In order to be compatible the "this" and "type" must be an alias from each other,
+        for instance, "varchar" is compatible with "character varying" and vice-versa,
+        smallint is compatible with int2, and so on. */
+    bool isEquivalentTo(PgSQLType type);
+
 		PgSQLType getAliasType(void);
-		QString getCodeDefinition(unsigned def_type, QString ref_type="");
+		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
 
 		//! \brief Retorns the SQL definition for the type
@@ -453,9 +463,9 @@ class PgSQLType: public BaseType{
 		unsigned operator = (const QString &type_name);
 		bool operator == (unsigned type_idx);
 		bool operator == (PgSQLType type);
-		bool operator == (const QString &type_name);
+    bool operator == (const QString &type_name);
 		bool operator == (void *ptype);
-		bool operator != (const QString &type_name);
+    bool operator != (const QString &type_name);
 		bool operator != (PgSQLType type);
 		bool operator != (unsigned type_idx);
 

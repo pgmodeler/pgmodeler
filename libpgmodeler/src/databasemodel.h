@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,15 +62,21 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
+		XMLParser xmlparser;
+
 		//! \brief Database encoding
 		EncodingType encoding;
 
 		//! \brief Template database
 		QString template_db,
+
 						//! \brief Model's author
-						author,
+            author,
+
 						//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
-						localizations[2];
+            localizations[2];
+
+    map<ObjectType, BaseObject *> default_objs;
 
 		//! \brief Maximum number of connections
 		int conn_limit;
@@ -147,6 +153,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
+		//! brief Returns extra error info when loading database models
+		QString getErrorExtraInfo(void);
+
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
@@ -195,7 +204,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setEncoding(EncodingType encod);
 
 		//! \brief Sets the database localizations
-		void setLocalization(int localiz_id, const QString &value);
+		void setLocalization(unsigned localiz_id, const QString &value);
 
 		//! \brief Sets the connections limit
 		void setConnectionLimit(int conn_lim);
@@ -215,6 +224,8 @@ class DatabaseModel:  public QObject, public BaseObject {
     //! \brief Sets the sql prepeding at beginning of entire model definition
     void setPrependAtBOD(bool value);
 
+    void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
 
@@ -231,7 +242,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		unsigned getObjectCount(void);
 
 		//! \brief Retuns the specified localization value
-		QString getLocalization(int localiz_id);
+		QString getLocalization(unsigned localiz_id);
 
 		//! \brief Returns the connection limit
 		int getConnectionLimit(void);
@@ -244,6 +255,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the database enconding
 		EncodingType getEncoding(void);
+
+    BaseObject *getDefaultObject(ObjectType obj_type);
 
 		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
 		bool isInvalidated(void);
@@ -265,11 +278,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
-    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type);
+    /*! brief Returns the creation order of objects in each definition type (SQL or XML).
+        The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
+        of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
+        is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
+    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
 		BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
+		BaseRelationship *getRelationship(const QString &name);
 
 		/*! \brief Searchs and returns the relationship between the specified tables. If the second parameter
 		 is ommited (nullptr), the method returns the first relationship where the source table is
@@ -282,93 +300,114 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void addTextbox(Textbox *txtbox, int obj_idx=-1);
 		void removeTextbox(Textbox *txtbox, int obj_idx=-1);
 		Textbox *getTextbox(unsigned obj_idx);
+		Textbox *getTextbox(const QString &name);
 
 		void addFunction(Function *func, int obj_idx=-1);
 		void removeFunction(Function *func, int obj_idx=-1);
 		Function *getFunction(unsigned obj_idx);
+		Function *getFunction(const QString &signature);
 
 		void addSchema(Schema *schema, int obj_idx=-1);
 		void removeSchema(Schema *schema, int obj_idx=-1);
 		Schema *getSchema(unsigned obj_idx);
+		Schema *getSchema(const QString &name);
 
 		void addView(View *view, int obj_idx=-1);
 		void removeView(View *view, int obj_idx=-1);
 		View *getView(unsigned obj_idx);
+		View *getView(const QString &name);
 
 		void addTable(Table *table, int obj_idx=-1);
 		void removeTable(Table *table, int obj_idx=-1);
 		Table *getTable(unsigned obj_idx);
+		Table *getTable(const QString &name);
 
 		void addType(Type *type, int obj_idx=-1);
 		void removeType(Type *type, int obj_idx=-1);
 		Type *getType(unsigned obj_idx);
+		Type *getType(const QString &name);
 
 		void addRole(Role *role, int obj_idx=-1);
 		void removeRole(Role *role, int obj_idx=-1);
 		Role *getRole(unsigned obj_idx);
+		Role *getRole(const QString &name);
 
 		void addTablespace(Tablespace *tabspc, int obj_idx=-1);
 		void removeTablespace(Tablespace *tabspc, int obj_idx=-1);
 		Tablespace *getTablespace(unsigned obj_idx);
+		Tablespace *getTablespace(const QString &name);
 
 		void addLanguage(Language *lang, int obj_idx=-1);
 		void removeLanguage(Language *lang, int obj_idx=-1);
 		Language *getLanguage(unsigned obj_idx);
+		Language *getLanguage(const QString &name);
 
 		void addAggregate(Aggregate *aggreg, int obj_idx=-1);
 		void removeAggregate(Aggregate *aggreg, int obj_idx=-1);
 		Aggregate *getAggregate(unsigned obj_idx);
+		Aggregate *getAggregate(const QString &name);
 
 		void addCast(Cast *cast, int obj_idx=-1);
 		void removeCast(Cast *cast, int obj_idx=-1);
 		Cast *getCast(unsigned obj_idx);
+		Cast *getCast(const QString &name);
 
 		void addConversion(Conversion *conv, int obj_idx=-1);
 		void removeConversion(Conversion *conv, int obj_idx=-1);
 		Conversion *getConversion(unsigned obj_idx);
+		Conversion *getConversion(const QString &name);
 
 		void addOperator(Operator *oper, int obj_idx=-1);
 		void removeOperator(Operator *oper, int obj_idx=-1);
 		Operator *getOperator(unsigned obj_idx);
+		Operator *getOperator(const QString &signature);
 
 		void addOperatorClass(OperatorClass *op_class, int obj_idx=-1);
 		void removeOperatorClass(OperatorClass *op_class, int obj_idx=-1);
 		OperatorClass *getOperatorClass(unsigned obj_idx);
+		OperatorClass *getOperatorClass(const QString &name);
 
 		void addOperatorFamily(OperatorFamily *familia_op, int obj_idx=-1);
 		void removeOperatorFamily(OperatorFamily *op_family, int obj_idx=-1);
 		OperatorFamily *getOperatorFamily(unsigned obj_idx);
+		OperatorFamily *getOperatorFamily(const QString &name);
 
 		void addDomain(Domain *domain, int obj_idx=-1);
 		void removeDomain(Domain *dominio, int obj_idx=-1);
 		Domain *getDomain(unsigned obj_idx);
+		Domain *getDomain(const QString &name);
 
 		void addSequence(Sequence *sequence, int obj_idx=-1);
 		void removeSequence(Sequence *sequence, int obj_idx=-1);
 		Sequence *getSequence(unsigned obj_idx);
+		Sequence *getSequence(const QString &name);
 
 		void addCollation(Collation *collation, int obj_idx=-1);
 		void removeCollation(Collation *collation, int obj_idx=-1);
 		Collation *getCollation(unsigned obj_idx);
+		Collation *getCollation(const QString &name);
 
 		void addExtension(Extension *extension, int obj_idx=-1);
 		void removeExtension(Extension *extension, int obj_idx=-1);
 		Extension *getExtension(unsigned obj_idx);
+		Extension *getExtension(const QString &name);
 
     void addTag(Tag *tag, int obj_idx=-1);
     void removeTag(Tag *tag, int obj_idx=-1);
     Tag *getTag(unsigned obj_idx);
+		Tag *getTag(const QString &name);
 
 		void addEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
 		void removeEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
 		EventTrigger *getEventTrigger(unsigned obj_idx);
+		EventTrigger *getEventTrigger(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 		int getPermissionIndex(Permission *perm);
 
 		//! \brief Inserts a list of permissions into the model
-		void addPermissions(vector<Permission *> &perms);
+    void addPermissions(const vector<Permission *> &perms);
 
 		//! \brief Removes all the permission related to the passed object
 		void removePermissions(BaseObject *object);
@@ -379,8 +418,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-		ObjectType getObjectType(const QString &type_name);
-		void setBasicAttributes(BaseObject *object);
+    void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
 		PgSQLType createPgSQLType(void);
@@ -402,7 +440,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Aggregate *createAggregate(void);
 		Table *createTable(void);
 		Column *createColumn(void);
-		Rule *createRule(void);
 		Sequence *createSequence(bool ignore_onwer=false);
 		View *createView(void);
 		Collation *createCollation(void);
@@ -412,8 +449,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);
 		Constraint *createConstraint(BaseObject *parent_obj);
-		Index *createIndex(Table *table);
-		Trigger *createTrigger(BaseTable *table);
+		Rule *createRule(void);
+		Index *createIndex(void);
+		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
 
     //! \brief Creates/removes the relationship between the passed view and the referecend tables
@@ -441,14 +479,22 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-		/*! \brief Returns all the objects that references the passed object. The boolean paramenter is used to performance purpose,
+		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first
-		 reference is found */
-		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
+		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
+		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
+
+    /*! brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
+        meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
+    void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
     /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
      graphical objects to be marked */
     void setObjectsModified(vector<ObjectType> types={});
+
+		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
+		 graphical objects to be marked */
+		void setCodesInvalidated(vector<ObjectType> types={});
 
 		/*! \brief Updates the user type names which belongs to the passed schema. This method must be executed whenever
 		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally
@@ -457,20 +503,27 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Creates the system objects: public schema and languages C, SQL and plpgsql. This method ignores one of these
 		objects if some of them already exists */
-		void createSystemObjects(bool create_public);
+    void createSystemObjects(bool create_public);
 
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
 		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
 																		 bool case_sensitive, bool is_regexp, bool exact_match);
 
-		QString getErrorExtraInfo(void);
-
     void setLastPosition(const QPoint &pnt);
     QPoint getLastPosition(void);
 
     void setLastZoomFactor(float zoom);
     float getLastZoomFactor(void);
+
+		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
+		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call
+		 the create* method.
+
+		\note: This is not the better approach and certainly will be changed in future releases */
+		XMLParser *getXMLParser(void);
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

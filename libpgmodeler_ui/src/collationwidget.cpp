@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -89,10 +89,10 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 			if(locale_cmb->currentIndex()==0)
 			{
-				idx=lcctype_cmb->findText(collation->getLocalization(LC_CTYPE));
+				idx=lcctype_cmb->findText(collation->getLocalization(Collation::_LC_CTYPE));
 				lcctype_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-				idx=lccollate_cmb->findText(collation->getLocalization(LC_COLLATE));
+				idx=lccollate_cmb->findText(collation->getLocalization(Collation::_LC_COLLATE));
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 			}
 		}

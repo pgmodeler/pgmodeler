@@ -3,11 +3,17 @@
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
 	sql_gen_progress=progress=0;
-  db_created=ignore_dup=drop_db=export_canceled=false;
+  db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
   simulate=use_tmp_names=db_sql_reenabled=false;
 	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
 	db_model=nullptr;
-	connection=nullptr;
+  connection=nullptr;
+}
+
+void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
+{
+  ignored_errors=err_codes;
+  ignored_errors.removeDuplicates();
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
@@ -20,13 +26,14 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	try
 	{
 		progress=sql_gen_progress=0;
-		SchemaParser::setPgSQLVersion(pgsql_ver);
+		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
-                           trUtf8("PostgreSQL %1 version code generation.").arg(SchemaParser::getPgSQLVersion()),
-													 OBJ_DATABASE);
+                           trUtf8("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
+                           BASE_OBJECT);
 		progress=1;
 		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
 
+    emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), BASE_OBJECT);
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -46,7 +53,6 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	try
 	{
 		QPixmap pix;
-    //QRectF ret=scene->itemsBoundingRect();
 		bool shw_grd, shw_dlm, align_objs;
 		QGraphicsView viewp(scene);
 		QRect retv;
@@ -88,11 +94,18 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
 
       //Configures the template filename for pages pixmaps
-      tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + "_p%1." + fi.completeSuffix();
+      tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
     }
     else
     {
-      pages.push_back(scene->itemsBoundingRect());
+      QRectF rect=scene->itemsBoundingRect(true);
+
+      //Give some margin to the resulting image
+      QSizeF margin=QSizeF(5 * BaseObjectView::HORIZ_SPACING, 5 * BaseObjectView::VERT_SPACING);
+      rect.setTopLeft(rect.topLeft() - QPointF(margin.width(), margin.height()));
+      rect.setSize(rect.size() + margin);
+
+      pages.push_back(rect);
       file=filename;
     }
 
@@ -103,9 +116,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		viewp.setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
 		//Apply the zoom factor on the viewport
-		viewp.resetTransform();
-		viewp.centerOn(0,0);
-		viewp.scale(zoom, zoom);
+    viewp.resetTransform();
+    viewp.centerOn(0,0);
+    viewp.scale(zoom, zoom);
 
     QPainter painter;
     vector<QRectF>::iterator itr=pages.begin(), itr_end=pages.end();
@@ -132,8 +145,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
       painter.setRenderHint(QPainter::TextAntialiasing, true);
       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-      emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 100,
-                             trUtf8("Rendering objects onto the output pixmap."), BASE_OBJECT);
+      emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
+                             trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), BASE_OBJECT);
 
       //Render the entire viewport onto the pixmap
       viewp.render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -149,8 +162,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
         ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
         scene->update();
 
-        throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(file)),
-                        ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
+                        ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
     }
 
@@ -158,6 +171,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
     ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
     scene->update();
 
+    emit s_progressUpdated(100, trUtf8("Output image `%1' successfully written.").arg(filename), BASE_OBJECT);
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -172,31 +186,14 @@ void ModelExportHelper::sleepThread(unsigned msecs)
 		QThread::msleep(msecs);
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_tmp_names)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
 {
 	int type_id;
-	QString  version, sql_buf, sql_cmd, lin;
+  QString  version, sql_cmd;
 	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
-	vector<Exception> errors;
-	QTextStream ts;
-	bool ddl_tk_found=false;
-
-	/* Error codes treated in this method
-			42P04 	duplicate_database
-			42723 	duplicate_function
-			42P06 	duplicate_schema
-			42P07 	duplicate_table
-			42710 	duplicate_object
-			42701   duplicate_column
-			42P16   invalid_table_definition
-
-		 Reference:
-			http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-	QString error_codes[]={"42P04", "42723", "42P06", "42P07", "42710", "42701", "42P16"};
-	vector<QString> err_codes_vect(error_codes, error_codes + sizeof(error_codes) / sizeof(QString));
 
 	try
 	{
@@ -206,8 +203,10 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
-		if(simulate && (ignore_dup || drop_db))
+    if(simulate && (ignore_dup || drop_db || drop_objs))
 			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else if(drop_db && drop_objs)
+      throw Exception(ERR_MIX_INCOMP_DROP_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -218,20 +217,20 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 		//Retrive the DBMS version in order to generate the correct code
     conn.connect();
-    version=(conn.getPgSQLVersion()).mid(0,3);
+    version=conn.getPgSQLVersion(true);
 
     emit s_progressUpdated(progress, trUtf8("Starting export to DBMS."));
 
 		//Overriding the DBMS version case the version is informed on parameter
 		if(!pgsql_ver.isEmpty())
 		{
-			SchemaParser::setPgSQLVersion(pgsql_ver);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overrided. Using version %1.").arg(pgsql_ver));
+			BaseObject::setPgSQLVersion(pgsql_ver);
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL version detection overridden. Using version `%1'.").arg(pgsql_ver));
 		}
 		else
 		{
-			SchemaParser::setPgSQLVersion(version);
-      emit s_progressUpdated(progress, trUtf8("PostgreSQL %1 server detected.").arg(version));
+			BaseObject::setPgSQLVersion(version);
+      emit s_progressUpdated(progress, trUtf8("PostgreSQL `%1' server detected.").arg(version));
 		}
 
     if(simulate && use_tmp_names)
@@ -247,7 +246,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
     {
       db_model->setSQLDisabled(false);
       db_sql_reenabled=true;
-      emit s_progressUpdated(progress, trUtf8("Enabling the SQL code for database `%1'' to avoid errors.").arg(db_model->getName()));
+      emit s_progressUpdated(progress, trUtf8("Enabling the SQL code for database `%1' to avoid errors.").arg(db_model->getName()));
     }
 
 
@@ -258,6 +257,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Save the current status for ALTER command generation for table columns/constraints
 			saveGenAtlerCmdsStatus(db_model);
 		}
+
+    if(!ignored_errors.isEmpty())
+      emit s_progressUpdated(progress, trUtf8("Ignoring the following error code(s): `%1'.").arg(ignored_errors.join(", ")));
 
 		if(drop_db)
 		{
@@ -284,7 +286,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
-                                   trUtf8("Creating object `%1' (%2).").arg(Utf8String::create(object->getName())).arg(object->getTypeName()),
+                                   trUtf8("Creating object `%1' (%2).")
+                                   .arg(/*Utf8String::create(*/object->getName())
+                                   .arg(object->getTypeName()),
 																	 object->getObjectType());
 
 						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -293,16 +297,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				}
 				catch(Exception &e)
 				{
-					/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
-					returned by the server is other than object duplicity */
-					if(!ignore_dup ||
-						 (ignore_dup &&
-							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
+          //Ignoring the error if it is in the ignored list
+          if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+             (ignore_dup && isDuplicationError(e.getExtraInfo())))
+            emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+          //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+          else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
 						throw Exception(e.getErrorMessage(),
 														e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 					else
-						//If the object is duplicated store the error on a vector
-						errors.push_back(e);
+            errors.push_back(e);
 				}
 
 				created_objs[types[type_id]]++;
@@ -315,8 +319,10 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
-                               trUtf8("Creating database `%1'.").arg(Utf8String::create(db_model->getName())),
+                               trUtf8("Creating database `%1'.")
+                               .arg(/*Utf8String::create(*/db_model->getName()),
 															 OBJ_DATABASE);
+
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
@@ -324,15 +330,16 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		}
 		catch(Exception &e)
 		{
-			/* Raises an error if the object is duplicated and the ignore duplicity is not set or the error
-			returned by the server is other than object duplicity */
-			if(!ignore_dup ||
-				 (ignore_dup &&
-					std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-				throw Exception(e.getErrorMessage(),
-												e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-			else
-				errors.push_back(e);
+      //Ignoring the error if it is in the ignored list
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+         (ignore_dup && isDuplicationError(e.getExtraInfo())))
+        emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+      //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+      else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
+        throw Exception(e.getErrorMessage(),
+                        e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+      else
+        errors.push_back(e);
 		}
 
 		if(!export_canceled)
@@ -342,143 +349,20 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn=conn;
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
-                             trUtf8("Connecting to database `%1'.").arg(Utf8String::create(db_model->getName())));
+                             trUtf8("Connecting to database `%1'.")
+                             .arg(/*Utf8String::create(*/db_model->getName()));
 
 			new_db_conn.connect();
 			progress=30;
-			//Creating the other object types
-      emit s_progressUpdated(progress, trUtf8("Creating objects on database `%1'.").arg(Utf8String::create(db_model->getName())));
 
-			//Generates the sql from entire model
-			sql_buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+      //Creating the other object types
+      emit s_progressUpdated(progress,
+                             trUtf8("Creating objects on database `%1'.")
+                             .arg(/*Utf8String::create(*/db_model->getName()));
 
-			/* Extract each SQL command from the buffer and execute them separately. This is done
-			 to permit the user, in case of error, identify what object is wrongly configured. */
-			ts.setString(&sql_buf);
-			unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size();
-
-			progress+=(sql_gen_progress/progress);
-			sql_cmd.clear();
-
-			while(!ts.atEnd() && !export_canceled)
-			{
-				try
-				{
-					//Cleanup single line comments
-					lin=ts.readLine();
-					curr_size+=lin.size();
-					aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * 70);
-
-					ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
-					lin.remove(QRegExp("^(--)+(.)+$"));
-
-					//If the line isn't empty after cleanup it will be included on sql command
-					if(!lin.isEmpty())
-						sql_cmd += lin + "\n";
-
-					//If the ddl end token is found
-					if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
-					{
-						//Regexp used to extract the object being created
-						QRegExp reg=QRegExp("(CREATE)(.)+(\n)", Qt::CaseSensitive);
-
-
-						//Check if the regex matches the sql command
-						if(reg.exactMatch(sql_cmd))
-						{
-							QString obj_type, obj_name;
-							QRegExp reg_aux;
-							unsigned obj_id;
-							ObjectType obj_types[]={ OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
-																			 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
-																			 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
-																			 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
-																			 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
-																			 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE };
-							unsigned count=sizeof(obj_types)/sizeof(ObjectType);
-							int pos=0;
-
-							//Get the fisrt line of the sql command, that contains the CREATE ... statement
-							lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
-
-							for(obj_id=0; obj_id < count; obj_id++)
-							{
-								//Check if the keyword for the current object exists on string
-								reg_aux.setPattern(QString("(CREATE)(.)*(%1)%2")
-																	 .arg(BaseObject::getSQLName(obj_types[obj_id]))
-																	 .arg(obj_types[obj_id]==OBJ_INDEX ? "( )*(CONCURRENTLY)?" : ""));
-								pos=reg_aux.indexIn(lin);
-
-								if(pos >= 0)
-								{
-									//Extracts from the line the string starting with the object's name
-                  lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
-
-									//Stores the object type name
-									obj_type=BaseObject::getTypeName(obj_types[obj_id]);
-
-									if(obj_types[obj_id]!=OBJ_CAST)
-									{
-                    int last_quote_idx=lin.lastIndexOf('"'),
-                        first_quote_idx=lin.indexOf('"'),
-                        spc_idx=lin.indexOf(' ');
-
-                    if(spc_idx >=0 && spc_idx < first_quote_idx)
-                      //Getting the name at the first space before the first quote
-                      obj_name=lin.split(' ').at(0);
-                    else if(last_quote_idx >=0)
-                      //Getting the name until the last quote
-                      obj_name=lin.mid(0, last_quote_idx +1);
-                    else
-                      //Gettring the name until the first space or end of string
-                      obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
-
-                    obj_name.remove('(');
-									}
-									else
-									{
-										obj_name="cast" + lin.replace(" AS ",",");
-									}
-
-									obj_name.remove(';');
-									break;
-								}
-							}
-
-							emit s_progressUpdated(aux_prog,
-                                     trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(obj_type),
-																		 obj_types[obj_id]);
-						}
-						else
-							//General commands like alter / set aren't explicitly shown
-              emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."));
-
-						//Executes the extracted SQL command
-						if(!sql_cmd.isEmpty())
-							new_db_conn.executeDDLCommand(sql_cmd);
-
-						sql_cmd.clear();
-						ddl_tk_found=false;
-					}
-				}
-				catch(Exception &e)
-				{
-					if(ddl_tk_found) ddl_tk_found=false;
-
-					if(!ignore_dup ||
-						 (ignore_dup &&
-							std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-						throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
-														ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-					else
-					{
-						sql_cmd.clear();
-						errors.push_back(e);
-						sleepThread(10);
-					}
-				}
-			}
-		}
+      //Exporting the database model definition using the opened connection
+      exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
+    }
 
 		disconnect(db_model, nullptr, this, nullptr);
 
@@ -486,15 +370,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			restoreGenAtlerCmdsStatus();
 
 		//Closes the new opened connection
-		if(new_db_conn.isStablished()) new_db_conn.close();
+    new_db_conn.close();
 
 		/* If the process was a simulation or even canceled undo the export
 		removing the created objects */
 		if(simulate || export_canceled)
       undoDBMSExport(db_model, conn, use_tmp_names);
 
-		if(conn.isStablished())
-			conn.close();
+    conn.close();
 
 		if(!export_canceled)
 			emit s_exportFinished();
@@ -513,30 +396,30 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		try
 		{
 			//Closes the new opened connection
-			if(new_db_conn.isStablished()) new_db_conn.close();
+      new_db_conn.close();
 
 			//Undo the export removing the created objects
       undoDBMSExport(db_model, conn, use_tmp_names);
 		}
 		catch(Exception &){}
 
-		if(conn.isStablished())	conn.close();
+    conn.close();
 
 		/* When running in a separated thread (other than the main application thread)
 		redirects the error in form of signal */
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
-			errors.push_back(e);
+      errors.push_back(e);
 			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
 		}
 		else
 		{
-			//Redirects any error to the user
-			if(errors.empty())
+      //Redirects any error to terrorsr
+      if(errors.empty())
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 			{
-				errors.push_back(e);
+        errors.push_back(e);
 				throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 			}
 		}
@@ -648,9 +531,9 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   QTextStream stream(&tmp_name);
   QDateTime dt=QDateTime::currentDateTime();
   QCryptographicHash hash(QCryptographicHash::Md5);
-  map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, "db_" },
-                                          {OBJ_ROLE, "rl_"},
-                                          {OBJ_TABLESPACE, "tb_"} };
+  map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, QString("db_") },
+                                          { OBJ_ROLE, QString("rl_")},
+                                          { OBJ_TABLESPACE, QString("tb_")} };
 
   orig_obj_names.clear();
   orig_obj_names[db_model]=db_model->getName();
@@ -670,21 +553,303 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
   for(auto obj : orig_obj_names)
   {
-    stream << reinterpret_cast<unsigned *>(obj.first)  << "_" << dt.toTime_t();
+    stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
 
-    //Generates an unique name for the permission through md5 hash
+    //Generates an unique name for the object through md5 hash
     hash.addData(QByteArray(tmp_name.toStdString().c_str()));
     tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
 
     obj.first->setName(tmp_name.mid(0,15));
     tmp_name.clear();
   }
+
+	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
+		 renamed object correctly */
+	db_model->setCodesInvalidated();
 }
 
 void ModelExportHelper::restoreObjectNames(void)
 {
   for(auto obj : orig_obj_names)
     obj.first->setName(obj.second);
+
+	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
+		 object's with their original names */
+  db_model->setCodesInvalidated();
+}
+
+bool ModelExportHelper::isDuplicationError(const QString &error_code)
+{
+  /* Error codes treated in this method
+      42P04 	duplicate_database
+      42723 	duplicate_function
+      42P06 	duplicate_schema
+      42P07 	duplicate_table
+      42710 	duplicate_object
+      42701   duplicate_column
+      42P16   invalid_table_definition
+
+     Reference:
+      http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/ 
+  static QStringList err_codes = {QString("42P04"), QString("42723"), QString("42P06"),
+                                  QString("42P07"), QString("42710"), QString("42701"),
+                                  QString("42P16")};
+
+  return(err_codes.contains(error_code));
+}
+
+void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
+{
+  Connection aux_conn;
+  QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
+          obj_name, obj_tp_name, tab_name,
+          alter_tab=QString("ALTER TABLE");
+  //vector<Exception> errors;
+  vector<QString> db_sql_cmds;
+  QTextStream ts;
+  ObjectType obj_type=BASE_OBJECT;
+  bool ddl_tk_found=false, is_create=false, is_drop=false;
+  unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
+           factor=(db_name.isEmpty() ? 70 : 100);
+  int pos=0, pos1=0, comm_cnt=0;
+
+  //Regexp used to extract the object being created
+  QRegExp obj_reg(QString("(CREATE|DROP|ALTER)(.)+(\n)")),
+          tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
+          drop_reg(QString("^((\\-\\-)+( )*)+(DROP)(.)+")),
+          drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
+          reg_aux;
+
+  vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+                                 OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
+                                 OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
+                                 OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
+                                 OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
+                                 OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE,
+                                 OBJ_DATABASE };
+
+  /* Extract each SQL command from the buffer and execute them separately. This is done
+   to permit the user, in case of error, identify what object is wrongly configured. */
+  ts.setString(&sql_buf);
+
+  if(!conn.isStablished())
+  {
+    if(!db_name.isEmpty())
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
+
+    conn.connect();
+  }
+
+  while(!ts.atEnd() && !export_canceled)
+  {
+    try
+    {
+      //Cleanup single line comments
+      lin=ts.readLine();
+      curr_size+=lin.size();
+      aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * factor);
+
+      /* If the simulation mode is off and the drop objects option is checked,
+         check if the current line matches one of the accepted drop commands
+         (DROP [OBJECT] or ALTER TABLE...DROP) */
+      if(drop_objs && (drop_reg.exactMatch(lin) || drop_tab_obj_reg.exactMatch(lin)))
+      {
+        comm_cnt=lin.count(QString("--"));
+        lin=lin.remove(QString("--")).trimmed();
+
+        /* If the count of comment indicators (--) is 1 indicates that the DDL of the
+           object related to the DROP is enabled, so the DROP is executed otherwise ignored */
+        if(comm_cnt==1)
+        {
+         sql_cmd=lin + QString("\n");
+         ddl_tk_found=true;
+        }
+      }
+      else
+      {
+        ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+        lin.remove(QRegExp(QString("^(--)+(.)+$")));
+
+        //If the line isn't empty after cleanup it will be included on sql command
+        if(!lin.isEmpty())
+          sql_cmd += lin + QString("\n");
+      }
+
+      //If the ddl end token is found
+      if(ddl_tk_found || (!sql_cmd.isEmpty() && ts.atEnd()))
+      {
+        //Checking if the command is a column or constraint creation via ALTER TABLE
+        aux_cmd=sql_cmd;
+        pos=tab_obj_reg.indexIn(aux_cmd);
+
+        if(pos >= 0)
+        {        
+          aux_cmd.remove('"');
+          aux_cmd.remove(QString("IF EXISTS "));
+          obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
+          reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
+
+          pos+=tab_obj_reg.matchedLength();
+          pos1=aux_cmd.indexOf(' ', pos);
+
+          //Extracting the table name
+          pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
+          pos1=aux_cmd.indexOf(QString("ADD"));
+
+          if(pos1 < 0)
+          {
+            pos1=aux_cmd.indexOf(QString("DROP"));
+            is_drop=true;
+          }
+          tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
+
+          //Extracting the child object name (column | constraint) the one between
+          pos=reg_aux.indexIn(aux_cmd, pos1);
+          pos+=reg_aux.matchedLength();
+
+          pos1=aux_cmd.indexOf(" ", pos);
+          obj_name=aux_cmd.mid(pos, pos1 - pos).simplified();
+
+          //Creating a fully qualified name for the object (schema.table.name)
+          obj_name=tab_name + QString(".") + obj_name;
+
+          if(is_drop)
+            msg=trUtf8("Dropping object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+          else
+            msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+
+           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+        }
+        //Check if the regex matches the sql command
+        else if(obj_reg.exactMatch(sql_cmd))
+        {
+          //Get the fisrt line of the sql command, that contains the CREATE/DROP/ALTER ... statement
+          lin=sql_cmd.mid(0, sql_cmd.indexOf('\n'));
+
+          for(ObjectType obj_tp : obj_types)
+          {
+            if(export_canceled) break;
+
+            obj_type=obj_tp;
+
+            //Appeding special tokens when the object is an index or view
+            if(lin.startsWith(QString("CREATE")))
+            {
+              if(obj_tp==OBJ_INDEX)
+              {
+                lin.remove(QString("UNIQUE"));
+                lin.remove(QString("CONCURRENTLY"));
+              }
+              else if(obj_tp==OBJ_VIEW)
+              {
+                lin.remove(QString("MATERIALIZED"));
+                lin.remove(QString("RECURSIVE"));
+              }
+            }
+            else if(lin.startsWith(QString("DROP")))
+              lin.remove(QString("IF EXISTS"));
+
+            lin=lin.simplified();
+
+            //Check if the keyword for the current object exists on string
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)")
+                               .arg(BaseObject::getSQLName(obj_tp)));
+            pos=reg_aux.indexIn(lin);
+
+            if(pos >= 0)
+            {
+              is_create=lin.startsWith(QString("CREATE"));
+              is_drop=(!is_create && lin.startsWith(QString("DROP")));
+
+              //Extracts from the line the string starting with the object's name
+              lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
+              lin.remove('"');
+
+              if(obj_tp!=OBJ_CAST)
+              {
+                int spc_idx=lin.indexOf(' ');
+                obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+
+                if(obj_tp!=OBJ_FUNCTION)
+                {
+                  obj_name=obj_name.remove('(').simplified();
+                  obj_name=obj_name.remove(')').simplified();
+                }
+              }
+              else
+              {
+                obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+              }
+
+              //Stores the object type name
+              obj_tp_name=BaseObject::getTypeName(obj_tp);
+              obj_name.remove(';');
+
+              if(is_create)
+                msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+              else if(is_drop)
+                msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+              else
+                msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+
+              break;
+            }
+          }
+
+          emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+          is_create=is_drop=false;
+          msg.clear();
+        }
+        else if(!sql_cmd.trimmed().isEmpty())
+        {
+          //General commands like grant, revoke or set aren't explicitly shown
+          emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
+        }
+
+        //Executes the extracted SQL command
+        if(!sql_cmd.isEmpty())
+        {
+          if(obj_type!=OBJ_DATABASE)
+            conn.executeDDLCommand(sql_cmd);
+          else
+            db_sql_cmds.push_back(sql_cmd);
+        }
+
+        sql_cmd.clear();
+        ddl_tk_found=false;
+        sleepThread(20);    
+      }
+
+      if(ts.atEnd() && !db_sql_cmds.empty())
+      {
+        conn.close();
+        aux_conn=conn;
+        aux_conn.connect();
+        for(QString cmd : db_sql_cmds)
+          aux_conn.executeDDLCommand(cmd);
+      }
+    }
+    catch(Exception &e)
+    {
+      if(ddl_tk_found) ddl_tk_found=false;
+
+      //Ignoring the error if it is in the ignored list
+      if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+         (ignore_dup && isDuplicationError(e.getExtraInfo())))
+        emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+      //Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+      else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
+        throw Exception(e.getErrorMessage(),
+                        e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+      else
+        errors.push_back(e);
+
+      sql_cmd.clear();
+    }
+  }
+
+  if(!db_name.isEmpty())
+    emit s_exportFinished();
 }
 
 void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj_type)
@@ -695,21 +860,54 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool simulate, bool use_rand_names)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
 {
 	this->db_model=db_model;
 	this->connection=conn;
 	this->pgsql_ver=pgsql_ver;
 	this->ignore_dup=ignore_dup;
 	this->simulate=simulate;
-	this->drop_db=drop_db;
+  this->drop_db=drop_db && !drop_objs;
+  this->drop_objs=drop_objs && !drop_db;
   this->use_tmp_names=use_rand_names;
+  this->sql_buffer.clear();
+  this->db_name.clear();
+}
+
+void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
+{
+  this->sql_buffer=sql_buffer;
+  this->connection=conn;
+  this->db_name=db_name;
+  this->ignore_dup=ignore_dup;
+  this->simulate=false;
+  this->drop_db=false;
+  this->use_tmp_names=false;
 }
 
 void ModelExportHelper::exportToDBMS(void)
 {
 	if(connection)
-    exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, simulate, use_tmp_names);
+  {
+    if(sql_buffer.isEmpty())
+     exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, drop_objs, simulate, use_tmp_names);
+    else
+    {
+      try
+      {
+        exportBufferToDBMS(sql_buffer, *connection);
+      }
+      catch(Exception &e)
+      {
+        /* When running in a separated thread (other than the main application thread)
+        redirects the error in form of signal */
+        if(this->thread() && this->thread()!=qApp->thread())
+          emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+        else
+          throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+      }
+    }
+  }
 }
 
 void ModelExportHelper::cancelExport(void)

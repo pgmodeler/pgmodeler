@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@ Domain::Domain(void)
 {
 	obj_type=OBJ_DOMAIN;
 	not_null=false;
-	attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	attributes[ParsersAttributes::NOT_NULL]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::CONSTRAINT]="";
+	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+	attributes[ParsersAttributes::NOT_NULL]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::TYPE]=QString();
+	attributes[ParsersAttributes::CONSTRAINT]=QString();
 }
 
 void Domain::setName(const QString &name)
@@ -55,29 +55,36 @@ void Domain::setSchema(BaseObject *schema)
 void Domain::setConstraintName(const QString &constr_name)
 {
 	//Raises an error if the constraint name is invalid
-	if(!BaseObject::isValidName(constr_name))
+  if(!constr_name.isEmpty() && !BaseObject::isValidName(constr_name))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(constraint_name != constr_name);
 	this->constraint_name=constr_name;
 }
 
 void Domain::setExpression(const QString &expr)
 {
+	setCodeInvalidated(expression != expr);
 	this->expression=expr;
 }
 
 void Domain::setDefaultValue(const QString &default_val)
 {
-	this->default_value=default_val.trimmed();
+	QString def=default_val.trimmed();
+
+	setCodeInvalidated(default_value != def);
+	this->default_value=def;
 }
 
 void Domain::setNotNull(bool value)
 {
+	setCodeInvalidated(not_null != value);
 	not_null=value;
 }
 
 void Domain::setType(PgSQLType type)
 {
+	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 
@@ -108,7 +115,10 @@ PgSQLType Domain::getType(void)
 
 QString Domain::getCodeDefinition(unsigned def_type)
 {
-	attributes[ParsersAttributes::NOT_NULL]=(not_null ? "1" : "");
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
+	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::EXPRESSION]=expression;
 	attributes[ParsersAttributes::CONSTRAINT]=BaseObject::formatName(constraint_name);
@@ -136,3 +146,44 @@ void Domain::operator = (Domain &domain)
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
+QString Domain::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    QString alter_def=BaseObject::getAlterDefinition(object);
+    Domain *domain=dynamic_cast<Domain *>(object);
+
+    attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+    attributes[ParsersAttributes::NOT_NULL]=QString();
+    attributes[ParsersAttributes::CONSTRAINT]=QString();
+    attributes[ParsersAttributes::EXPRESSION]=QString();
+    attributes[ParsersAttributes::OLD_NAME]=QString();
+    attributes[ParsersAttributes::NEW_NAME]=QString();
+
+    if(this->default_value!=domain->default_value)
+      attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
+
+    if(this->not_null!=domain->not_null)
+      attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+    if(this->expression!=domain->expression)
+    {
+      attributes[ParsersAttributes::CONSTRAINT]=domain->constraint_name;
+      attributes[ParsersAttributes::EXPRESSION]=(!domain->expression.isEmpty() ? domain->expression : ParsersAttributes::UNSET);
+    }
+
+    if(!this->constraint_name.isEmpty() && !domain->constraint_name.isEmpty() &&
+       this->constraint_name!=domain->constraint_name)
+    {
+      attributes[ParsersAttributes::OLD_NAME]=this->constraint_name;
+      attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
+    }
+
+    alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

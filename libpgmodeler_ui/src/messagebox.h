@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@
 class Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
-		bool cancelled;
+
+    bool cancelled;
 
 	public:
 		//! \brief Constants used to define the message icon
@@ -53,15 +54,18 @@ class Messagebox: public QDialog, public Ui::Messagebox {
     User can specify custom button labels as well custom icons. The icons can be a path to a local file
     or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
     void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON,
-              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+              const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
+              const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
 
-    void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
-              const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-              const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+    //! brief Shows the message box using an excpetion as message
+    void show(Exception e, const QString &msg=QString(), unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
+              const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
+              const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
+
+    //! brief Shows a simple message box with the title automatically defined by the icon type
+    void show(const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
+
 		bool isCancelled(void);
-
-    void setRawTextInformation(const QString &text, bool richtext);
 
 	private slots:
 		void handleYesOkClick(void);

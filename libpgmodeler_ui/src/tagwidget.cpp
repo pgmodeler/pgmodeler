@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,112 +23,77 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
   Ui_TagWidget::setupUi(this);
   configureFormLayout(tag_grid, OBJ_TAG);
 
-  connect(parent_form->apply_ok_btn, &QPushButton::clicked, this, &TagWidget::applyConfiguration);
-  connect(tab_name_color_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(sch_name_color_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(title_fcolor1_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(title_fcolor2_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(title_bcolor_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(body_fcolor1_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(body_fcolor2_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(body_bcolor_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(extbody_fcolor1_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(extbody_fcolor2_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
-  connect(extbody_bcolor_tb, &QToolButton::clicked, this, &TagWidget::selectColor);
+	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
+												ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
+												ParsersAttributes::TABLE_EXT_BODY };
+	unsigned color_count=1;
+	int row=0;
 
-  parent_form->setMinimumSize(450, 300);
-  parent_form->setMaximumHeight(300);
+	for(auto attr : attribs)
+	{
+		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+			 color_count=3;
+
+		color_pickers[attr]=new ColorPickerWidget(color_count, this);
+		colors_grid->addWidget(color_pickers[attr], row, 1);
+		colors_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Fixed), row, 2);
+		row++;
+	}
+
+	connect(parent_form->apply_ok_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
+	parent_form->setMinimumSize(450, 320);
+	parent_form->setMaximumHeight(320);
 }
 
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)
 {
-  BaseObjectWidget::setAttributes(model, op_list, tag);
+	unsigned color_count=1, i;
+	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
+												ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
+												ParsersAttributes::TABLE_EXT_BODY };
 
-  if(tag)
-  {
-    tab_name_color_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_NAME, Tag::FILL_COLOR1)));
-    sch_name_color_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, Tag::FILL_COLOR1)));
+	BaseObjectWidget::setAttributes(model, op_list, tag);
 
-    title_fcolor1_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_TITLE, Tag::FILL_COLOR1)));
-    title_fcolor2_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_TITLE, Tag::FILL_COLOR2)));
-    title_bcolor_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_TITLE, Tag::BORDER_COLOR)));
+	for(auto attr : attribs)
+	{
+		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+			 color_count=3;
 
-    body_fcolor1_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_BODY, Tag::FILL_COLOR1)));
-    body_fcolor2_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_BODY, Tag::FILL_COLOR2)));
-    body_bcolor_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_BODY, Tag::BORDER_COLOR)));
-
-    extbody_fcolor1_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::FILL_COLOR1)));
-    extbody_fcolor2_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::FILL_COLOR2)));
-    extbody_bcolor_tb->setPalette(QPalette(tag->getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::BORDER_COLOR)));
-  }
-  else
-  {
-    tab_name_color_tb->setPalette(QPalette(BaseObjectView::getFontStyle(ParsersAttributes::TABLE_NAME).foreground().color()));
-    sch_name_color_tb->setPalette(QPalette(BaseObjectView::getFontStyle(ParsersAttributes::TABLE_SCHEMA_NAME).foreground().color()));
-
-
-    title_fcolor1_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_TITLE, Tag::FILL_COLOR1)));
-    title_fcolor2_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_TITLE, Tag::FILL_COLOR2)));
-    title_bcolor_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_TITLE, Tag::BORDER_COLOR)));
-
-    body_fcolor1_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_BODY, Tag::FILL_COLOR1)));
-    body_fcolor2_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_BODY, Tag::FILL_COLOR2)));
-    body_bcolor_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_BODY, Tag::BORDER_COLOR)));
-
-    extbody_fcolor1_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::FILL_COLOR1)));
-    extbody_fcolor2_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::FILL_COLOR2)));
-    extbody_bcolor_tb->setPalette(QPalette(BaseObjectView::getElementColor(ParsersAttributes::TABLE_EXT_BODY, Tag::BORDER_COLOR)));
-  }
-}
-
-void TagWidget::selectColor(void)
-{
-	QColorDialog color_dlg;
-  QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-
-  if(btn)
-  {
-    color_dlg.setWindowTitle(trUtf8("Select color"));
-    color_dlg.setCurrentColor(btn->palette().color(QPalette::Button));
-    color_dlg.exec();
-
-    if(color_dlg.result()==QDialog::Accepted)
-      btn->setPalette(QPalette(color_dlg.selectedColor()));
-  }
+		for(i=0; i < color_count; i++)
+		{
+			if(tag)
+				color_pickers[attr]->setColor(i, tag->getElementColor(attr, i));
+			else
+				color_pickers[attr]->setColor(i, BaseObjectView::getElementColor(attr, i));
+		}
+	}
 }
 
 void TagWidget::applyConfiguration(void)
 {
 	try
 	{
-    Tag *tag=nullptr;
+		Tag *tag=nullptr;
     vector<BaseObject *> tagged_tabs;
+		QStringList attribs={ ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
+													ParsersAttributes::TABLE_EXT_BODY };
 
     startConfiguration<Tag>();
     tag=dynamic_cast<Tag *>(this->object);
 
     BaseObjectWidget::applyConfiguration();
 
-    tag->setElementColor(ParsersAttributes::TABLE_NAME, tab_name_color_tb->palette().color(QPalette::Button), Tag::FILL_COLOR1);
-    tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, sch_name_color_tb->palette().color(QPalette::Button), Tag::FILL_COLOR1);
+		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FILL_COLOR1);
+		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FILL_COLOR1);
 
-    tag->setElementColors(ParsersAttributes::TABLE_TITLE,
-                          QString("%1,%2,%3")
-                          .arg(title_fcolor1_tb->palette().color(QPalette::Button).name())
-                          .arg(title_fcolor2_tb->palette().color(QPalette::Button).name())
-                          .arg(title_bcolor_tb->palette().color(QPalette::Button).name()));
-
-    tag->setElementColors(ParsersAttributes::TABLE_BODY,
-                          QString("%1,%2,%3")
-                          .arg(body_fcolor1_tb->palette().color(QPalette::Button).name())
-                          .arg(body_fcolor2_tb->palette().color(QPalette::Button).name())
-                          .arg(body_bcolor_tb->palette().color(QPalette::Button).name()));
-
-    tag->setElementColors(ParsersAttributes::TABLE_EXT_BODY,
-                          QString("%1,%2,%3")
-                          .arg(extbody_fcolor1_tb->palette().color(QPalette::Button).name())
-                          .arg(extbody_fcolor2_tb->palette().color(QPalette::Button).name())
-                          .arg(extbody_bcolor_tb->palette().color(QPalette::Button).name()));
+		for(auto attr : attribs)
+		{
+			tag->setElementColors(attr,
+														QString("%1,%2,%3")
+														.arg(color_pickers[attr]->getColor(Tag::FILL_COLOR1).name())
+														.arg(color_pickers[attr]->getColor(Tag::FILL_COLOR2).name())
+														.arg(color_pickers[attr]->getColor(Tag::BORDER_COLOR).name()));
+		}
 
     model->getObjectReferences(tag, tagged_tabs);
     while(!tagged_tabs.empty())
@@ -137,7 +102,7 @@ void TagWidget::applyConfiguration(void)
       tagged_tabs.pop_back();
     }
 
-    finishConfiguration();
+		finishConfiguration();
 	}
 	catch(Exception &e)
 	{

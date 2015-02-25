@@ -1,31 +1,46 @@
 #/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.2.1/5.2.1/clang_64
-QMAKE_ARGS="-r CONFIG+=x86_64 -spec macx-clang"
+QT_ROOT=/Users/$USR/Qt5.4.0/5.4/clang_64
+QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep -o '[0-9].[0-9].[0-9]\(.\)*'`
-DEPLOY_VER=${DEPLOY_VER/\",/}
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 WITH_BUILD_NUM='-with-build-num'
+DEMO_VERSION_OPT='-demo-version'
+DEMO_VERSION=0
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-macosx"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
 fi
 
 PKGFILE=$PKGNAME.dmg
 APPNAME=pgmodeler
-BUNDLE=$APPNAME.app
+INSTALL_ROOT="$PWD/build"
+APP_PREFIX="Applications"
+BUNDLE="$INSTALL_ROOT/$APP_PREFIX/$APPNAME.app"
 
 clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
@@ -52,8 +67,13 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
-rm -r build/* &> $LOG
+rm -r $INSTALL_ROOT/* &> $LOG
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
@@ -77,7 +97,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing dependencies..."
-make install  >> $LOG 2>&1
+make install INSTALL_ROOT=$INSTALL_ROOT >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -87,18 +107,17 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm $PKGFILE  >> $LOG 2>&1
 
 # Deploy the Qt libraries onto app bundle
-$QT_ROOT/bin/macdeployqt build/$BUNDLE >> $LOG 2>&1
-
-# Remove the libpq from Frameworks path
-rm build/$BUNDLE/Contents/Frameworks/libpq*  >> $LOG 2>&1
+$QT_ROOT/bin/macdeployqt $BUNDLE >> $LOG 2>&1
 
 # Creates an empty dmg file named
-ln -s /Applications build/Applications >> $LOG 2>&1
-cp installer/macosx/installer_icon.icns build/.VolumeIcon.icns >> $LOG 2>&1
-hdiutil create -format UDRW -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder build/ >> $LOG 2>&1
+cp installer/macosx/installer_icon.icns $INSTALL_ROOT/.VolumeIcon.icns >> $LOG 2>&1
+mv $BUNDLE $INSTALL_ROOT >> $LOG 2>&1
+rm -r "$INSTALL_ROOT/$APP_PREFIX" >> $LOG 2>&1
+ln -s /Applications $INSTALL_ROOT/Applications >> $LOG 2>&1
+
+hdiutil create -format UDRW -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder $INSTALL_ROOT >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -119,6 +138,9 @@ if [ $? -ne 0 ]; then
   echo
   exit 1
 fi
+
+mv $PKGFILE $INSTALL_ROOT >> $LOG 2>&1
+PKGFILE="build/$PKGFILE"
 
 echo "File created: $PKGFILE"
 echo "pgModeler successfully deployed!"

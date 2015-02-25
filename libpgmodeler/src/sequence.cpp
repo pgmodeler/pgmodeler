@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,29 +18,29 @@
 
 #include "sequence.h"
 
-const QString Sequence::MAX_POSITIVE_VALUE="+2147483647";
-const QString Sequence::MAX_NEGATIVE_VALUE="-2147483648";
-const QString Sequence::MAX_SMALL_POSITIVE_VALUE="+32767";
-const QString Sequence::MAX_SMALL_NEGATIVE_VALUE="-32768";
-const QString Sequence::MAX_BIG_POSITIVE_VALUE="+9223372036854775807";
-const QString Sequence::MAX_BIG_NEGATIVE_VALUE="-9223372036854775808";
+const QString Sequence::MAX_POSITIVE_VALUE=QString("+2147483647");
+const QString Sequence::MAX_NEGATIVE_VALUE=QString("-2147483648");
+const QString Sequence::MAX_SMALL_POSITIVE_VALUE=QString("+32767");
+const QString Sequence::MAX_SMALL_NEGATIVE_VALUE=QString("-32768");
+const QString Sequence::MAX_BIG_POSITIVE_VALUE=QString("+9223372036854775807");
+const QString Sequence::MAX_BIG_NEGATIVE_VALUE=QString("-9223372036854775808");
 
 Sequence::Sequence(void)
 {
 	obj_type=OBJ_SEQUENCE;
 	cycle=false;
-	setDefaultValues(PgSQLType("serial"));
+  setDefaultValues(PgSQLType(QString("serial")));
 	owner_col=nullptr;
 
-	attributes[ParsersAttributes::INCREMENT]="";
-	attributes[ParsersAttributes::MIN_VALUE]="";
-	attributes[ParsersAttributes::MAX_VALUE]="";
-	attributes[ParsersAttributes::START]="";
-	attributes[ParsersAttributes::CACHE]="";
-	attributes[ParsersAttributes::CYCLE]="";
-	attributes[ParsersAttributes::OWNER_COLUMN]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::COLUMN]="";
+	attributes[ParsersAttributes::INCREMENT]=QString();
+	attributes[ParsersAttributes::MIN_VALUE]=QString();
+	attributes[ParsersAttributes::MAX_VALUE]=QString();
+	attributes[ParsersAttributes::START]=QString();
+	attributes[ParsersAttributes::CACHE]=QString();
+	attributes[ParsersAttributes::CYCLE]=QString();
+	attributes[ParsersAttributes::OWNER_COLUMN]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::COLUMN]=QString();
 }
 
 bool Sequence::isNullValue(const QString &value)
@@ -111,7 +111,7 @@ QString Sequence::formatValue(const QString &value)
 		}
 
 		//When the negative signal count is odd the number is negative
-		if(neg_cnt % 2 != 0) fmt_value+="-";
+    if(neg_cnt % 2 != 0) fmt_value+=QString("-");
 
 		fmt_value+=value.mid(i, count);
 	}
@@ -155,7 +155,7 @@ int Sequence::compareValues(QString value1, QString value2)
 				idx++;
 			}
 			(*vet_values[i])=aux_value;
-			aux_value="";
+			aux_value=QString();
 		}
 
 		if(ops[0]==ops[1] && value1==value2)
@@ -173,12 +173,12 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 {
 	QString min, max;
 
-	if(serial_type=="smallserial")
+  if(serial_type==QString("smallserial"))
 	{
 		min=MAX_SMALL_NEGATIVE_VALUE;
 		max=MAX_SMALL_POSITIVE_VALUE;
 	}
-	else if(serial_type=="bigserial")
+  else if(serial_type==QString("bigserial"))
 	{
 		min=MAX_BIG_NEGATIVE_VALUE;
 		max=MAX_BIG_POSITIVE_VALUE;
@@ -189,7 +189,7 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 		max=MAX_POSITIVE_VALUE;
 	}
 
-	setValues(min, max, "1", "1", "1");
+  setValues(min, max, QString("1"), QString("1"), QString("1"));
 }
 
 
@@ -222,6 +222,7 @@ void Sequence::setSchema(BaseObject *schema)
 
 void Sequence::setCycle(bool value)
 {
+	setCodeInvalidated(cycle != value);
 	cycle=value;
 }
 
@@ -234,8 +235,8 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	cache=formatValue(cache);
 
 	//Raises an error when some values are empty
-	if(minv==""   || maxv=="" || inc=="" ||
-		 start=="" || cache=="")
+  if(minv.isEmpty()   || maxv.isEmpty() || inc.isEmpty() ||
+     start.isEmpty() ||  cache.isEmpty())
 		throw Exception(ERR_ASG_INV_VALUE_SEQ_ATTRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the min value is greater than max value
 	else if(compareValues(minv,maxv) > 0)
@@ -256,24 +257,26 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	this->increment=inc;
 	this->cache=cache;
 	this->start=start;
+
+	setCodeInvalidated(true);
 }
 
 void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 {
-	if(!table || col_name=="")
+  if(!table || col_name.isEmpty())
 		this->owner_col=nullptr;
 	else if(table)
 	{
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Gets the column with the passed name
@@ -282,7 +285,7 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 		//Raises an error if the column doesn't exists
 		if(!this->owner_col)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the onwer column was added by relationship and the column id is greater than
@@ -291,6 +294,8 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 			 this->owner_col->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 void Sequence::setOwnerColumn(Column *column)
@@ -306,19 +311,19 @@ void Sequence::setOwnerColumn(Column *column)
 		//Raises an error when the column doesn't has a parent table
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OWNER_COL_SEQ)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_INV_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-											.arg(Utf8String::create(this->getName(true))),
+                      .arg(/*Utf8String::create(*/this->getName(true)),
 											ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->owner_col=column;
@@ -329,6 +334,8 @@ void Sequence::setOwnerColumn(Column *column)
 			 column->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 bool Sequence::isReferRelationshipAddedColumn(void)
@@ -373,27 +380,85 @@ Column *Sequence::getOwnerColumn(void)
 
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
-	QString str_aux;
-	Table *table=nullptr;
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
+  Table *table=nullptr;
 
 	if(owner_col)
 	{
-		table=dynamic_cast<Table *>(owner_col->getParentTable());
-		str_aux=table->getName(true) + "." + owner_col->getName(true);
+    attributes[ParsersAttributes::OWNER_COLUMN]=owner_col->getSignature();
+    table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
-	attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
-	attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : "");
-	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : "");
+  attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : QString());
+	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;
 	attributes[ParsersAttributes::MAX_VALUE]=max_value;
 	attributes[ParsersAttributes::START]=start;
 	attributes[ParsersAttributes::CACHE]=cache;
-	attributes[ParsersAttributes::CYCLE]=(cycle ? "1" : "");
+	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::_TRUE_ : QString());
 
 	return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Sequence::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Sequence *seq=dynamic_cast<Sequence *>(object);
+    Table *table=nullptr;
+    attribs_map attribs;
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if((this->owner_col && !seq->owner_col) ||
+       (!this->owner_col && seq->owner_col) ||
+       (this->owner_col && seq->owner_col &&
+        this->owner_col->getSignature()!=seq->owner_col->getSignature()))
+    {
+      if(seq->owner_col)
+      {
+        attribs[ParsersAttributes::OWNER_COLUMN]=seq->owner_col->getSignature();
+        table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
+
+        if(table)
+        {
+          attribs[ParsersAttributes::TABLE]=table->getName(true);
+          attribs[ParsersAttributes::COLUMN]=seq->owner_col->getName(true);
+        }
+      }
+      else
+        attribs[ParsersAttributes::OWNER_COLUMN]=ParsersAttributes::UNSET;
+    }
+
+    if(this->increment!=seq->increment)
+      attribs[ParsersAttributes::INCREMENT]=seq->increment;
+
+    if(this->min_value!=seq->min_value)
+      attribs[ParsersAttributes::MIN_VALUE]=seq->min_value;
+
+    if(this->max_value!=seq->max_value)
+      attribs[ParsersAttributes::MAX_VALUE]=seq->max_value;
+
+    if(this->start!=seq->start)
+      attribs[ParsersAttributes::START]=seq->start;
+
+    if(this->cache!=seq->cache)
+      attribs[ParsersAttributes::CACHE]=seq->cache;
+
+    if(this->cycle!=seq->cycle)
+      attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+    copyAttributes(attribs);
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Sequence::operator = (Sequence &seq)

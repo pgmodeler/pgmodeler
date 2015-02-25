@@ -2,30 +2,30 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
+%if {list} %then
 [SELECT id.indexrelid AS oid, cl.relname AS name FROM pg_index AS id
   LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid ]
 
- %if @{schema} %then
+ %if {schema} %then
     [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
       LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-      WHERE nspname= ] '@{schema}'
+      WHERE nspname= ] '{schema}'
 
-   %if @{table} %then
-     [ AND tb.relkind = 'r' AND tb.relname = ] '@{table}'
+   %if {table} %then
+     [ AND tb.relkind = 'r' AND tb.relname = ] '{table}'
    %end
  %end
 
-  %if @{last-sys-oid} %then
-    %if @{schema} %then
+  %if {last-sys-oid} %then
+    %if {schema} %then
       [ AND ]
     %else
       [ WHERE ]
     %end
-    [ id.indexrelid ] @{oid-filter-op} $sp @{last-sys-oid}
+    [ id.indexrelid ] {oid-filter-op} $sp {last-sys-oid}
   %end
 
-  %if %not @{schema} %and %not @{last-sys-oid} %then
+  %if %not {schema} %and %not {last-sys-oid} %then
      [ WHERE ]
    %else
      [ AND ]
@@ -33,19 +33,23 @@
 
    [ (id.indisprimary IS FALSE ]
 
-   %if %not @{pgsql90} %then
+   %if ({pgsql-ver} != "9.0") %then
      [ AND id.indisexclusion IS FALSE ]
    %end
 
    [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
+   %if {not-ext-object} %then
+     [ AND ]( {not-ext-object} )
+   %end
+
 %else
-    %if @{attribs} %then
+    %if {attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,
 	      am.amname AS index_type, id.indrelid AS table,
 	      id.indisunique AS unique_bool, ]
 
-      %if @{pgsql90} %then
+      %if ({pgsql-ver} == "9.0") %then
        [ NULL AS collations, ]
       %else
        [ indcollation::oid] $ob $cb [ AS collations, ]
@@ -61,36 +65,36 @@
 	LEFT JOIN pg_am AS am ON cl.relam  = am.oid
 	LEFT JOIN pg_description ds ON ds.objoid = id.indexrelid ]
 
-     %if @{schema} %then
+     %if {schema} %then
 	  [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
 	    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-	    WHERE ns.nspname= ] '@{schema}'
+	    WHERE ns.nspname= ] '{schema}'
 
-	%if @{table} %then
-	  [ AND tb.relkind='r' AND tb.relname= ] '@{table}'
+	%if {table} %then
+	  [ AND tb.relkind='r' AND tb.relname= ] '{table}'
 	%end
      %end
 
-     %if @{last-sys-oid} %then
-	%if @{schema} %then
+     %if {last-sys-oid} %then
+	%if {schema} %then
 	  [ AND ]
 	%else
 	  [ WHERE ]
 	%end
-	[ id.indexrelid ] @{oid-filter-op} $sp @{last-sys-oid}
+	[ id.indexrelid ] {oid-filter-op} $sp {last-sys-oid}
      %end
 
-     %if @{filter-oids} %then
-       %if @{schema} %or @{last-sys-oid} %then
+     %if {filter-oids} %then
+       %if {schema} %or {last-sys-oid} %then
 	 [ AND ]
        %else
 	 [ WHERE ]
        %end
 
-       [ id.indexrelid IN (] @{filter-oids} )
+       [ id.indexrelid IN (] {filter-oids} )
      %end
 
-     %if %not @{schema} %and %not @{last-sys-oid} %and %not @{filter-oids} %then
+     %if %not {schema} %and %not {last-sys-oid} %and %not {filter-oids} %then
        [ WHERE ]
      %else
        [ AND ]
@@ -98,10 +102,15 @@
 
      [ (id.indisprimary IS FALSE ]
 
-     %if %not @{pgsql90} %then
+     %if ({pgsql-ver} != "9.0") %then
        [ AND id.indisexclusion IS FALSE ]
      %end
 
      [) AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+
+      %if {not-ext-object} %then
+        [ AND ]( {not-ext-object} )
+      %end
+
     %end
 %end

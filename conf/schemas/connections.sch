@@ -1,7 +1,6 @@
 # XML definition for connections configuration
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
-%if @{connections} %then
+# CAUTION: Do not modify this file unless you know what you are doing.
+%if {connections} %then
 
 [<?xml version="1.0" encoding="UTF-8" ?>] $br
 [<!--] $br
@@ -10,38 +9,42 @@
 [-->] $br
 
 <connections> $br
-@{connections} $br
+{connections} $br
 </connections> $br
 
 %else
 
-$tb [<connection alias="] @{alias} [" host=] "@{host}" [ port=] "@{port}" [ dbname=] "@{dbname}" $br
-$tb $tb [user=] "@{user}"
+$tb [<connection alias="] {alias} [" host=] "{host}" [ port=] "{port}" [ dbname=] "{dbname}" $br
+$tb $tb [user=] "{user}"
 
-%if @{password} %then [ password=] "@{password}" %end
+%if {password} %then [ password=] "{password}" %end
 
-[ connect_timeout=] "@{connect_timeout}" $br
+[ connect_timeout=] "{connect_timeout}" $br
 
-$tb $tb [sslmode=] "@{sslmode}" $br
+$tb $tb [sslmode=] "{sslmode}" $br
 
-%if @{sslcert} %then $tb $tb [sslcert=] "@{sslcert}" $br %end
-%if @{sslkey} %then  $tb $tb [sslkey=] "@{sslkey}" $br %end 
-%if @{sslrootcert} %then $tb $tb [sslrootcert=] "@{sslrootcert}" $br %end 
-%if @{sslcrl} %then $tb $tb [sslcrl=] "@{sslcrl}" $br %end
+%if {sslcert} %then $tb $tb [sslcert=] "{sslcert}" $br %end
+%if {sslkey} %then  $tb $tb [sslkey=] "{sslkey}" $br %end 
+%if {sslrootcert} %then $tb $tb [sslrootcert=] "{sslrootcert}" $br %end 
+%if {sslcrl} %then $tb $tb [sslcrl=] "{sslcrl}" $br %end
 
 
-%if @{krbsrvname} %then
- $tb $tb [krbsrvname=] "@{krbsrvname}" 
+%if {krbsrvname} %then
+ $br $tb $tb [krbsrvname=] "{krbsrvname}" 
 
- %if @{gsslib} %then 
-   [ gsslib=] "@{gsslib}"
+ %if {gsslib} %then 
+   [ gsslib=] "{gsslib}"
  %end
- $br 
 %end
 
-%if @{options} %then
- $tb $tb options="@{options}"
+%if {auto-browse-db} %then
+ $br $tb $tb auto-browse-db="true"
 %end
 
- $tb $tb /> $br
+%if {options} %then
+ $br $tb $tb options="{options}"
+%end
+
+
+/> $br
 %end

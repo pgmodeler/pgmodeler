@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@
 class PgModelerCLI: public QApplication {
 	private:
 		Q_OBJECT
+
+		XMLParser *xmlparser;
 
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;
@@ -79,12 +81,13 @@ class PgModelerCLI: public QApplication {
 		float zoom;
 
 		//! \brief Option names constants
-		static QString INPUT,
+    static const QString INPUT,
 		OUTPUT,
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,
 		EXPORT_TO_DBMS,
 		DROP_DATABASE,
+    DROP_OBJECTS,
 		PGSQL_VER,
 		HELP,
 		SHOW_GRID,

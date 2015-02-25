@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,38 +17,19 @@
 */
 
 #include "syntaxhighlighter.h"
-#include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
+QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
 
 SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
-  GeneralConfigWidget *general_conf=nullptr;
-  map<QString, attribs_map> confs;
-
-  if(configuration_form)
-  {
-    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-    confs=general_conf->getConfigurationParams();
-  }
+  if(!parent)
+    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent->setAcceptRichText(true);
-
-  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
-  {
-    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
-    if(size < 5.0f) size=5.0f;
-
-    parent->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
-    parent->setFontPointSize(size);
-  }
-
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
-
   parent->installEventFilter(this);
-  parent_txt=parent;
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -83,7 +64,6 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 
 void SyntaxHighlighter::configureAttributes(void)
 {
-
 	conf_loaded=false;
 	current_block=-1;
 	curr_blk_info_count=0;
@@ -339,7 +319,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			}
 		}
 
-		if(!match) group="";
+    if(!match) group=QString();
 		return(group);
 	}
 }
@@ -444,7 +424,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				if(match_idx >=0 &&  aux_len != word.length())
 					i-=word.length() - aux_len;
 
-				word="";
+        word=QString();
 			}
 		}
 		while(i < len);
@@ -475,8 +455,8 @@ void SyntaxHighlighter::clearConfiguration(void)
 
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
-	if(filename!="")
-	{
+  if(!filename.isEmpty())
+  {
 		attribs_map attribs;
 		QString elem, expr_type, group;
 		bool groups_decl=false, chr_sensitive=false,
@@ -490,8 +470,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		try
 		{
 			clearConfiguration();
-			XMLParser::restartParser();
-			XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+			xmlparser.restartParser();
+			xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
 														GlobalAttributes::DIR_SEPARATOR +
 														GlobalAttributes::OBJECT_DTD_DIR +
 														GlobalAttributes::DIR_SEPARATOR +
@@ -499,34 +479,34 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 														GlobalAttributes::OBJECT_DTD_EXT,
 														GlobalAttributes::CODE_HIGHLIGHT_CONF);
 
-			XMLParser::loadXMLFile(filename);
+			xmlparser.loadXMLFile(filename);
 
-			if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+			if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 			{
 				do
 				{
-					if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+					if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 					{
-						elem=XMLParser::getElementName();
+						elem=xmlparser.getElementName();
 
 						if(elem==ParsersAttributes::WORD_SEPARATORS)
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 							word_separators=attribs[ParsersAttributes::VALUE];
 						}
 						else if(elem==ParsersAttributes::WORD_DELIMITERS)
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 							word_delimiters=attribs[ParsersAttributes::VALUE];
 						}
 						else if(elem==ParsersAttributes::IGNORED_CHARS)
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 							ignored_chars=attribs[ParsersAttributes::VALUE];
 						}
 						else if(elem==ParsersAttributes::COMPLETION_TRIGGER)
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 
 							if(attribs[ParsersAttributes::VALUE].size() >= 1)
 								completion_trigger=attribs[ParsersAttributes::VALUE].at(0);
@@ -541,14 +521,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						{
 							//Marks a flag indication that groups are being declared
 							groups_decl=true;
-							XMLParser::savePosition();
-							XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-							elem=XMLParser::getElementName();
+							xmlparser.savePosition();
+							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+							elem=xmlparser.getElementName();
 						}
 
 						if(elem==ParsersAttributes::GROUP)
 						{
-							XMLParser::getElementAttributes(attribs);
+							xmlparser.getElementAttributes(attribs);
 							group=attribs[ParsersAttributes::NAME];
 
 							/* If the parser is on the group declaration block and not in the build block
@@ -562,7 +542,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																	ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
-								else if(attribs.size() > 1 || XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
+								else if(attribs.size() > 1 || xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
 								{
 									throw Exception(Exception::getErrorMessage(ERR_DEF_INV_GROUP_DECL)
 																	.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
@@ -588,7 +568,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																	ERR_DEF_NOT_DECL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
-								else if(!XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
+								else if(!xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
 								{
 									throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(group),
 																	ERR_DEF_EMPTY_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -610,6 +590,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
 									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
 
+                format.setFontFamily(default_font.family());
+                format.setFontPointSize(default_font.pointSizeF());
 								format.setFontItalic(italic);
 								format.setFontUnderline(underline);
 
@@ -623,8 +605,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								formats[group]=format;
 
 
-								XMLParser::savePosition();
-								XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+								xmlparser.savePosition();
+								xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 
 								if(chr_sensitive)
 									regexp.setCaseSensitivity(Qt::CaseSensitive);
@@ -635,9 +617,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 								do
 								{
-									if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 									{
-										XMLParser::getElementAttributes(attribs);
+										xmlparser.getElementAttributes(attribs);
 										expr_type=attribs[ParsersAttributes::TYPE];
 										regexp.setPattern(attribs[ParsersAttributes::VALUE]);
 
@@ -648,7 +630,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);
 
-										if(expr_type=="" ||
+                    if(expr_type.isEmpty() ||
 											 expr_type==ParsersAttributes::SIMPLE_EXP ||
 											 expr_type==ParsersAttributes::INITIAL_EXP)
 											initial_exprs[group].push_back(regexp);
@@ -656,22 +638,22 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 											final_exprs[group].push_back(regexp);
 									}
 								}
-								while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
-								XMLParser::restorePosition();
+								while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+								xmlparser.restorePosition();
 							}
 						}
 					}
 
 					/* Check if there are some other groups to be declared, if not,
 							continues to reading to the other part of configuration */
-					if(groups_decl && !XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
+					if(groups_decl && !xmlparser.hasElement(XMLParser::NEXT_ELEMENT))
 					{
 						groups_decl=false;
-						XMLParser::restorePosition();
+						xmlparser.restorePosition();
 					}
 
 				}
-				while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+				while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 			}
 
 			itr=groups_order.begin();
@@ -714,3 +696,7 @@ QChar SyntaxHighlighter::getCompletionTrigger(void)
 	return(completion_trigger);
 }
 
+void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
+{
+	SyntaxHighlighter::default_font=fnt;
+}

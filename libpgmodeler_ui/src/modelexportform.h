@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "schemaparser.h"
 #include "modelwidget.h"
 #include "modelexporthelper.h"
+#include "hinttextwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
@@ -43,29 +44,30 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		//! \brief Thread used to manage the export helper when dealing with dbms export
 		QThread *export_thread;
 
-		QTimer timer;
+    HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
 
-		void finishExport(const QString &msg);
+    void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
+		int exec(void){ return(QDialog::Rejected); }
 
 	public:
 		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void show(ModelWidget *model);
+		void exec(ModelWidget *model);
 		void hideEvent(QHideEvent *);
 
-	private slots:
-		void enableExportMode(void);
+  private slots:
+    void selectExportMode(void);
 		void exportModel(void);
 		void selectOutputFile(void);
-		void hideProgress(bool value=true);
-		void updateProgress(int progress, QString msg, ObjectType obj_type);
+    void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd);
 		void captureThreadError(Exception e);
 		void cancelExport(void);
 		void handleExportFinished(void);
 		void handleExportCanceled(void);
+    void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
 };
 
 #endif

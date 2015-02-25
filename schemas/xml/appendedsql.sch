@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 #Creates <![CDATA[]]> element envolving the appended-sql
-#The tag <![CDATA[]]>  is converted to <! $ob CDATA $ob @{attribute} $cb > in order
+#The tag <![CDATA[]]>  is converted to <! $ob CDATA $ob {attribute} $cb > in order
 #to not cause syntax errors on the schema parser
 
-$tb <appended-sql><! $ob CDATA $ob @{appended-sql} $cb $cb ></appended-sql> $br
+$tb <appended-sql><! $ob CDATA $ob {appended-sql} $cb $cb ></appended-sql> $br

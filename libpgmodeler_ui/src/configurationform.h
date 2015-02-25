@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,23 +30,29 @@
 #include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
 #include "pluginsconfigwidget.h"
+#include "relationshipconfigwidget.h"
+#include "snippetsconfigwidget.h"
 
 class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 
-		Messagebox msg_box;
 		GeneralConfigWidget *general_conf;
 		AppearanceConfigWidget *appearance_conf;
 		ConnectionsConfigWidget *connections_conf;
-		PluginsConfigWidget *plugins_conf;
+		RelationshipConfigWidget *relationships_conf;
+    SnippetsConfigWidget *snippets_conf;
+    PluginsConfigWidget *plugins_conf;
 
+    void hideEvent(QHideEvent *);
 
 	public:
 		static const int	GENERAL_CONF_WGT=0,
-                      APPEARANCE_CONF_WGT=1,
-                      CONNECTIONS_CONF_WGT=2,
-                      PLUGINS_CONF_WGT=3;
+											RELATIONSHIPS_CONF_WGT=1,
+											APPEARANCE_CONF_WGT=2,
+											CONNECTIONS_CONF_WGT=3,
+                      SNIPPETS_CONF_WGT=4,
+                      PLUGINS_CONF_WGT=5;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
@@ -55,7 +61,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	public slots:
 		void applyConfiguration(void);
 		void loadConfiguration(void);
-		void close(void);
+		void reject(void);
 
 	private slots:
 		void restoreDefaults(void);

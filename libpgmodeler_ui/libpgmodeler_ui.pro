@@ -1,30 +1,22 @@
-include(../pgmodeler.pro)
+# libpgmodeler_ui.pro (reviewed version)
+#
+# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
+#
+# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
+# refactored code, containing almost all changes done by the refactoring author.
+
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler_ui
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS = $$DESTDIR/$$LIBUTILS \
-       $$DESTDIR/$$LIBPARSERS \
-       $$DESTDIR/$$LIBPGCONNECTOR \
-       $$DESTDIR/$$LIBOBJRENDERER \
-       $$DESTDIR/$$LIBPGMODELER
+windows:DESTDIR = $$PWD
 
 SOURCES += src/mainwindow.cpp \
 	   src/modelwidget.cpp \
-	   src/aboutform.cpp \
 	   src/messagebox.cpp \
 	   src/textboxwidget.cpp \
 	   src/baseobjectwidget.cpp \
@@ -33,7 +25,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-	   src/databasewidget.cpp \
+           src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/objecttablewidget.cpp \
 	   src/rolewidget.cpp \
@@ -84,7 +76,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/objectfinderwidget.cpp \
 	   src/databaseimporthelper.cpp \
 	   src/databaseimportform.cpp \
-	   src/sqlappendwidget.cpp \
 	   src/codecompletionwidget.cpp \
            src/swapobjectsidswidget.cpp \
            src/sqltoolwidget.cpp \
@@ -92,11 +83,26 @@ SOURCES += src/mainwindow.cpp \
            src/modelfixform.cpp \
            src/updatenotifierwidget.cpp \
            src/newobjectoverlaywidget.cpp \
-    src/eventtriggerwidget.cpp
+           src/eventtriggerwidget.cpp \
+           src/aboutwidget.cpp \
+           src/colorpickerwidget.cpp \
+           src/modelnavigationwidget.cpp \
+           src/centralwidget.cpp \
+           src/relationshipconfigwidget.cpp \
+           src/datamanipulationform.cpp \
+           src/customsqlwidget.cpp \
+           src/findreplacewidget.cpp \
+           src/modeldatabasediffform.cpp \
+           src/modelsdiffhelper.cpp \
+           src/objectsdiffinfo.cpp \
+           src/hinttextwidget.cpp \
+           src/databaseexplorerwidget.cpp \
+           src/snippetsconfigwidget.cpp \
+           src/pgmodeleruins.cpp \
+           src/bugreportform.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
-	   src/aboutform.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
 	   src/textboxwidget.h \
@@ -105,7 +111,7 @@ HEADERS += src/mainwindow.h \
 	   src/baseform.h \
 	   src/sourcecodewidget.h \
 	   src/syntaxhighlighter.h \
-	   src/databasewidget.h \
+           src/databasewidget.h \
 	   src/schemawidget.h \
 	   src/objecttablewidget.h \
 	   src/rolewidget.h \
@@ -156,7 +162,6 @@ HEADERS += src/mainwindow.h \
 	   src/objectfinderwidget.h \
 	   src/databaseimporthelper.h \
 	   src/databaseimportform.h \
-	   src/sqlappendwidget.h \
 	   src/codecompletionwidget.h \
            src/swapobjectsidswidget.h \
            src/sqltoolwidget.h \
@@ -164,10 +169,25 @@ HEADERS += src/mainwindow.h \
            src/modelfixform.h \
            src/updatenotifierwidget.h \
            src/newobjectoverlaywidget.h \
-    src/eventtriggerwidget.h
+           src/eventtriggerwidget.h \
+           src/aboutwidget.h \
+           src/colorpickerwidget.h \
+           src/modelnavigationwidget.h \
+           src/centralwidget.h \
+           src/relationshipconfigwidget.h \
+           src/datamanipulationform.h \
+           src/customsqlwidget.h \
+           src/findreplacewidget.h \
+           src/modeldatabasediffform.h \
+           src/modelsdiffhelper.h \
+           src/objectsdiffinfo.h \
+           src/hinttextwidget.h \
+           src/databaseexplorerwidget.h \
+           src/snippetsconfigwidget.h \
+           src/pgmodeleruins.h \
+           src/bugreportform.h
 
 FORMS += ui/mainwindow.ui \
-	 ui/aboutform.ui \
 	 ui/textboxwidget.ui \
 	 ui/messagebox.ui \
 	 ui/operationlistwidget.ui \
@@ -220,13 +240,46 @@ FORMS += ui/mainwindow.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
 	 ui/databaseimportform.ui \
-	 ui/sqlappendwidget.ui \
          ui/swapobjectsidswidget.ui \
          ui/sqltoolwidget.ui \
          ui/tagwidget.ui \
          ui/modelfixform.ui \
          ui/updatenotifierwidget.ui \
          ui/newobjectoverlaywidget.ui \
-    ui/eventtriggerwidget.ui
+         ui/eventtriggerwidget.ui \
+         ui/aboutwidget.ui \
+         ui/colorpickerwidget.ui \
+         ui/modelnavigationwidget.ui \
+         ui/centralwidget.ui \
+         ui/relationshipconfigwidget.ui \
+         ui/datamanipulationform.ui \
+         ui/customsqlwidget.ui \
+         ui/findreplacewidget.ui \
+         ui/modeldatabasediffform.ui \
+         ui/hinttextwidget.ui \
+         ui/databaseexplorerwidget.ui \
+         ui/snippetsconfigwidget.ui \
+         ui/bugreportform.ui
 
+unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
+                      -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
+                      -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
+                      -L$$OUT_PWD/../libparsers/ -lparsers \
+                      -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libobjrenderer/src \
+               $$PWD/../libpgconnector/src \
+               $$PWD/../libpgmodeler/src \
+               $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libobjrenderer \
+              $$PWD/../libpgconnector \
+              $$PWD/../libpgmodeler \
+              $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Deployment settings
+target.path = $$PRIVATELIBDIR
+INSTALLS = target
 

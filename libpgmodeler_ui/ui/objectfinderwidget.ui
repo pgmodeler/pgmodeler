@@ -177,7 +177,7 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>Highlight graphical objects when selecting them on results</string>
+      <string>Highlight graphical objects when selecting them or their children on the result list</string>
      </property>
      <property name="text">
       <string>Highlight</string>
@@ -578,6 +578,15 @@
       <attribute name="verticalHeaderStretchLastSection">
        <bool>false</bool>
       </attribute>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string>Object</string>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "mainwindow.h"
 #include "application.h"
+#include "mainwindow.h"
 
 #ifndef Q_OS_WIN
 #include "execinfo.h"
@@ -40,9 +40,9 @@ void startCrashHandler(int signal)
 
 	#ifdef Q_OS_MAC
 		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
-				GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
+        GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
 	#else
-		cmd=GlobalAttributes::CRASH_HANDLER_PATH + " -style " + GlobalAttributes::DEFAULT_QT_STYLE;
+    cmd=GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
 	#endif
 
 	//Creates the stacktrace file
@@ -55,7 +55,7 @@ void startCrashHandler(int signal)
 	{
     lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
         .arg(signal)
-        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+        .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
         .arg(GlobalAttributes::PGMODELER_VERSION)
         .arg(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
@@ -90,25 +90,27 @@ void startCrashHandler(int signal)
 
 int main(int argc, char **argv)
 {
-	try
+  try
 	{
     /* Registering the below classes as metatypes in order to make
-		them liable to be sent through signal parameters. */
-		qRegisterMetaType<ObjectType>("ObjectType");
-		qRegisterMetaType<Exception>("Exception");
-		qRegisterMetaType<ValidationInfo>("ValidationInfo");
+    them liable to be sent through signal parameters. */
+    qRegisterMetaType<ObjectType>("ObjectType");
+    qRegisterMetaType<Exception>("Exception");
+    qRegisterMetaType<ValidationInfo>("ValidationInfo");
+    qRegisterMetaType<ObjectsDiffInfo>("ObjectsDiffInfo");
 
-		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
-		signal(SIGSEGV, startCrashHandler);
-		signal(SIGABRT, startCrashHandler);
+    //Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
+    signal(SIGSEGV, startCrashHandler);
+    signal(SIGABRT, startCrashHandler);
 
-		Application app(argc,argv);
+    Application app(argc,argv);
+    int res=0;
 
-		//Loading the application splash screen
+    //Loading the application splash screen
 		QSplashScreen splash;
-		QPixmap pix(QPixmap(":imagens/imagens/pgmodeler_splash.png"));
+    QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
 		splash.setPixmap(pix);
-		splash.setMask(pix.mask());
+    splash.setMask(pix.mask());
 
 		#ifndef Q_OS_MAC
 			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
@@ -122,7 +124,7 @@ int main(int argc, char **argv)
       splash.showMaximized();
     #endif
 
-		app.processEvents();
+    app.processEvents();
 
 		//Creates the main form
 		MainWindow fmain;
@@ -137,15 +139,17 @@ int main(int argc, char **argv)
       fmain.loadModels(params);
 		#endif
 
-		splash.finish(&fmain);
 		fmain.showMaximized();
+		splash.finish(&fmain);
+    res=app.exec();
+    app.closeAllWindows();
 
-		return(app.exec());
+    return(res);
 	}
 	catch(Exception &e)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(e.getErrorType());
-	}
+    return(e.getErrorType());
+  }
 }

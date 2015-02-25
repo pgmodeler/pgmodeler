@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 {
 	try
 	{
-		map<QString, vector<QWidget *> > field_map;
 		QFrame *frame=nullptr;
-		QString version_key;
-
 		Ui_LanguageWidget::setupUi(this);
 
 		func_handler_sel=nullptr;
@@ -48,8 +45,8 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(540, 440);
-		parent_form->setMaximumHeight(440);
+    parent_form->setMinimumSize(540, 400);
+    parent_form->setMaximumHeight(400);
 
     configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 	}

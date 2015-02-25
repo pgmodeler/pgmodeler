@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
     setupUi(this);
     elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
-    elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-                                         GlobalAttributes::DIR_SEPARATOR +
-                                         GlobalAttributes::SQL_HIGHLIGHT_CONF +
-                                         GlobalAttributes::CONFIGURATION_EXT);
+    elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     parent_obj=nullptr;
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
@@ -41,11 +38,11 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/opclass.png"),3);
+    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/opclass.png")),3);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
@@ -54,7 +51,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(operator_sel, 4,1,1,2);
 		element_grid->addWidget(elements_tab, 6,0,1,3);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(collation_lbl);
+    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(frame, element_grid->count()+1, 0, 1, 3);
 		frame->setParent(this);
@@ -127,7 +124,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<In
 	collation_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-	elements_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
+  elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -146,7 +143,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj,
 	operator_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-	elements_tab->setHeaderIcon(QPixmap(":/icones/icones/operator.png"),2);
+  elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/operator.png")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -196,7 +193,7 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=table->getColumn(i);
-				column_cmb->addItem(Utf8String::create(column->getName()),
+        column_cmb->addItem(/*Utf8String::create(*/column->getName(),
 														QVariant::fromValue<void *>(column));
 			}
 		}
@@ -206,7 +203,7 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=rel->getAttribute(i);
-				column_cmb->addItem(Utf8String::create(column->getName()),
+        column_cmb->addItem(/*Utf8String::create(*/column->getName(),
 														QVariant::fromValue<void *>(column));
 			}
 		}
@@ -234,24 +231,24 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 
 	if(elem->getColumn())
 	{
-		elements_tab->setCellText(Utf8String::create(elem->getColumn()->getName()), elem_idx, 0);
-		elements_tab->setCellText(Utf8String::create(elem->getColumn()->getTypeName()), elem_idx, 1);
+    elements_tab->setCellText(/*Utf8String::create(*/elem->getColumn()->getName(), elem_idx, 0);
+    elements_tab->setCellText(/*Utf8String::create(*/elem->getColumn()->getTypeName(), elem_idx, 1);
 	}
 	else
 	{
-		elements_tab->setCellText(Utf8String::create(elem->getExpression()), elem_idx, 0);
+    elements_tab->setCellText(/*Utf8String::create(*/elem->getExpression(), elem_idx, 0);
 		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
 	}
 
 	elements_tab->clearCellText(elem_idx, 2);
 	if(idxelem && idxelem->getCollation())
-		elements_tab->setCellText(Utf8String::create(idxelem->getCollation()->getName(true)), elem_idx, 2);
+    elements_tab->setCellText(/*Utf8String::create(*/idxelem->getCollation()->getName(true), elem_idx, 2);
 	else if(excelem && excelem->getOperator())
-		elements_tab->setCellText(Utf8String::create(excelem->getOperator()->getSignature(true)), elem_idx, 2);
+    elements_tab->setCellText(/*Utf8String::create(*/excelem->getOperator()->getSignature(true), elem_idx, 2);
 
 	elements_tab->clearCellText(elem_idx, 3);
 	if(elem->getOperatorClass())
-		elements_tab->setCellText(Utf8String::create(elem->getOperatorClass()->getName(true)), elem_idx, 3);
+    elements_tab->setCellText(/*Utf8String::create(*/elem->getOperatorClass()->getName(true), elem_idx, 3);
 
 	if(elem->isSortingEnabled())
 	{
@@ -343,12 +340,12 @@ void ElementsWidget::editElement(int elem_idx)
 	if(elem->getColumn())
 	{
 		column_rb->setChecked(true);
-		column_cmb->setCurrentIndex(column_cmb->findText(Utf8String::create(elem->getColumn()->getName())));
+    column_cmb->setCurrentIndex(column_cmb->findText(/*Utf8String::create(*/elem->getColumn()->getName()));
 	}
 	else
 	{
 		expression_rb->setChecked(true);
-		elem_expr_txt->setPlainText(Utf8String::create(elem->getExpression()));
+    elem_expr_txt->setPlainText(/*Utf8String::create(*/elem->getExpression());
 	}
 
 	if(elem->getSortingAttribute(IndexElement::ASC_ORDER))

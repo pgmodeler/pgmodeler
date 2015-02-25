@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,14 +29,18 @@
 #include <QThread>
 #include "catalog.h"
 #include "modelwidget.h"
+#include <random>
+
+using namespace std;
 
 class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-    static const QString ARRAY_PATTERN,
-    UNKNOWN_OBJECT_OID_XML;
+		//! brief Random number generator engine used to generate random colors for imported schemas
+		default_random_engine rand_num_engine;
+
+		static const QString UNKNOWN_OBJECT_OID_XML;
 
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */
@@ -70,7 +74,10 @@ class DatabaseImportHelper: public QObject {
 		auto_resolve_deps,
 
 		//! \brief Outputs to STDOUT the executed query catalogs as well the generated XML
-		debug_mode;
+		debug_mode,
+
+		//! \brief Generate random colors for relationships
+		rand_rel_colors;
 
 		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
@@ -110,11 +117,17 @@ class DatabaseImportHelper: public QObject {
 				is referenced by it in order to avoid reference breaking */
 		map<QString, QString> seq_tab_swap;
 
-		//! \brief Database model widget which will receive the imported objects
-		ModelWidget *model_wgt;
+    /*! brief Stores all columns that are inherited on the database. Since these columns are created
+        dettached from parent columns on the resulting model before the inheritances creation they
+        will be removed from their related tables if there is no object referencing them */
+    vector<Column *> inherited_cols;
 
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
+
+		XMLParser *xmlparser;
+
+		SchemaParser schparser;
 
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
@@ -140,17 +153,10 @@ class DatabaseImportHelper: public QObject {
 		void createTrigger(attribs_map &attribs);
 		void createIndex(attribs_map &attribs);
 		void createConstraint(attribs_map &attribs);
-		void createPermission(attribs_map &attribs);
-		void createTableInheritances(void);
+		void createPermission(attribs_map &attribs);		
 		void createEventTrigger(attribs_map &attribs);
-
-		//! \brief Parse a PostgreSQL array value and return the elements in a string list
-		QStringList parseArrayValues(const QString array_val);
-
-		/*! \brief Parse a function's default value and return the elements in a string list.
-		It can be specified the string delimiter as well the value separator if the input default value
-		contains several values */
-		QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
+    void __createTableInheritances(void);
+    void createTableInheritances(void);
 
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */
@@ -190,11 +196,11 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Clears the vectors and maps used in the import process
 		void resetImportParameters(void);
 
-	public:
+  public:
 		DatabaseImportHelper(QObject *parent=0);
 
 		//! \brief Set the connection used to access the PostgreSQL server
-		void setConnection(Connection &conn);
+    void setConnection(Connection &conn);
 
     /*! brief Closes all connections opened by this object including the catalog connection.
     Once this method is called the user must call setConnection() again or the import will fail */
@@ -203,19 +209,27 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Set the current database to work on
 		void setCurrentDatabase(const QString &dbname);
 
-		//! \brief Defines the selected object to be imported
-		void setSelectedOIDs(ModelWidget *model_wgt, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		//! \brief Defines the selected object to be imported. This method always expect filled maps. Hint: use the method Catalog::getObjectOIDs()
+		void setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
-    void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode);
+		//! brief Configures the import parameters
+		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors);
 
+		//! brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID(void);
+
+    //! brief Returns the current database in which the helper is working on
+    QString getCurrentDatabase(void);
+
+    //! brief Returns a copy of the current catalog instance being used
+    Catalog getCatalog(void);
 
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"
 				must be used only when retrieving table children objects.
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assigne the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
+		attribs_map getObjects(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), attribs_map extra_attribs=attribs_map());
 
 		void retrieveSystemObjects(void);
 		void retrieveUserObjects(void);
@@ -233,7 +247,7 @@ class DatabaseImportHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+    void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
 
 		//! \brief This signal is emited when the import has finished
 		void s_importFinished(Exception e=Exception());
@@ -251,6 +265,7 @@ class DatabaseImportHelper: public QObject {
 		void importDatabase(void);
 		
 	friend class DatabaseImportForm;
+	friend class ModelDatabaseDiffForm;
 };
 
 #endif

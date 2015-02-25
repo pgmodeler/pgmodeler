@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -271,19 +271,19 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	unsigned idx,total;
 	bool found=false;
 
-	if(type_name=="")
+  if(type_name.isEmpty())
 		return(BaseType::null);
 	else
 	{
     QString aux_name, tp_name=type_name;
 
-    tp_name.remove("\"");
+    tp_name.remove('"');
 		total=offset + count;
 
 		for(idx=offset; idx<total && !found; idx++)
     {
       aux_name=BaseType::type_list[idx];
-      aux_name.remove("\"");
+      aux_name.remove('"');
       found=(tp_name==aux_name);
     }
 
@@ -617,20 +617,20 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 {
 	QString name=type_name;
 
-	if(name.endsWith("ZM"))
+  if(name.endsWith(QString("ZM")))
 	{
 		variation_id=var_zm;
-		name.remove("ZM");
+    name.remove(QString("ZM"));
 	}
-	else if(name.endsWith("M"))
+  else if(name.endsWith(QString("M")))
 	{
 		variation_id=var_m;
-		name.remove("M");
+    name.remove(QString("M"));
 	}
-	else if(name.endsWith("Z"))
+  else if(name.endsWith(QString("Z")))
 	{
 		variation_id=var_z;
-		name.remove("Z");
+    name.remove(QString("Z"));
 	}
 
 	BaseType::setType(BaseType::getType(name, offset, types_count),
@@ -690,10 +690,10 @@ QString SpatialType::operator * (void)
 
 		switch(variation)
 		{
-			case var_z: var_str+="Z"; break;
-			case var_m: var_str+="M"; break;
-			case var_zm: var_str+="ZM"; break;
-			default: var_str=""; break;
+      case var_z: var_str+=QString("Z"); break;
+      case var_m: var_str+=QString("M"); break;
+      case var_zm: var_str+=QString("ZM"); break;
+      default: var_str=QString(); break;
 		}
 
 		if(srid > 0)
@@ -702,7 +702,7 @@ QString SpatialType::operator * (void)
 			return(QString("(%1%2)").arg(type_list[type_idx]).arg(var_str));
 	}
 	else
-		return("");
+    return(QString());
 }
 
 /********************
@@ -787,7 +787,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		interv=intervals.back();
 		intervals.pop_back();
 
-		start=type_str.indexOf(QRegExp("( )" + interv.toLower()));
+    start=type_str.indexOf(QRegExp(QString("( )") + interv.toLower()));
 		if(start>=0)
 		{
 			type_str.remove(start, interv.size()+1);
@@ -798,37 +798,37 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	}
 
 	//Check if the type contains "with time zone" descriptor
-	with_tz=QRegExp("(.)*(with time zone)(.)*").exactMatch(type_str);
+  with_tz=QRegExp(QString("(.)*(with time zone)(.)*")).exactMatch(type_str);
 
 	//Removes the timezone descriptor
-	type_str.remove(QRegExp("(with)(out)*( time zone)"));
+  type_str.remove(QRegExp(QString("(with)(out)*( time zone)")));
 
 	//Count the dimension of the type and removes the array descriptor
-	dim=type_str.count("[]");
-	type_str.remove("[]");
+  dim=type_str.count(QString("[]"));
+  type_str.remove(QString("[]"));
 
 	//Check if the type is a variable length type, e.g varchar(200)
-	if(QRegExp("(.)+\\(( )*[0-9]+( )*\\)").indexIn(type_str) >=0)
+  if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	{
-		start=type_str.indexOf("(");
-		end=type_str.indexOf(")", start);
+    start=type_str.indexOf('(');
+    end=type_str.indexOf(')', start);
 		len=type_str.mid(start+1, end-start-1).toUInt();
 	}
 	//Check if the type is a numeric type, e.g, numeric(10,2)
-	else if(QRegExp("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)").indexIn(type_str) >=0)
+  else if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
 	{
-		start=type_str.indexOf("(");
-		end=type_str.indexOf(")", start);
-		value=type_str.mid(start+1, end-start-1).split(",");
+    start=type_str.indexOf('(');
+    end=type_str.indexOf(')', start);
+    value=type_str.mid(start+1, end-start-1).split(',');
 		len=value[0].toUInt();
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
-  else if(QRegExp("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)",Qt::CaseInsensitive).indexIn(type_str) >=0)
+  else if(QRegExp(QString("(.)+\\(( )*[a-z]+(( )*(,)( )*[0-9]+( )*)?\\)"), Qt::CaseInsensitive).indexIn(type_str) >=0)
 	{
-		start=type_str.indexOf("(");
-		end=type_str.indexOf(")", start);
-		value=type_str.mid(start+1, end-start-1).split(",");
+    start=type_str.indexOf('(');
+    end=type_str.indexOf(')', start);
+    value=type_str.mid(start+1, end-start-1).split(',');
 		sptype=value[0].toUpper();
 
     if(value.size() > 1)
@@ -851,14 +851,20 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			//Creates the type based on the extracted values
 			type=PgSQLType(type_str);
 		}
-		catch(Exception &)
+    catch(Exception &)
 		{
 			/* In case of error (specially with PostGiS types) split the string to remove
 				the schema name and try to create the type once more */
-			QStringList typname=type_str.split(".");
+      QStringList typname=type_str.split('.');
 
 			if(typname.size()==2)
 				type=PgSQLType(typname[1]);
+      else
+      {
+        /* One last try it to check if the type has an entry on user defined types
+           as pg_catalog.[type name] */
+        type=PgSQLType(QString("pg_catalog.") + type_str);
+      }
 		}
 
 		type.setWithTimezone(with_tz);
@@ -967,6 +973,14 @@ QString PgSQLType::getSQLTypeName(void)
   return(*(*this));
 }
 
+bool PgSQLType::isRegistered(const QString &type, void *pmodel)
+{
+  if(getBaseTypeIndex(type)!=BaseType::null)
+    return(true);
+  else
+    return(getUserTypeIndex(type, nullptr, pmodel)!=BaseType::null);
+}
+
 bool PgSQLType::operator == (unsigned type_id)
 {
 	return(this->type_idx==type_id);
@@ -1004,14 +1018,14 @@ bool PgSQLType::operator != (unsigned type_id)
 
 bool PgSQLType::operator == (PgSQLType type)
 {
-	return(this->type_idx==type.type_idx);
+  return(this->type_idx==type.type_idx);
 }
 
 bool PgSQLType::operator == (void *ptype)
 {
 	int idx;
-	idx=getUserTypeIndex("",ptype);
-	return(static_cast<int>(type_idx) == idx);
+  idx=getUserTypeIndex(QString(),ptype);
+  return(static_cast<int>(type_idx) == idx);
 }
 
 IntervalType PgSQLType::getIntervalType(void)
@@ -1078,7 +1092,7 @@ void PgSQLType::setUserType(void *ptype)
 {
 	int idx;
 
-	idx=getUserTypeIndex("",ptype);
+  idx=getUserTypeIndex(QString(),ptype);
 	if(idx <= 0)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
@@ -1087,7 +1101,7 @@ void PgSQLType::setUserType(void *ptype)
 
 void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
 {
-	if(type_name!="" && ptype && pmodel &&
+  if(!type_name.isEmpty() && ptype && pmodel &&
 		 (type_conf==UserTypeConfig::DOMAIN_TYPE ||
 			type_conf==UserTypeConfig::SEQUENCE_TYPE ||
 			type_conf==UserTypeConfig::TABLE_TYPE ||
@@ -1109,7 +1123,7 @@ void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 {
 	if(PgSQLType::user_types.size() > 0 &&
-		 type_name!="" && ptype)
+     !type_name.isEmpty() && ptype)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
@@ -1124,8 +1138,7 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 
 		if(itr!=itr_end)
 		{
-			//PgSQLType::user_types.erase(itr);
-			itr->name="__invalidated_type__";
+      itr->name=QString("__invalidated_type__");
 			itr->ptype=nullptr;
 			itr->invalidated=true;
 		}
@@ -1135,7 +1148,7 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
 {
 	if(PgSQLType::user_types.size() > 0 &&
-		 type_name!="" && ptype && type_name!=new_name)
+     !type_name.isEmpty() && ptype && type_name!=new_name)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
@@ -1182,16 +1195,15 @@ unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 {
 	QString aux_name=type_name;
 
-	aux_name.remove("[]");
-  //aux_name.remove("\"");
-	aux_name.remove(QRegExp("( )(with)(out)?(.)*"));
+  aux_name.remove(QString("[]"));
+  aux_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
 	aux_name=aux_name.trimmed();
 	return(getType(aux_name,offset,types_count));
 }
 
 unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
 {
-	if(PgSQLType::user_types.size() > 0 && (type_name!="" || ptype))
+  if(PgSQLType::user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 		int idx=0;
@@ -1202,7 +1214,7 @@ unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		while(itr!=itr_end)
 		{
 			if(!itr->invalidated &&
-				 (((type_name!="" && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
+         (((!type_name.isEmpty() && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
 					((pmodel && itr->pmodel==pmodel) || !pmodel)))
 				break;
 
@@ -1230,7 +1242,7 @@ QString PgSQLType::getUserTypeName(unsigned type_id)
 		 (type_id >= lim1 && type_id < lim2))
 		return(PgSQLType::user_types[type_id - lim1].name);
 	else
-		return("");
+    return(QString());
 }
 
 void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
@@ -1285,73 +1297,107 @@ bool PgSQLType::isUserType(void)
 
 bool PgSQLType::isGiSType(void)
 {
-	return(type_list[this->type_idx]=="geography" ||
-				 type_list[this->type_idx]=="geometry" ||
-				 type_list[this->type_idx]=="geometry_dump");
+  return(type_list[this->type_idx]==QString("geography") ||
+         type_list[this->type_idx]==QString("geometry") ||
+         type_list[this->type_idx]==QString("geometry_dump"));
 }
 
 bool PgSQLType::isRangeType(void)
 {
-	return(type_list[this->type_idx]=="int4range" || type_list[this->type_idx]=="int8range" ||
-				 type_list[this->type_idx]=="numrange" ||	type_list[this->type_idx]=="tsrange" ||
-				 type_list[this->type_idx]=="tstzrange" || type_list[this->type_idx]=="daterange");
+  return(type_list[this->type_idx]==QString("int4range") || type_list[this->type_idx]==QString("int8range") ||
+         type_list[this->type_idx]==QString("numrange") ||	type_list[this->type_idx]==QString("tsrange") ||
+         type_list[this->type_idx]==QString("tstzrange") || type_list[this->type_idx]==QString("daterange"));
 }
 
 bool PgSQLType::isSerialType(void)
 {
-	return(type_list[this->type_idx]=="serial" ||
-				 type_list[this->type_idx]=="smallserial" ||
-				 type_list[this->type_idx]=="bigserial");
+  return(type_list[this->type_idx]==QString("serial") ||
+         type_list[this->type_idx]==QString("smallserial") ||
+         type_list[this->type_idx]==QString("bigserial"));
 }
 
 bool PgSQLType::isDateTimeType(void)
 {
-	return(type_list[this->type_idx]=="time" ||
-				 type_list[this->type_idx]=="timestamp" ||
-				 type_list[this->type_idx]=="interval" ||
-				 type_list[this->type_idx]=="date" ||
-				 type_list[this->type_idx]=="timetz" ||
-				 type_list[this->type_idx]=="timestamptz");
+  return(type_list[this->type_idx]==QString("time") ||
+         type_list[this->type_idx]==QString("timestamp") ||
+         type_list[this->type_idx]==QString("interval") ||
+         type_list[this->type_idx]==QString("date") ||
+         type_list[this->type_idx]==QString("timetz") ||
+         type_list[this->type_idx]==QString("timestamptz"));
 }
 
 bool PgSQLType::isNumericType(void)
 {
-	return(type_list[this->type_idx]=="numeric" ||
-				 type_list[this->type_idx]=="decimal");
+  return(type_list[this->type_idx]==QString("numeric") ||
+         type_list[this->type_idx]==QString("decimal"));
 }
 
 bool PgSQLType::isIntegerType(void)
 {
-  return(type_list[this->type_idx]=="smallint" ||
-         type_list[this->type_idx]=="integer" ||
-         type_list[this->type_idx]=="bigint" ||
-         type_list[this->type_idx]=="int4" ||
-         type_list[this->type_idx]=="int8" ||
-         type_list[this->type_idx]=="int2");
+  return(type_list[this->type_idx]==QString("smallint") ||
+         type_list[this->type_idx]==QString("integer") ||
+         type_list[this->type_idx]==QString("bigint") ||
+         type_list[this->type_idx]==QString("int4") ||
+         type_list[this->type_idx]==QString("int8") ||
+         type_list[this->type_idx]==QString("int2"));
 }
 
 bool PgSQLType::hasVariableLength(void)
 {
-	return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
-			type_list[this->type_idx]=="character varying" || type_list[this->type_idx]=="varchar" ||
-			type_list[this->type_idx]=="character" || type_list[this->type_idx]=="char" ||
-			type_list[this->type_idx]=="bit" || type_list[this->type_idx]=="bit varying" ||
-			type_list[this->type_idx]=="varbit");
+  return(type_list[this->type_idx]==QString("numeric") || type_list[this->type_idx]==QString("decimal") ||
+      type_list[this->type_idx]==QString("character varying") || type_list[this->type_idx]==QString("varchar") ||
+      type_list[this->type_idx]==QString("character") || type_list[this->type_idx]==QString("char") ||
+      type_list[this->type_idx]==QString("bit") || type_list[this->type_idx]==QString("bit varying") ||
+      type_list[this->type_idx]==QString("varbit"));
 }
 
 bool PgSQLType::acceptsPrecision(void)
 {
-	return(isNumericType() || (type_list[this->type_idx]!="date" && isDateTimeType()));
+  return(isNumericType() || (type_list[this->type_idx]!=QString("date") && isDateTimeType()));
+}
+
+bool PgSQLType::isEquivalentTo(PgSQLType type)
+{
+  unsigned this_idx=0, type_idx=0;
+  static vector<QStringList> types={ {QString("int2"),QString("smallint")},
+                                     {QString("int4"),QString("integer")},
+                                     {QString("int8"),QString("bigint")},
+                                     {QString("decimal"),QString("numeric")},
+                                     {QString("character varying"),QString("varchar")},
+                                     {QString("character"), QString("char")},
+                                     {QString("bit varying"),QString("varbit")} };
+
+  //If the types are equal there is no need to perform further operations
+  if(*this==type)
+    return(true);
+
+  //Getting the index which the this type is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~(*this))) break;
+    this_idx++;
+  }
+
+  //Getting the index which 'type' is in
+  for(QStringList list : types)
+  {
+    if(list.contains(~type)) break;
+    type_idx++;
+  }
+
+  return(this_idx < types.size() && type_idx < types.size() &&
+         this_idx==type_idx &&
+         this->isArrayType()==type.isArrayType());
 }
 
 PgSQLType PgSQLType::getAliasType(void)
 {
-	if(type_list[this->type_idx]=="serial")
-		return(PgSQLType("integer"));
-	else if(type_list[this->type_idx]=="smallserial")
-		return(PgSQLType("smallint"));
-	else if(type_list[this->type_idx]=="bigserial")
-		return(PgSQLType("bigint"));
+  if(type_list[this->type_idx]==QString("serial"))
+    return(PgSQLType(QString("integer")));
+  else if(type_list[this->type_idx]==QString("smallserial"))
+    return(PgSQLType(QString("smallint")));
+  else if(type_list[this->type_idx]==QString("bigserial"))
+    return(PgSQLType(QString("bigint")));
 	else
 		return(PgSQLType(type_list[this->type_idx]));
 }
@@ -1381,13 +1427,13 @@ void PgSQLType::setLength(unsigned len)
 void PgSQLType::setPrecision(int prec)
 {
 	//Raises an error if the user tries to specify a precision > lenght
-	if(((BaseType::type_list[type_idx]=="numeric" ||
-			 BaseType::type_list[type_idx]=="decimal") && prec > static_cast<int>(length)))
+  if(((BaseType::type_list[type_idx]==QString("numeric") ||
+       BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
 		throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the precision is greater thant 6
-	else if(((BaseType::type_list[type_idx]=="time" ||
-						BaseType::type_list[type_idx]=="timestamp" ||
-						BaseType::type_list[type_idx]=="interval") && prec > 6))
+  else if(((BaseType::type_list[type_idx]==QString("time") ||
+            BaseType::type_list[type_idx]==QString("timestamp") ||
+            BaseType::type_list[type_idx]==QString("interval")) && prec > 6))
 		throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->precision=prec;
@@ -1415,15 +1461,16 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 	else
 	{
 		attribs_map attribs;
+		SchemaParser schparser;
 
-		attribs[ParsersAttributes::LENGTH]="";
-		attribs[ParsersAttributes::DIMENSION]="";
-		attribs[ParsersAttributes::PRECISION]="";
-		attribs[ParsersAttributes::WITH_TIMEZONE]="";
-		attribs[ParsersAttributes::INTERVAL_TYPE]="";
-		attribs[ParsersAttributes::SPATIAL_TYPE]="";
-		attribs[ParsersAttributes::VARIATION]="";
-		attribs[ParsersAttributes::SRID]="";
+    attribs[ParsersAttributes::LENGTH]=QString();
+    attribs[ParsersAttributes::DIMENSION]=QString();
+    attribs[ParsersAttributes::PRECISION]=QString();
+    attribs[ParsersAttributes::WITH_TIMEZONE]=QString();
+    attribs[ParsersAttributes::INTERVAL_TYPE]=QString();
+    attribs[ParsersAttributes::SPATIAL_TYPE]=QString();
+    attribs[ParsersAttributes::VARIATION]=QString();
+    attribs[ParsersAttributes::SRID]=QString();
 		attribs[ParsersAttributes::REF_TYPE]=ref_type;
 
 		attribs[ParsersAttributes::NAME]=(~(*this));
@@ -1448,9 +1495,9 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		}
 
 		if(with_timezone)
-			attribs[ParsersAttributes::WITH_TIMEZONE]="1";
+      attribs[ParsersAttributes::WITH_TIMEZONE]=ParsersAttributes::_TRUE_;
 
-		return(SchemaParser::getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
+		return(schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}
 }
 
@@ -1462,12 +1509,12 @@ QString PgSQLType::operator * (void)
 	type=~(*this);
 
 	//Generation the definition for the spatial types (PostGiS)
-	if(type=="geometry" || type=="geography")
+  if(type==QString("geometry") || type==QString("geography"))
 		fmt_type=type + (*spatial_type);
 	else if(length > 1 && hasVariableLength())
 	{
 		//Configuring the precision
-		if((type=="numeric" || type=="decimal") && precision>=0 &&
+    if((type==QString("numeric") || type==QString("decimal")) && precision>=0 &&
 			 precision<=static_cast<int>(length))
 			aux=QString("%1(%2,%3)").arg(BaseType::type_list[type_idx]).arg(length).arg(precision);
 		//Configuring the length for the type
@@ -1476,9 +1523,9 @@ QString PgSQLType::operator * (void)
 
 		fmt_type=aux;
 	}
-	else if(type!="numeric" && type!="decimal" && acceptsPrecision())
+  else if(type!=QString("numeric") && type!=QString("decimal") && acceptsPrecision())
 	{
-		if(type!="interval")
+    if(type!=QString("interval"))
 		{
 			aux=BaseType::type_list[type_idx];
 
@@ -1486,7 +1533,7 @@ QString PgSQLType::operator * (void)
 				aux+=QString("(%1)").arg(precision);
 
 			if(with_timezone)
-				aux+=" with time zone";
+        aux+=QString(" with time zone");
 		}
 		else
 		{
@@ -1505,10 +1552,10 @@ QString PgSQLType::operator * (void)
 		fmt_type=type;
 
 
-	if(type!="void" && dimension > 0)
+  if(type!=QString("void") && dimension > 0)
 	{
 		for(idx=0; idx < dimension; idx++)
-			fmt_type+="[]";
+      fmt_type+=QString("[]");
 	}
 
 	return(fmt_type);

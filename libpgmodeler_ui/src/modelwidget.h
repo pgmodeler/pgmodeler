@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,10 +38,9 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-    NewObjectOverlayWidget *new_obj_overlay_wgt;
+		XMLParser *xmlparser;
 
-		//! \brief Message box used to show error/confirmation/alert messages
-		Messagebox msg_box;
+    NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Current zoom aplied to the scene
 		float current_zoom;
@@ -50,13 +49,19 @@ class ModelWidget: public QWidget {
     bool modified;
 
 		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *obj);
+    void configureSubmenu(BaseObject *object);
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
 		static bool cut_operation;
 
-    static bool save_restore_pos;
+		//! brief Indicates if the last position and zoom must be saved/restored
+		static bool save_restore_pos,
+
+		//! brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
+		simple_obj_creation,
+
+		disable_render_smooth;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -95,7 +100,7 @@ class ModelWidget: public QWidget {
           //! \brief Stores the tags used by the "set tag" operation
           tags_menu,
 
-					break_rel_menu;
+          break_rel_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -121,7 +126,7 @@ class ModelWidget: public QWidget {
     //! brief This timer controls the interval the zoom label is visible
     QTimer zoom_info_timer;
 
-	protected:
+  protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
 													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
@@ -132,6 +137,7 @@ class ModelWidget: public QWidget {
             *action_protect,
             *action_unprotect,
             *action_remove,
+            *action_cascade_del,
             *action_select_all,
             *action_convert_relnn,
             *action_copy,
@@ -152,7 +158,9 @@ class ModelWidget: public QWidget {
             *action_conv_int_serial,
             *action_break_rel_line,
             *action_remove_rel_points,
-            *action_set_tag;
+            *action_set_tag,
+            *action_disable_sql,
+            *action_enable_sql;
 
     //! \brief Actions used to create new objects on the model
     map<ObjectType, QAction *> actions_new_objects;
@@ -168,7 +176,6 @@ class ModelWidget: public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
-    void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
@@ -224,7 +231,13 @@ class ModelWidget: public QWidget {
 		OperationList *getOperationList(void);
 
     //! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
-    static void saveLastCanvasPosition(bool value);
+		static void setSaveLastCanvasPosition(bool value);
+
+		//! brief Defines if any instance of the class must disable rendering smoothness improving performance
+		static void setRenderSmoothnessDisabled(bool value);
+
+		//! brief Defines if any instance of the class must simiplify the graphical object's creation
+		static void setSimplifiedObjectCreation(bool value);
 
     //! brief Restore the last editing position on canvas as well the zoom factor
     void restoreLastCanvasPosition(void);
@@ -286,7 +299,7 @@ private slots:
 		void selectSchemaChildren(void);
 
 		//! \brief Removes the selected objects
-		void removeObjects(void);
+    void removeObjects(bool cascade);
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects(void);
@@ -334,7 +347,10 @@ private slots:
 		void highlightObject(void);
 
     void toggleNewObjectOverlay(void);
+
     void adjustOverlayPosition(void);
+
+    void toggleObjectSQL(void);
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -350,6 +366,9 @@ private slots:
 		void s_objectRemoved(void);
 		void s_zoomModified(float);
 		void s_modelResized(void);
+
+		//! \brief Signal emitted whenever a object is created / edited using the form
+		void s_objectManipulated(void);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

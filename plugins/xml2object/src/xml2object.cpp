@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ Xml2Object::Xml2Object(void)
 											GlobalAttributes::PLUGINS_DIR +
 											GlobalAttributes::DIR_SEPARATOR +
 											QString("xml2object") +
-											GlobalAttributes::DIR_SEPARATOR + "xml2object.png");
+                      GlobalAttributes::DIR_SEPARATOR + QString("xml2object.png"));
 }
 
 QString Xml2Object::getPluginTitle(void)
@@ -40,12 +40,12 @@ QString Xml2Object::getPluginTitle(void)
 
 QString Xml2Object::getPluginVersion(void)
 {
-	return("0.1");
+  return(QString("0.1"));
 }
 
 QString Xml2Object::getPluginAuthor(void)
 {
-	return("Raphael A. Silva");
+  return(QString("Raphael A. Silva"));
 }
 
 QString Xml2Object::getPluginDescription(void)
@@ -68,5 +68,5 @@ void Xml2Object::executePlugin(ModelWidget *model)
 
 QKeySequence Xml2Object::getPluginShortcut(void)
 {
-	return(QKeySequence("Ctrl+K"));
+  return(QKeySequence(QString("Ctrl+K")));
 }

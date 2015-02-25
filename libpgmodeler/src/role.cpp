@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,20 +30,20 @@ Role::Role(void)
 
 	conn_limit=-1;
 
-	attributes[ParsersAttributes::SUPERUSER]="";
-	attributes[ParsersAttributes::CREATEDB]="";
-	attributes[ParsersAttributes::CREATEROLE]="";
-	attributes[ParsersAttributes::INHERIT]="";
-	attributes[ParsersAttributes::LOGIN]="";
-	attributes[ParsersAttributes::CONN_LIMIT]="";
-	attributes[ParsersAttributes::PASSWORD]="";
-	attributes[ParsersAttributes::ENCRYPTED]="";
-	attributes[ParsersAttributes::VALIDITY]="";
-	attributes[ParsersAttributes::REF_ROLES]="";
-	attributes[ParsersAttributes::MEMBER_ROLES]="";
-	attributes[ParsersAttributes::ADMIN_ROLES]="";
-	attributes[ParsersAttributes::REPLICATION]="";
-	attributes[ParsersAttributes::GROUP]="";
+	attributes[ParsersAttributes::SUPERUSER]=QString();
+	attributes[ParsersAttributes::CREATEDB]=QString();
+	attributes[ParsersAttributes::CREATEROLE]=QString();
+	attributes[ParsersAttributes::INHERIT]=QString();
+	attributes[ParsersAttributes::LOGIN]=QString();
+	attributes[ParsersAttributes::CONN_LIMIT]=QString();
+	attributes[ParsersAttributes::PASSWORD]=QString();
+	attributes[ParsersAttributes::ENCRYPTED]=QString();
+	attributes[ParsersAttributes::VALIDITY]=QString();
+	attributes[ParsersAttributes::REF_ROLES]=QString();
+	attributes[ParsersAttributes::MEMBER_ROLES]=QString();
+	attributes[ParsersAttributes::ADMIN_ROLES]=QString();
+	attributes[ParsersAttributes::REPLICATION]=QString();
+	attributes[ParsersAttributes::GROUP]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)
@@ -56,7 +56,12 @@ void Role::setOption(unsigned op_type, bool value)
 	for(unsigned i=OP_CREATEDB; (op_type==OP_SUPERUSER && value) && i <= OP_REPLICATION; i++)
 		options[i]=false;
 
-	options[op_type]=(!options[OP_SUPERUSER] && value);
+	setCodeInvalidated(options[op_type] != value);
+
+  if(op_type!=OP_ENCRYPTED)
+    options[op_type]=(!options[OP_SUPERUSER] && value);
+  else
+    options[op_type]=value;
 }
 
 void Role::addRole(unsigned role_type, Role *role)
@@ -67,7 +72,7 @@ void Role::addRole(unsigned role_type, Role *role)
 	//Raises an error if the role to be added is the 'this' role
 	else if(role && this==role)
 		throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
-										.arg(Utf8String::create(role->getName())),
+                    .arg(/*Utf8String::create(*/role->getName()),
 										ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -90,8 +95,8 @@ void Role::addRole(unsigned role_type, Role *role)
 			 (role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
 			 (role_type==ADMIN_ROLE && (role_adm || role_mem)))
 			throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-											.arg(Utf8String::create(role->getName()))
-											.arg(Utf8String::create(this->getName())),
+                      .arg(/*Utf8String::create(*/role->getName())
+                      .arg(/*Utf8String::create(*/this->getName()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Checking for redundant reference between roles.
@@ -120,8 +125,8 @@ void Role::addRole(unsigned role_type, Role *role)
 						(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
 						(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
 			throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-											.arg(Utf8String::create(this->getName()))
-											.arg(Utf8String::create(role->getName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/role->getName()),
 											ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
@@ -134,22 +139,27 @@ void Role::addRole(unsigned role_type, Role *role)
 					ref_roles.push_back(role);
 				break;
 			}
+
+			setCodeInvalidated(true);
 		}
 	}
 }
 
 void Role::setConnectionLimit(int limit)
 {
+	setCodeInvalidated(conn_limit != limit);
 	conn_limit=limit;
 }
 
 void Role::setValidity(const QString &date)
 {
+	setCodeInvalidated(validity != date);
 	validity=date.mid(0,19);
 }
 
 void Role::setPassword(const QString &passwd)
 {
+	setCodeInvalidated(password != passwd);
 	this->password=passwd;
 }
 
@@ -180,7 +190,7 @@ void Role::setRoleAttribute(unsigned role_type)
 	for(i=0; i < count; i++)
 	{
 		str_roles+=roles_vect->at(i)->getName(true);
-		if(i < (count-1)) str_roles+=",";
+    if(i < (count-1)) str_roles+=QString(",");
 	}
 
 	attributes[attrib]=str_roles;
@@ -207,6 +217,7 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 
 	itr=list->begin() + role_idx;
 	list->erase(itr);
+	setCodeInvalidated(true);
 }
 
 void Role::removeRoles(unsigned role_type)
@@ -225,6 +236,7 @@ void Role::removeRoles(unsigned role_type)
 	}
 
 	list->clear();
+	setCodeInvalidated(true);
 }
 
 bool Role::isRoleExists(unsigned role_type, Role *role)
@@ -320,6 +332,9 @@ QString Role::getPassword(void)
 
 QString Role::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i;
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 												 ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
@@ -331,12 +346,10 @@ QString Role::getCodeDefinition(unsigned def_type)
 	setRoleAttribute(ADMIN_ROLE);
 
 	for(i=0; i <= OP_REPLICATION; i++)
-		attributes[op_attribs[i]]=(options[i] ? "1" : "");
+		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;
-
-	attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
 
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
@@ -344,3 +357,38 @@ QString Role::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
+{
+  try
+  {
+    Role *role=dynamic_cast<Role *>(object);
+    attribs_map attribs;
+    QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+                           ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+                           ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+                           ParsersAttributes::REPLICATION };
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+
+    if(this->password!=role->password)
+      attribs[ParsersAttributes::PASSWORD]=role->password;
+
+    if(this->validity!=role->validity)
+      attribs[ParsersAttributes::VALIDITY]=role->validity;
+
+    for(unsigned i=0; i <= OP_REPLICATION; i++)
+    {
+      if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
+         this->options[i]!=role->options[i])
+        attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+    }
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

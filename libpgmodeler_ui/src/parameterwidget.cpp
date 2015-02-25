@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	param_in_chk->setChecked(param.isIn());
 	param_out_chk->setChecked(param.isOut());
 	param_variadic_chk->setChecked(param.isVariadic());
-	default_value_edt->setText(Utf8String::create(param.getDefaultValue()));
+  default_value_edt->setText(/*Utf8String::create(*/param.getDefaultValue());
 	data_type->setAttributes(param.getType(), model);
 
 	BaseObjectWidget::setAttributes(model,&this->parameter, nullptr);

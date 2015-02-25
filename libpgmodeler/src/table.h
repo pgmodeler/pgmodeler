@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,9 +76,6 @@ class Table: public BaseTable {
 		//! \brief The methods below generates the table attributes used by the SchemaParser
 		void setColumnsAttribute(unsigned def_type);
 		void setConstraintsAttribute(unsigned def_type);
-		void setTriggersAttribute(unsigned def_type);
-		void setIndexesAttribute(unsigned def_type);
-		void setRulesAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
     void setRelObjectsIndexesAttribute(void);
@@ -256,7 +253,9 @@ class Table: public BaseTable {
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-		//! \brief Returns the index for the specified table object
+    /*! \brief Returns the index for the specified table object.
+        If the object specified on the parameter owns to another table other than 'this'
+        then the name of the objects are compared instead of the memory address */
 		int getObjectIndex(BaseObject *obj);
 
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
@@ -322,8 +321,16 @@ class Table: public BaseTable {
     //! brief Creates custom index from rel. created object using a name and index vectors as input.
     void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
 
+    //! brief Invalidates the cached code forcing the generation of both SQL and XML
+		void setCodeInvalidated(bool value);
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
+    QString getTruncateDefinition(bool cascade);
+
 		friend class Relationship;
-    friend class OperationList;
+		friend class OperationList;
+
 };
 
 #endif

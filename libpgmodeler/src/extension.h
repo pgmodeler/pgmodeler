@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,11 +41,12 @@ class Extension: public BaseObject {
 
 	public:
 		static const unsigned CUR_VERSION=0,
-															OLD_VERSION=1;
+                          OLD_VERSION=1;
 		Extension(void);
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
+    QString getSignature(bool format);
 
 		/*! \brief Defines if the extension handles a datatype. When setting to true
 		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when
@@ -64,7 +65,9 @@ class Extension: public BaseObject {
 		//! \brief Returns the SQL / XML code definition for the extension
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-		void operator = (Extension &ext);
+    virtual QString getAlterDefinition(BaseObject *object) final;
+
+    void operator = (Extension &ext);
 };
 
 #endif

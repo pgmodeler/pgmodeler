@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,10 +95,10 @@ class Trigger: public TableObject{
 		void setReferecendTable(BaseTable *ref_table);
 
 		//! \brief Defines the deferral type
-		void setDeferralType(DeferralType tipo);
+		void setDeferralType(DeferralType type);
 
 		//! \brief Defines whether the trigger is deferrable or not
-		void setDeferrable(bool valor);
+		void setDeferrable(bool value);
 
 		//! \brief Changes the specified trigger agument replacing the current argument by the 'new_arg'
 		void editArgument(unsigned arg_idx, const QString &new_arg);
@@ -114,6 +114,9 @@ class Trigger: public TableObject{
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);
+
+		//! \brief Returns the current EXECUTE PER ROW state
+		bool isExecutePerRow(void);
 
 		//! \brief Gets one reference column by its index
 		Column *getColumn(unsigned col_idx);
@@ -177,6 +180,8 @@ class Trigger: public TableObject{
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
 		void validateTrigger(void);
+
+    virtual QString getSignature(bool format=true) final;
 };
 
 #endif

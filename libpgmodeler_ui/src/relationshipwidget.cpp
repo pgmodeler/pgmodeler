@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,7 @@
 #include "constraintwidget.h"
 #include "columnwidget.h"
 #include "tablewidget.h"
-
-extern ConstraintWidget *constraint_wgt;
-extern ColumnWidget *column_wgt;
-extern TableWidget *table_wgt;
+#include "configurationform.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
@@ -33,34 +30,41 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		QStringList list;
 		QGridLayout *grid=nullptr;
+		QVBoxLayout *vlayout=nullptr;
 		QFrame *frame=nullptr;
-		QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
-																	src_fk_pattern_txt, dst_fk_pattern_txt,
-																	pk_pattern_txt, uq_pattern_txt };
-		unsigned i, count=sizeof(pattern_fields)/sizeof(QTextEdit *);
-
+    QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+                                 src_fk_pattern_txt, dst_fk_pattern_txt,
+                                 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 		operation_count=0;
 
-		table1_hl=new SyntaxHighlighter(ref_table_txt, false);
-		table1_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
+    gen_tab_name_ht->setText(relnn_tab_name_edt->statusTip());
 
-		table2_hl=new SyntaxHighlighter(recv_table_txt, false);
-		table2_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    ref_table_ht=new HintTextWidget(ref_table_hint, this);
+    recv_table_ht=new HintTextWidget(recv_table_hint, this);
 
-		for(i=0; i < count; i++)
+    identifier_ht=new HintTextWidget(identifier_hint, this);
+    identifier_ht->setText(identifier_chk->statusTip());
+
+    single_pk_ht=new HintTextWidget(single_pk_hint, this);
+    single_pk_ht->setText(single_pk_chk->statusTip());
+
+    table1_hl=nullptr;
+    table1_hl=new SyntaxHighlighter(ref_table_txt, false);
+    table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+    table2_hl=nullptr;
+    table2_hl=new SyntaxHighlighter(recv_table_txt, false);
+    table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+    for(int i=0; i < pattern_fields.size(); i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(pattern_fields[i], true, true);
+      patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QTextEdit *>(pattern_fields[i]), true, true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																			 GlobalAttributes::DIR_SEPARATOR +
 																			 GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
-		}
+    }
 
 		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																					(ObjectTableWidget::UPDATE_BUTTON |
@@ -74,21 +78,21 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
-		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"), 1);
-		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		constraints_tab->setColumnCount(2);
 		constraints_tab->setHeaderLabel(trUtf8("Constraint"), 0);
-		constraints_tab->setHeaderIcon(QPixmap(":/icones/icones/constraint.png"),0);
+    constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/constraint.png")),0);
 		constraints_tab->setHeaderLabel(trUtf8("Type"), 1);
-		constraints_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		advanced_objs_tab->setColumnCount(2);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Name"), 0);
-		advanced_objs_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
-		advanced_objs_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
 
@@ -118,6 +122,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		rel_attribs_tbw->widget(4)->setLayout(grid);
 
+		color_picker=new ColorPickerWidget(1,this);
+		color_picker->setEnabled(false);
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(0)->layout());
+		grid->addWidget(color_picker, 0, 1);
+
     configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
     parent_form->setMinimumSize(this->minimumSize());
 
@@ -133,13 +142,19 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																																 .arg(Relationship::SRC_TAB_TOKEN)
 																																 .arg(Relationship::DST_TAB_TOKEN)
 																																 .arg(Relationship::GEN_TAB_TOKEN));
-		grid=dynamic_cast<QGridLayout *>(name_patterns_grp->layout());
-		grid->addWidget(frame, grid->count()+1, 0, 1, 4);
+		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
+		vlayout->addWidget(frame);
 
     ActionType::getTypes(list);
     list.push_front(trUtf8("Default"));
     del_action_cmb->addItems(list);
     upd_action_cmb->addItems(list);
+
+		tabs={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
+										rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
+
+    tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
+                            rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
@@ -169,6 +184,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(indexes_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(storage_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(all_chk, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
+
+		connect(custom_color_chk, SIGNAL(toggled(bool)), color_picker, SLOT(setEnabled(bool)));
+
+		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
+		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
 	}
 	catch(Exception &e)
 	{
@@ -180,6 +200,7 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 {
 	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
 
+	custom_color_chk->setChecked(false);
 	identifier_chk->setChecked(false);
 	table1_mand_chk->setChecked(false);
 	table2_mand_chk->setChecked(false);
@@ -197,7 +218,6 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	attributes_tab->blockSignals(false);
 	constraints_tab->blockSignals(false);
 
-  ref_tab_hint_lbl->setVisible(true);
 	rel_columns_lst->clear();
 
 	if(rel && !rel->isModified())
@@ -211,13 +231,11 @@ void RelationshipWidget::showEvent(QShowEvent *)
   if(rel_fk_rb->isChecked() ||
      (rel_dep_rb->isChecked() &&
       this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-    parent_form->setMinimumSize(620, 450);
+    parent_form->setMinimumSize(640, 320);
   else if(rel_gen_rb->isChecked())
-    parent_form->setMinimumSize(620, 550);
-  else if(rel_nn_rb->isChecked())
-    parent_form->setMinimumSize(620, 610);
+    parent_form->setMinimumSize(640, 525);
   else
-    parent_form->setMinimumSize(620, 660);
+    parent_form->setMinimumSize(640, 680);
 
   parent_form->resize(parent_form->minimumSize());
 }
@@ -229,6 +247,9 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	try
 	{
 		rel=new Relationship(rel_type, src_tab, dst_tab);
+
+    color_picker->generateRandomColors();
+    rel->setCustomColor(color_picker->getColor(0));
 
 		this->new_object=true;
 		this->setAttributes(model, op_list, rel);
@@ -246,13 +267,9 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel)
 {
-	static QWidget *tabs[]={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
-														rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
-	static QString tab_lables[]={ "", rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
-																rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
-	unsigned rel_type, i;
+  unsigned rel_type, i;
 	Relationship *aux_rel=nullptr;
-	bool rel1n, relnn, relgen_dep;
+	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
 
 	if(!base_rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -283,75 +300,56 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
     if(base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK)
     {
       ref_table_lbl->setText(trUtf8("Referer View:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
+      ref_table_ht->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
+      recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
     }
     else
     {
       ref_table_lbl->setText(trUtf8("Referer Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
-      recv_tab_hint_lbl->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
+      ref_table_ht->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
+      recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
     }
 
     recv_table_lbl->setText(trUtf8("Referenced Table:"));
 
-    ref_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
-    recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
+    ref_table_txt->setPlainText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true));
+    recv_table_txt->setPlainText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true));
   }
   else if(aux_rel)
   {
     if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
     {
       ref_table_lbl->setText(trUtf8("Reference Table:"));
-      ref_tab_hint_lbl->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
+      ref_table_ht->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
 
       recv_table_lbl->setText(trUtf8("Receiver Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
+      recv_table_ht->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
 
-      ref_table_txt->setPlainText(Utf8String::create(aux_rel->getReferenceTable()->getName(true)));
-      recv_table_txt->setPlainText(Utf8String::create(aux_rel->getReceiverTable()->getName(true)));
+      ref_table_txt->setPlainText(/*Utf8String::create(*/aux_rel->getReferenceTable()->getName(true));
+      recv_table_txt->setPlainText(/*Utf8String::create(*/aux_rel->getReceiverTable()->getName(true));
     }
     else
-    {
+    {     
       ref_table_lbl->setText(trUtf8("Reference Table:"));
-      ref_tab_hint_lbl->setVisible(false);
+      ref_table_ht->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
       recv_table_lbl->setText(trUtf8("Reference Table:"));
-      recv_tab_hint_lbl->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
-
-      ref_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
-      recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
+      recv_table_ht->setText(ref_table_ht->getText());
+      ref_table_txt->setPlainText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true));
+      recv_table_txt->setPlainText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true));
     }
   }
 
 	disable_sql_chk->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP);
-	table1_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" is required"));
-	table2_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" is required"));
+  table1_mand_chk->setText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::SRC_TABLE)->getName() + trUtf8(" is required"));
+  table2_mand_chk->setText(/*Utf8String::create(*/base_rel->getTable(BaseRelationship::DST_TABLE)->getName() + trUtf8(" is required"));
 
 	if(aux_rel)
 	{
-    int idx;
-
-		pk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::PK_PATTERN)));
-		src_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_FK_PATTERN)));
-		dst_fk_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::DST_FK_PATTERN)));
-		uq_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::UQ_PATTERN)));
-		src_col_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::SRC_COL_PATTERN)));
-		dst_col_pattern_txt->setPlainText(Utf8String::create(aux_rel->getNamePattern(Relationship::DST_COL_PATTERN)));
-
+    single_pk_chk->setChecked(aux_rel->isSiglePKColumn());
 		table1_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::SRC_TABLE));
 		table2_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::DST_TABLE));
 		identifier_chk->setChecked(aux_rel->isIdentifier());
-		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
-
-    deferral_cmb->setCurrentIndex(deferral_cmb->findText(aux_rel->getDeferralType().getTypeName()));
-
-    idx=del_action_cmb->findText(~aux_rel->getActionType(Constraint::DELETE_ACTION));
-    del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
-
-    idx=upd_action_cmb->findText(~aux_rel->getActionType(Constraint::UPDATE_ACTION));
-    upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
-
     attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 		constraints_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
@@ -361,10 +359,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		//Lists the relationship constraints
 		listObjects(OBJ_CONSTRAINT);
 
-		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
-		{
-      listSpecialPkColumns();
+		listSpecialPkColumns();
 
+		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+		{		
 			if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 			{
 				CopyOptions copy_op=aux_rel->getCopyOptions();
@@ -390,8 +388,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 							rel_type==BaseRelationship::RELATIONSHIP_GEN ||
 							rel_type==BaseRelationship::RELATIONSHIP_FK);
 
-	name_patterns_grp->setVisible(rel1n || relnn ||
-																(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
+	use_name_patterns=(rel1n || relnn ||
+										 (relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
+
+	name_patterns_grp->setVisible(use_name_patterns);
 
 	dst_col_pattern_txt->setEnabled(relnn);
 	dst_fk_pattern_txt->setEnabled(relnn);
@@ -404,41 +404,129 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	uq_pattern_lbl->setEnabled(!relgen_dep);
 	uq_pattern_txt->setEnabled(!relgen_dep);
 
+  pk_col_pattern_lbl->setEnabled(relnn);
+  pk_col_pattern_txt->setEnabled(relnn);
+
 	card_lbl->setVisible(rel1n);
 	table1_mand_chk->setEnabled(rel1n);
 	table1_mand_chk->setVisible(rel1n);
 	table2_mand_chk->setEnabled(rel_type==BaseRelationship::RELATIONSHIP_11);
 	table2_mand_chk->setVisible(rel1n);
 
-	identifier_chk->setVisible(rel1n && !base_rel->isSelfRelationship());
+  identifier_wgt->setVisible(rel1n && !base_rel->isSelfRelationship());
   foreign_key_gb->setVisible(rel1n || relnn);
+  single_pk_wgt->setVisible(relnn);
 
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
+  gen_tab_name_hint->setVisible(relnn);
 
-  for(i=ATTRIBUTES_TAB; i <= ADVANCED_TAB; i++)
+	for(i=ATTRIBUTES_TAB; i <= ADVANCED_TAB; i++)
 		rel_attribs_tbw->removeTab(1);
 
 	if(!relgen_dep)
 	{
 		for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
-		{
-			if(i!=SPECIAL_PK_TAB || (i==SPECIAL_PK_TAB && base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
-			 rel_attribs_tbw->addTab(tabs[i], tab_lables[i]);
-		}
+     rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP)
-		rel_attribs_tbw->addTab(tabs[SPECIAL_PK_TAB], tab_lables[SPECIAL_PK_TAB]);
+		rel_attribs_tbw->addTab(tabs[SPECIAL_PK_TAB], tab_labels[SPECIAL_PK_TAB]);
 
 	if(base_rel->getObjectType()==OBJ_RELATIONSHIP ||
 		 (base_rel->getObjectType()==BASE_RELATIONSHIP &&
 			base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
-		rel_attribs_tbw->addTab(tabs[ADVANCED_TAB], tab_lables[ADVANCED_TAB]);
+		rel_attribs_tbw->addTab(tabs[ADVANCED_TAB], tab_labels[ADVANCED_TAB]);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP &&
 															 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP);
 
+	custom_color_chk->setChecked(base_rel->getCustomColor()!=Qt::transparent);
+	color_picker->setColor(0, base_rel->getCustomColor());
 	listAdvancedObjects();
+
+	if(rel1n || relnn)
+	{
+		fk_gconf_chk->blockSignals(true);
+		fk_gconf_chk->setChecked(this->new_object);
+		useFKGlobalSettings(this->new_object);
+		fk_gconf_chk->blockSignals(false);
+	}
+
+	if(use_name_patterns)
+	{
+		patterns_gconf_chk->blockSignals(true);
+		patterns_gconf_chk->setChecked(this->new_object);
+		usePatternGlobalSettings(this->new_object);
+		patterns_gconf_chk->blockSignals(false);
+	}
+}
+
+void RelationshipWidget::useFKGlobalSettings(bool value)
+{
+	fk_wgt->setEnabled(!value);
+
+	if(value)
+	{
+    map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+    deferrable_chk->setChecked(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+    deferral_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
+    upd_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
+    del_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);
+	}
+	else
+	{
+		Relationship *rel=dynamic_cast<Relationship *>(this->object);
+		int idx=-1;
+
+		//Using the settings of the relatinship itself
+		if(rel)
+		{
+			deferrable_chk->setChecked(rel->isDeferrable());
+			idx=deferral_cmb->findText(~rel->getDeferralType());
+			deferral_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+			idx=del_action_cmb->findText(~rel->getActionType(Constraint::DELETE_ACTION));
+			del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+			idx=upd_action_cmb->findText(~rel->getActionType(Constraint::UPDATE_ACTION));
+			upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		}
+	}
+}
+
+void RelationshipWidget::usePatternGlobalSettings(bool value)
+{
+	Relationship *rel=dynamic_cast<Relationship *>(this->object);
+	patterns_wgt->setEnabled(!value);
+
+	if(rel)
+	{
+		if(value)
+		{
+      map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
+			QString rel_type=rel->getRelTypeAttribute();
+
+      //Using the global settings
+			pk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::PK_PATTERN]);
+			src_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_FK_PATTERN]);
+			dst_fk_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_FK_PATTERN]);
+			uq_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::UQ_PATTERN]);
+			src_col_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::SRC_COL_PATTERN]);
+			dst_col_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::DST_COL_PATTERN]);
+      pk_col_pattern_txt->setPlainText(confs[rel_type][ParsersAttributes::PK_COL_PATTERN]);
+		}
+		else
+		{
+			//Using the settings of the relatinship itself
+			pk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_PATTERN));
+			src_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_FK_PATTERN));
+			dst_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_FK_PATTERN));
+			uq_pattern_txt->setPlainText(rel->getNamePattern(Relationship::UQ_PATTERN));
+			src_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_COL_PATTERN));
+			dst_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_COL_PATTERN));
+      pk_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_COL_PATTERN));
+		}
+	}
 }
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
@@ -504,8 +592,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				for(i=0; i < count; i++)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getName()),i,0);
-					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getTypeName()),i,1);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/cols[i]->getName(),i,0);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/cols[i]->getTypeName(),i,1);
           advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(cols[i])), i);
 				}
 
@@ -515,8 +603,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++,i1++)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getName()),i1,0);
-					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getTypeName()),i1,1);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/constrs[i]->getName(),i1,0);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/constrs[i]->getTypeName(),i1,1);
           advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constrs[i])), i1);
 				}
 			}
@@ -526,8 +614,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				if(tab)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(Utf8String::create(tab->getName()),0,0);
-					advanced_objs_tab->setCellText(Utf8String::create(tab->getTypeName()),0,1);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/tab->getName(),0,0);
+          advanced_objs_tab->setCellText(/*Utf8String::create(*/tab->getTypeName(),0,1);
           advanced_objs_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(tab)), 0);
 				}
 			}
@@ -548,8 +636,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 			for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++, i1++)
 			{
 				advanced_objs_tab->addRow();
-				advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getName()),i1,0);
-				advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getTypeName()),i1,1);
+        advanced_objs_tab->setCellText(/*Utf8String::create(*/constrs[i]->getName(),i1,0);
+        advanced_objs_tab->setCellText(/*Utf8String::create(*/constrs[i]->getTypeName(),i1,1);
 				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
 			}
 		}
@@ -568,40 +656,42 @@ void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
 	bool prot=true;
-  Table *tab=nullptr;
+	Table *tab=nullptr;
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
+	ObjectType obj_type=object->getObjectType();
 
-	switch(object->getObjectType())
+	if(obj_type==OBJ_COLUMN)
 	{
-		case OBJ_COLUMN:
-			col=dynamic_cast<Column *>(object);
-			column_wgt->setAttributes(this->model, col->getParentTable(), this->op_list, col);
-			column_wgt->show();
-		break;
+		ColumnWidget column_wgt(this);
+		col=dynamic_cast<Column *>(object);
+		column_wgt.setAttributes(this->model, col->getParentTable(), this->op_list, col);
+		column_wgt.show();
+	}
+	else if(obj_type==OBJ_CONSTRAINT)
+	{
+		ConstraintWidget constraint_wgt(this);
+		constr=dynamic_cast<Constraint *>(object);
 
-		case OBJ_CONSTRAINT:
-			constr=dynamic_cast<Constraint *>(object);
+		if(!constr->isAddedByRelationship())
+		{
+			prot=constr->isProtected();
+			constr->setProtected(true);
+		}
 
-			if(!constr->isAddedByRelationship())
-			{
-				prot=constr->isProtected();
-				constr->setProtected(true);
-			}
-
-			constraint_wgt->setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
-			constraint_wgt->show();
-			constr->setProtected(prot);
-		break;
-
-		default:
-      tab=dynamic_cast<Table *>(object);
-      tab->setProtected(true);
-      table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-                                tab,	tab->getPosition().x(), tab->getPosition().y());
-			table_wgt->show();
-      tab->setProtected(false);
-		break;
+		constraint_wgt.setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
+		constraint_wgt.show();
+		constr->setProtected(prot);
+	}
+	else
+	{
+		TableWidget table_wgt(this);
+		tab=dynamic_cast<Table *>(object);
+		tab->setProtected(true);
+		table_wgt.setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+														 tab,	tab->getPosition().x(), tab->getPosition().y());
+		table_wgt.show();
+		tab->setProtected(false);
 	}
 }
 
@@ -624,13 +714,15 @@ void RelationshipWidget::addObject(void)
 
 		if(obj_type==OBJ_COLUMN)
 		{
-			column_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
-			column_wgt->show();
+			ColumnWidget column_wgt(this);
+			column_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
+			column_wgt.show();
 		}
 		else
 		{
-			constraint_wgt->setAttributes(this->model, this->object, this->op_list, nullptr);
-			constraint_wgt->show();
+			ConstraintWidget constraint_wgt(this);
+			constraint_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
+			constraint_wgt.show();
 		}
 
 		listObjects(obj_type);
@@ -653,17 +745,19 @@ void RelationshipWidget::editObject(int row)
 
 		if(sender()==attributes_tab)
 		{
+			ColumnWidget column_wgt(this);
 			obj_type=OBJ_COLUMN;
-			column_wgt->setAttributes(this->model, this->object, this->op_list,
+			column_wgt.setAttributes(this->model, this->object, this->op_list,
 																reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
-			column_wgt->show();
+			column_wgt.show();
 		}
 		else
 		{
+			ConstraintWidget constraint_wgt(this);
 			obj_type=OBJ_CONSTRAINT;
-			constraint_wgt->setAttributes(this->model, this->object, this->op_list,
+			constraint_wgt.setAttributes(this->model, this->object, this->op_list,
 																	 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
-			constraint_wgt->show();
+			constraint_wgt.show();
 		}
 
 		listObjects(obj_type);
@@ -684,15 +778,15 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 	if(object->getObjectType()==OBJ_COLUMN)
 	{
 		tab=attributes_tab;
-		attributes_tab->setCellText(Utf8String::create(*dynamic_cast<Column *>(object)->getType()),row,1);
+    attributes_tab->setCellText(/*Utf8String::create(*/*dynamic_cast<Column *>(object)->getType(),row,1);
 	}
 	else
 	{
 		tab=constraints_tab;
-		constraints_tab->setCellText(Utf8String::create(~dynamic_cast<Constraint *>(object)->getConstraintType()),row,1);
+    constraints_tab->setCellText(/*Utf8String::create(*/~dynamic_cast<Constraint *>(object)->getConstraintType(),row,1);
 	}
 
-	tab->setCellText(Utf8String::create(object->getName()),row,0);
+  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
@@ -825,7 +919,9 @@ void RelationshipWidget::listSpecialPkColumns(void)
     QListWidgetItem *item=nullptr;
 
     rel_columns_lst->clear();
-    cols=aux_rel->getGeneratedColumns();
+
+		if(aux_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN)
+			cols=aux_rel->getGeneratedColumns();
 
     for(auto attrib : aux_rel->getAttributes())
       cols.push_back(dynamic_cast<Column *>(attrib));
@@ -837,7 +933,7 @@ void RelationshipWidget::listSpecialPkColumns(void)
     for(idx=0; idx < count; idx++)
     {
       rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
-                               " (" + Utf8String::create(*cols[idx]->getType()) + ")");
+                               QString(" (") + /*Utf8String::create(*/*cols[idx]->getType() + QString(")"));
       item=rel_columns_lst->item(idx);
       item->setCheckState(Qt::Unchecked);
     }
@@ -848,7 +944,7 @@ void RelationshipWidget::listSpecialPkColumns(void)
       if(col_ids[idx] < static_cast<unsigned>(rel_columns_lst->count()))
         rel_columns_lst->item(col_ids[idx])->setCheckState(Qt::Checked);
     }
-  }
+	}
 }
 
 void RelationshipWidget::applyConfiguration(void)
@@ -856,6 +952,7 @@ void RelationshipWidget::applyConfiguration(void)
 	try
 	{
 		Relationship *rel=nullptr;
+		BaseRelationship *base_rel=dynamic_cast<BaseRelationship *>(this->object);
 		unsigned rel_type, count, i, copy_mode=0, copy_ops=0;
 		vector<unsigned> col_ids;
 
@@ -873,25 +970,27 @@ void RelationshipWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
+		if(custom_color_chk->isChecked())
+			base_rel->setCustomColor(color_picker->getColor(0));
+		else
+			base_rel->setCustomColor(Qt::transparent);
+
 		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
 		{
 			QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																		src_fk_pattern_txt, dst_fk_pattern_txt,
-																		pk_pattern_txt, uq_pattern_txt };
+                                    pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 			unsigned pattern_ids[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
 																Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
-																Relationship::PK_PATTERN, Relationship::UQ_PATTERN };
+                                Relationship::PK_PATTERN, Relationship::UQ_PATTERN, Relationship::PK_COL_PATTERN };
 
-			rel=dynamic_cast<Relationship *>(this->object);
+			rel=dynamic_cast<Relationship *>(base_rel);
 
 			if(name_patterns_grp->isVisible())
 			{
 				count=sizeof(pattern_ids)/sizeof(unsigned);
 				for(i=0; i < count; i++)
-				{
-					if(pattern_fields[i]->isEnabled())
-						rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
-				}
+					rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
 			}
 
 			rel_type=rel->getRelationshipType();
@@ -936,20 +1035,19 @@ void RelationshipWidget::applyConfiguration(void)
         rel->setDeferralType(DeferralType(deferral_cmb->currentText()));
         rel->setActionType((del_action_cmb->currentIndex()!=0 ? ActionType(del_action_cmb->currentText()) : ActionType::null), Constraint::DELETE_ACTION);
         rel->setActionType((upd_action_cmb->currentIndex()!=0 ? ActionType(upd_action_cmb->currentText()) : ActionType::null), Constraint::UPDATE_ACTION);
+
+        if(rel_type==BaseRelationship::RELATIONSHIP_NN)
+          rel->setSiglePKColumn(single_pk_chk->isChecked());
       }
 
-
-			if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+			count=rel_columns_lst->count();
+			for(i=0; i < count; i++)
 			{
-				count=rel_columns_lst->count();
-				for(i=0; i < count; i++)
-				{
-					if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
-						col_ids.push_back(i);
-				}
-
-				rel->setSpecialPrimaryKeyCols(col_ids);
+				if(rel_columns_lst->item(i)->checkState()==Qt::Checked)
+					col_ids.push_back(i);
 			}
+
+			rel->setSpecialPrimaryKeyCols(col_ids);
 
 			try
 			{
@@ -962,9 +1060,7 @@ void RelationshipWidget::applyConfiguration(void)
 				if(rel_type!=BaseRelationship::RELATIONSHIP_FK)
 					model->validateRelationships();
 
-        //rel->saveObjectsIndexes();
 				rel->blockSignals(false);
-				rel->setModified(true);
 			}
 			catch(Exception &e)
 			{
@@ -999,4 +1095,3 @@ void RelationshipWidget::cancelConfiguration(void)
 	if(operation_count < op_list->getCurrentSize())
 		BaseObjectWidget::cancelConfiguration();
 }
-

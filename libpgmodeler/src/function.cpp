@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 Function::Function(void)
 {
-	return_type=PgSQLType("void");
+  return_type=PgSQLType(QString("void"));
 	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
@@ -30,23 +30,23 @@ Function::Function(void)
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[ParsersAttributes::PARAMETERS]="";
-	attributes[ParsersAttributes::EXECUTION_COST]="";
-	attributes[ParsersAttributes::ROW_AMOUNT]="";
-	attributes[ParsersAttributes::RETURN_TYPE]="";
-	attributes[ParsersAttributes::FUNCTION_TYPE]="";
-	attributes[ParsersAttributes::LANGUAGE]="";
-	attributes[ParsersAttributes::RETURNS_SETOF]="";
-	attributes[ParsersAttributes::SECURITY_TYPE]="";
-	attributes[ParsersAttributes::BEHAVIOR_TYPE]="";
-	attributes[ParsersAttributes::DEFINITION]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::REF_TYPE]="";
-	attributes[ParsersAttributes::WINDOW_FUNC]="";
-	attributes[ParsersAttributes::RETURN_TABLE]="";
-	attributes[ParsersAttributes::LIBRARY]="";
-	attributes[ParsersAttributes::SYMBOL]="";
-	attributes[ParsersAttributes::LEAKPROOF]="";
+	attributes[ParsersAttributes::PARAMETERS]=QString();
+	attributes[ParsersAttributes::EXECUTION_COST]=QString();
+	attributes[ParsersAttributes::ROW_AMOUNT]=QString();
+	attributes[ParsersAttributes::RETURN_TYPE]=QString();
+	attributes[ParsersAttributes::FUNCTION_TYPE]=QString();
+	attributes[ParsersAttributes::LANGUAGE]=QString();
+	attributes[ParsersAttributes::RETURNS_SETOF]=QString();
+	attributes[ParsersAttributes::SECURITY_TYPE]=QString();
+	attributes[ParsersAttributes::BEHAVIOR_TYPE]=QString();
+	attributes[ParsersAttributes::DEFINITION]=QString();
+	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
+	attributes[ParsersAttributes::WINDOW_FUNC]=QString();
+	attributes[ParsersAttributes::RETURN_TABLE]=QString();
+	attributes[ParsersAttributes::LIBRARY]=QString();
+	attributes[ParsersAttributes::SYMBOL]=QString();
+	attributes[ParsersAttributes::LEAKPROOF]=QString();
 }
 
 void Function::setName(const QString &name)
@@ -81,20 +81,19 @@ void Function::addParameter(Parameter param)
 	//If a duplicated parameter is found an error is raised
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-										.arg(Utf8String::create(param.getName()))
-										.arg(Utf8String::create(this->signature)),
+                    .arg(/*Utf8String::create(*/param.getName())
+                    .arg(/*Utf8String::create(*/this->signature),
 										ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
 	parameters.push_back(param);
-
 	createSignature();
 }
 
 void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
 	//Raises an error if the column name is empty
-	if(name=="")
+  if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr,itr_end;
@@ -115,14 +114,15 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	//Raises an error if the column is duplicated
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-										.arg(Utf8String::create(name))
-										.arg(Utf8String::create(this->signature)),
+                    .arg(/*Utf8String::create(*/name)
+                    .arg(/*Utf8String::create(*/this->signature),
 										ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
 	p.setName(name);
 	p.setType(type);
 	ret_table_columns.push_back(p);
+	setCodeInvalidated(true);
 }
 
 void Function::setParametersAttribute(unsigned def_type)
@@ -161,11 +161,13 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 
 void Function::setExecutionCost(unsigned exec_cost)
 {
+	setCodeInvalidated(execution_cost != exec_cost);
 	execution_cost=exec_cost;
 }
 
 void Function::setRowAmount(unsigned row_amount)
 {
+	setCodeInvalidated(this->row_amount != row_amount);
 	this->row_amount=row_amount;
 }
 
@@ -173,9 +175,10 @@ void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->library != library);
 	this->library=library;
 }
 
@@ -183,19 +186,22 @@ void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->symbol != symbol);
 	this->symbol=symbol;
 }
 
 void Function::setReturnType(PgSQLType type)
 {
+	setCodeInvalidated(return_type != type);
 	return_type=type;
 }
 
 void Function::setFunctionType(FunctionType func_type)
 {
+	setCodeInvalidated(function_type != func_type);
 	function_type=func_type;
 }
 
@@ -208,31 +214,37 @@ void Function::setLanguage(BaseObject *language)
 	else if(language->getObjectType()!=OBJ_LANGUAGE)
 		throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->language != language);
 	this->language=language;
 }
 
 void Function::setReturnSetOf(bool value)
 {
+	setCodeInvalidated(returns_setof != value);
 	returns_setof=value;
 }
 
 void Function::setWindowFunction(bool value)
 {
+	setCodeInvalidated(is_wnd_function != value);
 	is_wnd_function=value;
 }
 
 void Function::setLeakProof(bool value)
 {
+	setCodeInvalidated(is_leakproof != value);
 	is_leakproof=value;
 }
 
 void Function::setSecurityType(SecurityType sec_type)
 {
+	setCodeInvalidated(security_type != sec_type);
 	security_type=sec_type;
 }
 
 void Function::setBehaviorType(BehaviorType behav_type)
 {
+	setCodeInvalidated(behavior_type != behav_type);
 	behavior_type=behav_type;
 }
 
@@ -240,9 +252,10 @@ void Function::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
-										.arg(Utf8String::create(this->getSignature())),
+                    .arg(/*Utf8String::create(*/this->getSignature()),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->source_code != src_code);
 	this->source_code=src_code;
 }
 
@@ -353,6 +366,7 @@ void Function::removeParameters(void)
 void Function::removeReturnedTableColumns(void)
 {
 	ret_table_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Function::removeParameter(const QString &name, PgSQLType type)
@@ -398,9 +412,10 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	vector<Parameter>::iterator itr;
 	itr=ret_table_columns.begin()+column_idx;
 	ret_table_columns.erase(itr);
+	setCodeInvalidated(true);
 }
 
-QString Function::getSignature(void)
+QString Function::getSignature(bool)
 {
 	return(signature);
 }
@@ -417,22 +432,29 @@ void Function::createSignature(bool format, bool prepend_schema)
 		if(!parameters[i].isIn() || parameters[i].isVariadic() ||
 			 (parameters[i].isIn() && parameters[i].isOut()) ||
 			 (parameters[i].isIn() && !parameters[i].isOut()))
-		str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+		{
+			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+			parameters[i].setCodeInvalidated(true);
+		}
 	}
 
 	str_param.remove(str_param.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+  signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+	this->setCodeInvalidated(true);
 }
 
 QString Function::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+  return(this->getCodeDefinition(def_type, false));
 }
 
 QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setParametersAttribute(def_type);
 
 	attributes[ParsersAttributes::EXECUTION_COST]=QString("%1").arg(execution_cost);
@@ -455,9 +477,9 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? "1" : "");
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? "1" : "");
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? "1" : "");
+	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;
@@ -472,3 +494,45 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+QString Function::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Function *func=dynamic_cast<Function *>(object);
+    attribs_map attribs;
+
+    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+    if(this->execution_cost!=func->execution_cost)
+      attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
+
+    if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+    {
+      attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
+      attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+    }
+
+    if(this->function_type!=func->function_type)
+      attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+
+    if(this->is_leakproof!=func->is_leakproof)
+      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+    if(this->security_type!=func->security_type)
+      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type; 
+
+    if((this->behavior_type!=func->behavior_type) &&
+       ((this->behavior_type==BehaviorType::called_on_null_input) ||
+        ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
+         func->function_type==BehaviorType::called_on_null_input)))
+      attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+
+    copyAttributes(attribs);
+
+    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}

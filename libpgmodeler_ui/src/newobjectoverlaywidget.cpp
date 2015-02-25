@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
    map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
                                                            { rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
                                                            { relnn_tb,  std::make_tuple(trUtf8("3"), 2) },
-                                                           { relgen_tb, std::make_tuple(trUtf8("4"), 3) },
-                                                           { reldep_tb, std::make_tuple(trUtf8("5"), 4) } };
+																													 { reldep_tb, std::make_tuple(trUtf8("5"), 3) },
+																													 { relgen_tb, std::make_tuple(trUtf8("4"), 4) } };
 
 	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 
@@ -69,10 +69,10 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     shortcut=std::get<0>(itr.second);
     obj_type=std::get<1>(itr.second);
 
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
-    connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
     connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
   }
 
   for(auto itr : rel_shortcuts)
@@ -81,24 +81,23 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     shortcut=std::get<0>(itr.second);
     action_idx=std::get<1>(itr.second);
 
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
 
+    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
     if(action_idx < rel_actions.size())
       connect(button, SIGNAL(clicked()), rel_actions[action_idx], SLOT(trigger()));
-
-    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   }
 
   shortcut=trUtf8("0");
   for(auto itr : permission_btns)
   {
     button=itr;
-    button->setText(shortcut + ": " + button->text());
+    button->setText(shortcut + QString(": ") + button->text());
     button->setShortcut(QKeySequence(shortcut));
 
-    connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
     connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
   }
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@ Conversion::Conversion(void)
 	obj_type=OBJ_CONVERSION;
 	conversion_func=nullptr;
 	is_default=false;
-	attributes[ParsersAttributes::DEFAULT]="";
-	attributes[ParsersAttributes::SRC_ENCODING]="";
-	attributes[ParsersAttributes::DST_ENCODING]="";
-	attributes[ParsersAttributes::FUNCTION]="";
+	attributes[ParsersAttributes::DEFAULT]=QString();
+	attributes[ParsersAttributes::SRC_ENCODING]=QString();
+	attributes[ParsersAttributes::DST_ENCODING]=QString();
+	attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
@@ -35,9 +35,9 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 	if(encoding_idx<=DST_ENCODING)
 	{
 		//If the passed enconding type is null an error is raised
-		if((~encoding_type)=="")
+    if((~encoding_type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -54,48 +54,50 @@ void Conversion::setConversionFunction(Function *conv_func)
 	//Raises an error in case the passed conversion function is null
 	if(!conv_func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* The conversion function must have 5 parameters if it's not the case
 		raises an error. */
 	else if(conv_func->getParameterCount()!=5)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function parameters does not following the type order:
 		interger, integer, cstring, internal, integer */
-	else if(conv_func->getParameter(0).getType()!="integer" ||
-					conv_func->getParameter(1).getType()!="integer" ||
-					conv_func->getParameter(2).getType()!="cstring" ||
-					conv_func->getParameter(3).getType()!="internal" ||
-					conv_func->getParameter(4).getType()!="integer")
+  else if(conv_func->getParameter(0).getType()!=QString("integer") ||
+          conv_func->getParameter(1).getType()!=QString("integer") ||
+          conv_func->getParameter(2).getType()!=QString("cstring") ||
+          conv_func->getParameter(3).getType()!=QString("internal") ||
+          conv_func->getParameter(4).getType()!=QString("integer"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the conversion function return type is not 'void'
-	else if(conv_func->getReturnType()!="void")
+  else if(conv_func->getReturnType()!=QString("void"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(conversion_func != conv_func);
 	this->conversion_func=conv_func;
 }
 
 void Conversion::setDefault(bool value)
 {
+	setCodeInvalidated(is_default != value);
 	is_default=value;
 }
 
 EncodingType Conversion::getEncoding(unsigned encoding_idx)
 {
-	if(encoding_idx<=DST_ENCODING)
-		return(this->encodings[encoding_idx]);
-	else
+	if(encoding_idx > DST_ENCODING)
 		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(this->encodings[encoding_idx]);
 }
 
 Function *Conversion::getConversionFunction(void)
@@ -110,7 +112,10 @@ bool Conversion::isDefault(void)
 
 QString Conversion::getCodeDefinition(unsigned def_type)
 {
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? "1" : "");
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SRC_ENCODING]);
 	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DST_ENCODING]);
 

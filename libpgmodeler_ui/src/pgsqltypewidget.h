@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		SyntaxHighlighter *format_hl;
 
 	public:
-		PgSQLTypeWidget(QWidget * parent = 0, const QString &label="");
+		PgSQLTypeWidget(QWidget * parent = 0, const QString &label=QString());
 
 		/*! \brief Lists the PostgreSQL types on the specified combo. The user can configure which types
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to

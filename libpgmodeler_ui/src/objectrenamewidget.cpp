@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(tab_obj && tab_obj->isAddedByRelationship())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT)
-										.arg(Utf8String::create(tab_obj->getName()))
-										.arg(Utf8String::create(tab_obj->getTypeName()))
+                    .arg(/*Utf8String::create(*/tab_obj->getName())
+                    .arg(/*Utf8String::create(*/tab_obj->getTypeName())
 										,ERR_OPR_REL_INCL_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->adjustSize();
@@ -52,8 +52,8 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + object->getSchemaName() + QString(".png")));
 	obj_icon_lbl->setToolTip(object->getTypeName());
 
-	obj_name_lbl->setText(Utf8String::create(object->getName()));
-	new_name_edt->setText(Utf8String::create(object->getName()));
+  obj_name_lbl->setText(/*Utf8String::create(*/object->getName());
+  new_name_edt->setText(/*Utf8String::create(*/object->getName());
 }
 
 int ObjectRenameWidget::exec(void)
@@ -87,7 +87,7 @@ void ObjectRenameWidget::applyRenaming(void)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 			BaseObject *aux_obj=nullptr, *parent_obj=nullptr;
 			QString fmt_name;
-      vector<BaseObject *> ref_objs;
+			vector<BaseObject *> ref_objs;
 
 			obj_type=object->getObjectType();
 
@@ -100,7 +100,7 @@ void ObjectRenameWidget::applyRenaming(void)
 				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 				if(object->getSchema())
-					fmt_name=object->getSchema()->getName(true) + "." + fmt_name;
+          fmt_name=object->getSchema()->getName(true) + QString(".") + fmt_name;
 
 				//For table child object, check if there is another object with the same new name
 				if(tab_obj)
@@ -119,10 +119,10 @@ void ObjectRenameWidget::applyRenaming(void)
 				if(aux_obj && aux_obj!=object)
 				{
 					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-													.arg(Utf8String::create(fmt_name))
-													.arg(Utf8String::create(object->getTypeName()))
-													.arg(Utf8String::create(parent_obj->getName(true)))
-													.arg(Utf8String::create(parent_obj->getTypeName())),
+                          .arg(/*Utf8String::create(*/fmt_name)
+                          .arg(/*Utf8String::create(*/object->getTypeName())
+                          .arg(/*Utf8String::create(*/parent_obj->getName(true))
+                          .arg(/*Utf8String::create(*/parent_obj->getTypeName()),
 													ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
@@ -151,6 +151,7 @@ void ObjectRenameWidget::applyRenaming(void)
 					model->validateRelationships();
 
 				tab->setModified(true);
+				tab->setCodeInvalidated(true);
 				dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
 			}
 			else if(object->getObjectType()==OBJ_SCHEMA)
@@ -159,18 +160,21 @@ void ObjectRenameWidget::applyRenaming(void)
 				dynamic_cast<Schema *>(object)->setModified(true);
 			}
 
-      if(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-         object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-         object->getObjectType()==OBJ_EXTENSION)
-      {
-        model->getObjectReferences(object, ref_objs);
+      Column *col=nullptr;
+      model->getObjectReferences(object, ref_objs);
 
-        for(auto obj : ref_objs)
+      for(auto obj : ref_objs)
+      {
+        if(obj->getObjectType()==OBJ_COLUMN)
         {
-          if(obj->getObjectType()==OBJ_COLUMN)
-            dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+          col=dynamic_cast<Column *>(obj);
+          col->getParentTable()->setModified(true);
+          col->setCodeInvalidated(true);
         }
+        else
+          obj->setCodeInvalidated(true);
       }
+
 
 			accept();
 		}

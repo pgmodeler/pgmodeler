@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,6 +92,16 @@ QString ResultSet::getColumnName(int column_idx)
 
 	//Returns the column name on the specified index
 	return(QString(PQfname(sql_result, column_idx)));
+}
+
+unsigned ResultSet::getColumnTypeId(int column_idx)
+{
+	//Throws an error in case the column index is invalid
+	if(column_idx < 0 || column_idx >= getColumnCount())
+		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	//Returns the column type id on the specified index
+	return(static_cast<unsigned>(PQftype(sql_result, column_idx)));
 }
 
 int ResultSet::getColumnIndex(const QString &column_name)

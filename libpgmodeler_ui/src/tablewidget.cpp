@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,12 +23,6 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 
-extern ConstraintWidget *constraint_wgt;
-extern ColumnWidget *column_wgt;
-extern RuleWidget *rule_wgt;
-extern IndexWidget *index_wgt;
-extern TriggerWidget *trigger_wgt;
-
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;
@@ -39,7 +33,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	Ui_TableWidget::setupUi(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(unlogged_chk);
+  fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
@@ -48,11 +42,11 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
-	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
-	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/schema.png"),1);
+  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/schema.png")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
-	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),2);
+  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),2);
 
   tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
 	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
@@ -84,38 +78,38 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+  objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute"), 3);
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+  objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
 
 	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/table.png"),1);
+  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/trigger.png"),2);
+  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 	objects_tab_map[OBJ_RULE]->setColumnCount(3);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
 	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+  objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
@@ -168,33 +162,34 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 
 	table=dynamic_cast<Table *>(this->object);
 
-	switch(obj_type)
+	if(obj_type==OBJ_COLUMN)
 	{
-		case OBJ_COLUMN:
-			column_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-			column_wgt->show();
-		break;
-
-		case OBJ_CONSTRAINT:
-			constraint_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-			constraint_wgt->show();
-		break;
-
-		case OBJ_TRIGGER:
-			trigger_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-			trigger_wgt->show();
-		break;
-
-		case OBJ_INDEX:
-			index_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-			index_wgt->show();
-		break;
-
-		default:
-		case OBJ_RULE:
-			rule_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-			rule_wgt->show();
-		break;
+		ColumnWidget column_wgt(this);
+		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
+		column_wgt.show();
+	}
+	else if(obj_type==OBJ_CONSTRAINT)
+	{
+		ConstraintWidget constraint_wgt(this);
+		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
+		constraint_wgt.show();
+	}
+	else if(obj_type==OBJ_TRIGGER)
+	{
+		TriggerWidget trigger_wgt(this);
+		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
+		trigger_wgt.show();
+	}
+	else if(obj_type==OBJ_INDEX)
+	{
+		IndexWidget index_wgt(this);
+		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
+		index_wgt.show();
+	}else
+	{
+		RuleWidget rule_wgt(this);
+		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
+		rule_wgt.show();
 	}
 }
 
@@ -272,8 +267,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		{
 			aux_tab=table->getAncestorTable(i);
 			parent_tables->addRow();
-			parent_tables->setCellText(Utf8String::create(aux_tab->getName()), i, 0);
-			parent_tables->setCellText(Utf8String::create(aux_tab->getSchema()->getName()), i, 1);
+      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getName(), i, 0);
+      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Parent"), i, 2);
 		}
 
@@ -281,8 +276,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		if(aux_tab)
 		{
 			parent_tables->addRow();
-			parent_tables->setCellText(Utf8String::create(aux_tab->getName()), i, 0);
-			parent_tables->setCellText(Utf8String::create(aux_tab->getSchema()->getName()), i, 1);
+      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getName(), i, 0);
+      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Copy"), i, 2);
 		}
 
@@ -368,12 +363,13 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	Rule *rule=nullptr;
 	Index *index=nullptr;
 	ObjectType obj_type;
-	QString str_aux, str_aux1,
-			contr_types[]={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
-											~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
-											QString("NOT NULL") },
+  QString str_aux, str_aux1;
 
-			constr_codes[]={ "pk", "fk", "ck", "uq", "nn"};
+  QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
+                            ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
+                            QString("NOT NULL") },
+      constr_codes={ QString("pk"), QString("fk"), QString("ck"), QString("uq"), QString("nn")};
+
 	QFont font;
 	unsigned i;
 	EventType events[]={ EventType::on_insert, EventType::on_delete,
@@ -383,7 +379,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-	tab->setCellText(Utf8String::create(object->getName()),row,0);
+  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
@@ -391,26 +387,26 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		column=dynamic_cast<Column *>(object);
 
 		//Column 1: Column data type
-		tab->setCellText(Utf8String::create(*column->getType()),row,1);
+    tab->setCellText(/*Utf8String::create(*/*column->getType(),row,1);
 
 		//Column 2: Column defaul value
     if(column->getSequence())
-      str_aux=QString("netval('%1'::regclass)").arg(column->getSequence()->getName(true).remove("\""));
+      str_aux=QString("netval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
     else
       str_aux=column->getDefaultValue();
 
-		if(str_aux.isEmpty()) str_aux="-";
+    if(str_aux.isEmpty()) str_aux=QString("-");
 		tab->setCellText(str_aux,row,2);
 
 		//Column 3: Column attributes (constraints which belongs)
-		str_aux=Utf8String::create(TableObjectView::getConstraintString(column));
-		for(i=0; i < 5; i++)
+    str_aux=/*Utf8String::create(*/TableObjectView::getConstraintString(column);
+    for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
 				str_aux1+=contr_types[i]  + QString(", ");
 		}
 
-		if(str_aux1.isEmpty()) str_aux1="-";
+    if(str_aux1.isEmpty()) str_aux1=QString("-");
 		else str_aux1.remove(str_aux1.size()-2, 2);
 
 		tab->setCellText(str_aux1,row,3);
@@ -432,8 +428,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		}
 		else
 		{
-			tab->setCellText("-",row,2);
-			tab->setCellText("-",row,3);
+      tab->setCellText(QString("-"),row,2);
+      tab->setCellText(QString("-"),row,3);
 		}
 	}
 	else if(obj_type==OBJ_TRIGGER)
@@ -443,7 +439,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-			tab->setCellText(Utf8String::create(trigger->getReferencedTable()->getName(true)),row,1);
+      tab->setCellText(/*Utf8String::create(*/trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -517,7 +513,7 @@ void TableWidget::removeObjects(void)
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-												.arg(Utf8String::create(object->getName()))
+                        .arg(/*Utf8String::create(*/object->getName())
 												.arg(object->getTypeName()),
 												ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -566,7 +562,7 @@ void TableWidget::removeObject(int row)
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-											.arg(Utf8String::create(object->getName()))
+                      .arg(/*Utf8String::create(*/object->getName())
 											.arg(object->getTypeName()),
 											ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -623,6 +619,7 @@ void TableWidget::applyConfiguration(void)
 	try
 	{
 		Table *table=nullptr;
+		vector<BaseRelationship *> rels;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -637,7 +634,7 @@ void TableWidget::applyConfiguration(void)
 
 		try
 		{
-      table->saveRelObjectsIndexes();
+			table->saveRelObjectsIndexes();
 
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
@@ -656,6 +653,20 @@ void TableWidget::applyConfiguration(void)
 
 		op_list->finishOperationChain();
 		finishConfiguration();
+
+		if(RelationshipView::getLineConnectinMode()==RelationshipView::CONNECT_FK_TO_PK)
+		{
+			/* Forcing the update of relationships connected to the table in order to reconfigure the line
+			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */
+			rels=model->getRelationships(table);
+			for(auto rel : rels)
+			{
+				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+					 rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+					 rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					rel->setModified(true);
+			}
+		}
 	}
 	catch(Exception &e)
 	{

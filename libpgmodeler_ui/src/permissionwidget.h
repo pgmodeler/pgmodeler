@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		void editPermission(void);
 
 		//! \brief Removes the selected permission
-    void removePermission(int perm_id);
+		void removePermission(int);
 
 		//! \brief Removes all permissions from the permissions table
 		void removePermissions(void);

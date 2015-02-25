@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,9 @@ class Rule: public TableObject{
 		void removeCommands(void);
 
 		//! \brief Returns the SQL / XML definition for the rule
-		virtual QString getCodeDefinition(unsigned def_type) final;
+    virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getSignature(bool format=true) final;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,34 +21,40 @@
 BaseGraphicObject::BaseGraphicObject(void)
 {
 	is_modified=true;
-	attributes[ParsersAttributes::X_POS]="";
-	attributes[ParsersAttributes::Y_POS]="";
-	attributes[ParsersAttributes::POSITION]="";
+	attributes[ParsersAttributes::X_POS]=QString();
+	attributes[ParsersAttributes::Y_POS]=QString();
+	attributes[ParsersAttributes::POSITION]=QString();
 	receiver_object=nullptr;
 }
 
 void BaseGraphicObject::setProtected(bool value)
 {
 	BaseObject::setProtected(value);
-
-	//if(!this->signalsBlocked())
-		emit s_objectProtected(this->isProtected());
+	emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setSystemObject(bool value)
 {
 	BaseObject::setSystemObject(value);
-
-	// if(!this->signalsBlocked())
-		 emit s_objectProtected(this->isProtected());
+	emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setModified(bool value)
 {
 	is_modified=value;
 
-	if(/*!this->signalsBlocked() &&*/ is_modified)
-		emit s_objectModified();
+	if(is_modified)
+    emit s_objectModified();
+}
+
+void BaseGraphicObject::setSQLDisabled(bool value)
+{
+  bool curr_val=sql_disabled;
+
+  BaseObject::setSQLDisabled(value);
+
+  if(value != curr_val)
+    emit s_objectModified();
 }
 
 bool BaseGraphicObject::isModified(void)
@@ -60,12 +66,12 @@ void BaseGraphicObject::setPositionAttribute(void)
 {
 	attributes[ParsersAttributes::X_POS]=QString("%1").arg(position.x());
 	attributes[ParsersAttributes::Y_POS]=QString("%1").arg(position.y());
-	attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
-																																					attributes, SchemaParser::XML_DEFINITION);
+	attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)
 {
+	setCodeInvalidated(position != pos);
 	position=pos;
 }
 

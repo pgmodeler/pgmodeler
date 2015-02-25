@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,35 +23,35 @@ Type::Type(void)
 	obj_type=OBJ_TYPE;
 	setConfiguration(ENUMERATION_TYPE);
 
-	BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]="";
-	BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]="";
-	BaseObject::attributes[ParsersAttributes::INPUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::OUTPUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::RECV_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::SEND_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::ANALYZE_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="";
-	BaseObject::attributes[ParsersAttributes::BY_VALUE]="";
-	BaseObject::attributes[ParsersAttributes::ALIGNMENT]="";
-	BaseObject::attributes[ParsersAttributes::STORAGE]="";
-	BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]="";
-	BaseObject::attributes[ParsersAttributes::ELEMENT]="";
-	BaseObject::attributes[ParsersAttributes::DELIMITER]="";
-	BaseObject::attributes[ParsersAttributes::REDUCED_FORM]="";
-	BaseObject::attributes[ParsersAttributes::CATEGORY]="";
-	BaseObject::attributes[ParsersAttributes::PREFERRED]="";
-	BaseObject::attributes[ParsersAttributes::LIKE_TYPE]="";
-	BaseObject::attributes[ParsersAttributes::COLLATABLE]="";
-	BaseObject::attributes[ParsersAttributes::SUBTYPE]="";
-	BaseObject::attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::CANONICAL_FUNC]="";
-	BaseObject::attributes[ParsersAttributes::OP_CLASS]="";
+  attributes[ParsersAttributes::BASE_TYPE]=QString();
+  attributes[ParsersAttributes::COMPOSITE_TYPE]=QString();
+  attributes[ParsersAttributes::RANGE_TYPE]=QString();
+  attributes[ParsersAttributes::TYPE_ATTRIBUTE]=QString();
+  attributes[ParsersAttributes::ENUM_TYPE]=QString();
+  attributes[ParsersAttributes::ENUMERATIONS]=QString();
+  attributes[ParsersAttributes::INPUT_FUNC]=QString();
+  attributes[ParsersAttributes::OUTPUT_FUNC]=QString();
+  attributes[ParsersAttributes::RECV_FUNC]=QString();
+  attributes[ParsersAttributes::SEND_FUNC]=QString();
+  attributes[ParsersAttributes::TPMOD_IN_FUNC]=QString();
+  attributes[ParsersAttributes::TPMOD_OUT_FUNC]=QString();
+  attributes[ParsersAttributes::ANALYZE_FUNC]=QString();
+  attributes[ParsersAttributes::INTERNAL_LENGTH]=QString();
+  attributes[ParsersAttributes::BY_VALUE]=QString();
+  attributes[ParsersAttributes::ALIGNMENT]=QString();
+  attributes[ParsersAttributes::STORAGE]=QString();
+  attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+  attributes[ParsersAttributes::ELEMENT]=QString();
+  attributes[ParsersAttributes::DELIMITER]=QString();
+  attributes[ParsersAttributes::REDUCED_FORM]=QString();
+  attributes[ParsersAttributes::CATEGORY]=QString();
+  attributes[ParsersAttributes::PREFERRED]=QString();
+  attributes[ParsersAttributes::LIKE_TYPE]=QString();
+  attributes[ParsersAttributes::COLLATABLE]=QString();
+  attributes[ParsersAttributes::SUBTYPE]=QString();
+  attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]=QString();
+  attributes[ParsersAttributes::CANONICAL_FUNC]=QString();
+  attributes[ParsersAttributes::OP_CLASS]=QString();
 }
 
 void Type::setName(const QString &name)
@@ -72,51 +72,59 @@ void Type::setSchema(BaseObject *schema)
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
-bool Type::isAttributeExists(const QString &attrib_name)
+int Type::getAttributeIndex(const QString &attrib_name)
 {
 	vector<TypeAttribute>::iterator itr, itr_end;
-	bool found=false;
+  int idx=-1;
 
-	itr=attributes.begin();
-	itr_end=attributes.end();
+  itr=type_attribs.begin();
+  itr_end=type_attribs.end();
 
-	while(itr!=itr_end && !found)
+  while(itr!=itr_end)
 	{
-		found=(itr->getName()==attrib_name);
+    if(itr->getName()==attrib_name)
+    {
+      idx=(itr - type_attribs.begin());
+      break;
+    }
+
 		itr++;
 	}
 
-	return(found);
+  return(idx);
 }
 
 void Type::addAttribute(TypeAttribute attrib)
 {
 	//Raises an error if the attribute has an empty name or null type
-	if(attrib.getName()=="" || attrib.getType()==PgSQLType::null)
+  if(attrib.getName().isEmpty() || attrib.getType()==PgSQLType::null)
 		throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the passed attribute has the same type as the defining type (this)
 	else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the attribute already exists
-	else if(isAttributeExists(attrib.getName()))
+  else if(getAttributeIndex(attrib.getName()) >= 0)
 		throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.push_back(attrib);
+  type_attribs.push_back(attrib);
+	setCodeInvalidated(true);
 }
 
 void Type::removeAttribute(unsigned attrib_idx)
 {
 	//Raises an error if the attribute index is out of bound
-	if(attrib_idx >= attributes.size())
+  if(attrib_idx >= type_attribs.size())
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.erase(attributes.begin() + attrib_idx);
+  type_attribs.erase(type_attribs.begin() + attrib_idx);
+	setCodeInvalidated(true);
 }
 
 void Type::removeAttributes(void)
 {
-	attributes.clear();
+  type_attribs.clear();
+	setCodeInvalidated(true);
 }
 
 bool Type::isEnumerationExists(const QString &enum_name)
@@ -139,7 +147,7 @@ bool Type::isEnumerationExists(const QString &enum_name)
 void Type::addEnumeration(const QString &enum_name)
 {
 	//Raises an error if the enumaration name is empty
-	if(enum_name=="")
+  if(enum_name.isEmpty())
 		throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration name is invalid (exceeds the maximum length)
 	else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
@@ -149,6 +157,7 @@ void Type::addEnumeration(const QString &enum_name)
 		throw Exception(ERR_INS_DUPLIC_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	enumerations.push_back(enum_name);
+	setCodeInvalidated(true);
 }
 
 void Type::removeEnumeration(unsigned enum_idx)
@@ -157,11 +166,13 @@ void Type::removeEnumeration(unsigned enum_idx)
 		throw Exception(ERR_REF_ENUM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	enumerations.erase(enumerations.begin() + enum_idx);
+	setCodeInvalidated(true);
 }
 
 void Type::removeEnumerations(void)
 {
 	enumerations.clear();
+	setCodeInvalidated(true);
 }
 
 void Type::setConfiguration(unsigned conf)
@@ -170,7 +181,7 @@ void Type::setConfiguration(unsigned conf)
 	if(conf < BASE_TYPE || conf > RANGE_TYPE)
 		throw Exception(ERR_ASG_INV_TYPE_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	attributes.clear();
+  type_attribs.clear();
 	enumerations.clear();
 
 	for(unsigned idx=0; idx < sizeof(functions)/sizeof(Function *); idx++)
@@ -189,6 +200,7 @@ void Type::setConfiguration(unsigned conf)
 	like_type="any";
 
 	this->config=conf;
+	setCodeInvalidated(true);
 }
 
 void Type::setFunction(unsigned func_id, Function *func)
@@ -214,7 +226,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 		because this function is mandatory for base types */
 	else if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName(true)))
+                    .arg(/*Utf8String::create(*/this->getName(true))
 										.arg(BaseObject::getTypeName(OBJ_TYPE)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -236,7 +248,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 							func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
 							func_id==ANALYZE_FUNC  || func_id==CANONICAL_FUNC)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Checking the return types of function in relation to type.
@@ -246,17 +258,17 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 OUTPUT and TPMOD_OUT should return cstring.
 		 The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
 		 respectively. Raises an error if some of conditions above is not satisfied. */
-		else if((func_id==INPUT_FUNC && func->getReturnType()!="any") ||
-						(func_id==OUTPUT_FUNC && func->getReturnType()!="cstring") ||
-						(func_id==RECV_FUNC && func->getReturnType()!="any") ||
-						(func_id==SEND_FUNC && func->getReturnType()!="bytea") ||
-						(func_id==TPMOD_IN_FUNC && func->getReturnType()!="integer") ||
-						(func_id==TPMOD_OUT_FUNC && func->getReturnType()!="cstring") ||
-						(func_id==ANALYZE_FUNC && func->getReturnType()!="boolean") ||
-						(func_id==CANONICAL_FUNC && func->getReturnType()!="any") ||
-						(func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!="double precision"))
+    else if((func_id==INPUT_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==OUTPUT_FUNC && func->getReturnType()!=QString("cstring")) ||
+            (func_id==RECV_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==SEND_FUNC && func->getReturnType()!=QString("bytea")) ||
+            (func_id==TPMOD_IN_FUNC && func->getReturnType()!=QString("integer")) ||
+            (func_id==TPMOD_OUT_FUNC && func->getReturnType()!=QString("cstring")) ||
+            (func_id==ANALYZE_FUNC && func->getReturnType()!=QString("boolean")) ||
+            (func_id==CANONICAL_FUNC && func->getReturnType()!=QString("any")) ||
+            (func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!=QString("double precision")))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -270,30 +282,31 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 The ANALYZE function must have a parameter of type (internal).
 		 Raises an error if some of above conditions is not satisfied.*/
 		else if((func_id==INPUT_FUNC &&
-						 (func->getParameter(0).getType()!="cstring" ||
+             (func->getParameter(0).getType()!=QString("cstring") ||
 							(param_count==3 &&
-							 (func->getParameter(1).getType()!="oid" ||
-								func->getParameter(2).getType()!="integer")))) ||
+               (func->getParameter(1).getType()!=QString("oid") ||
+                func->getParameter(2).getType()!=QString("integer"))))) ||
 						(func_id==RECV_FUNC &&
-						 (func->getParameter(0).getType()!="internal" ||
+             (func->getParameter(0).getType()!=QString("internal") ||
 							(param_count==3 &&
-							 (func->getParameter(1).getType()!="oid" ||
-								func->getParameter(2).getType()!="integer")))) ||
-						((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!="any") ||
-						(func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!="cstring[]") ||
-						(func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!="integer") ||
-						(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!="internal") ||
+               (func->getParameter(1).getType()!=QString("oid") ||
+                func->getParameter(2).getType()!=QString("integer"))))) ||
+            ((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!=QString("any")) ||
+            (func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
+            (func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!=QString("integer")) ||
+            (func_id==ANALYZE_FUNC && func->getParameter(0).getType()!=QString("internal")) ||
 						(func_id==SUBTYPE_DIFF_FUNC &&
 							(func->getParameter(0).getType()!=this->subtype ||
 							 func->getParameter(1).getType()!=this->subtype)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-											.arg(Utf8String::create(this->getName()))
-											.arg(Utf8String::create(this->getTypeName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/this->getTypeName()),
 											ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		func->setProtected(false);
 	}
 
+	setCodeInvalidated(functions[func_id] != func);
 	functions[func_id]=func;
 }
 
@@ -322,7 +335,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				}
 				else
 				{
-					param.setType(PgSQLType("any"));
+          param.setType(PgSQLType(QString("any")));
 					func->addParameter(param);
 				}
 			}
@@ -331,19 +344,23 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				if(!inverse_conv)
 					func->setReturnType(PgSQLType(this));
 				else
-					func->setReturnType(PgSQLType("any"));
+          func->setReturnType(PgSQLType(QString("any")));
 			}
 		}
 	}
+
+	setCodeInvalidated(true);
 }
 
 void Type::setInternalLength(unsigned length)
 {
+	setCodeInvalidated(internal_len != length);
 	internal_len=length;
 }
 
 void Type::setByValue(bool value)
 {
+	setCodeInvalidated(by_value != value);
 	by_value=value;
 }
 
@@ -352,37 +369,46 @@ void Type::setAlignment(PgSQLType type)
 	QString tp=(*type);
 
 	//Raises an error if the type assigned to the alignment is invalid according to the rule
-	if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(Utf8String::create(this->getName(true))),
+  if(tp!=QString("char") && tp!=QString("smallint") && tp!=QString("integer") && tp!=QString("double precision"))
+    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(alignment != type);
+	alignment=tp;
 }
 
 void Type::setStorage(StorageType strg)
 {
+	setCodeInvalidated(storage != strg);
 	storage=strg;
 }
 
 void Type::setDefaultValue(const QString &value)
 {
-	this->default_value=value.trimmed();
+	QString def=value.trimmed();
+
+	setCodeInvalidated(default_value != def);
+	this->default_value=def;
 }
 
 void Type::setElement(PgSQLType elem)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem!="any" &&
+  else if(elem!=QString("any") &&
 					(elem.isOIDType() || elem.isPseudoType() ||
 					 elem.isUserType() || elem.isArrayType()))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(element != elem);
 	this->element=elem;
 }
 
 void Type::setDelimiter(char delim)
 {
+	setCodeInvalidated(delimiter != delim);
 	delimiter=delim;
 }
 
@@ -391,14 +417,14 @@ void Type::setElementsAttribute(unsigned def_type)
 	QString str_elem;
 	unsigned i, count;
 
-	count=Type::attributes.size();
+  count=type_attribs.size();
 	for(i=0; i < count; i++)
-		str_elem+=Type::attributes[i].getCodeDefinition(def_type);
+    str_elem+=type_attribs[i].getCodeDefinition(def_type);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
-	BaseObject::attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
+  attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
 }
 
 void Type::setEnumerationsAttribute(unsigned def_type)
@@ -410,46 +436,51 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			str_enum+="'" + enumerations[i] + "'";
+      str_enum+=QString("'") + enumerations[i] + QString("'");
 		else
 			str_enum+=enumerations[i];
 
-		if(i < (count-1)) str_enum+=",";
+    if(i < (count-1)) str_enum+=QString(",");
 	}
 
-	BaseObject::attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
+  attributes[ParsersAttributes::ENUMERATIONS]=str_enum;
 }
 
 void Type::setCategory(CategoryType categ)
 {
+	setCodeInvalidated(category != categ);
 	this->category=categ;
 }
 
 void Type::setPreferred(bool value)
 {
+	setCodeInvalidated(preferred != value);
 	this->preferred=value;
 }
 
 void Type::setCollatable(bool value)
 {
+	setCodeInvalidated(collatable != value);
 	this->collatable=value;
 }
 
 void Type::setLikeType(PgSQLType like_type)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->like_type != like_type);
 	this->like_type=like_type;
 }
 
 void Type::setSubtype(PgSQLType subtype)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !subtype)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
+    throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(this->subtype != subtype);
 	this->subtype=subtype;
 }
 
@@ -457,24 +488,25 @@ void Type::setSubtypeOpClass(OperatorClass *opclass)
 {
 	if(opclass && opclass->getIndexingType()!=IndexingType::btree)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OPCLASS_OBJ)
-										.arg(Utf8String::create(this->getName(true)))
-										.arg(Utf8String::create(this->getTypeName())),
+                    .arg(/*Utf8String::create(*/this->getName(true))
+                    .arg(/*Utf8String::create(*/this->getTypeName()),
 										ERR_ASG_INV_OPCLASS_OBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(subtype_opclass != opclass);
 	subtype_opclass=opclass;
 }
 
 TypeAttribute Type::getAttribute(unsigned attrib_idx)
 {
-	if(attrib_idx >= attributes.size())
+  if(attrib_idx >= type_attribs.size())
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(attributes[attrib_idx]);
+  return(type_attribs[attrib_idx]);
 }
 
 unsigned Type::getAttributeCount(void)
 {
-	return(attributes.size());
+  return(type_attribs.size());
 }
 
 QString Type::getEnumeration(unsigned idx_enum)
@@ -575,64 +607,67 @@ QString Type::getCodeDefinition(unsigned def_type)
 
 QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(config==ENUMERATION_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="1";
+    attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::_TRUE_;
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==COMPOSITE_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
+    attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::_TRUE_;
 		setElementsAttribute(def_type);
 	}
 	else if(config==RANGE_TYPE)
 	{
-		BaseObject::attributes[ParsersAttributes::RANGE_TYPE]="1";
+    attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			BaseObject::attributes[ParsersAttributes::SUBTYPE]=(*subtype);
+      attributes[ParsersAttributes::SUBTYPE]=(*subtype);
 		else
-			BaseObject::attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
+      attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 		if(subtype_opclass)
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
+        attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
 			else
-				BaseObject::attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
+        attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
 		}
 	}
 	else
 	{
-		BaseObject::attributes[ParsersAttributes::BASE_TYPE]="1";
+    attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
 
 		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
-			BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
+      attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("VARIABLE");
 		else
-			BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
+      attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
-		BaseObject::attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
-		BaseObject::attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
-		BaseObject::attributes[ParsersAttributes::STORAGE]=(~storage);
-		BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+    attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
+    attributes[ParsersAttributes::STORAGE]=(~storage);
+    attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
-		if(element!="any")
-			BaseObject::attributes[ParsersAttributes::ELEMENT]=(*element);
+    if(element!=QString("any"))
+      attributes[ParsersAttributes::ELEMENT]=(*element);
 
 		if(delimiter!='\0')
-			BaseObject::attributes[ParsersAttributes::DELIMITER]=delimiter;
+      attributes[ParsersAttributes::DELIMITER]=delimiter;
 
-		BaseObject::attributes[ParsersAttributes::CATEGORY]=~(category);
+    attributes[ParsersAttributes::CATEGORY]=~(category);
 
-		BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
-		BaseObject::attributes[ParsersAttributes::COLLATABLE]=(collatable ? "1" : "");
+    attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : QString());
+    attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : QString());
 
-		if(like_type!="any")
+    if(like_type!=QString("any"))
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
+        attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
 			else
-				BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
+        attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 	}
 
@@ -654,17 +689,115 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 			if(functions[i])
 			{
 				if(def_type==SchemaParser::SQL_DEFINITION)
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getName();
+          attributes[func_attrib[i]]=functions[i]->getName();
 				else
 				{
 					functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attrib[i]);
-					BaseObject::attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
+          attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
 				}
 			}
 		}
 	}
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+}
+
+QString Type::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    Type *type=dynamic_cast<Type *>(object);
+    attribs_map attribs;
+    QString alter_def, prev_val;
+    int attrib_idx=-1;
+
+    alter_def=BaseObject::getAlterDefinition(object);
+
+    if(this->config==type->config)
+    {
+      if(config==ENUMERATION_TYPE)
+      {
+        for(QString enum_val : type->enumerations)
+        {
+          if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
+          {
+            attribs[ParsersAttributes::BEFORE]=QString();
+            if(prev_val.isEmpty())
+            {
+              attribs[ParsersAttributes::BEFORE]=ParsersAttributes::_TRUE_;
+              prev_val=this->enumerations[0];
+            }
+
+            attribs[ParsersAttributes::VALUE]=enum_val;
+            attribs[ParsersAttributes::EXISTING_VALUE]=prev_val;
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attribs.clear();
+          }
+
+          prev_val=enum_val;
+        }
+      }
+      else if(config==COMPOSITE_TYPE)
+      {
+        //Removing type attributes
+        for(TypeAttribute attrib : this->type_attribs)
+        {
+          if(type->getAttributeIndex(attrib.getName()) < 0)
+          {
+            attribs[ParsersAttributes::DROP]=ParsersAttributes::_TRUE_;
+            attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attribs.clear();
+            attributes[ParsersAttributes::DROP]=QString();
+          }
+        }
+
+        for(TypeAttribute attrib : type->type_attribs)
+        {
+          attrib_idx=this->getAttributeIndex(attrib.getName());
+
+          //Creating type attributes
+          if(attrib_idx < 0)
+          {
+            attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+            attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+            attribs[ParsersAttributes::COLLATION]=QString();
+
+            if(attrib.getCollation())
+              attribs[ParsersAttributes::COLLATION]=attrib.getCollation()->getName(true);
+
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+          }
+          //Changing type attributes
+          else
+          {
+            attribs[ParsersAttributes::CHANGE]=ParsersAttributes::_TRUE_;
+
+            if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
+            {
+              attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+              attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+            }
+
+            copyAttributes(attribs);
+            alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
+            attributes[ParsersAttributes::CHANGE]=QString();
+          }
+
+          attribs.clear();
+        }
+      }
+    }
+
+    return(alter_def);
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Type::operator = (Type &type)
@@ -676,7 +809,7 @@ void Type::operator = (Type &type)
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(type);
 
 	this->config=type.config;
-	this->attributes=type.attributes;
+  this->type_attribs=type.type_attribs;
 	this->enumerations=type.enumerations;
 	this->internal_len=type.internal_len;
 	this->by_value=type.by_value;

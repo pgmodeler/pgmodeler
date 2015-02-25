@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,7 +113,11 @@ class Index: public TableObject{
 		unsigned getFillFactor(void);
 
 		//! \brief Returns the SQL / XML definition for the index
-		virtual QString getCodeDefinition(unsigned tipo_def) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getSignature(bool format=true) final ;
+
+    virtual QString getAlterDefinition(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
@@ -129,7 +133,10 @@ class Index: public TableObject{
     vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if some index element is referencing the specified collation
-		bool isReferCollation(Collation *collation);
+    bool isReferCollation(Collation *collation);
+
+    //! brief Returns if some index element is referencing the specified column
+    bool isReferColumn(Column *column);
 };
 
 #endif

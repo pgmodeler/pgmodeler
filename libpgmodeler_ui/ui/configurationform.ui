@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>620</height>
+    <width>740</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>690</width>
-    <height>620</height>
+    <width>740</width>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,9 @@
       </property>
       <property name="bottomMargin">
        <number>4</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>2</number>
       </property>
       <item row="0" column="0">
        <widget class="QListWidget" name="icons_lst">
@@ -196,7 +199,16 @@
         </item>
         <item>
          <property name="text">
-          <string>Style</string>
+          <string>Relationships</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/relationshiptv.png</normaloff>:/icones/icones/relationshiptv.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Appearance</string>
          </property>
          <property name="textAlignment">
           <set>AlignLeft|AlignVCenter</set>
@@ -222,6 +234,15 @@
          </property>
          <property name="flags">
           <set>ItemIsSelectable|ItemIsEnabled</set>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Snippets</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/codesnippet.png</normaloff>:/icones/icones/codesnippet.png</iconset>
          </property>
         </item>
         <item>
@@ -265,19 +286,8 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>-1</number>
         </property>
-        <widget class="QWidget" name="general_pg">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-        <widget class="QWidget" name="style_pg"/>
-        <widget class="QWidget" name="connections_pg"/>
-        <widget class="QWidget" name="plugins_pg"/>
        </widget>
       </item>
      </layout>
@@ -311,7 +321,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>90</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -340,7 +350,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>90</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -366,7 +376,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>90</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>

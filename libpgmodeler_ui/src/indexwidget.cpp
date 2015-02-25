@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,10 +30,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		Ui_IndexWidget::setupUi(this);
 
     predicate_hl=new SyntaxHighlighter(predicate_txt, false);
-    predicate_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																						GlobalAttributes::CONFIGURATION_EXT);
+    predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		elements_wgt = new ElementsWidget(this);
 
@@ -48,7 +45,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(buffering_chk);
+    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		frame->setParent(this);
 		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
@@ -84,7 +81,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 void IndexWidget::selectIndexingType(void)
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
-	fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+  //fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 }
@@ -116,7 +113,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
-    predicate_txt->setPlainText(Utf8String::create(index->getPredicate()));
+    predicate_txt->setPlainText(/*Utf8String::create(*/index->getPredicate());
 
 		selectIndexingType();
 	}

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,36 +19,27 @@
 #include "modelfixform.h"
 #include "configurationform.h"
 
-extern ConfigurationForm *configuration_form;
-
 #ifndef Q_OS_MAC
-	const QString ModelFixForm::PGMODELER_CLI="pgmodeler-cli";
+  const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
 #else
-	const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
+  const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
 #endif
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+  map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+
   setupUi(this);
   hideEvent(nullptr);
 
   //Configuring font style for output widget
-  if(configuration_form)
+  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
   {
-    GeneralConfigWidget *general_conf=nullptr;
-    map<QString, attribs_map> confs;
+    float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+    if(size < 5.0f) size=5.0f;
 
-    general_conf=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-    confs=general_conf->getConfigurationParams();
-
-    if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
-    {
-      float size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
-      if(size < 5.0f) size=5.0f;
-
-      output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
-      output_txt->setFontPointSize(size);
-    }
+    output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+    output_txt->setFontPointSize(size);
   }
 
   connect(&pgmodeler_cli_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(updateOutput()));
@@ -79,25 +70,20 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-	QString pgmodeler_cli=qApp->applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + PGMODELER_CLI;
-
-	#ifdef Q_OS_WIN
-		pgmodeler_cli+=".exe";
-	#endif
-
-	QFileInfo fi(pgmodeler_cli);
+  QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH);
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-		msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%1</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.").arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
+    msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+                     .arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_edt->setVisible(true);
 		sel_cli_exe_tb->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(fi.absoluteFilePath());
+    pgmodeler_cli_edt->setText(GlobalAttributes::PGMODELER_CLI_PATH);
 
   return(QDialog::exec());
 }
@@ -107,10 +93,16 @@ void ModelFixForm::enableFix(void)
   if(!pgmodeler_cli_edt->text().isEmpty())
   {
      QFileInfo fi(pgmodeler_cli_edt->text());
-     invalid_cli_lbl->setVisible(!fi.exists() || fi.baseName()!=PGMODELER_CLI);
+     bool visible=!fi.exists() || fi.baseName()!=PGMODELER_CLI;
+
+     invalid_cli_lbl->setVisible(visible);
+     message_frm->setVisible(visible);
   }
   else
+  {
     invalid_cli_lbl->setVisible(false);
+    message_frm->setVisible(false);
+  }
 
   fix_btn->setEnabled(!input_file_edt->text().isEmpty() &&
                       !output_file_edt->text().isEmpty() &&
@@ -120,13 +112,13 @@ void ModelFixForm::enableFix(void)
 
 void ModelFixForm::fixModel(void)
 {
-	QString cmd="\"%1\"";
+  QString cmd=QString("\"%1\"");
 
-	#ifdef Q_OS_MAC
-		cmd+=" pgmodeler-cli";
-	#endif
+  #ifdef Q_OS_MAC
+    cmd+=QString(" pgmodeler-cli");
+  #endif
 
-  cmd+=" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"";
+  cmd+=QString(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
   cmd=cmd.arg(pgmodeler_cli_edt->text())
          .arg(fix_tries_sb->value())
          .arg(input_file_edt->text())
@@ -149,13 +141,13 @@ void ModelFixForm::selectFile(void)
     txt=pgmodeler_cli_edt;
 
     #ifdef Q_OS_WIN
-      cli_cmd+=".exe";
+      cli_cmd+=QString(".exe");
     #endif
 
     file_dlg.selectFile(cli_cmd);
     file_dlg.setFileMode(QFileDialog::ExistingFile);
     file_dlg.setNameFilter(trUtf8("pgModeler command line tool (%1)").arg(cli_cmd));
-    file_dlg.setWindowTitle("Browse pgmodeler-cli command...");
+    file_dlg.setWindowTitle(QString("Browse pgmodeler-cli command..."));
   }
   else
   {
@@ -164,7 +156,7 @@ void ModelFixForm::selectFile(void)
     else
       txt=output_file_edt;
 
-    file_dlg.setWindowTitle("Select model file...");
+    file_dlg.setWindowTitle(QString("Select model file..."));
   }
 
   file_dlg.exec();

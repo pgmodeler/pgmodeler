@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	obj_name=new QGraphicsSimpleTextItem;
 	obj_name->setZValue(1);
 
-	box=new QGraphicsPolygonItem;
+  //box=new QGraphicsPolygonItem;
+  box=new RoundedRectItem;
+  box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
 	box->setZValue(0);
 
 	this->addToGroup(box);
@@ -75,10 +77,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 
 	//Strike out the table name when its sql is disabled
-	fmt=font_config[schema_name_attrib];
-	font=fmt.font();
-  font.setStrikeOut(object->isSQLDisabled() && !schema->isRectVisible());
-
+  fmt=font_config[schema_name_attrib];
+  font=fmt.font();
   schema_name->setFont(font);
 
   if(!tag)
@@ -87,16 +87,15 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
     schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
 
 	if(schema->isRectVisible())
-		schema_name->setText(" ");
+    schema_name->setText(QString(" "));
 	else
-		schema_name->setText(Utf8String::create(schema->getName() + "."));
+    schema_name->setText(/*Utf8String::create(*/schema->getName() + QString("."));
 
-	fmt=font_config[name_attrib];
-	font=fmt.font();
-	font.setStrikeOut(object->isSQLDisabled());
+  fmt=font_config[name_attrib];
+  font=fmt.font();
 
-	obj_name->setFont(font);
-	obj_name->setText(Utf8String::create(object->getName()));
+  obj_name->setFont(font);
+  obj_name->setText(/*Utf8String::create(*/object->getName());
 
   if(!tag)
   {
@@ -129,21 +128,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 void TableTitleView::resizeTitle(float width, float height)
 {
-	QPolygonF pol;
-	pol=box->polygon();
+  box->setRect(QRectF(0,0, width, height));
 
-	if(pol.isEmpty())
-	{
-		pol.append(QPointF(0.0f,0.0f));
-		pol.append(QPointF(1.0f,0.0f));
-		pol.append(QPointF(1.0f,1.0f));
-		pol.append(QPointF(0.0f,1.0f));
-	}
-
-	this->resizePolygon(pol, width, height);
-	box->setPolygon(pol);
-
-	if(schema_name->text()==" ")
+  if(schema_name->text()==QString(" "))
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);
 	else
 	{

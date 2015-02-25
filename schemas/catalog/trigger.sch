@@ -2,16 +2,16 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
+%if {list} %then
   [SELECT tg.oid, tgname AS name FROM pg_trigger AS tg
     LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v') ]
 
-  %if @{schema} %then
+  %if {schema} %then
     [  LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-       WHERE ns.nspname= ] '@{schema}'
+       WHERE ns.nspname= ] '{schema}'
 
-    %if @{table} %then
-     [ AND tb.relname=]'@{table}'
+    %if {table} %then
+     [ AND tb.relname=]'{table}'
     %end
 
    [ AND ]
@@ -21,12 +21,16 @@
 
   [ tgisinternal IS FALSE ]
 
-  %if @{last-sys-oid} %then
-    [ AND tg.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+  %if {last-sys-oid} %then
+    [ AND tg.oid ] {oid-filter-op} $sp {last-sys-oid}
+  %end
+
+  %if {not-ext-object} %then
+    [ AND ]( {not-ext-object} )
   %end
 
 %else
-    %if @{attribs} %then
+    %if {attribs} %then
     # pg_trigger.tgtype datails:
     #   bit 0 -> FOR EACH ROW [1] | STATEMENT [0]
     #   bit 1 -> AFTER [0] | BEFORE [1]
@@ -77,20 +81,24 @@
 		   it.event_object_table=tb.relname
 	 WHERE tg.tgisinternal IS FALSE ]
 
-      %if @{schema} %then
-       [  AND ns.nspname= ] '@{schema}'
+      %if {schema} %then
+       [  AND ns.nspname= ] '{schema}'
 
-	%if @{table} %then
-	  [ AND tb.relname=]'@{table}'
+	%if {table} %then
+	  [ AND tb.relname=]'{table}'
 	%end
       %end
 
-       %if @{last-sys-oid} %then
-	 [ AND tg.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+       %if {last-sys-oid} %then
+	 [ AND tg.oid ] {oid-filter-op} $sp {last-sys-oid}
        %end
 
-	%if @{filter-oids} %then
-	  [ AND tg.oid IN (] @{filter-oids} )
+	%if {filter-oids} %then
+	  [ AND tg.oid IN (] {filter-oids} )
 	%end
+
+        %if {not-ext-object} %then
+          [ AND ]( {not-ext-object} )
+        %end
     %end
 %end

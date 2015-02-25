@@ -1,21 +1,17 @@
-include(../pgmodeler.pro)
+# libpgmodeler.pro (reviewed version)
+#
+# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
+# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
+#
+# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
+# refactored code, containing almost all changes done by the refactoring author.
+
+include(../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = pgmodeler
-
-!macx {
- # Check if LIBDESTDIR points to another location other than DESTDIR
- # in this case the INSTALLS will be used
- !equals(LIBDESTDIR, $$DESTDIR) {
-  target.path = $$LIBDESTDIR
-  INSTALLS = target
- }
-}
-
-macx:DESTDIR=$$LIBDESTDIR
-
-LIBS += $$DESTDIR/$$LIBUTILS \
-	$$DESTDIR/$$LIBPARSERS
+windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
 	   src/cast.h \
@@ -27,7 +23,7 @@ HEADERS += src/textbox.h \
 	   src/column.h \
 	   src/domain.h \
 	   src/aggregate.h \
-     src/permission.h \
+           src/permission.h \
 	   src/databasemodel.h \
 	   src/role.h \
 	   src/constraint.h \
@@ -61,8 +57,8 @@ HEADERS += src/textbox.h \
 	   src/typeattribute.h \
 	   src/extension.h \
 	   src/pgmodelerns.h \
-    src/tag.h \
-    src/eventtrigger.h
+           src/tag.h \
+           src/eventtrigger.h
 
 
 SOURCES +=  src/textbox.cpp \
@@ -85,7 +81,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/view.cpp \
 	    src/conversion.cpp \
 	    src/function.cpp \
-      src/permission.cpp \
+            src/permission.cpp \
 	    src/databasemodel.cpp \
 	    src/rule.cpp \
 	    src/table.cpp \
@@ -108,6 +104,19 @@ SOURCES +=  src/textbox.cpp \
 	    src/typeattribute.cpp \
 	    src/extension.cpp \
 	    src/pgmodelerns.cpp \
-    src/tag.cpp \
-    src/eventtrigger.cpp
+            src/tag.cpp \
+            src/eventtrigger.cpp \
+    src/operation.cpp
 
+unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
+                    -L$$OUT_PWD/../libutils/ -lutils
+
+INCLUDEPATH += $$PWD/../libparsers/src \
+               $$PWD/../libutils/src
+
+DEPENDPATH += $$PWD/../libparsers \
+              $$PWD/../libutils
+
+# Deployment settings
+target.path = $$PRIVATELIBDIR
+INSTALLS = target

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,10 +34,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, false);
 
-		format_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		GlobalAttributes::DIR_SEPARATOR +
-																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		GlobalAttributes::CONFIGURATION_EXT);
+    format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		IntervalType::getTypes(interval_lst);
 		interval_cmb->addItem("");
@@ -81,11 +78,11 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 			type=data.toUInt();
 
 		length_sb->setEnabled(type.hasVariableLength());
-		timezone_chk->setVisible(type=="timestamp" || type=="time");
+    timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
 		timezone_lbl->setVisible(timezone_chk->isVisible());
 		precision_sb->setEnabled(type.acceptsPrecision());
-		dimension_sb->setEnabled(type!="void");
-		interval_cmb->setVisible(type=="interval");
+    dimension_sb->setEnabled(type!=QString("void"));
+    interval_cmb->setVisible(type==QString("interval"));
 		interval_lbl->setVisible(interval_cmb->isVisible());
 
 		spatial_cmb->setVisible(type.isGiSType());
@@ -99,10 +96,6 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 		if(spatial_cmb->isVisible())
 		{
 			SpatialType spatial_tp;
-
-			//For the geography type the SRID is always 4326
-			//if(type=="geography") srid_spb->setValue(4326);
-
 			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
 
 			if(var_z_chk->isChecked() && var_m_chk->isChecked())
@@ -121,7 +114,7 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 		type.setIntervalType(interval_cmb->currentText());
 		type.setWithTimezone(timezone_chk->isChecked());
 
-		format_txt->setPlainText(Utf8String::create(*type));
+    format_txt->setPlainText(/*Utf8String::create(*/*type);
 	}
 	catch(Exception &e)
 	{
@@ -144,7 +137,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-			combo->addItem(Utf8String::create(types[idx]), QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
+      combo->addItem(/*Utf8String::create(*/types[idx], QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
 		PgSQLType::getTypes(types, oid_types, pseudo_types);
@@ -164,7 +157,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 		type_cmb->blockSignals(false);
 
 		//Get the passed type index
-		idx=type_cmb->findText(Utf8String::create(~type));
+    idx=type_cmb->findText(/*Utf8String::create(*/~type);
 
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,105 +29,107 @@
 #include "syntaxhighlighter.h"
 #include "connection.h"
 #include "databaseimportform.h"
+#include "datamanipulationform.h"
+#include "findreplacewidget.h"
+#include "codecompletionwidget.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    //! brief Syntax highlighter for sql input field
-    SyntaxHighlighter *sql_cmd_hl;
+		SchemaParser schparser;
 
-    //! brief Database import helper used to list objects from current connection
-    DatabaseImportHelper import_helper;
+		//! brief Syntax highlighter for sql input field
+		SyntaxHighlighter *sql_cmd_hl;
 
-    //! brief Connection used to run commands specified on sql input field
-    Connection sql_cmd_conn;
+		//! brief Database import helper used to list objects from current connection
+		DatabaseImportHelper import_helper;
 
-    //! brief Dialog for SQL save/load
-    QFileDialog sql_file_dlg,
+		//! brief Connection used to run commands specified on sql input field
+		Connection sql_cmd_conn;
 
-    //! brief Dialog for CSV save/load
-    csv_file_dlg;
+		//! brief Dialog for SQL save/load
+		QFileDialog sql_file_dlg;
 
-    //! brief Stores the results selection copy action
-    QMenu copy_menu,
+    QMenu snippets_menu;
 
-          //! brief Stores the actions to drop and show object's data
-          handle_menu;
+		FindReplaceWidget *find_replace_wgt;
 
-	QAction *copy_action, *drop_action, *drop_cascade_action, *show_data_action, *refresh_action;
+		CodeCompletionWidget *code_compl_wgt;
 
+		/*! brief Enables/Disables the fields for sql input and execution.
+				When enabling a new connection to server will be opened. */
+		void enableSQLExecution(bool enable);
 
-    //! brief Generates a CSV buffer based upon the selection on the results grid
-    QByteArray generateCSVBuffer(int start_row, int start_col, int row_cnt, int col_cnt);
+		//! brief Stores the command on the sql command history
+		void registerSQLCommand(const QString &cmd);
 
-    /*! brief Enables/Disables the fields for sql input and execution.
-        When enabling a new connection to server will be opened. */
-    void enableSQLExecution(bool enable);
+    //! brief Show the exception message in the output widget
+		void showError(Exception &e);
 
-    //! brief Drops the object represented by the specified item
-	void dropObject(QTreeWidgetItem *item, bool cascade);
-
-    //! brief Shows the data of the object represented by the specified item
-    void showObjectData(QTreeWidgetItem *item);
-
-    //! brief Fills up the results grid based upon the specified result set
-    void fillResultsTable(ResultSet &res);
-
-    //! brief Stores the command on the sql command history
-    void registerSQLCommand(const QString &cmd);
-
-    void showError(Exception &e);
-
-    bool eventFilter(QObject *object, QEvent *event);
-
-	void configureImportHelper(void);
+    //! brief Fills the result grid with the specified result set
+		void fillResultsTable(ResultSet &res);
 
   public:
-    SQLToolWidget(QWidget * parent = 0);
+		SQLToolWidget(QWidget * parent = 0);
+    ~SQLToolWidget(void);
 
-    //! \brief Updates the connections combo
-    void updateConnections(map<QString, Connection *> &conns);
+		//! \brief Updates the connections combo
+		void updateConnections(map<QString, Connection *> &conns);
+
+		/*! brief Fills up the results grid based upon the specified result set.
+				The parameter store_data will make each item store the text as its data */
+		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
+
+		//! brief Copy to clipboard (in csv format) the current selected items on results grid
+		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
+
+		//! brief Generates a CSV buffer based upon the selection on the results grid
+		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+
+		//! brief Exports the results to csv file
+		static void exportResults(QTableWidget *results_tbw);
 
   public slots:
-    void hide(void);
+    void configureSnippets(void);
 
   private slots:
-    //! brief Opens a connection to the selected database
-    void connectToDatabase(void);
+    //! brief Opens a connection to the selected server
+    void connectToServer(void);
 
-    //! brief Lists all objects for the current selected database
-    void listObjects(void);
+    void disconnectFromServer(void);
 
-    //! brief Updates on the tree under the current selected object
-    void updateCurrentItem(void);
+		//! brief Enables the command buttons when user fills the sql field
+		void enableCommandButtons(void);
 
-    //! brief Enables the command buttons when user fills the sql field
-    void enableCommandButtons(void);
+		//! brief Runs the current typed sql command
+		void runSQLCommand(void);
 
-    //! brief Runs the current typed sql command
-    void runSQLCommand(void);
+		//! brief Save the current typed sql command on a file
+		void saveCommands(void);
 
-    //! brief Save the current typed sql command on a file
-    void saveCommands(void);
+		//! brief Load a sql command from a file
+		void loadCommands(void);
 
-    //! brief Load a sql command from a file
-    void loadCommands(void);
+		//! brief Clears the input field as well the results grid
+		void clearAll(void);
 
-    //! brief Exports the results to csv file
-    void exportResults(void);
+		//! brief Drop the current selected database
+		void dropDatabase(void);
 
-    //! brief Clears the input field as well the results grid
-    void clearAll(void);
+		//! brief Show the widget to handle data in tables
+    void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
 
-    //! brief Copy to clipboard (in csv format) the current selected items on results grid
-    void copySelection(void);
+    //! brief Open the current database in a database explorer instance
+    void browseDatabase(void);
 
-    //! brief Shows the menu to drop/show data
-    void handleObject(QTreeWidgetItem *item, int);
+    void closeDatabaseExplorer(int idx);
 
-  signals:
-    void s_visibilityChanged(bool);
+    void setCurrentDatabase(int idx);
+
+    void selectSnippet(QAction *act);
+
+    void handleSelectedWord(QString word);
 };
 
 #endif

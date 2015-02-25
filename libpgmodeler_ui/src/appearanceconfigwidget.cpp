@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 #include "appearanceconfigwidget.h"
 
-AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(parent)
+map<QString, attribs_map> AppearanceConfigWidget::config_params;
+
+AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -53,6 +55,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 		conf_items[i].obj_conf=(std::find(conf_obj_ids.begin(), conf_obj_ids.end(), i)!=conf_obj_ids.end());
 	}
 
+	color_picker=new ColorPickerWidget(3, this);
+
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,500,500));
@@ -69,25 +73,36 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 	viewp->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewp->centerOn(0,0);
 
-	appearanceconfig_grid->addWidget(viewp, appearanceconfig_grid->count()-1, 0, 1, 5);
+  QGridLayout *grid=dynamic_cast<QGridLayout *>(appearance_frm->layout());
+  grid->addWidget(color_picker, 3, 1, 1, 4);
+  grid->addWidget(viewp, 4 , 0, 1, 5);
 
 	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
-	connect(color1_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-	connect(color2_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-	connect(color3_tb, SIGNAL(clicked(void)), this, SLOT(applyElementColor(void)));
-
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle(void)));
 	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle(void)));
 	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
 	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
 	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
+
+	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
+
+	connect(color_picker, &ColorPickerWidget::s_colorsChanged,
+					[=](){
+									for(unsigned i=0; i < color_picker->getColorCount(); i++)
+										applyElementColor(i, color_picker->getColor(i));
+							 });
 }
 
 AppearanceConfigWidget::~AppearanceConfigWidget(void)
 {
-	delete(viewp);
+  delete(viewp);
 	delete(scene);
 	delete(model);
+}
+
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
 }
 
 void AppearanceConfigWidget::loadExampleModel(void)
@@ -95,7 +110,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 	try
 	{
 		RelationshipView *rel=nullptr;
-		TextboxView *txtbox=nullptr;
+    StyledTextboxView *txtbox=nullptr;
 		TableView *tab=nullptr;
 		GraphicalView *view=nullptr;
 		unsigned count, i;
@@ -138,7 +153,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 			count=model->getObjectCount(OBJ_TEXTBOX);
 			for(i=0; i < count; i++)
 			{
-				txtbox=new TextboxView(model->getTextbox(i));
+        txtbox=new StyledTextboxView(model->getTextbox(i));
 				txtbox->setSelected(i==0);
 				scene->addItem(txtbox);
 			}
@@ -183,7 +198,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 
 void AppearanceConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
 		attribs_map attribs;
 		vector<AppearanceConfigItem>::iterator itr, itr_end;
@@ -203,14 +218,14 @@ void AppearanceConfigWidget::saveConfiguration(void)
 			if(item.obj_conf)
 			{
 				//Creates an attribute that stores the fill color
-				attrib_id=item.conf_id + QString("-color");
+        attrib_id=item.conf_id + QString("-color");
 				if(item.colors[0]==item.colors[1])
 					attribs[attrib_id]=item.colors[0].name();
 				else
-					attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
+          attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
 
 				//Creates an attribute that stores the border color
-				attrib_id=item.conf_id + QString("-bcolor");
+        attrib_id=item.conf_id + QString("-bcolor");
 				attribs[attrib_id]=item.colors[2].name();
 			}
 			//If the item is a font config
@@ -219,28 +234,28 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				font=item.font_fmt.font();
 
 				//Creates an attribute to store the font color
-				attrib_id=item.conf_id + QString("-fcolor");
+        attrib_id=item.conf_id + QString("-fcolor");
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
+        attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
 				attribs[attrib_id]=(font.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::BOLD;
+        attrib_id=item.conf_id + QString("-") + ParsersAttributes::BOLD;
 				attribs[attrib_id]=(font.bold() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
+        attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
 				attribs[attrib_id]=(font.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 			}
 			//Special case: treating the global font element
 			else
 			{
-				attribs["font-name"]=QFontInfo(item.font_fmt.font()).family();
-				attribs["font-size"]=QString("%1").arg(item.font_fmt.font().pointSizeF());
+        attribs[QString("font-name")]=QFontInfo(item.font_fmt.font()).family();
+        attribs[QString("font-size")]=QString("%1").arg(item.font_fmt.font().pointSizeF());
 			}
 		}
 
 		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -250,7 +265,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 
 void AppearanceConfigWidget::enableConfigElement(void)
 {
-	QPalette pal;
+	//QPalette pal;
 	int idx=element_cmb->currentIndex();
 
 	//Widgets enabled only when the global font element is selected (idx==0)
@@ -265,15 +280,12 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	italic_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
 
 	colors_lbl->setVisible(idx!=0);
-	color1_tb->setVisible(idx!=0);
+	color_picker->setVisible(colors_lbl->isVisible());
 
-	//Widgets visible when a object configuration element is selected
-	color2_tb->setVisible(conf_items[idx].obj_conf);
-	color3_tb->setVisible(conf_items[idx].obj_conf);
+	//Buttons visible when a object configuration element is selected
+	color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
+	color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
 
-	color1_tb->blockSignals(true);
-	color2_tb->blockSignals(true);
-	color3_tb->blockSignals(true);
 	underline_chk->blockSignals(true);
 	italic_chk->blockSignals(true);
 	bold_chk->blockSignals(true);
@@ -283,8 +295,7 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	if(!conf_items[idx].obj_conf)
 	{
 		QTextCharFormat fmt=BaseObjectView::getFontStyle(conf_items[idx].conf_id);
-		pal.setColor(QPalette::Button, fmt.foreground().color());
-		color1_tb->setPalette(pal);
+		color_picker->setColor(0, fmt.foreground().color());
 		underline_chk->setChecked(fmt.font().underline());
 		italic_chk->setChecked(fmt.font().italic());
 		bold_chk->setChecked(fmt.font().bold());
@@ -294,26 +305,16 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	else
 	{
 		QColor color1, color2;
-
 		BaseObjectView::getFillStyle(conf_items[idx].conf_id, color1, color2);
 
-		pal.setColor(QPalette::Button, color1);
-		color1_tb->setPalette(pal);
-
-		pal.setColor(QPalette::Button, color2);
-		color2_tb->setPalette(pal);
-
-		pal.setColor(QPalette::Button, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
-		color3_tb->setPalette(pal);
-
+		color_picker->setColor(0, color1);
+		color_picker->setColor(1, color2);
+		color_picker->setColor(2, BaseObjectView::getBorderStyle(conf_items[idx].conf_id).color());
 		underline_chk->setChecked(false);
 		italic_chk->setChecked(false);
 		bold_chk->setChecked(false);
 	}
 
-	color1_tb->blockSignals(false);
-	color2_tb->blockSignals(false);
-	color3_tb->blockSignals(false);
 	underline_chk->blockSignals(false);
 	italic_chk->blockSignals(false);
 	bold_chk->blockSignals(false);
@@ -321,44 +322,23 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	font_size_spb->blockSignals(false);
 }
 
-void AppearanceConfigWidget::applyElementColor(void)
+void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 {
-	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-
-	if(btn)
+	if(conf_items[element_cmb->currentIndex()].obj_conf)
 	{
-		QPalette pal;
-		unsigned color_idx;
-
-		pal=btn->palette();
-		color_dlg.setCurrentColor(pal.color(QPalette::Button));
-		color_dlg.exec();
-
-		if(color_dlg.result()==QDialog::Accepted)
-		{
-			pal.setColor(QPalette::Button, color_dlg.selectedColor());
-			btn->setPalette(pal);
-
-			if(conf_items[element_cmb->currentIndex()].obj_conf)
-			{
-				if(btn==color1_tb) color_idx=0;
-				else if(btn==color2_tb) color_idx=1;
-				else color_idx=2;
-
-				conf_items[element_cmb->currentIndex()].colors[color_idx]=color_dlg.selectedColor();
-				BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color_dlg.selectedColor(), color_idx);
-			}
-			else
-			{
-				conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color_dlg.selectedColor());
-				BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
-						conf_items[element_cmb->currentIndex()].font_fmt);
-			}
-
-			model->setObjectsModified();
-			scene->update();
-		}
+		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
+		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
 	}
+	else
+	{
+		conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color);
+		BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
+				conf_items[element_cmb->currentIndex()].font_fmt);
+	}
+
+	model->setObjectsModified();
+  scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::applyFontStyle(void)
@@ -376,7 +356,8 @@ void AppearanceConfigWidget::applyFontStyle(void)
 			conf_items[element_cmb->currentIndex()].font_fmt);
 
 	model->setObjectsModified();
-	scene->update();
+  scene->update();
+  setConfigurationChanged(true);
 }
 
 void AppearanceConfigWidget::restoreDefaults(void)
@@ -384,7 +365,8 @@ void AppearanceConfigWidget::restoreDefaults(void)
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
-		this->loadConfiguration();
+    this->loadConfiguration();
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{

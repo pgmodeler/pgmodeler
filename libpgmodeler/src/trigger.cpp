@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,23 +32,23 @@ Trigger::Trigger(void)
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[ParsersAttributes::ARGUMENTS]="";
-	attributes[ParsersAttributes::EVENTS]="";
-	attributes[ParsersAttributes::TRIGGER_FUNC]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::COLUMNS]="";
-	attributes[ParsersAttributes::FIRING_TYPE]="";
-	attributes[ParsersAttributes::PER_ROW]="";
-	attributes[ParsersAttributes::INS_EVENT]="";
-	attributes[ParsersAttributes::DEL_EVENT]="";
-	attributes[ParsersAttributes::UPD_EVENT]="";
-	attributes[ParsersAttributes::TRUNC_EVENT]="";
-	attributes[ParsersAttributes::CONDITION]="";
-	attributes[ParsersAttributes::REF_TABLE]="";
-	attributes[ParsersAttributes::DEFER_TYPE]="";
-	attributes[ParsersAttributes::DEFERRABLE]="";
-	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	attributes[ParsersAttributes::CONSTRAINT]="";
+	attributes[ParsersAttributes::ARGUMENTS]=QString();
+	attributes[ParsersAttributes::EVENTS]=QString();
+	attributes[ParsersAttributes::TRIGGER_FUNC]=QString();
+	attributes[ParsersAttributes::TABLE]=QString();
+	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::FIRING_TYPE]=QString();
+	attributes[ParsersAttributes::PER_ROW]=QString();
+	attributes[ParsersAttributes::INS_EVENT]=QString();
+	attributes[ParsersAttributes::DEL_EVENT]=QString();
+	attributes[ParsersAttributes::UPD_EVENT]=QString();
+	attributes[ParsersAttributes::TRUNC_EVENT]=QString();
+	attributes[ParsersAttributes::CONDITION]=QString();
+	attributes[ParsersAttributes::REF_TABLE]=QString();
+	attributes[ParsersAttributes::DEFER_TYPE]=QString();
+	attributes[ParsersAttributes::DEFERRABLE]=QString();
+	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::CONSTRAINT]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -65,11 +65,11 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-			str_args+="'" + arguments[i] + "'";
+      str_args+=QString("'") + arguments[i] + QString("'");
 		else
 			str_args+=arguments[i];
 
-		if(i < (count-1)) str_args+=",";
+    if(i < (count-1)) str_args+=QString(",");
 	}
 
 	attributes[ParsersAttributes::ARGUMENTS]=str_args;
@@ -77,6 +77,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 
 void Trigger::setFiringType(FiringType firing_type)
 {
+	setCodeInvalidated(this->firing_type != firing_type);
 	this->firing_type=firing_type;
 }
 
@@ -85,6 +86,7 @@ void Trigger::setEvent(EventType event, bool value)
 	if(event==EventType::on_select)
 		throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(events[event] != value);
 	events[event]=value;
 }
 
@@ -93,27 +95,29 @@ void Trigger::setFunction(Function *func)
 	//Case the function is null an error is raised
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
-		if(func->getReturnType()!="trigger")
-			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg("trigger"),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    if(func->getReturnType()!=QString("trigger"))
+      throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		setCodeInvalidated(function != func);
 		this->function=func;
 	}
 }
 
 void Trigger::setCondition(const QString &cond)
 {
+	setCodeInvalidated(condition != cond);
 	this->condition=cond;
 }
 
@@ -137,6 +141,7 @@ void Trigger::addColumn(Column *column)
 										ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	upd_columns.push_back(column);
+	setCodeInvalidated(true);
 }
 
 void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
@@ -149,10 +154,13 @@ void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 
 	itr=arguments.begin()+arg_idx;
 	(*itr)=new_arg;
+
+	setCodeInvalidated(true);
 }
 
 void Trigger::setExecutePerRow(bool value)
 {
+	setCodeInvalidated(is_exec_per_row != value);
 	is_exec_per_row=value;
 }
 
@@ -162,6 +170,11 @@ bool Trigger::isExecuteOnEvent(EventType event)
 		throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(events.at(!event));
+}
+
+bool Trigger::isExecutePerRow(void)
+{
+	return(is_exec_per_row);
 }
 
 QString Trigger::getArgument(unsigned arg_idx)
@@ -216,16 +229,19 @@ void Trigger::removeArgument(unsigned arg_idx)
 	vector<QString>::iterator itr;
 	itr=arguments.begin()+arg_idx;
 	arguments.erase(itr);
+	setCodeInvalidated(true);
 }
 
 void Trigger::removeArguments(void)
 {
 	arguments.clear();
+	setCodeInvalidated(true);
 }
 
 void Trigger::removeColumns(void)
 {
 	upd_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Trigger::setReferecendTable(BaseTable *ref_table)
@@ -234,17 +250,20 @@ void Trigger::setReferecendTable(BaseTable *ref_table)
 	if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
 		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(referenced_table != ref_table);
 	this->referenced_table=ref_table;
 }
 
-void Trigger::setDeferralType(DeferralType tipo)
+void Trigger::setDeferralType(DeferralType type)
 {
-	deferral_type=tipo;
+	setCodeInvalidated(deferral_type != type);
+	deferral_type=type;
 }
 
-void Trigger::setDeferrable(bool valor)
+void Trigger::setDeferrable(bool value)
 {
-	is_deferrable=valor;
+	setCodeInvalidated(is_deferrable != value);
+	is_deferrable=value;
 }
 
 BaseTable *Trigger::getReferencedTable(void)
@@ -264,6 +283,7 @@ bool Trigger::isDeferrable(void)
 
 void Trigger::setConstraint(bool value)
 {
+	setCodeInvalidated(is_constraint != value);
 	is_constraint=value;
 }
 
@@ -321,27 +341,27 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		if(events.at(event_types[i]))
 		{
 			str_aux+=sql_event[i];
-			attributes[attribs[i]]="1";
+      attributes[attribs[i]]=ParsersAttributes::_TRUE_;
 
 			if(event_types[i]==EventType::on_update)
 			{
 				count=upd_columns.size();
-				attributes[ParsersAttributes::COLUMNS]="";
+				attributes[ParsersAttributes::COLUMNS]=QString();
 
 				for(i1=0; i1 < count; i1++)
 				{
 					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-						attributes[ParsersAttributes::COLUMNS]+=",";
+            attributes[ParsersAttributes::COLUMNS]+=QString(",");
 				}
 			}
 		}
 	}
 
-	if(str_aux!="") str_aux.remove(str_aux.size()-3,3);
+  if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
 	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
-		str_aux+=" OF " + attributes[ParsersAttributes::COLUMNS];
+    str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
 
 	attributes[ParsersAttributes::EVENTS]=str_aux;
 
@@ -356,28 +376,31 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 QString Trigger::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setBasicAttributes(def_type);
 
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+    attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
 
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? "1" : "");
+	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? "1" : "");
+	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
 	{
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
-		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? "1" : "");
+		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	}
 
@@ -423,4 +446,12 @@ void Trigger::validateTrigger(void)
 				throw Exception(ERR_CONST_TRIG_NOT_AFTER_ROW,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
+}
+
+QString Trigger::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

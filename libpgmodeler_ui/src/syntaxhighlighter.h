@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
+		XMLParser xmlparser;
 
 		//! \brief Auxiliary class used by the highlighter that stores informations	about multiline code blocks
 		class MultiLineInfo: public QTextBlockUserData {
@@ -60,7 +61,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 				MultiLineInfo(void)
 				{
-					this->group="";
+					this->group=QString();
 					this->start_col=-1;
 					this->start_block=-1;
 					this->end_col=-1;
@@ -68,8 +69,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				}
 		};
 
-    //! brief Stores the parent text edit in order to handle text pasting on eventFilter
-    QTextEdit *parent_txt;
+		static QFont default_font;
 
 		/*! \brief Stores the multiline infos and is used to check if the text being typed
 		by the user is on a multiline block */
@@ -165,6 +165,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
+
+		static void setDefaultFont(const QFont &fnt);
 
 	public slots:
 		//! \brief Rehighlight all the document

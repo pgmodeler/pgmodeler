@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include <QApplication>
 
 QString Exception::messages[ERROR_COUNT][2]={
-	{"ERR_CUSTOM", " "},
+  {"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
@@ -125,8 +125,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
 	{"ERR_ASG_INV_MAX_SIZE_OP_LIST", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
-	{"ERR_FILE_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!")},
-	{"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the model in the file %1 due to one or more errors in the definition generation process!")},
+  {"ERR_FILE_DIR_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
+  {"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the file `%1'' due to one or more errors in the definition generation process!")},
 	{"ERR_DUPLIC_RELATIONSHIP", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model!")},
 	{"ERR_INS_REL_GENS_REDUNDACY", QT_TR_NOOP("The configuration of the relationship `%1' generates a redundancy between the relationships `%2'. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!")},
 	{"ERR_INVALIDATED_OBJECTS", QT_TR_NOOP("One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!")},
@@ -147,9 +147,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_ELEMENT_TYPE", QT_TR_NOOP("Assignment of invalid element to type `%1'!")},
 	{"ERR_ASG_INV_ALIGNMENT_TYPE",QT_TR_NOOP("Assignment of invalid alignment to type `%1'!")},
 	{"ERR_ASG_INV_NAME_TABLE_RELNN",  QT_TR_NOOP("Assignment of invalid name to the table generated from N-N relationship!")},
-	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a many-to-many relationship!")},
+	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"ERR_OPR_REL_INCL_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
-	{"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
+  {"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
 	{"ERR_REDECL_HL_GROUP", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"ERR_DEF_INV_GROUP_DECL", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
 	{"ERR_DEF_NOT_DECL_GROUP", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},
@@ -167,11 +167,13 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_EXPORT_FAILURE", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
 	{"ERR_PLUGIN_NOT_LOADED", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"ERR_PLUGINS_NOT_LOADED", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
-	{"ERR_INVALID_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
-	{"ERR_INV_CONDITIONAL", QT_TR_NOOP("Invalid conditional instruction `%1' on file %2, line %3, column %4!")},
+  {"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
+  {"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file %2, line %3, column %4!")},
 	{"ERR_UNK_ATTRIBUTE", QT_TR_NOOP("Unknown attribute `%1' in file %2, line %3, column %4!")},
 	{"ERR_INV_METACHARACTER", QT_TR_NOOP("Invalid metacharacter `%1' in file %2, line %3, column %4!")},
-	{"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file %2, line %3, column %4!")},
+  {"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file %2, line %3, column %4!")},
+  {"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file %2, line %3, column %4!")},
+  {"ERR_INV_ATTRIBUTE", QT_TR_NOOP("Attribute `%1' with an invalid name in file %2, line %3, column %4!")},
 	{"ERR_ASG_EMPTY_XML_BUFFER", QT_TR_NOOP("Assignment of empty XML buffer to parser!")},
 	{"ERR_FILE_DIR_NOT_ACCESSED", QT_TR_NOOP("Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!")},
 	{"ERR_ASG_EMPTY_DTD_FILE", QT_TR_NOOP("Assignment of empty DTD file name!")},
@@ -221,8 +223,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_NAME_PATTERN", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
 	{"ERR_INV_USE_VARIADIC_PARAM_MODE", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with array data types!")},
-	{"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications' and `drop database' cannot be used with `simulate export'!")},
-	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
+  {"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
+  {"ERR_MIX_INCOMP_DROP_OPTS", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
+  {"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
 	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2) could not be imported due to one or more errors! Check the exception stack for more details.")},
@@ -235,11 +238,14 @@ QString Exception::messages[ERROR_COUNT][2]={
   {"ERR_INV_USE_TMPNAMES_EXPORT_OPT", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
 	{"ERR_INV_CONV_INTEGER_TO_SERIAL", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function!")},
 	{"ERR_ASG_INV_EVENT_TRIGGER_VARIABLE", QT_TR_NOOP("Could not assign the variable `%1' to event trigger's filter. Currently, PostgreSQL supports only the `TAG' variable!")},
+	{"ERR_ROW_DATA_NOT_MANIPULATED", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
+	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
+  {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore! The operations history will be cleaned up.")}
 };
 
 Exception::Exception(void)
 {
-	configureException("",ERR_CUSTOM,"","",-1,"");
+  configureException(QString(),ERR_CUSTOM,QString(),QString(),-1,QString());
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -335,7 +341,7 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		 context (Exception) in the ts file and the text to be translated */
 		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", -1));
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getErrorCode(ErrorType error_type)
@@ -343,7 +349,7 @@ QString Exception::getErrorCode(ErrorType error_type)
 	if(error_type < ERROR_COUNT)
 		return(messages[error_type][ERROR_CODE]);
 	else
-		return("");
+    return(QString());
 }
 
 QString Exception::getMethod(void)
@@ -419,7 +425,7 @@ QString Exception::getExceptionsText(void)
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-			exceptions_txt+="\n";
+      exceptions_txt+=QString("\n");
 
 		itr++; idx--;
 	}

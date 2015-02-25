@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "tag.h"
 
-unsigned Tag::tag_id=30000;
+unsigned Tag::tag_id=3000;
 
 Tag::Tag(void)
 {
@@ -28,7 +28,7 @@ Tag::Tag(void)
 
   obj_type=OBJ_TAG;
   object_id=Tag::tag_id++;
-  attributes[ParsersAttributes::STYLES]="";
+  attributes[ParsersAttributes::STYLES]=QString();
 
   for(auto attr : attribs)
   {
@@ -60,6 +60,7 @@ void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned 
   {
     validateElementId(elem_id, color_id);
     color_config[elem_id][color_id]=color;
+		setCodeInvalidated(true);
   }
   catch(Exception &e)
   {
@@ -80,6 +81,8 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
       color_config[elem_id][color_id]=QColor(color);
       color_id++;
     }
+
+		setCodeInvalidated(true);
   }
   catch(Exception &e)
   {
@@ -138,10 +141,13 @@ QString Tag::getCodeDefinition(unsigned def_type)
 
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-  if(def_type==SchemaParser::SQL_DEFINITION)
-    return("");
+	if(def_type==SchemaParser::SQL_DEFINITION)
+    return(QString());
   else
   {
+		QString code_def=getCachedCode(def_type, reduced_form);
+		if(!code_def.isEmpty()) return(code_def);
+
     try
     {
       attribs_map attribs;
@@ -149,15 +155,15 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
       for(auto itr : color_config)
       {
         attribs[ParsersAttributes::ID]=itr.first;
-        attribs[ParsersAttributes::COLORS]="";
+        attribs[ParsersAttributes::COLORS]=QString();
 
         if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME)
           attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name();
         else
-          attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + "," +
-              itr.second[FILL_COLOR2].name() + "," + itr.second[BORDER_COLOR].name();
+          attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + QString(",") +
+              itr.second[FILL_COLOR2].name() + QString(",") + itr.second[BORDER_COLOR].name();
 
-        attributes[ParsersAttributes::STYLES]+=SchemaParser::getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
+				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
       }
     }
     catch(Exception &e)

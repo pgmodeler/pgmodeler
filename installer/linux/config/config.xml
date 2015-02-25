@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>PostgreSQL Database Modeler</Name>
-    <Version>0.7.2</Version>
+    <Version>0.8.0</Version>
     <Title>pgModeler</Title>
-    <Publisher>Raphael A. Silva (rkhaotix@gmail.com)</Publisher>
+    <Publisher>Raphael A. Silva (raphael@pgmodeler.com.br)</Publisher>
     <StartMenuDir>pgModeler</StartMenuDir>
-    <TargetDir>@HomeDir@/pgmodeler</TargetDir>
+    <TargetDir>/opt/pgmodeler</TargetDir>
     <InstallerApplicationIcon>installer_icon</InstallerApplicationIcon>
     <InstallerWindowIcon>installer_icon</InstallerWindowIcon>
     <Logo>installer_logo.png</Logo>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		virtual ~BaseObjectWidget(void);
 
 		//! \brief Generates a string containing the specified version interval
-		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
+		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver=QString());
 
 		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and

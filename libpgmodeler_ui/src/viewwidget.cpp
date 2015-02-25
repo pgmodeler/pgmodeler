@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +20,6 @@
 #include "rulewidget.h"
 #include "triggerwidget.h"
 
-extern RuleWidget *rule_wgt;
-extern TriggerWidget *trigger_wgt;
-
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
@@ -39,22 +36,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		operation_count=0;
 
 		expression_hl=new SyntaxHighlighter(expression_txt, false);
-		expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		 GlobalAttributes::DIR_SEPARATOR +
-																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		 GlobalAttributes::CONFIGURATION_EXT);
+    expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		code_hl=new SyntaxHighlighter(code_txt, false);
-		code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			 GlobalAttributes::DIR_SEPARATOR +
-																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			 GlobalAttributes::CONFIGURATION_EXT);
+    code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt, false);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																			 GlobalAttributes::DIR_SEPARATOR +
-																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																			 GlobalAttributes::CONFIGURATION_EXT);
+    cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
@@ -100,16 +88,16 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+    objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/table.png"),1);
+    objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/trigger.png"),2);
+    objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 		objects_tab_map[OBJ_RULE]->setColumnCount(3);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+    objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
@@ -117,9 +105,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
     tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, OBJ_VIEW);
 
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(recursive_rb);
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(materialized_rb);
-    fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(recursive_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(materialized_rb);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(with_no_data_chk);
     frame=generateVersionWarningFrame(fields_map);
     view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
     frame->setParent(this);
@@ -185,18 +173,17 @@ void ViewWidget::showTableObjectForm(ObjectType obj_type)
 
 	view=dynamic_cast<View *>(this->object);
 
-	switch(obj_type)
+	if(obj_type==OBJ_TRIGGER)
 	{
-		case OBJ_TRIGGER:
-			trigger_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
-			trigger_wgt->show();
-		break;
-
-		default:
-		case OBJ_RULE:
-			rule_wgt->setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
-			rule_wgt->show();
-		break;
+		TriggerWidget trigger_wgt(this);
+		trigger_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
+		trigger_wgt.show();
+	}
+	else
+	{
+		RuleWidget rule_wgt(this);
+		rule_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
+		rule_wgt.show();
 	}
 }
 
@@ -315,7 +302,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-	tab->setCellText(Utf8String::create(object->getName()),row,0);
+  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
 
 	if(obj_type==OBJ_TRIGGER)
 	{
@@ -324,7 +311,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-			tab->setCellText(Utf8String::create(trigger->getReferencedTable()->getName(true)),row,1);
+      tab->setCellText(/*Utf8String::create(*/trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -510,13 +497,13 @@ void ViewWidget::editReference(int ref_idx)
 		else
 			table_sel->setSelectedObject(ref.getTable());
 
-		col_alias_edt->setText(Utf8String::create(ref.getColumnAlias()));
-		tab_alias_edt->setText(Utf8String::create(ref.getAlias()));
+    col_alias_edt->setText(/*Utf8String::create(*/ref.getColumnAlias());
+    tab_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
 	}
 	else
 	{
-		expression_txt->setPlainText(Utf8String::create(ref.getExpression()));
-		expr_alias_edt->setText(Utf8String::create(ref.getAlias()));
+    expression_txt->setPlainText(/*Utf8String::create(*/ref.getExpression());
+    expr_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
 	}
 
 	str_aux=references_tab->getCellText(ref_idx,3);
@@ -570,28 +557,28 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 		/* If the table is allocated but not the column indicates that the reference
 		 is to all table columns this way shows a string in format: [SCHEMA].[TABLE].* */
 		if(tab && !col)
-			references_tab->setCellText(Utf8String::create(tab->getName(true) + QString(".*")),row,0);
+      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".*"),row,0);
 		/* If the table and column are allocated indicates that the reference
 		 is to a specific column this way shows a string in format: [SCHEMA].[TABLE].[COLUMN] */
 		else
-			references_tab->setCellText(Utf8String::create(tab->getName(true) + QString(".") + col->getName(true)),row,0);
+      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".") + col->getName(true),row,0);
 
-		references_tab->setCellText(Utf8String::create(refer.getAlias()),row,1);
+    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
 
 		if(col)
-			references_tab->setCellText(Utf8String::create(refer.getColumnAlias()),row,2);
+      references_tab->setCellText(/*Utf8String::create(*/refer.getColumnAlias(),row,2);
 	}
 	else
 	{
-		references_tab->setCellText(Utf8String::create(refer.getExpression()),row,0);
-		references_tab->setCellText(Utf8String::create(refer.getAlias()),row,1);
+    references_tab->setCellText(/*Utf8String::create(*/refer.getExpression(),row,0);
+    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
 	}
 
 	//Configures the string that denotes the SQL application for the reference
-	str_aux+=(selec_from ? "1" : "0");
-	str_aux+=(from_where ? "1" : "0");
-	str_aux+=(after_where ? "1" : "0");
-	str_aux+=(view_def ? "1" : "0");
+  str_aux+=(selec_from ? QString("1") : QString("0"));
+  str_aux+=(from_where ? QString("1") : QString("0"));
+  str_aux+=(after_where ? QString("1") : QString("0"));
+  str_aux+=(view_def ? QString("1") : QString("0"));
 	references_tab->setCellText(str_aux,row,3);
 
 	refer.setDefinitionExpression(view_def);
@@ -666,7 +653,7 @@ void ViewWidget::updateCodePreview(void)
 
 				itr++;
 			}
-			code_txt->setPlainText(Utf8String::create(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+      code_txt->setPlainText(/*Utf8String::create(*/aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
 		}
 	}
 	catch(Exception &e)
@@ -718,7 +705,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
   tag_sel->setModel(this->model);
   tag_sel->setSelectedObject(view->getTag());
 
-  cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
+  cte_expression_txt->setPlainText(/*Utf8String::create(*/view->getCommomTableExpression());
 
   count=view->getReferenceCount();
   references_tab->blockSignals(true);
@@ -797,9 +784,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-    //op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
-    //op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

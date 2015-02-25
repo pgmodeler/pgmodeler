@@ -1,39 +1,54 @@
 #/bin/bash
 
-QT_INSTALL_VERSION='5.3.0'
-QT_BASE_VERSION='5.3'
+QT_INSTALL_VERSION='5.4.0'
+QT_BASE_VERSION='5.4'
 PGSQL_VERSION='9.3'
-QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw482_32/"
+QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw491_32/"
 QMAKE_ROOT=$QT_ROOT/bin
-MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw482_32/bin"
+MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw491_32/bin"
 PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-QMAKE_ARGS="-r -spec win32-g++"
+QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | grep '[0-9].[0-9].[0-9]\(.\)*'`
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 WITH_BUILD_NUM='-with-build-num'
+DEMO_VERSION_OPT='-demo-version'
+DEMO_VERSION=0
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-windows"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-windows"
 fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
+INSTALL_ROOT="$PWD/build"
 ISSFILE=./installer/windows/pgmodeler.iss
-QT_CONF=build/qt.conf
-DEP_PLUGINS_DIR=build/qtplugins
+QT_CONF="$INSTALL_ROOT/qt.conf"
+DEP_PLUGINS_DIR="$INSTALL_ROOT/lib/qtplugins"
 PLUGINS="dummy xml2object"
   
-DEP_LIBS="$QMAKE_ROOT/icudt52.dll \
-		  $QMAKE_ROOT/icuin52.dll \
-		  $QMAKE_ROOT/icuuc52.dll \
+DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
+		  $QMAKE_ROOT/icuin53.dll \
+		  $QMAKE_ROOT/icuuc53.dll \
 		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
@@ -68,7 +83,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2014 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -96,6 +111,11 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
+fi
+
 echo "Cleaning previous compilation..."
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
@@ -122,8 +142,10 @@ fi
 
 echo "Installing dependencies..."
 
+$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
+
 for dll in $DEP_LIBS; do
-	cp $dll build/ >> $LOG 2>&1
+	cp $dll $INSTALL_ROOT/lib >> $LOG 2>&1
 	if [ $? -ne 0 ]; then
 		echo
 		echo "** Installation failed!"
@@ -133,10 +155,10 @@ for dll in $DEP_LIBS; do
 done
 
 #Creates the file build/qt.conf to bind qt plugins
-mkdir $DEP_PLUGINS_DIR
+mkdir -p $DEP_PLUGINS_DIR
 echo "[Paths]" > $QT_CONF
 echo "Prefix=." >> $QT_CONF
-echo "Plugins=qtplugins" >> $QT_CONF
+echo "Plugins=lib/qtplugins" >> $QT_CONF
 echo "Libraries=." >> $QT_CONF
 
 #Copies the qt plugins to build/qtplugins
@@ -155,12 +177,13 @@ done
 
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
+
 #Fixing the pgModeler plugin deployment.
 #Moving dlls from build/plugins/[PLUGIN]/build to build/plugins/[PLUGIN]
-for plugin in $PLUGINS; do
-	mv build/plugins/$plugin/build/* build/plugins/$plugin >> $LOG 2>&1
-	rm -r build/plugins/$plugin/build/  >> $LOG 2>&1
-done
+#for plugin in $PLUGINS; do
+#	mv build/plugins/$plugin/build/* build/plugins/$plugin >> $LOG 2>&1
+#	rm -r build/plugins/$plugin/build/  >> $LOG 2>&1
+#done
 
 if [ $? -ne 0 ]; then
   echo
@@ -170,7 +193,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Packaging installation..."
-rm -r $PKGNAME >> $LOG 2>&1
 
 "$INNOSETUP_CMD" $ISSFILE >> $LOG 2>&1
 
@@ -180,7 +202,8 @@ if [ $? -ne 0 ]; then
   echo "** Proceeding with basic deployment."
   
   mkdir $PKGNAME >> $LOG 2>&1
-  mv build/* $PKGNAME >> $LOG 2>&1
+  mv $INSTALL_ROOT/* $PKGNAME >> $LOG 2>&1
+  mv $PKGNAME $INSTALL_ROOT >> $LOG 2>&1
 
   if [ $? -ne 0 ]; then
 	echo "** Failed to execute basic deployment!"
@@ -190,8 +213,8 @@ if [ $? -ne 0 ]; then
   echo
   echo "Directory created: $PKGNAME"
 else
-  mv $GENINSTALLER $PKGFILE >> $LOG 2>&1
-  echo "File created: $PKGFILE"
+  mv $GENINSTALLER build/$PKGFILE >> $LOG 2>&1
+  echo "File created: $INSTALL_ROOT/$PKGFILE"
 fi
 
 echo "pgModeler successfully deployed!"

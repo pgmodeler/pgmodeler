@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,13 +27,16 @@
 
 #include "ui_appearanceconfigwidget.h"
 #include "baseconfigwidget.h"
+#include "colorpickerwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
 
-class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget, public BaseConfigWidget {
+class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
+
+    static map<QString, attribs_map> config_params;
 
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
@@ -43,6 +46,8 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
 				QColor colors[3];
 				bool obj_conf;
 		};
+
+		ColorPickerWidget *color_picker;
 
 		//! \brief Color picker dialog
 		QColorDialog color_dlg;
@@ -66,16 +71,14 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
 		AppearanceConfigWidget(QWidget * parent=0);
 		~AppearanceConfigWidget(void);
 
-		//! \brief Saves the configuration to file
 		void saveConfiguration(void);
-
-		//! \brief Loads the configuration from file
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
-	private slots:
+  private slots:
 		void enableConfigElement(void);
 		void applyFontStyle(void);
-		void applyElementColor(void);
+		void applyElementColor(unsigned color_idx, QColor color);
 
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}

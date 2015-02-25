@@ -3,26 +3,27 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{decl-in-table} %then
+%if {decl-in-table} %then
  $tb
 %else
-[-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
- %if @{table} %then
-  [ALTER TABLE ] @{table} [ ADD COLUMN ]
+[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
+[-- ] {drop}
+ %if {table} %then
+  [ALTER TABLE ] {table} [ ADD COLUMN ]
   %end
 %end
 
-@{name} $sp @{type}
+{name} $sp {type}
 
-%if @{not-null} %then
+%if {not-null} %then
  [ NOT NULL]
 %end
 
-%if @{default-value} %then
- [ DEFAULT ] @{default-value}
+%if {default-value} %then
+ [ DEFAULT ] {default-value}
 %end
 
-%if @{decl-in-table} %then
+%if {decl-in-table} %then
 [,]
 %else
 [;]

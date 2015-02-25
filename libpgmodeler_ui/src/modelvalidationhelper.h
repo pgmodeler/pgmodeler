@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,19 +67,22 @@ class ModelValidationHelper: public QObject {
 		This vector is read when applying fixes */
 		vector<ValidationInfo> val_infos;
 
+    //! brief Stores the analyzed relationship marked as invalidated
+    vector<BaseObject *> inv_rels;
+
 		/*! \brief When the execution of the instance of this class is in another thread instead of main app
 		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
 		finished before completely quit the thread itself otherwise the method don't do anything. */
 		void sleepThread(unsigned msecs);
 
-    void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
+		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-    void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="", bool use_tmp_names=false);
+    void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver=QString(), bool use_tmp_names=false);
 
 		//! \brief Switch the validator to fix mode
 		void switchToFixMode(bool value);
@@ -97,7 +100,7 @@ class ModelValidationHelper: public QObject {
 		void resolveConflict(ValidationInfo &info);
 
 	private slots:
-		void redirectExportProgress(int prog, QString msg, ObjectType obj_type);
+		void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd);
 		void captureThreadError(Exception e);
 		void emitValidationCanceled(void);
 		void emitValidationFinished(void);
@@ -112,7 +115,7 @@ class ModelValidationHelper: public QObject {
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString());
 
 		//! \brief This signal is emitted when the object is processed by the validator
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);
@@ -128,6 +131,10 @@ class ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
 		void s_fixApplied(void);
+
+    /*! brief This signal is emitted when the validator need the validation of relationship.
+        This process must be performed outside the current thread, this explains the usage of this signal */
+    void s_relsValidationRequested(void);
 };
 
 #endif

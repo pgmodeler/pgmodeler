@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,18 +36,17 @@
 
 using namespace std;
 
-
 class XMLParser {
 	private:
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */
-		static QString xml_doc_filename;
+		QString xml_doc_filename;
 
 		//! \brief Stores the xml document (element tree) generated after the buffer reading
-		static xmlDoc *xml_doc;
+		xmlDoc *xml_doc;
 
 		//! \brief Stores the reference to the root element of the element tree
-		static xmlNode	*root_elem,
+		xmlNode	*root_elem,
 										//! \brief Stores the current element that parser is analyzing
 										*curr_elem;
 
@@ -55,10 +54,10 @@ class XMLParser {
 		 a subsequent operation. To configure this element it is necessary
 		 call the method savePosition() and to return the navigation to the saved
 		 position is necessary call restorePosition() */
-		static stack<xmlNode *> elems_stack;
+		stack<xmlNode *> elems_stack;
 
 		//! \brief Stores the document DTD declaration
-		static QString	dtd_decl,
+		QString	dtd_decl,
 										//! \brief Stores XML document to be analyzed
 										xml_buffer,
 										/*! \brief Stores the declaration <?xml?>. If this isn't exists it will be
@@ -67,13 +66,13 @@ class XMLParser {
 
 		/*! \brief Remove the original DTD from the document. This is done to evit that
 		 the user insert some external dtd in the model file that is not valid for pgModeler */
-		static void removeDTD(void);
+		void removeDTD(void);
 
 		/*! \brief Makes the interpretation of XML inside the buffer validating it according to
 		 DTD defined configured (by the parser) to the buffer. Initializes
 		 the necessary attributes to make possible the navigation through the element tree
 		 generated from the XML document read. */
-		static void readBuffer(void);
+		void readBuffer(void);
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
@@ -92,70 +91,70 @@ class XMLParser {
 		~XMLParser(void);
 
 		//! \brief Loads the XML buffer from a file
-		static void loadXMLFile(const QString &filename);
+		void loadXMLFile(const QString &filename);
 
 		//! \brief Loads the XML buffer from a string
-		static void loadXMLBuffer(const QString &xml_buf);
+		void loadXMLBuffer(const QString &xml_buf);
 
 		//! \brief Informs the DTD file used to make element validations
-		static void setDTDFile(const QString &dtd_file, const QString &dtd_name);
+		void setDTDFile(const QString &dtd_file, const QString &dtd_name);
 
 		//! \brief Saves to stack the current navigation position on the element tree
-		static void savePosition(void);
+		void savePosition(void);
 
 		//! \brief Restores the previous navigation position oh the element tree
-		static void restorePosition(void);
+		void restorePosition(void);
 
 		/*! \brief Restores the position of the navigation on a specific
 		 element on the document. The navigation stack is always
 		 emptied when this method is called */
-		static void restorePosition(const xmlNode *elem);
+		void restorePosition(const xmlNode *elem);
 
 		/*! \brief Moves one level in the element tree according to the type of element
 		 to be accessed. Returns true if the position was moved to the
 		 desired element. */
-		static bool accessElement(unsigned elem_type);
+		bool accessElement(unsigned elem_type);
 
 		//! \brief Returns if an element has a root, child, previous or next element
-		static bool hasElement(unsigned elem_type);
+    bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
 
 		//! \brief Retorns if an element has attributes
-		static bool hasAttributes(void);
+		bool hasAttributes(void);
 
 		//! \brief Stores on a map the atrributes (names and values) of the current element
-		static void getElementAttributes(attribs_map &attributes);
+		void getElementAttributes(attribs_map &attributes);
 
 		/*! \brief Returns the content text of the element, used only for elements which do not have children
 		 and that are filled by simple texts */
-		static QString getElementContent(void);
+		QString getElementContent(void);
 
 		//! \brief Returns the current element type
-		static xmlElementType getElementType(void);
+		xmlElementType getElementType(void);
 
 		//! \brief Returns the constant reference to the current element on the tree
-		static const xmlNode *getCurrentElement(void);
+		const xmlNode *getCurrentElement(void);
 
 		//! \brief Returns the current line number on the buffer that is being processed
-		static int getCurrentBufferLine(void);
+		int getCurrentBufferLine(void);
 
 		//! \brief Returns the total line amount of the buffer
-		static int getBufferLineCount(void);
+		int getBufferLineCount(void);
 
 		//! \brief Returns the tag name that defines the current element
-		static QString getElementName(void);
+		QString getElementName(void);
 
 		//! \brief Returns the filename that generated XML buffer
-		static QString getLoadedFilename(void);
+		QString getLoadedFilename(void);
 
 		//! \brief Returns the full parser buffer
-		static QString getXMLBuffer(void);
+		QString getXMLBuffer(void);
 
 		//! \brief Reset all the elements resposible to the navigation through the element tree
-		static void restartNavigation(void);
+		void restartNavigation(void);
 
 		/*! \brief Reset all the parser attributes, deallocating the element tree. The user have to
 		 reload the file to analyze it again */
-		static void restartParser(void);
+		void restartParser(void);
 };
 
 #endif

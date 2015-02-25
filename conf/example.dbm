@@ -3,13 +3,10 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel author="Raphael Araújo e Silva">
+<dbmodel pgmodeler-ver="0.8.0-alpha2" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
 <database name="exampledb" encoding="UTF8">
-	<comment>Example Database Model</comment>
+	<comment><![CDATA[Example Database Model]]></comment>
 </database>
-
-<schema name="public">
-</schema>
 
 <tag name="sample tag">
 	<style id="table-body" colors="#ffffff,#ffffff,#000000"/>
@@ -19,9 +16,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-title" colors="#ff0000,#800000,#000000"/>
 	<comment><![CDATA[this tag is a test]]></comment>
 </tag>
+<schema name="public" protected="true" fill-color="#000000" sql-disabled="true">
+</schema>
 
-<language name="testlang" protected="true"/>
-
+	<language name="testlang" protected="true"/>
 <function name="trigger_func"
 		window-func="false"
 		returns-setof="false"
@@ -35,24 +33,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
-	<definition>SELECT 1+1;</definition>
+	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
 
-
-<table name="table" oids="false">
+<table name="table">
 	<schema name="public"/>
-	<tag name="sample tag" />
+	<tag name="sample tag"/>
 	<position x="20" y="20"/>
 	<column name="column" not-null="true">
 		<type name="serial"/>
 	</column>
 	<column name="column1">
-		<type name="text"/>
-	</column>
-	<column name="column2" not-null="true">
-		<type name="integer"/>
-	</column>
-	<column name="column3">
 		<type name="text"/>
 	</column>
 	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table">
@@ -62,20 +53,21 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="table_ck" type="ck-constr" table="public.table">
-			<expression> column1 &gt; 0 </expression>
+			<expression><![CDATA[ column1 > 0 ]]></expression>
 	</constraint>
-	<index name="index" table="public.table"
-		 concurrent="true" unique="true" fast-update="false"
-		 index-type="hash" factor="90">
-	<idxelement nulls-first="false" asc-order="false">
-		<column name="column1"/>
-	</idxelement>
-	</index>
 </table>
 
-<table name="table1" oids="false">
+<index name="index" table="public.table"
+	 concurrent="true" unique="true" fast-update="false" buffering="false"
+	 index-type="hash" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="false">
+			<column name="column1"/>
+		</idxelement>
+</index>
+
+<table name="table1">
 	<schema name="public"/>
-	<position x="627" y="41"/>
+	<position x="377" y="234"/>
 	<column name="column" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -95,74 +87,81 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="table_ck" type="ck-constr" table="public.table1">
-			<expression> column1 &gt; 0 </expression>
+			<expression><![CDATA[ column1 > 0 ]]></expression>
 	</constraint>
-	<rule name="rule1" event-type="ON INSERT"
-		 exec-type="ALSO">
-		<condition>column1 = 0</condition>
-		<commands>UPDATE public.table1 SET column1 = 1</commands>
-	</rule>
-	<trigger name="trigger1" firing-type="BEFORE" per-line="false"
-		 ins-event="true" del-event="true" upd-event="true" trunc-event="false">
-		<function signature="public.trigger_func()"/>
-	</trigger>
 </table>
 
-<relationship name="table1_has_many_table"
-	 type="rel1n" protected="true"
-	 src-required="false" dst-required="false"
-	 table-name="relationship"
+<rule name="rule1" event-type="ON INSERT" exec-type="ALSO"
+ table="public.table1">
+		<condition><![CDATA[column1 = 0]]></condition>
+		<commands><![CDATA[UPDATE public.table1 SET column1 = 1]]></commands>
+</rule>
+
+<trigger name="trigger1" firing-type="BEFORE" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.table1">
+		<function signature="public.trigger_func()"/>
+</trigger>
+
+<relationship name="table1_has_many_table" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
 	 src-table="public.table1"
-	 dst-table="public.table">
+	 dst-table="public.table"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="307" y="248"/>
+	<position x="306" y="111"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="12.6257" y="16.0515"/>
+	</label>
 	<column name="attribute">
-		<type name="integer"/>
-	</column>
-	<column name="attribute1">
-		<type name="integer"/>
-	</column>
-	<column name="attribute2">
 		<type name="integer"/>
 	</column>
 </relationship>
 
 <view name="view">
 	<schema name="public"/>
-	<position x="616" y="334"/>
+	<position x="12" y="244"/>
 	<reference table="public.table" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
-		<expression>extract(month from now())</expression>
+		<expression><![CDATA[extract(month from now())]]></expression>
 	</reference>
 	<reference table="public.table1" alias="t3" column-alias="col3"/>
-<expression type="select-exp">0,1,2,3</expression>
-<expression type="from-exp">3,0</expression>
+	<expression type="select-exp">0,1,2,3</expression>
+	<expression type="from-exp">3,0</expression>
 </view>
 
-<relationship name="rel_view_table"
-	 type="reltv"
-	 src-required="false" dst-required="false"
+<relationship name="rel_view_table" type="reltv"
 	 src-table="public.view"
-	 dst-table="public.table"/>
+	 dst-table="public.table"
+	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_view_table1"
-	 type="reltv"
-	 src-required="false" dst-required="false"
+<relationship name="rel_view_table1" type="reltv"
 	 src-table="public.view"
-	 dst-table="public.table1"/>
+	 dst-table="public.table1"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="9.79871" y="6.45926"/>
+	</label>
+</relationship>
 
-<textbox name="textbox">
-	<position x="229" y="240"/>
-	<comment>Selected Textbox</comment>
+<textbox name="textbox" font-size="9">
+	<position x="406" y="156"/>
+	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
-<textbox name="textbox1" protected="true">
-	<position x="351" y="343"/>
-	<comment>Protected Textbox</comment>
+<textbox name="textbox1" protected="true" font-size="9">
+	<position x="401" y="193"/>
+	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
 <table name="table2" oids="true">
 	<schema name="public"/>
-	<position x="24" y="341"/>
+	<position x="368" y="37"/>
 	<column name="column" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -182,26 +181,35 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="table_ck" type="ck-constr" table="public.table2">
-			<expression> column1 &gt; 0 </expression>
+			<expression><![CDATA[ column1 > 0 ]]></expression>
 	</constraint>
-	<index name="index" table="public.table2"
-		 concurrent="true" unique="true" fast-update="false"
-		 index-type="hash" factor="90">
-	<idxelement nulls-first="false" asc-order="false">
-		<column name="column1"/>
-	</idxelement>
-	</index>
 </table>
 
-<constraint name="table2_fk" type="fk-constr"	 comparison-type="MATCH FULL"
+<index name="index" table="public.table2"
+	 concurrent="true" unique="true" fast-update="false" buffering="false"
+	 index-type="hash" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="false">
+			<column name="column1"/>
+		</idxelement>
+</index>
+
+<constraint name="table2_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.table" table="public.table2">
 	<columns names="column2" ref-type="src-columns"/>
 	<columns names="column" ref-type="dst-columns"/>
 </constraint>
-<relationship name="rel_table2_table"
-	 type="relfk"
-	 src-required="false" dst-required="false"
+
+<relationship name="rel_table2_table" type="relfk"
 	 src-table="public.table2"
-	 dst-table="public.table"/>
+	 dst-table="public.table"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="315" y="93"/>
+	<position x="311.85" y="48.6"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="-0.374268" y="-85.9485"/>
+	</label>
+</relationship>
 
 </dbmodel>

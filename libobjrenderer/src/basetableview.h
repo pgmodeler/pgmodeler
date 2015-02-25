@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "basetable.h"
 #include "tabletitleview.h"
 #include "tableobjectview.h"
+#include "roundedrectitem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -45,13 +46,13 @@ class BaseTableView: public BaseObjectView {
 
     static bool hide_ext_attribs, hide_tags;
 
-		//! \brief Polygonal object that defines the table body
-		QGraphicsPolygonItem *body,
+    //! \brief Polygonal object that defines the table body
+    RoundedRectItem *body,
 
-		//! \brief Extended table attributes (indexes, rules, triggers) section body
-    *ext_attribs_body,
+    //! \brief Extended table attributes (indexes, rules, triggers) section body
+    *ext_attribs_body;
 
-    *tag_body;
+    QGraphicsPolygonItem *tag_body;
 
     QGraphicsSimpleTextItem *tag_name;
 
@@ -73,6 +74,9 @@ class BaseTableView: public BaseObjectView {
     void configureTag(void);
 
 	public:
+		static const unsigned LEFT_CONN_POINT=0,
+		RIGHT_CONN_POINT=1;
+
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);
 
@@ -81,10 +85,10 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
-		static void hideExtAttributes(bool value);
+    static void setHideExtAttributes(bool value);
 
     //! \brief Hides the table tags. This applies to all table instances
-    static void hideTags(bool value);
+    static void setHideTags(bool value);
 
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);

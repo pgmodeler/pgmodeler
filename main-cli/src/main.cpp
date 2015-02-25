@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,13 @@ int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
+	#ifdef DEMO_VERSION
+		out << endl;
+    out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << QT_TR_NOOP(" command line interface.") << endl;
+		out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
+		out << QT_TR_NOOP("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+		out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
+	#else
 	try
   {
 		QTranslator translator;
@@ -41,7 +48,8 @@ int main(int argc, char **argv)
 	{
 		out << endl;
 		out << e.getExceptionsText();
-		out << "** pgmodeler-cli aborted due to critical error(s). **" << endl << endl;
+    out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
 		return(e.getErrorType()==ERR_CUSTOM ? -1 : e.getErrorType());
 	}
+	#endif
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,9 +34,11 @@ class TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
+		map<TableObject *, vector<QPointF>> conn_points;
+
 	public:
 		TableView(Table *table);
-		~TableView(void);
+		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
 
 	private slots:
 		void configureObject(void);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 */
 
 #include "baseobjectview.h"
+#include "textboxview.h"
+#include "roundedrectitem.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, QColor *> BaseObjectView::color_config;
@@ -28,13 +30,15 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	protected_icon=nullptr;
 	obj_shadow=nullptr;
 	obj_selection=nullptr;
-	pos_info_pol=nullptr;
+  pos_info_rect=nullptr;
 	pos_info_txt=nullptr;
+  sql_disabled_txt=nullptr;
+  sql_disabled_box=nullptr;
 	setSourceObject(object);
 }
 
 BaseObjectView::~BaseObjectView(void)
-{
+{  
 	setSourceObject(nullptr);
 }
 
@@ -53,31 +57,26 @@ void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
-	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
-
-	disconnect(this, SLOT(toggleProtectionIcon(bool)));
-
-	if(graph_obj)
-		graph_obj->setReceiverObject(nullptr);
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
 	//Stores the reference to the source object as the data of graphical object
 	this->setData(0, QVariant::fromValue<void *>(object));
 
 	if(!graph_obj)
 	{
-		if(obj_selection)
+    if(obj_selection)
 		{
 			this->removeFromGroup(obj_selection);
 			delete(obj_selection);
 			obj_selection=nullptr;
-		}
+    }
 
-		if(obj_shadow)
+    if(obj_shadow)
 		{
 			this->removeFromGroup(obj_shadow);
 			delete(obj_shadow);
 			obj_shadow=nullptr;
-		}
+    }
 
 		if(protected_icon)
 		{
@@ -92,17 +91,29 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			delete(pos_info_txt);
 			pos_info_txt=nullptr;
 
-			this->removeFromGroup(pos_info_pol);
-			delete(pos_info_pol);
-			pos_info_pol=nullptr;
+      this->removeFromGroup(pos_info_rect);
+      delete(pos_info_rect);
+      pos_info_rect=nullptr;
 		}
+
+    if(sql_disabled_box)
+    {
+      this->removeFromGroup(sql_disabled_txt);
+      delete(sql_disabled_txt);
+      sql_disabled_txt=nullptr;
+
+      this->removeFromGroup(sql_disabled_box);
+      delete(sql_disabled_box);
+      sql_disabled_box=nullptr;
+    }
 	}
 	else
 	{
 		QGraphicsPolygonItem *pol_item=nullptr;
 
-		connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
-		graph_obj->setReceiverObject(this);
+    graph_obj->disconnect();
+    graph_obj->setReceiverObject(this);
+    connect(graph_obj, SIGNAL(s_objectProtected(bool)), this, SLOT(toggleProtectionIcon(bool)));
 
 		//By default the item can be selected and send geometry changes to the scene
 		this->setFlags(QGraphicsItem::ItemIsSelectable |
@@ -113,47 +124,40 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 		if(!protected_icon)
 		{
 			protected_icon=new QGraphicsItemGroup;
-			protected_icon->setVisible(graph_obj->isProtected());
+      protected_icon->setVisible(graph_obj->isProtected());
 			protected_icon->setZValue(3);
 
 			pol_item=new QGraphicsPolygonItem;
-			protected_icon->addToGroup(pol_item);
+      protected_icon->addToGroup(pol_item);
 
 			pol_item=new QGraphicsPolygonItem;
-			protected_icon->addToGroup(pol_item);
+      protected_icon->addToGroup(pol_item);
 
-			this->addToGroup(protected_icon);
-		}
-
-		if(!obj_selection)
-		{
-			obj_selection=new QGraphicsPolygonItem;
-			this->addToGroup(obj_selection);
-		}
-
-		obj_selection->setVisible(false);
-		obj_selection->setZValue(4);
-
-		if(!obj_shadow)
-		{
-			obj_shadow=new QGraphicsPolygonItem;
-			obj_shadow->setZValue(-1);
-			this->addToGroup(obj_shadow);
+      this->addToGroup(protected_icon);
 		}
 
 		if(!pos_info_txt)
 		{
-			pos_info_pol=new QGraphicsPolygonItem;
+      pos_info_rect=new QGraphicsRectItem;
 			pos_info_txt=new QGraphicsSimpleTextItem;
-			pos_info_pol->setZValue(9);
-			pos_info_txt->setZValue(10);
-			this->addToGroup(pos_info_pol);
-			this->addToGroup(pos_info_txt);
-		}
+      pos_info_rect->setZValue(9);
+			pos_info_txt->setZValue(10);      
 
-		pos_info_pol->setVisible(false);
-		pos_info_txt->setVisible(false);
-	}
+      this->addToGroup(pos_info_rect);
+      this->addToGroup(pos_info_txt);
+    }
+
+    if(!sql_disabled_box && object->getObjectType()!=OBJ_TEXTBOX)
+    {
+      sql_disabled_txt=new QGraphicsSimpleTextItem;
+      sql_disabled_box=new QGraphicsRectItem;
+      sql_disabled_txt->setZValue(100);
+      sql_disabled_box->setZValue(99);
+
+      this->addToGroup(sql_disabled_box);
+      this->addToGroup(sql_disabled_txt);
+    }
+  }
 }
 
 BaseObject *BaseObjectView::getSourceObject(void)
@@ -193,26 +197,27 @@ void BaseObjectView::loadObjectsStyle(void)
 	QString elem,
 			config_file=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
 									GlobalAttributes::OBJECTS_STYLE_CONF + GlobalAttributes::CONFIGURATION_EXT;
+	XMLParser xmlparser;
 
 	try
 	{
-		XMLParser::restartParser();
-		XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+		xmlparser.restartParser();
+		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECTS_STYLE_CONF +
 													GlobalAttributes::OBJECT_DTD_EXT, GlobalAttributes::OBJECTS_STYLE_CONF);
-		XMLParser::loadXMLFile(config_file);
+		xmlparser.loadXMLFile(config_file);
 
-		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
 			{
-				if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					XMLParser::getElementAttributes(attribs);
-					elem=XMLParser::getElementName();
+					xmlparser.getElementAttributes(attribs);
+					elem=xmlparser.getElementName();
 
 					if(elem==ParsersAttributes::GLOBAL)
 					{
@@ -237,7 +242,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 					else if(elem==ParsersAttributes::OBJECT)
 					{
-						list=attribs[ParsersAttributes::FILL_COLOR].split(",");
+            list=attribs[ParsersAttributes::FILL_COLOR].split(',');
 						colors=new QColor[3];
 						colors[0]=(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
 						colors[1]=(list.size()==2 ? QColor(list[1]) : colors[0]);
@@ -246,7 +251,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 				}
 			}
-			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 	}
 	catch(Exception &e)
@@ -382,16 +387,16 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 	else if(change==ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
-		pos_info_pol->setVisible(value.toBool());
-		pos_info_txt->setVisible(value.toBool());
-		obj_selection->setVisible(value.toBool());
-		this->configurePositionInfo(this->pos());
+    pos_info_rect->setVisible(value.toBool());
+    pos_info_txt->setVisible(value.toBool());
+    obj_selection->setVisible(value.toBool());
 
+    this->configurePositionInfo(this->pos());
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
 													value.toBool());
 	}
 
-	return(value);
+  return(value);
 }
 
 void BaseObjectView::setSelectionOrder(bool selected)
@@ -399,7 +404,7 @@ void BaseObjectView::setSelectionOrder(bool selected)
 	if(this->sel_order==0 && selected)
 		this->sel_order=++BaseObjectView::global_sel_order;
 	else if(!selected)
-		this->sel_order=0;
+    this->sel_order=0;
 }
 
 QRectF BaseObjectView::boundingRect(void) const
@@ -420,67 +425,83 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 
 void BaseObjectView::configurePositionInfo(QPointF pos)
 {
-	if(this->isSelected())
-	{
-		QPolygonF pol;
+  if(this->isSelected())
+	{		
+    QFont fnt=font_config[ParsersAttributes::POSITION_INFO].font();
 
-		pos_info_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
-		pos_info_pol->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
-		pos_info_txt->setFont(font_config[ParsersAttributes::POSITION_INFO].font());
+    pos_info_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+    pos_info_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+
+    fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
+    pos_info_txt->setFont(fnt);
 		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
 
-		pos_info_txt->setText(QString(" x=%1 y=%2 ").arg(pos.x()).arg(pos.y()));
-		pol.append(pos_info_txt->boundingRect().topLeft());
-		pol.append(pos_info_txt->boundingRect().topRight());
-		pol.append(pos_info_txt->boundingRect().bottomRight());
-		pol.append(pos_info_txt->boundingRect().bottomLeft());
-		pos_info_pol->setPolygon(pol);
-		pos_info_txt->setPos(0,
-												 - pos_info_txt->boundingRect().height());
-		pos_info_pol->setPos(0,
-												 - pos_info_pol->boundingRect().height());
-	}
+    pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(pos.x()).arg(pos.y()));
+    pos_info_rect->setRect(pos_info_txt->boundingRect());
+    pos_info_txt->setPos(-0.5, -pos_info_txt->boundingRect().height()/2);
+    pos_info_rect->setPos(-0.5, -pos_info_rect->boundingRect().height()/2);
+  }
+}
+
+void BaseObjectView::configureSQLDisabledInfo(void)
+{
+  if(sql_disabled_box)
+  {
+    float px=0, py=0;
+
+    sql_disabled_txt->setVisible(this->getSourceObject()->isSQLDisabled());
+    sql_disabled_box->setVisible(this->getSourceObject()->isSQLDisabled());
+
+    if(this->getSourceObject()->isSQLDisabled())
+    {    
+      QTextCharFormat char_fmt;
+      char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
+      char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
+
+      sql_disabled_txt->setFont(char_fmt.font());
+      sql_disabled_txt->setText(trUtf8("SQL off"));
+      sql_disabled_txt->setBrush(char_fmt.foreground());
+
+      sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HORIZ_SPACING, 1.5 * VERT_SPACING)));
+      sql_disabled_box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+      sql_disabled_box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+
+      px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HORIZ_SPACING),
+      py=-(sql_disabled_box->boundingRect().height()/2);
+
+      sql_disabled_txt->setPos(px + (HORIZ_SPACING * 0.75), py + (VERT_SPACING * 0.75));
+      sql_disabled_box->setPos(px, py);
+    }
+  }
 }
 
 void BaseObjectView::configureObjectShadow(void)
 {
-	if(obj_shadow)
-	{
-		QRectF ret;
-		QPolygonF pol;
+  RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
 
-		ret=this->boundingRect();
-		pol.append(QPointF(ret.right()-1, ret.top()+7.5));
-		pol.append(QPointF(ret.right()+3.5f, ret.top()+7.5f));
-		pol.append(QPointF(ret.right()+3.5f, ret.bottom()+3.5f));
-		pol.append(QPointF(ret.left()+7.5f, ret.bottom()+3.5f));
-		pol.append(QPointF(ret.left()+7.5f, ret.bottom()-1));
-		pol.append(QPointF(ret.right()-1, ret.bottom()-1));
-		obj_shadow->setPolygon(pol);
-		obj_shadow->setPos(0,0);
-		obj_shadow->setPen(Qt::NoPen);
-		obj_shadow->setBrush(QColor(50,50,50,60));
+  if(rect_item)
+	{
+    rect_item->setPen(Qt::NoPen);
+    rect_item->setBrush(QColor(50,50,50,60));
+    rect_item->setRect(this->boundingRect());
+    rect_item->setPos(3.5,3.5);
 	}
 }
 
 void BaseObjectView::configureObjectSelection(void)
 {
-	if(obj_selection)
-	{
-		QRectF ret;
-		QPolygonF pol;
+  RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
 
-		ret=this->boundingRect();
-		pol.append(ret.topLeft());
-		pol.append(ret.topRight());
-		pol.append(ret.bottomRight());
-		pol.append(ret.bottomLeft());
-		obj_selection->setPolygon(pol);
-		obj_selection->setPos(0,0);
-		obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-		obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+  if(rect_item)
+	{
+    rect_item->setRect(this->boundingRect());
+    rect_item->setPos(0,0);
+    rect_item->setBorderRadius(5);
+    rect_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+    rect_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 	}
 }
+
 void BaseObjectView::configureProtectedIcon(void)
 {
 	if(protected_icon)
@@ -533,8 +554,9 @@ void BaseObjectView::__configureObject(void)
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-		this->setToolTip(Utf8String::create(graph_obj->getName(true)) +
-                     " (" + graph_obj->getTypeName() + ") " + QString("\nId: %1").arg(graph_obj->getObjectId()));
+    this->setToolTip(/*Utf8String::create(*/graph_obj->getName(true) +
+                     QString(" (") + graph_obj->getTypeName() +
+                     QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}

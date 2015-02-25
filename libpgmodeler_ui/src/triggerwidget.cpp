@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		Ui_TriggerWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																						GlobalAttributes::CONFIGURATION_EXT);
+    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																				(ObjectTableWidget::EDIT_BUTTON |
@@ -47,9 +44,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
@@ -133,8 +130,8 @@ void TriggerWidget::addColumn(Column *column, int row)
 {
 	if(column && row >= 0)
 	{
-		columns_tab->setCellText(Utf8String::create(column->getName()),row,0);
-		columns_tab->setCellText(Utf8String::create(~column->getType()),row,1);
+    columns_tab->setCellText(/*Utf8String::create(*/column->getName(),row,0);
+    columns_tab->setCellText(/*Utf8String::create(*/~column->getType(),row,1);
 		columns_tab->setRowData(QVariant::fromValue<void *>(column), row);
 	}
 }
@@ -157,7 +154,8 @@ void TriggerWidget::updateColumnsCombo(void)
 
 				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				{
-					column_cmb->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")",
+          column_cmb->addItem(/*Utf8String::create(*/column->getName() +
+                              QString(" (") + ~column->getType() + QString(")"),
 															QVariant::fromValue<void *>(column));
 				}
 			}
@@ -232,7 +230,9 @@ void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table,
 	if(trigger)
 	{
 		constr_trig_chk->setChecked(trigger->isConstraint());
-		cond_expr_txt->setPlainText(Utf8String::create(trigger->getCondition()));
+
+		exec_per_row_chk->setChecked(trigger->isExecutePerRow());
+    cond_expr_txt->setPlainText(/*Utf8String::create(*/trigger->getCondition());
 		deferrable_chk->setChecked(trigger->isDeferrable());
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
 		firing_mode_cmb->setCurrentIndex(firing_mode_cmb->findText(~trigger->getFiringType()));

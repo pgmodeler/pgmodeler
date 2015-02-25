@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "pluginsconfigwidget.h"
 
-PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
+PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(parent)
 {
 	setupUi(this);
 
@@ -30,7 +30,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
 	plugins_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
-	plugins_tab->setHeaderIcon(QPixmap(":/icones/icones/plugins.png"),0);
+  plugins_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/plugins.png")),0);
 	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
 	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 
@@ -53,7 +53,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 
 void PluginsConfigWidget::openRootPluginDiretory(void)
 {
-	QDesktopServices::openUrl(QUrl("file:///" + root_dir_edt->text()));
+  QDesktopServices::openUrl(QUrl(QString("file:///") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)
@@ -61,7 +61,7 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 	plugins[idx]->showPluginInfo();
 }
 
-void PluginsConfigWidget::loadPlugins(void)
+void PluginsConfigWidget::loadConfiguration(void)
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
@@ -79,7 +79,7 @@ void PluginsConfigWidget::loadPlugins(void)
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
-	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+  dir_list=QDir(dir_plugins, QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
 	{
@@ -134,8 +134,8 @@ void PluginsConfigWidget::loadPlugins(void)
 		else
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
-																 .arg(Utf8String::create(dir_list.front()))
-																 .arg(Utf8String::create(lib))
+                                 .arg(/*Utf8String::create(*/dir_list.front())
+                                 .arg(/*Utf8String::create(*/lib)
 																 .arg(plugin_loader.errorString()),
 																 ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}

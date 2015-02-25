@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,11 +26,14 @@
 #define SCHEMA_WIDGET_H
 
 #include "baseobjectwidget.h"
+#include "colorpickerwidget.h"
 #include "ui_schemawidget.h"
 
 class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 	private:
 		Q_OBJECT
+
+		ColorPickerWidget *color_picker;
 
 	public:
 		SchemaWidget(QWidget * parent = 0);
@@ -38,9 +41,6 @@ class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 
 	public slots:
 		void applyConfiguration(void);
-
-	private slots:
-		void selectFillColor(void);
 };
 
 #endif

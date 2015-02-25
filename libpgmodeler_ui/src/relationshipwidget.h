@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,10 +28,22 @@
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
 #include "objecttablewidget.h"
+#include "colorpickerwidget.h"
+#include "hinttextwidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
+
+    HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
+
+		ColorPickerWidget *color_picker;
+
+		//! brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
+		QWidgetList tabs;
+
+		//! brief Stores the original labels of the tabs
+		QStringList tab_labels;
 
 		/*! \brief Operation list element count before editing the relationship. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to
@@ -40,7 +52,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		SyntaxHighlighter *table1_hl,
 											*table2_hl,
-											*patterns_hl[6];
+                      *patterns_hl[7];
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		ObjectTableWidget *attributes_tab,
@@ -81,6 +93,9 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void showAdvancedObject(int row);
 		void selectCopyOptions(void);
     void listSpecialPkColumns(void);
+
+		void useFKGlobalSettings(bool value);
+		void usePatternGlobalSettings(bool value);
 
 	public slots:
 		void applyConfiguration(void);

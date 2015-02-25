@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ void TableObject::setAddedByGeneralization(bool value)
 
 void TableObject::setDeclaredInTable(bool value)
 {
+	setCodeInvalidated(decl_in_table != value);
 	decl_in_table=value;
 }
 
@@ -100,4 +101,30 @@ void TableObject::operator = (TableObject &object)
 	this->add_by_generalization=false;
 	this->add_by_linking=false;
 	this->decl_in_table=object.decl_in_table;
+}
+
+void TableObject::setCodeInvalidated(bool value)
+{
+	if(parent_table)
+		parent_table->BaseObject::setCodeInvalidated(value);
+
+	BaseObject::setCodeInvalidated(value);
+}
+
+QString TableObject::getDropDefinition(bool cascade)
+{
+  if(getParentTable())
+    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+
+  attributes[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+
+  return(BaseObject::getDropDefinition(cascade));
+}
+
+QString TableObject::getSignature(bool format)
+{
+  if(!parent_table)
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
 }

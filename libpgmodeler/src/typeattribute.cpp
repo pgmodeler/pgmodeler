@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ TypeAttribute::TypeAttribute(void)
 
 void TypeAttribute::setType(PgSQLType type)
 {
+	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 
@@ -35,6 +36,9 @@ PgSQLType TypeAttribute::getType(void)
 
 QString TypeAttribute::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
 	else

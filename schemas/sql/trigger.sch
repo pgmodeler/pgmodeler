@@ -3,37 +3,48 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[-- object: ] @{name} [ | type: ] @{sql-object} [ --] $br
+[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 
-@{drop}
+[-- ] {drop}
+
+ %if {prepended-sql} %then
+   {prepended-sql}
+   $br [-- ddl-end --] $br $br
+ %end
 
 [CREATE ] 
-%if @{constraint} %then [CONSTRAINT ]%end
-[TRIGGER ] @{name} $br
-$tb @{firing-type} $sp @{events} $br
+%if {constraint} %then [CONSTRAINT ]%end
+[TRIGGER ] {name} $br
+$tb {firing-type} $sp {events} $br
 
-$tb [ON ] @{table} $br
+$tb [ON ] {table} $br
 
-%if @{ref-table} %then 
- $tb [FROM ] @{ref-table} $br 
+%if {ref-table} %then 
+ $tb [FROM ] {ref-table} $br 
 
- %if @{deferrable} %then
-  $tb [DEFERRABLE ] @{defer-type} $br
+ %if {deferrable} %then
+  $tb [DEFERRABLE ] {defer-type} $br
  %else
   $tb [NOT DEFERRABLE ] $br
  %end
 %end
 
-$tb [FOR EACH ] %if @{per-line} %then ROW %else STATEMENT %end $br
+$tb [FOR EACH ] %if {per-line} %then ROW %else STATEMENT %end $br
 
-%if @{condition} %then $tb WHEN $sp (@{condition}) $br %end
+%if {condition} %then $tb WHEN $sp ({condition}) $br %end
 
-$tb [EXECUTE PROCEDURE ] @{trigger-func}(
-%if @{arguments} %then @{arguments} %end ); $br
-
-%if @{comment} %then @{comment} %end
+$tb [EXECUTE PROCEDURE ] {trigger-func}(
+%if {arguments} %then {arguments} %end ); $br
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br $br
+[-- ddl-end --] $br
 
+%if {comment} %then {comment} %end
+
+%if {appended-sql} %then
+ {appended-sql}
+ $br [-- ddl-end --] $br
+%end
+
+$br

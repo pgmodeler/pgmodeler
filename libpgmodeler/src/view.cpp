@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,18 +22,16 @@ View::View(void) : BaseTable()
 {
 	obj_type=OBJ_VIEW;
   materialized=recursive=with_no_data=false;
-	attributes[ParsersAttributes::DECLARATION]="";
-	attributes[ParsersAttributes::REFERENCES]="";
-	attributes[ParsersAttributes::SELECT_EXP]="";
-	attributes[ParsersAttributes::FROM_EXP]="";
-	attributes[ParsersAttributes::SIMPLE_EXP]="";
-	attributes[ParsersAttributes::CTE_EXPRESSION]="";
-	attributes[ParsersAttributes::TRIGGERS]="";
-	attributes[ParsersAttributes::RULES]="";
-  attributes[ParsersAttributes::MATERIALIZED]="";
-  attributes[ParsersAttributes::RECURSIVE]="";
-  attributes[ParsersAttributes::WITH_NO_DATA]="";
-  attributes[ParsersAttributes::COLUMNS]="";
+  attributes[ParsersAttributes::DECLARATION]=QString();
+  attributes[ParsersAttributes::REFERENCES]=QString();
+  attributes[ParsersAttributes::SELECT_EXP]=QString();
+  attributes[ParsersAttributes::FROM_EXP]=QString();
+  attributes[ParsersAttributes::SIMPLE_EXP]=QString();
+  attributes[ParsersAttributes::CTE_EXPRESSION]=QString();
+  attributes[ParsersAttributes::MATERIALIZED]=QString();
+  attributes[ParsersAttributes::RECURSIVE]=QString();
+  attributes[ParsersAttributes::WITH_NO_DATA]=QString();
+  attributes[ParsersAttributes::COLUMNS]=QString();
 }
 
 View::~View(void)
@@ -93,19 +91,22 @@ void View::setProtected(bool value)
 
 void View::setMaterialized(bool value)
 {
+	setCodeInvalidated(materialized != value);
   materialized=value;
   if(materialized) recursive=false;
 }
 
 void View::setRecursive(bool value)
 {
+	setCodeInvalidated(recursive != value);
   recursive=value;
   if(recursive) materialized=false;
 }
 
 void View::setWithNoData(bool value)
 {
- with_no_data=(materialized ? value : false);
+	setCodeInvalidated(materialized && with_no_data != value);
+	with_no_data=(materialized ? value : false);
 }
 
 bool View::isMaterialized(void)
@@ -125,6 +126,7 @@ bool View::isWithNoData(void)
 
 void View::setCommomTableExpression(const QString &expr)
 {
+	setCodeInvalidated(cte_expression != expr);
 	cte_expression=expr;
 }
 
@@ -140,7 +142,7 @@ bool View::hasDefinitionExpression(void)
 		itr++;
 	}
 
-	return(found);
+  return(found);
 }
 
 QString View::getCommomTableExpression(void)
@@ -262,6 +264,8 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			 col->getObjectId() > this->object_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
+
+	setCodeInvalidated(true);
 }
 
 unsigned View::getReferenceCount(void)
@@ -353,6 +357,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Removes the reference from the view
 	references.erase(references.begin() + ref_id);
+	setCodeInvalidated(true);
 }
 
 void View::removeReferences(void)
@@ -361,6 +366,7 @@ void View::removeReferences(void)
 	exp_select.clear();
 	exp_from.clear();
 	exp_where.clear();
+	setCodeInvalidated(true);
 }
 
 void View::removeReference(unsigned expr_id, unsigned sql_type)
@@ -371,6 +377,7 @@ void View::removeReference(unsigned expr_id, unsigned sql_type)
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vect_idref->erase(vect_idref->begin() + expr_id);
+	setCodeInvalidated(true);
 }
 
 int View::getReferenceIndex(Reference &ref, unsigned sql_type)
@@ -471,12 +478,12 @@ void View::setReferencesAttribute(void)
 
 	for(i=0; i < 3; i++)
 	{
-		str_aux="";
+    str_aux=QString();
 		qtd=vect_exp[i]->size();
 		for(i1=0; i1 < qtd; i1++)
 		{
 			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-			if(i1 < qtd-1) str_aux+=",";
+      if(i1 < qtd-1) str_aux+=QString(",");
 		}
 		attributes[attribs[i]]=str_aux;
 	}
@@ -547,20 +554,21 @@ bool View::isReferencingColumn(Column *col)
 
 QString View::getCodeDefinition(unsigned def_type)
 {
-	unsigned count, i;
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
-  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? "1" : "");
-  attributes[ParsersAttributes::RECURSIVE]=(recursive ? "1" : "");
-  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? "1" : "");
-  attributes[ParsersAttributes::COLUMNS]="";
-  attributes[ParsersAttributes::TAG]="";
+  attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::COLUMNS]=QString();
+  attributes[ParsersAttributes::TAG]=QString();
 
   if(materialized)
-    attributes[ParsersAttributes::SQL_OBJECT]="MATERIALIZED " + BaseObject::getSQLName(OBJ_VIEW);
+    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
 
   if(recursive)
-    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(",");
+    attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
 
   if(tag && def_type==SchemaParser::XML_DEFINITION)
    attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
@@ -572,15 +580,6 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setReferencesAttribute();
 	}
-
-	count=triggers.size();
-	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::TRIGGERS]+=triggers[i]->getCodeDefinition(def_type);
-
-	count=rules.size();
-	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::RULES]+=rules[i]->getCodeDefinition(def_type);
-
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -621,7 +620,7 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 	{
 		vector<TableObject *>::iterator itr, itr_end;
 		vector<TableObject *> *obj_list=getObjectList(obj_type);
-		bool found=false, format=name.contains("\"");
+    bool found=false, format=name.contains('"');
 
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
@@ -674,13 +673,15 @@ void View::addObject(BaseObject *obj, int obj_idx)
 				obj_list->push_back(tab_obj);
 			else
 				obj_list->insert(obj_list->begin() + obj_idx, tab_obj);
+
+			setCodeInvalidated(true);
 		}
 		catch(Exception &e)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(Utf8String::create(obj->getName()))
-												.arg(Utf8String::create(obj->getTypeName())),
+                        .arg(/*Utf8String::create(*/obj->getName())
+                        .arg(/*Utf8String::create(*/obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -724,6 +725,7 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 	itr=obj_list->begin() + obj_idx;
 	(*itr)->setParentTable(nullptr);
 	obj_list->erase(itr);
+	setCodeInvalidated(true);
 }
 
 void View::removeObject(BaseObject *obj)

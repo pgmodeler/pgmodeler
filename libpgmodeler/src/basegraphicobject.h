@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,6 +81,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 This method emits the signal s_objectModified() */
 		virtual void setModified(bool value);
 
+    virtual void setSQLDisabled(bool value);
+
 		//! \brief Returns the modified status of the object
 		bool isModified(void);
 
@@ -104,6 +106,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		friend class BaseObjectView;
 		friend class DatabaseModel;
+    friend class OperationList;
 };
 
 #endif

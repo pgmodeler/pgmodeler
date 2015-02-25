@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,35 +24,36 @@ Constraint::Constraint(void)
 	obj_type=OBJ_CONSTRAINT;
 	deferrable=false;
 	no_inherit=false;
-	fill_factor=100;
+	fill_factor=0;
 	index_type=BaseType::null;
 
-	attributes[ParsersAttributes::PK_CONSTR]="";
-	attributes[ParsersAttributes::FK_CONSTR]="";
-	attributes[ParsersAttributes::CK_CONSTR]="";
-	attributes[ParsersAttributes::UQ_CONSTR]="";
-	attributes[ParsersAttributes::EX_CONSTR]="";
-	attributes[ParsersAttributes::REF_TABLE]="";
-	attributes[ParsersAttributes::SRC_COLUMNS]="";
-	attributes[ParsersAttributes::DST_COLUMNS]="";
-	attributes[ParsersAttributes::DEL_ACTION]="";
-	attributes[ParsersAttributes::UPD_ACTION]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::TYPE]="";
-	attributes[ParsersAttributes::COMPARISON_TYPE]="";
-	attributes[ParsersAttributes::DEFER_TYPE]="";
-	attributes[ParsersAttributes::INDEX_TYPE]="";
-	attributes[ParsersAttributes::DEFERRABLE]="";
-	attributes[ParsersAttributes::TABLE]="";
-	attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	attributes[ParsersAttributes::FACTOR]="";
-	attributes[ParsersAttributes::NO_INHERIT]="";
-	attributes[ParsersAttributes::ELEMENTS]="";
+  attributes[ParsersAttributes::PK_CONSTR]=QString();
+  attributes[ParsersAttributes::FK_CONSTR]=QString();
+  attributes[ParsersAttributes::CK_CONSTR]=QString();
+  attributes[ParsersAttributes::UQ_CONSTR]=QString();
+  attributes[ParsersAttributes::EX_CONSTR]=QString();
+  attributes[ParsersAttributes::REF_TABLE]=QString();
+  attributes[ParsersAttributes::SRC_COLUMNS]=QString();
+  attributes[ParsersAttributes::DST_COLUMNS]=QString();
+  attributes[ParsersAttributes::DEL_ACTION]=QString();
+  attributes[ParsersAttributes::UPD_ACTION]=QString();
+  attributes[ParsersAttributes::EXPRESSION]=QString();
+  attributes[ParsersAttributes::TYPE]=QString();
+  attributes[ParsersAttributes::COMPARISON_TYPE]=QString();
+  attributes[ParsersAttributes::DEFER_TYPE]=QString();
+  attributes[ParsersAttributes::INDEX_TYPE]=QString();
+  attributes[ParsersAttributes::DEFERRABLE]=QString();
+  attributes[ParsersAttributes::TABLE]=QString();
+  attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+  attributes[ParsersAttributes::FACTOR]=QString();
+  attributes[ParsersAttributes::NO_INHERIT]=QString();
+  attributes[ParsersAttributes::ELEMENTS]=QString();
 }
 
 Constraint::~Constraint(void)
 {
-	removeColumns();
+  columns.clear();
+  ref_columns.clear();
 }
 
 void Constraint::setConstraintType(ConstraintType constr_type)
@@ -63,20 +64,26 @@ void Constraint::setConstraintType(ConstraintType constr_type)
 void Constraint::setActionType(ActionType action_type, unsigned act_id)
 {
   if(act_id==DELETE_ACTION)
+	{
+		setCodeInvalidated(this->del_action != action_type);
     this->del_action=action_type;
+	}
 	else
+	{
+		setCodeInvalidated(this->upd_action != action_type);
     this->upd_action=action_type;
+	}
 }
 
 void Constraint::setExpression(const QString &expr)
 {
+	setCodeInvalidated(expression != expr);
   expression=expr;
 }
 
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
 {
 	vector<Column *>::iterator itr, itr_end;
-	//Column *col_aux=nullptr;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -141,7 +148,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	//Raises an error if the column is not allocated
 	if(!column)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)
@@ -151,9 +158,14 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 		{
 			if(col_type==REFERENCED_COLS)
 				ref_columns.push_back(column);
-			else
-				columns.push_back(column);
-		}
+      else
+      {
+        columns.push_back(column);
+        setColumnsNotNull(true);
+      }
+
+      setCodeInvalidated(true);
+    }
 	}
 }
 
@@ -209,7 +221,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 				 (!inc_addedbyrel && !col->isAddedByRelationship()))))
 		{
 			str_cols+=col->getName(format);
-			str_cols+=",";
+      str_cols+=',';
 		}
 	}
 
@@ -239,7 +251,8 @@ void Constraint::setMatchType(MatchType match_type)
 
 void Constraint::setFillFactor(unsigned factor)
 {
-	if(factor < 10) factor=10;
+	if(factor!=0 && factor < 10) factor=10;
+	else if(factor > 100) factor=100;
 	fill_factor=factor;
 }
 
@@ -321,8 +334,10 @@ unsigned Constraint::getColumnCount(unsigned col_type)
 
 void Constraint::removeColumns(void)
 {
+  setColumnsNotNull(false);
 	columns.clear();
 	ref_columns.clear();
+	setCodeInvalidated(true);
 }
 
 void Constraint::removeColumn(const QString &name, unsigned col_type)
@@ -346,9 +361,13 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 
 		//Case the column is found
 		if(col->getName()==name)
-		{
+    {
+      if(constr_type==ConstraintType::primary_key)
+        col->setNotNull(false);
+
 			//Remove its iterator from the list
 			cols->erase(itr);
+			setCodeInvalidated(true);
 			break;
 		}
 		else itr++;
@@ -487,6 +506,7 @@ void Constraint::addExcludeElement(ExcludeElement elem)
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.push_back(elem);
+	setCodeInvalidated(true);
 }
 
 void Constraint::addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
@@ -511,6 +531,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -527,7 +548,8 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		//Case the column is not allocated raises an error
 		if(!column)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-											.arg(Utf8String::create(this->getName())).arg(Utf8String::create(this->getTypeName())),
+                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(/*Utf8String::create(*/this->getTypeName()),
 											ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
@@ -542,6 +564,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
+		setCodeInvalidated(true);
 	}
 	catch(Exception &e)
 	{
@@ -555,11 +578,25 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.erase(excl_elements.begin() + elem_idx);
+	setCodeInvalidated(true);
 }
 
 void Constraint::removeExcludeElements(void)
 {
 	excl_elements.clear();
+  setCodeInvalidated(true);
+}
+
+void Constraint::setColumnsNotNull(bool value)
+{
+  if(constr_type==ConstraintType::primary_key)
+  {
+    for(auto col : columns)
+    {
+      if(!col->isAddedByRelationship())
+        col->setNotNull(value);
+    }
+  }
 }
 
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
@@ -584,7 +621,7 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=excl_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=",";
+    if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;
@@ -605,15 +642,26 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 	return(getCodeDefinition(def_type, false));
 }
 
+void Constraint::setDeclInTableAttribute(void)
+{
+  if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
+    attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+  else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
+    attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+}
+
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
+	QString code_def=getCachedCode(def_type, false);
+  if(!inc_addedbyrel && !code_def.isEmpty()) return(code_def);
+
 	QString attrib;
 
-	attributes[ParsersAttributes::PK_CONSTR]="";
-	attributes[ParsersAttributes::FK_CONSTR]="";
-	attributes[ParsersAttributes::CK_CONSTR]="";
-	attributes[ParsersAttributes::UQ_CONSTR]="";
-	attributes[ParsersAttributes::EX_CONSTR]="";
+  attributes[ParsersAttributes::PK_CONSTR]=QString();
+  attributes[ParsersAttributes::FK_CONSTR]=QString();
+  attributes[ParsersAttributes::CK_CONSTR]=QString();
+  attributes[ParsersAttributes::UQ_CONSTR]=QString();
+  attributes[ParsersAttributes::EX_CONSTR]=QString();
 
 	switch(!constr_type)
 	{
@@ -633,7 +681,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=ParsersAttributes::EX_CONSTR;
 		break;
 	}
-	attributes[attrib]="1";
+  attributes[attrib]=ParsersAttributes::_TRUE_;
 
 	attributes[ParsersAttributes::TYPE]=attrib;
 	attributes[ParsersAttributes::UPD_ACTION]=(~upd_action);
@@ -656,9 +704,9 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			setColumnsAttribute(REFERENCED_COLS, def_type, inc_addedbyrel);
 	}
 
-	attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : "");
-	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
-	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? "1" : "");
+  attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : QString());
+  attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~ index_type);
@@ -666,18 +714,45 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	/* Case the constraint doesn't referece some column added by relationship it will be declared
-		inside the parent table construction by the use of 'decl-in-table' schema attribute. */
-	if(!isDeclaredInTable())
-		attributes[ParsersAttributes::DECL_IN_TABLE]="";
-	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
-		attributes[ParsersAttributes::DECL_IN_TABLE]="1";
+  setDeclInTableAttribute();
 
-	if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)
+	if(fill_factor!=0 && (constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique))
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 	else
-		attributes[ParsersAttributes::FACTOR]="";
+    attributes[ParsersAttributes::FACTOR]=QString();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
 }
 
+QString Constraint::getDropDefinition(bool cascade)
+{
+  setDeclInTableAttribute();
+  return(TableObject::getDropDefinition(cascade));
+}
+
+QString Constraint::getSignature(bool format)
+{
+  if(!getParentTable())
+    return(BaseObject::getSignature(format));
+
+  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+}
+
+bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
+{
+  if(!object)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else if(object->getObjectType()!=this->getObjectType())
+    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  try
+  {
+    return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         object->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+                                         ignored_attribs, ignored_tags));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  }
+}

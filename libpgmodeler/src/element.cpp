@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ void Element::setColumn(Column *column)
 	if(column)
 	{
 		this->column=column;
-		this->expression="";
+		this->expression=QString();
 	}
 }
 
@@ -93,12 +93,12 @@ OperatorClass *Element::getOperatorClass(void)
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
-	attributes[ParsersAttributes::COLUMN]="";
-	attributes[ParsersAttributes::EXPRESSION]="";
-	attributes[ParsersAttributes::OP_CLASS]="";
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? "1" : "");
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? "1" : "");
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? "1" : "");
+	attributes[ParsersAttributes::COLUMN]=QString();
+	attributes[ParsersAttributes::EXPRESSION]=QString();
+	attributes[ParsersAttributes::OP_CLASS]=QString();
+	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : QString());
 
 
 	if(column)
@@ -118,5 +118,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 bool Element::operator == (Element &elem)
 {
 	return(this->column == elem.column &&
-				 this->expression == elem.expression);
+				 this->expression == elem.expression &&
+				 this->operator_class == elem.operator_class &&
+				 this->sorting_enabled == elem.sorting_enabled &&
+				 this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
+				 this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
 }

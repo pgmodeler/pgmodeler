@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,7 +118,9 @@ class Role: public BaseObject {
 		QString getPassword(void);
 
 		//! \brief Returns the SQL / XML definition for the role
-		virtual QString getCodeDefinition(unsigned def_type) final;
+    virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff=false) final;
 };
 
 #endif

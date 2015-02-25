@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,17 @@
 */
 
 #include "connectionsconfigwidget.h"
+#include "pgmodeleruins.h"
 
-ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(parent)
+vector<Connection *> ConnectionsConfigWidget::connections;
+map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+
+ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	setupUi(this);
+  Ui_ConnectionsConfigWidget::setupUi(this);
+
+  auto_browse_ht=new HintTextWidget(auto_browse_hint, this);
+  auto_browse_ht->setText(auto_browse_chk->statusTip());
 
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
 
@@ -47,9 +54,7 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(par
 
 ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
 {
-	//Destroy all the loaded connections
-	while(connections_cmb->count() > 0)
-		this->removeConnection();
+	destroyConnections();
 }
 
 void ConnectionsConfigWidget::hideEvent(QHideEvent *)
@@ -57,50 +62,74 @@ void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 	this->newConnection();
 }
 
-void ConnectionsConfigWidget::loadConfiguration(void)
+void ConnectionsConfigWidget::destroyConnections(void)
 {
-	vector<QString> key_attribs;
-	map<QString, attribs_map >::iterator itr, itr_end;
 	Connection *conn=nullptr;
 
-	//Destroy all the loaded connections
-	while(connections_cmb->count() > 0)
-		this->removeConnection();
-
-	key_attribs.push_back(ParsersAttributes::ALIAS);
-	BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, key_attribs);
-
-	itr=config_params.begin();
-	itr_end=config_params.end();
-
-	while(itr!=itr_end)
+  while(!connections.empty())
 	{
-		conn=new Connection;
-
-		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
-		conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
-		conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
-		conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
-		conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
-		conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[Connection::PARAM_CONN_TIMEOUT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
-		conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
-		conn->setConnectionParam(Connection::PARAM_SSL_KEY, itr->second[Connection::PARAM_SSL_KEY]);
-		conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
-		conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
-		conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
-		conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
-
-		connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]) +
-				QString(" (%1:%2)").arg(itr->second[Connection::PARAM_SERVER_FQDN]).arg(itr->second[Connection::PARAM_PORT]),
-				QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
-
-		itr++;
+    conn=connections.back();
+    connections.pop_back();
+		connections_cmb->removeItem(0);
+    delete(conn);
 	}
+}
 
-	edit_tb->setEnabled(connections_cmb->count() > 0);
-	remove_tb->setEnabled(connections_cmb->count() > 0);
+map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams(void)
+{
+  return(config_params);
+}
+
+void ConnectionsConfigWidget::loadConfiguration(void)
+{
+	try
+	{
+		vector<QString> key_attribs;
+		map<QString, attribs_map >::iterator itr, itr_end;
+		Connection *conn=nullptr;
+
+		destroyConnections();
+
+		key_attribs.push_back(ParsersAttributes::ALIAS);
+    BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+
+		itr=config_params.begin();
+		itr_end=config_params.end();
+
+		while(itr!=itr_end)
+		{
+			conn=new Connection;
+
+      conn->setConnectionParam(Connection::PARAM_ALIAS, itr->second[ParsersAttributes::ALIAS]);
+			conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
+			conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
+			conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
+			conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
+			conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
+			conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[Connection::PARAM_CONN_TIMEOUT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
+			conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
+			conn->setConnectionParam(Connection::PARAM_SSL_KEY, itr->second[Connection::PARAM_SSL_KEY]);
+			conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
+			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
+			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
+			conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
+      conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
+
+      connections.push_back(conn);
+      connections_cmb->addItem(conn->getConnectionId());
+
+			itr++;
+		}
+
+		edit_tb->setEnabled(connections_cmb->count() > 0);
+		remove_tb->setEnabled(connections_cmb->count() > 0);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void ConnectionsConfigWidget::enableCertificates(void)
@@ -120,7 +149,6 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 	test_tb->setEnabled(!alias_edt->text().isEmpty() &&
 											!host_edt->text().isEmpty() &&
 											!user_edt->text().isEmpty() &&
-                      /*!passwd_edt->text().isEmpty() && */
 											!conn_db_edt->text().isEmpty());
 	add_tb->setEnabled(test_tb->isEnabled());
   update_tb->setEnabled(test_tb->isEnabled());
@@ -136,11 +164,13 @@ void ConnectionsConfigWidget::newConnection(void)
 	passwd_edt->clear();
 	options_edt->clear();
 
+  auto_browse_chk->setChecked(false);
+
 	ssl_mode_cmb->setCurrentIndex(0);
-	client_cert_edt->setText("~/.postgresql/postgresql.crt");
-	root_cert_edt->setText("~/.postgresql/root.crt");
-	crl_edt->setText("~/.postgresql/root.crl");
-	client_key_edt->setText("~/.postgresql/postgresql.key");
+  client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
+  root_cert_edt->setText(QString("~/.postgresql/root.crt"));
+  crl_edt->setText(QString("~/.postgresql/root.crl"));
+  client_key_edt->setText(QString("~/.postgresql/postgresql.key"));
 
 	gssapi_auth_chk->setChecked(false);
 	krb_server_edt->clear();
@@ -155,27 +185,29 @@ void ConnectionsConfigWidget::newConnection(void)
 
 	edit_tb->setEnabled(connections_cmb->count() > 0);
 	remove_tb->setEnabled(connections_cmb->count() > 0);
-	duplicate_tb->setEnabled(connections_cmb->count() > 0);
+  duplicate_tb->setEnabled(connections_cmb->count() > 0);
 }
 
-void ConnectionsConfigWidget::duplicateConnection()
+void ConnectionsConfigWidget::duplicateConnection(void)
 {
 	Connection *conn=nullptr, *new_conn=nullptr;
-	QString alias;
 
 	try
 	{
-		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+    conn=connections.at(connections_cmb->currentIndex());
 		new_conn=new Connection;
 		(*new_conn)=(*conn);
-		alias=QString("cp_%1").arg(connections_cmb->currentText());
-		connections_cmb->addItem(alias,  QVariant::fromValue<void *>(reinterpret_cast<void *>(new_conn)));
-		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
-	}
+    connections.push_back(new_conn);
+
+    new_conn->setConnectionParam(Connection::PARAM_ALIAS, QString("cp_%1").arg(conn->getConnectionParam(Connection::PARAM_ALIAS)));
+    connections_cmb->addItem(new_conn->getConnectionId());
+    connections_cmb->setCurrentIndex(connections_cmb->count()-1);
+    setConfigurationChanged(true);
+  }
 	catch(Exception &e)
 	{
-		if(new_conn)
-			delete(new_conn);
+    if(new_conn)
+      delete(new_conn);
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -184,33 +216,32 @@ void ConnectionsConfigWidget::duplicateConnection()
 void ConnectionsConfigWidget::handleConnection(void)
 {
 	Connection *conn=nullptr;
-	QString alias;
 
 	try
 	{
-		alias=QString("%1 (%2:%3)").arg(alias_edt->text()).arg(host_edt->text()).arg(port_sbp->value());
-
 		if(!update_tb->isVisible())
 		{
 			conn=new Connection;
 			this->configureConnection(conn);
-			connections_cmb->addItem(alias, QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
+      connections_cmb->addItem(conn->getConnectionId());
+      connections.push_back(conn);
 		}
 		else
 		{
-			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+      conn=connections.at(connections_cmb->currentIndex());
 			this->configureConnection(conn);
-			connections_cmb->setItemText(connections_cmb->currentIndex(), alias);
+      connections_cmb->setItemText(connections_cmb->currentIndex(), conn->getConnectionId());
 		}
 
 		this->newConnection();
 		edit_tb->setEnabled(connections_cmb->count() > 0);
 		remove_tb->setEnabled(connections_cmb->count() > 0);
+    setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
-		if(add_tb->isVisible())
-			delete(conn);
+    if(add_tb->isVisible())
+      delete(conn);
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -220,12 +251,13 @@ void ConnectionsConfigWidget::removeConnection(void)
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
-		Connection *conexao=nullptr;
-
-		conexao=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		connections_cmb->removeItem(connections_cmb->currentIndex());
-		delete(conexao);
-		this->newConnection();
+    Connection *conn=nullptr;
+    conn=connections.at(connections_cmb->currentIndex());
+    connections.erase(connections.begin() + connections_cmb->currentIndex());
+    connections_cmb->removeItem(connections_cmb->currentIndex());
+    delete(conn);
+    this->newConnection();
+    setConfigurationChanged(true);
 	}
 }
 
@@ -235,10 +267,9 @@ void ConnectionsConfigWidget::editConnection(void)
 	{
     Connection *conn=nullptr;
 
-		conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-		//Removes the (host:port) portion from the alias before fill the field
-		alias_edt->setText(connections_cmb->currentText().remove(QRegExp("( )(\\()(.)+(\\:)(.)+(\\))")));
+    conn=connections.at(connections_cmb->currentIndex());
+    alias_edt->setText(conn->getConnectionParam(Connection::PARAM_ALIAS));
+    auto_browse_chk->setChecked(conn->isAutoBrowseDB());
 
 		if(!conn->getConnectionParam(Connection::PARAM_SERVER_FQDN).isEmpty())
 			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_FQDN));
@@ -252,7 +283,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		timeout_sbp->setValue(conn->getConnectionParam(Connection::PARAM_CONN_TIMEOUT).toInt());
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::PARAM_KERBEROS_SERVER));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)=="gssapi");
+    gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)==QString("gssapi"));
 		options_edt->setText(conn->getConnectionParam(Connection::PARAM_OPTIONS));
 
 		if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_DESABLE)
@@ -281,7 +312,7 @@ void ConnectionsConfigWidget::editConnection(void)
 		new_tb->setVisible(false);
 		duplicate_tb->setEnabled(false);
 		cancel_tb->setVisible(true);
-		edit_tb->setEnabled(false);
+    edit_tb->setEnabled(false);
 	}
 }
 
@@ -289,6 +320,8 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 {
 	if(conn)
 	{
+    conn->setAutoBrowseDB(auto_browse_chk->isChecked());
+    conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
 		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(Connection::PARAM_USER, user_edt->text());
@@ -325,7 +358,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 		}
 
 		if(gssapi_auth_chk->isChecked())
-			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, "gssapi");
+      conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, QString("gssapi"));
 
 		if(!krb_server_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, krb_server_edt->text());
@@ -339,12 +372,18 @@ void ConnectionsConfigWidget::testConnection(void)
 {
 	Connection conn;
 	Messagebox msg_box;
+  attribs_map srv_info;
 
 	try
 	{
 		this->configureConnection(&conn);
 		conn.connect();
-		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), Messagebox::INFO_ICON);
+    srv_info=conn.getServerInfo();
+    msg_box.show(trUtf8("Success"),
+                 PgModelerUiNS::formatMessage(trUtf8("Connection successfuly stablished!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+                 .arg(srv_info[Connection::SERVER_PID])
+                 .arg(srv_info[Connection::SERVER_PROTOCOL])
+                 .arg(srv_info[Connection::SERVER_VERSION]), Messagebox::INFO_ICON);
 	}
 	catch(Exception &e)
 	{
@@ -364,7 +403,8 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 			this->removeConnection();
 
 		//Reloads the configuration
-		this->loadConfiguration();
+    this->loadConfiguration();
+
 	}
 	catch(Exception &e)
 	{
@@ -374,10 +414,8 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 
 void ConnectionsConfigWidget::saveConfiguration(void)
 {
-	try
+  try
 	{
-		int i, count;
-		Connection *conn=nullptr;
 		attribs_map attribs;
 
     /* If add or update buttons are enabled when saving the configs indicates
@@ -387,47 +425,46 @@ void ConnectionsConfigWidget::saveConfiguration(void)
     {
       Messagebox msg_box;
 
-      msg_box.show(trUtf8("Alert"), trUtf8("There is an unsaved connection! Want to save it?"),
-               Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+      msg_box.show(trUtf8("There is an unsaved connection! Want to save it?"),
+                   Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)
        handleConnection();
     }
 
 		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
-		count=connections_cmb->count();
 
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
-		if(count==0)
-			config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
+    if(connections.empty())
+      config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]=QString("  ");
 		else
 		{
-			for(i=0; i < count; i++)
+      for(Connection *conn : connections)
 			{
-				conn=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
 				attribs=conn->getConnectionParams();
 
 				if(attribs[Connection::PARAM_SERVER_FQDN].isEmpty())
 					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
 
-				attribs[ParsersAttributes::ALIAS]=connections_cmb->itemText(i).remove(QRegExp(" \\((.)*\\)"));
+        attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
+        attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
 
-				SchemaParser::setIgnoreUnkownAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
-						SchemaParser::getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SCHEMAS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::CONNECTIONS_CONF +
-																						GlobalAttributes::SCHEMA_EXT,
-																						attribs);
-				SchemaParser::setIgnoreUnkownAttributes(false);
+						schparser.getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
+																				GlobalAttributes::DIR_SEPARATOR +
+																				GlobalAttributes::SCHEMAS_DIR +
+																				GlobalAttributes::DIR_SEPARATOR +
+																				GlobalAttributes::CONNECTIONS_CONF +
+																				GlobalAttributes::SCHEMA_EXT,
+																				attribs);
+				schparser.ignoreUnkownAttributes(false);
 			}
 		}
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF);
-	}
+    BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params);
+  }
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -436,21 +473,32 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, bool inc_hosts)
 {
-	int i, count;
 	QString alias;
 
 	conns.clear();
-	count=connections_cmb->count();
-
-	for(i=0; i < count; i++)
+  for(Connection *conn : connections)
 	{
-		alias=connections_cmb->itemText(i);
+    alias=conn->getConnectionId();
 
 		if(!inc_hosts)
-			alias.remove(QRegExp(" \\((.)*\\)"));
+      alias.remove(QRegExp(QString(" \\((.)*\\)")));
 
-		conns[alias]=reinterpret_cast<Connection *>(connections_cmb->itemData(i).value<void *>());
+    conns[alias]=conn;
 	}
+}
+
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
+{
+	map<QString, Connection *> connections;
+
+	if(!combo)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  getConnections(connections);
+	combo->clear();
+
+	for(auto itr : connections)
+		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));
 }
 
 

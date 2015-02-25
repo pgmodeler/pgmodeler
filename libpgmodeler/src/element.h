@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,15 +49,17 @@ class Element {
 				 sorting_enabled;
 
 	protected:
+		SchemaParser schparser;
+
 		void configureAttributes(attribs_map &attributes, unsigned def_type);
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
 		static const unsigned ASC_ORDER=0,
-															NULLS_FIRST=1;
+													NULLS_FIRST=1;
 
 		Element(void);
-        virtual ~Element(void) {}
+		virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
 		void setColumn(Column *column);
@@ -77,7 +79,6 @@ class Element {
 		bool isSortingEnabled(void);
 
 		virtual QString getCodeDefinition(unsigned) = 0;
-
 		bool operator == (Element &elem);
 };
 

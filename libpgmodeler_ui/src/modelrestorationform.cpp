@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+
+  keep_models_ht=new HintTextWidget(keep_models_hint, this);
+  keep_models_ht->setText(keep_models_chk->statusTip());
+
 	connect(restore_btn, SIGNAL(clicked(void)), this, SLOT(accept(void)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 	connect(tmp_files_lst, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration(void)));
@@ -29,7 +33,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels(void)
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+  return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 int ModelRestorationForm::exec(void)
@@ -46,7 +50,7 @@ int ModelRestorationForm::exec(void)
 		item=new QListWidgetItem;
 		item->setText(info.fileName() +
 									QString(" - ") +
-									trUtf8("Modified: %1").arg(info.lastModified().toString(tr("yyyy-MM-dd hh:mm:ss"))) +
+                  trUtf8("Modified: %1").arg(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss"))) +
 									QString(" - ") +
 									QString("%1 bytes").arg(info.size()));
 

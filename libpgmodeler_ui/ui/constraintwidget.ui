@@ -168,6 +168,9 @@
      <property name="undoRedoEnabled">
       <bool>true</bool>
      </property>
+     <property name="lineWrapMode">
+      <enum>QTextEdit::NoWrap</enum>
+     </property>
      <property name="readOnly">
       <bool>false</bool>
      </property>
@@ -176,27 +179,11 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="fill_factor_lbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Fill Factor:</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="1">
     <widget class="QSpinBox" name="fill_factor_sb">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -600,6 +587,13 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="fill_factor_chk">
+     <property name="text">
+      <string>Fill Factor:</string>
      </property>
     </widget>
    </item>

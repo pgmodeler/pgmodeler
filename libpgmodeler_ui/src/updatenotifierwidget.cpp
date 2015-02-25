@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,24 +30,22 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
   old_pos=QPoint(-1,-1);
   frame->installEventFilter(this);
 
+	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
+	drop_shadow->setOffset(5,5);
+	drop_shadow->setBlurRadius(30);
+	this->setGraphicsEffect(drop_shadow);
+
+  get_binary_menu=new QMenu(this);
+  action_recover=get_binary_menu->addAction(trUtf8("Recover a package"));
+  action_purchase=get_binary_menu->addAction(trUtf8("Purchase a new package"));
+  get_binary_tb->setMenu(get_binary_menu);
+
   connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
   //C++11 lambda slots
-  connect(get_binary_tb, &QToolButton::clicked, this,
-          [=](){
-            //Open the url to download binary packages and hides the widget
-            QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_BIN_URL));
-            this->close();
-            emit s_visibilityChanged(false);
-          });
-
-  connect(get_source_tb, &QToolButton::clicked, this,
-          [=](){
-            //Open the url to download source code and hides the widget
-            QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SRC_URL));
-            this->close();
-            emit s_visibilityChanged(false);
-          });
+  connect(action_purchase, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_PURCHASE_URL); });
+  connect(action_recover, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_RECOVER_URL); });
+  connect(get_source_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
 
 	connect(hide_tb, &QToolButton::clicked, this,
 					[=](){
@@ -91,13 +89,20 @@ bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)
   return(QWidget::eventFilter(obj, event));
 }
 
+void UpdateNotifierWidget::activateLink(const QString &link)
+{
+  QDesktopServices::openUrl(QUrl(link));
+  this->close();
+  emit s_visibilityChanged(false);
+}
+
 void UpdateNotifierWidget::checkForUpdate(void)
 {
-  QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
-  QNetworkRequest req(url);
+	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
+	QNetworkRequest req(url);
 
-  show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
-  update_chk_reply=update_chk_manager.get(req);
+	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
+	update_chk_reply=update_chk_manager.get(req);
 }
 
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)

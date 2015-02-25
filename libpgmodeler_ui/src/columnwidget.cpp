@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,11 +31,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
     Ui_ColumnWidget::setupUi(this);
 
     hl_default_value=nullptr;
-	hl_default_value=new SyntaxHighlighter(def_value_txt, false, true);
-    hl_default_value->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-                                        GlobalAttributes::DIR_SEPARATOR +
-                                        GlobalAttributes::SQL_HIGHLIGHT_CONF +
-                                        GlobalAttributes::CONFIGURATION_EXT);
+    hl_default_value=new SyntaxHighlighter(def_value_txt, false, true);
+    hl_default_value->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     sequence_sel=new ObjectSelectorWidget(OBJ_SEQUENCE, true, this);
     sequence_sel->setEnabled(false);
@@ -91,7 +88,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 	{
 		type=column->getType();
 		notnull_chk->setChecked(column->isNotNull());
-		def_value_txt->setPlainText(Utf8String::create(column->getDefaultValue()));
+    def_value_txt->setPlainText(/*Utf8String::create(*/column->getDefaultValue());
 
     if(column->getSequence())
     {
@@ -110,27 +107,18 @@ void ColumnWidget::applyConfiguration(void)
 	try
 	{
 		Column *column=nullptr;
-
 		startConfiguration<Column>();
 
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
-
-    if(expression_rb->isChecked())
-    {
-      column->setDefaultValue(def_value_txt->toPlainText());
-      //column->setSequence(nullptr);
-    }
-    else
-    {
-      column->setSequence(sequence_sel->getSelectedObject());
-      //column->setDefaultValue("");
-    }
-
 		column->setType(data_type->getPgSQLType());
 
-		BaseObjectWidget::applyConfiguration();
+    if(expression_rb->isChecked())
+      column->setDefaultValue(def_value_txt->toPlainText());
+    else
+      column->setSequence(sequence_sel->getSelectedObject());
 
+		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}
 	catch(Exception &e)

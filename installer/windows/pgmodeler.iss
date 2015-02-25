@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.7.2"
+#define MyAppVersion "0.8.0-beta2"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -95,7 +95,14 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep=ssInstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}'),true);
+      SetEnv('Path',ExpandConstant('{app}') + '\lib',true);
+      SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',true);
+      SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',true);
+      SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',true);
+      SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',true);
+      SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',true);
+      SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',true);
+      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',true);
     end;
 end;
 
@@ -103,6 +110,13 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 if CurUninstallStep = usUninstall then
     begin
-      SetEnv('Path',ExpandConstant('{app}'),false);
+      SetEnv('Path',ExpandConstant('{app}') + '\lib',false);
+      SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',false);
+      SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
+      SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',false);
+      SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',false);
+      SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',false);
+      SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',false);
+      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',false);
     end;
 end;

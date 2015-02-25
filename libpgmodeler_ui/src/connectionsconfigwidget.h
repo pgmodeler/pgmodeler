@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,15 +29,26 @@
 #include "baseconfigwidget.h"
 #include "connection.h"
 #include "messagebox.h"
+#include "hinttextwidget.h"
 
-class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidget, public BaseConfigWidget {
+class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
+
+    HintTextWidget *auto_browse_ht;
+
+    //! brief Stores the connections created by the user
+    static vector<Connection *> connections;
+
+    /*! brief Stores the connections attributes. This map is used to write the connections.conf file
+        as well to create the connections stored by the 'connections' vector */
+    static map<QString, attribs_map> config_params;
 
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn);
 
 		void hideEvent(QHideEvent *);
+		void destroyConnections(void);
 
 	public:
 		ConnectionsConfigWidget(QWidget * parent=0);
@@ -45,14 +56,18 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
 		//! \brief Fills the passed map with all the loaded connections.
-		void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+    static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 
-	public slots:
+		//! brief Fills the passed combobox with all the loaded connections
+    static void fillConnectionsComboBox(QComboBox *combo);
+
+  public slots:
 		void restoreDefaults(void);
 
-	private slots:
+  private slots:
 		void newConnection(void);
 		void duplicateConnection(void);
 		void handleConnection(void);
@@ -61,7 +76,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void removeConnection(void);
 		void enableCertificates(void);
 		void enableConnectionTest(void);
-    void applyConfiguration(void){};
+    void applyConfiguration(void){}
 };
 
 #endif

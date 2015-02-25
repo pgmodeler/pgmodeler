@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ are emitted during the validation process on ModelValidationHelper class.
 #ifndef VALIDATION_INFO_H
 #define VALIDATION_INFO_H
 
-#include <QString>
+/* Including QByteArray due to 'QByteArray has no toStdString()'
+   error on Qt 5.4 (Windows only) */
 #include "baseobject.h"
 #include <vector>
 
@@ -45,11 +46,12 @@ class ValidationInfo {
 		QStringList errors;
 
 	public:
-		static const unsigned NO_UNIQUE_NAME=0,
+    static const unsigned NO_UNIQUE_NAME=0,
                           BROKEN_REFERENCE=1,
                           SP_OBJ_BROKEN_REFERENCE=2,
-                          SQL_VALIDATION_ERR=3,
-                          VALIDATION_ABORTED=4;
+                          BROKEN_REL_CONFIG=3,
+                          SQL_VALIDATION_ERR=4,
+                          VALIDATION_ABORTED=5;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);

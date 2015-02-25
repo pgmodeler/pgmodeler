@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.0-beta" last-position="0,0" last-zoom="1">
+<database name="usda" encoding="UTF8" lc-collate="C" lc-ctype="C">
+	<role name="postgres"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" protected="true" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="data_src">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="37" y="354"/>
+	<column name="datasrc_id" not-null="true">
+		<type name="character" length="6"/>
+	</column>
+	<column name="authors">
+		<type name="text"/>
+	</column>
+	<column name="title" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="year">
+		<type name="integer"/>
+	</column>
+	<column name="journal">
+		<type name="text"/>
+	</column>
+	<column name="vol_city">
+		<type name="text"/>
+	</column>
+	<column name="issue_state">
+		<type name="text"/>
+	</column>
+	<column name="start_page">
+		<type name="text"/>
+	</column>
+	<column name="end_page">
+		<type name="text"/>
+	</column>
+	<constraint name="data_src_pkey" type="pk-constr" factor="100" table="public.data_src">
+		<columns names="datasrc_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="datsrcln">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="322" y="522"/>
+	<column name="ndb_no" not-null="true">
+		<type name="character" length="5"/>
+	</column>
+	<column name="nutr_no" not-null="true">
+		<type name="character" length="3"/>
+	</column>
+	<column name="datasrc_id" not-null="true">
+		<type name="character" length="6"/>
+	</column>
+	<constraint name="datsrcln_pkey" type="pk-constr" factor="100" table="public.datsrcln">
+		<columns names="ndb_no,nutr_no,datasrc_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="deriv_cd">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="27" y="631"/>
+	<column name="deriv_cd" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="derivcd_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<constraint name="deriv_cd_pkey" type="pk-constr" factor="100" table="public.deriv_cd">
+		<columns names="deriv_cd" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fd_group">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1020" y="597"/>
+	<column name="fdgrp_cd" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="fddrp_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<constraint name="fd_group_pkey" type="pk-constr" factor="100" table="public.fd_group">
+		<columns names="fdgrp_cd" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="food_des">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1408" y="290"/>
+	<column name="ndb_no" not-null="true">
+		<type name="character" length="5"/>
+	</column>
+	<column name="fdgrp_cd" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="long_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="shrt_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="comname">
+		<type name="text"/>
+	</column>
+	<column name="manufacname">
+		<type name="text"/>
+	</column>
+	<column name="survey">
+		<type name="character"/>
+	</column>
+	<column name="ref_desc">
+		<type name="text"/>
+	</column>
+	<column name="refuse">
+		<type name="integer"/>
+	</column>
+	<column name="sciname">
+		<type name="text"/>
+	</column>
+	<column name="n_factor">
+		<type name="double precision"/>
+	</column>
+	<column name="pro_factor">
+		<type name="double precision"/>
+	</column>
+	<column name="fat_factor">
+		<type name="double precision"/>
+	</column>
+	<column name="cho_factor">
+		<type name="double precision"/>
+	</column>
+	<constraint name="food_des_pkey" type="pk-constr" factor="100" table="public.food_des">
+		<columns names="ndb_no" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="footnote">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1144" y="877.2"/>
+	<column name="ndb_no" not-null="true">
+		<type name="character" length="5"/>
+	</column>
+	<column name="footnt_no" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="footnt_typ" not-null="true">
+		<type name="character"/>
+	</column>
+	<column name="nutr_no">
+		<type name="character" length="3"/>
+	</column>
+	<column name="footnt_txt" not-null="true">
+		<type name="text"/>
+	</column>
+</table>
+
+<table name="nut_data">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="305" y="723.2"/>
+	<column name="ndb_no" not-null="true">
+		<type name="character" length="5"/>
+	</column>
+	<column name="nutr_no" not-null="true">
+		<type name="character" length="3"/>
+	</column>
+	<column name="nutr_val" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="num_data_pts" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="std_error">
+		<type name="double precision"/>
+	</column>
+	<column name="src_cd" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="deriv_cd">
+		<type name="text"/>
+	</column>
+	<column name="ref_ndb_no">
+		<type name="character" length="5"/>
+	</column>
+	<column name="add_nutr_mark">
+		<type name="character"/>
+	</column>
+	<column name="num_studies">
+		<type name="integer"/>
+	</column>
+	<column name="min">
+		<type name="double precision"/>
+	</column>
+	<column name="max">
+		<type name="double precision"/>
+	</column>
+	<column name="df">
+		<type name="integer"/>
+	</column>
+	<column name="low_eb">
+		<type name="double precision"/>
+	</column>
+	<column name="up_eb">
+		<type name="double precision"/>
+	</column>
+	<column name="stat_cmt">
+		<type name="text"/>
+	</column>
+	<column name="cc">
+		<type name="character"/>
+	</column>
+	<constraint name="nut_data_pkey" type="pk-constr" factor="100" table="public.nut_data">
+		<columns names="ndb_no,nutr_no" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="nutr_def">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="711" y="921.2"/>
+	<column name="nutr_no" not-null="true">
+		<type name="character" length="3"/>
+	</column>
+	<column name="units" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="tagname">
+		<type name="text"/>
+	</column>
+	<column name="nutrdesc">
+		<type name="text"/>
+	</column>
+	<column name="num_dec">
+		<type name="smallint"/>
+	</column>
+	<column name="sr_order">
+		<type name="integer"/>
+	</column>
+	<constraint name="nutr_def_pkey" type="pk-constr" factor="100" table="public.nutr_def">
+		<columns names="nutr_no" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="src_cd">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="797" y="381.2"/>
+	<column name="src_cd" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="srccd_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<constraint name="src_cd_pkey" type="pk-constr" factor="100" table="public.src_cd">
+		<columns names="src_cd" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="weight">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1018" y="722.2"/>
+	<column name="ndb_no" not-null="true">
+		<type name="character" length="5"/>
+	</column>
+	<column name="seq" not-null="true">
+		<type name="character" length="2"/>
+	</column>
+	<column name="amount" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="msre_desc" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="gm_wgt" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="num_data_pts">
+		<type name="integer"/>
+	</column>
+	<column name="std_dev">
+		<type name="double precision"/>
+	</column>
+	<constraint name="weight_pkey" type="pk-constr" factor="100" table="public.weight">
+		<columns names="ndb_no,seq" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="datsrcln_datasrc_id_idx" table="public.datsrcln"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="datasrc_id"/>
+		</idxelement>
+</index>
+
+<index name="food_des_fdgrp_cd_idx" table="public.food_des"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="fdgrp_cd"/>
+		</idxelement>
+</index>
+
+<index name="footnote_ndb_no_idx" table="public.footnote"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="ndb_no"/>
+		</idxelement>
+		<idxelement use-sorting="false">
+			<column name="nutr_no"/>
+		</idxelement>
+</index>
+
+<index name="nut_data_deriv_cd_idx" table="public.nut_data"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="deriv_cd"/>
+		</idxelement>
+</index>
+
+<index name="nut_data_nutr_no_idx" table="public.nut_data"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="nutr_no"/>
+		</idxelement>
+</index>
+
+<index name="nut_data_src_cd_idx" table="public.nut_data"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="src_cd"/>
+		</idxelement>
+</index>
+
+<textbox name="usda_desc" font-size="11">
+	<position x="21" y="15.273"/>
+	<comment><![CDATA[[ usda sample database ]
+
+The USDA Food Database is published by the US Department of Agriculture.
+
+Citation:
+
+U.S. Department of Agriculture, Agricultural Research Service. 2005. USDA Nutrient Database for Standard Reference,
+Release 18. Nutrient Data Laboratory Home Page, http://www.ars.usda.gov/ba/bhnrc/ndl
+
+USDA food composition data is in the public domain and there is no copyright. They would appreciate it if you would list
+them as the source of the data and when possible they would like to see the product which uses the data or be notified of its use.
+
+This model was reverse engineered from the original database available on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
+</textbox>
+
+<constraint name="datsrcln_datasrc_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.data_src" table="public.datsrcln">
+	<columns names="datasrc_id" ref-type="src-columns"/>
+	<columns names="datasrc_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="datsrcln_ndb_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.nut_data" table="public.datsrcln">
+	<columns names="ndb_no,nutr_no" ref-type="src-columns"/>
+	<columns names="ndb_no,nutr_no" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="food_des_fdgrp_cd_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fd_group" table="public.food_des">
+	<columns names="fdgrp_cd" ref-type="src-columns"/>
+	<columns names="fdgrp_cd" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="footnote_ndb_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.food_des" table="public.footnote">
+	<columns names="ndb_no" ref-type="src-columns"/>
+	<columns names="ndb_no" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="footnote_nutr_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.nutr_def" table="public.footnote">
+	<columns names="nutr_no" ref-type="src-columns"/>
+	<columns names="nutr_no" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="nut_data_deriv_cd_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.deriv_cd" table="public.nut_data">
+	<columns names="deriv_cd" ref-type="src-columns"/>
+	<columns names="deriv_cd" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="nut_data_ndb_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.food_des" table="public.nut_data">
+	<columns names="ndb_no" ref-type="src-columns"/>
+	<columns names="ndb_no" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="nut_data_nutr_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.nutr_def" table="public.nut_data">
+	<columns names="nutr_no" ref-type="src-columns"/>
+	<columns names="nutr_no" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="nut_data_src_cd_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.src_cd" table="public.nut_data">
+	<columns names="src_cd" ref-type="src-columns"/>
+	<columns names="src_cd" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="weight_ndb_no_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.food_des" table="public.weight">
+	<columns names="ndb_no" ref-type="src-columns"/>
+	<columns names="ndb_no" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_datsrcln_data_src" type="relfk"
+	 custom-color="#97b81e"
+	 src-table="public.datsrcln"
+	 dst-table="public.data_src"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="290.35" y="578.6"/>
+	<position x="290.35" y="382.6"/>
+	</line>
+</relationship>
+
+<relationship name="rel_datsrcln_nut_data" type="relfk"
+	 custom-color="#ee2638"
+	 src-table="public.datsrcln"
+	 dst-table="public.nut_data"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="607" y="556"/>
+	</line>
+</relationship>
+
+<relationship name="rel_food_des_fd_group" type="relfk"
+	 custom-color="#daa378"
+	 src-table="public.food_des"
+	 dst-table="public.fd_group"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1351" y="333"/>
+	<position x="1355" y="626"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_footnote_food_des" type="relfk"
+	 custom-color="#8a93ae"
+	 src-table="public.footnote"
+	 dst-table="public.food_des"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_footnote_nutr_def" type="relfk"
+	 custom-color="#3e33b8"
+	 src-table="public.footnote"
+	 dst-table="public.nutr_def"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_nut_data_deriv_cd" type="relfk"
+	 custom-color="#e250f2"
+	 src-table="public.nut_data"
+	 dst-table="public.deriv_cd"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="254.35" y="835.8"/>
+	<position x="254.35" y="659.6"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_nut_data_food_des" type="relfk"
+	 custom-color="#b4007d"
+	 src-table="public.nut_data"
+	 dst-table="public.food_des"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1084.35" y="751.8"/>
+	<position x="1084.35" y="318.6"/>
+	</line>
+</relationship>
+
+<relationship name="rel_nut_data_nutr_def" type="relfk"
+	 custom-color="#770084"
+	 src-table="public.nut_data"
+	 dst-table="public.nutr_def"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="650.85" y="765.8"/>
+	<position x="650.85" y="949.8"/>
+	</line>
+</relationship>
+
+<relationship name="rel_nut_data_src_cd" type="relfk"
+	 custom-color="#ad1a09"
+	 src-table="public.nut_data"
+	 dst-table="public.src_cd"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="778.85" y="821.8"/>
+	<position x="778.85" y="409.8"/>
+	</line>
+</relationship>
+
+<relationship name="rel_weight_food_des" type="relfk"
+	 custom-color="#9b3058"
+	 src-table="public.weight"
+	 dst-table="public.food_des"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1437.85" y="750.8"/>
+	<position x="1437" y="373"/>
+	</line>
+</relationship>
+
+</dbmodel>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,26 +31,26 @@ Operator::Operator(void)
 		operators[i]=nullptr;
 
 	hashes=merges=false;
-	argument_types[LEFT_ARG]=PgSQLType("any");
-	argument_types[RIGHT_ARG]=PgSQLType("any");
+  argument_types[LEFT_ARG]=PgSQLType(QString("any"));
+  argument_types[RIGHT_ARG]=PgSQLType(QString("any"));
 
-	attributes[ParsersAttributes::LEFT_TYPE]="";
-	attributes[ParsersAttributes::RIGHT_TYPE]="";
-	attributes[ParsersAttributes::COMMUTATOR_OP]="";
-	attributes[ParsersAttributes::NEGATOR_OP]="";
-	attributes[ParsersAttributes::RESTRICTION_FUNC]="";
-	attributes[ParsersAttributes::JOIN_FUNC]="";
-	attributes[ParsersAttributes::OPERATOR_FUNC]="";
-	attributes[ParsersAttributes::HASHES]="";
-	attributes[ParsersAttributes::MERGES]="";
-	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::REF_TYPE]="";
+	attributes[ParsersAttributes::LEFT_TYPE]=QString();
+	attributes[ParsersAttributes::RIGHT_TYPE]=QString();
+	attributes[ParsersAttributes::COMMUTATOR_OP]=QString();
+	attributes[ParsersAttributes::NEGATOR_OP]=QString();
+	attributes[ParsersAttributes::RESTRICTION_FUNC]=QString();
+	attributes[ParsersAttributes::JOIN_FUNC]=QString();
+	attributes[ParsersAttributes::OPERATOR_FUNC]=QString();
+	attributes[ParsersAttributes::HASHES]=QString();
+	attributes[ParsersAttributes::MERGES]=QString();
+	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
 }
 
 bool Operator::isValidName(const QString &name)
 {
 	//Warning: Do not alter the sequence of characters or the validation will fail
-	QString valid_chars="+-*/<>=~!@#%^&|'?";
+  QString valid_chars=QString("+-*/<>=~!@#%^&|'?");
 	int pos, len;
 	bool valid=true;
 
@@ -64,8 +64,8 @@ bool Operator::isValidName(const QString &name)
 		valid=!(valid_chars.indexOf(name[pos]) < 0);
 
 	//2) The name doesn't has sequences like -- or /* that defines SQL comments
-	if(valid) valid=(name.indexOf("--") < 0);
-	if(valid) valid=(name.indexOf("/*") < 0);
+  if(valid) valid=(name.indexOf(QLatin1String("--")) < 0);
+  if(valid) valid=(name.indexOf(QLatin1String("/*")) < 0);
 
 	//3) Case the name end with - or + it may own one or more chars in the set ~!@#%^&|'?
 	if(name[name.size()-1]=='-' || name[name.size()-1]=='+')
@@ -81,15 +81,12 @@ bool Operator::isValidName(const QString &name)
 
 void Operator::setName(const QString &name)
 {
-	if(name=="")
+  if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		if(!isValidName(name))
-			throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else
-			this->obj_name=name;
-	}
+	else	if(!isValidName(name))
+		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->obj_name=name;
 }
 
 void Operator::setFunction(Function *func, unsigned func_type)
@@ -102,20 +99,20 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		//Raises an error if the function is not allocated
 		if(!func)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-											.arg(Utf8String::create(this->getName(true)))
+                      .arg(/*Utf8String::create(*/this->getName(true))
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Raises an error if the parameter count is invalid. To be used by the operator
 		 the function must own 1 or 2 parameters */
 		else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(Utf8String::create(this->getName()))
+                      .arg(/*Utf8String::create(*/this->getName())
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			unsigned param_count=func->getParameterCount();
-			PgSQLType param_type1=PgSQLType("any"), param_type2=PgSQLType("any");
+      PgSQLType param_type1=PgSQLType(QString("any")), param_type2=PgSQLType(QString("any"));
 
 			//Get the function parameter to make validations
 			param_type1=func->getParameter(0).getType();
@@ -124,32 +121,33 @@ void Operator::setFunction(Function *func, unsigned func_type)
 			//Validates the function parameters according to the operator arguments
 
 			//ERROR 1: The function have parameters of the type 'any'
-			if((param_type1=="any" || (param_count==2 && param_type2=="any")) ||
+      if((param_type1==QString("any") || (param_count==2 && param_type2==QString("any"))) ||
 
 				 //ERROR 2: The function parameter count is 1 and the type of operator argument is not 'any'
-				 (param_count==1 && argument_types[0]!="any" && argument_types[1]!="any") ||
+         (param_count==1 && argument_types[0]!=QString("any") && argument_types[1]!=QString("any")) ||
 
 				 //ERROR 3: The function parameter count is 2 and the operator arguments is not 'any'
-				 (param_count==2 && ((argument_types[0]=="any" && argument_types[1]!="any") ||
-														 (argument_types[0]!="any" && argument_types[1]=="any"))) ||
+         (param_count==2 && ((argument_types[0]==QString("any") && argument_types[1]!=QString("any")) ||
+                             (argument_types[0]!=QString("any") && argument_types[1]==QString("any")))) ||
 
 				 /* ERROR 4:  The function parameter count is 2 and the argument types differs from
 											parameters type */
 				 (param_count==2 &&
-					((argument_types[0]=="any" || argument_types[1]=="any") ||
+          ((argument_types[0]==QString("any") || argument_types[1]==QString("any")) ||
 					 (argument_types[0]!=param_type1 || argument_types[1]!=param_type2))) ||
 
 				 //ERROR 5:  When the function has 1 parameter the type differ from the operator argument
 				 (param_count==1 &&
-					((argument_types[0]!="any" && argument_types[0]!=param_type1) ||
-					 (argument_types[1]!="any" && argument_types[1]!=param_type1))))
+          ((argument_types[0]!=QString("any") && argument_types[0]!=param_type1) ||
+           (argument_types[1]!=QString("any") && argument_types[1]!=param_type1))))
 				throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-												.arg(Utf8String::create(this->getName()))
+                        .arg(/*Utf8String::create(*/this->getName())
 												.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 												ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 
+	setCodeInvalidated(functions[func_type] != func);
 	functions[func_type]=func;
 }
 
@@ -159,6 +157,7 @@ void Operator::setArgumentType(PgSQLType arg_type, unsigned arg_id)
 	if(arg_id > RIGHT_ARG)
 		throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(argument_types[arg_id] != arg_type);
 	argument_types[arg_id]=arg_type;
 }
 
@@ -178,8 +177,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
-											.arg(Utf8String::create(oper->getSignature(true)))
-											.arg(Utf8String::create(this->getSignature(true))),
+                      .arg(/*Utf8String::create(*/oper->getSignature(true))
+                      .arg(/*Utf8String::create(*/this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		/* Validating Negator OP: According to the PostgreSQL documentation the negator
@@ -192,22 +191,25 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 						 argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
-											.arg(Utf8String::create(oper->getSignature(true)))
-											.arg(Utf8String::create(this->getSignature(true))),
+                      .arg(/*Utf8String::create(*/oper->getSignature(true))
+                      .arg(/*Utf8String::create(*/this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
+		setCodeInvalidated(operators[op_type] != oper);
 		operators[op_type]=oper;
 	}
 }
 
 void Operator::setHashes(bool value)
 {
+	setCodeInvalidated(hashes != value);
 	hashes=value;
 }
 
 void Operator::setMerges(bool value)
 {
+	setCodeInvalidated(merges != value);
 	merges=value;
 }
 
@@ -257,13 +259,13 @@ QString Operator::getSignature(bool format_name)
 
 	for(i=0; i < 2; i++)
 	{
-		if(argument_types[i]=="any")
-			args.push_back("NONE");
+    if(argument_types[i]==QString("any"))
+      args.push_back(QString("NONE"));
 		else
 			args.push_back(*argument_types[i]);
 	}
 
-	signature+="(" + args.join(",") + ")";
+  signature+=QString("(") + args.join(',') + QString(")");
 	return(signature);
 }
 
@@ -274,26 +276,29 @@ QString Operator::getCodeDefinition(unsigned def_type)
 
 QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def=getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return(code_def);
+
 	unsigned i;
-	QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
-			atribs_ops[]={ ParsersAttributes::COMMUTATOR_OP,
+	QString type_attribs[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
+			op_attribs[]={ ParsersAttributes::COMMUTATOR_OP,
 										 ParsersAttributes::NEGATOR_OP },
 
-			atribs_funcoes[]={ParsersAttributes::OPERATOR_FUNC,
-												ParsersAttributes::JOIN_FUNC,
-												ParsersAttributes::RESTRICTION_FUNC};
+			func_attribs[]={ParsersAttributes::OPERATOR_FUNC,
+											ParsersAttributes::JOIN_FUNC,
+											ParsersAttributes::RESTRICTION_FUNC};
 
 	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			if(argument_types[i]!="any")
-				attributes[atribs_tipos[i]]=(*argument_types[i]);
+      if(argument_types[i]!=QString("any"))
+				attributes[type_attribs[i]]=(*argument_types[i]);
 		}
 		else
 		{
-			attributes[atribs_tipos[i]]=argument_types[i].
-																	getCodeDefinition(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
+			attributes[type_attribs[i]]=argument_types[i].
+																	getCodeDefinition(SchemaParser::XML_DEFINITION,type_attribs[i]);
 		}
 	}
 
@@ -302,11 +307,11 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(operators[i])
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[atribs_ops[i]]=operators[i]->getName(true);
+				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
-				operators[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
-				attributes[atribs_ops[i]]=operators[i]->getCodeDefinition(def_type, true);
+				operators[i]->attributes[ParsersAttributes::REF_TYPE]=op_attribs[i];
+				attributes[op_attribs[i]]=operators[i]->getCodeDefinition(def_type, true);
 			}
 		}
 	}
@@ -316,17 +321,17 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(functions[i])
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[atribs_funcoes[i]]=functions[i]->getName(true);
+				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
-				attributes[atribs_funcoes[i]]=functions[i]->getCodeDefinition(def_type, true);
+				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attribs[i]);
+				attributes[func_attribs[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}
 	}
 
-	attributes[ParsersAttributes::HASHES]=(hashes ? "1" : "");
-	attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
+	attributes[ParsersAttributes::HASHES]=(hashes ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::MERGES]=(merges ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

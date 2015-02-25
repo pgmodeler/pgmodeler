@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,21 +28,15 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		Ui_RuleWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																						GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																						GlobalAttributes::CONFIGURATION_EXT);
+    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		command_hl=new SyntaxHighlighter(comando_txt, false);
-		command_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																		GlobalAttributes::DIR_SEPARATOR +
-																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																		GlobalAttributes::CONFIGURATION_EXT);
+    command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-		commands_tab->setHeaderIcon(QPixmap(":/icones/icones/codigosql.png"),0);
+    commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
@@ -112,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-		cond_expr_txt->setPlainText(Utf8String::create(rule->getConditionalExpression()));
+    cond_expr_txt->setPlainText(/*Utf8String::create(*/rule->getConditionalExpression());
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-			commands_tab->setCellText(Utf8String::create(rule->getCommand(i)),i,0);
+      commands_tab->setCellText(/*Utf8String::create(*/rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}

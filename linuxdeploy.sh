@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.4.0/5.4/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.3/5.3/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.4.0/5.4/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -19,37 +19,62 @@ esac
 #QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
-LOG=linuxdeploy.log
+LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-if-1.5.0
 
+STARTUP_SCRIPT="start-pgmodeler.sh"
+ENV_VARS_SCRIPT="pgmodeler.vars"
+BUILD_DIR="$PWD/build"
+INSTALL_ROOT="/opt/pgmodeler"
+INSTALLER_CONF_DIR="$PWD/installer/linux/config"
+INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/br.com.pgmodeler/data"
+QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
+DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
+  
 # Detecting current pgModeler version
-DEPLOY_VER=$(cat libutils/src/globalattributes.h | grep --color=never PGMODELER_VERSION | sed -r 's/.*PGMODELER_VERSION="(.*)",/\1/')
+DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
-PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 WITH_BUILD_NUM='-with-build-num'
 GEN_INSTALLER_OPT='-gen-installer'
+DEMO_VERSION_OPT='-demo-version'
+NO_QT_LIBS_OPT='-no-qt-libs'
 GEN_INST_PKG=0
+DEMO_VERSION=0
+BUNDLE_QT_LIBS=1
 
-if [[ "$*" == "$WITH_BUILD_NUM" ]]; then
-  PKGNAME="${PKGNAME}_${BUILD_NUM}"
-fi
+for param in $@; do
+ if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
+   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ fi
 
-if [[ "$*" == "$GEN_INSTALLER_OPT" ]]; then
-  GEN_INST_PKG=1
+ if [[ "$param" == "$GEN_INSTALLER_OPT" ]]; then
+   GEN_INST_PKG=1
+ fi
+
+ if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
+   DEMO_VERSION=1
+   GEN_INST_PKG=1
+   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+ 
+ if [[ "$param" == "$NO_QT_LIBS_OPT" ]]; then
+  BUNDLE_QT_LIBS=0
+ fi
+done
+
+if [ $DEMO_VERSION = 1 ]; then
+  PKGNAME="pgmodeler-demo-$ARCH"
+else
+  PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi
 
 PKGFILE=$PKGNAME.tar.gz
-NO_QT_LIBS_OPT='-no-qt-libs'
 
-if [[ "$*" == "$NO_QT_LIBS_OPT" ]]; then
+if [ $BUNDLE_QT_LIBS = 0 ]; then
   PKGFILE=$PKGNAME.tar.gz
-  BUNDLE_QT_LIBS=0
-else
-  BUNDLE_QT_LIBS=1
-  QT_CONF=build/qt.conf
-  DEP_PLUGINS_DIR=build/qtplugins
-  
+else 
   #Dependency qt plugins copied to build dir
   DEP_PLUGINS="imageformats/libqgif.so \
                imageformats/libqico.so \
@@ -74,11 +99,11 @@ else
            libicudata.so.5*"
 fi
 
-clear
+clear 
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <rkhaotix@gmail.com>"
+echo "Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -131,11 +156,15 @@ if [ $BUNDLE_QT_LIBS = 0 ]; then
 fi
 
 if [ $GEN_INST_PKG = 1 ]; then
-  echo "The tarball and installer will be generated. (Found $GEN_INSTALLER_OPT)"
+  echo "The installer will be generated. (Found $GEN_INSTALLER_OPT)"
+fi
+
+if [ $DEMO_VERSION = 1 ]; then
+  echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
 
 echo "Cleaning previous compilation..."
-rm -r build/* &> $LOG
+rm -r $BUILD_DIR/* &> $LOG
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
@@ -149,7 +178,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make -j5  >> $LOG 2>&1
+make -j7  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -159,7 +188,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installing dependencies..."
-make install  >> $LOG 2>&1
+make install INSTALL_ROOT=$BUILD_DIR  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -174,7 +203,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
  for lib in $QT_LIBS; do
-  cp $QT_ROOT/lib/$lib build/ >> $LOG 2>&1
+  cp $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
@@ -190,7 +219,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  mkdir $DEP_PLUGINS_DIR
  echo "[Paths]" > $QT_CONF
  echo "Prefix=." >> $QT_CONF
- echo "Plugins=qtplugins" >> $QT_CONF
+ echo "Plugins=lib/qtplugins" >> $QT_CONF
  echo "Libraries=." >> $QT_CONF
 
  #Copies the qt plugins to build/qtplugins
@@ -209,27 +238,53 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 
 fi
 
-echo "Generating tarball..."
-rm -r $PKGNAME  >> $LOG 2>&1
-mkdir $PKGNAME  >> $LOG 2>&1
-cp -r build/* $PKGNAME  >> $LOG 2>&1
-tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
-rm -r $PKGNAME  >> $LOG 2>&1
+echo "Copying scripts..."
+cp $STARTUP_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
+cp $ENV_VARS_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
-  echo
-  echo "** Failed to create package!"
-  echo
-  exit 1
+    echo
+    echo "** Failed to copy startup script!"
+    echo
+    exit 1
 fi
 
-echo "File created: $PKGFILE"
+if [ $DEMO_VERSION = 0 ]; then
+  echo "Generating tarball..."
+  rm -r $PKGNAME  >> $LOG 2>&1
+  mkdir $BUILD_DIR/$PKGNAME  >> $LOG 2>&1
+  cp -r $BUILD_DIR/$INSTALL_ROOT/* $BUILD_DIR/$PKGNAME  >> $LOG 2>&1
+  
+  cd $BUILD_DIR >> $LOG 2>&1
+  tar -zcvf $PKGFILE $PKGNAME  >> $LOG 2>&1
+  rm -r $PKGNAME  >> $LOG 2>&1
+  cd .. >> $LOG 2>&1
+
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create package!"
+    echo
+    exit 1
+  fi
+
+  echo "File created: build/$PKGFILE"
+fi
 
 
 if [ $GEN_INST_PKG = 1 ]; then
-
   echo "Generating installer..."
-  $QT_IFW_ROOT/bin/binarycreator -c installer/linux/config/config.xml -p installer/linux/packages "$PKGNAME.run" >> $LOG 2>&1
+ 
+  rm $INSTALLER_DATA_DIR >> $LOG 2>&1
+  ln -sf "$BUILD_DIR/$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
+   
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to configure installer data dir!"
+    echo
+    exit 1
+  fi   
+ 
+  $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$BUILD_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
    echo
@@ -238,7 +293,7 @@ if [ $GEN_INST_PKG = 1 ]; then
    exit 1
  fi
 
- echo "File created: $PKGNAME.run"
+ echo "File created: build/$PKGNAME.run"
 fi
 
 

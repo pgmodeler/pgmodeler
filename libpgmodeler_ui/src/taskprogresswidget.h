@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
-#include "utf8string.h"
 
 using namespace std;
 
@@ -47,6 +46,7 @@ class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 	public slots:
 		void show(void);
 		void close(void);
+		void updateProgress(int progress, unsigned icon_id);
 		void updateProgress(int progress, QString text, unsigned icon_id);
 };
 

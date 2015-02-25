@@ -1,0 +1,26 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT relationships (connection, foreign-keys, name-patterns)>
+
+<!ELEMENT connection EMPTY>
+<!ATTLIST connection mode (fk-to-pk|center-pnts) "fk-to-pk">
+
+<!ELEMENT foreign-keys EMPTY>
+<!ATTLIST foreign-keys deferrable (false|true) "false">
+<!ATTLIST foreign-keys defer-type CDATA #IMPLIED>
+<!ATTLIST foreign-keys upd-action CDATA #IMPLIED>
+<!ATTLIST foreign-keys del-action CDATA #IMPLIED>
+
+<!ELEMENT name-patterns (patterns+)>
+
+<!ELEMENT patterns EMPTY>
+<!ATTLIST patterns type (rel11|rel1n|relnn|relgen|reldep) "rel11">
+<!ATTLIST patterns src-col-pattern CDATA #IMPLIED>
+<!ATTLIST patterns dst-col-pattern CDATA #IMPLIED>
+<!ATTLIST patterns src-fk-pattern CDATA #IMPLIED>
+<!ATTLIST patterns dst-fk-pattern CDATA #IMPLIED>
+<!ATTLIST patterns pk-pattern CDATA #IMPLIED>
+<!ATTLIST patterns uq-pattern CDATA #IMPLIED>
+<!ATTLIST patterns pk-col-pattern CDATA #IMPLIED>

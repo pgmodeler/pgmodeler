@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,11 +65,11 @@ void SequenceWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	else
 	{
 		cyclic_chk->setChecked(false);
-		start_edt->setText("1");
+    start_edt->setText(QString("1"));
 		maximum_edt->setText(Sequence::MAX_POSITIVE_VALUE);
-		minimum_edt->setText("0");
-		cache_edt->setText("1");
-		increment_edt->setText("1");
+    minimum_edt->setText(QString("0"));
+    cache_edt->setText(QString("1"));
+    increment_edt->setText(QString("1"));
 	}
 
 	BaseObjectWidget::setAttributes(model,op_list,sequence,schema);

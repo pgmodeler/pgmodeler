@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -135,6 +135,10 @@ void ObjectFinderWidget::selectObject(void)
 	{
 		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
 		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
+		TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+
+		if(tab_obj && !graph_obj)
+			graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
 		//Highlight the graphical object when the 'highlight' button is checked
 		if(graph_obj && highlight_btn->isChecked())
@@ -192,49 +196,62 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
 			if(objs[i]->getObjectType()==BASE_RELATIONSHIP)
-				str_aux="tv";
+        str_aux=QString("tv");
 			else
 				str_aux.clear();
 
-			//First column: Object name
-			tab_wgt->insertRow(lin_idx);		
-			tab_item=new QTableWidgetItem;
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
-			fnt=tab_item->font();
+			tab_wgt->insertRow(lin_idx);
 
-			tab_item->setText(Utf8String::create(objs[i]->getName()));
-			tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-																BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux + QString(".png")));
+			//First column: Object id
+			tab_item=new QTableWidgetItem;
+			//tab_item->setFont(fnt);
+			tab_item->setText(QString::number(objs[i]->getObjectId()));
+			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
 			tab_wgt->setItem(lin_idx, 0, tab_item);
 
-			if(objs[i]->isProtected() || objs[i]->isSystemObject())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
-			}
-			else if(dynamic_cast<TableObject *>(objs[i]) &&
-							dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
-			}
 
-			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
-			tab_item->setFont(fnt);
-			fnt.setStrikeOut(false);
-
-			//Second column: Object type
+			//Second column: Object name
 			if(tab_wgt->columnCount() > 1)
+			{
+				tab_item=new QTableWidgetItem;
+				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
+				fnt=tab_item->font();
+
+        tab_item->setText(/*Utf8String::create(*/objs[i]->getName());
+				tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
+                                  BaseObject::getSchemaName(objs[i]->getObjectType()) +
+                                  str_aux + QString(".png")));
+				tab_wgt->setItem(lin_idx, 1, tab_item);
+
+				if(objs[i]->isProtected() || objs[i]->isSystemObject())
+				{
+					fnt.setItalic(true);
+					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+				}
+				else if(dynamic_cast<TableObject *>(objs[i]) &&
+								dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
+				{
+					fnt.setItalic(true);
+					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
+				}
+
+				fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
+				tab_item->setFont(fnt);
+				fnt.setStrikeOut(false);
+			}
+
+			//Third column: Object type
+			if(tab_wgt->columnCount() > 2)
 			{
 				fnt.setItalic(true);
 				tab_item=new QTableWidgetItem;
 				tab_item->setFont(fnt);
 				tab_item->setText(objs[i]->getTypeName());
-				tab_wgt->setItem(lin_idx, 1, tab_item);
+				tab_wgt->setItem(lin_idx, 2, tab_item);
 			}
 
-			//Third column: Parent object name
-			if(tab_wgt->columnCount() > 2)
+			//Fourth column: Parent object name
+			if(tab_wgt->columnCount() > 3)
 			{
 				tab_item=new QTableWidgetItem;
 
@@ -247,10 +264,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				else
 					parent_obj=objs[i]->getDatabase();
 
-				tab_item->setText(parent_obj ? Utf8String::create(parent_obj->getName()) : "-");
+        tab_item->setText(parent_obj ? /*Utf8String::create(*/parent_obj->getName() : QString("-"));
         tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
 
-				tab_wgt->setItem(lin_idx, 2, tab_item);
+				tab_wgt->setItem(lin_idx, 3, tab_item);
 
 				if(parent_obj)
 				{
@@ -266,14 +283,14 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				}
 			}
 
-			//Fourth column: Parent object type
-			if(tab_wgt->columnCount() > 3)
+			//Fifth column: Parent object type
+			if(tab_wgt->columnCount() > 4)
 			{
 				tab_item=new QTableWidgetItem;
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? parent_obj->getTypeName() : "-");
-				tab_wgt->setItem(lin_idx, 3, tab_item);
+        tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
+				tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 
 			lin_idx++;
@@ -300,11 +317,11 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			item=new QListWidgetItem;
 
 			if(types[type_id]==BASE_RELATIONSHIP)
-				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + "tv";
+        str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-			icon=QPixmap(Utf8String::create(":/icones/icones/") + str_aux + QString(".png"));
+      icon=QPixmap(/*Utf8String::create(*/QString(":/icones/icones/") + str_aux + QString(".png"));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

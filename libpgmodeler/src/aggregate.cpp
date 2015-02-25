@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ Aggregate::Aggregate(void)
 	obj_type=OBJ_AGGREGATE;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[ParsersAttributes::TYPES]="";
-	attributes[ParsersAttributes::TRANSITION_FUNC]="";
-	attributes[ParsersAttributes::STATE_TYPE]="";
-	attributes[ParsersAttributes::BASE_TYPE]="";
-	attributes[ParsersAttributes::FINAL_FUNC]="";
-	attributes[ParsersAttributes::INITIAL_COND]="";
-	attributes[ParsersAttributes::SORT_OP]="";
+	attributes[ParsersAttributes::TYPES]=QString();
+	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
+	attributes[ParsersAttributes::STATE_TYPE]=QString();
+	attributes[ParsersAttributes::BASE_TYPE]=QString();
+	attributes[ParsersAttributes::FINAL_FUNC]=QString();
+	attributes[ParsersAttributes::INITIAL_COND]=QString();
+	attributes[ParsersAttributes::SORT_OP]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
@@ -41,10 +41,11 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 	//Checks if the function is valid, if not the case raises an error
 	if(!isValidFunction(func_idx, func))
 		throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
-										.arg(Utf8String::create(this->getName()))
+                    .arg(/*Utf8String::create(*/this->getName())
 										.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
 										ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	setCodeInvalidated(functions[func_idx]!=func);
 	functions[func_idx]=func;
 }
 
@@ -84,11 +85,13 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 void Aggregate::setStateType(PgSQLType state_type)
 {
+	setCodeInvalidated(this->state_type != state_type);
 	this->state_type=state_type;
 }
 
 void Aggregate::setInitialCondition(const QString &cond)
 {
+	setCodeInvalidated(initial_condition != cond);
 	initial_condition=cond;
 }
 
@@ -114,12 +117,13 @@ void Aggregate::setSortOperator(Operator *sort_op)
 			throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
+	setCodeInvalidated(sort_operator != sort_op);
 	this->sort_operator=sort_op;
 }
 
 void Aggregate::setTypesAttribute(unsigned def_type)
 {
-	QString str_types;
+  QString str_types;
 	unsigned i, count;
 
 	count=data_types.size();
@@ -127,17 +131,17 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			str_types+=*(data_types[i]);
-			if(i < (count-1)) str_types+=",";
+      str_types+=~data_types[i];
+      if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
-	}
+  }
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(str_types.isEmpty()) str_types="*";
+  if(str_types.isEmpty()) str_types='*';
 
-	attributes[ParsersAttributes::TYPES]=str_types;
+  attributes[ParsersAttributes::TYPES]=str_types;
 }
 
 void Aggregate::addDataType(PgSQLType type)
@@ -145,11 +149,12 @@ void Aggregate::addDataType(PgSQLType type)
 	//Case the data type already exists in the aggregate raise an exception
 	if(isDataTypeExist(type))
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
-										.arg(Utf8String::create(~type))
-										.arg(Utf8String::create(this->getName(true))),
+                    .arg(/*Utf8String::create(*/~type)
+                    .arg(/*Utf8String::create(*/this->getName(true)),
 										ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	data_types.push_back(type);
+	setCodeInvalidated(true);
 }
 
 void Aggregate::removeDataType(unsigned type_idx)
@@ -160,11 +165,13 @@ void Aggregate::removeDataType(unsigned type_idx)
 
 	//Removes the type at the specified position
 	data_types.erase(data_types.begin() + type_idx);
+	setCodeInvalidated(true);
 }
 
 void Aggregate::removeDataTypes(void)
 {
 	data_types.clear();
+	setCodeInvalidated(true);
 }
 
 bool Aggregate::isDataTypeExist(PgSQLType type)
@@ -181,7 +188,7 @@ bool Aggregate::isDataTypeExist(PgSQLType type)
 		itr++;
 	}
 
-	return(enc);
+  return(enc);
 }
 
 unsigned Aggregate::getDataTypeCount(void)
@@ -224,6 +231,9 @@ PgSQLType Aggregate::getDataType(unsigned type_idx)
 
 QString Aggregate::getCodeDefinition(unsigned def_type)
 {
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return(code_def);
+
 	setTypesAttribute(def_type);
 
 	if(functions[TRANSITION_FUNC])
@@ -258,7 +268,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
-	if(initial_condition!="")
+  if(!initial_condition.isEmpty())
 		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -266,6 +276,40 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	else
 		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
+QString Aggregate::getDropDefinition(bool cascade)
+{
+  setTypesAttribute(SchemaParser::SQL_DEFINITION);
+  return(BaseObject::getDropDefinition(cascade));
+}
+
+QString Aggregate::getAlterDefinition(BaseObject *object)
+{
+  try
+  {
+    setTypesAttribute(SchemaParser::SQL_DEFINITION);
+    return(BaseObject::getAlterDefinition(object));
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+QString Aggregate::getSignature(bool format)
+{
+  QStringList types;
+
+  if(data_types.empty())
+    types.push_back(QString("*"));
+  else
+  {
+    for(auto tp : data_types)
+      types.push_back(~tp);
+  }
+
+  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 

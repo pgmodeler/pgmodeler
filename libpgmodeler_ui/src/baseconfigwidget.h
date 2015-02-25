@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 /**
 \ingroup libpgmodeler_ui
 \class BaseConfigWidget
-\brief Implements base operations to load/save XML based configuration files.
+\brief Implements base operations to load/save XML based configuration files. This class reunites basic methods to perform
+       the load and save operation. Each subclass must satisfy the contract (implement abstract methods) and have their own
+       static configuration parameter set as following: map<QStrig, attribs_map>
 */
 
 #ifndef BASE_CONF_WIDGET_H
@@ -29,44 +31,58 @@
 #include "xmlparser.h"
 #include "parsersattributes.h"
 #include <algorithm>
+#include <QWidget>
 
-class BaseConfigWidget {
+class BaseConfigWidget: public QWidget {
+  private:
+    Q_OBJECT
+
+    bool config_changed;
+
 	protected:
-		/*! \brief Stores the configuration params, the main key is the xml element name
-		 and the value is a map where the key is the attribute name and the value
-		 is the current attribute value */
-		map<QString, attribs_map > config_params;
+		XMLParser xmlparser;
+    SchemaParser schparser;
 
-		/*! \brief Saves the configuration on file. The conf_id param indicates the type of
-		 configuration to be saved. (see GlobalAttributes::*_CONF) */
-		void saveConfiguration(const QString &conf_id);
+    /*! \brief Saves the configuration params on file. The conf_id param indicates the type of
+     configuration to be saved. (see GlobalAttributes::*_CONF) and config_params the map containing the
+     configuration values */
+    void saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params);
 
 		/*! \brief Loads a configuration from file. The vector key_attribs is used to specify the xml element name
 		 considered as a key on the configuration map */
-		void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
+    void loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs=vector<QString>());
 
 		//! \brief Get a configuratoin key from the xml parser
-		void getConfigurationParams(const vector<QString> &key_attribs);
+    void getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs);
 
 		//! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
-		void restoreDefaults(const QString &conf_id);
+    void restoreDefaults(const QString &conf_id);
 
-	public:
-		BaseConfigWidget(void){}
+    //! brief Adds a parameter to the specified configuration parameters set
+    static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
 
-		//! \brief Adds a configuration param to the configuration map. Replaces the values if the param already exists.
-		void addConfigurationParam(const QString &param, const attribs_map &attribs);
+    void showEvent(QShowEvent *);
 
-		//! \brief Gets the parameters loaded from file
-		map<QString, attribs_map > getConfigurationParams(void);
+  public:
+    BaseConfigWidget(QWidget *parent = 0);
+    ~BaseConfigWidget(void){}
 
-		//! \brief Removes the values for the specified configuration parameter
-		void removeConfigurationParam(const QString &param);
+    bool isConfigurationChanged(void);
 
-		//! \brief Removes all the configuration params
-		void removeConfigurationParams(void);
+    //! brief Applies the configuration to object
+    virtual void applyConfiguration(void)=0;
 
-		virtual void applyConfiguration(void)=0;
+    //! brief Loads a set of configurations from a file
+    virtual void loadConfiguration(void)=0;
+
+    //! brief Saves the current settings to a file
+    virtual void saveConfiguration(void)=0;
+
+    //! brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
+    virtual void restoreDefaults(void)=0;
+
+  public slots:
+    void setConfigurationChanged(bool changed=true);
 };
 
 #endif

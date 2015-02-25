@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,25 +17,20 @@
 */
 
 #include "xmlparser.h"
+#include <QUrl>
 
-QString XMLParser::xml_doc_filename="";
-QString XMLParser::xml_buffer="";
-QString XMLParser::dtd_decl="";
-QString XMLParser::xml_decl="";
-xmlNode *XMLParser::root_elem=nullptr;
-xmlNode *XMLParser::curr_elem=nullptr;
-xmlDoc *XMLParser::xml_doc=nullptr;
-stack<xmlNode*> XMLParser::elems_stack;
-
-const QString XMLParser::CHAR_AMP="&amp;";
-const QString XMLParser::CHAR_LT="&lt;";
-const QString XMLParser::CHAR_GT="&gt;";
-const QString XMLParser::CHAR_QUOT="&quot;";
-const QString XMLParser::CHAR_APOS="&apos;";
+const QString XMLParser::CHAR_AMP=QString("&amp;");
+const QString XMLParser::CHAR_LT=QString("&lt;");
+const QString XMLParser::CHAR_GT=QString("&gt;");
+const QString XMLParser::CHAR_QUOT=QString("&quot;");
+const QString XMLParser::CHAR_APOS=QString("&apos;");
 
 XMLParser::XMLParser(void)
 {
-  xmlInitParser();
+	root_elem=nullptr;
+	curr_elem=nullptr;
+	xml_doc=nullptr;
+	xmlInitParser();
 }
 
 XMLParser::~XMLParser(void)
@@ -53,13 +48,13 @@ void XMLParser::removeDTD(void)
 		/* Removes the current DTD from document.
 		 If the user attempts to manipulate the structure of
 		 document damaging its integrity. */
-		pos1=xml_buffer.indexOf("<!DOCTYPE");
-		pos2=xml_buffer.indexOf("]>\n");
-		pos3=xml_buffer.indexOf("\">\n");
+    pos1=xml_buffer.indexOf(QLatin1String("<!DOCTYPE"));
+    pos2=xml_buffer.indexOf(QLatin1String("]>\n"));
+    pos3=xml_buffer.indexOf(QLatin1String("\">\n"));
 		if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
 		{
 			len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-			xml_buffer.replace(pos1,len,"");
+      xml_buffer.replace(pos1,len,QString());
 		}
 	}
 }
@@ -71,7 +66,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 		QFile input;
 		QString buffer;
 
-		if(filename!="")
+    if(!filename.isEmpty())
 		{
 			//Opens a file stream using the file name
 			input.setFileName(filename);
@@ -106,18 +101,18 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 		if(xml_buf.isEmpty())
 			throw Exception(ERR_ASG_EMPTY_XML_BUFFER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		pos1=xml_buf.indexOf("<?xml");
-		pos2=xml_buf.indexOf("?>");
+    pos1=xml_buf.indexOf(QLatin1String("<?xml"));
+    pos2=xml_buf.indexOf(QLatin1String("?>"));
 		xml_buffer=xml_buf;
 
 		if(pos1 >= 0 && pos2 >= 0)
 		{
 			tam=(pos2-pos1)+3;
 			xml_decl=xml_buffer.mid(pos1, tam);
-			xml_buffer.replace(pos1,tam,"");
+      xml_buffer.replace(pos1,tam,QString());
 		}
 		else
-			xml_decl="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+      xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
 		removeDTD();
 		readBuffer();
@@ -139,14 +134,17 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	#ifndef Q_OS_WIN
-		fmt_dtd_file="file://";
+    fmt_dtd_file=QString("file://");
 	#else
-		fmt_dtd_file="file:///";
+    fmt_dtd_file=QString("file:///");
 	#endif
 
-	//Formats the dtd file path in order to replace spaces by %20 (url format)
-	fmt_dtd_file+=QFileInfo(dtd_file).absoluteFilePath();
-	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  fmt_dtd_file.replace(QString(" "),QString("%20")) + "\">\n";
+	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
+	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
+  dtd_decl=QString("<!DOCTYPE ") + dtd_name +
+           QString(" SYSTEM ") +
+           QString("\"") +
+           fmt_dtd_file + QString("\">\n");
 }
 
 void XMLParser::readBuffer(void)
@@ -188,7 +186,7 @@ void XMLParser::readBuffer(void)
 			//Formats the error
 			msg=xml_error->message;
 			file=xml_error->file;
-			if(!file.isEmpty()) file="("+file+")";
+      if(!file.isEmpty()) file=QString("(%1)").arg(file);
 			msg.replace("\n"," ");
 
 			//Restarts the parser
@@ -258,12 +256,12 @@ void XMLParser::restartParser(void)
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
 	}
-	dtd_decl=xml_buffer=xml_decl="";
+  dtd_decl=xml_buffer=xml_decl=QString();
 
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-	xml_doc_filename="";
+  xml_doc_filename=QString();
   xmlResetLastError();
 }
 
@@ -292,25 +290,29 @@ bool XMLParser::accessElement(unsigned elem_type)
 	return(has_elem);
 }
 
-bool XMLParser::hasElement(unsigned tipo_elem)
+bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 {
 	if(!root_elem)
 		throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(tipo_elem==ROOT_ELEMENT)
+  if(elem_type==ROOT_ELEMENT)
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
-		return(curr_elem!=root_elem && curr_elem->parent!=nullptr);
-	else if(tipo_elem==CHILD_ELEMENT)
+    return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
+           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
+  else if(elem_type==CHILD_ELEMENT)
 		//Returns the verification if the current element has children
-		return(curr_elem->children!=nullptr);
-	else if(tipo_elem==NEXT_ELEMENT)
-		return(curr_elem->next!=nullptr);
+    return(curr_elem->children!=nullptr &&
+           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
+  else if(elem_type==NEXT_ELEMENT)
+    return(curr_elem->next!=nullptr &&
+           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
 	else
 		/* The second comparison in the expression is made for the root element
 		 because libxml2 places the previous element as the root itself */
-		return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem);
+    return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
+           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
 bool XMLParser::hasAttributes(void)

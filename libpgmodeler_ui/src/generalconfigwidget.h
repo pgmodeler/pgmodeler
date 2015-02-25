@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,25 +27,35 @@
 
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "objectsscene.h"
-#include "operationlist.h"
-#include "modelwidget.h"
 #include "messagebox.h"
+#include "hinttextwidget.h"
 
-class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
+class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
+
+    QWidgetList child_wgts;
+    static map<QString, attribs_map> config_params;
+
 		static const unsigned UNIT_MILIMETERS=0,
                           UNIT_POINT=1,
 													UNIT_INCHS=2,
 													UNIT_CENTIMETERS=3;
 
+    HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
+    *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
+    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht, *code_completion_ht;
+
+    void hideEvent(QHideEvent *);
 
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
+    static void addConfigurationParam(const QString &param, const attribs_map &attribs);
+    static void removeConfigurationParam(const QRegExp &param_reg);
+    static map<QString, attribs_map> getConfigurationParams(void);
 
 	public slots:
 		void applyConfiguration(void);

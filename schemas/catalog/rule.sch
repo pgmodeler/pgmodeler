@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if @{list} %then
+%if {list} %then
 [SELECT rl.oid, rl.rulename AS name
   FROM (
 	SELECT rw.oid, rw.*
@@ -11,27 +11,36 @@
   ) AS rl
   LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v') ]
 
-  %if @{schema} %then
+  %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
-      WHERE ns.nspname= ] '@{schema}'
+      WHERE ns.nspname= ] '{schema}'
 
-    %if @{table} %then
-     [ AND cl.relname=]'@{table}'
+    %if {table} %then
+     [ AND cl.relname=]'{table}'
     %end
   %end
 
-  %if @{last-sys-oid} %then
-    %if @{schema} %then
+  %if {last-sys-oid} %then
+    %if {schema} %then
       [ AND ]
     %else
       [ WHERE ]
     %end
 
-    [ rl.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+    [ rl.oid ] {oid-filter-op} $sp {last-sys-oid}
+  %end
+
+  %if {not-ext-object} %then
+    %if %not {last-sys-oid} %and %not {schema} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+      ( {not-ext-object} )
   %end
 
 %else
-    %if @{attribs} %then
+    %if {attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,
 	      pg_get_ruledef(rl.oid) AS commands,
 	      ds.description AS comment,
@@ -56,28 +65,42 @@
       LEFT JOIN pg_class AS cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v')
       LEFT JOIN pg_description ds ON ds.objoid = rl.oid ]
 
-      %if @{schema} %then
+      %if {schema} %then
 	[ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
-	  WHERE ns.nspname= ] '@{schema}'
+	  WHERE ns.nspname= ] '{schema}'
 
-	%if @{table} %then
-	  [ AND cl.relname=]'@{table}'
+	%if {table} %then
+	  [ AND cl.relname=]'{table}'
 	%end
       %end
 
-      %if @{last-sys-oid} %then
-	%if @{schema} %then
+      %if {last-sys-oid} %then
+	%if {schema} %then
 	 [ AND ]
 	%else
 	 [ WHERE ]
 	%end
 
-	[ rl.oid ] @{oid-filter-op} $sp @{last-sys-oid}
+	[ rl.oid ] {oid-filter-op} $sp {last-sys-oid}
       %end
 
-      %if @{filter-oids} %then
-	[ AND rl.oid IN (] @{filter-oids} )
+      %if {filter-oids} %then
+        %if %not {last-sys-oid} %then
+          [ WHERE ]
+        %else
+          [ AND ]
+        %end
+        [ rl.oid IN (] {filter-oids} )
       %end
+
+        %if {not-ext-object} %then
+          %if %not {last-sys-oid} %and %not {filter-oids} %and %not {schema} %then
+            [ WHERE ]
+          %else
+            [ AND ]
+          %end
+          ( {not-ext-object} )
+        %end
 
     %end
 %end

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2014 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,14 +31,13 @@
 #include <signal.h>
 #include <vector>
 #include <deque>
-#include "utf8string.h"
 
 using namespace std;
 
-const int ERROR_COUNT=216;
+static const int ERROR_COUNT=222;
 
 /*
- ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
+ ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
 
  OPERATION_CODE is composed as:
 	 INS=Insertion
@@ -156,7 +155,7 @@ enum ErrorType {
 	ERR_REF_OBJ_INEXISTS_MODEL,
 	ERR_REF_INEXIST_USER_TYPE,
 	ERR_ASG_INV_MAX_SIZE_OP_LIST,
-	ERR_FILE_NOT_WRITTEN,
+  ERR_FILE_DIR_NOT_WRITTEN,
 	ERR_FILE_NOT_WRITTER_INV_DEF,
 	ERR_DUPLIC_RELATIONSHIP,
 	ERR_INS_REL_GENS_REDUNDACY,
@@ -198,11 +197,13 @@ enum ErrorType {
 	ERR_EXPORT_FAILURE,
 	ERR_PLUGIN_NOT_LOADED,
 	ERR_PLUGINS_NOT_LOADED,
-	ERR_INVALID_SYNTAX,
-	ERR_INV_CONDITIONAL,
-	ERR_UNK_ATTRIBUTE,
-	ERR_INV_METACHARACTER,
+  ERR_INV_SYNTAX,
+  ERR_INV_INSTRUCTION,
+  ERR_UNK_ATTRIBUTE,
+  ERR_INV_METACHARACTER,
+  ERR_INV_OPERATOR_IN_EXPR,
 	ERR_UNDEF_ATTRIB_VALUE,
+  ERR_INV_ATTRIBUTE,
 	ERR_ASG_EMPTY_XML_BUFFER,
 	ERR_FILE_DIR_NOT_ACCESSED,
 	ERR_ASG_EMPTY_DTD_FILE,
@@ -253,6 +254,7 @@ enum ErrorType {
 	ERR_REF_INV_NAME_PATTERN_ID,
 	ERR_INV_USE_VARIADIC_PARAM_MODE,
 	ERR_MIX_INCOMP_EXPORT_OPTS,
+  ERR_MIX_INCOMP_DROP_OPTS,
 	ERR_INV_ID_SWAP_SAME_OBJECT,
 	ERR_INV_ID_SWAP_INV_OBJ_TYPE,
 	ERR_ASG_WGT_ALREADY_HAS_PARENT,
@@ -266,6 +268,9 @@ enum ErrorType {
   ERR_INV_USE_TMPNAMES_EXPORT_OPT,
 	ERR_INV_CONV_INTEGER_TO_SERIAL,
 	ERR_ASG_INV_EVENT_TRIGGER_VARIABLE,
+	ERR_ROW_DATA_NOT_MANIPULATED,
+  ERR_MALFORMED_UNESCAPED_VALUE,
+  ERR_UNDO_REDO_OPR_INV_OBJECT
 };
 
 class Exception {
@@ -311,12 +316,12 @@ class Exception {
 
 	public:
 		Exception(void);
-		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
-		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
-		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info="");
-		Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+    Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+    Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+    Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 
 		~Exception(void){}
 		QString getErrorMessage(void);
