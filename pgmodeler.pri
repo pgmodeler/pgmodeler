@@ -24,10 +24,8 @@ defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 unix {
  BUILDNUM=$$system("date '+%Y%m%d'")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
-}
-else
-{
- BUILDNUM=$$system("date '+%Y%m%d'")
+} else {
+ BUILDNUM=$$system('wingetdate.bat')
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 
