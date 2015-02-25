@@ -1,6 +1,36 @@
 Change Log
 ---------
 
+v0.8.0
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: February 27, 2015</em><br/>
+
+* [Change] Minor adjustments on ModelValidationHelper.
+* [Change] Minor adjustments on CustomSQLWidget.
+* [Change] Included the delete cascade action to Edit menu in MainWindow.
+* [Change] Minor widget adjustments on ModelDatabaseDiffForm.
+* [Change] Minor improvements when saving temp models. Now the saving thread will not run if the diff/export/import dialogs are focused avoiding (rare) race conditions.
+* [Change] Improved the update notifier to display a recover link and purchase link on the "Get binary package" button menu.
+* [Change] Minor adjustment on output icons at ModelExportForm.
+* [Change] Improvement on DatabaseModel::getObjectReferences to retrieve indexes as references to columns. This solve the bug related to import and diff processes that was causing detached columns to be dropped even if there were indexes referencing those columns.
+* [Change] Added a more friendly error message when the user try to undo/redo an invalid operation at operations history.
+* [Change] Minor improvement on ConnectionsConfigWidget adding the ability to make the configured initial database to be auto browsed when using the connection to manage objects on Manage view.
+* [Fix] Minor fix on crash handler startup. Now exceptions occurred during the process are printed to stdout.
+* [Fix] Fix a crash when pasting objects right after closing the source model (from where the objects were copied/cut).
+* [Fix] Minor fix on ModelWidget::showObjectForm to correctly show permissions details.
+* [Fix] Minor fix on the import process. Now the majority of problems related to objects that are created before their dependencies are solved.
+* [Fix] Fixed some bug related to object duplication error treatment on ModelExportHelper.
+* [Fix] Fixed a crash on connections config dialog when user removed a single connection and close the application, causing segmentation fault.
+* [Fix] Minor fix on SQLToolWidget to avoid the disabling of SQL command input and controls when a database is dropped and there is at least one database being browsed.
+* [Fix] Minor fix on session saving process.
+* [Fix] Fixed a bug that was causing relationship points to be moved twice when multiple objects were selected on the canvas area.
+* [Fix] Fixed some syntax errors on snippets.conf file.
+* [Fix] Fixed a bug that was preventing global settings for relationships to be persisted.
+* [Fix] Fixed a bug when importing permissions related to functions.
+* [Fix] Minor fix on signal/slot connection order in NewObjectOverlayWidget.
+* [Fix] Minor improvements on swap objects ids dialog.
+
 v0.8.0-beta2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
