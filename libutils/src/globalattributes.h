@@ -42,7 +42,7 @@ namespace GlobalAttributes {
   PGMODELER_URI=QString("pgmodeler.com.br"),
   PGMODELER_VERSION=QString("0.8.0"),
   PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
-  PGMODELER_BUILD_NUMBER=QDate::fromString(QString(__DATE__).simplified(), "MMM d yyyy").toString("yyyyMMdd"),
+  PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
   PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
   PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
   PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
