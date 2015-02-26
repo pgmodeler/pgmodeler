@@ -140,11 +140,13 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Updates on the tree under the current selected object
     void updateCurrentItem(void);
 
-    //! brief Loads the catalog properties of a selected object and stores them in the current selected item
-    void loadObjectProperties(void);
+    /*! brief Loads the catalog properties of a selected object and stores them in the current selected item,
+        the force_reload parameter is used to ignore the cached properties and retrieve them again */
+    void loadObjectProperties(bool force_reload=false);
 
-    //! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid
-    void showObjectProperties(void);
+    /*! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
+        the force_reload parameter is used to ignore the cached properties and retrieve them again */
+    void showObjectProperties(bool force_reload=false);
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened

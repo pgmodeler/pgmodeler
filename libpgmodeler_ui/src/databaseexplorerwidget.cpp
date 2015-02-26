@@ -100,7 +100,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), trUtf8("Trunc. cascade"), &handle_menu);
 
   show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
-  properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Properties"), &handle_menu);
+  properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
   refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
@@ -850,7 +850,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     else if(exec_action==refresh_action)
       updateCurrentItem();
     else if(exec_action==properties_action)
-      showObjectProperties();
+      showObjectProperties(true);
     else if(exec_action==show_data_action)
       emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),
@@ -1164,7 +1164,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
   }
 }
 
-void DatabaseExplorerWidget::loadObjectProperties(void)
+void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 {
   try
   {
@@ -1180,7 +1180,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
       //In case of the cached attributes are empty
-      if(orig_attribs.empty())
+      if(orig_attribs.empty() || force_reload)
       {
         //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
@@ -1213,7 +1213,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
   }
 }
 
-void DatabaseExplorerWidget::showObjectProperties(void)
+void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 {
   try
   {
@@ -1233,7 +1233,7 @@ void DatabaseExplorerWidget::showObjectProperties(void)
       int row=0;
       QFont font;
 
-      loadObjectProperties();
+      loadObjectProperties(force_reload);
       cached_attribs=item->data((raw_attrib_names_chk->isChecked() ?
                                  DatabaseImportForm::OBJECT_OTHER_DATA : DatabaseImportForm::OBJECT_ATTRIBS),
                                 Qt::UserRole).value<attribs_map>();
