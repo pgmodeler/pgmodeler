@@ -59,12 +59,16 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     snippets_menu;
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
-            *show_data_action, *refresh_action, *properties_action;
+            *show_data_action, *refresh_action, *properties_action,
+            *trunc_cascade_action, *truncate_action;
 
     void configureImportHelper(void);
 
     //! brief Drops the object represented by the specified item
     void dropObject(QTreeWidgetItem *item, bool cascade);
+
+    //! brief Truncates the table represented by the specified item
+    void truncateTable(QTreeWidgetItem *item, bool cascade);
 
     bool eventFilter(QObject *object, QEvent *event);
 
