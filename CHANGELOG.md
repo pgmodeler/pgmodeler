@@ -4,8 +4,10 @@ Change Log
 v0.8.0
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: February 27, 2015</em><br/>
+<em>Release date: February 28, 2015</em><br/>
 
+* [New] Added support to multiple SQL execution widget instances for the same browsed database in SQL tool.
+* [New] Added truncate table actions on DatabaseExplorerWidget.
 * [Change] Minor adjustments on ModelValidationHelper.
 * [Change] Minor adjustments on CustomSQLWidget.
 * [Change] Included the delete cascade action to Edit menu in MainWindow.

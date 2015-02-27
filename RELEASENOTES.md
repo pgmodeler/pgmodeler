@@ -1,12 +1,12 @@
 v0.8.0
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: February 27, 2015</em>
+<em>Release date: February 28, 2015</em>
 <em>Changes since: <strong>v0.7.2</strong></em><br/>
 
 <strong>Summary:</strong> after eight months working on create an even more improved product the final 0.8.0 is done. This version is the best one ever created because the software is more stable, reliable, useful and beatiful.<br/>
 Compared to the previous release (0.7.2) this one has a lot more features that will surely improve the database design. Also, there are new features to help user in manage live databases.<br/>
-To give an idea on how pgModeler has changed since 0.7.2, the full change log for the new release has 347 entries, being 83 new features, 147 changes and 117 bug fixes.<br/>
+To give an idea on how pgModeler has changed since 0.7.2, the full change log for the new release has 349 entries, being 85 new features, 147 changes and 117 bug fixes.<br/>
 Obviously, not all new features or changes will be noted since they were created to help in bug fixes but what matters is that pgModeler is now a better product.<br/>
 Below the key features of this new version are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
 
