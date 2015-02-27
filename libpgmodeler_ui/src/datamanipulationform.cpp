@@ -17,7 +17,7 @@
 */
 
 #include "datamanipulationform.h"
-#include "sqltoolwidget.h"
+#include "sqlexecutionwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -75,13 +75,13 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(results_tbw, &QTableWidget::itemPressed,
-					[=](){ SQLToolWidget::copySelection(results_tbw); });
+          [=](){ SQLExecutionWidget::copySelection(results_tbw); });
 
 	connect(copy_tb, &QToolButton::clicked,
-					[=](){ SQLToolWidget::copySelection(results_tbw, false); });
+          [=](){ SQLExecutionWidget::copySelection(results_tbw, false); });
 
 	connect(export_tb, &QToolButton::clicked,
-					[=](){ SQLToolWidget::exportResults(results_tbw); });
+          [=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged,
 					[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
@@ -206,7 +206,7 @@ void DataManipulationForm::retrieveData(void)
 		connection.executeDMLCommand(query, res);
 
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
-		SQLToolWidget::fillResultsTable(catalog, res, results_tbw, true);
+    SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
 		rows_ret_lbl->setVisible(results_tbw->rowCount() > 0);

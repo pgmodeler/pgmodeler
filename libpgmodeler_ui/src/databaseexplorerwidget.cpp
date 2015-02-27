@@ -19,6 +19,7 @@
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
+#include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
 
 using namespace ParsersAttributes;
@@ -115,8 +116,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
   connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
 
+  connect(data_grid_tb, &QToolButton::clicked,
+          [=]() { emit s_dataGridOpenRequested(); });
+
+  connect(runsql_tb, &QToolButton::clicked,
+          [=]() { emit s_sqlExecutionRequested(); });
+
   connect(properties_tbw, &QTableWidget::itemPressed,
-          [=]() { SQLToolWidget::copySelection(properties_tbw, true); });
+          [=]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
 
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
