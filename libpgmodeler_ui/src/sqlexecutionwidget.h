@@ -68,8 +68,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
   public:
     SQLExecutionWidget(QWidget * parent = 0);
-    ~SQLExecutionWidget(void);
 
+    //! brief Configures the connection to query the server
     void setConnection(Connection conn);
 
 		/*! brief Fills up the results grid based upon the specified result set.

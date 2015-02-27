@@ -25,26 +25,20 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
-
   h_splitter->setSizes({0, 10000});
-  //data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 
   connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
   connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
   connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromServer(void)));
   connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromServer()));
   connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
-  //connect(runsql_tb, SIGNAL(clicked(void)), this, SLOT(executeSQLCommands(void)));
 	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
-  //connect(data_grid_tb, SIGNAL(clicked()), this, SLOT(openDataGrid()));
   connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
-  connect(databases_tbw, SIGNAL(currentChanged(int)), this, SLOT(setCurrentDatabase(int)));
+  connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecution(int)));
 
   connect(database_cmb, &QComboBox::currentTextChanged,
           [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0);
-									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0);
-                  //data_grid_tb->setEnabled(database_cmb->currentIndex() > 0);
-                  /*runsql_tb->setEnabled(database_cmb->currentIndex() > 0); */ });
+									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0); });
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -65,7 +59,18 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
 		itr++;
 	}
 
-	connect_tb->setEnabled(connections_cmb->count() > 0);
+  connect_tb->setEnabled(connections_cmb->count() > 0);
+}
+
+void SQLToolWidget::configureSnippets(void)
+{
+  SQLExecutionWidget *sql_exec_wgt=nullptr;
+
+  for(int i=0; i < sql_exec_tbw->count(); i++)
+  {
+    sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
+    sql_exec_wgt->configureSnippets();
+  }
 }
 
 void SQLToolWidget::connectToServer(void)
@@ -148,8 +153,6 @@ void SQLToolWidget::dropDatabase(void)
 			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(database_cmb->currentText()));
 			aux_conn.close();
       connectToServer();
-
-      setCurrentDatabase(databases_tbw->currentIndex());
 		}
 		catch(Exception &e)
 		{
@@ -195,8 +198,8 @@ void SQLToolWidget::browseDatabase(void)
     databases_tbw->setCurrentWidget(db_explorer_wgt);
 
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
-    connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(executeSQLCommands()));
-    //connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), sql_cmd_txt, SLOT(setPlainText(QString)));
+    connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
+    connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
   }
   catch(Exception &e)
   {
@@ -204,19 +207,20 @@ void SQLToolWidget::browseDatabase(void)
   }
 }
 
-void SQLToolWidget::executeSQLCommands(void)
+void SQLToolWidget::addSQLExecutionTab(void)
 {
   try
   {
     Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
     SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
+    QString db_name=databases_tbw->tabText(databases_tbw->currentIndex());
 
-    conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+    conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
     sql_exec_wgt->setConnection(conn);
 
-    sqlexec_tbw->addTab(sql_exec_wgt, database_cmb->currentText());
-    sqlexec_tbw->setCurrentWidget(sql_exec_wgt);
-    sqlexec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
+    sql_exec_tbw->addTab(sql_exec_wgt, db_name);
+    sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
+    sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
   }
   catch(Exception &e)
   {
@@ -227,28 +231,39 @@ void SQLToolWidget::executeSQLCommands(void)
 void SQLToolWidget::closeDatabaseExplorer(int idx)
 {
   DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
+
+  //Closing sql execution tabs related to the database to be closed
+  for(int i=0; i < sql_exec_tbw->count(); i++)
+  {
+    if(databases_tbw->tabText(idx)==sql_exec_tbw->tabText(i))
+    {
+      closeSQLExecution(i);
+      i=-1;
+    }
+  }
+
   databases_tbw->removeTab(idx);
 
   if(db_explorer)
     delete(db_explorer);
-
-  //enableSQLExecution(databases_tbw->count()!=0);
 }
 
-void SQLToolWidget::setCurrentDatabase(int idx)
+void SQLToolWidget::closeSQLExecution(int idx)
 {
-  try
-  {
-    DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
-    //sql_cmd_conn.close();
+  SQLExecutionWidget *sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(idx));
+  sql_exec_tbw->removeTab(idx);
 
-    //if(db_explorer)
-//      sql_cmd_conn=db_explorer->getConnection();
+  if(sql_exec_wgt)
+    delete(sql_exec_wgt);
+}
 
- //   enableSQLExecution(db_explorer!=nullptr);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+void SQLToolWidget::showSnippet(const QString &snip)
+{
+  SQLExecutionWidget *sql_exec_wgt=nullptr;
+
+  if(sql_exec_tbw->count()==0)
+    addSQLExecutionTab();
+
+  sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
+  sql_exec_wgt->sql_cmd_txt->setPlainText(snip);
 }

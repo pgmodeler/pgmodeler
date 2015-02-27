@@ -47,10 +47,14 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
+  public slots:
+    void configureSnippets(void);
+
   private slots:
     //! brief Opens a connection to the selected server
     void connectToServer(void);
 
+    //! brief Disconnect from server and close any opened database explorer or sql execution tab
     void disconnectFromServer(void);
 
 		//! brief Drop the current selected database
@@ -62,11 +66,17 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     //! brief Open the current database in a database explorer instance
     void browseDatabase(void);
 
-    void executeSQLCommands(void);
+    //! brief Add a tab to permit the SQL execution for the current database being browsed
+    void addSQLExecutionTab(void);
 
+    //! brief Show the selected snippet on the current opened SQL execution tab
+    void showSnippet(const QString &snip);
+
+    //! brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
     void closeDatabaseExplorer(int idx);
 
-    void setCurrentDatabase(int idx);
+    //! brief Close the SQL execution tab specified by its index
+    void closeSQLExecution(int idx);
 };
 
 #endif

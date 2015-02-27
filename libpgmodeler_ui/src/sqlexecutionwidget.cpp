@@ -82,11 +82,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   configureSnippets();
 }
 
-SQLExecutionWidget::~SQLExecutionWidget(void)
-{
-
-}
-
 void SQLExecutionWidget::setConnection(Connection conn)
 {
   sql_cmd_conn=conn;
