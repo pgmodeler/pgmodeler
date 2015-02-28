@@ -59,12 +59,16 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     snippets_menu;
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
-            *show_data_action, *refresh_action, *properties_action;
+            *show_data_action, *refresh_action, *properties_action,
+            *trunc_cascade_action, *truncate_action;
 
     void configureImportHelper(void);
 
     //! brief Drops the object represented by the specified item
     void dropObject(QTreeWidgetItem *item, bool cascade);
+
+    //! brief Truncates the table represented by the specified item
+    void truncateTable(QTreeWidgetItem *item, bool cascade);
 
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -136,15 +140,20 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     //! brief Updates on the tree under the current selected object
     void updateCurrentItem(void);
 
-    //! brief Loads the catalog properties of a selected object and stores them in the current selected item
-    void loadObjectProperties(void);
+    /*! brief Loads the catalog properties of a selected object and stores them in the current selected item,
+        the force_reload parameter is used to ignore the cached properties and retrieve them again */
+    void loadObjectProperties(bool force_reload=false);
 
-    //! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid
-    void showObjectProperties(void);
+    /*! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
+        the force_reload parameter is used to ignore the cached properties and retrieve them again */
+    void showObjectProperties(bool force_reload=false);
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
-    void s_dataGridOpenRequested(QString schema, QString table, bool hide_views);
+    void s_dataGridOpenRequested(QString schema="", QString table="", bool hide_views=true);
+
+    //! brief This signal is emmited to indicate that a sql execution widget need to be opened
+    void s_sqlExecutionRequested(void);
 
     //! brief This signal is emmited containing the processed snippet to be shown in an input field
     void s_snippetShowRequested(QString snippet);

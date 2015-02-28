@@ -20,6 +20,14 @@ UI_DIR = src
 # Setting up the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 
+# Properly defining build number constant
+unix {
+ BUILDNUM=$$system("date '+%Y%m%d'")
+ DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+} else {
+ BUILDNUM=$$system('wingetdate.bat')
+ DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
+}
 
 # Below, the user can specify where all generated file can be placed
 # through a set of variables, being them:

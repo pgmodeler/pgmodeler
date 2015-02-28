@@ -37,38 +37,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
-		SchemaParser schparser;
-
-		//! brief Syntax highlighter for sql input field
-		SyntaxHighlighter *sql_cmd_hl;
-
 		//! brief Database import helper used to list objects from current connection
 		DatabaseImportHelper import_helper;
-
-		//! brief Connection used to run commands specified on sql input field
-		Connection sql_cmd_conn;
-
-		//! brief Dialog for SQL save/load
-		QFileDialog sql_file_dlg;
-
-    QMenu snippets_menu;
-
-		FindReplaceWidget *find_replace_wgt;
-
-		CodeCompletionWidget *code_compl_wgt;
-
-		/*! brief Enables/Disables the fields for sql input and execution.
-				When enabling a new connection to server will be opened. */
-		void enableSQLExecution(bool enable);
-
-		//! brief Stores the command on the sql command history
-		void registerSQLCommand(const QString &cmd);
-
-    //! brief Show the exception message in the output widget
-		void showError(Exception &e);
-
-    //! brief Fills the result grid with the specified result set
-		void fillResultsTable(ResultSet &res);
 
   public:
 		SQLToolWidget(QWidget * parent = 0);
@@ -77,19 +47,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
-		/*! brief Fills up the results grid based upon the specified result set.
-				The parameter store_data will make each item store the text as its data */
-		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
-
-		//! brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
-
-		//! brief Generates a CSV buffer based upon the selection on the results grid
-		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
-
-		//! brief Exports the results to csv file
-		static void exportResults(QTableWidget *results_tbw);
-
   public slots:
     void configureSnippets(void);
 
@@ -97,22 +54,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     //! brief Opens a connection to the selected server
     void connectToServer(void);
 
+    //! brief Disconnect from server and close any opened database explorer or sql execution tab
     void disconnectFromServer(void);
-
-		//! brief Enables the command buttons when user fills the sql field
-		void enableCommandButtons(void);
-
-		//! brief Runs the current typed sql command
-		void runSQLCommand(void);
-
-		//! brief Save the current typed sql command on a file
-		void saveCommands(void);
-
-		//! brief Load a sql command from a file
-		void loadCommands(void);
-
-		//! brief Clears the input field as well the results grid
-		void clearAll(void);
 
 		//! brief Drop the current selected database
 		void dropDatabase(void);
@@ -123,13 +66,17 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     //! brief Open the current database in a database explorer instance
     void browseDatabase(void);
 
+    //! brief Add a tab to permit the SQL execution for the current database being browsed
+    void addSQLExecutionTab(void);
+
+    //! brief Show the selected snippet on the current opened SQL execution tab
+    void showSnippet(const QString &snip);
+
+    //! brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
     void closeDatabaseExplorer(int idx);
 
-    void setCurrentDatabase(int idx);
-
-    void selectSnippet(QAction *act);
-
-    void handleSelectedWord(QString word);
+    //! brief Close the SQL execution tab specified by its index
+    void closeSQLExecution(int idx);
 };
 
 #endif

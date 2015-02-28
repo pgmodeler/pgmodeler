@@ -19,6 +19,7 @@
 #include "databaseexplorerwidget.h"
 #include "databaseimportform.h"
 #include "sqltoolwidget.h"
+#include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
 
 using namespace ParsersAttributes;
@@ -93,11 +94,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   drop_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), trUtf8("Drop object"), &handle_menu);
   drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
-  drop_cascade_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), trUtf8("Drop cascade"), &handle_menu);
+  drop_cascade_action=new QAction(QIcon(QString(":icones/icones/delcascade.png")), trUtf8("Drop cascade"), &handle_menu);
   drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
 
+  truncate_action=new QAction(QIcon(QString(":icones/icones/truncate.png")), trUtf8("Truncate"), &handle_menu);
+  trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), trUtf8("Trunc. cascade"), &handle_menu);
+
   show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
-  properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Properties"), &handle_menu);
+  properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
   refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
@@ -112,8 +116,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
   connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
 
+  connect(data_grid_tb, &QToolButton::clicked,
+          [=]() { emit s_dataGridOpenRequested(); });
+
+  connect(runsql_tb, &QToolButton::clicked,
+          [=]() { emit s_sqlExecutionRequested(); });
+
   connect(properties_tbw, &QTableWidget::itemPressed,
-          [=]() { SQLToolWidget::copySelection(properties_tbw, true); });
+          [=]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
 
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
@@ -812,19 +822,28 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     for(auto act : handle_menu.actions())
       handle_menu.removeAction(act);
 
-    if(obj_id > 0 && obj_type!=OBJ_DATABASE)
+    handle_menu.addAction(refresh_action);
+
+    if(obj_id > 0)
     {
       if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
         handle_menu.addAction(show_data_action);
 
-      handle_menu.addAction(drop_action);
-      handle_menu.addAction(drop_cascade_action);
+      handle_menu.addAction(properties_action);
     }
 
-    handle_menu.addAction(refresh_action);
+    if(obj_id > 0 && obj_type!=OBJ_DATABASE)
+    {
+      handle_menu.addSeparator();
+      handle_menu.addAction(drop_action);
+      handle_menu.addAction(drop_cascade_action);
 
-    if(obj_id > 0)
-      handle_menu.addAction(properties_action);
+      if(obj_type==OBJ_TABLE)
+      {
+        handle_menu.addAction(truncate_action);
+        handle_menu.addAction(trunc_cascade_action);
+      }
+    }
 
     handle_menu.addSeparator();
     handle_menu.addMenu(&snippets_menu);
@@ -833,10 +852,12 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
     if(exec_action==drop_action || exec_action==drop_cascade_action)
       dropObject(item,  exec_action==drop_cascade_action);
+    else if(exec_action==truncate_action || exec_action==trunc_cascade_action)
+      truncateTable(item,  exec_action==trunc_cascade_action);
     else if(exec_action==refresh_action)
       updateCurrentItem();
     else if(exec_action==properties_action)
-      showObjectProperties();
+      showObjectProperties(true);
     else if(exec_action==show_data_action)
       emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),
@@ -998,6 +1019,58 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
   }
 }
 
+void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
+{
+  Messagebox msg_box;
+
+  try
+  {
+    if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
+    {
+      QString msg, obj_name, sch_name;
+
+      obj_name=item->text(0);
+      sch_name=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
+
+      if(!cascade)
+        msg=trUtf8("Do you really want to truncate the table <strong>%1</strong>?").arg(obj_name);
+      else
+        msg=trUtf8("Do you really want to <strong>cascade</strong> truncate the table <strong>%1</strong>? This action will truncate all the tables that depends on it?").arg(obj_name);
+
+      msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+      if(msg_box.result()==QDialog::Accepted)
+      {
+        attribs_map attribs;
+        QString truc_cmd;
+        Connection conn;
+
+        attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
+        attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".") + obj_name;
+        attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+
+
+        //Generate the truncate command
+        schparser.ignoreEmptyAttributes(true);
+        schparser.ignoreUnkownAttributes(true);
+        truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                             GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                             ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
+                                             attribs);
+
+        //Executes the truncate cmd
+        conn=connection;
+        conn.connect();
+        conn.executeDDLCommand(truc_cmd);
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
+  }
+}
+
 void DatabaseExplorerWidget::updateCurrentItem(void)
 {
   QTreeWidgetItem *item=objects_trw->currentItem();
@@ -1098,7 +1171,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
   }
 }
 
-void DatabaseExplorerWidget::loadObjectProperties(void)
+void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 {
   try
   {
@@ -1114,7 +1187,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
       orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
       //In case of the cached attributes are empty
-      if(orig_attribs.empty())
+      if(orig_attribs.empty() || force_reload)
       {
         //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
@@ -1147,7 +1220,7 @@ void DatabaseExplorerWidget::loadObjectProperties(void)
   }
 }
 
-void DatabaseExplorerWidget::showObjectProperties(void)
+void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 {
   try
   {
@@ -1167,7 +1240,7 @@ void DatabaseExplorerWidget::showObjectProperties(void)
       int row=0;
       QFont font;
 
-      loadObjectProperties();
+      loadObjectProperties(force_reload);
       cached_attribs=item->data((raw_attrib_names_chk->isChecked() ?
                                  DatabaseImportForm::OBJECT_OTHER_DATA : DatabaseImportForm::OBJECT_ATTRIBS),
                                 Qt::UserRole).value<attribs_map>();
