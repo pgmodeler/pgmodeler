@@ -78,7 +78,6 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 
     bool process_paused;
 
-		void showEvent(QShowEvent *);	
 		void closeEvent(QCloseEvent *event);
 
     //! brief Creates the helpers and threads
@@ -91,7 +90,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void destroyModel(void);
 
     void clearOutput(void);
-		void resetButtons(void);
+    void resetForm(void);
+    void resetButtons(void);
     void saveDiffToFile(void);
     void finishDiff(void);
 

@@ -56,7 +56,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 	public slots:
 		void exec(ModelWidget *model);
-		void hideEvent(QHideEvent *);
+    //void hideEvent(QHideEvent *);
 
   private slots:
     void selectExportMode(void);

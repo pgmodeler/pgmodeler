@@ -137,7 +137,7 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
   }
 }
 
-void ModelExportForm::hideEvent(QHideEvent *)
+/*void ModelExportForm::hideEvent(QHideEvent *)
 {
 	this->model=nullptr;
 	file_edt->clear();
@@ -155,7 +155,7 @@ void ModelExportForm::hideEvent(QHideEvent *)
   page_by_page_chk->setChecked(false);
 	connections_cmb->setCurrentIndex(0);
   zoom_cmb->setCurrentText(QString("100%"));
-}
+}*/
 
 void ModelExportForm::exportModel(void)
 {
