@@ -3421,7 +3421,7 @@ void ModelWidget::createSequenceFromColumn(void)
     op_list->finishOperationChain();
 
 		//Revalidate the relationships since the modified column can be a primary key
-		if(tab->getPrimaryKey()->isColumnReferenced(col))
+    if(tab->getPrimaryKey() && tab->getPrimaryKey()->isColumnReferenced(col))
 			db_model->validateRelationships();
 
 		tab->setModified(true);
