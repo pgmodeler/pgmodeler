@@ -96,6 +96,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
     connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
     connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
+
+    resetForm();
   }
   catch(Exception &e)
   {
@@ -114,14 +116,14 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 	source_model=model;
 }
 
-void ModelDatabaseDiffForm::showEvent(QShowEvent *)
+void ModelDatabaseDiffForm::resetForm(void)
 {
   ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
-	connections_cmb->setEnabled(connections_cmb->count() > 0);
-	connection_lbl->setEnabled(connections_cmb->isEnabled());
-	connect_tb->setEnabled(connections_cmb->isEnabled());
-	enableDiffMode();
-	settings_tbw->setTabEnabled(1, false);
+  connections_cmb->setEnabled(connections_cmb->count() > 0);
+  connection_lbl->setEnabled(connections_cmb->isEnabled());
+  connect_tb->setEnabled(connections_cmb->isEnabled());
+  enableDiffMode();
+  settings_tbw->setTabEnabled(1, false);
   settings_tbw->setTabEnabled(2, false);
 }
 
