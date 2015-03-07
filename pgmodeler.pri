@@ -44,42 +44,20 @@ defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
 linux {
   CONFIG += x11
 
-  # !!! NOTE TO PACKAGE MAINTAINERS !!!
-  #
-  # The values defined for variables below are configured in a way that the installer generation
-  # process (see linuxdeploy.sh) can find the files and compress them all together.
-  #
-  # THIS IS NOT THE STANDARD STRUCTURE FOR MOST LINUX DISTRO!
-  # Uncomment the lines below to use the Linux standard directory structure.
-
-  # !defined(PREFIX, var): PREFIX = /usr/local
-  # BINDIR = $$PREFIX/bin
-  # PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
-  # PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
-  # PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
-  # SHAREDIR = $$PREFIX/share/pgmodeler
-  # CONFDIR = $$SHAREDIR/conf
-  # DOCDIR = $$SHAREDIR/doc
-  # LANGDIR = $$SHAREDIR/lang
-  # SAMPLESDIR = $$SHAREDIR/samples
-  # SCHEMASDIR = $$SHAREDIR/schemas
-  # TEMPDIR = $$PREFIX/tmp
-
-
-  # Default configuration for package pgModeler using linuxdeploy.sh
-  # The default prefix is /opt/pgmodeler
-  !defined(PREFIX, var):        PREFIX = /opt/pgmodeler
-  !defined(BINDIR, var):        BINDIR = $$PREFIX
-  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib
-  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
-  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
+  # Default configuration for package pgModeler.
+  # The default prefix is /usr/local
+  !defined(PREFIX, var):        PREFIX = /usr/local
+  !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
+  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
   !defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
   !defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
   !defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
   !defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
-  !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
+  !defined(TEMPDIR, var):       TEMPDIR = /tmp
 
   # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
