@@ -28,10 +28,19 @@ SUBDIRS += crashhandler \
            main
 
 # Deployment settings
-pgmodeler_data.files = samples schemas lang conf
-pgmodeler_data.path = $$SHAREDIR
+samples.files = samples
+samples.path = $$SAMPLESDIR
 
-pgmodeler_doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
-pgmodeler_doc.path = $$DOCDIR
+schemas.files = schemas
+schemas.path = $$SCHEMASDIR
 
-INSTALLS += pgmodeler_data pgmodeler_doc
+lang.files = lang
+lang.path = $$LANGDIR
+
+conf.files = conf
+conf.path = $$CONFDIR
+
+doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
+doc.path = $$DOCDIR
+
+INSTALLS += samples schemas lang conf doc
