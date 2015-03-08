@@ -4,7 +4,7 @@ v0.8.0
 <em>Release date: February 28, 2015</em>
 <em>Changes since: <strong>v0.7.2</strong></em><br/>
 
-<strong>Summary:</strong> after eight months working on create an even more improved product the final 0.8.0 is done. This version is the best one ever created because the software is more stable, reliable, useful and beatiful.<br/>
+<strong>Summary:</strong> after eight months working on create an even more improved product the final 0.8.0 is done. This version is the best one ever created because the software is more stable, reliable, useful and beautiful.<br/>
 Compared to the previous release (0.7.2) this one has a lot more features that will surely improve the database design. Also, there are new features to help user in manage live databases.<br/>
 To give an idea on how pgModeler has changed since 0.7.2, the full change log for the new release has 349 entries, being 85 new features, 147 changes and 117 bug fixes.<br/>
 Obviously, not all new features or changes will be noted since they were created to help in bug fixes but what matters is that pgModeler is now a better product.<br/>
@@ -25,7 +25,7 @@ This process now is capable to solve automatically the majority of problems rela
 * <strong>Improved SQL tool:</strong> being now a dedicated section of the software the SQL tool (manage view) is even better. Now its possible to handle several databases, manage table data through the data manipulation dialog and run SQL commands directly on the server.<br/>
 In this release, SQL code snippets were introduced in order to help users to create and execute SQL commands when working on a database.<br/>
 
-* <strong>Improved model validation:</strong> the main source of crashes in previous releases the validation process was carefully improved being more stable and reliable by fixing the majority of model inconsistences that may appear during the design time.<br/>
+* <strong>Improved model validation:</strong> the main source of crashes in previous releases the validation process was carefully improved being more stable and reliable by fixing the majority of model inconsistencies that may appear during the design time.<br/>
 
 * <strong>Improved model export:</strong> several bugs were fixed on the model export process. Additionally, user now have the option to run DROP commands before create an object directly on the database. This is useful when you do not want to drop the entire database in order to recreate the objects.<br/>
 

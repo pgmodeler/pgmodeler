@@ -18,6 +18,9 @@ v0.8.0
 * [Change] Improvement on DatabaseModel::getObjectReferences to retrieve indexes as references to columns. This solve the bug related to import and diff processes that was causing detached columns to be dropped even if there were indexes referencing those columns.
 * [Change] Added a more friendly error message when the user try to undo/redo an invalid operation at operations history.
 * [Change] Minor improvement on ConnectionsConfigWidget adding the ability to make the configured initial database to be auto browsed when using the connection to manage objects on Manage view.
+* [Fix] Fixed the output of SQL commands on diff, import and export. The commands now does not comes without original line breaks.
+* [Fix] Fixed unexpected dialog blockings and form resetting on diff and export dialogs when minimizing and restoring the application.
+* [Fix] Fix a crash when converting a serial column to sequence in which the first is not assigned to a primary key.
 * [Fix] Minor fix on crash handler startup. Now exceptions occurred during the process are printed to stdout.
 * [Fix] Fix a crash when pasting objects right after closing the source model (from where the objects were copied/cut).
 * [Fix] Minor fix on ModelWidget::showObjectForm to correctly show permissions details.
