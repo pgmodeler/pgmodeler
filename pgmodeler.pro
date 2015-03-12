@@ -28,16 +28,16 @@ SUBDIRS += crashhandler \
            main
 
 # Deployment settings
-samples.files = samples
+samples.files = samples/*
 samples.path = $$SAMPLESDIR
 
-schemas.files = schemas
+schemas.files = schemas/*
 schemas.path = $$SCHEMASDIR
 
-lang.files = lang
+lang.files = lang/*
 lang.path = $$LANGDIR
 
-conf.files = conf
+conf.files = conf/*
 conf.path = $$CONFDIR
 
 doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
