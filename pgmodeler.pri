@@ -33,8 +33,8 @@ unix {
 # through a set of variables, being them:
 #
 # PREFIX        -> the root directory where the files will be placed
-# BINDIR        -> where executables accessable to the user resides
-# PRIVATEBINDIR -> where executables not directly accessable to the user resides
+# BINDIR        -> where executables accessible by the user resides
+# PRIVATEBINDIR -> where executables not directly accessible by the user resides
 # PRIVATELIBDIR -> where libraries not directly shared through the system resides
 # PLUGINSDIR    -> where third party plugins are installed
 # SHAREDIR      -> where shared files and resources should be placed
