@@ -594,6 +594,8 @@ void PgModelerCLI::extractObjectXML(void)
 
       if(!is_rel && !lin.isEmpty())
         def_xml+=lin + QString("\n");
+      else if(lin.isEmpty())
+        def_xml+=QString("\n");
 
 			//If the iteration reached the end of the object's definition
 			if(open_tag && close_tag)
