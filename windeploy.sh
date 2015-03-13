@@ -43,7 +43,7 @@ GENINSTALLER=pgmodeler.exe
 INSTALL_ROOT="$PWD/build"
 ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF="$INSTALL_ROOT/qt.conf"
-DEP_PLUGINS_DIR="$INSTALL_ROOT/lib/qtplugins"
+DEP_PLUGINS_DIR="$INSTALL_ROOT/qtplugins"
 PLUGINS="dummy xml2object"
   
 DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
@@ -145,7 +145,7 @@ echo "Installing dependencies..."
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
 for dll in $DEP_LIBS; do
-	cp $dll $INSTALL_ROOT/lib >> $LOG 2>&1
+	cp $dll $INSTALL_ROOT >> $LOG 2>&1
 	if [ $? -ne 0 ]; then
 		echo
 		echo "** Installation failed!"
@@ -158,7 +158,7 @@ done
 mkdir -p $DEP_PLUGINS_DIR
 echo "[Paths]" > $QT_CONF
 echo "Prefix=." >> $QT_CONF
-echo "Plugins=lib/qtplugins" >> $QT_CONF
+echo "Plugins=qtplugins" >> $QT_CONF
 echo "Libraries=." >> $QT_CONF
 
 #Copies the qt plugins to build/qtplugins
