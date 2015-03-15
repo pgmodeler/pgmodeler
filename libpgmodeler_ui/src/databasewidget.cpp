@@ -128,6 +128,8 @@ void DatabaseWidget::applyConfiguration(void)
 
 		if(encoding_cmb->currentIndex() > 0)
 			model->setEncoding(EncodingType(encoding_cmb->currentText()));
+    else
+      model->setEncoding(EncodingType(BaseType::null));
 
     if(lccollate_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
