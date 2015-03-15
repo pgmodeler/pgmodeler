@@ -614,12 +614,14 @@ void PgModelerCLI::extractObjectXML(void)
 void PgModelerCLI::recreateObjects(void)
 {
 	QStringList fail_objs, constr, list;
-	QString xml_def;
+  QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
 	BaseObject *object=nullptr;
   ObjectType obj_type=BASE_OBJECT;
+  vector<ObjectType> types={ OBJ_INDEX, OBJ_TRIGGER, OBJ_RULE };
 	attribs_map attribs;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FIX_TRIES].toUInt();
+  int start_pos=-1, end_pos=-1, len=0;
 
 	if(!silent_mode)
 		out << trUtf8("Recreating objects...") << endl;
@@ -671,6 +673,43 @@ void PgModelerCLI::recreateObjects(void)
 						xmlparser->loadXMLBuffer(xml_def);
 					}
 				}
+
+        /* Additional step to extract indexes/triggers/rules from within tables/views
+           and putting their xml on the list of object to be created */
+        if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+           xml_def.contains(QRegExp("(<)(index|trigger|rule)")))
+        {
+          for(ObjectType type : types)
+          {
+            do
+            {
+              //Checking where the object starts and ends
+              aux_tag=start_tag.arg(BaseObject::getSchemaName(type));
+              start_pos=xml_def.indexOf(aux_tag);
+              end_pos=(start_pos >=0 ? xml_def.indexOf(end_tag.arg(BaseObject::getSchemaName(type))) : -1);
+
+              if(start_pos >=0 && end_pos >= 0)
+              {
+                //Extracts the xml code
+                len=(end_pos - start_pos) + end_tag.arg(BaseObject::getSchemaName(type)).length() + 1;
+                aux_def=xml_def.mid(start_pos, len);
+
+                //Remove the code from original table's definition
+                xml_def.remove(start_pos, len);
+
+                //If the extract object doesn't contains the 'table=' attribute it'll be added.
+                if(!aux_def.contains("table="))
+                {
+                  aux_def.replace(aux_tag, QString("%1 table=\"%2\"").arg(aux_tag).arg(object->getName(true)));
+                  aux_def=SchemaParser::convertCharsToXMLEntities(aux_def);
+                }
+
+                objs_xml.push_back(aux_def);
+              }
+            }
+            while(start_pos >= 0);
+          }
+        }
 
 				//Discarding fk relationships
 				if(obj_type!=OBJ_RELATIONSHIP ||
