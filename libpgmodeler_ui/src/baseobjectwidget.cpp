@@ -779,101 +779,113 @@ void BaseObjectWidget::applyConfiguration(void)
         PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
 		}
 		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		{     
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
 
 void BaseObjectWidget::finishConfiguration(void)
 {
-	if(this->object)
-	{
-		ObjectType obj_type=this->object->getObjectType();
-		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
-		TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
-		vector<BaseObject *> ref_objs;
-
-		if(new_object)
-		{
-			//If the object is a table object and the parent table is specified, adds it to table
-			if(table && TableObject::isTableObject(obj_type))
-				table->addObject(this->object);
-			//Adding the object on the relationship, if specified
-			else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
-				relationship->addObject(dynamic_cast<TableObject *>(this->object));
-			//Adding the object on the model
-			else if(obj_type!=OBJ_PARAMETER)
-				model->addObject(this->object);
-
-			if(op_list)
-			{
-				//If the object is a new one is necessary register it on the operation list
-				if(this->table)
-					op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
-				else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
-					op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
-			}
-			new_object=false;
-		}
-		else
-		{
-			//If the object is being updated, validates its SQL definition
-      if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
-        this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
-			else
-        this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-		}
-
-
-    model->getObjectReferences(object, ref_objs);
-    for(auto obj : ref_objs)
+  try
+  {
+    if(this->object)
     {
-      obj->setCodeInvalidated(true);
+      ObjectType obj_type=this->object->getObjectType();
+      BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
+      TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
+      vector<BaseObject *> ref_objs;
 
-      if(obj->getObjectType()==OBJ_COLUMN)
-        dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+      if(new_object)
+      {
+        //If the object is a table object and the parent table is specified, adds it to table
+        if(table && TableObject::isTableObject(obj_type))
+          table->addObject(this->object);
+        //Adding the object on the relationship, if specified
+        else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
+          relationship->addObject(dynamic_cast<TableObject *>(this->object));
+        //Adding the object on the model
+        else if(obj_type!=OBJ_PARAMETER)
+          model->addObject(this->object);
+
+        if(op_list)
+        {
+          //If the object is a new one is necessary register it on the operation list
+          if(this->table)
+            op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
+          else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
+            op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
+        }
+        new_object=false;
+      }
+      else
+      {
+        //If the object is being updated, validates its SQL definition
+        if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+          this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+        else
+          this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+      }
+
+
+      model->getObjectReferences(object, ref_objs);
+      for(auto obj : ref_objs)
+      {
+        obj->setCodeInvalidated(true);
+
+        if(obj->getObjectType()==OBJ_COLUMN)
+          dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+      }
+
+      object->setCodeInvalidated(true);
+      this->accept();
+      parent_form->hide();
+
+      //If the object is graphical (or a table object), updates it (or its parent) on the scene
+      if(graph_obj || tab_obj)
+      {
+        if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
+        {
+          if(this->table)
+            graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
+          else
+            graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
+
+          graph_obj->setModified(true);
+          graph_obj->setCodeInvalidated(true);
+        }
+        else if(graph_obj)
+        {
+          if(!isnan(object_px) && !isnan(object_py))
+            graph_obj->setPosition(QPointF(object_px, object_py));
+
+          graph_obj->setModified(true);
+        }
+
+        /* Updates the visual schemas when the objects is moved to another or a
+        table object is added to a table */
+        if(object->getSchema())
+          dynamic_cast<Schema *>(object->getSchema())->setModified(true);
+        else if(tab_obj && tab_obj->getParentTable() &&
+                 tab_obj->getParentTable()->getSchema())
+          dynamic_cast<Schema *>(tab_obj->getParentTable() ->getSchema())->setModified(true);
+
+        if(prev_schema && object->getSchema()!=prev_schema)
+          prev_schema->setModified(true);
+      }
+
+      emit s_objectManipulated();
     }
-
-		object->setCodeInvalidated(true);
-		this->accept();
-		parent_form->hide();
-
-		//If the object is graphical (or a table object), updates it (or its parent) on the scene
-		if(graph_obj || tab_obj)
-		{
-			if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
-			{
-				if(this->table)
-					graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
-				else
-					graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
-
-				graph_obj->setModified(true);
-				graph_obj->setCodeInvalidated(true);
-			}
-			else if(graph_obj)
-			{
-				if(!isnan(object_px) && !isnan(object_py))
-					graph_obj->setPosition(QPointF(object_px, object_py));
-
-				graph_obj->setModified(true);
-			}
-
-			/* Updates the visual schemas when the objects is moved to another or a
-			table object is added to a table */
-			if(object->getSchema())
-				dynamic_cast<Schema *>(object->getSchema())->setModified(true);
-			else if(tab_obj && tab_obj->getParentTable() &&
-							 tab_obj->getParentTable()->getSchema())
-				dynamic_cast<Schema *>(tab_obj->getParentTable() ->getSchema())->setModified(true);
-
-			if(prev_schema && object->getSchema()!=prev_schema)
-				prev_schema->setModified(true);
-		}
-
-		emit s_objectManipulated();
-	}
+  }
+  catch(Exception &e)
+  {
+    if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
+      throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
+                      .arg(this->object->getName()).arg(this->object->getTypeName()),
+                      ERR_REQ_FIELDS_NOT_FILLED,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    else
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void BaseObjectWidget::cancelConfiguration(void)
