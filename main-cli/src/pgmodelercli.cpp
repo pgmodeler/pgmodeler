@@ -535,6 +535,17 @@ void PgModelerCLI::extractObjectXML(void)
 		{
 			lin=ts.readLine();
 
+      /*  Special case for empty tags like <language />, they will be converted to
+          <tag></tag> in order to be correctly extracted further. Currently only language has this
+          behaviour, so additional object may be added in the future. */
+      if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(OBJ_LANGUAGE))))
+      {
+        lin=lin.simplified();
+
+        if(lin.contains(QString("/>")))
+          lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(OBJ_LANGUAGE)));
+      }
+
       if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
            (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
@@ -545,7 +556,8 @@ void PgModelerCLI::extractObjectXML(void)
       else
 			{
 				//If the line contains an objects open tag
-        if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
+        //if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
+        if(lin.contains(QRegExp("^(((\n)|(\t))*(<))")) && !open_tag)
         {
 					//Check the flag indicating an open tag
 					open_tag=true;
@@ -587,6 +599,8 @@ void PgModelerCLI::extractObjectXML(void)
 
             close_tag=true;
 					}
+          else
+            close_tag=lin.contains(end_tag);
 				}
         else if(open_tag && lin.contains(end_tag))
 					close_tag=true;
@@ -674,6 +688,22 @@ void PgModelerCLI::recreateObjects(void)
 					}
 				}
 
+            //Discarding fk relationships
+				if(obj_type!=OBJ_RELATIONSHIP ||
+					 (obj_type==OBJ_RELATIONSHIP && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
+				{
+					object=model->createObject(obj_type);
+
+					if(object)
+					{
+						if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+							model->addObject(object);
+					}
+
+					//For each sucessful created object the method will try to create a failed one
+					use_fail_obj=(!fail_objs.isEmpty());
+				}
+
         /* Additional step to extract indexes/triggers/rules from within tables/views
            and putting their xml on the list of object to be created */
         if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
@@ -710,22 +740,6 @@ void PgModelerCLI::recreateObjects(void)
             while(start_pos >= 0);
           }
         }
-
-				//Discarding fk relationships
-				if(obj_type!=OBJ_RELATIONSHIP ||
-					 (obj_type==OBJ_RELATIONSHIP && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
-				{
-					object=model->createObject(obj_type);
-
-					if(object)
-					{
-						if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
-							model->addObject(object);
-					}
-
-					//For each sucessful created object the method will try to create a failed one
-					use_fail_obj=(!fail_objs.isEmpty());
-				}
 			}
 		}
 		catch(Exception &e)
