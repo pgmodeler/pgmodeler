@@ -137,7 +137,11 @@ class PgModelerCLI: public QApplication {
 		//! \brief Returns if the specified string contains some of relationship attributes
 		bool containsRelAttributes(const QString &str);
 
-	public:
+    /*! brief Updates the current .dbm file association. The paramenter 'remove' is used to clean up any
+        file association done previously */
+    void updateFileAssociation(bool remove);
+
+  public:
 		PgModelerCLI(int argc, char **argv);
 		~PgModelerCLI(void);
 		int exec(void);
