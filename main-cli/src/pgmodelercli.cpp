@@ -956,6 +956,7 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 
 void PgModelerCLI::updateFileAssociation(bool remove)
 {
+ SchemaParser schparser;
  Messagebox msg_box;
  QString title=trUtf8("File association missing"),
          msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
