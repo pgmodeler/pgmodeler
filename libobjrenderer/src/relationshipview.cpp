@@ -788,10 +788,10 @@ void RelationshipView::configureLine(void)
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-      tool_tip=/*Utf8String::create(*/base_rel->getName(true) +
+      tool_tip=base_rel->getName(true) +
                QString(" (") + BaseObject::getTypeName(OBJ_RELATIONSHIP) + QString(")");
 		else
-      tool_tip=/*Utf8String::create(*/base_rel->getName(true) +
+      tool_tip=base_rel->getName(true) +
                QString(" (") + base_rel->getTypeName() + QString(")");
 
     tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
@@ -1013,7 +1013,7 @@ void RelationshipView::configureAttributes(void)
 
 			attrib->setPos(px, py);
 
-      text->setText(/*Utf8String::create(*/col->getName());
+      text->setText(col->getName());
 			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
 			desc->setPos(0, VERT_SPACING * factor);
 

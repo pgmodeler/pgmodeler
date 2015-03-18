@@ -680,8 +680,8 @@ void View::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                        .arg(/*Utf8String::create(*/obj->getName())
-                        .arg(/*Utf8String::create(*/obj->getTypeName()),
+                        .arg(obj->getName())
+                        .arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

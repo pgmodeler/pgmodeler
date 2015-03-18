@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
+    <width>561</width>
     <height>336</height>
    </rect>
   </property>
@@ -177,7 +177,83 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="1" column="0">
+       <item row="2" column="3">
+        <widget class="QToolButton" name="save_sql_tb">
+         <property name="toolTip">
+          <string>Save the SQL code to a file.</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QWidget" name="incl_child_sql_wgt" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="incl_child_sql_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="statusTip">
+             <string>Include all children objects of the current object if it is a schema, table or view. In case of tables foreign keys will be included only if they references tables in the same schema as the selected table.</string>
+            </property>
+            <property name="text">
+             <string>Include children's SQL</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="incl_child_sql_hint" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="4">
         <widget class="QTextEdit" name="sqlcode_txt">
          <property name="font">
           <font>
@@ -199,14 +275,70 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="incl_refs_sql_chk">
-         <property name="text">
-          <string>Include key referrer objects' SQL</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
+        <widget class="QWidget" name="incl_deps_sql_wgt" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="incl_deps_sql_chk">
+            <property name="statusTip">
+             <string>Includes the SQL code of all objects need to properly create the selected object.</string>
+            </property>
+            <property name="text">
+             <string>Include dependencies' SQL</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="incl_deps_sql_hint" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
+       </item>
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -270,6 +402,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>sqlcode_txt</tabstop>
   <tabstop>xmlcode_txt</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -97,7 +97,7 @@ void TextboxView::__configureObject(void)
     text->setBrush(txtbox->getTextColor());
 	}
 
-  text->setText(/*Utf8String::create(*/txtbox->getComment());
+  text->setText(txtbox->getComment());
 
   if(text->font().italic())
     text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);

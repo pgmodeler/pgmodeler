@@ -37,7 +37,7 @@ void EventTrigger::setFunction(Function *func)
 {
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
@@ -46,7 +46,7 @@ void EventTrigger::setFunction(Function *func)
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers

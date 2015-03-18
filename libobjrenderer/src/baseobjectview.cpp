@@ -554,7 +554,7 @@ void BaseObjectView::__configureObject(void)
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-    this->setToolTip(/*Utf8String::create(*/graph_obj->getName(true) +
+    this->setToolTip(graph_obj->getName(true) +
                      QString(" (") + graph_obj->getTypeName() +
                      QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());

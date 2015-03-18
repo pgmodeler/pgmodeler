@@ -27,6 +27,7 @@
 
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"
+#include "hinttextwidget.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
@@ -34,6 +35,9 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 		SyntaxHighlighter *hl_sqlcode,
 											*hl_xmlcode;
+
+    HintTextWidget *incl_child_sql_ht,
+                   *incl_deps_sql_ht;
 
 		void applyConfiguration(void){}
 		void hideEvent(QHideEvent *event);
@@ -45,6 +49,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private slots:
 		void generateSourceCode(int=0);
 		void setSourceCodeTab(int=0);
+    void saveSQLCode(void);
 };
 
 #endif

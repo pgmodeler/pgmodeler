@@ -302,7 +302,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
+  tab->setCellText(object->getName(),row,0);
 
 	if(obj_type==OBJ_TRIGGER)
 	{
@@ -311,7 +311,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-      tab->setCellText(/*Utf8String::create(*/trigger->getReferencedTable()->getName(true),row,1);
+      tab->setCellText(trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -497,13 +497,13 @@ void ViewWidget::editReference(int ref_idx)
 		else
 			table_sel->setSelectedObject(ref.getTable());
 
-    col_alias_edt->setText(/*Utf8String::create(*/ref.getColumnAlias());
-    tab_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
+    col_alias_edt->setText(ref.getColumnAlias());
+    tab_alias_edt->setText(ref.getAlias());
 	}
 	else
 	{
-    expression_txt->setPlainText(/*Utf8String::create(*/ref.getExpression());
-    expr_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
+    expression_txt->setPlainText(ref.getExpression());
+    expr_alias_edt->setText(ref.getAlias());
 	}
 
 	str_aux=references_tab->getCellText(ref_idx,3);
@@ -557,21 +557,21 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 		/* If the table is allocated but not the column indicates that the reference
 		 is to all table columns this way shows a string in format: [SCHEMA].[TABLE].* */
 		if(tab && !col)
-      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".*"),row,0);
+      references_tab->setCellText(tab->getName(true) + QString(".*"),row,0);
 		/* If the table and column are allocated indicates that the reference
 		 is to a specific column this way shows a string in format: [SCHEMA].[TABLE].[COLUMN] */
 		else
-      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".") + col->getName(true),row,0);
+      references_tab->setCellText(tab->getName(true) + QString(".") + col->getName(true),row,0);
 
-    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
+    references_tab->setCellText(refer.getAlias(),row,1);
 
 		if(col)
-      references_tab->setCellText(/*Utf8String::create(*/refer.getColumnAlias(),row,2);
+      references_tab->setCellText(refer.getColumnAlias(),row,2);
 	}
 	else
 	{
-    references_tab->setCellText(/*Utf8String::create(*/refer.getExpression(),row,0);
-    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
+    references_tab->setCellText(refer.getExpression(),row,0);
+    references_tab->setCellText(refer.getAlias(),row,1);
 	}
 
 	//Configures the string that denotes the SQL application for the reference
@@ -653,7 +653,7 @@ void ViewWidget::updateCodePreview(void)
 
 				itr++;
 			}
-      code_txt->setPlainText(/*Utf8String::create(*/aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+      code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
 		}
 	}
 	catch(Exception &e)
@@ -705,7 +705,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
   tag_sel->setModel(this->model);
   tag_sel->setSelectedObject(view->getTag());
 
-  cte_expression_txt->setPlainText(/*Utf8String::create(*/view->getCommomTableExpression());
+  cte_expression_txt->setPlainText(view->getCommomTableExpression());
 
   count=view->getReferenceCount();
   references_tab->blockSignals(true);

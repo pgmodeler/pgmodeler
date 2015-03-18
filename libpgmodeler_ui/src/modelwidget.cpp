@@ -113,7 +113,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label=new QLabel(protected_model_frm);
 	label->setMinimumSize(QSize(32, 32));
 	label->setMaximumSize(QSize(32, 32));
-  label->setPixmap(QPixmap(/*Utf8String::create(*/QString(":/icones/icones/msgbox_alerta.png")));
+  label->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 
   grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -1356,7 +1356,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		that can be edited only on its fill color an rectangle attributes */
     if(object && object->isSystemObject() && object->getName()!=QString("public"))
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                      .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                      .arg(object->getName()).arg(object->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     if(obj_type==OBJ_PERMISSION)
@@ -1679,7 +1679,7 @@ void ModelWidget::renameObject(void)
 
 	if(obj->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                    .arg(obj->getName()).arg(/*Utf8String::create(*/obj->getTypeName()),
+                    .arg(obj->getName()).arg(obj->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectRenameWidget objectrename_wgt(this);
@@ -1947,7 +1947,7 @@ void ModelWidget::protectObject(void)
 				//Raise an error if the user try to modify a reserved object protection
 				if(this->selected_objects[0]->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
+                          .arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
@@ -1976,7 +1976,7 @@ void ModelWidget::protectObject(void)
 
 				if(object->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                          .arg(object->getName()).arg(object->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
@@ -2036,7 +2036,7 @@ void ModelWidget::copyObjects(void)
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                      .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
+                      .arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -2623,7 +2623,7 @@ void ModelWidget::removeObjects(bool cascade)
           //Raises an error if the user try to remove a reserved object
           if(object->isSystemObject())
 						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                            .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                            .arg(object->getName()).arg(object->getTypeName()),
 														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
           else if(object->isProtected())
@@ -3227,7 +3227,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					submenu=new QMenu(&popup_menu);
 					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
 																	 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
-          submenu->setTitle(/*Utf8String::create(*/constr->getName());
+          submenu->setTitle(constr->getName());
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
 					action->setIcon(QPixmap(QString(":/icones/icones/editar.png")));

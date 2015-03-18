@@ -226,7 +226,7 @@ void TableView::configureObject(void)
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-  this->table_tooltip=/*Utf8String::create(*/table->getName(true) +
+  this->table_tooltip=table->getName(true) +
                       QString(" (") + table->getTypeName() + QString(") \n") +
                       QString("Id: %1\n").arg(table->getObjectId()) +
 											TableObjectView::CONSTR_DELIM_START +
