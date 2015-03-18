@@ -1611,7 +1611,6 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 {
 	try
 	{
-    attribs[ParsersAttributes::COLUMNS]=attribs[ParsersAttributes::COLUMNS].simplified();
 		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
 		attribs[ParsersAttributes::TRIGGER_FUNC]=getDependencyObject(attribs[ParsersAttributes::TRIGGER_FUNC], OBJ_FUNCTION, true, true);
     attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(QString(",\"\""))).join(',');

@@ -5231,10 +5231,10 @@ Trigger *DatabaseModel::createTrigger(void)
 
 						for(i=0; i < count; i++)
 						{
-							column=dynamic_cast<Column *>(table->getObject(list_aux[i], OBJ_COLUMN));
+              column=dynamic_cast<Column *>(table->getObject(list_aux[i].trimmed(), OBJ_COLUMN));
 
 							if(!column && dynamic_cast<Table *>(table))
-								column=dynamic_cast<Table *>(table)->getColumn(list_aux[i], true);
+                column=dynamic_cast<Table *>(table)->getColumn(list_aux[i].trimmed(), true);
 
 							trigger->addColumn(column);
 						}
