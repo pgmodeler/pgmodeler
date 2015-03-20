@@ -124,6 +124,9 @@ class Permission: public BaseObject {
 		//! \brief Gets one role from permission using its index
 		Role *getRole(unsigned role_idx);
 
+    //! brief Returns all the roles that is used by the permission
+    vector<Role *> getRoles(void);
+
 		//! \brief Gets the object that is subject to the privileges
 		BaseObject *getObject(void);
 

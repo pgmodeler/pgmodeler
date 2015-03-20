@@ -267,8 +267,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		{
 			aux_tab=table->getAncestorTable(i);
 			parent_tables->addRow();
-      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getName(), i, 0);
-      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getSchema()->getName(), i, 1);
+      parent_tables->setCellText(aux_tab->getName(), i, 0);
+      parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Parent"), i, 2);
 		}
 
@@ -276,8 +276,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		if(aux_tab)
 		{
 			parent_tables->addRow();
-      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getName(), i, 0);
-      parent_tables->setCellText(/*Utf8String::create(*/aux_tab->getSchema()->getName(), i, 1);
+      parent_tables->setCellText(aux_tab->getName(), i, 0);
+      parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Copy"), i, 2);
 		}
 
@@ -379,7 +379,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
+  tab->setCellText(object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
@@ -387,7 +387,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		column=dynamic_cast<Column *>(object);
 
 		//Column 1: Column data type
-    tab->setCellText(/*Utf8String::create(*/*column->getType(),row,1);
+    tab->setCellText(*column->getType(),row,1);
 
 		//Column 2: Column defaul value
     if(column->getSequence())
@@ -399,7 +399,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(str_aux,row,2);
 
 		//Column 3: Column attributes (constraints which belongs)
-    str_aux=/*Utf8String::create(*/TableObjectView::getConstraintString(column);
+    str_aux=TableObjectView::getConstraintString(column);
     for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
@@ -439,7 +439,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-      tab->setCellText(/*Utf8String::create(*/trigger->getReferencedTable()->getName(true),row,1);
+      tab->setCellText(trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -513,7 +513,7 @@ void TableWidget::removeObjects(void)
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                        .arg(/*Utf8String::create(*/object->getName())
+                        .arg(object->getName())
 												.arg(object->getTypeName()),
 												ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -562,7 +562,7 @@ void TableWidget::removeObject(int row)
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                      .arg(/*Utf8String::create(*/object->getName())
+                      .arg(object->getName())
 											.arg(object->getTypeName()),
 											ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}

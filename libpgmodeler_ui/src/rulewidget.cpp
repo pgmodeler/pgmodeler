@@ -106,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-    cond_expr_txt->setPlainText(/*Utf8String::create(*/rule->getConditionalExpression());
+    cond_expr_txt->setPlainText(rule->getConditionalExpression());
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-      commands_tab->setCellText(/*Utf8String::create(*/rule->getCommand(i),i,0);
+      commands_tab->setCellText(rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}

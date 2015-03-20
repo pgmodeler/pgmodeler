@@ -54,7 +54,7 @@ void Extension::setHandlesType(bool value)
 	on table columns/functions or any other objects that references PgSQLType */
 	if(!value && PgSQLType::getUserTypeIndex(this->getName(true), this) != BaseType::null)
 		throw Exception(Exception::getErrorMessage(ERR_REG_EXT_NOT_HANDLING_TYPE)
-                    .arg(/*Utf8String::create(*/this->getName(true)),
+                    .arg(this->getName(true)),
                     ERR_REG_EXT_NOT_HANDLING_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->handles_type=value;

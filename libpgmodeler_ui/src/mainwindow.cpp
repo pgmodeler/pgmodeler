@@ -763,13 +763,13 @@ void MainWindow::addModel(const QString &filename)
     tab_name=obj_name;
 
     model_tab=new ModelWidget;
-    model_tab->setObjectName(/*Utf8String::create(*/obj_name);
+    model_tab->setObjectName(obj_name);
 
     //Add the tab to the tab widget
     obj_name=model_tab->db_model->getName();
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_tab, /*Utf8String::create(*/obj_name);
+    models_tbw->addTab(model_tab, obj_name);
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
@@ -837,7 +837,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
     model_nav_wgt->addModel(model_wgt);
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_wgt, /*Utf8String::create(*/model_wgt->getDatabaseModel()->getName());
+    models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     setCurrentModel();
@@ -1115,7 +1115,7 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-    model_nav_wgt->updateModelText(models_tbw->currentIndex(), /*Utf8String::create(*/current_model->db_model->getName(), current_model->getFilename());
+    model_nav_wgt->updateModelText(models_tbw->currentIndex(), current_model->db_model->getName(), current_model->getFilename());
 }
 
 void MainWindow::applyConfigurations(void)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
+    <width>602</width>
     <height>336</height>
    </rect>
   </property>
@@ -177,7 +177,104 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="1" column="0">
+       <item row="2" column="0" colspan="5">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Code display:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="code_options_cmb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <item>
+            <property name="text">
+             <string>Original</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Original + depedencies' SQL</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Original + children's SQL</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="code_options_hint" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="save_sql_tb">
+           <property name="toolTip">
+            <string>Save the SQL code to a file.</string>
+           </property>
+           <property name="text">
+            <string>Save SQL</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="5">
         <widget class="QTextEdit" name="sqlcode_txt">
          <property name="font">
           <font>
@@ -195,16 +292,6 @@
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="incl_refs_sql_chk">
-         <property name="text">
-          <string>Include key referrer objects' SQL</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -270,6 +357,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>sqlcode_txt</tabstop>
   <tabstop>xmlcode_txt</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

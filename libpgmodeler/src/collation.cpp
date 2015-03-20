@@ -61,8 +61,8 @@ void Collation::setCollation(BaseObject *collation)
 {
 	if(collation==this)
 		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
-                    .arg(/*Utf8String::create(*/this->getName(true))
-                    .arg(/*Utf8String::create(*/this->getTypeName()),
+                    .arg(this->getName(true))
+                    .arg(this->getTypeName()),
 										ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setCollation(collation);

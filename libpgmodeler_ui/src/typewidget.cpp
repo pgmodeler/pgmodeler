@@ -188,11 +188,11 @@ void TypeWidget::handleEnumeration(int row)
 
 void TypeWidget::showAttributeData(TypeAttribute attrib, int row)
 {
-  attributes_tab->setCellText(/*Utf8String::create(*/attrib.getName(), row, 0);
-  attributes_tab->setCellText(/*Utf8String::create(*/*attrib.getType(), row, 1);
+  attributes_tab->setCellText(attrib.getName(), row, 0);
+  attributes_tab->setCellText(*attrib.getType(), row, 1);
 
 	if(attrib.getCollation())
-    attributes_tab->setCellText(/*Utf8String::create(*/attrib.getCollation()->getName(true), row, 2);
+    attributes_tab->setCellText(attrib.getCollation()->getName(true), row, 2);
 	else
 		attributes_tab->clearCellText(row,2);
 
@@ -203,7 +203,7 @@ void TypeWidget::editAttribute(int row)
 {
 	TypeAttribute attrib=attributes_tab->getRowData(row).value<TypeAttribute>();
 
-  attrib_name_edt->setText(/*Utf8String::create(*/attrib.getName());
+  attrib_name_edt->setText(attrib.getName());
 	attrib_collation_sel->setSelectedObject(attrib.getCollation());
 	attrib_type_wgt->setAttributes(attrib.getType(), this->model);
 }
@@ -275,7 +275,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			for(i=0; i < count; i++)
 			{
 				enumerations_tab->addRow();
-        enumerations_tab->setCellText(/*Utf8String::create(*/type->getEnumeration(i), i, 0);
+        enumerations_tab->setCellText(type->getEnumeration(i), i, 0);
 			}
 
 			enumerations_tab->blockSignals(false);
@@ -301,7 +301,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			preferred_chk->setChecked(type->isPreferred());
 			collatable_chk->setChecked(type->isCollatable());
 			delimiter_edt->setText(QString(type->getDelimiter()));
-      default_value_edt->setText(/*Utf8String::create(*/type->getDefaultValue());
+      default_value_edt->setText(type->getDefaultValue());
 			category_cmb->setCurrentIndex(category_cmb->findText(~type->getCategory()));
 			storage_cmb->setCurrentIndex(storage_cmb->findText(~type->getStorage()));
 			alignment_cmb->setCurrentIndex(alignment_cmb->findText(~type->getAlignment()));

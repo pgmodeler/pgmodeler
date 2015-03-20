@@ -91,10 +91,19 @@ void HintTextWidget::setText(const QString &text)
 {
   QFontMetrics f(text_lbl->font());
   QString txt=text;
-  QRect ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)"))));
+  QRect ret;
+  QSize txt_size;
+
+  txt.replace(QRegExp(QString("(<)(br)(/)?(>)")), QString("\n"));
+  txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)")));
+  ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt);
+  txt_size=QSize(ret.size().width(), ret.size().height() + (text_lbl->margin() * 1.5));
 
   text_lbl->setText(text);
-  this->setMinimumSize(QSize(ret.size().width(), ret.size().height() + (text_lbl->margin() * 1.5)));
+  text_lbl->setMaximumSize(txt_size);
+  text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+  this->setMinimumSize(txt_size + QSize(0, text_lbl->margin()/2));
+  this->adjustSize();
 }
 
 void HintTextWidget::setIconSize(unsigned icon_sz)

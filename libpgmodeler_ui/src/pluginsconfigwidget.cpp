@@ -134,8 +134,8 @@ void PluginsConfigWidget::loadConfiguration(void)
 		else
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
-                                 .arg(/*Utf8String::create(*/dir_list.front())
-                                 .arg(/*Utf8String::create(*/lib)
+                                 .arg(dir_list.front())
+                                 .arg(lib)
 																 .arg(plugin_loader.errorString()),
 																 ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}

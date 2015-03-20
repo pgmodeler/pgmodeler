@@ -39,7 +39,7 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 		//Raises an error if the passed data type is null
     if((*type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
-                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(this->getName())
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
 											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -77,7 +77,7 @@ void Cast::setCastFunction(Function *cast_func)
 
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -87,7 +87,7 @@ void Cast::setCastFunction(Function *cast_func)
 	//Raises an error if the function don't have at least 1 parameter or a maximum of 3
 	if(param_count==0 || param_count > 3)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
@@ -109,7 +109,7 @@ void Cast::setCastFunction(Function *cast_func)
 		//In case some error condition is reached raises an error
 		if(error)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(this->getName())
 											.arg(BaseObject::getTypeName(OBJ_CAST)),
 											ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -117,7 +117,7 @@ void Cast::setCastFunction(Function *cast_func)
 	//Raises an error if the return type of the function differs from the destination data type
 	if(cast_func->getReturnType()!=this->types[DST_TYPE])
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CAST)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

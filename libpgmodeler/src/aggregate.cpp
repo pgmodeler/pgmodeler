@@ -41,7 +41,7 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 	//Checks if the function is valid, if not the case raises an error
 	if(!isValidFunction(func_idx, func))
 		throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
 										ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -149,8 +149,8 @@ void Aggregate::addDataType(PgSQLType type)
 	//Case the data type already exists in the aggregate raise an exception
 	if(isDataTypeExist(type))
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
-                    .arg(/*Utf8String::create(*/~type)
-                    .arg(/*Utf8String::create(*/this->getName(true)),
+                    .arg(~type)
+                    .arg(this->getName(true)),
 										ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	data_types.push_back(type);
