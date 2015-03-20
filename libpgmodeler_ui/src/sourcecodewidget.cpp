@@ -175,7 +175,7 @@ void SourceCodeWidget::generateSourceCode(int)
           sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
         else
         {
-          vector<BaseObject *> objs=model->getCreationOrder(object, incl_child_sql_chk->isChecked());
+          vector<BaseObject *> objs=model->getCreationOrder(object);
 
           for(BaseObject *obj : objs)
             aux_def+=obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
