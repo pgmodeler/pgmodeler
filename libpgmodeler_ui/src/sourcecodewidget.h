@@ -33,11 +33,14 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 
+    static const int ORIGINAL_SQL=0,
+    DEPENDENCIES_SQL=1,
+    CHILDREN_SQL=2;
+
 		SyntaxHighlighter *hl_sqlcode,
 											*hl_xmlcode;
 
-    HintTextWidget *incl_child_sql_ht,
-                   *incl_deps_sql_ht;
+    HintTextWidget *code_options_ht;
 
 		void applyConfiguration(void){}
 		void hideEvent(QHideEvent *event);

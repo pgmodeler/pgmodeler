@@ -44,26 +44,17 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
 		parent_form->setMinimumSize(650, 550);
 
-    incl_child_sql_ht=new HintTextWidget(incl_child_sql_hint, this);
-    incl_child_sql_ht->setText(incl_child_sql_chk->statusTip());
-
-    incl_deps_sql_ht=new HintTextWidget(incl_deps_sql_hint, this);
-    incl_deps_sql_ht->setText(incl_deps_sql_chk->statusTip());
+    code_options_ht=new HintTextWidget(code_options_hint, this);
+    code_options_ht->setText(
+          trUtf8("<strong>Original:</strong> displays only the original object's SQL code.<br/><br/>\
+<strong>Dependencies:</strong> display the original code including all dependencies needed to properly create the selected object.<br/><br/>\
+<strong>Children:</strong> display the original code including all children's SQL code. This option is used only by schemas, tables and views."));
 
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
-    connect(incl_deps_sql_chk, SIGNAL(stateChanged(int)), this, SLOT(generateSourceCode(int)));
-    connect(incl_child_sql_chk, SIGNAL(stateChanged(int)), this, SLOT(generateSourceCode(int)));
+    connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
     connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
-
-    connect(incl_deps_sql_chk, &QCheckBox::toggled,
-            [=](bool checked){
-                  incl_child_sql_chk->blockSignals(true);
-                  incl_child_sql_chk->setChecked(false);
-                  incl_child_sql_chk->setEnabled(checked);
-                  incl_child_sql_chk->blockSignals(false);
-            });
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt, false);
@@ -171,11 +162,11 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
       else
       {
-        if(!incl_deps_sql_chk->isChecked())
+        if(code_options_cmb->currentIndex()==ORIGINAL_SQL)
           sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
         else
         {
-          vector<BaseObject *> objs=model->getCreationOrder(object);
+          vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==CHILDREN_SQL);
 
           for(BaseObject *obj : objs)
             aux_def+=obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -209,7 +200,6 @@ void SourceCodeWidget::generateSourceCode(int)
 		}
 
     save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
-    incl_deps_sql_wgt->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
 
 		if(sqlcode_txt->toPlainText().isEmpty())
 			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
@@ -254,14 +244,14 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
 			this->obj_id_lbl->setVisible(false);
-
-      incl_deps_sql_wgt->setVisible(true);
-      incl_child_sql_wgt->setVisible(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+      this->code_options_cmb->setEnabled(obj_type!=OBJ_DATABASE &&
+                                         obj_type!=OBJ_TEXTBOX &&
+                                         obj_type!=BASE_RELATIONSHIP &&
+                                         obj_type!=OBJ_RELATIONSHIP);
 
 			#ifdef DEMO_VERSION
-				#warning "DEMO VERSION: Referrer objects SQL code attachment disabled."
-        incl_deps_sql_wgt->setEnabled(false);
-        incl_child_sql_wgt->setEnabled(false);
+        #warning "DEMO VERSION: SQL code display options disabled."
+        code_options_cmb->setEnabled(false);
 			#endif
 
 			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
@@ -270,14 +260,10 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			comment_edt->setText(object->getTypeName());
 
 			if(!hl_sqlcode->isConfigurationLoaded())
-			{
         hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-			}
 
 			if(!hl_xmlcode->isConfigurationLoaded())
-			{
         hl_xmlcode->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
-			}
 
 			generateSourceCode();
 		}
