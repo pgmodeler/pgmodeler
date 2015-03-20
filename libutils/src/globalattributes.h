@@ -107,6 +107,9 @@ namespace GlobalAttributes {
      PGMODELER_CLI_PATH */
 
 	static const QString
+  //! brief Stores the path where the main application executable is located
+  PGMODELER_BIN_PATH=QString(BINDIR),
+
 	/*! \brief According to the libxml documentation , the paths used by the parser are
 		 in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
 		 C:\a\b\c, this caused the error in the parser that could not find

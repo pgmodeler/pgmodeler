@@ -106,7 +106,10 @@ class PgModelerCLI: public QApplication {
 		FIX_MODEL,
 		FIX_TRIES,
     ZOOM_FACTOR,
-    USE_TMP_NAMES;
+    USE_TMP_NAMES,
+    UPDATE_MIME,
+    INSTALL,
+    UNINSTALL;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
@@ -137,9 +140,9 @@ class PgModelerCLI: public QApplication {
 		//! \brief Returns if the specified string contains some of relationship attributes
 		bool containsRelAttributes(const QString &str);
 
-    /*! brief Updates the current .dbm file association. The paramenter 'remove' is used to clean up any
-        file association done previously */
-    void updateFileAssociation(bool remove);
+    /*! brief Updates the current .dbm file association in mime database. The paramenter 'remove' is used
+        to clean up any file association done previously */
+    void updateMimeDatabase(bool remove);
 
   public:
 		PgModelerCLI(int argc, char **argv);

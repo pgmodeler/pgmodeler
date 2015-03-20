@@ -45,6 +45,9 @@ const QString PgModelerCLI::FIX_MODEL=QString("--fix-model");
 const QString PgModelerCLI::FIX_TRIES=QString("--fix-tries");
 const QString PgModelerCLI::ZOOM_FACTOR=QString("--zoom");
 const QString PgModelerCLI::USE_TMP_NAMES=QString("--use-tmp-names");
+const QString PgModelerCLI::UPDATE_MIME=QString("--update-mime");
+const QString PgModelerCLI::INSTALL=QString("install");
+const QString PgModelerCLI::UNINSTALL=QString("uninstall");
 
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -192,6 +195,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[FIX_TRIES]=true;
 	long_opts[ZOOM_FACTOR]=true;
   long_opts[USE_TMP_NAMES]=false;
+  long_opts[UPDATE_MIME]=true;
 
   short_opts[INPUT]=QString("-i");
   short_opts[OUTPUT]=QString("-o");
@@ -219,6 +223,7 @@ void PgModelerCLI::initializeOptions(void)
   short_opts[FIX_TRIES]=QString("-t");
   short_opts[ZOOM_FACTOR]=QString("-z");
   short_opts[USE_TMP_NAMES]=QString("-n");
+  short_opts[UPDATE_MIME]=QString("-m");
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -280,7 +285,13 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("   %1, %2=[USER]\t\t PosrgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
 	out << trUtf8("   %1, %2=[PASSWORD]\t PosrgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
 	out << trUtf8("   %1, %2=[DBNAME]\t Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
-	out << endl;
+  out << endl;
+
+#ifndef Q_OS_MAC
+  out << trUtf8("Miscellaneous options: ") << endl;
+  out << trUtf8("   %1, %2=[ACTION]]\t Install or removes the association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[UPDATE_MIME]).arg(UPDATE_MIME).arg(INSTALL).arg(UNINSTALL) << endl;
+  out << endl;
+#endif
 }
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
@@ -322,7 +333,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	else
 	{
 		int mode_cnt=0;
-    bool fix_model=(opts.count(FIX_MODEL) > 0);
+    bool fix_model=(opts.count(FIX_MODEL) > 0), upd_mime=(opts.count(UPDATE_MIME) > 0);
     QFileInfo input_fi(opts[INPUT]), output_fi(opts[OUTPUT]);
 
 		//Checking if multiples export modes were specified
@@ -333,21 +344,26 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		if(opts.count(ZOOM_FACTOR))
 			zoom=opts[ZOOM_FACTOR].toFloat()/static_cast<float>(100);
 
-    if(!fix_model && mode_cnt==0)
+    if(!fix_model && !upd_mime && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-    else if(!fix_model && mode_cnt > 1)
+    if((mode_cnt > 0 && (fix_model || upd_mime)) ||
+       (mode_cnt==0 && fix_model && upd_mime))
+      throw Exception(trUtf8("Export, fix model and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else if(!fix_model && !upd_mime && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else	if(opts[INPUT].isEmpty())
+    else	if(!upd_mime && opts[INPUT].isEmpty())
 			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else	if(!opts.count(EXPORT_TO_DBMS) && opts[OUTPUT].isEmpty())
+    else	if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && opts[OUTPUT].isEmpty())
 			throw Exception(trUtf8("No output file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-    else if(!opts.count(EXPORT_TO_DBMS) && input_fi.absoluteFilePath()==output_fi.absoluteFilePath())
+    else if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && input_fi.absoluteFilePath()==output_fi.absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
 						 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
 			throw Exception(trUtf8("Incomplete connection information!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MINIMUM_ZOOM || zoom > ModelWidget::MAXIMUM_ZOOM))
-			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else if(upd_mime && opts[UPDATE_MIME]!=INSTALL && opts[UPDATE_MIME]!=UNINSTALL)
+      throw Exception(trUtf8("Invalid action specified to update mime option!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
     QDir::setCurrent(orig_work_dir);
@@ -373,10 +389,13 @@ int PgModelerCLI::exec(void)
 
 				if(parsed_opts.count(FIX_MODEL))
 					out << trUtf8("Starting model fixing...") << endl;
+        else if(parsed_opts.count(UPDATE_MIME))
+          out << trUtf8("Starting mime update...") << endl;
 				else
 					out << trUtf8("Starting model export...") << endl;
 
-				out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
+        if(parsed_opts.count(UPDATE_MIME)==0)
+          out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
 			}
 
 			if(parsed_opts.count(FIX_MODEL))
@@ -392,6 +411,10 @@ int PgModelerCLI::exec(void)
 				if(!silent_mode)
 					out << trUtf8("Model successfully fixed!") << endl << endl;
 			}
+      else if(parsed_opts.count(UPDATE_MIME))
+      {
+        updateMimeDatabase(parsed_opts[UPDATE_MIME]==UNINSTALL);
+      }
 			else
 			{
 				//Create the systems objects on model before loading it
@@ -954,12 +977,12 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 	return(found);
 }
 
-void PgModelerCLI::updateFileAssociation(bool remove)
+void PgModelerCLI::updateMimeDatabase(bool remove)
 {
  SchemaParser schparser;
  Messagebox msg_box;
- QString title=trUtf8("File association missing"),
-         msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
+ //QString title=trUtf8("File association missing"),
+ //        msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
 
  #ifdef Q_OS_LINUX
   attribs_map attribs;
@@ -992,90 +1015,87 @@ void PgModelerCLI::updateFileAssociation(bool remove)
   QFile out;
 
   //Check if the necessary file exists. If not asks the user to update file association
-  if(!QFileInfo(files[0]).exists() || !QFileInfo(files[1]).exists())
-    msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+  if(QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists())
+    throw Exception(trUtf8("Database model files (.dbm) are already associated to pgModeler!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    //msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-  if(msg_box.result()==QDialog::Accepted)
+  attribs[ParsersAttributes::ROOT_DIR]=GlobalAttributes::PGMODELER_BIN_PATH;
+  attribs[ParsersAttributes::ICON]=exec_icon;
+
+  try
   {
-    //file_associated=true;
-    attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
-    attribs[ParsersAttributes::ICON]=exec_icon;
-
-    try
+    for(unsigned i=0; i < 2; i++)
     {
-      for(unsigned i=0; i < 2; i++)
+      schparser.loadFile(schemas[i]);
+      buf.append(schparser.getCodeDefinition(attribs));
+      QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
+
+      out.setFileName(files[i]);
+      out.open(QFile::WriteOnly);
+
+      if(!out.isOpen())
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
+                        ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+      out.write(buf.data(), buf.size());
+      out.close();
+      buf.clear();
+      attribs[ParsersAttributes::ICON]=dbm_icon;
+    }
+
+    out.setFileName(mimeapps);
+
+    //If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
+    if(!QFileInfo(mimeapps).exists())
+    {
+      out.open(QFile::WriteOnly);
+      out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
+      out.close();
+    }
+    else
+    {
+
+      out.open(QFile::ReadOnly);
+
+      if(!out.isOpen())
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(mimeapps),
+                        ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+      //Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
+      buf=out.readAll();
+      out.close();
+
+      QTextStream ts(&buf);
+      while(!ts.atEnd())
       {
-        schparser.loadFile(schemas[i]);
-        buf.append(schparser.getCodeDefinition(attribs));
-        QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
+        //Remove any reference to application/dbm mime from file
+        str_aux=ts.readLine();
+        str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
 
-        out.setFileName(files[i]);
-        out.open(QFile::WriteOnly);
-
-        if(!out.isOpen())
-          throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
-                          ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-        out.write(buf.data(), buf.size());
-        out.close();
-        buf.clear();
-        attribs[ParsersAttributes::ICON]=dbm_icon;
-      }
-
-      out.setFileName(mimeapps);
-
-      //If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
-      if(!QFileInfo(mimeapps).exists())
-      {
-        out.open(QFile::WriteOnly);
-        out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
-        out.close();
-      }
-      else
-      {
-
-        out.open(QFile::ReadOnly);
-
-        if(!out.isOpen())
-          throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(mimeapps),
-                          ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-        //Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
-        buf=out.readAll();
-        out.close();
-
-        QTextStream ts(&buf);
-        while(!ts.atEnd())
+        if(!str_aux.isEmpty())
         {
-          //Remove any reference to application/dbm mime from file
-          str_aux=ts.readLine();
-          str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
+          //Updates the application/dbm mime association
+          if(str_aux.contains(QString("[Added Associations]")))
+            str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
+          else
+            str_aux+=QString("\n");
 
-          if(!str_aux.isEmpty())
-          {
-            //Updates the application/dbm mime association
-            if(str_aux.contains(QString("[Added Associations]")))
-              str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
-            else
-              str_aux+=QString("\n");
-
-            buf_aux.append(str_aux);
-          }
+          buf_aux.append(str_aux);
         }
-
-        //Write a new copy of the mimeapps.list file
-        out.open(QFile::Truncate | QFile::WriteOnly);
-        out.write(buf_aux.data(), buf_aux.size());
-        out.close();
       }
 
-      //Update the mime database
-      QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
+      //Write a new copy of the mimeapps.list file
+      out.open(QFile::Truncate | QFile::WriteOnly);
+      out.write(buf_aux.data(), buf_aux.size());
+      out.close();
     }
-    catch(Exception &e)
-    {
-      msg_box.show(e);
-    }
+
+    //Update the mime database
+    QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
   }
  #else
     #ifdef Q_OS_WIN
