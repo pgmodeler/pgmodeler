@@ -850,6 +850,8 @@
   <tabstop>edit_tb</tabstop>
   <tabstop>remove_tb</tabstop>
   <tabstop>alias_edt</tabstop>
+  <tabstop>conn_db_edt</tabstop>
+  <tabstop>auto_browse_chk</tabstop>
   <tabstop>host_edt</tabstop>
   <tabstop>port_sbp</tabstop>
   <tabstop>user_edt</tabstop>
