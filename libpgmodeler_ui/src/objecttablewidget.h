@@ -42,14 +42,14 @@ class LIBPGMODELER_UI_EXPORT ObjectTableWidget: public QWidget, public Ui::Objec
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static const unsigned ADD_BUTTON=1,
-															REMOVE_BUTTON=2,
-															UPDATE_BUTTON=4,
-															MOVE_BUTTONS=8,
-															EDIT_BUTTON=16,
-															REMOVE_ALL_BUTTON=32,
-															ALL_BUTTONS=63,
-															NO_BUTTONS=0;
+		static const unsigned ADD_BUTTON=1;
+		static const unsigned REMOVE_BUTTON=2;
+		static const unsigned UPDATE_BUTTON=4;
+		static const unsigned MOVE_BUTTONS=8;
+		static const unsigned EDIT_BUTTON=16;
+		static const unsigned REMOVE_ALL_BUTTON=32;
+		static const unsigned ALL_BUTTONS=63;
+		static const unsigned NO_BUTTONS=0;
 
 		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
 											bool conf_exclusion=false, QWidget * parent = 0);

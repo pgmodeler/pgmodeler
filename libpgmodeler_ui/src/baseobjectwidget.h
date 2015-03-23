@@ -48,11 +48,11 @@ class LIBPGMODELER_UI_EXPORT BaseObjectWidget: public QDialog, public Ui::BaseOb
 		int pf_min_height, pf_max_height;
 
 	protected:
-    static const int MAX_OBJECT_SIZE=16777215;
-		static const QColor PROT_LINE_BGCOLOR,
-												PROT_LINE_FGCOLOR,
-												RELINC_LINE_BGCOLOR,
-												RELINC_LINE_FGCOLOR;
+		static const int MAX_OBJECT_SIZE=16777215;
+		static const QColor PROT_LINE_BGCOLOR;
+		static const QColor PROT_LINE_FGCOLOR;
+		static const QColor RELINC_LINE_BGCOLOR;
+		static const QColor RELINC_LINE_FGCOLOR;
 
 		//! \brief Parent form used to show the widget as a dialog.
 		BaseForm *parent_form;
@@ -132,9 +132,9 @@ class LIBPGMODELER_UI_EXPORT BaseObjectWidget: public QDialog, public Ui::BaseOb
 
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static const unsigned UNTIL_VERSION=0,
-															VERSIONS_INTERVAL=1,
-															AFTER_VERSION=2;
+        static const unsigned UNTIL_VERSION=0;
+        static const unsigned VERSIONS_INTERVAL=1;
+        static const unsigned AFTER_VERSION=2;
 
 		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
 

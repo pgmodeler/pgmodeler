@@ -55,8 +55,8 @@ class LIBPGMODELER_EXPORT Element {
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		static const unsigned ASC_ORDER=0,
-													NULLS_FIRST=1;
+		static const unsigned ASC_ORDER=0;
+		static const unsigned NULLS_FIRST=1;
 
 		Element(void);
 		virtual ~Element(void) {}

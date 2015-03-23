@@ -36,11 +36,11 @@ class LIBPGMODELER_UI_EXPORT ObjectsDiffInfo {
     BaseObject *object, *old_object;
 
 	public:
-		static const unsigned CREATE_OBJECT,
-													DROP_OBJECT,
-                          ALTER_OBJECT,
-                          IGNORE_OBJECT,
-                          NO_DIFFERENCE;
+		static const unsigned CREATE_OBJECT;
+		static const unsigned DROP_OBJECT;
+		static const unsigned ALTER_OBJECT;
+		static const unsigned IGNORE_OBJECT;
+		static const unsigned NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
     ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);

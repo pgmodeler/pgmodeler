@@ -97,10 +97,10 @@ class LIBOBJECTRENDERER_EXPORT BaseObjectView: public QObject, public QGraphicsI
     void setSelectionOrder(bool selected);
 
 	public:
-    static const float VERT_SPACING,
-													 HORIZ_SPACING,
-													 DEFAULT_FONT_SIZE,
-													 OBJ_BORDER_WIDTH;
+		static const float VERT_SPACING;
+		static const float HORIZ_SPACING;
+		static const float DEFAULT_FONT_SIZE;
+		static const float OBJ_BORDER_WIDTH;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView(void);

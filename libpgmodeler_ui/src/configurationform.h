@@ -47,12 +47,12 @@ class LIBPGMODELER_UI_EXPORT ConfigurationForm: public QDialog, public Ui::Confi
     void hideEvent(QHideEvent *);
 
 	public:
-		static const int	GENERAL_CONF_WGT=0,
-											RELATIONSHIPS_CONF_WGT=1,
-											APPEARANCE_CONF_WGT=2,
-											CONNECTIONS_CONF_WGT=3,
-                      SNIPPETS_CONF_WGT=4,
-                      PLUGINS_CONF_WGT=5;
+		static const int	GENERAL_CONF_WGT=0;
+		static const int	RELATIONSHIPS_CONF_WGT=1;
+		static const int	APPEARANCE_CONF_WGT=2;
+		static const int	CONNECTIONS_CONF_WGT=3;
+		static const int	SNIPPETS_CONF_WGT=4;
+		static const int	PLUGINS_CONF_WGT=5;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 

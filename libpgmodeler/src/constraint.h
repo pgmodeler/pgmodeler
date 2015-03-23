@@ -86,14 +86,14 @@ class LIBPGMODELER_EXPORT Constraint: public TableObject{
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
-		static const unsigned SOURCE_COLS=0,
+		static const unsigned SOURCE_COLS=0;
 
-														 /*! \brief Access the referenced columns that means the columns from the
-														 referenced table primary key (only for foreign keys) */
-														 REFERENCED_COLS=1;
+		/*! \brief Access the referenced columns that means the columns from the
+		referenced table primary key (only for foreign keys) */
+		static const unsigned REFERENCED_COLS=1;
 
-    static const unsigned DELETE_ACTION=0,
-                             UPDATE_ACTION=1;
+		static const unsigned DELETE_ACTION=0;
+		static const unsigned UPDATE_ACTION=1;
 
 		Constraint(void);
     ~Constraint(void);
