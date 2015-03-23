@@ -35,8 +35,6 @@
 #include <QStringList>
 #include <QTextStream>
 
-using namespace ParsersAttributes;
-
 enum ObjectType {
 	OBJ_COLUMN,
 	OBJ_CONSTRAINT,
