@@ -48,8 +48,8 @@ class LIBPGMODELER_EXPORT Collation : public BaseObject {
 						locale;
 
 	public:
-		static const unsigned _LC_CTYPE=0,
-		_LC_COLLATE=1;
+		static const unsigned _LC_CTYPE=0;
+		static const unsigned _LC_COLLATE=1;
 
 		Collation(void);
 

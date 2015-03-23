@@ -278,20 +278,20 @@ class LIBPGMODELER_EXPORT Relationship: public BaseRelationship {
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
-		static const QString SUFFIX_SEPARATOR,
-    SRC_TAB_TOKEN, //{st}
-    DST_TAB_TOKEN, //{dt}
-    GEN_TAB_TOKEN, //{gt}
-    SRC_COL_TOKEN; //{sc}
+		static const QString SUFFIX_SEPARATOR;
+		static const QString SRC_TAB_TOKEN; //{st}
+		static const QString DST_TAB_TOKEN; //{dt}
+		static const QString GEN_TAB_TOKEN; //{gt}
+		static const QString SRC_COL_TOKEN; //{sc}
 
 		//! \brief Patterns ids
-		static const unsigned SRC_COL_PATTERN,
-		DST_COL_PATTERN,
-		PK_PATTERN,
-		UQ_PATTERN,
-		SRC_FK_PATTERN,
-    DST_FK_PATTERN,
-    PK_COL_PATTERN;
+		static const unsigned SRC_COL_PATTERN;
+		static const unsigned DST_COL_PATTERN;
+		static const unsigned PK_PATTERN;
+		static const unsigned UQ_PATTERN;
+		static const unsigned SRC_FK_PATTERN;
+		static const unsigned DST_FK_PATTERN;
+		static const unsigned PK_COL_PATTERN;
 
 		Relationship(Relationship *rel);
 

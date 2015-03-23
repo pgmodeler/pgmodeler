@@ -58,20 +58,20 @@ class LIBPGMODELER_UI_EXPORT MainWindow: public QMainWindow, public Ui::MainWind
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
-    const static int GENERAL_ACTIONS_COUNT=9;
+		const static int GENERAL_ACTIONS_COUNT=9;
 
-    const static int WELCOME_VIEW=0,
-    DESIGN_VIEW=1,
-    MANAGE_VIEW=2;
+		const static int WELCOME_VIEW=0;
+		const static int DESIGN_VIEW=1;
+		const static int MANAGE_VIEW=2;
 
-    static bool confirm_validation;
+		static bool confirm_validation;
 
-    //! \brief Constants used to mark a pending operation to be executed after validate model
-    const static unsigned NO_PENDING_OPER=0,
-    PENDING_SAVE_OPER=1,
-    PENDING_SAVE_AS_OPER=2,
-    PENDING_EXPORT_OPER=3,
-    PENDING_DIFF_OPER=4;
+		//! \brief Constants used to mark a pending operation to be executed after validate model
+		const static unsigned NO_PENDING_OPER=0;
+		const static unsigned PENDING_SAVE_OPER=1;
+		const static unsigned PENDING_SAVE_AS_OPER=2;
+		const static unsigned PENDING_EXPORT_OPER=3;
+		const static unsigned PENDING_DIFF_OPER=4;
 
     unsigned pending_op;
 

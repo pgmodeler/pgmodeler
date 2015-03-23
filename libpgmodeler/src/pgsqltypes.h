@@ -304,15 +304,13 @@ class LIBPGMODELER_EXPORT UserTypeConfig {
 		bool invalidated;
 
 	public:
-    static const unsigned BASE_TYPE=1, //! \brief The type refers to a user-defined base type (class Type)
-													DOMAIN_TYPE=2, //! \brief The type refers to a domain
-													TABLE_TYPE=4, //! \brief The type refers to a table
-													SEQUENCE_TYPE=8, //! \brief The type refers to a sequence
-													VIEW_TYPE=16, //! \brief The type refers to a view
-													EXTENSION_TYPE=32, //! \brief The type refers to a extension used as datatype
-
-													//! \brief This constant refers to all types above and must be used only on type searches
-													ALL_USER_TYPES=63;
+		static const unsigned BASE_TYPE=1; //! \brief The type refers to a user-defined base type (class Type)
+		static const unsigned DOMAIN_TYPE=2; //! \brief The type refers to a domain
+		static const unsigned TABLE_TYPE=4; //! \brief The type refers to a table
+		static const unsigned SEQUENCE_TYPE=8; //! \brief The type refers to a sequence
+		static const unsigned VIEW_TYPE=16; //! \brief The type refers to a view
+		static const unsigned EXTENSION_TYPE=32; //! \brief The type refers to a extension used as datatype
+		static const unsigned ALL_USER_TYPES=63; //! \brief This constant refers to all types above and must be used only on type searches
 
 		UserTypeConfig(void)
     { name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }

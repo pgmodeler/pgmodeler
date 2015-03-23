@@ -84,18 +84,18 @@ class LIBPGMODELER_EXPORT Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-    static const unsigned PRIV_SELECT=0,
-                          PRIV_INSERT=1,
-                          PRIV_UPDATE=2,
-                          PRIV_DELETE=3,
-                          PRIV_TRUNCATE=4,
-                          PRIV_REFERENCES=5,
-                          PRIV_TRIGGER=6,
-                          PRIV_CREATE=7,
-                          PRIV_CONNECT=8,
-                          PRIV_TEMPORARY=9,
-                          PRIV_EXECUTE=10,
-                          PRIV_USAGE=11;
+		static const unsigned PRIV_SELECT=0;
+		static const unsigned PRIV_INSERT=1;
+		static const unsigned PRIV_UPDATE=2;
+		static const unsigned PRIV_DELETE=3;
+		static const unsigned PRIV_TRUNCATE=4;
+		static const unsigned PRIV_REFERENCES=5;
+		static const unsigned PRIV_TRIGGER=6;
+		static const unsigned PRIV_CREATE=7;
+		static const unsigned PRIV_CONNECT=8;
+		static const unsigned PRIV_TEMPORARY=9;
+		static const unsigned PRIV_EXECUTE=10;
+		static const unsigned PRIV_USAGE=11;
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of

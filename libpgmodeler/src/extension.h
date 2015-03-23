@@ -40,8 +40,8 @@ class LIBPGMODELER_EXPORT Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static const unsigned CUR_VERSION=0,
-                          OLD_VERSION=1;
+		static const unsigned CUR_VERSION=0;
+		static const unsigned OLD_VERSION=1;
 		Extension(void);
 
 		void setName(const QString &name);

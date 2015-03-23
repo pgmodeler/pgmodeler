@@ -52,16 +52,16 @@ class LIBOBJECTRENDERER_EXPORT TableObjectView: public BaseObjectView
 		}
 
 	public:
-		static const QString	CONSTR_DELIM_END,
-													CONSTR_DELIM_START,
-													TYPE_SEPARATOR,
-													CONSTR_SEPARATOR,
-													TXT_FOREIGN_KEY,
-                          TXT_NOT_NULL,
-													TXT_PRIMARY_KEY,
-													TXT_UNIQUE,
-													TXT_CHECK,
-													TXT_EXCLUDE;
+		static const QString	CONSTR_DELIM_END;
+		static const QString	CONSTR_DELIM_START;
+		static const QString	TYPE_SEPARATOR;
+		static const QString	CONSTR_SEPARATOR;
+		static const QString	TXT_FOREIGN_KEY;
+		static const QString	TXT_NOT_NULL;
+		static const QString	TXT_PRIMARY_KEY;
+		static const QString	TXT_UNIQUE;
+		static const QString	TXT_CHECK;
+		static const QString	TXT_EXCLUDE;
 
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);

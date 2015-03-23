@@ -45,8 +45,8 @@ class LIBPGMODELER_EXPORT Conversion: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the conversion encodings
-		static const unsigned SRC_ENCODING=0,
-													DST_ENCODING=1;
+		static const unsigned SRC_ENCODING=0;
+		static const unsigned DST_ENCODING=1;
 
 		Conversion(void);
 
