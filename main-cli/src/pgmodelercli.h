@@ -107,7 +107,7 @@ class PgModelerCLI: public QApplication {
 		FIX_TRIES,
     ZOOM_FACTOR,
     USE_TMP_NAMES,
-    UPDATE_MIME,
+    DBM_MIME_TYPE,
     INSTALL,
     UNINSTALL;
 
@@ -140,9 +140,9 @@ class PgModelerCLI: public QApplication {
 		//! \brief Returns if the specified string contains some of relationship attributes
 		bool containsRelAttributes(const QString &str);
 
-    /*! brief Updates the current .dbm file association in mime database. The paramenter 'remove' is used
-        to clean up any file association done previously */
-    void updateMimeDatabase(bool remove);
+    /*! brief Install the .dbm file association in the mime database (default behaviour).
+        The paramenter 'uninstall' is used to clean up any file association done previously. */
+    void handleMimeDatabase(bool uninstall);
 
   public:
 		PgModelerCLI(int argc, char **argv);
