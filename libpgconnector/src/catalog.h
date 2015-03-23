@@ -32,7 +32,7 @@ This class is the basis for the reverse engineering feature.
 #include <QTextStream>
 #include <QApplication>
 
-class Catalog {
+class LIBPGCONNECTOR_EXPORT Catalog {
 	private:
 		SchemaParser schparser;
 

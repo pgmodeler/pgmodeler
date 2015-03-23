@@ -32,7 +32,7 @@
 #include "function.h"
 #include "operatorfamily.h"
 
-class OperatorClassElement {
+class LIBPGMODELER_EXPORT OperatorClassElement {
 	private:
 		/*! \brief Type of the operator class element.
 		 This can have 3 possible values:

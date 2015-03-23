@@ -29,7 +29,7 @@
 #include "ui_triggerwidget.h"
 #include "objecttablewidget.h"
 
-class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
+class LIBPGMODELER_UI_EXPORT TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:
 		Q_OBJECT
 

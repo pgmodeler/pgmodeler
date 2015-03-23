@@ -21,7 +21,7 @@
 \class ObjectTableWidget
 \brief Implements a basic table (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This
-class also implements operations to handle insertion/deletion/update/movements
+class LIBPGMODELER_UI_EXPORT also implements operations to handle insertion/deletion/update/movements
 of rows on the table.
 */
 
@@ -32,7 +32,7 @@ of rows on the table.
 #include "messagebox.h"
 #include "baseobjectwidget.h"
 
-class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
+class LIBPGMODELER_UI_EXPORT ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 	private:
 		Q_OBJECT
 

@@ -29,7 +29,7 @@
 #include "table.h"
 #include "schema.h"
 
-class Reference {
+class LIBPGMODELER_EXPORT Reference {
 	private:
 		//! \brief Stores the table used by the reference
 		Table *table;

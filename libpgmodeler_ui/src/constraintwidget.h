@@ -31,7 +31,7 @@
 #include "messagebox.h"
 #include "elementswidget.h"
 
-class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
+class LIBPGMODELER_UI_EXPORT ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
 

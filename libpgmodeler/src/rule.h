@@ -29,7 +29,7 @@
 #include "tableobject.h"
 #include "column.h"
 
-class Rule: public TableObject{
+class LIBPGMODELER_EXPORT Rule: public TableObject{
 	private:
 		//! \brief Commands executed by the rule when activated
 		vector<QString> commands;

@@ -33,7 +33,7 @@
 
 using namespace std;
 
-class Connection {
+class LIBPGCONNECTOR_EXPORT Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;

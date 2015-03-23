@@ -270,6 +270,8 @@ unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libparsers/ -lparsers \
                       -L$$OUT_PWD/../libutils/ -lutils
 
+windows: DEFINES += LIBPGMODELER_UI_EXPORT=Q_DECL_EXPORT
+
 INCLUDEPATH += $$PWD/../libobjrenderer/src \
                $$PWD/../libpgconnector/src \
                $$PWD/../libpgmodeler/src \

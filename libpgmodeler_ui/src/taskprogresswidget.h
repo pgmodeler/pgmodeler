@@ -31,7 +31,7 @@
 
 using namespace std;
 
-class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
+class LIBPGMODELER_UI_EXPORT TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 {
 	private:
 		Q_OBJECT

@@ -29,7 +29,7 @@
 #include "basegraphicobject.h"
 #include <QColor>
 
-class Schema: public BaseGraphicObject {
+class LIBPGMODELER_EXPORT Schema: public BaseGraphicObject {
 	private:
 		QColor fill_color;
 		bool rect_visible;

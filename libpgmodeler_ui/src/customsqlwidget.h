@@ -29,7 +29,7 @@
 #include "codecompletionwidget.h"
 #include "ui_customsqlwidget.h"
 
-class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
+class LIBPGMODELER_UI_EXPORT CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 	private:
 		Q_OBJECT
 

@@ -30,7 +30,7 @@
 #include "objecttablewidget.h"
 #include "tableview.h"
 
-class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
+class LIBPGMODELER_UI_EXPORT TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 

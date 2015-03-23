@@ -30,7 +30,7 @@
 #include "function.h"
 #include "role.h"
 
-class Conversion: public BaseObject {
+class LIBPGMODELER_EXPORT Conversion: public BaseObject {
 	private:
 		/*! \brief Encoding types vector:
 		 0 -> Source encoding

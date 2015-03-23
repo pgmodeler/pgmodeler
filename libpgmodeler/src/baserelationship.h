@@ -32,7 +32,7 @@
 #include <cmath>
 #include <QColor>
 
-class BaseRelationship: public BaseGraphicObject  {
+class LIBPGMODELER_EXPORT BaseRelationship: public BaseGraphicObject  {
 	protected:
 		//! brief This attribute overrides the default color configuration for relationship line and descriptor
 		QColor custom_color;

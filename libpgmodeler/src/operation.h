@@ -29,7 +29,7 @@
 #include "permission.h"
 #include <QString>
 
-class Operation {
+class LIBPGMODELER_EXPORT Operation {
   private:
     /*! brief Uniquely identifies the object. This id is used to check if the operation object's somehow
         where delete (changing their addresses). This will avoid the operation list to try to execute

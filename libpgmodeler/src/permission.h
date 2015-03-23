@@ -34,7 +34,7 @@
 #include <QCryptographicHash>
 #include <QRegExp>
 
-class Permission: public BaseObject {
+class LIBPGMODELER_EXPORT Permission: public BaseObject {
 		/*! \brief Permissions on PostgreSQL are only applied to the following
 				object type:
 

@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class OperatorFamily: public BaseObject {
+class LIBPGMODELER_EXPORT OperatorFamily: public BaseObject {
 	private:
 		//! \brief Indexing type used by the operator family
 		IndexingType indexing_type;

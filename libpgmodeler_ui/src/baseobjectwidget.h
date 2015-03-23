@@ -39,7 +39,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSQLType)
 
-class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
+class LIBPGMODELER_UI_EXPORT BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 

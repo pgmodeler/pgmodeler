@@ -29,7 +29,7 @@
 #include "table.h"
 #include "baseobjectview.h"
 
-class TableObjectView: public BaseObjectView
+class LIBOBJECTRENDERER_EXPORT TableObjectView: public BaseObjectView
 {
 	private:
 		Q_OBJECT

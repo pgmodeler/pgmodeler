@@ -29,7 +29,7 @@
 #include "tableobject.h"
 #include "indexelement.h"
 
-class Index: public TableObject{
+class LIBPGMODELER_EXPORT Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
