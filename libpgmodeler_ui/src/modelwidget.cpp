@@ -2205,8 +2205,8 @@ void ModelWidget::pasteObjects(void)
 				 (aux_object &&
 					(dynamic_cast<BaseGraphicObject *>(object) ||
 					 (aux_object->getDatabase()==object->getDatabase()) ||
-						 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
-							object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION)))))
+						 (aux_object->getCodeDefinition(SchemaParser::XML_DEFINITION) !=
+							object->getCodeDefinition(SchemaParser::XML_DEFINITION)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)
