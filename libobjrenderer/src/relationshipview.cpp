@@ -18,6 +18,8 @@
 
 #include "relationshipview.h"
 
+const float RelationshipView::GRAPHIC_PNT_RADIUS=6.0f;
+const float RelationshipView::CONN_LINE_LENGTH=20.0f;
 bool RelationshipView::hide_name_label=false;
 unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 

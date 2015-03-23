@@ -34,10 +34,10 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-    static constexpr float GRAPHIC_PNT_RADIUS=6.0f;
+    static const float GRAPHIC_PNT_RADIUS;
 
 		//! brief Length of the lines linked to fk/pk columns
-		static constexpr float CONN_LINE_LENGTH=20.0f;
+		static const float CONN_LINE_LENGTH;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;

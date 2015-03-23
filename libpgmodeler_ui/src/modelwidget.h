@@ -196,9 +196,9 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	public:
-    static constexpr float MINIMUM_ZOOM=0.05f,
-													 MAXIMUM_ZOOM=4.0f,
-													 ZOOM_INCREMENT=0.05f;
+    static const float MINIMUM_ZOOM,
+													 MAXIMUM_ZOOM,
+													 ZOOM_INCREMENT;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
