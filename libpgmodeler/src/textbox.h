@@ -30,7 +30,7 @@ model also used to represent relationship labels.
 #include "basegraphicobject.h"
 #include <QColor>
 
-class Textbox: public BaseGraphicObject{
+class LIBPGMODELER_EXPORT Textbox: public BaseGraphicObject{
 	private:
 		//! \brief Stores the status of text attributes (bold / italic / underline)
 		bool text_attributes[3];

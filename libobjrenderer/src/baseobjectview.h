@@ -30,7 +30,7 @@
 #include "baserelationship.h"
 #include "xmlparser.h"
 
-class BaseObjectView: public QObject, public QGraphicsItemGroup {
+class LIBOBJECTRENDERER_EXPORT BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 

@@ -30,7 +30,7 @@
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
 
-class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class LIBPGMODELER_UI_EXPORT DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 

@@ -49,7 +49,7 @@
 #include "centralwidget.h"
 #include "configurationform.h"
 
-class MainWindow: public QMainWindow, public Ui::MainWindow {
+class LIBPGMODELER_UI_EXPORT MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 

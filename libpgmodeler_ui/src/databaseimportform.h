@@ -30,7 +30,7 @@
 #include "hinttextwidget.h"
 #include <QTimer>
 
-class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
+class LIBPGMODELER_UI_EXPORT DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 

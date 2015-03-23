@@ -36,7 +36,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(ValidationInfo)
 
-class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
+class LIBPGMODELER_UI_EXPORT ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 

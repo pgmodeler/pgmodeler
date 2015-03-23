@@ -29,7 +29,7 @@
 #include "globalattributes.h"
 #include "ui_modelfixform.h"
 
-class ModelFixForm: public QDialog, public Ui::ModelFixForm {
+class LIBPGMODELER_UI_EXPORT ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 

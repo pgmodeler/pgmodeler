@@ -29,7 +29,7 @@
 #include "role.h"
 #include "parameter.h"
 
-class Function: public BaseObject {
+class LIBPGMODELER_EXPORT Function: public BaseObject {
 	private:
 		//! \brief Function unique signature
 		QString signature;

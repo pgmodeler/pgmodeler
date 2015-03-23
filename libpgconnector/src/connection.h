@@ -30,7 +30,7 @@
 #include "attribsmap.h"
 #include <QRegExp>
 
-class Connection {
+class LIBPGCONNECTOR_EXPORT Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;

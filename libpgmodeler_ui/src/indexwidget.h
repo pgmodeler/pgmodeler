@@ -30,7 +30,7 @@
 #include "objecttablewidget.h"
 #include "elementswidget.h"
 
-class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
+class LIBPGMODELER_UI_EXPORT IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 

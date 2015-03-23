@@ -36,7 +36,7 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 //This constant is defined on PostgreSQL source code src/catalog/pg_type.h
 #define BYTEAOID 17
 
-class ResultSet {
+class LIBPGCONNECTOR_EXPORT ResultSet {
  private:
  /*! \brief Indicates whether the result was copied, this flag is used
      to avoid segmentation faults when calling the destructor.

@@ -34,7 +34,7 @@
 #include <iostream>
 #include "attribsmap.h"
 
-class XMLParser {
+class LIBPARSERS_EXPORT XMLParser {
 	private:
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */

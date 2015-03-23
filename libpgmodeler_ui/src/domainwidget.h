@@ -29,7 +29,7 @@
 #include "ui_domainwidget.h"
 #include "pgsqltypewidget.h"
 
-class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
+class LIBPGMODELER_UI_EXPORT DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:
 		Q_OBJECT
 

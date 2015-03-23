@@ -34,7 +34,7 @@
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
 
-class ModelWidget: public QWidget {
+class LIBPGMODELER_UI_EXPORT ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 

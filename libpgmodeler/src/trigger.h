@@ -29,7 +29,7 @@
 #include "tableobject.h"
 #include "function.h"
 
-class Trigger: public TableObject{
+class LIBPGMODELER_EXPORT Trigger: public TableObject{
 	private:
 		//! \brief Arguments passed to the function that trigger executes
 		vector<QString> arguments;

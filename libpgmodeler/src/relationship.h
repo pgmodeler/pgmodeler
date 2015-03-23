@@ -115,7 +115,7 @@ Must be manually simulated using the available binary relationships.
 			weak entity tuples must be destroyed also because this latter exists only because
 			the first. */
 
-class Relationship: public BaseRelationship {
+class LIBPGMODELER_EXPORT Relationship: public BaseRelationship {
 	private:
 		/*! \brief Indicates that the relationship invalid because one or more critical attributes
 		 where modified needing to be revalidated */

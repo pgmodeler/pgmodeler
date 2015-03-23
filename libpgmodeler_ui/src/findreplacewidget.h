@@ -29,7 +29,7 @@
 #include <QTextEdit>
 #include "exception.h"
 
-class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class LIBPGMODELER_UI_EXPORT FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 

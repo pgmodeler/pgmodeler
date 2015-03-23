@@ -32,7 +32,7 @@
 #include "ui_hinttextwidget.h"
 #include "exception.h"
 
-class HintTextWidget: public QWidget, public Ui::HintTextWidget {
+class LIBPGMODELER_UI_EXPORT HintTextWidget: public QWidget, public Ui::HintTextWidget {
 	private:
 		Q_OBJECT
 

@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "table.h"
 
-class Sequence: public BaseObject {
+class LIBPGMODELER_EXPORT Sequence: public BaseObject {
 	private:
 		/*! \brief Indicates taht the sequence is cyclic
 		 (the counter resets when maximum value is reached) */

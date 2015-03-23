@@ -31,7 +31,7 @@ are emitted during the validation process on ModelValidationHelper class.
 #include "baseobject.h"
 #include <vector>
 
-class ValidationInfo {
+class LIBPGMODELER_UI_EXPORT ValidationInfo {
 	private:
 		//! \brief Validation type (see constants below)
 		unsigned val_type;

@@ -29,7 +29,7 @@
 #include "tableview.h"
 #include "relationship.h"
 
-class RelationshipView: public BaseObjectView {
+class LIBOBJECTRENDERER_EXPORT RelationshipView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

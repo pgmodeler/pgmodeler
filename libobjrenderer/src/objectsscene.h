@@ -33,7 +33,7 @@
 #include "schemaview.h"
 #include "styledtextboxview.h"
 
-class ObjectsScene: public QGraphicsScene {
+class LIBOBJECTRENDERER_EXPORT ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 

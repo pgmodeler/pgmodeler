@@ -28,7 +28,7 @@
 #include <QGraphicsRectItem>
 #include <QPainter>
 
-class RoundedRectItem: public QGraphicsRectItem {
+class LIBOBJECTRENDERER_EXPORT RoundedRectItem: public QGraphicsRectItem {
   private:
     //! brief Rect border radius
     float radius;

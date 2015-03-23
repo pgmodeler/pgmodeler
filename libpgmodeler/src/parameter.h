@@ -26,7 +26,7 @@
 
 #include "column.h"
 
-class Parameter: public Column {
+class LIBPGMODELER_EXPORT Parameter: public Column {
 	private:
 		/*! \brief This attributes indicates whether the parameter
 		is in, out or both (IN, OUT, INOUT, VARIADIC) */

@@ -27,7 +27,7 @@
 #include "column.h"
 #include "operatorclass.h"
 
-class Element {
+class LIBPGMODELER_EXPORT Element {
 	private:
 		/*! \brief Column referenced by the  element. This attribute is
 		 mutually exclusive with the expression attribute, this means,

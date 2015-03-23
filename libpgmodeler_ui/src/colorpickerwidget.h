@@ -33,7 +33,7 @@
 #include <QTime>
 #include <random>
 
-class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
+class LIBPGMODELER_UI_EXPORT ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
 

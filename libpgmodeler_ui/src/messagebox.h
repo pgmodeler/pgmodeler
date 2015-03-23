@@ -28,7 +28,7 @@
 #include "ui_messagebox.h"
 #include "exception.h"
 
-class Messagebox: public QDialog, public Ui::Messagebox {
+class LIBPGMODELER_UI_EXPORT Messagebox: public QDialog, public Ui::Messagebox {
 	private:
 		Q_OBJECT
 
