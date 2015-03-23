@@ -50,7 +50,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QRectF scene_rect;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-    static constexpr float RESIZE_FACTOR=0.20f;
+    static const float RESIZE_FACTOR;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);
