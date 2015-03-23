@@ -31,7 +31,7 @@
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
 
-class BaseTableView: public BaseObjectView {
+class LIBOBJECTRENDERER_EXPORT BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 

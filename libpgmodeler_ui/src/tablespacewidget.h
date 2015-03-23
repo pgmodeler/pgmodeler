@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_tablespacewidget.h"
 
-class TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
+class LIBPGMODELER_UI_EXPORT TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
 	private:
 		Q_OBJECT
 

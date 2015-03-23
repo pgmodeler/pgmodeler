@@ -31,7 +31,7 @@
 #include "column.h"
 #include "excludeelement.h"
 
-class Constraint: public TableObject{
+class LIBPGMODELER_EXPORT Constraint: public TableObject{
 	private:
 		//! \brief Type of the constraint (primary key, foreign key, unique or check)
 		ConstraintType constr_type;

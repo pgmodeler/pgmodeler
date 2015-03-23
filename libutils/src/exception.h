@@ -274,7 +274,7 @@ enum ErrorType {
   ERR_REQ_FIELDS_NOT_FILLED
 };
 
-class Exception {
+class LIBUTILS_EXPORT Exception {
 	private:
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
@@ -286,7 +286,7 @@ class Exception {
 
 		//! \brief Constants used to access the error details
     static const unsigned ERROR_CODE=0,
-															ERROR_MESSAGE=1;
+                                                            ERROR_MESSAGE=1;
 
 		//! \brief Error type related to the exception
 		ErrorType error_type;

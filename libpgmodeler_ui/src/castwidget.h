@@ -29,7 +29,7 @@
 #include "pgsqltypewidget.h"
 #include "ui_castwidget.h"
 
-class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
+class LIBPGMODELER_UI_EXPORT CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 	private:
 		Q_OBJECT
 

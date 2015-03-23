@@ -37,7 +37,7 @@
 #include "copyoptions.h"
 #include <QStringList>
 
-class Table: public BaseTable {
+class LIBPGMODELER_EXPORT Table: public BaseTable {
 	private:
 		//! \brief Vectors that store basic table attributes
 		vector<TableObject *> columns;

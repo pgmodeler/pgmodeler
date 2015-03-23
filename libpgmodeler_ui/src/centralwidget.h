@@ -26,7 +26,7 @@
 
 #include "ui_centralwidget.h"
 
-class CentralWidget: public QWidget, public Ui::CentralWidget {
+class LIBPGMODELER_UI_EXPORT CentralWidget: public QWidget, public Ui::CentralWidget {
 	private:
 		Q_OBJECT
 

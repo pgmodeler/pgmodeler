@@ -33,7 +33,7 @@
 #include "typeattribute.h"
 #include "operatorclass.h"
 
-class Type: public BaseObject {
+class LIBPGMODELER_EXPORT Type: public BaseObject {
 	private:
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
 		unsigned config;

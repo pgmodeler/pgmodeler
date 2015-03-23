@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "function.h"
 
-class Cast: public BaseObject {
+class LIBPGMODELER_EXPORT Cast: public BaseObject {
 	private:
 		/*! \brief Data types used on the cast:
 		0 -> Source data type

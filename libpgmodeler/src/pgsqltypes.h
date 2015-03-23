@@ -34,7 +34,7 @@
 
 using namespace std;
 
-class BaseType{
+class LIBPGMODELER_EXPORT BaseType{
 	private:
 		static const unsigned types_count=237;
 
@@ -82,7 +82,7 @@ class BaseType{
 		static QString getTypeString(unsigned type_id);
 };
 
-class ActionType: public BaseType{
+class LIBPGMODELER_EXPORT ActionType: public BaseType{
 	private:
 		//! \brief Initial position of the names related to the class on BaseType::type_list
     static const unsigned offset=1;
@@ -107,7 +107,7 @@ class ActionType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class ConstraintType: public BaseType{
+class LIBPGMODELER_EXPORT ConstraintType: public BaseType{
 	private:
     static const unsigned offset=6;
     static const unsigned types_count=5;
@@ -128,7 +128,7 @@ class ConstraintType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class EventType: public BaseType{
+class LIBPGMODELER_EXPORT EventType: public BaseType{
 	private:
     static const unsigned offset=11;
     static const unsigned types_count=5;
@@ -154,7 +154,7 @@ class EventType: public BaseType{
 		bool operator < (unsigned type_id) const;
 };
 
-class ExecutionType: public BaseType{
+class LIBPGMODELER_EXPORT ExecutionType: public BaseType{
 	private:
     static const unsigned offset=16;
     static const unsigned types_count=2;
@@ -172,7 +172,7 @@ class ExecutionType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class FunctionType: public BaseType{
+class LIBPGMODELER_EXPORT FunctionType: public BaseType{
 	private:
     static const unsigned offset=18;
     static const unsigned types_count=3;
@@ -191,7 +191,7 @@ class FunctionType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class IndexingType: public BaseType{
+class LIBPGMODELER_EXPORT IndexingType: public BaseType{
 	private:
     static const unsigned offset=21;
     static const unsigned types_count=5;
@@ -212,7 +212,7 @@ class IndexingType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class IntervalType: public BaseType{
+class LIBPGMODELER_EXPORT IntervalType: public BaseType{
 	private:
 		static const unsigned offset=135;
     static const unsigned types_count=13;
@@ -241,7 +241,7 @@ class IntervalType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class SpatialType: public BaseType{
+class LIBPGMODELER_EXPORT SpatialType: public BaseType{
 	private:
 		unsigned variation;
 		static const unsigned offset=226;
@@ -284,7 +284,7 @@ class SpatialType: public BaseType{
 	 When the user creates a Type, Sequence, Domain, even a Table,
 	 it can be used as a type on certain configurations so this
 	 class implements a basic structure to control these types */
-class UserTypeConfig {
+class LIBPGMODELER_EXPORT UserTypeConfig {
 	protected:
 		//! \brief Pointer to the instance of the user defined type
 		void *ptype;
@@ -320,7 +320,7 @@ class UserTypeConfig {
 		friend class PgSQLType;
 };
 
-class PgSQLType: public BaseType{
+class LIBPGMODELER_EXPORT PgSQLType: public BaseType{
 	private:
     static const unsigned offset=26;
 		static const unsigned types_count=109;
@@ -494,7 +494,7 @@ class PgSQLType: public BaseType{
     friend class DatabaseModel;
 };
 
-class BehaviorType: public BaseType{
+class LIBPGMODELER_EXPORT BehaviorType: public BaseType{
 	private:
 		static const unsigned offset=148;
     static const unsigned types_count=3;
@@ -513,7 +513,7 @@ class BehaviorType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class SecurityType: public BaseType{
+class LIBPGMODELER_EXPORT SecurityType: public BaseType{
 	private:
 		static const unsigned offset=151;
     static const unsigned types_count=2;
@@ -531,7 +531,7 @@ class SecurityType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class LanguageType: public BaseType{
+class LIBPGMODELER_EXPORT LanguageType: public BaseType{
 	private:
 		static const unsigned offset=153;
     static const unsigned types_count=6;
@@ -553,7 +553,7 @@ class LanguageType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class EncodingType: public BaseType{
+class LIBPGMODELER_EXPORT EncodingType: public BaseType{
 	private:
 		static const unsigned offset=159;
     static const unsigned types_count=41;
@@ -573,7 +573,7 @@ class EncodingType: public BaseType{
 		bool operator != (unsigned tipo_id);
 };
 
-class StorageType: public BaseType{
+class LIBPGMODELER_EXPORT StorageType: public BaseType{
 	private:
 		static const unsigned offset=200;
     static const unsigned types_count=4;
@@ -596,7 +596,7 @@ class StorageType: public BaseType{
 		bool operator != (StorageType type);
 };
 
-class MatchType: public BaseType{
+class LIBPGMODELER_EXPORT MatchType: public BaseType{
 	private:
 		static const unsigned offset=204;
     static const unsigned types_count=3;
@@ -615,7 +615,7 @@ class MatchType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class DeferralType: public BaseType{
+class LIBPGMODELER_EXPORT DeferralType: public BaseType{
 	private:
 		static const unsigned offset=207;
     static const unsigned types_count=2;
@@ -633,7 +633,7 @@ class DeferralType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class CategoryType: public BaseType{
+class LIBPGMODELER_EXPORT CategoryType: public BaseType{
 	private:
 		static const unsigned offset=209;
     static const unsigned types_count=14;
@@ -663,7 +663,7 @@ class CategoryType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class FiringType: public BaseType{
+class LIBPGMODELER_EXPORT FiringType: public BaseType{
 	private:
 		static const unsigned offset=223;
     static const unsigned types_count=3;
@@ -682,7 +682,7 @@ class FiringType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class EventTriggerType: public BaseType{
+class LIBPGMODELER_EXPORT EventTriggerType: public BaseType{
 	private:
 		static const unsigned offset=234;
 		static const unsigned types_count=3;

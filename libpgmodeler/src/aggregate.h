@@ -30,7 +30,7 @@
 #include "function.h"
 #include "operator.h"
 
-class Aggregate: public BaseObject {
+class LIBPGMODELER_EXPORT Aggregate: public BaseObject {
 	private:
 		/*! \brief List of types with which the aggregate operates.
 		 If it is empty will be considered all possible types '*'

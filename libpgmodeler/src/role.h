@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class Role: public BaseObject {
+class LIBPGMODELER_EXPORT Role: public BaseObject {
 	private:
 		static unsigned role_id;
 

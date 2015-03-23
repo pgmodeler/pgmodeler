@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "pgsqltypes.h"
 
-class Collation : public BaseObject {
+class LIBPGMODELER_EXPORT Collation : public BaseObject {
 	private:
 		/*! \brief Base encoding for the collation.
 		When setting the locale or lc_??? attributes the encoding name

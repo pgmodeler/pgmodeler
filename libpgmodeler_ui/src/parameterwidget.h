@@ -29,7 +29,7 @@
 #include "ui_parameterwidget.h"
 #include "pgsqltypewidget.h"
 
-class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
+class LIBPGMODELER_UI_EXPORT ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 	private:
 		Q_OBJECT
 

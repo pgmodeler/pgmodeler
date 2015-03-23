@@ -28,7 +28,7 @@ are emitted during the diff process on ModelsDiffHelper class.
 
 #include "tableobject.h"
 
-class ObjectsDiffInfo {
+class LIBPGMODELER_UI_EXPORT ObjectsDiffInfo {
 	private:
 		//! \brief Difference type (see constants below)
 		unsigned diff_type;

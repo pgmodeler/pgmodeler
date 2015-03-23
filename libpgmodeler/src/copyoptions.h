@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include <QString>
 
-class CopyOptions {
+class LIBPGMODELER_EXPORT CopyOptions {
 	private:
 		unsigned copy_mode, copy_op_ids;
 

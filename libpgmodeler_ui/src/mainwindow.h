@@ -51,7 +51,7 @@
 
 using namespace std;
 
-class MainWindow: public QMainWindow, public Ui::MainWindow {
+class LIBPGMODELER_UI_EXPORT MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 

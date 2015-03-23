@@ -30,7 +30,7 @@
 #include "messagebox.h"
 #include "hinttextwidget.h"
 
-class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
+class LIBPGMODELER_UI_EXPORT GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
 

@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <QWidget>
 
-class BaseConfigWidget: public QWidget {
+class LIBPGMODELER_UI_EXPORT BaseConfigWidget: public QWidget {
   private:
     Q_OBJECT
 

@@ -31,7 +31,7 @@
 #include "colorpickerwidget.h"
 #include "hinttextwidget.h"
 
-class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
+class LIBPGMODELER_UI_EXPORT RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
 

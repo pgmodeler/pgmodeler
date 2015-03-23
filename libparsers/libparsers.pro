@@ -23,6 +23,8 @@ SOURCES += src/schemaparser.cpp \
 
 unix|windows: LIBS += -L$$OUT_PWD/../libutils/ -lutils $$XML_LIB
 
+windows: DEFINES += LIBPARSERS_EXPORT=Q_DECL_EXPORT
+
 INCLUDEPATH += $$PWD/../libutils/src
 DEPENDPATH += $$PWD/../libutils
 

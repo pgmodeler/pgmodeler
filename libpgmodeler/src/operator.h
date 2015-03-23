@@ -30,7 +30,7 @@
 #include "schema.h"
 #include "role.h"
 
-class Operator: public BaseObject {
+class LIBPGMODELER_EXPORT Operator: public BaseObject {
 	private:
 		//! \brief Stores the functions that defines the operator
 		Function *functions[3];

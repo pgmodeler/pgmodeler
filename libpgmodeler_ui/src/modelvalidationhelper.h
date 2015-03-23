@@ -31,7 +31,7 @@
 #include "connection.h"
 #include "modelexporthelper.h"
 
-class ModelValidationHelper: public QObject {
+class LIBPGMODELER_UI_EXPORT ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 

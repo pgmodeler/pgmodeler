@@ -35,7 +35,7 @@
 #include "attribsmap.h"
 #include "pgsqlversions.h"
 
-class SchemaParser {
+class LIBPARSERS_EXPORT SchemaParser {
 	private:
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */

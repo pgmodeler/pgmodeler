@@ -31,7 +31,7 @@
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 
-class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
+class LIBPGMODELER_UI_EXPORT ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 	private:
 		Q_OBJECT
 

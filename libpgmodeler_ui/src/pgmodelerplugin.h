@@ -46,7 +46,7 @@
 
     Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
-class PgModelerPlugin {
+class LIBPGMODELER_UI_EXPORT PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
 

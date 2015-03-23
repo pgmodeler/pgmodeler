@@ -30,7 +30,7 @@
 #include "function.h"
 #include "role.h"
 
-class Language: public BaseObject{
+class LIBPGMODELER_EXPORT Language: public BaseObject{
 	private:
 		/*! \brief Indicates whether the language is trusted on the database which means
 		that the object can be used by an unprivileged user without compromise
