@@ -190,14 +190,14 @@ void Type::setConfiguration(unsigned conf)
 	setCollation(nullptr);
 	subtype_opclass=nullptr;
 
-	alignment="integer";
+	alignment=QStringLiteral("integer");
 	delimiter='\0';
 	storage=StorageType::plain;
-	element="any";
+	element=QStringLiteral("any");
 	internal_len=0;
 	category=CategoryType::userdefined;
 	preferred=collatable=by_value=false;
-	like_type="any";
+	like_type=QStringLiteral("any");
 
 	this->config=conf;
 	setCodeInvalidated(true);
