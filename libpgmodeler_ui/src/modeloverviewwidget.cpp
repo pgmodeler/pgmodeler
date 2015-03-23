@@ -19,6 +19,8 @@
 #include "modeloverviewwidget.h"
 #include "modelwidget.h"
 
+const float ModelOverviewWidget::RESIZE_FACTOR=0.20f;
+
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
 	setupUi(this);
