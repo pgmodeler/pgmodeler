@@ -42,9 +42,9 @@ class LIBPGMODELER_EXPORT Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		static const unsigned ITALIC_TXT=0,
-															BOLD_TXT=1,
-															UNDERLINE_TXT=2;
+		static const unsigned ITALIC_TXT=0;
+		static const unsigned BOLD_TXT=1;
+		static const unsigned UNDERLINE_TXT=2;
 
 		/*! \brief To define the content of the textboxes
 		 the method setComment() must be used and the getComment()

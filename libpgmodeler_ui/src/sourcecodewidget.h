@@ -33,9 +33,9 @@ class LIBPGMODELER_UI_EXPORT SourceCodeWidget: public BaseObjectWidget, public U
 	private:
 		Q_OBJECT
 
-    static const int ORIGINAL_SQL=0,
-    DEPENDENCIES_SQL=1,
-    CHILDREN_SQL=2;
+    static const int ORIGINAL_SQL=0;
+    static const int DEPENDENCIES_SQL=1;
+    static const int CHILDREN_SQL=2;
 
 		SyntaxHighlighter *hl_sqlcode,
 											*hl_xmlcode;

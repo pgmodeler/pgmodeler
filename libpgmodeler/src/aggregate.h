@@ -65,8 +65,8 @@ class LIBPGMODELER_EXPORT Aggregate: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
-    static const unsigned FINAL_FUNC=0,
-                          TRANSITION_FUNC=1;
+		static const unsigned FINAL_FUNC=0;
+		static const unsigned TRANSITION_FUNC=1;
 
 		Aggregate(void);
 

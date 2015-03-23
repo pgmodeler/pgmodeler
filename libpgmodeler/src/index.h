@@ -50,10 +50,10 @@ class LIBPGMODELER_EXPORT Index: public TableObject{
 		void setIndexElementsAttribute(unsigned def_type);
 
 	public:
-		static const  unsigned UNIQUE=0,
-                           CONCURRENT=1,
-													 FAST_UPDATE=2,
-													 BUFFERING=3;
+		static const  unsigned UNIQUE=0;
+		static const  unsigned CONCURRENT=1;
+		static const  unsigned FAST_UPDATE=2;
+		static const  unsigned BUFFERING=3;
 
 		Index(void);
 

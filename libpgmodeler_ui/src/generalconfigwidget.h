@@ -37,10 +37,10 @@ class LIBPGMODELER_UI_EXPORT GeneralConfigWidget: public BaseConfigWidget, publi
     QWidgetList child_wgts;
     static map<QString, attribs_map> config_params;
 
-		static const unsigned UNIT_MILIMETERS=0,
-                          UNIT_POINT=1,
-													UNIT_INCHS=2,
-													UNIT_CENTIMETERS=3;
+    static const unsigned UNIT_MILIMETERS=0;
+    static const unsigned UNIT_POINT=1;
+    static const unsigned UNIT_INCHS=2;
+    static const unsigned UNIT_CENTIMETERS=3;
 
     HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
     *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,

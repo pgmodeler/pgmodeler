@@ -70,21 +70,21 @@ class LIBPGMODELER_EXPORT Operation {
 
 	public:
 		//! \brief Constants used to reference the type of operations
-    static const unsigned NO_OPERATION=0,
-                          OBJECT_MODIFIED=1,
-                          OBJECT_CREATED=2,
-                          OBJECT_REMOVED=3,
-                          /*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
-                            except that it not (re)validate relationships as happens with operations.
-                            This type of operation (OBJECT_MOVED) is useful to undo position changes of
-                            graphical objects without executing unnecessary revalidations of relationships */
-                          OBJECT_MOVED=4;
+		static const unsigned NO_OPERATION=0;
+		static const unsigned OBJECT_MODIFIED=1;
+		static const unsigned OBJECT_CREATED=2;
+		static const unsigned OBJECT_REMOVED=3;
+		/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
+		except that it not (re)validate relationships as happens with operations.
+		This type of operation (OBJECT_MOVED) is useful to undo position changes of
+		graphical objects without executing unnecessary revalidations of relationships */
+		static const unsigned OBJECT_MOVED=4;
 
 		//! \brief Operation chain types
-    static const unsigned NO_CHAIN=0, //! \brief The operation is not part of a chain
-                          CHAIN_START=1, //! \brief The operation is the head of the chain
-                          CHAIN_MIDDLE=2, //! \brief The operation is in the middle of the chain
-                          CHAIN_END=3; //! \brief The operation is the last on the chain
+		static const unsigned NO_CHAIN=0; //! \brief The operation is not part of a chain
+		static const unsigned CHAIN_START=1; //! \brief The operation is the head of the chain
+		static const unsigned CHAIN_MIDDLE=2; //! \brief The operation is in the middle of the chain
+		static const unsigned CHAIN_END=3; //! \brief The operation is the last on the chain
 
 
     Operation(void);

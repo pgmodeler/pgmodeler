@@ -56,12 +56,12 @@ class LIBPGMODELER_UI_EXPORT ModelWidget: public QWidget {
 		static bool cut_operation;
 
 		//! brief Indicates if the last position and zoom must be saved/restored
-		static bool save_restore_pos,
+		static bool save_restore_pos;
 
 		//! brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
-		simple_obj_creation,
+		static bool simple_obj_creation;
 
-		disable_render_smooth;
+		static bool disable_render_smooth;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -127,10 +127,10 @@ class LIBPGMODELER_UI_EXPORT ModelWidget: public QWidget {
     QTimer zoom_info_timer;
 
   protected:
-		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
-													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
-													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
-													BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+        static const unsigned BREAK_VERT_NINETY_DEGREES; //Break vertically the line in one 90° angle
+        static const unsigned BREAK_HORIZ_NINETY_DEGREES; //Break horizontally the line in one 90° angle
+        static const unsigned BREAK_VERT_2NINETY_DEGREES; //Break vertically the line in two 90° angles
+        static const unsigned BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
 
     QAction *action_source_code,
             *action_edit,
@@ -196,9 +196,9 @@ class LIBPGMODELER_UI_EXPORT ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
 
 	public:
-    static const float MINIMUM_ZOOM,
-													 MAXIMUM_ZOOM,
-													 ZOOM_INCREMENT;
+    static const float MINIMUM_ZOOM;
+    static const float MAXIMUM_ZOOM;
+    static const float ZOOM_INCREMENT;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);

@@ -60,9 +60,9 @@ class LIBPGMODELER_EXPORT OperatorClassElement {
 
 	public:
 		//! \brief Constants used to reference the element types
-		static const unsigned OPERATOR_ELEM=0,
-													FUNCTION_ELEM=1,
-													STORAGE_ELEM=2;
+		static const unsigned OPERATOR_ELEM=0;
+		static const unsigned FUNCTION_ELEM=1;
+		static const unsigned STORAGE_ELEM=2;
 
 		OperatorClassElement(void);
 		virtual ~OperatorClassElement(void){}

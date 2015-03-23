@@ -42,9 +42,9 @@ class LIBPGMODELER_UI_EXPORT HintTextWidget: public QWidget, public Ui::HintText
     bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-    const static unsigned SMALL_ICON=16,
-    MEDIUM_ICON=24,
-    LARGE_ICON=32;
+    const static unsigned SMALL_ICON=16;
+    const static unsigned MEDIUM_ICON=24;
+    const static unsigned LARGE_ICON=32;
 
     HintTextWidget(QWidget *btn_parent, QWidget *parent);
 
