@@ -438,11 +438,19 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
-  return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
+  return(obj_type==OBJ_COLLATION || obj_type==OBJ_COLUMN ||
+         obj_type==OBJ_DOMAIN || obj_type==OBJ_EVENT_TRIGGER ||
+         obj_type==OBJ_EXTENSION || obj_type==OBJ_FUNCTION ||
+         obj_type==OBJ_INDEX || obj_type==OBJ_ROLE ||
+         obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
+         obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
+         obj_type==OBJ_TYPE);
+
+  /* return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
          obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
          obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER &&
          obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=OBJ_TAG  &&
-         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE);
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE); */
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
