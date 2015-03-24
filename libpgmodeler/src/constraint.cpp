@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
+#include <functional>
 #include "constraint.h"
 
 Constraint::Constraint(void)
@@ -391,43 +392,14 @@ bool Constraint::isNoInherit(void)
 
 bool Constraint::isReferRelationshipAddedColumn(void)
 {
-	vector<Column *>::iterator itr, itr_end;
-	vector<ExcludeElement>::iterator itr1, itr1_end;
-	Column *col=nullptr;
-	bool found=false;
-
-	//First iterates over the source columns list
-	itr=columns.begin();
-	itr_end=columns.end();
-
-	while(itr!=itr_end && !found)
-	{
-		col=(*itr);
-		//Check if the current column were added by relationship
-		found=col->isAddedByRelationship();
-		itr++;
-
-		/* Case the source column list is completely iterated steps to
-		 the referenced columns list iteration */
-		if(itr==itr_end && itr_end!=ref_columns.end() && !found)
-		{
-			itr=ref_columns.begin();
-			itr_end=ref_columns.end();
-		}
-	}
-
-	//Iterates over the exclude elements
-	itr1=excl_elements.begin();
-	itr1_end=excl_elements.end();
-
-	while(itr1!=itr1_end && !found)
-	{
-		col=(*itr1).getColumn();
-		found=(col && col->isAddedByRelationship());
-		itr1++;
-	}
-
-  return(found);
+	return std::any_of(columns.begin(), columns.end(),
+	                   std::bind(&Column::isAddedByRelationship, std::placeholders::_1)) ||
+	        std::any_of(ref_columns.begin(), ref_columns.end(),
+	                    std::bind(&Column::isAddedByRelationship, std::placeholders::_1)) ||
+	        std::any_of(excl_elements.begin(), excl_elements.end(),
+	                    [](ExcludeElement& element) {
+	                        return element.getColumn()->isAddedByRelationship();
+	                    });
 }
 
 vector<Column *> Constraint::getRelationshipAddedColumns(void)
