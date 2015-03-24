@@ -29,9 +29,6 @@
 #include "globalattributes.h"
 #include "ui_modelfixform.h"
 
-#include <iostream>
-using namespace std;
-
 class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT

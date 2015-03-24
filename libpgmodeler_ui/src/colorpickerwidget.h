@@ -33,8 +33,6 @@
 #include <QTime>
 #include <random>
 
-using namespace std;
-
 class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT

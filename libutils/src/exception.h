@@ -33,7 +33,6 @@
 #include <deque>
 
 using namespace std;
-
 static const int ERROR_COUNT=223;
 
 /*
