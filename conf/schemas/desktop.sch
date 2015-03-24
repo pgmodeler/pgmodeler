@@ -1,6 +1,6 @@
 $ob Desktop $sp Entry $cb $br
 [Comment=Create and deploy PostgreSQL database models] $br
-[Exec=]{root-dir}/start-pgmodeler.sh $br
+[Exec=]{root-dir}/{application} $br
 [GenericName=PostgreSQL Database Modeler] $br
 [Icon=]{icon} $br
 [MimeType=application/dbm] $br

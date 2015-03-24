@@ -289,7 +289,7 @@ accepted structure. All available options are described below.") << endl;
 
 #ifndef Q_OS_MAC
   out << trUtf8("Miscellaneous options: ") << endl;
-  out << trUtf8("   %1, %2=[ACTION]\t (Un)installs an file association to .dbm type. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+  out << trUtf8("   %1, %2=[ACTION]\t (Un)installs the file association to .dbm type. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
   out << endl;
 #endif
 }
@@ -981,9 +981,16 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
 {
  SchemaParser schparser;
 
+ if(!silent_mode)
+ {
+   out << trUtf8("Mime database operation: %1")
+          .arg(uninstall ? QString("uninstall") : QString("install")) << endl;
+ }
+
  #ifdef Q_OS_LINUX
   attribs_map attribs;
-  QString str_aux,
+  QString startup_script="start-pgmodeler.sh",
+       str_aux,
 
        //Configures the path to the application logo
        exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -1013,39 +1020,61 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
 
   //When installing, check if the necessary file exists. If exists, raises an error and abort.
   if(!uninstall && (QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists()))
-    throw Exception(trUtf8("Database model files (.dbm) are already associated to pgModeler!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-  attribs[ParsersAttributes::ROOT_DIR]=GlobalAttributes::PGMODELER_BIN_PATH;
-  attribs[ParsersAttributes::ICON]=exec_icon;
+  {
+    throw Exception(trUtf8("Database model files (.dbm) are already associated to pgModeler!"),
+                    ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
+  else if(uninstall && (!QFileInfo(files[0]).exists() && !QFileInfo(files[1]).exists()))
+  {
+    throw Exception(trUtf8("There is no file association related to pgModeler and .dbm files!"),
+                    ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
+  else if(!uninstall)
+  {
+    attribs[ParsersAttributes::ROOT_DIR]=GlobalAttributes::PGMODELER_BIN_PATH;
+    attribs[ParsersAttributes::APPLICATION]=QFileInfo(QString("%1/%2").arg(GlobalAttributes::PGMODELER_BIN_PATH).arg(startup_script)).exists() ?
+                                              startup_script : GlobalAttributes::PGMODELER_APP_NAME;
+    attribs[ParsersAttributes::ICON]=exec_icon;
+  }
 
   try
   {
     for(unsigned i=0; i < 2; i++)
     {
-      schparser.loadFile(schemas[i]);
-      buf.append(schparser.getCodeDefinition(attribs));
-      QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
+      if(uninstall)
+      {
+        if(!QFile(files[i]).remove())
+          throw Exception(trUtf8("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
+                          ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      }
+      else
+      {
+        schparser.loadFile(schemas[i]);
+        buf.append(schparser.getCodeDefinition(attribs));
+        QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
-      out.setFileName(files[i]);
-      out.open(QFile::WriteOnly);
+        out.setFileName(files[i]);
+        out.open(QFile::WriteOnly);
 
-      if(!out.isOpen())
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
-                        ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        if(!out.isOpen())
+          throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
+                          ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      out.write(buf.data(), buf.size());
-      out.close();
-      buf.clear();
-      attribs[ParsersAttributes::ICON]=dbm_icon;
+        out.write(buf.data(), buf.size());
+        out.close();
+        buf.clear();
+        attribs[ParsersAttributes::ICON]=dbm_icon;
+      }
     }
 
     out.setFileName(mimeapps);
 
     //If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
-    if(!QFileInfo(mimeapps).exists())
+    if(!uninstall && !QFileInfo(mimeapps).exists())
     {
       out.open(QFile::WriteOnly);
       out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
+      out.write(QByteArray("\n[Default Applications]\napplication/dbm=pgModeler.desktop;\n"));
       out.close();
     }
     else
@@ -1070,10 +1099,14 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
         if(!str_aux.isEmpty())
         {
           //Updates the application/dbm mime association
-          if(str_aux.contains(QString("[Added Associations]")))
+          if(!uninstall && (str_aux.contains(QString("[Added Associations]")) ||
+                            str_aux.contains(QString("[Default Applications]"))))
             str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
           else
             str_aux+=QString("\n");
+
+          if(str_aux.startsWith("[") && !str_aux.contains("Added Associations"))
+            str_aux=QString("\n") + str_aux;
 
           buf_aux.append(str_aux);
         }
@@ -1086,7 +1119,12 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
     }
 
     //Update the mime database
+    if(!silent_mode)
+      PgModelerCLI::out << trUtf8("Running update-mime-database command...") << endl;
     QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
+
+    if(!silent_mode)
+      PgModelerCLI::out << trUtf8("Mime database sucessfully updated.") << endl;
   }
   catch(Exception &e)
   {

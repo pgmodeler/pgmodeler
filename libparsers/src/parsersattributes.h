@@ -49,6 +49,7 @@ namespace ParsersAttributes {
   ANCESTOR_TABLE=QString("ancestor-table"),
   APPEND_AT_EOD=QString("append-at-eod"),
   APPENDED_SQL=QString("appended-sql"),
+  APPLICATION=QString("application"),
   ARG_COUNT=QString("arg-count"),
   ARG_DEF_COUNT=QString("arg-def-count"),
   ARG_DEFAULTS=QString("arg-defaults"),
