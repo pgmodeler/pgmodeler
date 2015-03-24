@@ -8593,7 +8593,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
   //Removing the duplicate items on the list
   std::sort(list.begin(), list.end());
   end=std::unique(list.begin(), list.end());
-  list.assign(list.begin(), end);
+  list.erase(end, list.end());
 
   return(list);
 }
