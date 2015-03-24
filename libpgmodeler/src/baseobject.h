@@ -396,7 +396,9 @@ class BaseObject {
 		//! \brief Returns if the specified type accepts to have appended sql commands
 		static bool acceptsCustomSQL(ObjectType obj_type);
 
-    //! \brief Returns if the specified type accepts the use of ALTER commands to have its attributes changed
+    /*! \brief Returns if the specified type accepts the use of ALTER commands in order to change their attributes
+        This is different from PostgreSQL implementation. In pgModeler, an object accepts ALTER when an attribute
+        other than name, schema or owner can be changed. */
     static bool acceptsAlterCommand(ObjectType obj_type);
 
     //! \brief Returns if the specified type accepts the use of DROP commands
