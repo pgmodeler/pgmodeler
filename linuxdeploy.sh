@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Identify architecture
 case `uname -m` in

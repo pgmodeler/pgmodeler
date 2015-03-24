@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Use this script if you having problems running pgModeler.
 # The most common execution problem is the missing library error:
@@ -11,15 +11,7 @@
 # For a more elaborated solution you may find useful the usage of pgmodeler.vars file.
 # Details about the use of that file are in it's comments.
 
-export PGMODELER_ROOT="$(dirname "$(readlink -f "$0")")"
-export PGMODELER_CONF_DIR="$PGMODELER_ROOT/conf"
-export PGMODELER_SCHEMAS_DIR="$PGMODELER_ROOT/schemas"
-export PGMODELER_LANG_DIR="$PGMODELER_ROOT/lang"
-export PGMODELER_TMP_DIR="$PGMODELER_ROOT/tmp"
-export PGMODELER_PLUGINS_DIR="$PGMODELER_ROOT/plugins"
-export PGMODELER_SAMPLES_DIR="$PGMODELER_ROOT/samples"
-export PGMODELER_CHANDLER_PATH="$PGMODELER_ROOT/pgmodeler-ch"
-export PGMODELER_CLI_PATH="$PGMODELER_ROOT/pgmodeler-cli"
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$PGMODELER_ROOT/lib"
+# Loading needed environment variables
+source "./pgmodeler.vars"
 
 "$PGMODELER_ROOT/pgmodeler" "$@" &

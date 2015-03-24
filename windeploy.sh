@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 QT_INSTALL_VERSION='5.4.1'
 QT_BASE_VERSION='5.4'
