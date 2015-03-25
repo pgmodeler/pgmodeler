@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "schema.h"
 
-class Domain: public BaseObject{
+class LIBPGMODELER_EXPORT Domain: public BaseObject{
 	private:
 		//! \brief Constraint name used by the domain
 		QString constraint_name,

@@ -28,7 +28,7 @@
 
 #include "baseobject.h"
 
-class Role: public BaseObject {
+class LIBPGMODELER_EXPORT Role: public BaseObject {
 	private:
 		static unsigned role_id;
 
@@ -59,18 +59,18 @@ class Role: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the available options for the role
-		static const unsigned OP_SUPERUSER=0,
-															OP_CREATEDB=1,
-															OP_CREATEROLE=2,
-															OP_INHERIT=3,
-															OP_LOGIN=4,
-															OP_ENCRYPTED=5,
-															OP_REPLICATION=6;
+		static const unsigned OP_SUPERUSER=0;
+		static const unsigned OP_CREATEDB=1;
+		static const unsigned OP_CREATEROLE=2;
+		static const unsigned OP_INHERIT=3;
+		static const unsigned OP_LOGIN=4;
+		static const unsigned OP_ENCRYPTED=5;
+		static const unsigned OP_REPLICATION=6;
 
 		//! \brief Constants used to reference the internal role lists of the class
-		static const unsigned REF_ROLE=10,
-													MEMBER_ROLE=20,
-													ADMIN_ROLE=30;
+		static const unsigned REF_ROLE=10;
+		static const unsigned MEMBER_ROLE=20;
+		static const unsigned ADMIN_ROLE=30;
 
 		Role(void);
 

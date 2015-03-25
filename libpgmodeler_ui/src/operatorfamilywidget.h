@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_operatorfamilywidget.h"
 
-class OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWidget {
+class LIBPGMODELER_UI_EXPORT OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWidget {
 	private:
 		Q_OBJECT
 

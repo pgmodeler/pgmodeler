@@ -30,7 +30,7 @@
 #include "baserelationship.h"
 #include "xmlparser.h"
 
-class BaseObjectView: public QObject, public QGraphicsItemGroup {
+class LIBOBJECTRENDERER_EXPORT BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 
@@ -97,10 +97,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
     void setSelectionOrder(bool selected);
 
 	public:
-    static constexpr float VERT_SPACING=2.0f,
-													 HORIZ_SPACING=2.0f,
-													 DEFAULT_FONT_SIZE=9.0f,
-													 OBJ_BORDER_WIDTH=0.80f;
+		static const float VERT_SPACING;
+		static const float HORIZ_SPACING;
+		static const float DEFAULT_FONT_SIZE;
+		static const float OBJ_BORDER_WIDTH;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView(void);

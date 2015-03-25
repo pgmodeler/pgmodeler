@@ -32,7 +32,7 @@ can be used in a particular indexing method.
 #include "operatorclasselement.h"                                                                                                                                                                                  
 #include "operatorfamily.h"
 
-class OperatorClass: public BaseObject {
+class LIBPGMODELER_EXPORT OperatorClass: public BaseObject {
 	private:
 		//! \brief Data type witch the operator class acts on
 		PgSQLType data_type;

@@ -33,7 +33,7 @@
 #include "typeattribute.h"
 #include "operatorclass.h"
 
-class Type: public BaseObject {
+class LIBPGMODELER_EXPORT Type: public BaseObject {
 	private:
 		//! \brief Type configuration (BASE | ENUMERATION | COMPOSITE | RANGE)
 		unsigned config;
@@ -106,20 +106,20 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static const unsigned BASE_TYPE=10,
-															ENUMERATION_TYPE=11,
-															COMPOSITE_TYPE=12,
-															RANGE_TYPE=13;
+		static const unsigned BASE_TYPE=10;
+		static const unsigned ENUMERATION_TYPE=11;
+		static const unsigned COMPOSITE_TYPE=12;
+		static const unsigned RANGE_TYPE=13;
 
-		static const unsigned INPUT_FUNC=0,
-															OUTPUT_FUNC=1,
-															RECV_FUNC=2,
-															SEND_FUNC=3,
-															TPMOD_IN_FUNC=4,
-															TPMOD_OUT_FUNC=5,
-															ANALYZE_FUNC=6,
-															CANONICAL_FUNC=7,
-															SUBTYPE_DIFF_FUNC=8;
+		static const unsigned INPUT_FUNC=0;
+		static const unsigned OUTPUT_FUNC=1;
+		static const unsigned RECV_FUNC=2;
+		static const unsigned SEND_FUNC=3;
+		static const unsigned TPMOD_IN_FUNC=4;
+		static const unsigned TPMOD_OUT_FUNC=5;
+		static const unsigned ANALYZE_FUNC=6;
+		static const unsigned CANONICAL_FUNC=7;
+		static const unsigned SUBTYPE_DIFF_FUNC=8;
 
 		Type(void);
 

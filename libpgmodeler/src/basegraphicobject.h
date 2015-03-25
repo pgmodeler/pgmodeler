@@ -32,7 +32,7 @@ this is treated in the BaseObjectView class on libobjrenderer library
 #include <QPointF>
 #include "baseobject.h"
 
-class BaseGraphicObject: public QObject, public BaseObject {
+class LIBPGMODELER_EXPORT BaseGraphicObject: public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 

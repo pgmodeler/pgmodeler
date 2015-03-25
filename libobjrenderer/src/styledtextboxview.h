@@ -27,7 +27,7 @@
 
 #include "textboxview.h"
 
-class StyledTextboxView: public TextboxView {
+class LIBOBJECTRENDERER_EXPORT StyledTextboxView: public TextboxView {
   private:
     Q_OBJECT
 

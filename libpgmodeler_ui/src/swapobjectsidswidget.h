@@ -30,7 +30,7 @@
 #include "baseform.h"
 #include "objectselectorwidget.h"
 
-class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
+class LIBPGMODELER_UI_EXPORT SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 

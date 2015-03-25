@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "table.h"
 
-class Sequence: public BaseObject {
+class LIBPGMODELER_EXPORT Sequence: public BaseObject {
 	private:
 		/*! \brief Indicates taht the sequence is cyclic
 		 (the counter resets when maximum value is reached) */
@@ -66,15 +66,15 @@ class Sequence: public BaseObject {
 
 	public:
 		//! \brief Constants that indicates the maximum and minimum values accepted by sequence
-		static const QString //For serial sequences
-												 MAX_POSITIVE_VALUE,
-												 MAX_NEGATIVE_VALUE,
-												 //For smallserial sequences
-												 MAX_SMALL_POSITIVE_VALUE,
-												 MAX_SMALL_NEGATIVE_VALUE,
-												 //For bigserial sequences
-												 MAX_BIG_POSITIVE_VALUE,
-												 MAX_BIG_NEGATIVE_VALUE;
+	//For serial sequences
+	static const QString MAX_POSITIVE_VALUE;
+	static const QString MAX_NEGATIVE_VALUE;
+	//For smallserial sequences
+	static const QString MAX_SMALL_POSITIVE_VALUE;
+	static const QString MAX_SMALL_NEGATIVE_VALUE;
+	//For bigserial sequences
+	static const QString MAX_BIG_POSITIVE_VALUE;
+	static const QString MAX_BIG_NEGATIVE_VALUE;
 
 		Sequence(void);
 

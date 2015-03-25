@@ -31,9 +31,9 @@
 #include "ui_newobjectoverlaywidget.h"
 
 //Adding the declaration of ModelWidget class in order to be visible to NewObjectOverlayWidget
-class ModelWidget;
+class LIBPGMODELER_UI_EXPORT ModelWidget;
 
-class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
+class LIBPGMODELER_UI_EXPORT NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
 	private:
 		Q_OBJECT
 

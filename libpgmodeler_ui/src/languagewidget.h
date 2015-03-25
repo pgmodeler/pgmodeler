@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_languagewidget.h"
 
-class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
+class LIBPGMODELER_UI_EXPORT LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 	private:
 		Q_OBJECT
 

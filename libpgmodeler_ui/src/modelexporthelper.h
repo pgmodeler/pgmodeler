@@ -28,7 +28,7 @@
 #include "modelwidget.h"
 #include "connection.h"
 
-class ModelExportHelper: public QObject {
+class LIBPGMODELER_UI_EXPORT ModelExportHelper: public QObject {
 	private:
 		Q_OBJECT
 

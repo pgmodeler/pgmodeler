@@ -30,7 +30,7 @@
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
-class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
+class LIBPGMODELER_UI_EXPORT ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 

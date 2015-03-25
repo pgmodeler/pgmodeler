@@ -51,7 +51,7 @@
 #include "globalattributes.h"
 #include "parsersattributes.h"
 
-class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
+class LIBPGMODELER_UI_EXPORT UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 

@@ -31,7 +31,7 @@
 #include "baseobject.h"
 #include "hinttextwidget.h"
 
-class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
+class LIBPGMODELER_UI_EXPORT SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
 		Q_OBJECT
 

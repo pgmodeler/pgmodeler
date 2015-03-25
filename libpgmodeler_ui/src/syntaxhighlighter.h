@@ -34,7 +34,7 @@
 #include "parsersattributes.h"
 #include <algorithm>
 
-class SyntaxHighlighter: public QSyntaxHighlighter {
+class LIBPGMODELER_UI_EXPORT SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 		XMLParser xmlparser;

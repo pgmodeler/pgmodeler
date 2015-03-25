@@ -30,7 +30,7 @@
 #include "objecttablewidget.h"
 #include "pgmodelerplugin.h"
 
-class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
+class LIBPGMODELER_UI_EXPORT PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:
 		Q_OBJECT
 

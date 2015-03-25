@@ -30,7 +30,7 @@
 #include "schema.h"
 #include "role.h"
 
-class Operator: public BaseObject {
+class LIBPGMODELER_EXPORT Operator: public BaseObject {
 	private:
 		//! \brief Stores the functions that defines the operator
 		Function *functions[3];
@@ -45,13 +45,13 @@ class Operator: public BaseObject {
 					merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
-		static const unsigned FUNC_OPERATOR=0,
-															FUNC_JOIN=1,
-															FUNC_RESTRICT=2,
-															LEFT_ARG=0,
-															RIGHT_ARG=1,
-															OPER_COMMUTATOR=0,
-															OPER_NEGATOR=1;
+		static const unsigned FUNC_OPERATOR=0;
+		static const unsigned FUNC_JOIN=1;
+		static const unsigned FUNC_RESTRICT=2;
+		static const unsigned LEFT_ARG=0;
+		static const unsigned RIGHT_ARG=1;
+		static const unsigned OPER_COMMUTATOR=0;
+		static const unsigned OPER_NEGATOR=1;
 
 		Operator(void);
 
