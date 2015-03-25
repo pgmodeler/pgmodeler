@@ -30,7 +30,7 @@
 #include "function.h"
 #include "role.h"
 
-class Language: public BaseObject{
+class LIBPGMODELER_EXPORT Language: public BaseObject{
 	private:
 		/*! \brief Indicates whether the language is trusted on the database which means
 		that the object can be used by an unprivileged user without compromise
@@ -45,9 +45,9 @@ class Language: public BaseObject{
 			> VALIDATOR: Function that validates the code written in the language's syntax
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
-		static const unsigned VALIDATOR_FUNC=0,
-															HANDLER_FUNC=1,
-															INLINE_FUNC=2;
+		static const unsigned VALIDATOR_FUNC=0;
+		static const unsigned HANDLER_FUNC=1;
+		static const unsigned INLINE_FUNC=2;
 
 		Language(void);
 

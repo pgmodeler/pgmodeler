@@ -30,18 +30,22 @@
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
 
-class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class LIBPGMODELER_UI_EXPORT DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 
 		//! brief Constants used to mark the type of operation performed on rows
-		static const unsigned NO_OPERATION,	OP_INSERT, OP_UPDATE, OP_DELETE;
+		static const unsigned NO_OPERATION;
+		static const unsigned OP_INSERT;
+		static const unsigned OP_UPDATE;
+		static const unsigned OP_DELETE;
 
 		//! brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
 
 		//! brief Default char used as unescaped value delimiter (< and >)
-		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
+		static const QChar UNESC_VALUE_START;
+		static const QChar UNESC_VALUE_END;
 
 		SyntaxHighlighter *filter_hl;
 

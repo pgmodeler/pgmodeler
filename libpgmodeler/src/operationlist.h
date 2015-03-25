@@ -32,7 +32,7 @@ undo / redo all the operations made.
 #include "pgmodelerns.h"
 #include "operation.h"
 
-class OperationList: public QObject {
+class LIBPGMODELER_EXPORT OperationList: public QObject {
 	private:
 		Q_OBJECT
 

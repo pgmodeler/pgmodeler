@@ -28,19 +28,19 @@
 #include "baseobject.h"
 #include <QString>
 
-class CopyOptions {
+class LIBPGMODELER_EXPORT CopyOptions {
 	private:
 		unsigned copy_mode, copy_op_ids;
 
 	public:
-		static const unsigned DEFAULTS=1,
-															CONSTRAINTS=2,
-															INDEXES=4,
-															STORAGE=8,
-															COMMENTS=16,
-															ALL=31,
-															INCLUDING=64,
-															EXCLUDING=128;
+		static const unsigned DEFAULTS=1;
+		static const unsigned CONSTRAINTS=2;
+		static const unsigned INDEXES=4;
+		static const unsigned STORAGE=8;
+		static const unsigned COMMENTS=16;
+		static const unsigned ALL=31;
+		static const unsigned INCLUDING=64;
+		static const unsigned EXCLUDING=128;
 
 		CopyOptions(void);
 		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);

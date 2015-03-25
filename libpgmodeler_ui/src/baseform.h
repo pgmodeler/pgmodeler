@@ -30,7 +30,7 @@
 #include "exception.h"
 #include "messagebox.h"
 
-class BaseForm: public QDialog, public Ui::BaseForm {
+class LIBPGMODELER_UI_EXPORT BaseForm: public QDialog, public Ui::BaseForm {
 	private:
 		Q_OBJECT
 

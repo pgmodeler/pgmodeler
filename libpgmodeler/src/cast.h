@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "function.h"
 
-class Cast: public BaseObject {
+class LIBPGMODELER_EXPORT Cast: public BaseObject {
 	private:
 		/*! \brief Data types used on the cast:
 		0 -> Source data type
@@ -49,12 +49,12 @@ class Cast: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
-		static const unsigned SRC_TYPE=0,
-															DST_TYPE=1,
-															//! \brief Constants used to define the cast type
-															ASSIGNMENT=10,
-															IMPLICIT=20,
-															EXPLICIT=30;
+		static const unsigned SRC_TYPE=0;
+		static const unsigned DST_TYPE=1;
+		//! \brief Constants used to define the cast type
+		static const unsigned ASSIGNMENT=10;
+		static const unsigned IMPLICIT=20;
+		static const unsigned EXPLICIT=30;
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast

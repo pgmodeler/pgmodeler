@@ -581,7 +581,7 @@ void TableWidget::removeObject(int row)
 	}
 }
 
-void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
+void TableWidget::swapObjects(int idx1, int idx2)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	Table *table=nullptr;

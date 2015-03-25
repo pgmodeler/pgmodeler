@@ -35,7 +35,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(TypeAttribute)
 
-class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
+class LIBPGMODELER_UI_EXPORT TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
 		Q_OBJECT
 

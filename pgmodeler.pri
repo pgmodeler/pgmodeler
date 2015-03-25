@@ -69,6 +69,13 @@ linux {
 
   # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
+
+  DEFINES += LIBOBJECTRENDERER_EXPORT= \
+             LIBPARSERS_EXPORT= \
+             LIBPGCONNECTOR_EXPORT= \
+             LIBPGMODELER_EXPORT= \
+             LIBPGMODELER_UI_EXPORT= \
+             LIBUTILS_EXPORT=
 }
 
 
@@ -89,6 +96,13 @@ windows {
   !defined(SAMPLESDIR, var):    SAMPLESDIR = $$PREFIX/samples
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$PREFIX/schemas
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
+
+  DEFINES += LIBOBJECTRENDERER_EXPORT=Q_DECL_IMPORT \
+             LIBPARSERS_EXPORT=Q_DECL_IMPORT \
+             LIBPGCONNECTOR_EXPORT=Q_DECL_IMPORT \
+             LIBPGMODELER_EXPORT=Q_DECL_IMPORT \
+             LIBPGMODELER_UI_EXPORT=Q_DECL_IMPORT \
+             LIBUTILS_EXPORT=Q_DECL_IMPORT
 }
 
 
@@ -112,6 +126,13 @@ macx {
 
   # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
+
+  DEFINES += LIBOBJECTRENDERER_EXPORT= \
+             LIBPARSERS_EXPORT= \
+             LIBPGCONNECTOR_EXPORT= \
+             LIBPGMODELER_EXPORT= \
+             LIBPGMODELER_UI_EXPORT= \
+             LIBUTILS_EXPORT=
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes

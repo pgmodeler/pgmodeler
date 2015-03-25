@@ -31,7 +31,7 @@
 #include "messagebox.h"
 #include "hinttextwidget.h"
 
-class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
+class LIBPGMODELER_UI_EXPORT ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
 

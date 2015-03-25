@@ -29,7 +29,7 @@
 #include "ui_bugreportform.h"
 #include "syntaxhighlighter.h"
 
-class BugReportForm : public QDialog, public Ui::BugReportForm {
+class LIBPGMODELER_UI_EXPORT BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:
 		Q_OBJECT
 

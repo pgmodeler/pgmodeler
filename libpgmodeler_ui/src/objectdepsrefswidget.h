@@ -29,7 +29,7 @@
 #include "baseobjectwidget.h"
 #include "baseobjectview.h"
 
-class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
+class LIBPGMODELER_UI_EXPORT ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
 		Q_OBJECT
     ModelWidget *model_wgt;

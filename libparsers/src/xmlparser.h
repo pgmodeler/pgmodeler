@@ -36,7 +36,7 @@
 
 using namespace std;
 
-class XMLParser {
+class LIBPARSERS_EXPORT XMLParser {
 	private:
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */
@@ -76,10 +76,10 @@ class XMLParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-    static const unsigned ROOT_ELEMENT=0,
-															CHILD_ELEMENT=1,
-															NEXT_ELEMENT=2,
-															PREVIOUS_ELEMENT=3;
+		static const unsigned ROOT_ELEMENT=0;
+		static const unsigned CHILD_ELEMENT=1;
+		static const unsigned NEXT_ELEMENT=2;
+		static const unsigned PREVIOUS_ELEMENT=3;
 
 		static const QString CHAR_AMP; //! \brief & = &amp;
 		static const QString CHAR_LT; //! \brief  < = &lt;

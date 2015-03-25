@@ -33,25 +33,25 @@
 #include "schemaview.h"
 #include "styledtextboxview.h"
 
-class ObjectsScene: public QGraphicsScene {
+class LIBOBJECTRENDERER_EXPORT ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
     vector<BaseObjectView *> removed_objs;
 
     //! brief Indicates if the corner move is enabled for the scene
-    static bool corner_move,
+    static bool corner_move;
 
     /*! brief Indicates that panning mode and range selection model are activate in inverse mode.
     By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-    invert_panning_rangesel;
+    static bool invert_panning_rangesel;
 
     //! brief Indicates if the scene need to be moved
     bool move_scene;
 
-    static const int SCENE_MOVE_STEP=20,
-                     SCENE_MOVE_TIMEOUT=50,
-                     SCENE_MOVE_THRESHOLD=30;
+    static const int SCENE_MOVE_STEP=20;
+    static const int SCENE_MOVE_TIMEOUT=50;
+    static const int SCENE_MOVE_THRESHOLD=30;
 
     //! \brief Timer responsible to move the scene
     QTimer scene_move_timer,
@@ -64,7 +64,9 @@ class ObjectsScene: public QGraphicsScene {
     int scene_move_dx, scene_move_dy;
 
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
-		static bool align_objs_grid, show_grid, show_page_delim;
+		static bool align_objs_grid;
+		static bool show_grid;
+		static bool show_page_delim;
 
 		//! \brief Scene grid size
 		static unsigned grid_size;

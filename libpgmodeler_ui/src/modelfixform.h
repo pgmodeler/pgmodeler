@@ -32,7 +32,7 @@
 #include <iostream>
 using namespace std;
 
-class ModelFixForm: public QDialog, public Ui::ModelFixForm {
+class LIBPGMODELER_UI_EXPORT ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 

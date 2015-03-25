@@ -28,7 +28,7 @@ are emitted during the diff process on ModelsDiffHelper class.
 
 #include "tableobject.h"
 
-class ObjectsDiffInfo {
+class LIBPGMODELER_UI_EXPORT ObjectsDiffInfo {
 	private:
 		//! \brief Difference type (see constants below)
 		unsigned diff_type;
@@ -36,11 +36,11 @@ class ObjectsDiffInfo {
     BaseObject *object, *old_object;
 
 	public:
-		static const unsigned CREATE_OBJECT,
-													DROP_OBJECT,
-                          ALTER_OBJECT,
-                          IGNORE_OBJECT,
-                          NO_DIFFERENCE;
+		static const unsigned CREATE_OBJECT;
+		static const unsigned DROP_OBJECT;
+		static const unsigned ALTER_OBJECT;
+		static const unsigned IGNORE_OBJECT;
+		static const unsigned NO_DIFFERENCE;
 
 		ObjectsDiffInfo(void);
     ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);

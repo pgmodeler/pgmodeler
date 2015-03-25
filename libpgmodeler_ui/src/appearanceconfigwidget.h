@@ -32,7 +32,7 @@
 #include "databasemodel.h"
 #include <algorithm>
 
-class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
+class LIBPGMODELER_UI_EXPORT AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
 

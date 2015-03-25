@@ -19,6 +19,8 @@ HEADERS += src/exception.h \
 
 SOURCES += src/exception.cpp
 
+windows: DEFINES += LIBUTILS_EXPORT=Q_DECL_EXPORT
+
 # Deployment settings
 target.path = $$PRIVATELIBDIR
 INSTALLS = target

@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_conversionwidget.h"
 
-class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
+class LIBPGMODELER_UI_EXPORT ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
 	private:
 		Q_OBJECT
 		ObjectSelectorWidget *conv_func_sel;

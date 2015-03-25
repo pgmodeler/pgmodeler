@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_extensionwidget.h"
 
-class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
+class LIBPGMODELER_UI_EXPORT ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 	private:
 		Q_OBJECT
 
