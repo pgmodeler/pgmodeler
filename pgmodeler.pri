@@ -182,7 +182,7 @@ windows {
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 
-  INCLUDEPATH += $$PGSQL_INC $$XML_INC
+  INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
   *-msvc* {
     DEFINES += __PRETTY_FUNCTION__=__FUNCTION__ _CRT_SECURE_NO_WARNINGS
   }
