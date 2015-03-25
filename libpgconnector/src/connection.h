@@ -29,9 +29,6 @@
 #include "resultset.h"
 #include "attribsmap.h"
 #include <QRegExp>
-#include <iostream>
-
-using namespace std;
 
 class Connection {
 	private:

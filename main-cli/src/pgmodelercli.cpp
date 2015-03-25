@@ -1132,6 +1132,7 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
   }
  #else
     #ifdef Q_OS_WIN
+    /*
      //Checking if the .dbm registry key exists
      QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
      QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe"));
@@ -1167,7 +1168,7 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
           s.sync();
           itr++;
         }
-     }
+     } */
     #endif
 #endif
 }

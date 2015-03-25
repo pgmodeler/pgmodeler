@@ -32,8 +32,6 @@
 #include <map>
 #include <QRegExp>
 
-using namespace std;
-
 class BaseType{
 	private:
 		static const unsigned types_count=237;

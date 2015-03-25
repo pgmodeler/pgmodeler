@@ -18,6 +18,7 @@
 
 #include "modelfixform.h"
 #include "configurationform.h"
+#include <iostream>
 
 #ifndef Q_OS_MAC
   const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
