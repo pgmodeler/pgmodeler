@@ -6759,7 +6759,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
     //Cleaning up the resulting list removing duplicate elements
     std::sort(objs.begin(), objs.end());
     end=std::unique(objs.begin(), objs.end());
-    objs.assign(objs.begin(), end);
+    objs.erase(end, objs.end());
   }
 }
 
@@ -8475,7 +8475,7 @@ void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject 
     refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
     std::sort(refs.begin(), refs.end());
     end=std::unique(refs.begin(), refs.end());
-    refs.assign(refs.begin(), end);
+    refs.erase(end, refs.end());
 
     for(BaseObject *obj : refs_aux)
       __getObjectReferences(obj, refs, exclude_perms);
@@ -8806,7 +8806,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
   //Removing the duplicate items on the list
   std::sort(list.begin(), list.end());
   end=std::unique(list.begin(), list.end());
-  list.assign(list.begin(), end);
+  list.erase(end, list.end());
 
   return(list);
 }
