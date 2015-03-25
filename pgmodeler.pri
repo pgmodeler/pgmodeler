@@ -183,6 +183,9 @@ windows {
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
+  *-msvc* {
+    DEFINES += __PRETTY_FUNCTION__=__FUNCTION__ _CRT_SECURE_NO_WARNINGS
+  }
 }
 
 macx | windows {
