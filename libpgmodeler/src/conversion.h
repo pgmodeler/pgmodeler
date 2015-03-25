@@ -30,7 +30,7 @@
 #include "function.h"
 #include "role.h"
 
-class Conversion: public BaseObject {
+class LIBPGMODELER_EXPORT Conversion: public BaseObject {
 	private:
 		/*! \brief Encoding types vector:
 		 0 -> Source encoding
@@ -45,8 +45,8 @@ class Conversion: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the conversion encodings
-		static const unsigned SRC_ENCODING=0,
-													DST_ENCODING=1;
+		static const unsigned SRC_ENCODING=0;
+		static const unsigned DST_ENCODING=1;
 
 		Conversion(void);
 

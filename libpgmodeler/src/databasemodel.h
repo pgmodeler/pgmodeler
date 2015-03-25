@@ -56,7 +56,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <algorithm>
 #include <locale.h>
 
-class DatabaseModel:  public QObject, public BaseObject {
+class LIBPGMODELER_EXPORT DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 

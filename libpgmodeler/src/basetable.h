@@ -29,7 +29,7 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
-class BaseTable: public BaseGraphicObject {
+class LIBPGMODELER_EXPORT BaseTable: public BaseGraphicObject {
   protected:
     Tag *tag;
 

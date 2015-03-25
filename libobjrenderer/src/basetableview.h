@@ -31,7 +31,7 @@
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
 
-class BaseTableView: public BaseObjectView {
+class LIBOBJECTRENDERER_EXPORT BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
@@ -44,7 +44,8 @@ class BaseTableView: public BaseObjectView {
 		QGraphicsItemGroup *columns,
 		*ext_attribs;
 
-    static bool hide_ext_attribs, hide_tags;
+		static bool hide_ext_attribs;
+		static bool hide_tags;
 
     //! \brief Polygonal object that defines the table body
     RoundedRectItem *body,
@@ -74,8 +75,8 @@ class BaseTableView: public BaseObjectView {
     void configureTag(void);
 
 	public:
-		static const unsigned LEFT_CONN_POINT=0,
-		RIGHT_CONN_POINT=1;
+        static const unsigned LEFT_CONN_POINT=0;
+        static const unsigned RIGHT_CONN_POINT=1;
 
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);

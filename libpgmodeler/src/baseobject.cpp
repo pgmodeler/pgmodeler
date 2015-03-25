@@ -19,6 +19,8 @@
 #include "baseobject.h"
 #include <QApplication>
 
+using namespace ParsersAttributes;
+
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
 	 must also be modified */

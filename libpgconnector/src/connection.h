@@ -30,7 +30,7 @@
 #include "attribsmap.h"
 #include <QRegExp>
 
-class Connection {
+class LIBPGCONNECTOR_EXPORT Connection {
 	private:
 		//! \brief Database connection descriptor
 		PGconn *connection;
@@ -52,13 +52,13 @@ class Connection {
 		static void disableNoticeOutput(void *, const PGresult *){}
 
 		//! \brief Indicates if notices are enabled
-		static bool notice_enabled,
+		static bool notice_enabled;
 
 		//! \brief Indicates if executed sql must be printed (stdout) [default is false]
-    print_sql,
+		static bool print_sql;
 
-    //! \brief Indicates if error silence is enabled
-    silence_conn_err;
+		//! \brief Indicates if error silence is enabled
+		static bool silence_conn_err;
 
     /*! brief Indicates that the initial database configured in the connection can be automatically
         browsed after connect the server. This attribute is useful only in SQLTool */
@@ -66,33 +66,33 @@ class Connection {
 
 	public:
 		//! \brief Constants used to reference the connections parameters
-    static const QString	PARAM_ALIAS,
-                          PARAM_SERVER_FQDN,
-													PARAM_SERVER_IP,
-													PARAM_PORT,
-													PARAM_DB_NAME,
-													PARAM_USER,
-													PARAM_PASSWORD,
-													PARAM_CONN_TIMEOUT,
-													PARAM_OPTIONS,
-													PARAM_SSL_MODE,
-													PARAM_SSL_CERT,
-													PARAM_SSL_KEY,
-													PARAM_SSL_ROOT_CERT,
-													PARAM_SSL_CRL,
-													PARAM_KERBEROS_SERVER,
-                          PARAM_LIB_GSSAPI,
-													SSL_DESABLE,
-													SSL_ALLOW,
-													SSL_PREFER,
-													SSL_REQUIRE,
-													SSL_CA_VERIF,
-                          SSL_FULL_VERIF;
+		static const QString	PARAM_ALIAS;
+		static const QString	PARAM_SERVER_FQDN;
+		static const QString	PARAM_SERVER_IP;
+		static const QString	PARAM_PORT;
+		static const QString	PARAM_DB_NAME;
+		static const QString	PARAM_USER;
+		static const QString	PARAM_PASSWORD;
+		static const QString	PARAM_CONN_TIMEOUT;
+		static const QString	PARAM_OPTIONS;
+		static const QString	PARAM_SSL_MODE;
+		static const QString	PARAM_SSL_CERT;
+		static const QString	PARAM_SSL_KEY;
+		static const QString	PARAM_SSL_ROOT_CERT;
+		static const QString	PARAM_SSL_CRL;
+		static const QString	PARAM_KERBEROS_SERVER;
+		static const QString	PARAM_LIB_GSSAPI;
+		static const QString	SSL_DESABLE;
+		static const QString	SSL_ALLOW;
+		static const QString	SSL_PREFER;
+		static const QString	SSL_REQUIRE;
+		static const QString	SSL_CA_VERIF;
+		static const QString	SSL_FULL_VERIF;
 
-    //! \brief Constants used to reference the server info details (see getServerInfo())
-    static const QString	SERVER_VERSION,
-                          SERVER_PROTOCOL,
-                          SERVER_PID;
+		//! \brief Constants used to reference the server info details (see getServerInfo())
+		static const QString	SERVER_VERSION;
+		static const QString	SERVER_PROTOCOL;
+		static const QString	SERVER_PID;
 
     Connection(void);
 		~Connection(void);

@@ -66,6 +66,10 @@ const unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES=1;
 const unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES=2;
 const unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES=3;
 
+const float ModelWidget::MINIMUM_ZOOM=0.05f;
+const float ModelWidget::MAXIMUM_ZOOM=4.0f;
+const float ModelWidget::ZOOM_INCREMENT=0.05f;
+
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
 	QFont font;
@@ -2201,8 +2205,8 @@ void ModelWidget::pasteObjects(void)
 				 (aux_object &&
 					(dynamic_cast<BaseGraphicObject *>(object) ||
 					 (aux_object->getDatabase()==object->getDatabase()) ||
-						 (aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
-							object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION)))))
+						 (aux_object->getCodeDefinition(SchemaParser::XML_DEFINITION) !=
+							object->getCodeDefinition(SchemaParser::XML_DEFINITION)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)

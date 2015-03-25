@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "pgsqltypes.h"
 
-class Collation : public BaseObject {
+class LIBPGMODELER_EXPORT Collation : public BaseObject {
 	private:
 		/*! \brief Base encoding for the collation.
 		When setting the locale or lc_??? attributes the encoding name
@@ -48,8 +48,8 @@ class Collation : public BaseObject {
 						locale;
 
 	public:
-		static const unsigned _LC_CTYPE=0,
-		_LC_COLLATE=1;
+		static const unsigned _LC_CTYPE=0;
+		static const unsigned _LC_COLLATE=1;
 
 		Collation(void);
 

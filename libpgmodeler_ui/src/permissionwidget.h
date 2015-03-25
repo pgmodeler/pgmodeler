@@ -30,7 +30,7 @@
 #include "objecttablewidget.h"
 #include "modelobjectswidget.h"
 
-class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
+class LIBPGMODELER_UI_EXPORT PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
 		Q_OBJECT
 

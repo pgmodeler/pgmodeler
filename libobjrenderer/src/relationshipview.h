@@ -29,15 +29,15 @@
 #include "tableview.h"
 #include "relationship.h"
 
-class RelationshipView: public BaseObjectView {
+class LIBOBJECTRENDERER_EXPORT RelationshipView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-    static constexpr float GRAPHIC_PNT_RADIUS=6.0f;
+    static const float GRAPHIC_PNT_RADIUS;
 
 		//! brief Length of the lines linked to fk/pk columns
-		static constexpr float CONN_LINE_LENGTH=20.0f;
+		static const float CONN_LINE_LENGTH;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;
@@ -125,8 +125,8 @@ class RelationshipView: public BaseObjectView {
 		void configureObject(void);
 
 	public:
-		static const unsigned CONNECT_CENTER_PNTS=0,
-		CONNECT_FK_TO_PK=1;
+		static const unsigned CONNECT_CENTER_PNTS=0;
+		static const unsigned CONNECT_FK_TO_PK=1;
 
 		RelationshipView(BaseRelationship *rel);
 		~RelationshipView(void);

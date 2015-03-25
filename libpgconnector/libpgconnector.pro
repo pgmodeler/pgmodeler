@@ -21,10 +21,12 @@ SOURCES += src/resultset.cpp \
 	   src/connection.cpp \
 	   src/catalog.cpp
 
-unix|windows: LIBS += $$PGSQL_LIB\
+unix|windows: LIBS += "$$PGSQL_LIB" \
                     -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
+
+windows: DEFINES += LIBPGCONNECTOR_EXPORT=Q_DECL_EXPORT
 
 INCLUDEPATH += $$PWD/../libpgmodeler/src \
                $$PWD/../libparsers/src \

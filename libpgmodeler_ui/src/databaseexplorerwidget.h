@@ -29,13 +29,13 @@
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
 
-class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
+class LIBPGMODELER_UI_EXPORT DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
 		Q_OBJECT
 
-    static const QString DEP_NOT_DEFINED,
-                         DEP_NOT_FOUND,
-                         ELEM_SEPARATOR;
+    static const QString DEP_NOT_DEFINED;
+    static const QString DEP_NOT_FOUND;
+    static const QString ELEM_SEPARATOR;
 
     //! brief Stores the translations of all used attributes at properties panel
     static const attribs_map attribs_i18n;

@@ -28,7 +28,7 @@
 #include "ui_databasewidget.h"
 #include "baseobjectwidget.h"
 
-class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
+class LIBPGMODELER_UI_EXPORT DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 	private:
 		Q_OBJECT
 

@@ -28,7 +28,7 @@
 #include <QGraphicsRectItem>
 #include <QPainter>
 
-class RoundedRectItem: public QGraphicsRectItem {
+class LIBOBJECTRENDERER_EXPORT RoundedRectItem: public QGraphicsRectItem {
   private:
     //! brief Rect border radius
     float radius;
@@ -51,22 +51,22 @@ class RoundedRectItem: public QGraphicsRectItem {
 
   public:
     //! brief Implies a normal rectangle (no rounded corner)
-    static const unsigned NONE_CORNERS=0,
+    static const unsigned NONE_CORNERS=0;
 
     //! brief The top-left corner will be rounded
-    TOPLEFT_CORNER=2,
+    static const unsigned TOPLEFT_CORNER=2;
 
     //! brief The top-right corner will be rounded
-    TOPRIGHT_CORNER=4,
+    static const unsigned TOPRIGHT_CORNER=4;
 
     //! brief The Bottom-left corner will be rounded
-    BOTTOMLEFT_CORNER=8,
+    static const unsigned BOTTOMLEFT_CORNER=8;
 
     //! brief The Bottom-right corner will be rounded
-    BOTTOMRIGHT_CORNER=16,
+    static const unsigned BOTTOMRIGHT_CORNER=16;
 
     //! brief All corners will be rounded
-    ALL_CORNERS=32;
+    static const unsigned ALL_CORNERS=32;
 
     explicit RoundedRectItem(QGraphicsItem *parent = 0);
 

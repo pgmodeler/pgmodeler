@@ -28,7 +28,7 @@
 
 #include "tableobject.h"
 
-class Column: public TableObject{
+class LIBPGMODELER_EXPORT Column: public TableObject{
 	protected:
 		/*! \brief Stores the previous name of the column before its name has changed.
 		 This attribute assists in the process of reference columns added

@@ -24,6 +24,11 @@ map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, QColor *> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 
+const float BaseObjectView::VERT_SPACING=2.0f;
+const float BaseObjectView::HORIZ_SPACING=2.0f;
+const float BaseObjectView::DEFAULT_FONT_SIZE=9.0f;
+const float BaseObjectView::OBJ_BORDER_WIDTH=0.80f;
+
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
 	sel_order=0;

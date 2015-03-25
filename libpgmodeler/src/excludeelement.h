@@ -26,7 +26,7 @@
 
 #include "element.h"
 
-class ExcludeElement: public Element {
+class LIBPGMODELER_EXPORT ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 

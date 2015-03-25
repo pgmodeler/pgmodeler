@@ -29,7 +29,7 @@
 #include "ui_columnwidget.h"
 #include "pgsqltypewidget.h"
 
-class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
+class LIBPGMODELER_UI_EXPORT ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 	private:
 		Q_OBJECT
 

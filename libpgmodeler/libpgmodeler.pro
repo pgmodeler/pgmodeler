@@ -111,6 +111,8 @@ SOURCES +=  src/textbox.cpp \
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
+windows: DEFINES += LIBPGMODELER_EXPORT=Q_DECL_EXPORT
+
 INCLUDEPATH += $$PWD/../libparsers/src \
                $$PWD/../libutils/src
 

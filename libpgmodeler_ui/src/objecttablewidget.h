@@ -21,7 +21,7 @@
 \class ObjectTableWidget
 \brief Implements a basic table (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This
-class also implements operations to handle insertion/deletion/update/movements
+class LIBPGMODELER_UI_EXPORT also implements operations to handle insertion/deletion/update/movements
 of rows on the table.
 */
 
@@ -32,7 +32,7 @@ of rows on the table.
 #include "messagebox.h"
 #include "baseobjectwidget.h"
 
-class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
+class LIBPGMODELER_UI_EXPORT ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 	private:
 		Q_OBJECT
 
@@ -42,14 +42,14 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static const unsigned ADD_BUTTON=1,
-															REMOVE_BUTTON=2,
-															UPDATE_BUTTON=4,
-															MOVE_BUTTONS=8,
-															EDIT_BUTTON=16,
-															REMOVE_ALL_BUTTON=32,
-															ALL_BUTTONS=63,
-															NO_BUTTONS=0;
+		static const unsigned ADD_BUTTON=1;
+		static const unsigned REMOVE_BUTTON=2;
+		static const unsigned UPDATE_BUTTON=4;
+		static const unsigned MOVE_BUTTONS=8;
+		static const unsigned EDIT_BUTTON=16;
+		static const unsigned REMOVE_ALL_BUTTON=32;
+		static const unsigned ALL_BUTTONS=63;
+		static const unsigned NO_BUTTONS=0;
 
 		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
 											bool conf_exclusion=false, QWidget * parent = 0);
