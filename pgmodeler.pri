@@ -174,10 +174,10 @@ macx {
 }
 
 windows {
-  PGSQL_LIB = C:/PostgreSQL/9.4/bin/libpq.dll
+  PGSQL_LIB = C:/PostgreSQL/9.4/lib/libpq.lib
   PGSQL_INC = C:/PostgreSQL/9.4/include
-  XML_INC = C:/Qt/Qt5.4.1/5.4/mingw491_32/include
-  XML_LIB = C:/Qt/Qt5.4.1/5.4/mingw491_32/bin/libxml2-2.dll
+  XML_INC = C:/PostgreSQL/9.4/include
+  XML_LIB = C:/PostgreSQL/9.4/lib/libxml2.lib
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
