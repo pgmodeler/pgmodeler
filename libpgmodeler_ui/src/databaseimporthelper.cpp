@@ -1496,7 +1496,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
       {
         /* Building the type name prepending the schema name in order to search it on
            the user defined types list at PgSQLType class */
-        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], OBJ_SCHEMA);
+        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true);// OBJ_SCHEMA);
         type_name+=QString(".") + types[type_oid][ParsersAttributes::NAME];
         is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
       }

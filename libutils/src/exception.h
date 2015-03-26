@@ -23,6 +23,12 @@
 \note <strong>Creation date:</strong> 10/07/2006
 */
 
+/* Visual C++ only:
+   Disabling warning "C4267: conversion from 'size_t' to 'int/unsigned', possible loss of data" */
+#ifdef _MSC_VER
+    #pragma warning(disable: 4267)
+#endif
+
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 

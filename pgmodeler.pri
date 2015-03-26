@@ -184,7 +184,8 @@ windows {
 
   INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
   *-msvc* {
-    DEFINES += __PRETTY_FUNCTION__=__FUNCTION__ _CRT_SECURE_NO_WARNINGS
+    DEFINES += __PRETTY_FUNCTION__=__FUNCTION__ \
+               _CRT_SECURE_NO_WARNINGS=
   }
 }
 
