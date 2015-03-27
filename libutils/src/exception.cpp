@@ -407,28 +407,26 @@ QString Exception::getExceptionsText(void)
 {
 	vector<Exception> exceptions;
 	vector<Exception>::iterator itr, itr_end;
-	unsigned idx=0;
+	size_t idx=0;
 	QString exceptions_txt;
 
 	//Get the generated exceptions list
 	this->getExceptionsList(exceptions);
-	itr=exceptions.begin();
-	itr_end=exceptions.end();
 	idx=exceptions.size()-1;
 
 	//Append all usefull information about the exceptions on the string
-	while(itr!=itr_end)
+	for(auto& exception: exceptions)
 	{
-		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
-		exceptions_txt+=QString("  %1\n").arg(itr->getMethod());
-		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorType())).arg(itr->getErrorMessage());
+		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(exception.getFile()).arg(exception.getLine());
+		exceptions_txt+=QString("  %1\n").arg(exception.getMethod());
+		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(exception.getErrorType())).arg(exception.getErrorMessage());
 
-		if(!itr->getExtraInfo().isEmpty())
-			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
+		if(!exception.getExtraInfo().isEmpty())
+			exceptions_txt+=QString("       ** %1\n\n").arg(exception.getExtraInfo());
 		else
       exceptions_txt+=QString("\n");
 
-		itr++; idx--;
+		idx--;
 	}
 
 	return(exceptions_txt);

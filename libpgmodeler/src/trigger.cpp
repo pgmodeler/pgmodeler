@@ -17,6 +17,7 @@
 */
 
 #include "trigger.h"
+#include "stringutils.h"
 
 Trigger::Trigger(void)
 {
@@ -59,18 +60,11 @@ void Trigger::addArgument(const QString &arg)
 void Trigger::setArgumentAttribute(unsigned def_type)
 {
 	QString str_args;
-	unsigned i, count;
 
-	count=arguments.size();
-	for(i=0; i < count; i++)
-	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-      str_args+=QString("'") + arguments[i] + QString("'");
-		else
-			str_args+=arguments[i];
-
-    if(i < (count-1)) str_args+=QString(",");
-	}
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		str_args="'" + StringUtils::join<QString>(arguments, "','") + "'";
+	else
+		str_args=StringUtils::join<QString>(arguments, ",");
 
 	attributes[ParsersAttributes::ARGUMENTS]=str_args;
 }

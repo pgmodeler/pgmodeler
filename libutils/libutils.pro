@@ -15,7 +15,8 @@ windows: DESTDIR = $$PWD
 
 HEADERS += src/exception.h \
            src/globalattributes.h \
-           src/pgsqlversions.h
+           src/pgsqlversions.h \
+           src/stringutils.h
 
 SOURCES += src/exception.cpp
 

@@ -17,6 +17,7 @@
 */
 
 #include "type.h"
+#include "stringutils.h"
 
 Type::Type(void)
 {
@@ -415,11 +416,9 @@ void Type::setDelimiter(char delim)
 void Type::setElementsAttribute(unsigned def_type)
 {
 	QString str_elem;
-	unsigned i, count;
 
-  count=type_attribs.size();
-	for(i=0; i < count; i++)
-    str_elem+=type_attribs[i].getCodeDefinition(def_type);
+	for(auto& type_attrib: type_attribs)
+		str_elem+=type_attrib.getCodeDefinition(def_type);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
@@ -430,18 +429,11 @@ void Type::setElementsAttribute(unsigned def_type)
 void Type::setEnumerationsAttribute(unsigned def_type)
 {
 	QString str_enum;
-	unsigned i, count;
 
-	count=enumerations.size();
-	for(i=0; i < count; i++)
-	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-      str_enum+=QString("'") + enumerations[i] + QString("'");
-		else
-			str_enum+=enumerations[i];
-
-    if(i < (count-1)) str_enum+=QString(",");
-	}
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		str_enum="'" + StringUtils::join<QString>(enumerations, "','") + "'";
+	else
+		str_enum=StringUtils::join<QString>(enumerations, ",");
 
   attributes[ParsersAttributes::ENUMERATIONS]=str_enum;
 }

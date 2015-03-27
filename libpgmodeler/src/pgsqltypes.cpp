@@ -1247,33 +1247,27 @@ QString PgSQLType::getUserTypeName(unsigned type_id)
 
 void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
 {
-	unsigned idx,total;
-
 	type_list.clear();
-	total=PgSQLType::user_types.size();
 
-	for(idx=0; idx < total; idx++)
+	for (auto& user_type: user_types)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
-			 ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
-			type_list.push_back(user_types[idx].name);
+		if(!user_type.invalidated && user_type.pmodel==pmodel &&
+			 ((inc_usr_types & user_type.type_conf) == user_type.type_conf))
+			type_list.push_back(user_type.name);
 	}
 }
 
 void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
 {
-	unsigned idx, total;
-
 	ptypes.clear();
-	total=PgSQLType::user_types.size();
 
-	for(idx=0; idx < total; idx++)
+	for(auto& user_type: user_types)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
-			 ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
-			ptypes.push_back(user_types[idx].ptype);
+		if(!user_type.invalidated && user_type.pmodel==pmodel &&
+			 ((inc_usr_types & user_type.type_conf) == user_type.type_conf))
+			ptypes.push_back(user_type.ptype);
 	}
 }
 

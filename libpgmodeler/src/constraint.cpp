@@ -17,6 +17,7 @@
 */
 
 #include <functional>
+#include "stringutils.h"
 #include "constraint.h"
 
 Constraint::Constraint(void)
@@ -190,9 +191,7 @@ void Constraint::setTablespace(BaseObject *tabspc)
 void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel)
 {
 	vector<Column *> *col_vector=nullptr;
-	Column *col=nullptr;
 	QString str_cols, attrib;
-	unsigned i, count;
 	bool format=(def_type==SchemaParser::SQL_DEFINITION);
 
 	if(col_type==REFERENCED_COLS)
@@ -206,28 +205,26 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 		attrib=ParsersAttributes::SRC_COLUMNS;
 	}
 
-	count=col_vector->size();
-	for(i=0; i < count; i++)
+	std::vector<Column *> required_columns;
+	required_columns.reserve(col_vector->size());
+	std::copy_if(begin(*col_vector), end(*col_vector), std::back_inserter(required_columns), [&](Column* col)
 	{
-		col=col_vector->at(i);
-
 		/* For XML definition the columns added to the constraint
 		 through relationship can not be included because they are inserted
 		 to the restriction on the time of creation of the relationship from its XML
 		 so the parameter 'inc_addedbyrel' can be used to solve this case. */
-		if((def_type==SchemaParser::SQL_DEFINITION) ||
+		return (def_type==SchemaParser::SQL_DEFINITION) ||
 			 ((def_type==SchemaParser::XML_DEFINITION) &&
 				((inc_addedbyrel && col->isAddedByRelationship()) ||
 				 (inc_addedbyrel && !col->isAddedByRelationship()) ||
-				 (!inc_addedbyrel && !col->isAddedByRelationship()))))
-		{
-			str_cols+=col->getName(format);
-      str_cols+=',';
-		}
-	}
-
-	str_cols.remove(str_cols.size()-1,1);
-	attributes[attrib]=str_cols;
+				 (!inc_addedbyrel && !col->isAddedByRelationship())));
+	});
+	QStringList str_columns;
+	std::transform(begin(required_columns), end(required_columns), std::back_inserter(str_columns), [&](Column* col)
+			{
+				return col->getName(format);
+			});
+	attributes[attrib]=StringUtils::join(str_columns, ',');
 }
 
 void Constraint::setReferencedTable(BaseTable *tab_ref)
