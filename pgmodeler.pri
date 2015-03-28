@@ -47,7 +47,7 @@ unix {
 #
 # The values of each variable changes between supported platforms and are describe as follow
 
- 
+
 # Linux custom variables settings
 linux {
   CONFIG += x11
@@ -153,15 +153,15 @@ macx {
 }
 
 windows {
-  PGSQL_LIB = C:/PostgreSQL/9.4/bin/libpq.dll
+  PGSQL_LIB = C:/PostgreSQL/9.4/lib/libpq.dll
   PGSQL_INC = C:/PostgreSQL/9.4/include
-  XML_INC = C:/Qt/Qt5.4.1/5.4/mingw491_32/include
-  XML_LIB = C:/Qt/Qt5.4.1/5.4/mingw491_32/bin/libxml2-2.dll
+  XML_INC = C:/PostgreSQL/9.4/include
+  XML_LIB = C:/PostgreSQL/9.4/bin/libxml2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 
-  INCLUDEPATH += $$PGSQL_INC $$XML_INC
+  INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
 }
 
 macx | windows {
