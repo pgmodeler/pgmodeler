@@ -471,8 +471,6 @@ void MainWindow::showEvent(QShowEvent *)
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
   #ifndef Q_OS_MAC
-    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
-
     //Hiding/showing the main menu bar depending on the retrieved conf
     main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 

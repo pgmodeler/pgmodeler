@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.4.0/5.4/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.4.1/5.4/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.4.0/5.4/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.4.1/5.4/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -23,6 +23,7 @@ LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-if-1.5.0
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
+MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
 ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
 INSTALL_ROOT="/opt/pgmodeler"
@@ -114,7 +115,7 @@ else
                imageformats/libqwbmp.so \
                printsupport/libcupsprintersupport.so \
                platforms/libqxcb.so"
-               
+
   #Needed Qt libs
   QT_LIBS="libQt5DBus.so.5 \
            libQt5PrintSupport.so.5 \
@@ -267,12 +268,23 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 fi
 
 echo "Copying scripts..."
-cp $STARTUP_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
-cp $ENV_VARS_SCRIPT $BUILD_DIR/$INSTALL_ROOT >> $LOG 2>&1
+cp $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
     echo
-    echo "** Failed to copy startup script!"
+    echo "** Failed to copy scripts!"
+    echo
+    exit 1
+fi
+
+chmod +x "$BUILD_DIR/$INSTALL_ROOT/$STARTUP_SCRIPT"
+chmod +x "$BUILD_DIR/$INSTALL_ROOT/$MIME_UPDATE_SCRIPT"
+
+if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to set permisions to scripts!"
     echo
     exit 1
 fi

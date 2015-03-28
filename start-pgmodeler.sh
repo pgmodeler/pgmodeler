@@ -14,4 +14,4 @@
 # Loading needed environment variables
 source "./pgmodeler.vars"
 
-"$PGMODELER_ROOT/pgmodeler" "$@" &
+$PGMODELER_APP_PATH "$@"

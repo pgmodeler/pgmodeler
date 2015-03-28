@@ -25,73 +25,73 @@
 
 void startCrashHandler(int signal)
 {
-	QFile output;
-	QString lin, cmd;
+  QFile output;
+  QString lin, cmd;
 
     /** At the moment the backtrace function does not exists on MingW (Windows) this way
-		 the code that generates the stacktrace is available only on Linux/Unix systems */
-	#ifndef Q_OS_WIN
+     the code that generates the stacktrace is available only on Linux/Unix systems */
+  #ifndef Q_OS_WIN
     void *stack[30];
     size_t stack_size;
     char **symbols=nullptr;
     stack_size = backtrace(stack, 30);
     symbols = backtrace_symbols(stack, stack_size);
-	#endif
+  #endif
 
-	#ifdef Q_OS_MAC
-		cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
+  #ifdef Q_OS_MAC
+    cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
         GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
-	#else
-    cmd=GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
-	#endif
+  #else
+    cmd=GlobalAttributes::PGMODELER_CHANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
+  #endif
 
-	//Creates the stacktrace file
-	output.setFileName(GlobalAttributes::TEMPORARY_DIR +
-										 GlobalAttributes::DIR_SEPARATOR +
-										 GlobalAttributes::STACKTRACE_FILE);
-	output.open(QFile::WriteOnly);
+  //Creates the stacktrace file
+  output.setFileName(GlobalAttributes::TEMPORARY_DIR +
+                     GlobalAttributes::DIR_SEPARATOR +
+                     GlobalAttributes::STACKTRACE_FILE);
+  output.open(QFile::WriteOnly);
 
-	if(output.isOpen())
-	{
+  if(output.isOpen())
+  {
     lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
         .arg(signal)
         .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
         .arg(GlobalAttributes::PGMODELER_VERSION)
         .arg(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
-		lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
-				 .arg(QT_VERSION_STR)
-				 .arg(qVersion());
+    lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
+         .arg(QT_VERSION_STR)
+         .arg(qVersion());
 
-		output.write(lin.toStdString().c_str(), lin.size());
+    output.write(lin.toStdString().c_str(), lin.size());
 
-		#ifndef Q_OS_WIN
+    #ifndef Q_OS_WIN
       for(size_t i=0; i < stack_size; i++)
-			{
+      {
         lin=QString("[%1] ").arg(stack_size-1-i) + QString(symbols[i]) + QString("\n");
-				output.write(lin.toStdString().c_str(), lin.size());
-			}
+        output.write(lin.toStdString().c_str(), lin.size());
+      }
       free(symbols);
-		#else
-			lin=QString("** Stack trace unavailable on Windows system **");
-			output.write(lin.toStdString().c_str(), lin.size());
-		#endif
+    #else
+      lin=QString("** Stack trace unavailable on Windows system **");
+      output.write(lin.toStdString().c_str(), lin.size());
+    #endif
 
-		output.close();
-	}
+    output.close();
+  }
 
-	/* Changing the working dir to the main executable in order to call the crash handler
-	if the PGMODELER_CHANDLER_PATH isn't set */
-	QDir dir;
-	dir.cd(QApplication::applicationDirPath());
+  /* Changing the working dir to the main executable in order to call the crash handler
+  if the PGMODELER_CHANDLER_PATH isn't set */
+  QDir dir;
+  dir.cd(QApplication::applicationDirPath());
 
-	exit(1 + system(cmd.toStdString().c_str()));
+  exit(1 + system(cmd.toStdString().c_str()));
 }
 
 int main(int argc, char **argv)
 {
   try
-	{
+  {
     /* Registering the below classes as metatypes in order to make
     them liable to be sent through signal parameters. */
     qRegisterMetaType<ObjectType>("ObjectType");
@@ -107,16 +107,16 @@ int main(int argc, char **argv)
     int res=0;
 
     //Loading the application splash screen
-		QSplashScreen splash;
+    QSplashScreen splash;
     QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
-		splash.setPixmap(pix);
+    splash.setPixmap(pix);
     splash.setMask(pix.mask());
 
-		#ifndef Q_OS_MAC
-			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
-		#else
-			splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-		#endif
+    #ifndef Q_OS_MAC
+      splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
+    #else
+      splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    #endif
 
     #ifdef Q_OS_WIN
       splash.show();
@@ -126,30 +126,30 @@ int main(int argc, char **argv)
 
     app.processEvents();
 
-		//Creates the main form
-		MainWindow fmain;
+    //Creates the main form
+    MainWindow fmain;
 
-		//Loading models via command line on MacOSX are disabled until the file association work correclty on that system
-		#ifndef Q_OS_MAC
+    //Loading models via command line on MacOSX are disabled until the file association work correclty on that system
+    #ifndef Q_OS_MAC
      QStringList params=app.arguments();
      params.pop_front();
 
-		 //If the user specifies a list of files to be loaded
+     //If the user specifies a list of files to be loaded
      if(!params.isEmpty())
       fmain.loadModels(params);
-		#endif
+    #endif
 
-		fmain.showMaximized();
-		splash.finish(&fmain);
+    fmain.showMaximized();
+    splash.finish(&fmain);
     res=app.exec();
     app.closeAllWindows();
 
     return(res);
-	}
-	catch(Exception &e)
-	{
-		QTextStream ts(stdout);
-		ts << e.getExceptionsText();
+  }
+  catch(Exception &e)
+  {
+    QTextStream ts(stdout);
+    ts << e.getExceptionsText();
     return(e.getErrorType());
   }
 }

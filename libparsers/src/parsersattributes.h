@@ -383,7 +383,6 @@ namespace ParsersAttributes {
   ROLE_TYPE=QString("role-type"),
   ROLE=QString("role"),
   ROLES=QString("roles"),
-  ROOT_DIR=QString("root-dir"),
   ROW_AMOUNT=QString("row-amount"),
   RULES=QString("rules"),
   SAVE_LAST_POSITION=QString("save-last-position"),
@@ -492,6 +491,7 @@ namespace ParsersAttributes {
   WITHOUT_OIDS=QString("without-oids"),
   WORD_DELIMITERS=QString("word-delimiters"),
   WORD_SEPARATORS=QString("word-separators"),
+  WORKING_DIR=QString("working-dir"),
   X_POS=QString("x"),
   Y_POS=QString("y");
 }
