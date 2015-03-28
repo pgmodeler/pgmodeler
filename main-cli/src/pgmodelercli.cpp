@@ -413,7 +413,12 @@ int PgModelerCLI::exec(void)
       }
       else if(parsed_opts.count(DBM_MIME_TYPE))
       {
-        handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
+        #ifndef Q_OS_MAC
+          handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
+
+          if(!silent_mode)
+            PgModelerCLI::out << trUtf8("Mime database sucessfully updated.") << endl << endl;
+        #endif
       }
       else
       {
@@ -980,6 +985,8 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 void PgModelerCLI::handleMimeDatabase(bool uninstall)
 {
  SchemaParser schparser;
+ QString msg_file_associated=trUtf8("Database model files (.dbm) are already associated to pgModeler!"),
+     msg_no_association=trUtf8("There is no file association related to pgModeler and .dbm files!");
 
  if(!silent_mode)
  {
@@ -1020,13 +1027,11 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
   //When installing, check if the necessary file exists. If exists, raises an error and abort.
   if(!uninstall && (QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists()))
   {
-    throw Exception(trUtf8("Database model files (.dbm) are already associated to pgModeler!"),
-                    ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(msg_file_associated, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else if(uninstall && (!QFileInfo(files[0]).exists() && !QFileInfo(files[1]).exists()))
   {
-    throw Exception(trUtf8("There is no file association related to pgModeler and .dbm files!"),
-                    ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(msg_no_association, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else if(!uninstall)
   {
@@ -1125,9 +1130,6 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
       PgModelerCLI::out << trUtf8("Running update-mime-database command...") << endl;
 
     QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
-
-    if(!silent_mode)
-      PgModelerCLI::out << trUtf8("Mime database sucessfully updated.") << endl << endl;
   }
   catch(Exception &e)
   {
@@ -1135,43 +1137,55 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
   }
  #else
     #ifdef Q_OS_WIN
-    /*
+
      //Checking if the .dbm registry key exists
      QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe"));
+     QString exe_path=QDir::toNativeSeparators(GlobalAttributes::PGMODELER_APP_PATH);
 
-     //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
-     if(dbm_ext.value(QString("Default")).toString().isEmpty())
-       msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-      if(msg_box.result()==QDialog::Accepted)
-      {
-        //Write the default value for .dbm registry key
+     //If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
+     if(uninstall && dbm_ext.value(QString("Default")).toString().isEmpty())
+       throw Exception(msg_no_association, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     else if(!uninstall && !dbm_ext.value(QString("Default")).toString().isEmpty())
+       throw Exception(msg_file_associated, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     else
+     {
+       if(!uninstall)
+         //Write the default value for .dbm registry key
         dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-        dbm_ext.sync();
+       else
+         dbm_ext.remove(QString());
 
-        //Other registry keys values
-        map<QString, QStringList> confs = {
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
-        };
+       dbm_ext.sync();
+     }
 
-        map<QString, QStringList>::iterator itr;
-        itr=confs.begin();
+     //Other registry keys values
+     map<QString, QStringList> confs = {
+       { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
+       { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
+       { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+       { QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
+     };
 
-        //Iterates over the configuration map writing the other keys on registry
-        while(itr!=confs.end())
-        {
-          QSettings s(itr->first, QSettings::NativeFormat);
-          for(int i=0; i < itr->second.size(); i+=2)
-            s.setValue(itr->second[i], itr->second[i+1]);
+     map<QString, QStringList>::iterator itr;
+     itr=confs.begin();
 
-          s.sync();
-          itr++;
-        }
-     } */
+     //Iterates over the configuration map writing the other keys on registry
+     while(itr!=confs.end())
+     {
+       QSettings s(itr->first, QSettings::NativeFormat);
+
+       if(uninstall)
+         s.remove(QString());
+       else
+       {
+         for(int i=0; i < itr->second.size(); i+=2)
+           s.setValue(itr->second[i], itr->second[i+1]);
+       }
+
+       s.sync();
+       itr++;
+     }
+
     #endif
 #endif
 }
