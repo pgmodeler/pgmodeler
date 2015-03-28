@@ -289,7 +289,7 @@ accepted structure. All available options are described below.") << endl;
 
 #ifndef Q_OS_MAC
   out << trUtf8("Miscellaneous options: ") << endl;
-  out << trUtf8("   %1, %2=[ACTION]\t (Un)installs the file association to .dbm type. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+  out << trUtf8("   %1, %2=[ACTION]\t Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
   out << endl;
 #endif
 }

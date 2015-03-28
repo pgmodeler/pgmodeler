@@ -12,6 +12,6 @@
 # Details about the use of that file are in it's comments.
 
 # Loading needed environment variables
-source "./pgmodeler.vars"
-
+WORKING_DIR="$(dirname "$(readlink -f "$0")")"
+source "$WORKING_DIR/pgmodeler.vars"
 $PGMODELER_APP_PATH "$@"
