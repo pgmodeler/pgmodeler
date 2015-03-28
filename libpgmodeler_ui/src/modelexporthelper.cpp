@@ -505,7 +505,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 				 if(!object->isSQLDisabled())
 					 conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
 			 }
-			 catch(Exception &e){}
+       catch(Exception &){}
 
 			 created_objs[types[type_id]]--;
 		 }

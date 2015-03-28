@@ -933,7 +933,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 			op_list->undoOperation();
 			op_list->removeLastOperation();
 		}
-		catch(Exception &e)
+    catch(Exception &)
 		{}
 	}
 

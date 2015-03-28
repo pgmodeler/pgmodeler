@@ -282,7 +282,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		{
 			this->addObject(pk_special);
 		}
-		catch(Exception &e)
+    catch(Exception &)
 		{
 			//Case some error is raised deletes the special primary key
 			delete(pk_special);
