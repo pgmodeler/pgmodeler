@@ -49,8 +49,6 @@
 #include "centralwidget.h"
 #include "configurationform.h"
 
-using namespace std;
-
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT

@@ -792,6 +792,7 @@ void DatabaseExplorerWidget::listObjects(void)
     DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true);
     objects_trw->blockSignals(false);
     import_helper.closeConnection();
+    catalog.closeConnection();
   }
   catch(Exception &e)
   {
@@ -965,7 +966,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
         //For table objects the "table" attribute must be schema qualified
         if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
+          attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
         //For operators and functions there must exist the signature attribute
         else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
           attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
@@ -1181,7 +1182,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
     if(oid != 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-      attribs_map orig_attribs, fmt_attribs;
+      attribs_map orig_attribs, fmt_attribs;     
 
       //First, retrieve the attributes stored on the item as a result of a previous properties listing
       orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
@@ -1189,6 +1190,8 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
       //In case of the cached attributes are empty
       if(orig_attribs.empty() || force_reload)
       {
+        catalog.setConnection(connection);
+
         //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
           orig_attribs=catalog.getObjectAttributes(obj_type, oid);
@@ -1211,6 +1214,8 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
         //Store the attributes on the item to avoid repeatedly query the database
         item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
+
+        catalog.closeConnection();
       }
     }
   }

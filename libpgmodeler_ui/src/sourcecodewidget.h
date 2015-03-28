@@ -27,13 +27,20 @@
 
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"
+#include "hinttextwidget.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 
+    static const int ORIGINAL_SQL=0,
+    DEPENDENCIES_SQL=1,
+    CHILDREN_SQL=2;
+
 		SyntaxHighlighter *hl_sqlcode,
 											*hl_xmlcode;
+
+    HintTextWidget *code_options_ht;
 
 		void applyConfiguration(void){}
 		void hideEvent(QHideEvent *event);
@@ -45,6 +52,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private slots:
 		void generateSourceCode(int=0);
 		void setSourceCodeTab(int=0);
+    void saveSQLCode(void);
 };
 
 #endif

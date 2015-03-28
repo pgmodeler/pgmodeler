@@ -31,6 +31,7 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
   connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
+  connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
   connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
   connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 }
@@ -94,7 +95,11 @@ void ObjectDepsRefsWidget::updateObjectTables(void)
 	objs.erase(std::find(objs.begin(), objs.end(), this->object));
   ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
 
-  model->getObjectReferences(object, objs);
+  if(!inc_ind_refs_chk->isChecked())
+    model->getObjectReferences(object, objs);
+  else
+    model->__getObjectReferences(object, objs);
+
   ObjectFinderWidget::updateObjectTable(references_tbw, objs);
 
   references_tbw->resizeColumnsToContents();

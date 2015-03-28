@@ -264,6 +264,8 @@ void SQLToolWidget::closeSQLExecutionTab(int idx)
       itr.value().removeAt(idx1);
       break;
     }
+
+    itr++;
   }
 
   sql_exec_tbw->removeTab(idx);

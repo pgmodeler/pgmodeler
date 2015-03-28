@@ -156,7 +156,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
-	public:
+  public:
 		DatabaseModel(void);
 		~DatabaseModel(void);
 
@@ -283,6 +283,12 @@ class DatabaseModel:  public QObject, public BaseObject {
         of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
         is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
     map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
+
+    /*! brief Returns a list containig all the object need to create the 'object' in the proper order.
+        If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
+        If 'only_children' is not set, the method will automatically include dependencies, children and permissions of
+        the object. */
+    vector<BaseObject *> getCreationOrder(BaseObject *object, bool only_children);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
@@ -478,6 +484,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
+
+    /*! brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
+        additionally its children objects (for schemas, tables or views) as well permissions.
+        This method is less efficient than the non recursive version and is used only as an auxiliary operation for
+        getCreationOrder(BaseObject *object) */
+    void __getObjectDependencies(BaseObject *object, vector<BaseObject *> &objs);
 
 		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first

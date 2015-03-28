@@ -162,7 +162,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
         ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
         scene->update();
 
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file),
                         ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
     }
@@ -287,7 +287,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
                                    trUtf8("Creating object `%1' (%2).")
-                                   .arg(/*Utf8String::create(*/object->getName())
+                                   .arg(object->getName())
                                    .arg(object->getTypeName()),
 																	 object->getObjectType());
 
@@ -320,7 +320,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
                                trUtf8("Creating database `%1'.")
-                               .arg(/*Utf8String::create(*/db_model->getName()),
+                               .arg(db_model->getName()),
 															 OBJ_DATABASE);
 
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -350,7 +350,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
                              trUtf8("Connecting to database `%1'.")
-                             .arg(/*Utf8String::create(*/db_model->getName()));
+                             .arg(db_model->getName()));
 
 			new_db_conn.connect();
 			progress=30;
@@ -358,7 +358,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
       //Creating the other object types
       emit s_progressUpdated(progress,
                              trUtf8("Creating objects on database `%1'.")
-                             .arg(/*Utf8String::create(*/db_model->getName()));
+                             .arg(db_model->getName()));
 
       //Exporting the database model definition using the opened connection
       exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
@@ -505,7 +505,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 				 if(!object->isSQLDisabled())
 					 conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
 			 }
-			 catch(Exception &e){}
+       catch(Exception &){}
 
 			 created_objs[types[type_id]]--;
 		 }

@@ -363,7 +363,7 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 
 	QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 	QTreeWidgetItemIterator itr(tree_wgt);
-	QTreeWidgetItem *parent=nullptr;
+  QTreeWidgetItem *parent=nullptr, *item=nullptr;
 
 	tree_wgt->blockSignals(true);
 	tree_wgt->collapseAll();
@@ -382,9 +382,10 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	{
 		while(!items.isEmpty())
 		{
-			items.front()->setExpanded(true);
-			items.front()->setHidden(false);
-			parent=items.front()->parent();
+      item=items.front();
+      item->setExpanded(true);
+      item->setHidden(false);
+      parent=item->parent();
 
 			while(parent)
 			{
@@ -393,7 +394,7 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 				parent=parent->parent();
 			}
 
-			items.pop_front();
+      items.pop_front();
 		}
 	}
 

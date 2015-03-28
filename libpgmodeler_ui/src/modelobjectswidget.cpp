@@ -221,20 +221,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
   {
     Function *func=dynamic_cast<Function *>(object);
     func->createSignature(false);
-    item->setText(0,/*Utf8String::create(*/func->getSignature());
-    obj_name=/*Utf8String::create(*/func->getSignature();
+    item->setText(0,func->getSignature());
+    obj_name=func->getSignature();
     func->createSignature(true);
   }
   else if(obj_type==OBJ_OPERATOR)
   {
     Operator *oper=dynamic_cast<Operator *>(object);
-    item->setText(0, /*Utf8String::create(*/oper->getSignature(false));
-    obj_name=/*Utf8String::create(*/oper->getSignature(false);
+    item->setText(0, oper->getSignature(false));
+    obj_name=oper->getSignature(false);
   }
   else
   {
-    item->setText(0,/*Utf8String::create(*/object->getName());
-    obj_name=/*Utf8String::create(*/object->getName();
+    item->setText(0,object->getName());
+    obj_name=object->getName();
   }
 
 	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
@@ -692,7 +692,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			font.setItalic(true);
 			item->setFont(0, font);
 			item->setText(0, QString("%1 (%2)")
-                    .arg(/*Utf8String::create(*/BaseObject::getTypeName(OBJ_PERMISSION))
+                    .arg(BaseObject::getTypeName(OBJ_PERMISSION))
 										.arg(perms.size()));
 
 			item->setData(0, Qt::UserRole, generateItemValue(object));
