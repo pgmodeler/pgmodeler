@@ -18,7 +18,10 @@ OBJECTS_DIR = obj
 UI_DIR = src
 
 # Setting up the flag passed to compiler to build the demo version
-defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
+defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
+
+# Setting up the flag passed to compiler to disable all code related to update checking
+defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
 unix {

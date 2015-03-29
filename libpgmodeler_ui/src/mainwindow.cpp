@@ -133,8 +133,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
-		update_notifier_wgt=new UpdateNotifierWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    #ifdef NO_UPDATE_CHECK
+      update_notifier_wgt=nullptr;
+    #else
+      update_notifier_wgt=new UpdateNotifierWidget(this);
+      update_notifier_wgt->setVisible(false);
+    #endif
 
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
@@ -151,11 +157,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
 
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
-	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifndef NO_UPDATE_CHECK
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+    connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
 	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
@@ -221,7 +229,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
-	update_notifier_wgt->setVisible(false);
 	about_wgt->setVisible(false);
 
 	models_tbw_parent->lower();
@@ -486,9 +493,13 @@ void MainWindow::showEvent(QShowEvent *)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
 
-	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifdef NO_UPDATE_CHECK
+    #warning "NO UPDATE CHECK: Update checking is disabled."
+  #else
+    //Enabling update check at startup
+    if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+      QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
@@ -1570,13 +1581,15 @@ void MainWindow::openWiki(void)
 
 void MainWindow::toggleUpdateNotifier(bool show)
 {
-	if(show)
-	{
-		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
-		action_about->setChecked(false);
-	}
+  #ifndef NO_UPDATE_CHECK
+    if(show)
+    {
+      setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+      action_about->setChecked(false);
+    }
 
-	update_notifier_wgt->setVisible(show);
+    update_notifier_wgt->setVisible(show);
+  #endif
 }
 
 void MainWindow::toggleAboutWidget(bool show)

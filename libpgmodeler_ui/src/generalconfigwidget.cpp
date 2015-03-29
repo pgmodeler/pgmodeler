@@ -139,6 +139,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
     child_wgts.push_back(radio);
     connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
   }
+
+  #ifdef NO_UPDATE_CHECK
+    check_upd_chk->setChecked(false);
+    check_upd_chk->setVisible(false);
+  #endif
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
