@@ -694,7 +694,7 @@ p, li { white-space: pre-wrap; }
              <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderDefaultSectionSize">
-             <number>25</number>
+             <number>20</number>
             </attribute>
             <attribute name="verticalHeaderMinimumSectionSize">
              <number>20</number>

@@ -32,6 +32,8 @@
 
 class Connection {
 	private:
+    static const int MAX_CMD_LENGTH=500;
+
 		//! \brief Database connection descriptor
 		PGconn *connection;
 
