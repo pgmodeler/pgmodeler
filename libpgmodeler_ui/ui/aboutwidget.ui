@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>556</height>
+    <width>592</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -509,24 +509,14 @@
         </item>
        </layout>
       </item>
-      <item row="6" column="0" colspan="3">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="7" column="0" colspan="3">
        <widget class="QTabWidget" name="license_tbw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -551,7 +541,7 @@
            <widget class="QTextEdit" name="changelog_txt">
             <property name="font">
              <font>
-              <family>Courier</family>
+              <family>Droid Sans Tamil</family>
               <pointsize>10</pointsize>
              </font>
             </property>
@@ -574,8 +564,8 @@
              <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Courier'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2015 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root directory. Also, you can get the complete GNU General Public License at &amp;lt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans Tamil'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2015 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root directory. Also, you can get the complete GNU General Public License at &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; font-family:'Courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="acceptRichText">
              <bool>false</bool>
@@ -742,11 +732,6 @@ p, li { white-space: pre-wrap; }
               <string>6</string>
              </property>
             </row>
-            <row>
-             <property name="text">
-              <string>7</string>
-             </property>
-            </row>
             <column>
              <property name="text">
               <string>Name</string>
@@ -852,26 +837,27 @@ p, li { white-space: pre-wrap; }
               <string>Custom packaging first ideas. Tester of first version of custom packaging patch.</string>
              </property>
             </item>
-            <item row="6" column="0">
-             <property name="text">
-              <string>Joel Low</string>
-             </property>
-            </item>
-            <item row="6" column="1">
-             <property name="text">
-              <string>Singapore</string>
-             </property>
-            </item>
-            <item row="6" column="2">
-             <property name="text">
-              <string>Visual C++ port and several code optmizations (work in progress).</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
         </widget>
        </widget>
+      </item>
+      <item row="6" column="0" colspan="3">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
