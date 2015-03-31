@@ -497,7 +497,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
   getConnections(connections);
 	combo->clear();
 
-	for(auto itr : connections)
+  for(auto &itr : connections)
 		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));
 }
 

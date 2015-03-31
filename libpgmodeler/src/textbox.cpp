@@ -96,12 +96,12 @@ bool Textbox::getTextAttribute(unsigned attrib)
 	return(text_attributes[attrib]);
 }
 
-void Textbox::setFontSize(float size)
+void Textbox::setFontSize(double size)
 {
 	font_size=(size <= 0 ? 1 : size);
 }
 
-float Textbox::getFontSize(void)
+double Textbox::getFontSize(void)
 {
 	return(font_size);
 }

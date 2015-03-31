@@ -77,7 +77,7 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectTy
 	//Fills the creation order vector with the selected OIDs
 	creation_order.clear();
 
-	for(auto itr : object_oids)
+  for(auto &itr : object_oids)
 		creation_order.insert(creation_order.end(), itr.second.begin(), itr.second.end());
 
 	//Sort the creation order vector to create the object in the correct sequence
@@ -195,7 +195,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 			itr++;
 		}
 
-		progress=(i/static_cast<float>(cnt))*10;
+    progress=(i/static_cast<float>(cnt))*10;
     sleepThread(10);
 	}
 }
@@ -231,7 +231,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		}
 
 		objects.clear();
-		progress=(i/static_cast<float>(object_oids.size()))*100;
+    progress=(i/static_cast<float>(object_oids.size()))*100;
 		oid_itr++; i++;
     sleepThread(10);
 	}
@@ -250,7 +250,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
     if(names.size() > 1)
      retrieveTableColumns(names[0], names[1], col_itr->second);
 
-		progress=(i/static_cast<float>(column_oids.size()))*100;
+    progress=(i/static_cast<float>(column_oids.size()))*100;
 		col_itr++; i++;
     sleepThread(10);
   }
@@ -265,7 +265,7 @@ void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const Q
 
     cols=catalog.getObjectsAttributes(OBJ_COLUMN, sch_name, tab_name, col_ids);
 
-    for(auto itr : cols)
+    for(auto &itr : cols)
     {
       col_oid=itr.at(ParsersAttributes::OID).toUInt();
       tab_oid=itr.at(ParsersAttributes::TABLE).toUInt();
@@ -317,7 +317,7 @@ void DatabaseImportHelper::createObjects(void)
       not_created_objs.push_back(oid);
 		}
 
-		progress=(i/static_cast<float>(creation_order.size())) * 100;
+    progress=(i/static_cast<float>(creation_order.size())) * 100;
     sleepThread(10);
 	}
 
@@ -412,7 +412,7 @@ void DatabaseImportHelper::createConstraints(void)
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
+    progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
 		sleepThread(10);
 	}
 }
@@ -433,7 +433,7 @@ void DatabaseImportHelper::createPermissions(void)
 			createPermission(user_objs[*itr_obj]);
 			itr_obj++;
 
-			progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
+      progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
 			sleepThread(10);
 		}
 
@@ -452,7 +452,7 @@ void DatabaseImportHelper::createPermissions(void)
 			}
 
 			itr_cols++;
-			progress=((i++)/static_cast<float>(col_perms.size())) * 100;
+      progress=((i++)/static_cast<float>(col_perms.size())) * 100;
 			sleepThread(10);
 		}
 
@@ -492,7 +492,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 
 			dbmodel->updateTableFKRelationships(tab);
 
-			progress=(i/static_cast<float>(count)) * 100;
+      progress=(i/static_cast<float>(count)) * 100;
 			itr_tab++; i++;
 			sleepThread(10);
 		}

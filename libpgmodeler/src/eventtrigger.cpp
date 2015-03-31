@@ -115,7 +115,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
 
-		for(auto flt : filter)
+    for(auto &flt : filter)
       str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
     attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
@@ -125,7 +125,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getCodeDefinition(def_type, true);
 
-		for(auto flt : filter)
+    for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
 			attributes[ParsersAttributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 																						 .arg(ParsersAttributes::FILTER)

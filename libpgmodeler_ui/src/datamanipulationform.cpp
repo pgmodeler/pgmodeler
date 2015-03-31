@@ -156,7 +156,7 @@ void DataManipulationForm::listColumns(void)
 
 		cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
 
-		for(auto col : cols)
+    for(auto &col : cols)
 		{
 			col_names.push_back(col[ParsersAttributes::NAME]);
       code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
@@ -359,11 +359,11 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		combo->blockSignals(true);
 		combo->clear();
 
-		for(auto obj_type : obj_types)
+    for(auto &obj_type : obj_types)
 		{
 			objects=catalog.getObjectsNames(obj_type, schema);
 
-			for(auto attr : objects)
+      for(auto &attr : objects)
 				items.push_back(attr.second);
 
 			items.sort();
@@ -666,7 +666,7 @@ void DataManipulationForm::undoOperations(void)
 	}
 
 	//Marking rows to be deleted/updated as no-op
-	for(auto row : rows)
+  for(auto &row : rows)
 	{
 		item=results_tbw->verticalHeaderItem(row);
 		if(item->data(Qt::UserRole).toUInt()!=OP_INSERT)

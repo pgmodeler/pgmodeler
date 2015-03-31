@@ -224,7 +224,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 	return(obj_type);
 }
 
-void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, float pos_x, float pos_y)
+void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y)
 {
 	try
 	{
@@ -659,7 +659,7 @@ void TableWidget::applyConfiguration(void)
 			/* Forcing the update of relationships connected to the table in order to reconfigure the line
 			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */
 			rels=model->getRelationships(table);
-			for(auto rel : rels)
+      for(auto &rel : rels)
 			{
 				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
 					 rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||

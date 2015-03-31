@@ -45,7 +45,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim, bool page_by_page)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -278,7 +278,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			for(i=0; i < count && !export_canceled; i++)
 			{
 				object=db_model->getObject(i, types[type_id]);
-				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
+        progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
 
 				try
 				{
@@ -538,20 +538,20 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   orig_obj_names.clear();
   orig_obj_names[db_model]=db_model->getName();
 
-  for(auto role : *db_model->getObjectList(OBJ_ROLE))
+  for(auto &role : *db_model->getObjectList(OBJ_ROLE))
   {
     if(!role->isSystemObject())
       orig_obj_names[role]=role->getName();
   }
 
-  for(auto tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
+  for(auto &tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
   {
     if(!tabspc->isSystemObject())
       orig_obj_names[tabspc]=tabspc->getName();
   }
 
 
-  for(auto obj : orig_obj_names)
+  for(auto &obj : orig_obj_names)
   {
     stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
 
@@ -570,7 +570,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
 void ModelExportHelper::restoreObjectNames(void)
 {
-  for(auto obj : orig_obj_names)
+  for(auto &obj : orig_obj_names)
     obj.first->setName(obj.second);
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the

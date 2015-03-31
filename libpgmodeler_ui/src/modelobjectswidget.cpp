@@ -424,7 +424,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 	{
 		vector<ObjectType> visible_types;
 
-		for(auto tp : visible_objs_map)
+    for(auto &tp : visible_objs_map)
 		{
 			if(tp.second)
 				visible_types.push_back(tp.first);
@@ -772,7 +772,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
               {
                 db_model->getObjectReferences(object, ref_list);
 
-                for(auto ref : ref_list)
+                for(auto &ref : ref_list)
                   createItemForObject(ref, item2, false);
               }
             }

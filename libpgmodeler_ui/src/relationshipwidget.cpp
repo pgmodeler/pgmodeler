@@ -923,7 +923,7 @@ void RelationshipWidget::listSpecialPkColumns(void)
 		if(aux_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN)
 			cols=aux_rel->getGeneratedColumns();
 
-    for(auto attrib : aux_rel->getAttributes())
+    for(auto &attrib : aux_rel->getAttributes())
       cols.push_back(dynamic_cast<Column *>(attrib));
 
     //Get the special primary key columns ids

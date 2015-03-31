@@ -436,16 +436,16 @@ vector<Column *> Constraint::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   vector<vector<Column *> *> lists = { &columns, &ref_columns };
 
-  for(auto p_lst : lists)
+  for(auto &p_lst : lists)
   {
-    for(auto col : (*p_lst))
+    for(auto &col : (*p_lst))
     {
       if(col->isAddedByRelationship())
         cols.push_back(col);
     }
   }
 
-  for(auto excl_elem : excl_elements)
+  for(auto &excl_elem : excl_elements)
   {
     column=excl_elem.getColumn();
     if(column && column->isAddedByRelationship())
@@ -591,7 +591,7 @@ void Constraint::setColumnsNotNull(bool value)
 {
   if(constr_type==ConstraintType::primary_key)
   {
-    for(auto col : columns)
+    for(auto &col : columns)
     {
       if(!col->isAddedByRelationship())
         col->setNotNull(value);

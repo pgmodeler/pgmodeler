@@ -105,7 +105,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 					if(aux_obj && (aux_obj->getObjectType()==OBJ_VIEW || aux_obj->getObjectType()==OBJ_TABLE))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
-						for(auto rel : base_rels)
+            for(auto &rel : base_rels)
 						{
 							if(rel->getObjectId() < aux_obj->getObjectId())
 								BaseObject::updateObjectId(rel);
@@ -368,11 +368,11 @@ void ModelValidationHelper::validateModel(void)
                 /* Checking the table children objects if they references some columns added by relationship.
                 If so, the id of the relationships are swapped with the child object if the first is created
                 after the latter. */
-                for(auto obj_tp : tab_aux_types)
+                for(auto &obj_tp : tab_aux_types)
                 {
                   tab_objs = table->getObjectList(obj_tp);
 
-                  for(auto tab_obj : (*tab_objs))
+                  for(auto &tab_obj : (*tab_objs))
                   {
                     ref_cols.clear();
                     rels.clear();
@@ -393,7 +393,7 @@ void ModelValidationHelper::validateModel(void)
                     }
 
                     //Getting the relationships that owns the columns
-                    for(auto ref_col : ref_cols)
+                    for(auto &ref_col : ref_cols)
                     {
                       rel=ref_col->getParentRelationship();
                       if(rel->getObjectId() > tab_obj->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
@@ -409,7 +409,7 @@ void ModelValidationHelper::validateModel(void)
                 ref_cols=view->getRelationshipAddedColumns();
 
                 //Getting the relationships that owns the columns
-                for(auto ref_col : ref_cols)
+                for(auto &ref_col : ref_cols)
                 {
                   rel=ref_col->getParentRelationship();
                   if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
@@ -426,7 +426,7 @@ void ModelValidationHelper::validateModel(void)
 			}
 
 			//Emit a signal containing the validation progress
-			progress=((i+1)/static_cast<float>(count))*20;
+      progress=((i+1)/static_cast<float>(count))*20;
       emit s_progressUpdated(progress, QString());
       sleepThread(10);
 		}
@@ -504,7 +504,7 @@ void ModelValidationHelper::validateModel(void)
       }
 
 			//Emit a signal containing the validation progress
-			progress=20 + ((i/static_cast<float>(dup_objects.size()))*20);
+      progress=20 + ((i/static_cast<float>(dup_objects.size()))*20);
       emit s_progressUpdated(progress, QString());
 
 			i++; mitr++;

@@ -207,7 +207,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
      attribs[ParsersAttributes::NAME].startsWith(QLatin1String("information_schema.")))
     attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
-  for(auto attrib : attribs)
+  for(auto &attrib : attribs)
   {
     attr_name=attrib.first;
     attr_value=attrib.second;
@@ -820,7 +820,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
     SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu, { obj_type, BASE_OBJECT });
 
-    for(auto act : handle_menu.actions())
+    for(auto &act : handle_menu.actions())
       handle_menu.removeAction(act);
 
     handle_menu.addAction(refresh_action);
@@ -907,7 +907,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
     attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
   }
 
-  for(auto attr : attribs)
+  for(auto &attr : attribs)
   {
     if(attr.second.contains(ELEM_SEPARATOR))
       attribs[attr.first]=attr.second.replace(ELEM_SEPARATOR,QString(","));
@@ -1133,7 +1133,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
       //Updating the subtree for schemas / tables
       if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
       {
-        for(auto item : gen_items)
+        for(auto &item : gen_items)
         {
           //When the user refresh a single schema or table
           if(obj_id > 0 || obj_type==OBJ_TABLE)
@@ -1154,7 +1154,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
                                                               false, false, item, item->text(0));
 
             //Updates the table group for the current schema
-            for(auto item1 : gen_items1)
+            for(auto &item1 : gen_items1)
             {
               DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
                                                     BaseObject::getChildObjectTypes(OBJ_TABLE),
@@ -1254,7 +1254,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
       if(!cached_attribs.empty())
       {
-        for(auto attrib : cached_attribs)
+        for(auto &attrib : cached_attribs)
         {
           properties_tbw->insertRow(properties_tbw->rowCount());
           row=properties_tbw->rowCount() - 1;

@@ -666,7 +666,7 @@ void ViewWidget::updateCodePreview(void)
 	}
 }
 
-void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, float px, float py)
+void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py)
 {
 	unsigned i, count;
 	bool sel_from, from_where, after_where, view_def;

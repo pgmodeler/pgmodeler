@@ -45,7 +45,7 @@ void TextboxWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, float obj_px, float obj_py)
+void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, double obj_px, double obj_py)
 {
 	if(txtbox)
 	{

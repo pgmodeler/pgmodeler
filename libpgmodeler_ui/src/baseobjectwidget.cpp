@@ -265,7 +265,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
                 { name_edt, schema_sel , collation_sel, owner_sel, tablespace_sel,
                   comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
-  for(auto wgt : widgets)
+  for(auto &wgt : widgets)
   {
     wgt->setFocusPolicy(Qt::StrongFocus);
 
@@ -284,7 +284,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 
     tab_order.push_back(wgt);
 
-    for(auto child : children)
+    for(auto &child : children)
     {
       child->setFocusPolicy(Qt::StrongFocus);
       tab_order.push_back(child);
@@ -297,7 +297,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
    QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
-void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py, bool uses_op_list)
+void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, double obj_px, double obj_py, bool uses_op_list)
 {
 	ObjectType obj_type, parent_type=BASE_OBJECT;
 
@@ -829,7 +829,7 @@ void BaseObjectWidget::finishConfiguration(void)
 
 
       model->getObjectReferences(object, ref_objs);
-      for(auto obj : ref_objs)
+      for(auto &obj : ref_objs)
       {
         obj->setCodeInvalidated(true);
 
@@ -856,7 +856,7 @@ void BaseObjectWidget::finishConfiguration(void)
         }
         else if(graph_obj)
         {
-          if(!isnan(object_px) && !isnan(object_py))
+          if(!std::isnan(object_px) && !std::isnan(object_py))
             graph_obj->setPosition(QPointF(object_px, object_py));
 
           graph_obj->setModified(true);

@@ -65,9 +65,9 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
   pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
-	float values[]={ ModelWidget::MINIMUM_ZOOM, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
+	double values[]={ ModelWidget::MINIMUM_ZOOM, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
 									 2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MAXIMUM_ZOOM };
-	unsigned cnt=sizeof(values)/sizeof(float);
+	unsigned cnt=sizeof(values)/sizeof(double);
 
 	for(unsigned i=0; i < cnt; i++)
 		zoom_cmb->addItem(QString("%1%").arg(values[i] * 100), QVariant(values[i]));
@@ -167,7 +167,7 @@ void ModelExportForm::exportModel(void)
 
 		//Export to png
 		if(export_to_img_rb->isChecked())
-			export_hlp.exportToPNG(model->scene, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toFloat(),
+      export_hlp.exportToPNG(model->scene, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
                              show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
 		else
 		{

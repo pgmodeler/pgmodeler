@@ -366,7 +366,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
 
-  for(auto act : actions)
+  for(auto &act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
     if(btn)
@@ -681,7 +681,7 @@ void MainWindow::saveTemporaryModels(void)
 			for(int i=0; i < count; i++)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
+        bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
         if(model->isModified() || !QFileInfo(model->getTempFilename()).exists())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
@@ -971,7 +971,7 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 
-		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
+		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
@@ -1025,7 +1025,7 @@ void MainWindow::applyZoom(void)
 {
 	if(current_model)
 	{
-		float zoom=current_model->getCurrentZoom();
+		double zoom=current_model->getCurrentZoom();
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
@@ -1781,11 +1781,11 @@ void MainWindow::changeCurrentView(bool checked)
 
     actions=edit_menu->actions();
     actions.removeOne(action_configuration);
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     actions=show_menu->actions();
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     model_nav_wgt->setEnabled(enable);
