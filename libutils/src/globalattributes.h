@@ -53,7 +53,6 @@ namespace GlobalAttributes {
   BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
   BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
   STACKTRACE_FILE=QString(".stacktrace"),
-  MACOS_STARTUP_SCRIPT=QString("startapp"),
 
   DIR_SEPARATOR=QString("/"),
   DEFAULT_CONFS_DIR=QString("defaults"), //! \brief Directory name which holds the default pgModeler configuration
@@ -142,17 +141,25 @@ namespace GlobalAttributes {
   #if defined(Q_OS_UNIX)
     #if defined(Q_OS_MAC)
       //For MacOSX the crash handler path is fixed (inside bundle)
-      PGMODELER_CHANDLER_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-ch"),
-      PGMODELER_CLI_PATH=MACOS_STARTUP_SCRIPT,
-      PGMODELER_APP_PATH=MACOS_STARTUP_SCRIPT;
+      PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
+                              QString(getenv("PGMODELER_CHANDLER_PATH")) :
+                              QString(BINDIR) + QString("/pgmodeler-ch"),
+
+      PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
+                         QString(getenv("PGMODELER_CLI_PATH")) :
+                         QString(BINDIR) + QString("/pgmodeler-cli"),
+
+      PGMODELER_APP_PATH=getenv("PGMODELER_APP_PATH") ?
+                         QString(getenv("PGMODELER_APP_PATH")) :
+                         QString(BINDIR) + QString("/pgmodeler");
     #else
       PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
                          QString(getenv("PGMODELER_CHANDLER_PATH")) :
                          QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
 
       PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
-                           QString(getenv("PGMODELER_CLI_PATH")) :
-                           QString(BINDIR) + QString("/pgmodeler-cli"),
+                         QString(getenv("PGMODELER_CLI_PATH")) :
+                         QString(BINDIR) + QString("/pgmodeler-cli"),
 
       PGMODELER_APP_PATH=getenv("PGMODELER_APP_PATH") ?
                          QString(getenv("PGMODELER_APP_PATH")) :

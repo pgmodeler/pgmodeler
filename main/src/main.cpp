@@ -39,8 +39,7 @@ void startCrashHandler(int signal)
   #endif
 
   #ifdef Q_OS_MAC
-    cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR +
-        GlobalAttributes::CRASH_HANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
+    cmd=GlobalAttributes::PGMODELER_CHANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
   #else
     cmd=GlobalAttributes::PGMODELER_CHANDLER_PATH + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
   #endif

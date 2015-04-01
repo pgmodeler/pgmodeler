@@ -20,11 +20,7 @@
 #include "configurationform.h"
 #include <iostream>
 
-#ifndef Q_OS_MAC
-  const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
-#else
-  const QString ModelFixForm::PGMODELER_CLI=GlobalAttributes::MACOS_STARTUP_SCRIPT;
-#endif
+const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
