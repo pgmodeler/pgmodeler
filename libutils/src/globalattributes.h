@@ -143,7 +143,7 @@ namespace GlobalAttributes {
     #if defined(Q_OS_MAC)
       //For MacOSX the crash handler path is fixed (inside bundle)
       PGMODELER_CHANDLER_PATH=MACOS_STARTUP_SCRIPT + QString(" pgmodeler-ch"),
-      PGMODELER_CLI_PATH=MACOS_STARTUP_SCRIPT;// + QString(" pgmodeler-cli");
+      PGMODELER_CLI_PATH=MACOS_STARTUP_SCRIPT,
       PGMODELER_APP_PATH=MACOS_STARTUP_SCRIPT;
     #else
       PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
