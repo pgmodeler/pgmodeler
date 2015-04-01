@@ -52,15 +52,15 @@ DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
 		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		  $QMAKE_ROOT/libstdc++-6.dll \
 		  $QMAKE_ROOT/libwinpthread-1.dll \
-		  $QMAKE_ROOT/libxml2-2.dll \
-		  $QMAKE_ROOT/libiconv-2.dll \
 		  $QMAKE_ROOT/Qt5Core.dll \
 		  $QMAKE_ROOT/Qt5Gui.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
 		  $QMAKE_ROOT/Qt5PrintSupport.dll \
 		  $QMAKE_ROOT/Qt5Network.dll \
+		  $PGSQL_ROOT/libxml2.dll \
+		  $PGSQL_ROOT/libiconv.dll \
 		  $PGSQL_ROOT/libpq.dll \
-		  $PGSQL_ROOT/libintl.dll \
+		  $PGSQL_ROOT/intl.dll \
 		  $PGSQL_ROOT/libeay32.dll \
 		  $PGSQL_ROOT/ssleay32.dll \
 		  $PGSQL_ROOT/zlib1.dll"

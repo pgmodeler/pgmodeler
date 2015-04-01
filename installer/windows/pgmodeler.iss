@@ -4,7 +4,7 @@
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
 #define MyAppMenuGroup "pgModeler"
-#define MyAppVersion "0.8.0"
+#define MyAppVersion "0.8.1-alpha"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -97,7 +97,7 @@ begin
     begin
       SetEnv('Path',ExpandConstant('{app}'),true);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',true);
-      SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',true);
+      SetEnv('PGMODELER_TMPL_CONF_DIR',ExpandConstant('{app}') + '\conf',true);
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',true);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',true);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',true);
@@ -113,7 +113,7 @@ if CurUninstallStep = usUninstall then
     begin
       SetEnv('Path',ExpandConstant('{app}'),false);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',false);
-      SetEnv('PGMODELER_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
+      SetEnv('PGMODELER_TMPL_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',false);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',false);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',false);
