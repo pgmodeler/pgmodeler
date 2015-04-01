@@ -92,6 +92,8 @@ begin
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ResultCode: Integer;
 begin
   if CurStep=ssInstall then
     begin
@@ -101,24 +103,38 @@ begin
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',true);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',true);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',true);
-	  SetEnv('PGMODELER_PLUGINS_DIR',ExpandConstant('{app}') + '\plugins',true);
+      SetEnv('PGMODELER_PLUGINS_DIR',ExpandConstant('{app}') + '\plugins',true);
       SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',true);
-      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',true);
-    end;
+      SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',true);      
+      SetEnv('PGMODELER_APP_PATH',ExpandConstant('{app}') + '\pgmodeler.exe',true);    
+    end
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  ResultCode: Integer;
 begin
 if CurUninstallStep = usUninstall then
     begin
+      { Removing file association }
+      Exec(ExpandConstant('{app}\pgmodeler-cli.exe'), '-m uinstall', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
       SetEnv('Path',ExpandConstant('{app}'),false);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',false);
       SetEnv('PGMODELER_TMPL_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
       SetEnv('PGMODELER_SCHEMAS_DIR',ExpandConstant('{app}') + '\schemas',false);
       SetEnv('PGMODELER_TMP_DIR',ExpandConstant('{app}') + '\tmp',false);
       SetEnv('PGMODELER_SAMPLES_DIR',ExpandConstant('{app}') + '\samples',false);
-	  SetEnv('PGMODELER_PLUGINS_DIR',ExpandConstant('{app}') + '\plugins',false);
+      SetEnv('PGMODELER_PLUGINS_DIR',ExpandConstant('{app}') + '\plugins',false);
       SetEnv('PGMODELER_CHANDLER_PATH',ExpandConstant('{app}') + '\pgmodeler-ch.exe',false);
       SetEnv('PGMODELER_CLI_PATH',ExpandConstant('{app}') + '\pgmodeler-cli.exe',false);
+      SetEnv('PGMODELER_APP_PATH',ExpandConstant('{app}') + '\pgmodeler.exe',false);
     end;
+end;
+
+procedure CurInstallProgressChanged(CurProgress, MaxProgress: Integer);
+begin
+
+
+
 end;
