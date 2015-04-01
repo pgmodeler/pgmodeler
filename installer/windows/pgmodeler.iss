@@ -55,6 +55,13 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppMenuGroup}}"; Filename: "{uninstallex
 Name: "{commondesktop}\{#MyAppMenuGroup}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppMenuGroup}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
+[Run]
+Filename: "{app}\pgmodeler-cli.exe"; Parameters:"-m install"; Description: "Associate .dbm files to pgModeler"; Flags: postinstall runhidden
+
+[UninstallRun]
+Filename: "{app}\pgmodeler-cli.exe"; Parameters:"-m uninstall"; Flags: runhidden
+
+
 [code]
 procedure SetEnv(EnvName, EnvValue: String; IsInstall: Boolean);
 var
@@ -116,9 +123,6 @@ var
 begin
 if CurUninstallStep = usUninstall then
     begin
-      { Removing file association }
-      Exec(ExpandConstant('{app}\pgmodeler-cli.exe'), '-m uinstall', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-
       SetEnv('Path',ExpandConstant('{app}'),false);
       SetEnv('PGMODELER_LANG_DIR',ExpandConstant('{app}') + '\lang',false);
       SetEnv('PGMODELER_TMPL_CONF_DIR',ExpandConstant('{app}') + '\conf',false);
