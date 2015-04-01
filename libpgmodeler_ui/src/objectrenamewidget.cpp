@@ -163,7 +163,7 @@ void ObjectRenameWidget::applyRenaming(void)
       Column *col=nullptr;
       model->getObjectReferences(object, ref_objs);
 
-      for(auto obj : ref_objs)
+      for(auto &obj : ref_objs)
       {
         if(obj->getObjectType()==OBJ_COLUMN)
         {

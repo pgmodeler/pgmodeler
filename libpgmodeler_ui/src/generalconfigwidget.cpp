@@ -186,20 +186,20 @@ void GeneralConfigWidget::loadConfiguration(void)
     margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
     custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
-		left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
-		top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
-		right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
-		bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
+    left_marg->setValue((margin.count() >= 4 ? margin[0].toDouble() : 2));
+    top_marg->setValue((margin.count()>= 4 ? margin[1].toDouble() : 2));
+    right_marg->setValue((margin.count() >= 4 ? margin[2].toDouble() : 2));
+    bottom_marg->setValue((margin.count() >= 4 ? margin[3].toDouble() : 2));
 
-		width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
-		height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
+    width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toDouble() : 500));
+    height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toDouble() : 500));
 
 		hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
 		hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
 
 		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
-		font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
+    font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble());
 
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(false);
@@ -347,7 +347,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 {
 	int unit=unity_cmb->currentIndex();
 	QFont fnt;
-	float fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+  double fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble();
 
 	if(fnt_size < 5.0f)
 		fnt_size=5.0f;
@@ -393,7 +393,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 void GeneralConfigWidget::convertMarginUnity(void)
 {
 	static int prev_unity=UNIT_MILIMETERS;
-	float conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
+	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
 			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];

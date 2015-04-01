@@ -530,7 +530,7 @@ void ModelWidget::restoreLastCanvasPosition(void)
   }
 }
 
-void ModelWidget::applyZoom(float zoom)
+void ModelWidget::applyZoom(double zoom)
 {
 	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
   {
@@ -546,7 +546,7 @@ void ModelWidget::applyZoom(float zoom)
 	}
 }
 
-float ModelWidget::getCurrentZoom(void)
+double ModelWidget::getCurrentZoom(void)
 {
 	return(current_zoom);
 }
@@ -719,7 +719,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
 					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
-          for(auto tab : tables)
+          for(auto &tab : tables)
 					{
 						op_list->registerObject(tab->getSourceObject(), Operation::OBJECT_MOVED);
 
@@ -1756,7 +1756,7 @@ void ModelWidget::moveToSchema(void)
             if(!rels.empty())
             {
               //Updating the tables from relationships
-              for(auto rel : rels)
+              for(auto &rel : rels)
               {
                 if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
                   rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
@@ -2164,7 +2164,7 @@ void ModelWidget::pasteObjects(void)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+    task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
                                   trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2261,7 +2261,7 @@ void ModelWidget::pasteObjects(void)
 		itr++;
 
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+    task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
                                   trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -3481,7 +3481,7 @@ void ModelWidget::breakRelationshipLine(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
-		float dx, dy;
+		double dx, dy;
 		unsigned break_type=action->data().toUInt();
 		QPointF src_pnt, dst_pnt;
 
@@ -3544,13 +3544,13 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 }
 
-void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing)
+void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	Schema *schema=nullptr;
 	SchemaView *sch_view=nullptr;
 	unsigned sch_id=0;
-	float x=origin.x(), y=origin.y(), max_y=-1, cy=0;
+	double x=origin.x(), y=origin.y(), max_y=-1, cy=0;
 
 	itr=db_model->getObjectList(OBJ_SCHEMA)->begin();
 	itr_end=db_model->getObjectList(OBJ_SCHEMA)->end();
@@ -3602,7 +3602,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 	this->adjustSceneSize();
 }
 
-void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing)
+void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
 {
 	if(schema)
 	{
@@ -3611,7 +3611,7 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 		BaseTableView *tab_view=nullptr;
 		BaseTable *base_tab=nullptr;
 		unsigned tab_id=0;
-		float max_y=-1, x=origin.x(), y=origin.y(), cy=0;
+		double max_y=-1, x=origin.x(), y=origin.y(), cy=0;
 
 		//Get the tables and views for the specified schema
 		tables=db_model->getObjects(OBJ_TABLE, schema);

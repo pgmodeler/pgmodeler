@@ -127,7 +127,7 @@ class DatabaseModel:  public QObject, public BaseObject {
     //! \brief Stores the last position on the model where the user was editing objects
     QPoint last_pos;
 
-    float last_zoom;
+    double last_zoom;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -525,8 +525,8 @@ class DatabaseModel:  public QObject, public BaseObject {
     void setLastPosition(const QPoint &pnt);
     QPoint getLastPosition(void);
 
-    void setLastZoomFactor(float zoom);
-    float getLastZoomFactor(void);
+    void setLastZoomFactor(double zoom);
+    double getLastZoomFactor(void);
 
 		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
 		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call

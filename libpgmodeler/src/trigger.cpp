@@ -315,7 +315,7 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 {
   vector<Column *> cols;
 
-  for(auto col : upd_columns)
+  for(auto &col : upd_columns)
   {
     if(col->isAddedByRelationship())
       cols.push_back(col);

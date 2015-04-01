@@ -511,7 +511,7 @@ vector<Column *> View::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   Column *col=nullptr;
 
-  for(auto ref : references)
+  for(auto &ref : references)
   {
     col=ref.getColumn();
     if(col && col->isAddedByRelationship())

@@ -271,7 +271,7 @@ vector<Column *> Index::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   Column *col=nullptr;
 
-  for(auto elem : idx_elements)
+  for(auto &elem : idx_elements)
   {
     col=elem.getColumn();
 

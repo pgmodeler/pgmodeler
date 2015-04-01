@@ -77,7 +77,7 @@ QString BaseType::type_list[types_count]=
 	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
 
 	"smallint", "integer", "bigint", "decimal", "numeric",
-	"real", "double precision", "float", "serial", "bigserial", "money",
+	"real", "double precision", "double", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",  "char", "\"char\"",
 	"text", "bytea",
 	"timestamp", "date", "time","timetz","timestamptz",
@@ -85,7 +85,7 @@ QString BaseType::type_list[types_count]=
 	"point", "line", "lseg", "box", "path",
 	"polygon", "circle", "cidr", "inet",
 	"macaddr", "bit", "bit varying", "varbit", "uuid", "xml", "json", "jsonb",
-	"smallserial", "int2vector", "int2", "int4", "int8", "float4", "float8",
+	"smallserial", "int2vector", "int2", "int4", "int8", "double4", "double8",
 	"bpchar", "name", "abstime", "aclitem", "gtsvector", "refcursor",
 	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
 

@@ -22,7 +22,7 @@ Much effort, coffee, chocolate, time and knowledge has been devoted to this proj
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new feature requests as well to create a user's manual. So if you know C++ and Qt framework programming and wants to contribute with coding or an user's manual let me know! I'll be grateful for any help to the project!
+pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new feature requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------

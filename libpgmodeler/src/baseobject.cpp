@@ -1151,7 +1151,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
   if(!attribs.empty())
   {
     attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
-    for(auto itr : attribs)
+    for(auto &itr : attribs)
      attributes[itr.first]=itr.second;
   }
   else

@@ -589,7 +589,7 @@ void OperationList::undoOperation(void)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
+          emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                    trUtf8("Undoing change on object `%1' (%2).")
                                    .arg(operation->getOriginalObject()->getName(true))
                                    .arg(operation->getOriginalObject()->getTypeName()),
@@ -653,7 +653,7 @@ void OperationList::redoOperation(void)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
+          emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                    trUtf8("Redoing change on object `%1' (%2).")
                                    .arg(operation->getOriginalObject()->getName(true))
                                    .arg(operation->getOriginalObject()->getTypeName()),
@@ -919,7 +919,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
       vector<BaseObject *> ref_objs;
       model->getObjectReferences(object, ref_objs);
 
-      for(auto obj : ref_objs)
+      for(auto &obj : ref_objs)
       {
         if(obj->getObjectType()==OBJ_COLUMN)
           dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);

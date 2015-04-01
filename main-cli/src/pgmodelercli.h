@@ -78,7 +78,7 @@ class PgModelerCLI: public QApplication {
 		QStringList objs_xml;
 
 		//! \brief Zoom to be applied onto the png export
-		float zoom;
+		double zoom;
 
 		//! \brief Option names constants
     static const QString INPUT,

@@ -1533,7 +1533,7 @@ void DatabaseModel::validateRelationships(void)
 
   if(!loading_model)
   {
-    for(auto tab : tables)
+    for(auto &tab : tables)
       dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
 
     xml_special_objs.clear();
@@ -1990,7 +1990,7 @@ vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
   rels=base_relationships;
   rels.insert(rels.end(), relationships.begin(), relationships.end());
 
-  for(auto obj : rels)
+  for(auto &obj : rels)
   {
     base_rel=dynamic_cast<BaseRelationship *>(obj);
 
@@ -2845,7 +2845,7 @@ void DatabaseModel::loadModel(const QString &filename)
       if(pos_str.size()>=2)
         this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
 
-      this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toFloat();
+      this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toDouble();
       if(this->last_zoom <= 0) this->last_zoom=1;
 
       protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
@@ -2884,7 +2884,7 @@ void DatabaseModel::loadModel(const QString &filename)
                   if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
                     addObject(object);
 
-									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
+                  emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
                                       trUtf8("Loading: `%1' (%2)")
                                       .arg(object->getName())
                                       .arg(object->getTypeName()),
@@ -2907,7 +2907,7 @@ void DatabaseModel::loadModel(const QString &filename)
       this->BaseObject::setProtected(protected_model);
 
       //Validating default objects
-      for(auto itr : def_objs)
+      for(auto &itr : def_objs)
       {
         if(!itr.second.isEmpty())
         {
@@ -3127,8 +3127,8 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 						 (obj_type_aux!=OBJ_RELATIONSHIP &&
 							obj_type_aux!=BASE_RELATIONSHIP))
 					{
-						dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
-																																	 attribs[ParsersAttributes::Y_POS].toFloat()));
+            dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[ParsersAttributes::X_POS].toDouble(),
+                                                                   attribs[ParsersAttributes::Y_POS].toDouble()));
 
 
 					}
@@ -3189,12 +3189,12 @@ QPoint DatabaseModel::getLastPosition(void)
   return(last_pos);
 }
 
-void DatabaseModel::setLastZoomFactor(float zoom)
+void DatabaseModel::setLastZoomFactor(double zoom)
 {
   last_zoom=zoom;
 }
 
-float DatabaseModel::getLastZoomFactor(void)
+double DatabaseModel::getLastZoomFactor(void)
 {
   return(last_zoom);
 }
@@ -5713,7 +5713,7 @@ Textbox *DatabaseModel::createTextbox(void)
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
 
 		if(!attribs[ParsersAttributes::FONT_SIZE].isEmpty())
-			txtbox->setFontSize(attribs[ParsersAttributes::FONT_SIZE].toFloat());
+      txtbox->setFontSize(attribs[ParsersAttributes::FONT_SIZE].toDouble());
 	}
 	catch(Exception &e)
 	{
@@ -5909,8 +5909,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						do
 						{
 							xmlparser.getElementAttributes(attribs);
-							points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
-															 attribs[ParsersAttributes::Y_POS].toFloat()));
+              points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toDouble(),
+                               attribs[ParsersAttributes::Y_POS].toDouble()));
 						}
 						while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 
@@ -6264,7 +6264,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
   attribs_map attribs_aux;
-  float general_obj_cnt, gen_defs_count;
+  double general_obj_cnt, gen_defs_count;
   bool sql_disabled=false;
   BaseObject *object=nullptr;
   QString def, search_path=QString("pg_catalog,public"),
@@ -6291,7 +6291,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     {
       attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::_TRUE_ : QString());
 
-      for(auto type : types)
+      for(auto &type : types)
       {
         usr_type=dynamic_cast<Type *>(type);
 
@@ -6300,7 +6300,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
       }
     }
 
-    for(auto obj_itr : objects_map)
+    for(auto &obj_itr : objects_map)
     {
       object=obj_itr.second;
       obj_type=object->getObjectType();
@@ -6413,7 +6413,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     }
     else
     {
-      for(auto type : types)
+      for(auto &type : types)
       {
         usr_type=dynamic_cast<Type *>(type);
         if(usr_type->getConfiguration()==Type::BASE_TYPE)
@@ -6428,7 +6428,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   {
     if(def_type==SchemaParser::SQL_DEFINITION)
     {
-      for(auto type : types)
+      for(auto &type : types)
       {
         usr_type=dynamic_cast<Type *>(type);
         if(usr_type->getConfiguration()==Type::BASE_TYPE)
@@ -6483,7 +6483,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
     {
       obj_list=getObjectList(aux_obj_types[i]);
 
-      for(auto object : (*obj_list))
+      for(auto &object : (*obj_list))
          objects_map[object->getObjectId()]=object;
     }
   }
@@ -6502,7 +6502,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
     if(obj_list)
     {
-      for(auto object : (*obj_list))
+      for(auto &object : (*obj_list))
       {
         /* If the object is a FK relationship it's stored in a separeted list in order to have the
              code generated at end of whole definition (after foreign keys definition) */
@@ -6532,7 +6532,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
   /* Getting and storing the special objects (which reference columns of tables added for relationships)
       on the map of objects. */
-  for(auto obj : tables)
+  for(auto &obj : tables)
   {
     table=dynamic_cast<Table *>(obj);
     count=table->getConstraintCount();
@@ -6574,7 +6574,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
 			on the map of objects. */
-	for(auto obj : views)
+  for(auto &obj : views)
 	{
 		view=dynamic_cast<View *>(obj);
 
@@ -6662,7 +6662,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
   i=BaseObject::getGlobalId() + 1;
   fkeys.insert(fkeys.end(), fk_rels.begin(), fk_rels.end());
 
-  for(auto obj : fkeys)
+  for(auto &obj : fkeys)
   {
     objects_map[i]=obj;
     i++;
@@ -6671,7 +6671,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
   //Adding permissions at the very end of object map
   i=BaseObject::getGlobalId() + fkeys.size() + 1;
 
-  for(auto obj : permissions)
+  for(auto &obj : permissions)
   {
     objects_map[i]=obj;
     i++;
@@ -6883,7 +6883,7 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 
     //Recreationg the object list now with objects ordered properly
     objs.clear();
-    for(auto itr : objs_map)
+    for(auto &itr : objs_map)
       objs.push_back(itr.second);
 
     //Appending permissions at the end of the creation order list
@@ -8227,7 +8227,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
               if(constr->getConstraintType()==ConstraintType::exclude)
               {
-                for(auto elem : constr->getExcludeElements())
+                for(auto &elem : constr->getExcludeElements())
                 {
                   if(elem.getOperator()==oper)
                   {
@@ -8546,7 +8546,7 @@ void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
 
 		if(list)
 		{
-			for(auto obj : *list)
+      for(auto &obj : *list)
 				obj->setCodeInvalidated(true);
 		}
 	}

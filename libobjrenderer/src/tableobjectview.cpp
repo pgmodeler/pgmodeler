@@ -56,7 +56,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
-	float factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+	double factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	bool ellipse_desc=false;
 
 	//Based upon the source object type the descriptor is allocated
@@ -182,7 +182,7 @@ void TableObjectView::configureObject(void)
 	if(this->getSourceObject())
 	{
 		QTextCharFormat fmt;
-		float px;
+		double px;
 		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
@@ -381,7 +381,7 @@ void TableObjectView::configureObject(void)
 void TableObjectView::configureObject(Reference reference)
 {
 	QTextCharFormat fmt;
-	float px;
+	double px;
 	QString str_aux;
 
 	configureDescriptor();
@@ -451,7 +451,7 @@ void TableObjectView::configureObject(Reference reference)
 		bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
 }
 
-void TableObjectView::setChildObjectXPos(unsigned obj_idx, float px)
+void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 {
 	if(obj_idx >= 4)
 		throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);

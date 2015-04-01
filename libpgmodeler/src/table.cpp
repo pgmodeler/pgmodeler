@@ -158,7 +158,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 
     if(!obj_indexes[idx]->empty())
     {
-      for(auto obj_idx : (*obj_indexes[idx]))
+      for(auto &obj_idx : (*obj_indexes[idx]))
       {
         aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
         aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
@@ -578,7 +578,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		ancestor_tables.erase(itr);
     with_oid=false;
 
-    for(auto obj : ancestor_tables)
+    for(auto &obj : ancestor_tables)
     {
       tab=dynamic_cast<Table *>(obj);
 
@@ -1177,7 +1177,7 @@ void Table::saveRelObjectsIndexes(ObjectType obj_type)
   {
     unsigned idx=0;
 
-    for(auto obj : (*list))
+    for(auto &obj : (*list))
     {
       if(obj->isAddedByLinking())
         (*obj_idxs_map)[obj->getName()]=idx;
@@ -1228,7 +1228,7 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
     /* Indentify the maximum index on the existing rel objects. This is done
     to correctly resize the new list in order to avoid exceed the list bounds
     and consequently crashing the app */
-    for(auto itr : *obj_idxs)
+    for(auto &itr : *obj_idxs)
     {
       if(aux_size < (itr.second + 1))
         aux_size=itr.second + 1;
@@ -1241,7 +1241,7 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
 
     new_list.resize(aux_size);
 
-    for(auto obj : *list)
+    for(auto &obj : *list)
     {
       name=obj->getName();
 
@@ -1558,7 +1558,7 @@ void Table::setCodeInvalidated(bool value)
 	{
 		list=getObjectList(types[i]);
 
-		for(auto obj : *list)
+    for(auto &obj : *list)
 			obj->setCodeInvalidated(value);
 	}
 

@@ -28,7 +28,7 @@ void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	int i, count, obj_idx;
-	float width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
+	double width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;

@@ -266,7 +266,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
 
     gen_cols=gen_columns;
-    for(auto attrib : rel_attributes)
+    for(auto &attrib : rel_attributes)
       gen_cols.push_back(dynamic_cast<Column *>(attrib));
 
 		//Adds the columns to the primary key
@@ -1687,14 +1687,14 @@ void Relationship::addColumnsRelNn(void)
 
     if(!single_pk_column)
     {
-      for(auto col : gen_columns)
+      for(auto &col : gen_columns)
         pk_tabnn->addColumn(col, Constraint::SOURCE_COLS);
     }
     else
     {
       pk_tabnn->addColumn(pk_col, Constraint::SOURCE_COLS);
 
-      for(auto col : gen_columns)
+      for(auto &col : gen_columns)
         col->setNotNull(true);
     }
 

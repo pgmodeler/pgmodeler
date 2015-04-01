@@ -126,7 +126,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 											schema_name->boundingRect().height() + (2 * VERT_SPACING));
 }
 
-void TableTitleView::resizeTitle(float width, float height)
+void TableTitleView::resizeTitle(double width, double height)
 {
   box->setRect(QRectF(0,0, width, height));
 

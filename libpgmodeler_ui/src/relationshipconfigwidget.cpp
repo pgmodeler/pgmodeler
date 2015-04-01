@@ -142,7 +142,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 		config_params[ParsersAttributes::NAME_PATTERNS][ParsersAttributes::PATTERNS]=QString();
 
-		for(auto itr : patterns)
+    for(auto &itr : patterns)
 		{
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);

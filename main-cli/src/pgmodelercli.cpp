@@ -342,7 +342,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
     mode_cnt+=opts.count(EXPORT_TO_DBMS);
 
     if(opts.count(ZOOM_FACTOR))
-      zoom=opts[ZOOM_FACTOR].toFloat()/static_cast<float>(100);
+      zoom=opts[ZOOM_FACTOR].toDouble()/static_cast<double>(100);
 
     if(!fix_model && !upd_mime && mode_cnt==0)
       throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);

@@ -137,7 +137,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
   {
     tab_objs=ref_tab->getObjectList(types[i]);
 
-    for(auto tab_obj : *tab_objs)
+    for(auto &tab_obj : *tab_objs)
     {
       //Get the object from the compared table
       aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
@@ -195,7 +195,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     prog=50;
 	}
 
-	for(auto obj_itr : obj_order)
+  for(auto &obj_itr : obj_order)
 	{
 		if(diff_canceled) break;
 
@@ -370,7 +370,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
   Relationship *rel=nullptr;
   BaseObject *tab=nullptr;
 
-  for(auto obj : *rels)
+  for(auto &obj : *rels)
   {
     rel=dynamic_cast<Relationship *>(obj);
     if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
@@ -490,7 +490,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         vector<BaseObject *> ref_objs;
         imported_model->getObjectReferences(object, ref_objs);
 
-        for(auto obj : ref_objs)
+        for(auto &obj : ref_objs)
         {
           if(obj->getObjectType()!=BASE_RELATIONSHIP)
             generateDiffInfo(diff_type, obj);
@@ -613,11 +613,11 @@ void ModelsDiffHelper::processDiffInfos(void)
           recreateObject(object, drop_vect, create_vect);
 
           //Generating the drop for the object's reference
-          for(auto obj : drop_vect)
+          for(auto &obj : drop_vect)
             drop_objs[obj->getObjectId()]=getCodeDefinition(obj, true);
 
           //Generating the create for the object's reference
-          for(auto obj : create_vect)
+          for(auto &obj : create_vect)
           {
             //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
@@ -706,16 +706,16 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 
 
-      for(auto itr : create_objs)
+      for(auto &itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
       attribs[ParsersAttributes::CREATE_CMDS]+=fk_defs;
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
 
-      for(auto itr : truncate_tabs)
+      for(auto &itr : truncate_tabs)
         attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
 
-      for(auto itr : alter_objs)
+      for(auto &itr : alter_objs)
         attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;
 
       //Generating the whole diff buffer
@@ -860,7 +860,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
       create_objs.push_back(object);
 
     //Executing the recreation of the object's references
-    for(auto obj : ref_objs)
+    for(auto &obj : ref_objs)
       recreateObject(obj, drop_objs, create_objs);
   }
 }
