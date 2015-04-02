@@ -18,6 +18,7 @@
 
 #include "connection.h"
 #include <QTextStream>
+#include <iostream>
 
 const QString Connection::SSL_DESABLE=QString("disable");
 const QString Connection::SSL_ALLOW=QString("allow");
@@ -311,9 +312,9 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(strlen(PQerrorMessage(connection))>0)
 	{
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
-										.arg(PQerrorMessage(connection)),
+                    .arg(PQerrorMessage(connection)),
 										ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-										QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
+                    QString("Error: %1\n\n %2").arg(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)).arg(sql));
 	}
 
 	//Generates the resultset based on the sql result descriptor
@@ -345,11 +346,11 @@ void Connection::executeDDLCommand(const QString &sql)
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)
-	{
+	{    
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
-										.arg(PQerrorMessage(connection)),
+                    .arg(PQerrorMessage(connection)),
 										ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-										QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
+                    QString("Error: %1\n\n %2").arg(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)).arg(sql));
 	}
 }
 

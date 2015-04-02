@@ -43,7 +43,7 @@ class ModelWidget: public QWidget {
     NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Current zoom aplied to the scene
-		float current_zoom;
+		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
     bool modified;
@@ -188,15 +188,15 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing);
+		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing);
 
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
-		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
+		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
 
 	public:
-    static constexpr float MINIMUM_ZOOM=0.05f,
+    static constexpr double MINIMUM_ZOOM=0.05f,
 													 MAXIMUM_ZOOM=4.0f,
 													 ZOOM_INCREMENT=0.05f;
 
@@ -216,10 +216,10 @@ class ModelWidget: public QWidget {
 		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, QPointF pos=QPointF(NAN, NAN));
 
 		//! \brief Applies a zoom factor to the model
-		void applyZoom(float zoom);
+		void applyZoom(double zoom);
 
 		//! \brief Returns the current zoom factor applied to the model
-		float getCurrentZoom(void);
+		double getCurrentZoom(void);
 
 		//! \brief Returns if the model is modified or not
 		bool isModified(void);
@@ -364,7 +364,7 @@ private slots:
 		void s_objectsMoved(void);
 		void s_objectCreated(void);
 		void s_objectRemoved(void);
-		void s_zoomModified(float);
+		void s_zoomModified(double);
 		void s_modelResized(void);
 
 		//! \brief Signal emitted whenever a object is created / edited using the form

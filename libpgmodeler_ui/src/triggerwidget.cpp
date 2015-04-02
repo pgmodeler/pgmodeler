@@ -130,8 +130,8 @@ void TriggerWidget::addColumn(Column *column, int row)
 {
 	if(column && row >= 0)
 	{
-    columns_tab->setCellText(/*Utf8String::create(*/column->getName(),row,0);
-    columns_tab->setCellText(/*Utf8String::create(*/~column->getType(),row,1);
+    columns_tab->setCellText(column->getName(),row,0);
+    columns_tab->setCellText(~column->getType(),row,1);
 		columns_tab->setRowData(QVariant::fromValue<void *>(column), row);
 	}
 }
@@ -154,7 +154,7 @@ void TriggerWidget::updateColumnsCombo(void)
 
 				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				{
-          column_cmb->addItem(/*Utf8String::create(*/column->getName() +
+          column_cmb->addItem(column->getName() +
                               QString(" (") + ~column->getType() + QString(")"),
 															QVariant::fromValue<void *>(column));
 				}
@@ -232,7 +232,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table,
 		constr_trig_chk->setChecked(trigger->isConstraint());
 
 		exec_per_row_chk->setChecked(trigger->isExecutePerRow());
-    cond_expr_txt->setPlainText(/*Utf8String::create(*/trigger->getCondition());
+    cond_expr_txt->setPlainText(trigger->getCondition());
 		deferrable_chk->setChecked(trigger->isDeferrable());
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
 		firing_mode_cmb->setCurrentIndex(firing_mode_cmb->findText(~trigger->getFiringType()));

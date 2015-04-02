@@ -18,7 +18,10 @@ OBJECTS_DIR = obj
 UI_DIR = src
 
 # Setting up the flag passed to compiler to build the demo version
-defined(DEMO_VERSION, var): QMAKE_CXXFLAGS+="-DDEMO_VERSION"
+defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
+
+# Setting up the flag passed to compiler to disable all code related to update checking
+defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
 unix {
@@ -47,7 +50,7 @@ unix {
 #
 # The values of each variable changes between supported platforms and are describe as follow
 
- 
+
 # Linux custom variables settings
 linux {
   CONFIG += x11
@@ -69,6 +72,9 @@ linux {
 
   # Specifies where to find the libraries at runtime
   QMAKE_RPATHDIR += $$PRIVATELIBDIR
+
+  # Forcing the display of some warnings
+  CONFIG(debug, debug|release): QMAKE_CXXFLAGS += "-Wall -Wextra -Wuninitialized"
 }
 
 
@@ -80,7 +86,7 @@ windows {
   !defined(PREFIX, var):        PREFIX = $$PWD/build
   !defined(BINDIR, var):        BINDIR = $$PREFIX
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX
   !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/plugins
   !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX
   !defined(CONFDIR, var):       CONFDIR = $$PREFIX/conf
@@ -144,8 +150,8 @@ unix:!macx {
 }
 
 macx {
-  PGSQL_LIB = /Library/PostgreSQL/9.3/lib/libpq.dylib
-  PGSQL_INC = /Library/PostgreSQL/9.3/include
+  PGSQL_LIB = /Library/PostgreSQL/9.4/lib/libpq.dylib
+  PGSQL_INC = /Library/PostgreSQL/9.4/include
   XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2
   XML_LIB = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libxml2.dylib
 
@@ -153,15 +159,15 @@ macx {
 }
 
 windows {
-  PGSQL_LIB = C:/PostgreSQL/9.3/bin/libpq.dll
-  PGSQL_INC = C:/PostgreSQL/9.3/include
-  XML_INC = C:/Qt/Qt5.4.0/5.4/mingw491_32/include
-  XML_LIB = C:/Qt/Qt5.4.0/5.4/mingw491_32/bin/libxml2-2.dll
+  PGSQL_LIB = C:/PostgreSQL/9.4/lib/libpq.dll
+  PGSQL_INC = C:/PostgreSQL/9.4/include
+  XML_INC = C:/PostgreSQL/9.4/include
+  XML_LIB = C:/PostgreSQL/9.4/bin/libxml2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
 
-  INCLUDEPATH += $$PGSQL_INC $$XML_INC
+  INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
 }
 
 macx | windows {

@@ -41,7 +41,7 @@ void GraphicalView::configureObject(void)
   RoundedRectItem *bodies[]={ body, ext_attribs_body };
   QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
           tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
-	float width, type_width=0, px=0;
+	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
@@ -244,7 +244,7 @@ void GraphicalView::configureObject(void)
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-  this->table_tooltip=/*Utf8String::create(*/view->getName(true) +
+  this->table_tooltip=view->getName(true) +
                       QString(" (") + view->getTypeName() + QString(") \n") +
                       QString("Id: %1\n").arg(view->getObjectId()) +
 											TableObjectView::CONSTR_DELIM_START +

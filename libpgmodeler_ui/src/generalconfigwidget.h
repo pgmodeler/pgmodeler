@@ -60,7 +60,6 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
-		void updateFileAssociation(void);
 		void selectPaperSize(void);
 
 	private slots:

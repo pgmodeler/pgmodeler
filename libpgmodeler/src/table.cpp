@@ -158,7 +158,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 
     if(!obj_indexes[idx]->empty())
     {
-      for(auto obj_idx : (*obj_indexes[idx]))
+      for(auto &obj_idx : (*obj_indexes[idx]))
       {
         aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
         aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
@@ -361,8 +361,8 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					if(col && col->getType()==this)
 					{
 						throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_TABLE_TYPE)
-                            .arg(/*Utf8String::create(*/col->getName())
-                            .arg(/*Utf8String::create(*/this->getName()),
+                            .arg(col->getName())
+                            .arg(this->getName()),
 														ERR_INV_COLUMN_TABLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_CONSTRAINT)
@@ -422,7 +422,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                        .arg(/*Utf8String::create(*/obj->getName())
+                        .arg(obj->getName())
 												.arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
@@ -578,7 +578,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		ancestor_tables.erase(itr);
     with_oid=false;
 
-    for(auto obj : ancestor_tables)
+    for(auto &obj : ancestor_tables)
     {
       tab=dynamic_cast<Table *>(obj);
 
@@ -627,11 +627,11 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(!refs.empty())
 			{
         throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                        .arg(/*Utf8String::create(*/column->getName())
+                        .arg(column->getName())
                         .arg(column->getTypeName())
-                        .arg(/*Utf8String::create(*/refs[0]->getName())
+                        .arg(refs[0]->getName())
                         .arg(refs[0]->getTypeName())
-                        .arg(/*Utf8String::create(*/this->getName(true))
+                        .arg(this->getName(true))
                         .arg(this->getTypeName()),
                         ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -802,25 +802,25 @@ int Table::getObjectIndex(BaseObject *obj)
 	if(!obj)
 		return(-1);
 	else
-	{
-		vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
-		vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
+  {
+    vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
+    vector<TableObject *>::iterator itr, itr_end;
+    bool found=false;
 
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
+    itr=obj_list->begin();
+    itr_end=obj_list->end();
 
-		while(itr!=itr_end && !found)
-		{
+    while(itr!=itr_end && !found)
+    {
       found=((tab_obj->getParentTable()==this && (*itr)==tab_obj) ||
              (tab_obj->getName()==(*itr)->getName()));
-			if(!found) itr++;
-		}
+      if(!found) itr++;
+    }
 
-		if(found)
-			return(itr-obj_list->begin());
-		else
-			return(-1);
+    if(found)
+      return(itr-obj_list->begin());
+    else
+      return(-1);
 	}
 }
 
@@ -1177,7 +1177,7 @@ void Table::saveRelObjectsIndexes(ObjectType obj_type)
   {
     unsigned idx=0;
 
-    for(auto obj : (*list))
+    for(auto &obj : (*list))
     {
       if(obj->isAddedByLinking())
         (*obj_idxs_map)[obj->getName()]=idx;
@@ -1228,7 +1228,7 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
     /* Indentify the maximum index on the existing rel objects. This is done
     to correctly resize the new list in order to avoid exceed the list bounds
     and consequently crashing the app */
-    for(auto itr : *obj_idxs)
+    for(auto &itr : *obj_idxs)
     {
       if(aux_size < (itr.second + 1))
         aux_size=itr.second + 1;
@@ -1241,7 +1241,7 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
 
     new_list.resize(aux_size);
 
-    for(auto obj : *list)
+    for(auto &obj : *list)
     {
       name=obj->getName();
 
@@ -1558,7 +1558,7 @@ void Table::setCodeInvalidated(bool value)
 	{
 		list=getObjectList(types[i]);
 
-		for(auto obj : *list)
+    for(auto &obj : *list)
 			obj->setCodeInvalidated(value);
 	}
 

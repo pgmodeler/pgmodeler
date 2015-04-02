@@ -38,7 +38,12 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		Q_OBJECT
 
 		//! brief Database import helper used to list objects from current connection
-		DatabaseImportHelper import_helper;
+    DatabaseImportHelper import_helper;
+
+    /*! brief Controls the link between a database explorer instance and SQL execution widgets.
+        When a database explorer is closed all the SQL execution panes related to it are closed too.
+        (see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
+    QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
   public:
 		SQLToolWidget(QWidget * parent = 0);
@@ -76,7 +81,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void closeDatabaseExplorer(int idx);
 
     //! brief Close the SQL execution tab specified by its index
-    void closeSQLExecution(int idx);
+    void closeSQLExecutionTab(int idx);
 };
 
 #endif

@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>514</height>
+    <width>592</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -146,7 +146,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>60</height>
+          <height>0</height>
          </size>
         </property>
         <property name="font">
@@ -411,62 +411,6 @@
         </item>
        </layout>
       </item>
-      <item row="7" column="0" colspan="3">
-       <widget class="QGroupBox" name="changelog_gb">
-        <property name="title">
-         <string>License</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextEdit" name="changelog_txt">
-           <property name="font">
-            <font>
-             <family>Courier</family>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="sizeAdjustPolicy">
-            <enum>QAbstractScrollArea::AdjustToContents</enum>
-           </property>
-           <property name="undoRedoEnabled">
-            <bool>false</bool>
-           </property>
-           <property name="lineWrapMode">
-            <enum>QTextEdit::NoWrap</enum>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="html">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Courier'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2015 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under&lt;br /&gt;the terms of the GNU General Public License as published by the Free Software&lt;br /&gt;Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY&lt;br /&gt;WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A&lt;br /&gt;PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root&lt;br /&gt;directory. Also, you can get the complete GNU General Public License at&lt;br /&gt;&amp;lt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="3" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="bottomMargin">
@@ -564,6 +508,340 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="7" column="0" colspan="3">
+       <widget class="QTabWidget" name="license_tbw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="license_pg">
+         <attribute name="title">
+          <string>License</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QTextEdit" name="changelog_txt">
+            <property name="font">
+             <font>
+              <family>Droid Sans Tamil</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustToContents</enum>
+            </property>
+            <property name="undoRedoEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="lineWrapMode">
+             <enum>QTextEdit::WidgetWidth</enum>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="html">
+             <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans Tamil'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;pgModeler - PostgreSQL Database Modeler&lt;br /&gt;Copyright 2006-2015 - Raphael Araújo e Silva&lt;br /&gt;&lt;br /&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.&lt;br /&gt;&lt;br /&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;br /&gt;&lt;br /&gt;The complete text of GPLv3 is at LICENSE file on pgModeler's source code root directory. Also, you can get the complete GNU General Public License at &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses&quot;&gt;&lt;span style=&quot; font-family:'Courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.gnu.org/licenses&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Courier';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="acceptRichText">
+             <bool>false</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="contributors_pg">
+         <attribute name="title">
+          <string>Contributors</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <italic>false</italic>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This page is dedicated to all contributors who gave a bit of their time in make pgModeler a better software somehow. The complete list of people that helped pgModeler can be found at &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you have a great idea to improve pgModeler please submit it &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. No ideas for now but want to help? Why not donate a few bucks &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::RichText</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignTop</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QTableWidget" name="contributors_tab">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="tabKeyNavigation">
+             <bool>false</bool>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectItems</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerItem</enum>
+            </property>
+            <property name="showGrid">
+             <bool>true</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="cornerButtonEnabled">
+             <bool>true</bool>
+            </property>
+            <attribute name="horizontalHeaderCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>20</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>20</number>
+            </attribute>
+            <attribute name="verticalHeaderStretchLastSection">
+             <bool>false</bool>
+            </attribute>
+            <row>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>3</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>4</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>5</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>6</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Country</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Contribution</string>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string>Damien Degois</string>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string>France</string>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="text">
+              <string>French UI translation and several improvements in auxiliary scripts.</string>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="text">
+              <string>Ji Bin</string>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="text">
+              <string>China</string>
+             </property>
+            </item>
+            <item row="1" column="2">
+             <property name="text">
+              <string>Chinese UI translation and small fixes.</string>
+             </property>
+            </item>
+            <item row="2" column="0">
+             <property name="text">
+              <string>Pierre-Samuel LE STANG</string>
+             </property>
+            </item>
+            <item row="2" column="1">
+             <property name="text">
+              <string>France</string>
+             </property>
+            </item>
+            <item row="2" column="2">
+             <property name="text">
+              <string>French UI translation.</string>
+             </property>
+            </item>
+            <item row="3" column="0">
+             <property name="text">
+              <string>Lisandro Damián Nicanor</string>
+             </property>
+            </item>
+            <item row="3" column="1">
+             <property name="text">
+              <string>Argentina</string>
+             </property>
+            </item>
+            <item row="3" column="2">
+             <property name="text">
+              <string>Improvements on build scripts enabling the custom packaging in Linux distros; Per-user settings; pgModeler's package maintainer in Debian Linux.</string>
+             </property>
+            </item>
+            <item row="4" column="0">
+             <property name="text">
+              <string>Pavel Alexeev</string>
+             </property>
+            </item>
+            <item row="4" column="1">
+             <property name="text">
+              <string>Russia</string>
+             </property>
+            </item>
+            <item row="4" column="2">
+             <property name="text">
+              <string>Additional work for packaging in Linux distros; pgModeler's package maintainer in Fedora Linux.</string>
+             </property>
+            </item>
+            <item row="5" column="0">
+             <property name="text">
+              <string>Mariusz Fik</string>
+             </property>
+            </item>
+            <item row="5" column="1">
+             <property name="text">
+              <string>N/A</string>
+             </property>
+            </item>
+            <item row="5" column="2">
+             <property name="text">
+              <string>Custom packaging first ideas. Tester of first version of custom packaging patch.</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </item>
       <item row="6" column="0" colspan="3">
        <spacer name="verticalSpacer">

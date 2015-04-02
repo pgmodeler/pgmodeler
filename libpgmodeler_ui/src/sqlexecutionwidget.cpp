@@ -145,7 +145,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		std::unique(type_ids.begin(), type_ids.end());
     types=catalog.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
 
-		for(auto tp : types)
+    for(auto &tp : types)
 			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
 
 		catalog.setFilter(orig_filter);

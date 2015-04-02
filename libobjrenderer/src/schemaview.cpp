@@ -126,10 +126,10 @@ QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const 
 		last_pos=this->pos();
 	else if(change==ItemPositionHasChanged && this->isSelected())
 	{	
-		float dx=pos().x() - last_pos.x(),
+		double dx=pos().x() - last_pos.x(),
 					dy=pos().y() - last_pos.y();
 
-		for(auto child : children)
+    for(auto &child : children)
 			child->moveBy(dx, dy);
 	}
 
@@ -159,8 +159,8 @@ void SchemaView::configureObject(void)
 		QColor color;
 		QRectF rect;
 		QFont font;
-		float sp_h=0, sp_v=0, txt_h=0;
-    float x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
+		double sp_h=0, sp_v=0, txt_h=0;
+    double x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 
 		//Configures the bounding rect based upon the children dimension
@@ -183,7 +183,7 @@ void SchemaView::configureObject(void)
 		}
 
     //Configures the schema name at the top
-    sch_name->setText(/*Utf8String::create(*/schema->getName());
+    sch_name->setText(schema->getName());
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
@@ -225,7 +225,7 @@ void SchemaView::configureObject(void)
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-    this->setToolTip(/*Utf8String::create(*/schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
+    this->setToolTip(schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
 		sch_name->setToolTip(this->toolTip());
 
     this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,

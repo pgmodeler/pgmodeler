@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 USR=`whoami`
 QT_ROOT=/Users/$USR/Qt5.4.0/5.4/clang_64

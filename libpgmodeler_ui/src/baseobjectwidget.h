@@ -80,7 +80,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 		/*! \brief Stores the object position (generally the mouse position) when the dialog was called
 			(used only when creating graphical objects) */
-		float object_px, object_py;
+		double object_px, object_py;
 
 		//! \brief Grid layout used to organize the widgets over the form
 		QGridLayout *baseobject_grid;
@@ -119,7 +119,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
 															 BaseObject *object, BaseObject *parent_obj=nullptr,
-															 float obj_px=NAN, float obj_py=NAN, bool uses_op_list=true);
+															 double obj_px=NAN, double obj_py=NAN, bool uses_op_list=true);
 
 		/*! \brief This method is a simplification of the original setAttributes. This method must be used
 		only on forms that does not make use of operaton list and not treat graphical objects, since it calls

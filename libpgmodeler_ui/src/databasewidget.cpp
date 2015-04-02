@@ -86,8 +86,8 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		int idx;
 
 		connlim_sb->setValue(model->getConnectionLimit());
-    templatedb_edt->setText(/*Utf8String::create(*/model->getTemplateDB());
-    author_edt->setText(/*Utf8String::create(*/model->getAuthor());
+    templatedb_edt->setText(model->getTemplateDB());
+    author_edt->setText(model->getAuthor());
 
 		idx=encoding_cmb->findText(~model->getEncoding());
 		if(idx < 0) idx=0;
@@ -128,6 +128,8 @@ void DatabaseWidget::applyConfiguration(void)
 
 		if(encoding_cmb->currentIndex() > 0)
 			model->setEncoding(EncodingType(encoding_cmb->currentText()));
+    else
+      model->setEncoding(EncodingType(BaseType::null));
 
     if(lccollate_cmb->currentText()!=trUtf8("Default"))
 			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());

@@ -89,7 +89,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Open the grid to visualize / edit data</string>
+        <string>Open the grid to visualize or edit data.</string>
        </property>
        <property name="text">
         <string>Data &amp;Grid</string>
@@ -118,7 +118,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Update the objects tree.</string>
+        <string>Open a new SQL execution pane.</string>
        </property>
        <property name="text">
         <string>...</string>

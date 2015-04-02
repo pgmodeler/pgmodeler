@@ -24,13 +24,13 @@ RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QGraphicsRectItem(par
   corners=ALL_CORNERS;
 }
 
-void RoundedRectItem::setBorderRadius(float radius)
+void RoundedRectItem::setBorderRadius(double radius)
 {
   this->radius=radius;
   createPolygon();
 }
 
-float RoundedRectItem::getBorderRadius(void)
+double RoundedRectItem::getBorderRadius(void)
 {
   return(radius);
 }
@@ -103,11 +103,11 @@ void RoundedRectItem::createPolygon(void)
   }
 }
 
-QVector<QPointF> RoundedRectItem::calculatePoints(QPointF start_pnt, float start_angle, float end_angle)
+QVector<QPointF> RoundedRectItem::calculatePoints(QPointF start_pnt, double start_angle, double end_angle)
 {
   QVector<QPointF> points;
   QLineF lin;
-  float inc=(start_angle > end_angle ? -10 : 10), ang=start_angle;
+  double inc=(start_angle > end_angle ? -10 : 10), ang=start_angle;
   bool end=false;
 
   while(!end)

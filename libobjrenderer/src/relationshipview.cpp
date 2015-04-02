@@ -207,7 +207,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		rel_lines.insert(rel_lines.end(), fk_lines.begin(), fk_lines.end());
 		rel_lines.insert(rel_lines.end(), pk_lines.begin(), pk_lines.end());
 
-		for(auto lin : rel_lines)
+    for(auto &lin : rel_lines)
 		{
 			pen=lin->pen();
 			pen.setColor(color);
@@ -461,7 +461,7 @@ void RelationshipView::configureLine(void)
 
 		if(base_rel->isSelfRelationship())
 		{
-			float fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+			double fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
 			/* Sefl-relationshihp line format:
 
@@ -525,7 +525,7 @@ void RelationshipView::configureLine(void)
 			{
 				QPointF pnt;
 				QRectF rec_tab_rect, ref_tab_rect;
-				float fk_py=0, pk_py=0, fk_px=0, pk_px=0;
+				double fk_py=0, pk_py=0, fk_px=0, pk_px=0;
 				vector<Constraint *> fks;
 				Table *ref_tab=nullptr, *rec_tab=nullptr;
 				TableView *ref_tab_view=nullptr, *rec_tab_view=nullptr;
@@ -576,7 +576,7 @@ void RelationshipView::configureLine(void)
 					}
 				}
 
-				for(auto constr : fks)
+        for(auto &constr : fks)
 				{
 					cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
 
@@ -596,7 +596,7 @@ void RelationshipView::configureLine(void)
 
 				if(!fks.empty())
 				{
-					float pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
+					double pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
 								fk_dx=(fk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH);
 
 					pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
@@ -788,10 +788,10 @@ void RelationshipView::configureLine(void)
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-      tool_tip=/*Utf8String::create(*/base_rel->getName(true) +
+      tool_tip=base_rel->getName(true) +
                QString(" (") + BaseObject::getTypeName(OBJ_RELATIONSHIP) + QString(")");
 		else
-      tool_tip=/*Utf8String::create(*/base_rel->getName(true) +
+      tool_tip=base_rel->getName(true) +
                QString(" (") + base_rel->getTypeName() + QString(")");
 
     tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
@@ -814,7 +814,7 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-  float x, y, x1, y1, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+  double x, y, x1, y1, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -945,7 +945,7 @@ void RelationshipView::configureAttributes(void)
 		QFont font;
 		QRectF rect;
     QPolygonF pol;
-    float py, px,
+    double py, px,
 				factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
 		fmt=font_config[ParsersAttributes::ATTRIBUTE];
@@ -1013,7 +1013,7 @@ void RelationshipView::configureAttributes(void)
 
 			attrib->setPos(px, py);
 
-      text->setText(/*Utf8String::create(*/col->getName());
+      text->setText(col->getName());
 			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
 			desc->setPos(0, VERT_SPACING * factor);
 
@@ -1045,7 +1045,7 @@ void RelationshipView::configureAttributes(void)
 
 void RelationshipView::configureLabels(void)
 {
-	float x=0,y=0;
+	double x=0,y=0;
 	QPointF pnt;
 	BaseRelationship *base_rel=this->getSourceObject();
 	unsigned rel_type=base_rel->getRelationshipType();
@@ -1071,7 +1071,7 @@ void RelationshipView::configureLabels(void)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-    float dl, da, factor, v_space=VERT_SPACING * 2.5, h_space=HORIZ_SPACING * 2.5;
+    double dl, da, factor, v_space=VERT_SPACING * 2.5, h_space=HORIZ_SPACING * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
@@ -1187,7 +1187,7 @@ void RelationshipView::configureLabels(void)
 	}
 }
 
-void RelationshipView::configureLabelPosition(unsigned label_id, float x, float y)
+void RelationshipView::configureLabelPosition(unsigned label_id, double x, double y)
 {
 	if(label_id > BaseRelationship::REL_NAME_LABEL)
 		throw Exception(ERR_REF_OBJ_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1221,7 +1221,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, float x, float 
 
 QRectF RelationshipView::__boundingRect(void)
 {
-	float x1=0, y1=0, x2=0, y2=0;
+	double x1=0, y1=0, x2=0, y2=0;
 	unsigned i, count;
 	QPointF p;
 	QRectF rect;

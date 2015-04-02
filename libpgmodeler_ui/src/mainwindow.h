@@ -49,8 +49,6 @@
 #include "centralwidget.h"
 #include "configurationform.h"
 
-using namespace std;
-
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
@@ -147,7 +145,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-		//! brief Set the postion of a floating widget based upon an action at a tool bar
+    //! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
 		//! brief Creates drop shadown on a tool button that represents an QAction

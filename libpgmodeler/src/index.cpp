@@ -121,8 +121,8 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		//Case the column is not allocated raises an error
 		if(!column)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-                      .arg(/*Utf8String::create(*/this->getName())
-                      .arg(/*Utf8String::create(*/this->getTypeName()),
+                      .arg(this->getName())
+                      .arg(this->getTypeName()),
 											ERR_ASG_NOT_ALOC_COLUMN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
@@ -271,7 +271,7 @@ vector<Column *> Index::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   Column *col=nullptr;
 
-  for(auto elem : idx_elements)
+  for(auto &elem : idx_elements)
   {
     col=elem.getColumn();
 

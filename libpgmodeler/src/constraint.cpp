@@ -148,7 +148,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	//Raises an error if the column is not allocated
 	if(!column)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)
@@ -436,16 +436,16 @@ vector<Column *> Constraint::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   vector<vector<Column *> *> lists = { &columns, &ref_columns };
 
-  for(auto p_lst : lists)
+  for(auto &p_lst : lists)
   {
-    for(auto col : (*p_lst))
+    for(auto &col : (*p_lst))
     {
       if(col->isAddedByRelationship())
         cols.push_back(col);
     }
   }
 
-  for(auto excl_elem : excl_elements)
+  for(auto &excl_elem : excl_elements)
   {
     column=excl_elem.getColumn();
     if(column && column->isAddedByRelationship())
@@ -548,8 +548,8 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		//Case the column is not allocated raises an error
 		if(!column)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-                      .arg(/*Utf8String::create(*/this->getName())
-                      .arg(/*Utf8String::create(*/this->getTypeName()),
+                      .arg(this->getName())
+                      .arg(this->getTypeName()),
 											ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
@@ -591,7 +591,7 @@ void Constraint::setColumnsNotNull(bool value)
 {
   if(constr_type==ConstraintType::primary_key)
   {
-    for(auto col : columns)
+    for(auto &col : columns)
     {
       if(!col->isAddedByRelationship())
         col->setNotNull(value);

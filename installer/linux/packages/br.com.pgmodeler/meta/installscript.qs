@@ -19,9 +19,15 @@ Component.prototype.createOperations = function()
 
         var installdir=installer.value("TargetDir");
 
-            executable=installdir + "/" + "start-pgmodeler.sh";
-            component.addOperation("Execute", "chmod", "+x", executable, "errormessage=** Could not set executable flag for file " + executable);
-
+            start_script=installdir + "/" + "start-pgmodeler.sh";
+            mime_update=installdir + "/" + "dbm-mime-type.sh";
+            
+            component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
+            component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
+            
+	    component.addOperation("Execute", "{0,255}", mime_update, "uninstall");
+	    component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
+	    
     } catch (e) {
         print(e);
     }

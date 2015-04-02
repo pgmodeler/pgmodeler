@@ -89,13 +89,13 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(schema->isRectVisible())
     schema_name->setText(QString(" "));
 	else
-    schema_name->setText(/*Utf8String::create(*/schema->getName() + QString("."));
+    schema_name->setText(schema->getName() + QString("."));
 
   fmt=font_config[name_attrib];
   font=fmt.font();
 
   obj_name->setFont(font);
-  obj_name->setText(/*Utf8String::create(*/object->getName());
+  obj_name->setText(object->getName());
 
   if(!tag)
   {
@@ -126,7 +126,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 											schema_name->boundingRect().height() + (2 * VERT_SPACING));
 }
 
-void TableTitleView::resizeTitle(float width, float height)
+void TableTitleView::resizeTitle(double width, double height)
 {
   box->setRect(QRectF(0,0, width, height));
 

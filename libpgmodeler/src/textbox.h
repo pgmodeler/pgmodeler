@@ -35,7 +35,7 @@ class Textbox: public BaseGraphicObject{
 		//! \brief Stores the status of text attributes (bold / italic / underline)
 		bool text_attributes[3];
 
-		float font_size;
+		double font_size;
 
 		//! \brief Color used to draw the text
 		QColor text_color;
@@ -57,7 +57,7 @@ class Textbox: public BaseGraphicObject{
 		//! \brief Sets the color used to draw the text of textbox
 		void setTextColor(const QColor &color);
 
-		void setFontSize(float size);
+		void setFontSize(double size);
 
 		/*! \brief Since textboxes doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
@@ -68,7 +68,7 @@ class Textbox: public BaseGraphicObject{
 
 		QColor getTextColor(void);
 
-		float getFontSize(void);
+		double getFontSize(void);
 
 		//! \brief Copies the attributes between textboxes
 		void operator = (Textbox &txtbox);

@@ -198,6 +198,11 @@
         <file>icones/truncate.png</file>
         <file>icones/trunccascade.png</file>
         <file>icones/runsqldb.png</file>
+        <file>icones/flag_argentina.png</file>
+        <file>icones/flag_china.png</file>
+        <file>icones/flag_france.png</file>
+        <file>icones/flag_russia.png</file>
+        <file>icones/flag_singapore.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

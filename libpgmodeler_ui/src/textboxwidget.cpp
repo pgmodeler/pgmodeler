@@ -45,7 +45,7 @@ void TextboxWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, float obj_px, float obj_py)
+void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, double obj_px, double obj_py)
 {
 	if(txtbox)
 	{
@@ -53,7 +53,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		palette.setColor(QPalette::Button, txtbox->getTextColor());
 		color_select_tb->setPalette(palette);
 
-    text_txt->setPlainText(/*Utf8String::create(*/txtbox->getComment());
+    text_txt->setPlainText(txtbox->getComment());
 		bold_chk->setChecked(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		italic_chk->setChecked(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));

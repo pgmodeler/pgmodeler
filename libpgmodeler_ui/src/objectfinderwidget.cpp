@@ -217,7 +217,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
 				fnt=tab_item->font();
 
-        tab_item->setText(/*Utf8String::create(*/objs[i]->getName());
+        tab_item->setText(objs[i]->getName());
 				tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
                                   BaseObject::getSchemaName(objs[i]->getObjectType()) +
                                   str_aux + QString(".png")));
@@ -264,7 +264,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				else
 					parent_obj=objs[i]->getDatabase();
 
-        tab_item->setText(parent_obj ? /*Utf8String::create(*/parent_obj->getName() : QString("-"));
+        tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
         tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
 
 				tab_wgt->setItem(lin_idx, 3, tab_item);
@@ -321,7 +321,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-      icon=QPixmap(/*Utf8String::create(*/QString(":/icones/icones/") + str_aux + QString(".png"));
+      icon=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

@@ -133,8 +133,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
-		update_notifier_wgt=new UpdateNotifierWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    #ifdef NO_UPDATE_CHECK
+      update_notifier_wgt=nullptr;
+    #else
+      update_notifier_wgt=new UpdateNotifierWidget(this);
+      update_notifier_wgt->setVisible(false);
+    #endif
 
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
@@ -151,11 +157,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
 
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
-	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifndef NO_UPDATE_CHECK
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+    connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
 	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
@@ -221,7 +229,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
-	update_notifier_wgt->setVisible(false);
 	about_wgt->setVisible(false);
 
 	models_tbw_parent->lower();
@@ -359,7 +366,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
 
-  for(auto act : actions)
+  for(auto &act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
     if(btn)
@@ -471,8 +478,6 @@ void MainWindow::showEvent(QShowEvent *)
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
   #ifndef Q_OS_MAC
-    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
-
     //Hiding/showing the main menu bar depending on the retrieved conf
     main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 
@@ -488,9 +493,13 @@ void MainWindow::showEvent(QShowEvent *)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
 
-	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifdef NO_UPDATE_CHECK
+    #warning "NO UPDATE CHECK: Update checking is disabled."
+  #else
+    //Enabling update check at startup
+    if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+      QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
@@ -672,7 +681,7 @@ void MainWindow::saveTemporaryModels(void)
 			for(int i=0; i < count; i++)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
+        bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
         if(model->isModified() || !QFileInfo(model->getTempFilename()).exists())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
@@ -763,13 +772,13 @@ void MainWindow::addModel(const QString &filename)
     tab_name=obj_name;
 
     model_tab=new ModelWidget;
-    model_tab->setObjectName(/*Utf8String::create(*/obj_name);
+    model_tab->setObjectName(obj_name);
 
     //Add the tab to the tab widget
     obj_name=model_tab->db_model->getName();
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_tab, /*Utf8String::create(*/obj_name);
+    models_tbw->addTab(model_tab, obj_name);
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
@@ -837,7 +846,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
     model_nav_wgt->addModel(model_wgt);
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_wgt, /*Utf8String::create(*/model_wgt->getDatabaseModel()->getName());
+    models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     setCurrentModel();
@@ -962,7 +971,7 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 
-		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
+		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
@@ -1016,7 +1025,7 @@ void MainWindow::applyZoom(void)
 {
 	if(current_model)
 	{
-		float zoom=current_model->getCurrentZoom();
+		double zoom=current_model->getCurrentZoom();
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
@@ -1115,7 +1124,7 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-    model_nav_wgt->updateModelText(models_tbw->currentIndex(), /*Utf8String::create(*/current_model->db_model->getName(), current_model->getFilename());
+    model_nav_wgt->updateModelText(models_tbw->currentIndex(), current_model->db_model->getName(), current_model->getFilename());
 }
 
 void MainWindow::applyConfigurations(void)
@@ -1572,13 +1581,15 @@ void MainWindow::openWiki(void)
 
 void MainWindow::toggleUpdateNotifier(bool show)
 {
-	if(show)
-	{
-		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
-		action_about->setChecked(false);
-	}
+  #ifndef NO_UPDATE_CHECK
+    if(show)
+    {
+      setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+      action_about->setChecked(false);
+    }
 
-	update_notifier_wgt->setVisible(show);
+    update_notifier_wgt->setVisible(show);
+  #endif
 }
 
 void MainWindow::toggleAboutWidget(bool show)
@@ -1770,11 +1781,11 @@ void MainWindow::changeCurrentView(bool checked)
 
     actions=edit_menu->actions();
     actions.removeOne(action_configuration);
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     actions=show_menu->actions();
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     model_nav_wgt->setEnabled(enable);

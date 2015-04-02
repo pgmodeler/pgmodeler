@@ -139,6 +139,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
     child_wgts.push_back(radio);
     connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
   }
+
+  #ifdef NO_UPDATE_CHECK
+    check_upd_chk->setChecked(false);
+    check_upd_chk->setVisible(false);
+  #endif
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
@@ -181,20 +186,20 @@ void GeneralConfigWidget::loadConfiguration(void)
     margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
     custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
-		left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
-		top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
-		right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
-		bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
+    left_marg->setValue((margin.count() >= 4 ? margin[0].toDouble() : 2));
+    top_marg->setValue((margin.count()>= 4 ? margin[1].toDouble() : 2));
+    right_marg->setValue((margin.count() >= 4 ? margin[2].toDouble() : 2));
+    bottom_marg->setValue((margin.count() >= 4 ? margin[3].toDouble() : 2));
 
-		width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
-		height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
+    width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toDouble() : 500));
+    height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toDouble() : 500));
 
 		hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
 		hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
 
 		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
-		font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
+    font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble());
 
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(false);
@@ -342,7 +347,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 {
 	int unit=unity_cmb->currentIndex();
 	QFont fnt;
-	float fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+  double fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble();
 
 	if(fnt_size < 5.0f)
 		fnt_size=5.0f;
@@ -388,7 +393,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 void GeneralConfigWidget::convertMarginUnity(void)
 {
 	static int prev_unity=UNIT_MILIMETERS;
-	float conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
+	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
 			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];
@@ -406,170 +411,6 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
 	prev_unity=unity_cmb->currentIndex();
-}
-
-void GeneralConfigWidget::updateFileAssociation(void)
-{
- Messagebox msg_box;
- QString title=trUtf8("File association missing"),
-         msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
-
- #ifdef Q_OS_LINUX
-  attribs_map attribs;
-	QString str_aux,
-
-			 //Configures the path to the application logo
-			 exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-                      GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_logo.png")).absolutePath(),
-
-			 //Configures the path to the document logo
-			 dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-                     GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_dbm.png")).absolutePath(),
-
-			 //Path to directory that register mime types
-       mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
-
-			 //Path to the file that associates apps to mimetypes
-       mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
-
-			 base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
-										 GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR,
-
-			 //Files generated after update file association (application-dbm.xml and pgModeler.desktop)
-       files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
-                   mime_db_dir + QString("/packages/application-dbm.xml") },
-
-       schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SCHEMA_EXT,
-                     base_conf_dir + QString("application-dbm") + GlobalAttributes::SCHEMA_EXT };
-	QByteArray buf, buf_aux;
-	QFile out;
-
-	//Check if the necessary file exists. If not asks the user to update file association
-	if(!QFileInfo(files[0]).exists() || !QFileInfo(files[1]).exists())
-    msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-	if(msg_box.result()==QDialog::Accepted)
-	{
-		//file_associated=true;
-		attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
-		attribs[ParsersAttributes::ICON]=exec_icon;
-
-		try
-		{
-			for(unsigned i=0; i < 2; i++)
-			{
-				schparser.loadFile(schemas[i]);
-				buf.append(schparser.getCodeDefinition(attribs));
-        QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
-
-				out.setFileName(files[i]);
-				out.open(QFile::WriteOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
-													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				out.write(buf.data(), buf.size());
-				out.close();
-				buf.clear();
-				attribs[ParsersAttributes::ICON]=dbm_icon;
-			}
-
-			out.setFileName(mimeapps);
-
-			//If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
-			if(!QFileInfo(mimeapps).exists())
-			{
-				out.open(QFile::WriteOnly);
-				out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
-				out.close();
-			}
-			else
-			{
-
-				out.open(QFile::ReadOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(mimeapps),
-													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
-				buf=out.readAll();
-				out.close();
-
-				QTextStream ts(&buf);
-				while(!ts.atEnd())
-				{
-					//Remove any reference to application/dbm mime from file
-					str_aux=ts.readLine();
-          str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
-
-					if(!str_aux.isEmpty())
-					{
-						//Updates the application/dbm mime association
-            if(str_aux.contains(QString("[Added Associations]")))
-              str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
-						else
-              str_aux+=QString("\n");
-
-						buf_aux.append(str_aux);
-					}
-				}
-
-				//Write a new copy of the mimeapps.list file
-				out.open(QFile::Truncate | QFile::WriteOnly);
-				out.write(buf_aux.data(), buf_aux.size());
-				out.close();
-			}
-
-			//Update the mime database
-      QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
-		}
-		catch(Exception &e)
-		{
-			msg_box.show(e);
-		}
-	}
- #else
-		#ifdef Q_OS_WIN
-     //Checking if the .dbm registry key exists
-     QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe"));
-
-     //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
-     if(dbm_ext.value(QString("Default")).toString().isEmpty())
-       msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-      if(msg_box.result()==QDialog::Accepted)
-      {
-        //Write the default value for .dbm registry key
-        dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-        dbm_ext.sync();
-
-        //Other registry keys values
-        map<QString, QStringList> confs = {
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
-        };
-
-        map<QString, QStringList>::iterator itr;
-        itr=confs.begin();
-
-        //Iterates over the configuration map writing the other keys on registry
-        while(itr!=confs.end())
-        {
-          QSettings s(itr->first, QSettings::NativeFormat);
-          for(int i=0; i < itr->second.size(); i+=2)
-            s.setValue(itr->second[i], itr->second[i+1]);
-
-          s.sync();
-          itr++;
-        }
-     }
-		#endif
-#endif
 }
 
 void GeneralConfigWidget::selectPaperSize()

@@ -34,7 +34,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
 	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
   connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
-  connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecution(int)));
+  connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
 
   connect(database_cmb, &QComboBox::currentTextChanged,
           [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0);
@@ -200,6 +200,10 @@ void SQLToolWidget::browseDatabase(void)
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
     connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
     connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
+
+    /* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
+       new tab on the map of sql panes related to the database explorer */
+    db_explorer_wgt->runsql_tb->click();
   }
   catch(Exception &e)
   {
@@ -214,13 +218,15 @@ void SQLToolWidget::addSQLExecutionTab(void)
     Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
     SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
     QString db_name=databases_tbw->tabText(databases_tbw->currentIndex());
+    DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(sender());
 
     conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
     sql_exec_wgt->setConnection(conn);
 
     sql_exec_tbw->addTab(sql_exec_wgt, db_name);
     sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
-    sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
+    sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);    
+    sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
   }
   catch(Exception &e)
   {
@@ -233,24 +239,35 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
   DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
 
   //Closing sql execution tabs related to the database to be closed
-  for(int i=0; i < sql_exec_tbw->count(); i++)
-  {
-    if(databases_tbw->tabText(idx)==sql_exec_tbw->tabText(i))
-    {
-      closeSQLExecution(i);
-      i=-1;
-    }
-  }
+  for(QWidget *wgt : sql_exec_wgts[db_explorer])
+    sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
 
-  databases_tbw->removeTab(idx);
+  sql_exec_wgts.remove(db_explorer);
 
   if(db_explorer)
     delete(db_explorer);
 }
 
-void SQLToolWidget::closeSQLExecution(int idx)
+void SQLToolWidget::closeSQLExecutionTab(int idx)
 {
   SQLExecutionWidget *sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(idx));
+  QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
+  int idx1=-1;
+
+  //Removing the widget from the list it belongs
+  while(itr!=sql_exec_wgts.end())
+  {
+    idx1=itr.value().indexOf(sql_exec_wgt);
+
+    if(idx1 >= 0)
+    {
+      itr.value().removeAt(idx1);
+      break;
+    }
+
+    itr++;
+  }
+
   sql_exec_tbw->removeTab(idx);
 
   if(sql_exec_wgt)

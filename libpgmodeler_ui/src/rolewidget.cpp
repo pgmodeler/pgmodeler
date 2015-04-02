@@ -187,7 +187,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
-    members_tab[table_id]->setCellText(/*Utf8String::create(*/role->getName(), row, 0);
+    members_tab[table_id]->setCellText(role->getName(), row, 0);
 		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
 		for(type_id=0; type_id < 3; type_id++)
@@ -201,7 +201,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
         if(i < count-1) str_aux+=QString(", ");
 			}
 
-      members_tab[table_id]->setCellText(/*Utf8String::create(*/str_aux, row, 2 + type_id);
+      members_tab[table_id]->setCellText(str_aux, row, 2 + type_id);
 			str_aux.clear();
 		}
 	}
@@ -261,8 +261,8 @@ void RoleWidget::showSelectedRoleData(void)
 			members_tab[idx_tab]->removeRow(lin);
 
 		msg_box.show(Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-                    .arg(/*Utf8String::create(*/obj_sel->getName())
-                    .arg(/*Utf8String::create(*/name_edt->text()),
+                    .arg(obj_sel->getName())
+                    .arg(name_edt->text()),
 										ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
@@ -279,8 +279,8 @@ void RoleWidget::showSelectedRoleData(void)
 		if(obj_sel && idx_lin >= 0)
 		{
 			msg_box.show( Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-                      .arg(/*Utf8String::create(*/obj_sel->getName())
-                      .arg(/*Utf8String::create(*/name_edt->text()),
+                      .arg(obj_sel->getName())
+                      .arg(name_edt->text()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}

@@ -77,7 +77,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static map<QString, QColor*> color_config;
 
 		//! \brief Resizes to the specified dimension the passed polygon
-		void resizePolygon(QPolygonF &pol, float width, float height);
+		void resizePolygon(QPolygonF &pol, double width, double height);
 
 		//! \brief Configures the objects shadow polygon
 		void configureObjectShadow(void);
@@ -97,7 +97,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
     void setSelectionOrder(bool selected);
 
 	public:
-    static constexpr float VERT_SPACING=2.0f,
+    static constexpr double VERT_SPACING=2.0f,
 													 HORIZ_SPACING=2.0f,
 													 DEFAULT_FONT_SIZE=9.0f,
 													 OBJ_BORDER_WIDTH=0.80f;

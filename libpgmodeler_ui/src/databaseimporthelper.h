@@ -31,8 +31,6 @@
 #include "modelwidget.h"
 #include <random>
 
-using namespace std;
-
 class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT

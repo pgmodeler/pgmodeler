@@ -438,11 +438,19 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
-  return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
+  return(obj_type==OBJ_COLLATION || obj_type==OBJ_COLUMN ||
+         obj_type==OBJ_DOMAIN || obj_type==OBJ_EVENT_TRIGGER ||
+         obj_type==OBJ_EXTENSION || obj_type==OBJ_FUNCTION ||
+         obj_type==OBJ_INDEX || obj_type==OBJ_ROLE ||
+         obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
+         obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
+         obj_type==OBJ_TYPE);
+
+  /* return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
          obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
          obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER &&
          obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=OBJ_TAG  &&
-         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE);
+         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE); */
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -473,7 +481,7 @@ void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
-                    .arg(/*Utf8String::create(*/this->obj_name)
+                    .arg(this->obj_name)
                     .arg(this->getTypeName()),
 										ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
@@ -836,7 +844,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                        .arg(/*Utf8String::create(*/this->getName(true))
+                        .arg(this->getName(true))
 												.arg(this->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
@@ -878,12 +886,12 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 	else if(obj1->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                     .arg(obj1->getName())
-                    .arg(/*Utf8String::create(*/obj1->getTypeName()),
+                    .arg(obj1->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj2->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                     .arg(obj2->getName())
-                    .arg(/*Utf8String::create(*/obj2->getTypeName()),
+                    .arg(obj2->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
 	else if(!enable_cl_obj_swap &&
@@ -906,7 +914,7 @@ void BaseObject::updateObjectId(BaseObject *obj)
   else  if(obj->isSystemObject())
     throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                     .arg(obj->getName())
-                    .arg(/*Utf8String::create(*/obj->getTypeName()),
+                    .arg(obj->getTypeName()),
                     ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
     obj->object_id=++global_id;
@@ -1143,7 +1151,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
   if(!attribs.empty())
   {
     attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
-    for(auto itr : attribs)
+    for(auto &itr : attribs)
      attributes[itr.first]=itr.second;
   }
   else

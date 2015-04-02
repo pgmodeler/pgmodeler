@@ -99,7 +99,7 @@ void ColorPickerWidget::setEnabled(bool value)
 {
 	int i=0;
 
-	for(auto btn : buttons)
+  for(auto &btn : buttons)
     btn->setStyleSheet(QString("background-color: %1")
                        .arg(value ? colors[i++].name() : disable_color.name()));
 

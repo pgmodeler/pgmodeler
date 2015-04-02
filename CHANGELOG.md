@@ -1,6 +1,50 @@
 Change Log
 ---------
 
+v0.8.1-alpha
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: April 02, 2015</em><br/>
+
+* [New] Added a "Contributors" section in "About pgModeler" dialog.
+* [New] Introduced the NO_UPDATE_CHECK variable in qmake to turn off update verification code specifically for package maintainers usage.
+* [New] Generated installers has the ability to install .dbm file association (Windows and Linux).
+* [New] Introduced a new env var PGMODELER_TMPL_CONF_DIR to override the template configuration location.
+* [New] The "plugins" folder is created automatically at startup if does not exits.
+* [New] Added the ability to show original SQL code, dependencies and children's code for test purposes in source code preview dialog.
+* [New] Added the method DatabaseModel::getCreationOrder(BaseObject *) that retrieves all objects needed to create a certain object.
+* [New] Added an action to save SQL code to file in source code preview dialog.
+* [New] Added an option to list indirect refereces to an object in ObjectDepsRefsWidget.
+* [Change] Minor adjust on Windows installer script.
+* [Change] Deployment scripts on all platforms now uses PostgreSQL 9.4 and Qt 5.4.1 by default.
+* [Change] Replaced float data types to double in libobjrenderer and libpgmodeler_ui classes to avoid lost of precision mainly when handling graphical objects.
+* [Change] File association procedures were moved to CLI. Now the user can install/remove file association by using '--dbm-mime-type' option (Windows and Linux).
+* [Change] Minor adjustments in PgModelerCLI menu.
+* [Change] Removed unused variables and commented code throughout the code.
+* [Change] The build process now uses libxml2 from PostgreSQL installation (Windows).
+* [Change] Minor adjustment on how the duplicated elements are removed from lists in the methods __getObjectDependencies(), __getObjectReferences(), findObject() in DatabaseModel class.
+* [Change] Removed uneeded "using namespace" statements.
+* [Change] Adjustment on start-pgmodeler.sh script to use pgmodeler.vars as source of needed environment variables (Linux).
+* [Change] Improvements on how objects are recreated using the "recreate unmodifiable" option on Diff process.
+* [Change] Enhanced the control of database explorer widgets and the SQL execution panes related to them.
+* [Change] Added a clear error message when required fields are not set when creating/updating object.
+* [Change] Installation folder/files arrangement reverted to previous settings in order to avoid "DLL entry point errors" errors (Windows).
+* [Change] Minor change in pgmodeler.pri to set default output paths according to FSH standard (Linux).
+* [Fix] Minor fixes and adjustments on the deployment script and installer configuration file (windows).
+* [Fix] Minor fixes when dealing with CLI and crash handler calls inside code (MacOSX).
+* [Fix] Minor fix on range based loops using auto keyword.
+* [Fix] Fixing invalid shebang in shell scripts (Linux).
+* [Fix] Fix tab order in ConnectionsConfigWidget.
+* [Fix] Minor fix when resizing HintTextWidget instances.
+* [Fix] Fixed a bug when importing constraint triggers.
+* [Fix] Minor bug fix when dropping table children objects in database explorer.
+* [Fix] Minor fix when generating XML code for permissions.
+* [Fix] Minor bug fix on database explorer at manage view to avoid left opened connections.
+* [Fix] Added a patch in model fix process to correctly move indexes/triggers/rules from within tables to outside their xml definition.
+* [Fix] Fixed a bug when configuring encoding for database. Now the "Default" value can be used normally.
+* [Fix] Fixed a bug on model fix process that was removing empty lines (only with breaks) from functions definitions as well from other objects.
+* [Fix] Fix crash when converting a serial column which is not assigned to a primary key.
+
 v0.8.0
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>

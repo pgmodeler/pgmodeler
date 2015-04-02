@@ -30,7 +30,7 @@ Tag::Tag(void)
   object_id=Tag::tag_id++;
   attributes[ParsersAttributes::STYLES]=QString();
 
-  for(auto attr : attribs)
+  for(auto &attr : attribs)
   {
     if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
       color_config[attr]=new QColor[COLOR_COUNT];
@@ -75,7 +75,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
     QStringList color_lst=colors.split(',');
     unsigned color_id=FILL_COLOR1;
 
-    for(auto color : color_lst)
+    for(auto &color : color_lst)
     {
       validateElementId(elem_id, color_id);
       color_config[elem_id][color_id]=QColor(color);
@@ -152,7 +152,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
     {
       attribs_map attribs;
 
-      for(auto itr : color_config)
+      for(auto &itr : color_config)
       {
         attribs[ParsersAttributes::ID]=itr.first;
         attribs[ParsersAttributes::COLORS]=QString();
@@ -179,7 +179,7 @@ void Tag::operator = (Tag &tag)
 {
   (*dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tag);
 
-  for(auto attr : tag.color_config)
+  for(auto &attr : tag.color_config)
   {
     if(attr.first!=ParsersAttributes::TABLE_NAME && attr.first!=ParsersAttributes::TABLE_SCHEMA_NAME)
     {

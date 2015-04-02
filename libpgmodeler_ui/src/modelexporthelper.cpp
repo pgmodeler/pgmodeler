@@ -45,7 +45,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, float zoom, bool show_grid, bool show_delim, bool page_by_page)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -162,7 +162,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
         ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
         scene->update();
 
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/file),
+        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file),
                         ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
     }
@@ -278,7 +278,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			for(i=0; i < count && !export_canceled; i++)
 			{
 				object=db_model->getObject(i, types[type_id]);
-				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
+        progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
 
 				try
 				{
@@ -287,7 +287,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
                                    trUtf8("Creating object `%1' (%2).")
-                                   .arg(/*Utf8String::create(*/object->getName())
+                                   .arg(object->getName())
                                    .arg(object->getTypeName()),
 																	 object->getObjectType());
 
@@ -320,7 +320,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
                                trUtf8("Creating database `%1'.")
-                               .arg(/*Utf8String::create(*/db_model->getName()),
+                               .arg(db_model->getName()),
 															 OBJ_DATABASE);
 
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -350,7 +350,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
                              trUtf8("Connecting to database `%1'.")
-                             .arg(/*Utf8String::create(*/db_model->getName()));
+                             .arg(db_model->getName()));
 
 			new_db_conn.connect();
 			progress=30;
@@ -358,7 +358,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
       //Creating the other object types
       emit s_progressUpdated(progress,
                              trUtf8("Creating objects on database `%1'.")
-                             .arg(/*Utf8String::create(*/db_model->getName()));
+                             .arg(db_model->getName()));
 
       //Exporting the database model definition using the opened connection
       exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
@@ -505,7 +505,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 				 if(!object->isSQLDisabled())
 					 conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
 			 }
-			 catch(Exception &e){}
+       catch(Exception &){}
 
 			 created_objs[types[type_id]]--;
 		 }
@@ -538,20 +538,20 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
   orig_obj_names.clear();
   orig_obj_names[db_model]=db_model->getName();
 
-  for(auto role : *db_model->getObjectList(OBJ_ROLE))
+  for(auto &role : *db_model->getObjectList(OBJ_ROLE))
   {
     if(!role->isSystemObject())
       orig_obj_names[role]=role->getName();
   }
 
-  for(auto tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
+  for(auto &tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
   {
     if(!tabspc->isSystemObject())
       orig_obj_names[tabspc]=tabspc->getName();
   }
 
 
-  for(auto obj : orig_obj_names)
+  for(auto &obj : orig_obj_names)
   {
     stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toTime_t();
 
@@ -570,7 +570,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 
 void ModelExportHelper::restoreObjectNames(void)
 {
-  for(auto obj : orig_obj_names)
+  for(auto &obj : orig_obj_names)
     obj.first->setName(obj.second);
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
