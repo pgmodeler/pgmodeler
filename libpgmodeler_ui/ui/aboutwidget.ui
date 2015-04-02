@@ -518,7 +518,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="license_pg">
          <attribute name="title">
@@ -829,7 +829,7 @@ p, li { white-space: pre-wrap; }
             </item>
             <item row="5" column="1">
              <property name="text">
-              <string>N/A</string>
+              <string>Poland</string>
              </property>
             </item>
             <item row="5" column="2">
