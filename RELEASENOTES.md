@@ -1,32 +1,38 @@
-v0.8.0
+v0.8.1-alpha
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: February 28, 2015</em>
-<em>Changes since: <strong>v0.7.2</strong></em><br/>
+<em>Release date: April 02, 2015</em>
+<em>Changes since: <strong>v0.8.0</strong></em><br/>
 
-<strong>Summary:</strong> after eight months working on create an even more improved product the final 0.8.0 is done. This version is the best one ever created because the software is more stable, reliable, useful and beautiful.<br/>
-Compared to the previous release (0.7.2) this one has a lot more features that will surely improve the database design. Also, there are new features to help user in manage live databases.<br/>
-To give an idea on how pgModeler has changed since 0.7.2, the full change log for the new release has 349 entries, being 85 new features, 147 changes and 117 bug fixes.<br/>
-Obviously, not all new features or changes will be noted since they were created to help in bug fixes but what matters is that pgModeler is now a better product.<br/>
-Below the key features of this new version are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
+<strong>Summary:</strong> this release brings a series of fixes for bugs reported in 0.8.0 as well minor improvements for new features introduced by that version.<br/>
 
-* <strong>Optmized layout:</strong> the entire layout was improved, separating portions of the software in form of views (welcome, design and manage) giving users a better usage experience. Also, as part of layout improvements, the database model objects are now more clean and smooth being more pleasing to the eyes.<br/>
+In this release the user can generate SQL code for the object's dependencies and children in source code preview dialog for test purposes. The diff process was improved causing more reliable SQL diffs to be generated.<br/>
 
-* <strong>Faster code generation:</strong> the SQL and XML code generation speed was increased by introducing the cached code feature. With this feature the loading, saving and export processes are more faster speeding up the productivity.<br/>
+The reverse engineering process was patched too and now constraint triggers are correctly imported. The database management was improved too avoiding opened connections left behind and leading to a waste of resources. <br/>
 
-* <strong>Per-user configurations:</strong> pgModeler now is capable to store its settings separated for each user in the same system. This is quite handy when several users need to run the software with their own preferred settings without mess with others settings.<br/>
+Finally, the model fix procedure was patched and now it is capable to correctly fix models created in pgModeler 0.7.2.<br/>
 
-* <strong>Model database diff:</strong> create SQL scripts containing all commands needed to keep synchronized both model and database. With the diff feature you can make changes on a living database without drop it and recreate from the model that originate it.<br/>
-Just do the needed changes on the model and compare it to the database, pgModeler will handle the rest creating DDL commands and storing them on a file or applying directly to a server. <strong>NOTE:</strong> this is an experimental feature so it may fail in some cases.<br/>
+There are more changes in this version and the key ones are listed below. Please, refer to CHANGELOG.md to a complete set of modifications.<br/>
 
-* <strong>Improved reverse engineering:</strong> the import process is even better. Free from a lot of bug of previous releases the import permits user to create partial models by importing only a few set of objects or the entire database as he wishes.<br/>
-This process now is capable to solve automatically the majority of problems related to object's dependencies that previous versions could not handle.<br/>
-
-* <strong>Improved SQL tool:</strong> being now a dedicated section of the software the SQL tool (manage view) is even better. Now its possible to handle several databases, manage table data through the data manipulation dialog and run SQL commands directly on the server.<br/>
-In this release, SQL code snippets were introduced in order to help users to create and execute SQL commands when working on a database.<br/>
-
-* <strong>Improved model validation:</strong> the main source of crashes in previous releases the validation process was carefully improved being more stable and reliable by fixing the majority of model inconsistencies that may appear during the design time.<br/>
-
-* <strong>Improved model export:</strong> several bugs were fixed on the model export process. Additionally, user now have the option to run DROP commands before create an object directly on the database. This is useful when you do not want to drop the entire database in order to recreate the objects.<br/>
-
-* <strong>Miscelaneous:</strong> several bug fixes throughout the subprojects, ability to drop objects in cascade way during design, several improvements on quick actions menu when two or more objects are selected, several improvements on the configuration sections and much more. <br/>
+* [New] Added a "Contributors" section in "About pgModeler" dialog.
+* [New] The "plugins" folder is created automatically at startup if does not exits.
+* [New] Added the ability to show original SQL code, dependencies and children's code for test purposes in source code preview dialog.
+* [New] Added an action to save SQL code to file in source code preview dialog.
+* [New] Added an option to list indirect refereces to an object in ObjectDepsRefsWidget.
+* [Change] Deployment scripts on all platforms now uses PostgreSQL 9.4 and Qt 5.4.1 by default.
+* [Change] File association procedures were moved to CLI. Now the user can install/remove file association by using '--dbm-mime-type' option (Windows and Linux).
+* [Change] The build process now uses libxml2 from PostgreSQL installation (Windows).
+* [Change] Improvements on how objects are recreated using the "recreate unmodifiable" option on Diff process.
+* [Change] Enhanced the control of database explorer widgets and the SQL execution panes related to them.
+* [Change] Added a clear error message when required fields are not set when creating/updating object.
+* [Change] Installation folder/files arrangement reverted to previous settings in order to avoid "DLL entry point errors" errors (Windows).
+* [Change] Minor change in pgmodeler.pri to set default output paths according to FSH standard (Linux).
+* [Fix] Fix tab order in ConnectionsConfigWidget.
+* [Fix] Fixed a bug when importing constraint triggers.
+* [Fix] Minor bug fix when dropping table children objects in database explorer.
+* [Fix] Minor fix when generating XML code for permissions.
+* [Fix] Minor bug fix on database explorer at manage view to avoid left opened connections.
+* [Fix] Added a patch in model fix process to correctly move indexes/triggers/rules from within tables to outside their xml definition.
+* [Fix] Fixed a bug when configuring encoding for database. Now the "Default" value can be used normally.
+* [Fix] Fixed a bug on model fix process that was removing empty lines (only with breaks) from functions definitions as well from other objects.
+* [Fix] Fix crash when converting a serial column which is not assigned to a primary key.
