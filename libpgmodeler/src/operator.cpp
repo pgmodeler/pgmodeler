@@ -72,8 +72,8 @@ bool Operator::isValidName(const QString &name)
 	{
 		//The set ~!@#%^&|' is defined from position 7  in the valid_chars string
 		len=valid_chars.size();
-		for(pos=7; pos < len && valid; pos++)
-			valid=(name.indexOf(valid_chars[pos]) < 0);
+    for(pos=7; pos < len && valid; pos++)
+      valid|=(name.indexOf(valid_chars[pos]) >= 0);
 	}
 
 	return(valid);
