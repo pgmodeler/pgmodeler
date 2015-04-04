@@ -6264,7 +6264,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type)
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
   attribs_map attribs_aux;
-  double general_obj_cnt, gen_defs_count;
+  unsigned general_obj_cnt, gen_defs_count;
   bool sql_disabled=false;
   BaseObject *object=nullptr;
   QString def, search_path=QString("pg_catalog,public"),
@@ -6390,11 +6390,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
       if((def_type==SchemaParser::SQL_DEFINITION && !object->isSQLDisabled()) ||
          (def_type==SchemaParser::XML_DEFINITION && !object->isSystemObject()))
-        emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
+      {
+        emit s_objectLoaded((gen_defs_count/static_cast<unsigned>(general_obj_cnt)) * 100,
                               msg.arg(def_type_str)
                               .arg(object->getName())
                               .arg(object->getTypeName()),
                               object->getObjectType());
+      }
     }
 
     attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;
