@@ -60,8 +60,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
-	connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::HighPriority); });
-
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
   pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
