@@ -314,7 +314,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
                     .arg(PQerrorMessage(connection)),
 										ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-                    QString("Error: %1\n\n %2").arg(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)).arg(sql));
+                    QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
 	}
 
 	//Generates the resultset based on the sql result descriptor
@@ -350,7 +350,7 @@ void Connection::executeDDLCommand(const QString &sql)
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
                     .arg(PQerrorMessage(connection)),
 										ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-                    QString("Error: %1\n\n %2").arg(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)).arg(sql));
+                    QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
 	}
 }
 
