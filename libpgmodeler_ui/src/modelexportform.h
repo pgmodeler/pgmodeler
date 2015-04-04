@@ -39,13 +39,15 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		ModelWidget *model;
 
 		//! \brief Export helper
-		ModelExportHelper export_hlp;
+    ModelExportHelper *export_hlp;
 
 		//! \brief Thread used to manage the export helper when dealing with dbms export
 		QThread *export_thread;
 
     HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
 
+    void createThread(void);
+    void destroyThread(void);
     void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
@@ -56,7 +58,6 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 	public slots:
 		void exec(ModelWidget *model);
-    //void hideEvent(QHideEvent *);
 
   private slots:
     void selectExportMode(void);
