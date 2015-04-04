@@ -429,9 +429,9 @@ void Function::createSignature(bool format, bool prepend_schema)
 	for(i=0; i < count; i++)
 	{
 		//OUT parameters is not part of function's signature
-		if(!parameters[i].isIn() || parameters[i].isVariadic() ||
+    if(!parameters[i].isOut() || parameters[i].isVariadic() ||
 			 (parameters[i].isIn() && parameters[i].isOut()) ||
-			 (parameters[i].isIn() && !parameters[i].isOut()))
+       (parameters[i].isIn() && !parameters[i].isOut()))
 		{
 			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
 			parameters[i].setCodeInvalidated(true);

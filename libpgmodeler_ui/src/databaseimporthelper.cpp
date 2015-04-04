@@ -430,7 +430,7 @@ void DatabaseImportHelper::createPermissions(void)
 		{
 			emit s_progressUpdated(progress, trUtf8("Creating objects permissions..."), OBJ_PERMISSION);
 
-			createPermission(user_objs[*itr_obj]);
+      createPermission(user_objs[*itr_obj]);
 			itr_obj++;
 
       progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
@@ -446,8 +446,8 @@ void DatabaseImportHelper::createPermissions(void)
 			itr=col_perms[itr_cols->first].begin();
 
 			while(itr!=itr_cols->second.end())
-			{
-				createPermission(columns[itr_cols->first][*itr]);
+      {
+        createPermission(columns[itr_cols->first][*itr]);
 				itr++;
 			}
 
@@ -1817,10 +1817,10 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 {
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 	Permission *perm=nullptr;
+  QString sig;
 
 	if(Permission::objectAcceptsPermission(obj_type))
 	{
-
 		QStringList perm_list;
 		vector<unsigned> privs, gop_privs;
 		QString role_name;
@@ -1838,7 +1838,10 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 				if(obj_type==OBJ_DATABASE)
 					object=dbmodel;
 				else
+        {
+          sig=getObjectName(attribs[ParsersAttributes::OID], true);
           object=dbmodel->getObject(getObjectName(attribs[ParsersAttributes::OID], true), obj_type);
+        }
 			}
 			else
 			{
@@ -2072,7 +2075,9 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 					for(int i=0; i < arg_types.size(); i++)
 					{
-            if(!arg_modes.isEmpty() && arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
+            if(arg_modes.isEmpty())
+             params.push_back(arg_types[i]);
+            else if(arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
 						{
               if(arg_modes[i]==QString("i"))
                 params.push_back(QString("IN ") + arg_types[i]);
@@ -2080,9 +2085,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
                 params.push_back(QString("INOUT ") + arg_types[i]);
 							else
                 params.push_back(QString("VARIADIC ") + arg_types[i]);
-						}
-						else
-              params.push_back(arg_types[i]);
+						}             
 					}
 				}
         else if(obj_type==OBJ_AGGREGATE)
@@ -2202,8 +2205,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema") &&
-				 !catalog.isExtensionObject(type_oid))
+      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) /*&&
+         !catalog.isExtensionObject(type_oid))*/
         obj_name.prepend(sch_name + QString("."));
 
 			if(generate_xml)
