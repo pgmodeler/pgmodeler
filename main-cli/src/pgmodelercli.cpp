@@ -528,7 +528,13 @@ void PgModelerCLI::extractObjectXML(void)
   QString buf, lin, def_xml, end_tag;
   QTextStream ts;
   QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL)),
-      default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)"));
+      default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)")),
+
+      //[schema].[func_name](...OUT [type]...)
+      func_signature=QRegExp(QString("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")")),
+
+      //[,]OUT [schema].[type]
+      out_param=QRegExp(QString("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?"));
   int start=-1, end=-1;
   bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
 
@@ -564,7 +570,7 @@ void PgModelerCLI::extractObjectXML(void)
       lin=ts.readLine();
 
       /*  Special case for empty tags like <language />, they will be converted to
-          <tag></tag> in order to be correctly extracted further. Currently only language has this
+          <language></language> in order to be correctly extracted further. Currently only language has this
           behaviour, so additional object may be added in the future. */
       if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(OBJ_LANGUAGE))))
       {
@@ -573,6 +579,12 @@ void PgModelerCLI::extractObjectXML(void)
         if(lin.contains(QString("/>")))
           lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(OBJ_LANGUAGE)));
       }
+      /* Special case for function signatures. In previous releases, the function's signature was wrongly
+         including OUT parameters and according to docs they are not part of the signature, so it is needed
+         to remove them if the current line contains a valid signature with parameters. */
+      else if(lin.contains(func_signature))
+        lin.remove(out_param);
+
 
       if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
            (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
