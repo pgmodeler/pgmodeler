@@ -359,7 +359,7 @@ void DatabaseImportHelper::createObjects(void)
         {
           //In case of some error store the oid and the error in separated lists
           not_created_objs.push_back(*itr);
-          aux_errors.push_back(e);
+          aux_errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
         }
 
         progress=(i/static_cast<float>(not_created_objs.size())) * 100;
@@ -407,60 +407,72 @@ void DatabaseImportHelper::createConstraints(void)
 		catch(Exception &e)
 		{
 			if(ignore_errors)
-				errors.push_back(e);
+        errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
     progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
-		sleepThread(10);
+    sleepThread(20);
 	}
 }
 
 void DatabaseImportHelper::createPermissions(void)
 {
-	try
+  attribs_map attribs;
+
+  try
 	{
 		unsigned i=0, progress=0;
 		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
 		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
+    QString msg=trUtf8("Creating permissions for object `%1' (%2)...");
+    ObjectType obj_type;
 
 		//Create the object level permission
 		while(itr_obj!=obj_perms.end() && !import_canceled)
 		{
-			emit s_progressUpdated(progress, trUtf8("Creating objects permissions..."), OBJ_PERMISSION);
+      attribs=user_objs[*itr_obj];
+      obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+      emit s_progressUpdated(progress,
+                             msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
+                             .arg(BaseObject::getTypeName(obj_type)), OBJ_PERMISSION);
 
-      createPermission(user_objs[*itr_obj]);
+      createPermission(attribs);
 			itr_obj++;
 
       progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
-			sleepThread(10);
+      sleepThread(20);
 		}
 
+    emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
 		//Create the column level permission
 		i=0;
 		while(itr_cols!=col_perms.end() && !import_canceled)
-		{
-			emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
-
+		{			
 			itr=col_perms[itr_cols->first].begin();
 
 			while(itr!=itr_cols->second.end())
       {
-        createPermission(columns[itr_cols->first][*itr]);
+        attribs=columns[itr_cols->first][*itr];
+        obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+        emit s_progressUpdated(progress,
+                               msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
+                               .arg(BaseObject::getTypeName(obj_type)), OBJ_PERMISSION);
+
+        createPermission(attribs);
 				itr++;
 			}
 
 			itr_cols++;
       progress=((i++)/static_cast<float>(col_perms.size())) * 100;
-			sleepThread(10);
+      sleepThread(20);
 		}
-
 	}
 	catch(Exception &e)
 	{
 		if(ignore_errors)
-			errors.push_back(e);
+      errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 		else
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -639,6 +651,12 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
 				obj_perms.push_back(oid);
 
+      if(debug_mode)
+      {
+        QTextStream ts(stdout);
+        ts << dumpObjectAttributes(attribs) << endl;
+      }
+
 			switch(obj_type)
 			{
 				case OBJ_DATABASE: configureDatabase(attribs); break;
@@ -800,7 +818,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-      ts << QString("<!-- OID: ") << attribs[ParsersAttributes::OID] << QString(" -->") << endl;
+      ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[ParsersAttributes::NAME]).arg(attribs[ParsersAttributes::OID]) << endl;
 			ts << xml_buf << endl;
 		}
 
@@ -830,10 +848,24 @@ void DatabaseImportHelper::resetImportParameters(void)
 	constr_creation_order.clear();
 	obj_perms.clear();
 	col_perms.clear();
-
-  //if(connection.isStablished())
   connection.close();
   catalog.closeConnection();
+}
+
+QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
+{
+  QString dump_str;
+
+  dump_str+=QString("-- Raw attributes: %1 (OID: %2) --\n")
+            .arg(attribs[ParsersAttributes::NAME])
+            .arg(attribs[ParsersAttributes::OID]);
+
+  for(auto &attr : attribs)
+    dump_str+=QString("%1: %2\n").arg(attr.first).arg(attr.second);
+
+  dump_str+=QString("---\n");
+
+  return(dump_str);
 }
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
@@ -1898,7 +1930,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 						if(perm) delete(perm);
 
 						if(ignore_errors)
-							errors.push_back(e);
+              errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 						else
 							throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 					}
@@ -2004,7 +2036,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 					if(rel) delete(rel);
 
 					if(ignore_errors)
-						errors.push_back(e);
+            errors.push_back(e);
 					else
 						throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				}

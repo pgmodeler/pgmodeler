@@ -194,6 +194,9 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Clears the vectors and maps used in the import process
 		void resetImportParameters(void);
 
+    //! brief Return a string containing all attributes and their values in a formatted way
+    QString dumpObjectAttributes(attribs_map &attribs);
+
   public:
 		DatabaseImportHelper(QObject *parent=0);
 
