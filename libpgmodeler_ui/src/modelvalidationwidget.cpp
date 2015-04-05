@@ -39,9 +39,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     validation_thread=new QThread(this);
     validation_helper.moveToThread(validation_thread);
 
-		connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
-		connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
-		connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));    
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -54,19 +51,21 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     connect(use_tmp_names_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
+    connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
+    connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
+    connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
-		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
-		connect(validation_thread, &QThread::started, [=](){ validation_thread->setPriority(QThread::HighPriority); });
-
-		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
-		connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
-		connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
-		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
-		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
-		connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
-
-    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
-		connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+    connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
+    connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
     connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)), Qt::QueuedConnection);
 
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
@@ -74,9 +73,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
     connect(&validation_helper, &ModelValidationHelper::s_fixApplied,
             [=](){ emit s_fixApplied(); });
-
-		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
-		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 	}
 	catch(Exception &e)
 	{
@@ -359,7 +355,7 @@ void ModelValidationWidget::applyFixes(void)
   connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 }
 
-void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd)
+void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	QTreeWidgetItem *item=nullptr, *cmd_item=nullptr;
   QLabel *cmd_label=nullptr;
@@ -382,8 +378,6 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	else if(!msg.isEmpty())
 	{
     QPixmap ico;
-    ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
-    object_lbl->setText(trUtf8("Running SQL validation..."));
 
     msg=PgModelerUiNS::formatMessage(msg);
 
@@ -394,19 +388,30 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		else
       ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 
-    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, nullptr, false, false);
+    if(is_code_gen)
+    {
+      ico_lbl->setPixmap(ico);
+      object_lbl->setText(msg);
+    }
+    else
+    {
+      ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
+      object_lbl->setText(trUtf8("Running SQL commands on server..."));
 
-		if(!cmd.isEmpty())
-		{
-      QFont fnt;
+      item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, nullptr, false, false);
 
-      cmd_item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
-      cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(cmd_item, 0));
+      if(!cmd.isEmpty())
+      {
+        QFont fnt;
 
-      fnt=cmd_label->font();
-      fnt.setPointSizeF(8.0);
-      cmd_label->setFont(fnt);
-		}
+        cmd_item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
+        cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(cmd_item, 0));
+
+        fnt=cmd_label->font();
+        fnt.setPointSizeF(8.0);
+        cmd_label->setFont(fnt);
+      }
+    }
 	}
 }
 

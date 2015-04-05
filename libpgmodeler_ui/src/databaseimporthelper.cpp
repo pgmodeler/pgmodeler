@@ -506,7 +506,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 void DatabaseImportHelper::sleepThread(unsigned msecs)
 {
 	if(qApp->thread()!=this->thread())
-		QThread::msleep(msecs);
+    QThread::msleep(msecs);
 }
 
 void DatabaseImportHelper::importDatabase(void)

@@ -100,7 +100,7 @@ class ModelValidationHelper: public QObject {
 		void resolveConflict(ValidationInfo &info);
 
 	private slots:
-		void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd);
+    void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
 		void emitValidationCanceled(void);
 		void emitValidationFinished(void);
@@ -115,7 +115,7 @@ class ModelValidationHelper: public QObject {
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString());
+    void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);
 
 		//! \brief This signal is emitted when the object is processed by the validator
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);

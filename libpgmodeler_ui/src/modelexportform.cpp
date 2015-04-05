@@ -52,12 +52,12 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
   connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
-  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)));
   connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
-  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
-  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
-  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
-  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::QueuedConnection);
+  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)), Qt::QueuedConnection);
+  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)), Qt::QueuedConnection);
+  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
+  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
   connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -103,7 +103,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
                  item, true, false);
 }
 
-void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
+void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
   QTreeWidgetItem *item=nullptr;
   QString text=PgModelerUiNS::formatMessage(msg);
@@ -120,18 +120,22 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
     ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
 
   ico_lbl->setPixmap(ico);
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, text, ico, nullptr, false, false);
 
-  if(!cmd.isEmpty())
+  if(!is_code_gen)
   {
-    QFont fnt;
-    QLabel *cmd_label=nullptr;
+    item=PgModelerUiNS::createOutputTreeItem(output_trw, text, ico, nullptr, false, false);
 
-    item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
-    cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(item, 0));
-    fnt=cmd_label->font();
-    fnt.setPointSizeF(8.0);
-    cmd_label->setFont(fnt);
+    if(!cmd.isEmpty())
+    {
+      QFont fnt;
+      QLabel *cmd_label=nullptr;
+
+      item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
+      cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(item, 0));
+      fnt=cmd_label->font();
+      fnt.setPointSizeF(8.0);
+      cmd_label->setFont(fnt);
+    }
   }
 }
 

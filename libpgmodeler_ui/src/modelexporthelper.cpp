@@ -21,7 +21,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+  connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
 
 	try
 	{
@@ -183,13 +183,13 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::sleepThread(unsigned msecs)
 {
 	if(this->thread()!=qApp->thread())
-		QThread::msleep(msecs);
+    QThread::msleep(msecs);
 }
 
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
 {
 	int type_id;
-  QString  version, sql_cmd;
+  QString  version, sql_cmd, buf;
 	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
@@ -208,7 +208,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
     else if(drop_db && drop_objs)
       throw Exception(ERR_MIX_INCOMP_DROP_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+    connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
 
 		export_canceled=false;
 		db_created=false;
@@ -357,11 +357,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
       //Creating the other object types
       emit s_progressUpdated(progress,
-                             trUtf8("Creating objects on database `%1'.")
-                             .arg(db_model->getName()));
+                             trUtf8("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
       //Exporting the database model definition using the opened connection
-      exportBufferToDBMS(db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false), new_db_conn, drop_objs);
+      buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+      progress=40;
+      exportBufferToDBMS(buf, new_db_conn, drop_objs);
     }
 
 		disconnect(db_model, nullptr, this, nullptr);
@@ -628,6 +629,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
                                  OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE,
                                  OBJ_DATABASE };
 
+
   /* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
   ts.setString(&sql_buf);
@@ -718,7 +720,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           else
             msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
-           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+          sleepThread(20);
+          emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
         }
         //Check if the regex matches the sql command
         else if(obj_reg.exactMatch(sql_cmd))
@@ -796,6 +799,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             }
           }
 
+          sleepThread(20);
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
           is_create=is_drop=false;
           msg.clear();
@@ -803,6 +807,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
         else if(!sql_cmd.trimmed().isEmpty())
         {
           //General commands like grant, revoke or set aren't explicitly shown
+          sleepThread(20);
           emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
         }
 
@@ -817,7 +822,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
         sql_cmd.clear();
         ddl_tk_found=false;
-        sleepThread(20);    
+        sleepThread(20);
       }
 
       if(ts.atEnd() && !db_sql_cmds.empty())
@@ -857,7 +862,7 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	int aux_prog=progress + (prog/progress);
 	sql_gen_progress=prog;
 	if(aux_prog > 100) aux_prog=100;
-	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type));
+  emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender()==db_model);
 }
 
 void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
