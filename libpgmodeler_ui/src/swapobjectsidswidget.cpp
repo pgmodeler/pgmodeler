@@ -43,7 +43,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		parent_form.resize(parent_form.minimumSize());
 		parent_form.setMaximumHeight(220);
 
-		setModel(nullptr);
+    setModel(nullptr);
 
 		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(changeObjectsIds(void)));
@@ -76,11 +76,14 @@ void SwapObjectsIdsWidget::show(void)
 
 void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 {
-	this->model=model;
-	src_object_sel->setModel(model);
-	dst_object_sel->setModel(model);
+  this->model=model;
+
+  src_object_sel->setModel(model);
+  dst_object_sel->setModel(model);
+
 	parent_form.generalwidget_wgt->setEnabled(model!=nullptr);
 	parent_form.apply_ok_btn->setEnabled(model!=nullptr);
+
 	src_object_sel->clearSelector();
 	dst_object_sel->clearSelector();
 }
@@ -88,12 +91,12 @@ void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 void SwapObjectsIdsWidget::close(void)
 {
 	this->setResult(QDialog::Rejected);
-	parent_form.close();
+  parent_form.close();
 }
 
 void SwapObjectsIdsWidget::hideEvent(QHideEvent *)
 {
-	this->setModel(nullptr);
+  this->setModel(nullptr);
 }
 
 void SwapObjectsIdsWidget::showObjectId(void)
@@ -153,7 +156,8 @@ void SwapObjectsIdsWidget::changeObjectsIds(void)
 		if(graph_dst_obj)
 			graph_dst_obj->setModified(true);
 
-		this->accept();
+    model->setInvalidated(true);
+    this->setResult(QDialog::Accepted);
 		parent_form.close();
 	}
 	catch(Exception &e)

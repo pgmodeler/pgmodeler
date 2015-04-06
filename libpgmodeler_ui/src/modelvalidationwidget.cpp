@@ -441,7 +441,7 @@ void ModelValidationWidget::configureValidation(void)
 
 void ModelValidationWidget::swapObjectsIds(void)
 {
-	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
+  swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
   swapobjectsids_wgt->show();
 }
 

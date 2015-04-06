@@ -214,6 +214,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		db_created=false;
 		progress=sql_gen_progress=0;
 		created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
+    errors.clear();
 
 		//Retrive the DBMS version in order to generate the correct code
     conn.connect();
@@ -808,7 +809,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
         {
           //General commands like grant, revoke or set aren't explicitly shown
           sleepThread(20);
-          emit s_progressUpdated(aux_prog, trUtf8("Executing auxiliary command."), BASE_OBJECT, sql_cmd);
+          emit s_progressUpdated(aux_prog, trUtf8("Running auxiliary command."), BASE_OBJECT, sql_cmd);
         }
 
         //Executes the extracted SQL command
@@ -877,6 +878,7 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
   this->use_tmp_names=use_rand_names;
   this->sql_buffer.clear();
   this->db_name.clear();
+  this->errors.clear();
 }
 
 void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
@@ -888,6 +890,7 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
   this->simulate=false;
   this->drop_db=false;
   this->use_tmp_names=false;
+  this->errors.clear();
 }
 
 void ModelExportHelper::exportToDBMS(void)

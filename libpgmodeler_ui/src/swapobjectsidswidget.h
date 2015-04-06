@@ -25,8 +25,8 @@
 #ifndef SWAP_OBJECTS_IDS_WIDGET_H
 #define SWAP_OBJECTS_IDS_WIDGET_H
 
-#include "ui_swapobjectsidswidget.h"
 #include <QWidget>
+#include "ui_swapobjectsidswidget.h"
 #include "baseform.h"
 #include "objectselectorwidget.h"
 
@@ -35,7 +35,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 		Q_OBJECT
 
 		//! \brief Reference database model
-		DatabaseModel *model;
+    DatabaseModel *model;
 
 		//! \brief Widget's parent form (with bottom right control buttons)
 		BaseForm parent_form;
@@ -48,7 +48,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
 		~SwapObjectsIdsWidget(void);
-		void setModel(DatabaseModel *model);
+    void setModel(DatabaseModel *model);
 		
 	signals:
 

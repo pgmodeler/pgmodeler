@@ -35,7 +35,7 @@ class ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		//! \brief Reference database model
+    //! \brief Reference database model
 		DatabaseModel *db_model;
 
 		//! \brief Connection used to validate model on DBMS

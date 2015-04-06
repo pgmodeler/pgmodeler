@@ -244,8 +244,8 @@ void BaseTableView::configureTag(void)
     tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
     tag_body->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::TAG));
 
-    tag_name->setPos(-5, bottom - 2.5f);
-    tag_body->setPos(-5, bottom - 2.5f);
+    tag_name->setPos(-5, bottom - 1.5f);
+    tag_body->setPos(-5, bottom - 1.5f);
   }
 }
 
