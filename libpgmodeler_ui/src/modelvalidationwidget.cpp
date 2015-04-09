@@ -52,20 +52,19 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(validateModel(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
     connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
-    connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
     connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
-    connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
-    connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)));
-    connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
-    connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
-    connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
-    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
-    connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+    connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
+    connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
     connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
 
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
@@ -73,6 +72,8 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
     connect(&validation_helper, &ModelValidationHelper::s_fixApplied,
             [=](){ emit s_fixApplied(); });
+
+    connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 	}
 	catch(Exception &e)
 	{
@@ -177,6 +178,9 @@ void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
+  if(!validation_thread->isRunning())
+    return;
+
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
 	QLabel *label=new QLabel, *label1=nullptr, *label2=nullptr;
 	vector<BaseObject *> refs;
