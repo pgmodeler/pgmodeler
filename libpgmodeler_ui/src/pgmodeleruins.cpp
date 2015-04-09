@@ -119,6 +119,8 @@ QString PgModelerUiNS::formatMessage(const QString &msg)
         pos1 += start_tags[chr_idx].length() - 1;
         fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
       }
+      else
+        break;
 
       pos=pos1;
     }

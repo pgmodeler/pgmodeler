@@ -28,17 +28,10 @@ ModelValidationHelper::ModelValidationHelper(void)
 	export_thread=new QThread(this);
 	export_helper.moveToThread(export_thread);
 
-  connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType,QString,bool)), this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)));
+  connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType,QString,bool)), this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
 	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
-	connect(export_thread, &QThread::started, [=](){ export_thread->setPriority(QThread::HighPriority); });
 	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-}
-
-void ModelValidationHelper::sleepThread(unsigned msecs)
-{
-	if(qApp->thread()!=this->thread())
-    QThread::msleep(msecs);
 }
 
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
@@ -117,8 +110,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 					obj_id=info_obj->getObjectId();
         }
       }
-
-			sleepThread(10);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
@@ -178,7 +169,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				}
 
 				refs.pop_back();
-				sleepThread(10);
 			}
 		}
     else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
@@ -279,8 +269,7 @@ void ModelValidationHelper::validateModel(void)
     if(!db_model->isInvalidated())
     {
       progress=1;
-      emit s_progressUpdated(progress, trUtf8("Skipping broken references checking."));
-      sleepThread(10);
+      emit s_progressUpdated(progress, trUtf8("Skipping broken references checking."));      
     }
     else
     {
@@ -296,9 +285,7 @@ void ModelValidationHelper::validateModel(void)
           object=(*itr);
           obj_type=object->getObjectType();
           refs_aux.clear();
-          itr++;
-
-          sleepThread(10);
+          itr++;         
 
           //Excluding the validation of system objects (created automatically)
           if(!object->isSystemObject())
@@ -355,8 +342,6 @@ void ModelValidationHelper::validateModel(void)
 
                 refs.pop_back();
               }
-
-              sleepThread(10);
 
               /* Validating a special object. The validation made here is to check if the special object
                 (constraint/index/trigger/view) references a column added by a relationship and
@@ -438,8 +423,7 @@ void ModelValidationHelper::validateModel(void)
 
         //Emit a signal containing the validation progress
         progress=((i+1)/static_cast<float>(count))*20;
-        emit s_progressUpdated(progress, QString());
-        sleepThread(10);
+        emit s_progressUpdated(progress, QString());        
       }
     }
 
@@ -447,7 +431,6 @@ void ModelValidationHelper::validateModel(void)
     {
       progress=20;
       emit s_progressUpdated(progress, trUtf8("Skipping name conflicts checking."));
-      sleepThread(10);
     }
     else
     {
@@ -489,8 +472,6 @@ void ModelValidationHelper::validateModel(void)
               dup_objects[name].push_back(tab_obj);
           }
         }
-
-        sleepThread(10);
       }
 
       /* Inserting the tables and views to the map in order to check if there are table objects
@@ -504,8 +485,6 @@ void ModelValidationHelper::validateModel(void)
           dup_objects[(*itr)->getName(true).remove('"')].push_back(*itr);
           itr++;
         }
-
-        sleepThread(10);
       }
 
       //Checking the map of duplicated objects
@@ -527,7 +506,6 @@ void ModelValidationHelper::validateModel(void)
         emit s_progressUpdated(progress, QString());
 
         i++; mitr++;
-        sleepThread(10);
       }
     }
 
@@ -546,7 +524,6 @@ void ModelValidationHelper::validateModel(void)
         generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
 
       itr++;
-      sleepThread(10);
     }
 
 
@@ -599,15 +576,11 @@ void ModelValidationHelper::applyFixes(void)
                          val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
                          val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
 
-        sleepThread(10);
-
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
 			}
 
 			emit s_fixApplied();
-
-			sleepThread(10);
 
       if(!valid_canceled)
         validateModel();
@@ -628,8 +601,9 @@ void ModelValidationHelper::cancelValidation(void)
 	valid_canceled=true;
 	fix_mode=false;
 	val_infos.clear();
-	export_thread->quit();
 	export_helper.cancelExport();
+  //export_thread->quit();
+  //export_thread->wait();
 	emitValidationCanceled();
 }
 
@@ -637,6 +611,7 @@ void ModelValidationHelper::captureThreadError(Exception e)
 {
   ValidationInfo val_info(e);
 	export_thread->quit();
+  export_thread->wait();
 	warn_count++;
 
 	/* Indicates the model invalidation only when there are validation warnings (broken refs. or no unique name)
@@ -653,6 +628,7 @@ void ModelValidationHelper::emitValidationCanceled(void)
 {
   db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
+  export_thread->wait();
 	emit s_validationCanceled();
 	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
 }

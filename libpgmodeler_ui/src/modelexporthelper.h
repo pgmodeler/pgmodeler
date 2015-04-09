@@ -146,11 +146,6 @@ class ModelExportHelper: public QObject {
     void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
                       bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
-		/*! \brief When the execution of the instance of this class is in another thread instead of main app
-		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
-		finished before completely quit the thread itself otherwise the method don't do anything. */
-		void sleepThread(unsigned msecs);
-
   signals:
 		//! \brief This singal is emitted whenever the export progress changes
     void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);

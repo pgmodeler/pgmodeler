@@ -180,12 +180,6 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
-void ModelExportHelper::sleepThread(unsigned msecs)
-{
-	if(this->thread()!=qApp->thread())
-    QThread::msleep(msecs);
-}
-
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
 {
 	int type_id;
@@ -385,8 +379,6 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_exportFinished();
 		else
 			emit s_exportCanceled();
-
-		sleepThread(20);
 	}
 	catch(Exception &e)
 	{
@@ -407,25 +399,25 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
     conn.close();
 
-		/* When running in a separated thread (other than the main application thread)
-		redirects the error in form of signal */
-		if(this->thread() && this->thread()!=qApp->thread())
-		{
+    /* When running in a separated thread (other than the main application thread)
+    redirects the error in form of signal */
+    if(this->thread() && this->thread()!=qApp->thread())
+    {
       errors.push_back(e);
-			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
-		}
-		else
-		{
+      emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
+    }
+    else
+    {
       //Redirects any error to terrorsr
       if(errors.empty())
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-			else
-			{
+        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+      else
+      {
         errors.push_back(e);
-				throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
-			}
-		}
-	}
+        throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+      }
+    }
+  }
 }
 
 void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
@@ -516,7 +508,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 
  if(use_tmp_names)
  {
-  emit s_progressUpdated(100, trUtf8("Restoring orignal names of database, roles and tablespaces."));
+  emit s_progressUpdated(100, trUtf8("Restoring original names of database, roles and tablespaces."));
   restoreObjectNames();
  }
 
@@ -721,7 +713,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           else
             msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
-          sleepThread(20);
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
         }
         //Check if the regex matches the sql command
@@ -800,7 +791,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             }
           }
 
-          sleepThread(20);
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
           is_create=is_drop=false;
           msg.clear();
@@ -808,7 +798,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
         else if(!sql_cmd.trimmed().isEmpty())
         {
           //General commands like grant, revoke or set aren't explicitly shown
-          sleepThread(20);
           emit s_progressUpdated(aux_prog, trUtf8("Running auxiliary command."), BASE_OBJECT, sql_cmd);
         }
 
@@ -823,7 +812,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
         sql_cmd.clear();
         ddl_tk_found=false;
-        sleepThread(20);
       }
 
       if(ts.atEnd() && !db_sql_cmds.empty())

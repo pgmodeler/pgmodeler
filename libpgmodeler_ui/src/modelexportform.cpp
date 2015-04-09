@@ -53,11 +53,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
   connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
-  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
+  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
+  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
+  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
+  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
   connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -251,12 +251,11 @@ void ModelExportForm::captureThreadError(Exception e)
 {
   QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()),
                                                             QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr, true);
-
   if(!e.getExtraInfo().isEmpty())
     PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), QPixmap(), item, true);
 
-  finishExport(trUtf8("Exporting process aborted!"));
   ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+  finishExport(trUtf8("Exporting process aborted!"));
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }

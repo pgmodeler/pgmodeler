@@ -56,17 +56,17 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
     connect(validation_thread, SIGNAL(started(void)), &validation_helper, SLOT(applyFixes(void)));
-    connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
-    connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)), Qt::QueuedConnection);
+    connect(&validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)));
+    connect(&validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)));
+    connect(&validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)));
+    connect(&validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)));
+    connect(&validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)));
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)));
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)));
+    connect(&validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)));
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)));
+    connect(&validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)));
+    connect(&validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
 
     connect(&validation_helper, &ModelValidationHelper::s_validationCanceled,
             [=](){ emit s_validationCanceled(); });
@@ -136,6 +136,7 @@ void ModelValidationWidget::clearOutput(void)
 void ModelValidationWidget::cancelValidation(void)
 {
  validation_helper.cancelValidation();
+ validation_thread->quit();
  cancel_btn->setEnabled(false);
 }
 

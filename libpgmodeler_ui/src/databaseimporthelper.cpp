@@ -196,7 +196,6 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 		}
 
     progress=(i/static_cast<float>(cnt))*10;
-    sleepThread(10);
 	}
 }
 
@@ -233,7 +232,6 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		objects.clear();
     progress=(i/static_cast<float>(object_oids.size()))*100;
 		oid_itr++; i++;
-    sleepThread(10);
 	}
 
 	//Retrieving all selected table columns
@@ -252,7 +250,6 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 
     progress=(i/static_cast<float>(column_oids.size()))*100;
 		col_itr++; i++;
-    sleepThread(10);
   }
 }
 
@@ -317,8 +314,7 @@ void DatabaseImportHelper::createObjects(void)
       not_created_objs.push_back(oid);
 		}
 
-    progress=(i/static_cast<float>(creation_order.size())) * 100;
-    sleepThread(10);
+    progress=(i/static_cast<float>(creation_order.size())) * 100;    
 	}
 
   //Trying to recreate objects that failed to be created previously
@@ -363,7 +359,6 @@ void DatabaseImportHelper::createObjects(void)
         }
 
         progress=(i/static_cast<float>(not_created_objs.size())) * 100;
-        sleepThread(10);
       }
 
       if(!import_canceled)
@@ -413,7 +408,6 @@ void DatabaseImportHelper::createConstraints(void)
 		}
 
     progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
-    sleepThread(20);
 	}
 }
 
@@ -442,7 +436,6 @@ void DatabaseImportHelper::createPermissions(void)
 			itr_obj++;
 
       progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
-      sleepThread(20);
 		}
 
     emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
@@ -466,7 +459,6 @@ void DatabaseImportHelper::createPermissions(void)
 
 			itr_cols++;
       progress=((i++)/static_cast<float>(col_perms.size())) * 100;
-      sleepThread(20);
 		}
 	}
 	catch(Exception &e)
@@ -506,19 +498,12 @@ void DatabaseImportHelper::updateFKRelationships(void)
 
       progress=(i/static_cast<float>(count)) * 100;
 			itr_tab++; i++;
-			sleepThread(10);
 		}
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void DatabaseImportHelper::sleepThread(unsigned msecs)
-{
-	if(qApp->thread()!=this->thread())
-    QThread::msleep(msecs);
 }
 
 void DatabaseImportHelper::importDatabase(void)
@@ -596,7 +581,6 @@ void DatabaseImportHelper::importDatabase(void)
 		//Forcing the update of tables and views in order to correctly draw their titles without the schema's name
 		dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
 		resetImportParameters();   
-		sleepThread(20);
 	}
 	catch(Exception &e)
 	{
@@ -604,11 +588,11 @@ void DatabaseImportHelper::importDatabase(void)
 
 		/* When running in a separated thread (other than the main application thread)
 		redirects the error in form of signal */
-		if(this->thread() && this->thread()!=qApp->thread())
-			emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
-		else
-			//Redirects any error to the user
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
+    if(this->thread() && this->thread()!=qApp->thread())
+      emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
+    else
+      //Redirects any error to the user
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
