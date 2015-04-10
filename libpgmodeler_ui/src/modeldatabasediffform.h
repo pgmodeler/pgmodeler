@@ -81,10 +81,10 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void closeEvent(QCloseEvent *event);
 
     //! brief Creates the helpers and threads
-    void createThreads(void);
+    void createThread(unsigned thread_id);
 
     //! brief Destroy the helpers and threads
-    void destroyThreads(void);
+    void destroyThread(unsigned thread_id);
 
     //! brief Destroy the imported model
     void destroyModel(void);
@@ -95,10 +95,13 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void saveDiffToFile(void);
     void finishDiff(void);
 
+    static const unsigned IMPORT_THREAD=0,
+    DIFF_THREAD=1,
+    EXPORT_THREAD=2;
+
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);
-
 		void setDatabaseModel(DatabaseModel *model);
 
   private slots:

@@ -553,33 +553,37 @@ void DatabaseImportHelper::importDatabase(void)
 		else
 			emit s_importCanceled();
 
-		//Generating random colors for relationships
-		if(rand_rel_colors)
-		{
-			vector<BaseObject *> *rels=nullptr;
-			vector<BaseObject *>::iterator itr, itr_end;
-			std::uniform_int_distribution<unsigned> dist(0,255);
-			ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+    if(!import_canceled)
+    {
+      //Generating random colors for relationships
+      if(rand_rel_colors)
+      {
+        vector<BaseObject *> *rels=nullptr;
+        vector<BaseObject *>::iterator itr, itr_end;
+        std::uniform_int_distribution<unsigned> dist(0,255);
+        ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
 
-			for(unsigned i=0; i < 2; i++)
-			{
-				rels=dbmodel->getObjectList(rel_type[i]);
-				itr=rels->begin();
-				itr_end=rels->end();
+        for(unsigned i=0; i < 2; i++)
+        {
+          rels=dbmodel->getObjectList(rel_type[i]);
+          itr=rels->begin();
+          itr_end=rels->end();
 
-				while(itr!=itr_end)
-				{
-					(*itr)->setCodeInvalidated(true);
-					dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
-																																			dist(rand_num_engine),
-																																			dist(rand_num_engine)));
-					itr++;
-				}
-			}
-		}
+          while(itr!=itr_end)
+          {
+            (*itr)->setCodeInvalidated(true);
+            dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
+                                                                          dist(rand_num_engine),
+                                                                          dist(rand_num_engine)));
+            itr++;
+          }
+        }
+      }
 
-		//Forcing the update of tables and views in order to correctly draw their titles without the schema's name
-		dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
+      //Forcing the update of tables and views in order to correctly draw their titles without the schema's name
+      dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
+    }
+
 		resetImportParameters();   
 	}
 	catch(Exception &e)
