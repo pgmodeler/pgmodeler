@@ -25,7 +25,7 @@ ModelValidationHelper::ModelValidationHelper(void)
 	conn=nullptr;
   valid_canceled=fix_mode=use_tmp_names=false;
 
-	export_thread=new QThread(this);
+  export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
 
   connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
@@ -33,7 +33,14 @@ ModelValidationHelper::ModelValidationHelper(void)
           this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)));
 
   connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
-	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+}
+
+ModelValidationHelper::~ModelValidationHelper(void)
+{
+  export_thread->quit();
+  export_thread->wait();
+  delete(export_thread);
 }
 
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)

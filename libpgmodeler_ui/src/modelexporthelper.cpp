@@ -21,7 +21,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
+  connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
 	try
 	{

@@ -521,7 +521,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	#endif
 
 	//pgModeler will not close when the validation thread is still running
-	if(model_valid_wgt->validation_thread->isRunning())
+  if(model_valid_wgt->isValidationRunning())
 		event->ignore();
 	else
 	{

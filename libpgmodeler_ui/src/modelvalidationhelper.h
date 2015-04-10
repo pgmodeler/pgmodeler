@@ -74,6 +74,7 @@ class ModelValidationHelper: public QObject {
 
 	public:
 		ModelValidationHelper(void);
+    ~ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */

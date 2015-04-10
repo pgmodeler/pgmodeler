@@ -160,8 +160,6 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
       else if(!aux_obj && !tab_obj->isAddedByGeneralization())
         generateDiffInfo(diff_type, tab_obj);
     }
-
-    QThread::msleep(15);
   }
 }
 
@@ -312,8 +310,6 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                              trUtf8("Skipping object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
     }
-
-    QThread::msleep(15);
 	}
 }
 
