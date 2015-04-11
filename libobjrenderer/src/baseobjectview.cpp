@@ -202,7 +202,7 @@ void BaseObjectView::loadObjectsStyle(void)
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+    xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +

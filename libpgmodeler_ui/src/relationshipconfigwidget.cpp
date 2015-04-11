@@ -123,7 +123,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 	{
 		QString patterns_sch, root_dir;
 
-		root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+    root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 						 GlobalAttributes::DIR_SEPARATOR;
 
 		patterns_sch=root_dir +

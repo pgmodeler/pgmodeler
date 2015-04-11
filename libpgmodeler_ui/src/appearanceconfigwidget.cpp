@@ -117,7 +117,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 
 		if(model->getObjectCount()==0)
 		{
-			model->loadModel(GlobalAttributes::CONFIGURATIONS_DIR +
+      model->loadModel(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 											 GlobalAttributes::DIR_SEPARATOR +
 											 GlobalAttributes::EXAMPLE_MODEL);
 

@@ -442,7 +442,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 { 
 	try
 	{
-    QString root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+    QString root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
                      GlobalAttributes::DIR_SEPARATOR,
 
         snippet_sch=root_dir +
