@@ -24,6 +24,7 @@
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
   model=nullptr;
+  viewp=nullptr;
   setupUi(this);
 
   export_thread=new QThread(this);
@@ -83,12 +84,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   zoom_cmb->setCurrentText(QString("100%"));
 
   settings_tbw->setTabEnabled(1, false);
-}
-
-
-void ModelExportForm::updateScene(void)
-{
-  model->scene->update();
 }
 
 void ModelExportForm::exec(ModelWidget *model)
@@ -321,6 +316,7 @@ void ModelExportForm::finishExport(const QString &msg)
 
   if(viewp)
   {
+    export_thread->wait();
     delete(viewp);
     viewp=nullptr;
   }

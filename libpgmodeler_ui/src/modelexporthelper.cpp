@@ -44,11 +44,9 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 
     emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), BASE_OBJECT);
 		emit s_exportFinished();
-    resetExportParams();
 	}
 	catch(Exception &e)
 	{
-    resetExportParams();
 		disconnect(db_model, nullptr, this, nullptr);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -201,8 +199,6 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
     if(view!=viewp)
       delete(view);
-
-    resetExportParams();
 	}
 	catch(Exception &e)
 	{
@@ -943,6 +939,7 @@ void ModelExportHelper::exportToDBMS(void)
       }
       catch(Exception &e)
       {
+        resetExportParams();
         /* When running in a separated thread (other than the main application thread)
         redirects the error in form of signal */
         if(this->thread() && this->thread()!=qApp->thread())
@@ -951,6 +948,7 @@ void ModelExportHelper::exportToDBMS(void)
           throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
       }
     }
+    resetExportParams();
   }
 }
 
@@ -959,9 +957,12 @@ void ModelExportHelper::exportToPNG(void)
   try
   {
     exportToPNG(scene, filename, zoom, show_grid, show_delim, page_by_page, viewp);
+    resetExportParams();
   }
   catch(Exception &e)
   {
+    resetExportParams();
+
     /* When running in a separated thread (other than the main application thread)
     redirects the error in form of signal */
     if(this->thread() && this->thread()!=qApp->thread())
@@ -976,9 +977,11 @@ void ModelExportHelper::exportToSQL(void)
   try
   {
     exportToSQL(db_model, filename, pgsql_ver);
+    resetExportParams();
   }
   catch(Exception &e)
   {
+    resetExportParams();
     /* When running in a separated thread (other than the main application thread)
     redirects the error in form of signal */
     if(this->thread() && this->thread()!=qApp->thread())
