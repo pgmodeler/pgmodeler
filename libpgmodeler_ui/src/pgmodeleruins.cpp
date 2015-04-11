@@ -24,7 +24,6 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
     label->setMaximumHeight(label->heightForWidth(label->width()));
   }
 
-
   if(!parent)
     output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 

@@ -88,6 +88,17 @@ class ModelExportHelper: public QObject {
     //! brief Stores the original object names before the call of generateRandomObjectNames()
     map<BaseObject *, QString> orig_obj_names;
 
+    ObjectsScene *scene;
+
+    QGraphicsView *viewp;
+
+    QString filename;
+
+    double zoom;
+
+    bool show_grid, show_delim, page_by_page;
+
+
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
 
@@ -111,16 +122,8 @@ class ModelExportHelper: public QObject {
     //! brief Returns if the error code is one of the treated by the export process as object duplication error
     bool isDuplicationError(const QString &error_code);
 
-  protected:
-    /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
-        This form receive a database model as input and the sql code to be exported will be generated from it.
-        \note The params drop_db and drop_objs can't be true at the same time. */
-    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
-                               bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+    void resetExportParams(void);
 
-    /*! \brief Configures the DBMS export params before start the export thread (only in thread mode).
-        This form receive a previously generated sql buffer to be exported the the helper */
-    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
@@ -136,8 +139,11 @@ class ModelExportHelper: public QObject {
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
-		before draw it on the pixmap */
-    void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page);
+    before draw it on the pixmap. It is possible to specified an viewport (QGraphicsView instance) previously allocated
+    and the method will use it instead of allocate a local one. This is a workaround to error raised by QCoreApplication::sendPostedEvents
+    when running the helper in a thread */
+    void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim,
+                     bool page_by_page, QGraphicsView *viewp=nullptr);
 
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
@@ -145,6 +151,25 @@ class ModelExportHelper: public QObject {
     \note The params drop_db and drop_objs can't be true at the same time. */
     void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
                       bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+
+    /*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
+        This form receive a database model as input and the sql code to be exported will be generated from it.
+        \note The params drop_db and drop_objs can't be true at the same time. */
+    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
+                               bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+
+    /*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
+        This form receive a previously generated sql buffer to be exported the the helper */
+    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
+
+    /*! \brief Configures the SQL export params before start the export thread (when in thread mode).
+        This form receive the model, output filename and pgsql version to be used */
+    void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
+
+    /*! \brief Configures the PNG export params before start the export thread (when in thread mode).
+        This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
+    void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
+                              bool show_grid, bool show_delim, bool page_by_page);
 
   signals:
 		//! \brief This singal is emitted whenever the export progress changes
@@ -162,8 +187,10 @@ class ModelExportHelper: public QObject {
     //! \brief This signal is emited when the export has encountered a ignorable error (only in thread mode)
     void s_errorIgnored(QString err_code, QString err_msg, QString cmd);
 
-	protected slots:
+  public slots:
 		void exportToDBMS(void);
+    void exportToPNG(void);
+    void exportToSQL(void);
 		void cancelExport(void);
 
 	private slots:

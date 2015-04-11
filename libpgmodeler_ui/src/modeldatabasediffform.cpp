@@ -277,10 +277,12 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
+  //Destroy previously allocated threads and helper before start over.
   destroyModel();
   destroyThread(IMPORT_THREAD);
   destroyThread(DIFF_THREAD);
   destroyThread(EXPORT_THREAD);
+
 	clearOutput();
   importDatabase();
 

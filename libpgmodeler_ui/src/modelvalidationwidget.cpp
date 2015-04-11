@@ -45,10 +45,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
     connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
-		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
-		connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(configureValidation(void)));
-		connect(sql_validation_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
-    connect(use_tmp_names_chk, SIGNAL(toggled(bool)), this, SLOT(configureValidation(void)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
     connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
@@ -459,7 +455,7 @@ void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_ty
 
 void ModelValidationWidget::configureValidation(void)
 {
-	if(model_wgt)
+  if(model_wgt && validation_helper)
 	{
 		Connection *conn=nullptr;
 		QString ver;

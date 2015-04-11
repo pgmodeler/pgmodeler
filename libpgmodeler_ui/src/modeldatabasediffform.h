@@ -95,9 +95,10 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void saveDiffToFile(void);
     void finishDiff(void);
 
+    //! brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
     static const unsigned IMPORT_THREAD=0,
-    DIFF_THREAD=1,
-    EXPORT_THREAD=2;
+                          DIFF_THREAD=1,
+                          EXPORT_THREAD=2;
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);

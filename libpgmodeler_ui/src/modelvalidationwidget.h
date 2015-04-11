@@ -60,6 +60,8 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     //! brief Creates a new validation thread
     void createThread(void);
 
+    void configureValidation(void);
+
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
 
@@ -78,7 +80,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     void updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void updateObjectName(QString obj_name, ObjectType obj_type);
 		void reenableValidation(void);
-		void configureValidation(void);
 		void cancelValidation(void);
 		void swapObjectsIds(void);
     void validateRelationships(void);
