@@ -173,9 +173,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 	connect(action_fix_model, SIGNAL(triggered(bool)), this, SLOT(fixModel()));
-
-	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -524,7 +521,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	#endif
 
 	//pgModeler will not close when the validation thread is still running
-	if(model_valid_wgt->validation_thread->isRunning())
+  if(model_valid_wgt->isValidationRunning())
 		event->ignore();
 	else
 	{
@@ -884,9 +881,6 @@ void MainWindow::showMainMenu(void)
 
 void MainWindow::setCurrentModel(void)
 {
-  QObject *object=nullptr;
-
-	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
   action_design->setEnabled(models_tbw->count() > 0);
 
@@ -902,18 +896,6 @@ void MainWindow::setCurrentModel(void)
 	edit_menu->addAction(action_redo);
   edit_menu->addSeparator();
 
-	if(object==action_next || object==action_previous)
-	{
-		models_tbw->blockSignals(true);
-
-		if(object==action_next)
-			models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
-		else if(object==action_previous)
-			models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
-
-		models_tbw->blockSignals(false);
-	}
-
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
 
@@ -921,7 +903,7 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
+  models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
   if(current_model)
@@ -1540,7 +1522,7 @@ void MainWindow::updateDockWidgets(void)
 
 	/* Any operation executed over the model will reset the validation and
 	the finder will execute the search again */
-	model_valid_wgt->setModel(current_model);
+  model_valid_wgt->setModel(current_model);
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
 		obj_finder_wgt->findObjects();

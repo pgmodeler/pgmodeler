@@ -52,12 +52,22 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
   connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
-  connect(export_thread, SIGNAL(started(void)), &export_hlp, SLOT(exportToDBMS(void)));
-  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
-  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
+  connect(export_thread, &QThread::started,
+          [=]() {
+
+              if(export_to_dbms_rb->isChecked())
+                export_hlp.exportToDBMS();
+              else if(export_to_img_rb->isChecked())
+                export_hlp.exportToPNG();
+              else
+                export_hlp.exportToSQL();
+          });
+
+  connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
+  connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
+  connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
+  connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
+  connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
   connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -73,6 +83,12 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   zoom_cmb->setCurrentText(QString("100%"));
 
   settings_tbw->setTabEnabled(1, false);
+}
+
+
+void ModelExportForm::updateScene(void)
+{
+  model->scene->update();
 }
 
 void ModelExportForm::exec(ModelWidget *model)
@@ -146,11 +162,17 @@ void ModelExportForm::exportModel(void)
     output_trw->clear();
     settings_tbw->setTabEnabled(1, true);
     settings_tbw->setCurrentIndex(1);
+    enableExportModes(false);
+    cancel_btn->setEnabled(true);
 
     //Export to png
     if(export_to_img_rb->isChecked())
-      export_hlp.exportToPNG(model->scene, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
-                             show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
+    {
+      viewp=new QGraphicsView(model->scene);
+      export_hlp.setExportToPNGParams(model->scene, viewp, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
+                                      show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
+      export_thread->start();
+    }
     else
     {
       progress_lbl->setText(trUtf8("Initializing model export..."));
@@ -159,7 +181,8 @@ void ModelExportForm::exportModel(void)
       if(export_to_file_rb->isChecked())
       {
         progress_lbl->setText(trUtf8("Saving file '%1'").arg(file_edt->text()));
-        export_hlp.exportToSQL(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
+        export_hlp.setExportToSQLParams(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
+        export_thread->start();
       }
       //Exporting directly to DBMS
       else
@@ -175,8 +198,6 @@ void ModelExportForm::exportModel(void)
                                          drop_chk->isChecked() && drop_db_rb->isChecked(),
                                          drop_chk->isChecked() && drop_objs_rb->isChecked());
         export_thread->start();
-        enableExportModes(false);
-        cancel_btn->setEnabled(true);
       }
     }
   }
@@ -251,12 +272,11 @@ void ModelExportForm::captureThreadError(Exception e)
 {
   QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()),
                                                             QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr, true);
-
   if(!e.getExtraInfo().isEmpty())
     PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), QPixmap(), item, true);
 
-  finishExport(trUtf8("Exporting process aborted!"));
   ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+  finishExport(trUtf8("Exporting process aborted!"));
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
@@ -298,6 +318,12 @@ void ModelExportForm::finishExport(const QString &msg)
   progress_pb->setValue(100);
   progress_lbl->setText(msg);
   progress_lbl->repaint();
+
+  if(viewp)
+  {
+    delete(viewp);
+    viewp=nullptr;
+  }
 }
 
 void ModelExportForm::enableExportModes(bool value)

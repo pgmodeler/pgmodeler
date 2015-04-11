@@ -24,7 +24,6 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
     label->setMaximumHeight(label->heightForWidth(label->width()));
   }
 
-
   if(!parent)
     output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 
@@ -119,6 +118,8 @@ QString PgModelerUiNS::formatMessage(const QString &msg)
         pos1 += start_tags[chr_idx].length() - 1;
         fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
       }
+      else
+        break;
 
       pos=pos1;
     }

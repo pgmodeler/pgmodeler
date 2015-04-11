@@ -159,9 +159,10 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
          one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
       else if(!aux_obj && !tab_obj->isAddedByGeneralization())
         generateDiffInfo(diff_type, tab_obj);
-    }
 
-    QThread::msleep(15);
+      if(diff_canceled)
+        break;
+    }
   }
 }
 
@@ -174,6 +175,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
   unsigned idx=0, factor=0, prog=0;
 	DatabaseModel *aux_model=nullptr;
   bool objs_differs=false, xml_differs=false;
+
+  if(diff_canceled)
+    return;
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
@@ -197,8 +201,6 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
   for(auto &obj_itr : obj_order)
 	{
-		if(diff_canceled) break;
-
 		object=obj_itr.second;
 		obj_type=object->getObjectType();
 		idx++;
@@ -304,6 +306,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
         if(!source_model->getAlterDefinition(imported_model).isEmpty())
          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
       }
+
+      if(diff_canceled)
+        break;
     }
     else
     {
@@ -311,9 +316,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
                              trUtf8("Skipping object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
                              object->getObjectType());
-    }
 
-    QThread::msleep(15);
+      if(diff_canceled)
+        break;
+    }
 	}
 }
 
@@ -494,6 +500,9 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         {
           if(obj->getObjectType()!=BASE_RELATIONSHIP)
             generateDiffInfo(diff_type, obj);
+
+          if(diff_canceled)
+            break;
         }
       }
     }

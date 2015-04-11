@@ -27,9 +27,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   {
     setupUi(this);
 
+    imported_model=nullptr;
     import_helper=nullptr;
     diff_helper=nullptr;
-    imported_model=nullptr;
+    export_helper=nullptr;
     import_thread=diff_thread=export_thread=nullptr;
     import_item=diff_item=export_item=nullptr;
     export_conn=nullptr;
@@ -97,6 +98,10 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
     connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
     connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
     connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
+    connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+    connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+    connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+    connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 
     resetForm();
   }
@@ -108,7 +113,9 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
 
 ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 {
-	destroyThreads();
+  destroyThread(IMPORT_THREAD);
+  destroyThread(DIFF_THREAD);
+  destroyThread(EXPORT_THREAD);
   destroyModel();
 }
 
@@ -138,76 +145,68 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
     event->ignore();
 }
 
-void ModelDatabaseDiffForm::createThreads(void)
+void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 {
-	import_thread=new QThread;
-	import_helper=new DatabaseImportHelper;
-	import_helper->moveToThread(import_thread);
+  if(thread_id==IMPORT_THREAD)
+  {
+    import_thread=new QThread;
+    import_helper=new DatabaseImportHelper;
+    import_helper->moveToThread(import_thread);
 
-	diff_thread=new QThread;
-	diff_helper=new ModelsDiffHelper;
-	diff_helper->moveToThread(diff_thread);
+    connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
+    connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
+    connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
+    connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  }
+  else if(thread_id==DIFF_THREAD)
+  {
+    diff_thread=new QThread;
+    diff_helper=new ModelsDiffHelper;
+    diff_helper->moveToThread(diff_thread);
 
-  export_thread=new QThread;
-  export_helper=new ModelExportHelper;
-  export_helper->setIgnoredErrors({ QString("0A000") });
-  export_helper->moveToThread(export_thread);
+    connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
+    connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
+    connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
+    connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+    connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::BlockingQueuedConnection);
+  }
+  else
+  {
+    export_thread=new QThread;
+    export_helper=new ModelExportHelper;
+    export_helper->setIgnoredErrors({ QString("0A000") });
+    export_helper->moveToThread(export_thread);
 
-  connect(apply_on_server_btn, &QPushButton::clicked,
-          [=](){ apply_on_server_btn->setEnabled(false);
-                 exportDiff(false); });
+    connect(apply_on_server_btn, &QPushButton::clicked,
+            [=](){ apply_on_server_btn->setEnabled(false);
+                   exportDiff(false); });
 
-  connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
-  connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
-  connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
-
-  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
-
-  connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
-  connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()), Qt::QueuedConnection);
-  connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
-  connect(diff_helper, SIGNAL(s_objectsDiffInfoGenerated(ObjectsDiffInfo)), this, SLOT(updateDiffInfo(ObjectsDiffInfo)), Qt::QueuedConnection);
-
-  connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)), Qt::QueuedConnection);
-  connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()), Qt::QueuedConnection);
-  connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
-  connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::QueuedConnection);
-
-  connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-  connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-  connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-  connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+    connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
+    connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
+    connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
+    connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
+    connect(export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  }
 }
 
-void ModelDatabaseDiffForm::destroyThreads(void)
+void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 {
-  if(import_thread)
-	{
-		import_thread->quit();
-		import_thread->wait();
-		delete(import_thread);
-		import_thread=nullptr;
-    delete(import_helper);
-    import_helper=nullptr;
-	}
-
-  if(diff_thread)
-	{
-		diff_thread->quit();
-		diff_thread->wait();
-		delete(diff_thread);
-		diff_thread=nullptr;
-    delete(diff_helper);
-    diff_helper=nullptr;
-	}
-
-  if(export_thread)
+  if(thread_id==IMPORT_THREAD && import_thread)
   {
-    export_thread->quit();
-    export_thread->wait();
-
+    delete(import_thread);
+    delete(import_helper);
+    import_thread=nullptr;
+    import_helper=nullptr;
+  }
+  else if(thread_id==DIFF_THREAD && diff_thread)
+  {
+    diff_thread=nullptr;
+    diff_helper=nullptr;
+    delete(diff_thread);
+    delete(diff_helper);
+  }
+  else if(export_thread)
+  {
     if(export_conn)
     {
       delete(export_conn);
@@ -215,8 +214,8 @@ void ModelDatabaseDiffForm::destroyThreads(void)
     }
 
     delete(export_thread);
-    export_thread=nullptr;
     delete(export_helper);
+    export_thread=nullptr;
     export_helper=nullptr;
   }
 }
@@ -278,9 +277,13 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
+  //Destroy previously allocated threads and helper before start over.
   destroyModel();
+  destroyThread(IMPORT_THREAD);
+  destroyThread(DIFF_THREAD);
+  destroyThread(EXPORT_THREAD);
+
 	clearOutput();
-	createThreads();
   importDatabase();
 
   buttons_wgt->setEnabled(false);
@@ -297,6 +300,8 @@ void ModelDatabaseDiffForm::importDatabase(void)
 {
 	try
 	{
+    createThread(IMPORT_THREAD);
+
 		Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>())), conn1;
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
@@ -337,6 +342,8 @@ void ModelDatabaseDiffForm::importDatabase(void)
 
 void ModelDatabaseDiffForm::diffModels(void)
 {
+  createThread(DIFF_THREAD);
+
 	step_lbl->setText(trUtf8("Comparing the model <strong>%1</strong> and database <strong>%2</strong>...")
 										.arg(source_model->getName())
 										.arg(imported_model->getName()));
@@ -367,6 +374,8 @@ void ModelDatabaseDiffForm::diffModels(void)
 
 void ModelDatabaseDiffForm::exportDiff(bool confirm)
 {
+  createThread(EXPORT_THREAD);
+
   Messagebox msg_box;
 
   if(confirm)
@@ -486,16 +495,24 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
     PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
   }
 
-  if(import_helper)
-   import_helper->cancelImport();
+  if(import_helper && import_thread->isRunning())
+  {
+    import_helper->cancelImport();
+    import_thread->quit();
+  }
 
-  if(diff_helper)
-   diff_helper->cancelDiff();
+  if(diff_helper && diff_thread->isRunning())
+  {
+    diff_helper->cancelDiff();
+    diff_thread->quit();
+  }
 
-  if(export_helper)
-   export_helper->cancelExport();
+  if(export_helper && export_thread->isRunning())
+  {
+    export_helper->cancelExport();
+    export_thread->quit();
+  }
 
-  destroyThreads();
   resetButtons();
   process_paused=false;
 }
@@ -524,9 +541,8 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-  step_pb->setValue(30);
   import_thread->quit();
-  import_thread->wait();
+  step_pb->setValue(30);
   diffModels();
 }
 
@@ -535,7 +551,6 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
   sqlcode_txt->setPlainText(diff_helper->getDiffDefinition()); 
   settings_tbw->setTabEnabled(2, true);
   diff_thread->quit();
-  diff_thread->wait();
 
   if(store_in_file_rb->isChecked())
     saveDiffToFile();

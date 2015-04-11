@@ -70,15 +70,11 @@ class ModelValidationHelper: public QObject {
     //! brief Stores the analyzed relationship marked as invalidated
     vector<BaseObject *> inv_rels;
 
-		/*! \brief When the execution of the instance of this class is in another thread instead of main app
-		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
-		finished before completely quit the thread itself otherwise the method don't do anything. */
-		void sleepThread(unsigned msecs);
-
 		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper(void);
+    ~ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */

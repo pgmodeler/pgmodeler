@@ -89,10 +89,10 @@ void DatabaseImportForm::createThread(void)
   import_helper->moveToThread(import_thread);
 
   connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
-  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)), Qt::QueuedConnection);
-  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::QueuedConnection);
+  connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
+  connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
+  connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+  connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 }
 
 void DatabaseImportForm::destroyThread(void)
@@ -456,7 +456,6 @@ void DatabaseImportForm::finishImport(const QString &msg)
   if(import_thread->isRunning())
     import_thread->quit();
 
-	import_btn->setEnabled(true);
 	cancel_btn->setEnabled(false);
 	options_gb->setEnabled(true);
 	progress_pb->setValue(100);
