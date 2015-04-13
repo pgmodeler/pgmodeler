@@ -197,7 +197,7 @@ class ModelWidget: public QWidget {
 
 	public:
     static constexpr double MINIMUM_ZOOM=0.05f,
-													 MAXIMUM_ZOOM=4.0f,
+                           MAXIMUM_ZOOM=4.0f,
 													 ZOOM_INCREMENT=0.05f;
 
 		ModelWidget(QWidget *parent = 0);

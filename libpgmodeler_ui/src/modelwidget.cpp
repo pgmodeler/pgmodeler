@@ -532,18 +532,22 @@ void ModelWidget::restoreLastCanvasPosition(void)
 
 void ModelWidget::applyZoom(double zoom)
 {
-	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
+  float curr_zoom=static_cast<float>(zoom),
+        min_zoom=static_cast<float>(MINIMUM_ZOOM),
+        max_zoom=static_cast<float>(MAXIMUM_ZOOM);
+
+  if(curr_zoom >= min_zoom && curr_zoom <= max_zoom)
   {
-    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(zoom * 100, 'g' , 3)));
+		viewport->resetTransform();
+		viewport->scale(zoom, zoom);
+    this->current_zoom=zoom;
+
+    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
     zoom_info_lbl->setVisible(true);
     zoom_info_timer.start();
 
-		viewport->resetTransform();
-		viewport->scale(zoom, zoom);
-
-		this->current_zoom=zoom;
-		emit s_zoomModified(zoom);
-	}
+    emit s_zoomModified(zoom);
+  }
 }
 
 double ModelWidget::getCurrentZoom(void)
