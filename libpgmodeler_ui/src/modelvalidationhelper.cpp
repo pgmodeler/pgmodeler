@@ -119,6 +119,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 					obj_id=info_obj->getObjectId();
         }
       }
+      else
+      {
+        BaseObject::updateObjectId(info_obj);
+      }
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
@@ -180,7 +184,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				refs.pop_back();
 			}
 		}
-    else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+    /* ** CODE DISABLED:
+          It's not a good idea to move the relationship to the end of list
+          it may break other special objects **  */
+    /* else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
     {
       vector<BaseObject *> *rels=db_model->getObjectList(OBJ_RELATIONSHIP);
       vector<BaseObject *>::iterator itr;
@@ -192,14 +199,18 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
         rels->erase(itr);
         rels->push_back(info.getObject());
         BaseObject::updateObjectId(info.getObject());
-        info.getObject();
       }
-    }
+    }*/
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+bool ModelValidationHelper::isValidationCanceled(void)
+{
+  return(valid_canceled);
 }
 
 unsigned ModelValidationHelper::getWarningCount(void)
@@ -507,20 +518,24 @@ void ModelValidationHelper::validateModel(void)
     }
 
 
-    /* Step 3: Checking if there are some invalidated relationship. In some cases, specially with identifier relationship,
+    /* Step 3: Checking if there are some invalidated relationship. In some cases, specially with identifier and generalization relationships,
        the columns aren't correctly propagated due to creation order and special behavior of those objects. Thus, in order to
-       keep all columns synchonized it is need to make this step and change the relationship creation order if needed */
-    obj_list=db_model->getObjectList(OBJ_RELATIONSHIP);
-    itr=db_model->getObjectList(OBJ_RELATIONSHIP)->begin();
-
-    while(itr!=obj_list->end() && !valid_canceled)
+       keep all columns synchonized it is need to make this step and change the relationship creation order if needed. This step is executed
+       only when there is no validation infos generated because for each broken relationship there is the need to do a revalidation of all relationships */
+    if(val_infos.empty())
     {
-      progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
+      obj_list=db_model->getObjectList(OBJ_RELATIONSHIP);
+      itr=db_model->getObjectList(OBJ_RELATIONSHIP)->begin();
 
-      if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
-        generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
+      while(itr!=obj_list->end() && !valid_canceled)
+      {
+        progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
 
-      itr++;
+        if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
+          generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
+
+        itr++;
+      }
     }
 
 
@@ -561,17 +576,21 @@ void ModelValidationHelper::applyFixes(void)
 {
 	if(fix_mode)
 	{
-		bool validate_rels=false;
+    bool validate_rels=false, found_broken_rels;
 
-		while(!val_infos.empty() && !valid_canceled)
+    while(!val_infos.empty() && !valid_canceled && !found_broken_rels)
 		{
 			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
 			{
         if(!validate_rels)
           validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
                          val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
-                         val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
-                         val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
+                         val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
+
+        /* Checking if a broken relatinship is found, when this is the case all the pending validation info
+           will not be analyzed until no broken relationship is found */
+        if(!found_broken_rels)
+          found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
 
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
@@ -579,13 +598,14 @@ void ModelValidationHelper::applyFixes(void)
 
 			emit s_fixApplied();
 
-      if(!valid_canceled)
+      if(!valid_canceled && !found_broken_rels)
         validateModel();
 		}
 
-		if(!valid_canceled && val_infos.empty())
+    if(!valid_canceled && (found_broken_rels || val_infos.empty()))
     {
-      if(validate_rels)
+      //Emits a signal indicating that the relationships must revalidated
+      if(validate_rels || found_broken_rels)
         emit s_relsValidationRequested();
 
       fix_mode=false;

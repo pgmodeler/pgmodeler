@@ -54,7 +54,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 
 	private slots:
 		void showObjectId(void);
-		void changeObjectsIds(void);
+		void swapObjectsIds(void);
 		
 	public slots:
 		void show(void);

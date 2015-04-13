@@ -5,7 +5,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-    vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX, OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
+    vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
+                                                               OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
     setupUi(this);
 
 		src_object_sel=nullptr;
@@ -46,7 +47,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
     setModel(nullptr);
 
 		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(changeObjectsIds(void)));
+    connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds(void)));
 		connect(src_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(dst_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(src_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
@@ -139,7 +140,7 @@ void SwapObjectsIdsWidget::showObjectId(void)
                              dst_object_sel->getSelectedObject());
 }
 
-void SwapObjectsIdsWidget::changeObjectsIds(void)
+void SwapObjectsIdsWidget::swapObjectsIds(void)
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 						 *dst_obj=dst_object_sel->getSelectedObject();
@@ -147,7 +148,7 @@ void SwapObjectsIdsWidget::changeObjectsIds(void)
 										*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
 	try
-	{
+	{    
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		if(graph_src_obj)

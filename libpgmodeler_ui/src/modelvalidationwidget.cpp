@@ -203,7 +203,9 @@ bool ModelValidationWidget::isValidationRunning(void)
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
-  if(!validation_thread->isRunning())
+  if(validation_thread &&
+     (!validation_thread->isRunning() ||
+       validation_helper->isValidationCanceled()))
     return;
 
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
@@ -389,6 +391,10 @@ void ModelValidationWidget::applyFixes(void)
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
+  if(validation_thread &&
+     (!validation_thread->isRunning() || validation_helper->isValidationCanceled()))
+    return;
+
 	QTreeWidgetItem *item=nullptr, *cmd_item=nullptr;
   QLabel *cmd_label=nullptr;
 
