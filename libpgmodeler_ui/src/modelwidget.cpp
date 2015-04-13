@@ -532,11 +532,7 @@ void ModelWidget::restoreLastCanvasPosition(void)
 
 void ModelWidget::applyZoom(double zoom)
 {
-  float curr_zoom=static_cast<float>(zoom),
-        min_zoom=static_cast<float>(MINIMUM_ZOOM),
-        max_zoom=static_cast<float>(MAXIMUM_ZOOM);
-
-  if(curr_zoom >= min_zoom && curr_zoom <= max_zoom)
+  if(zoom > (MINIMUM_ZOOM - ZOOM_INCREMENT) && zoom <= MAXIMUM_ZOOM)
   {
 		viewport->resetTransform();
 		viewport->scale(zoom, zoom);
