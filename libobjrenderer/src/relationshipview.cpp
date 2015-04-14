@@ -542,7 +542,7 @@ void RelationshipView::configureLine(void)
 					rec_tab=rel->getReceiverTable();
 				}
 
-				rec_tab->getForeignKeys(fks, true, ref_tab);
+        rec_tab->getForeignKeys(fks, true, ref_tab);
 				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
 				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
 
@@ -613,6 +613,24 @@ void RelationshipView::configureLine(void)
 						p_central[1]=fk_pnt;
 					}
 				}
+        else
+        {
+          /* Fallback configuration: If no fk was found in the receiver table uses
+             the tables' center points to configure the line in order to avoid glitched lines.
+             This situation may happen when the relationship is being validated and the needed fks was not
+             created yet. In a second interaction of the rel. validation they are created
+             and the relationship is properly configured */
+          if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+          {
+            p_central[1]=pk_pnt=ref_tab_view->getCenter();
+            p_central[0]=fk_pnt=rec_tab_view->getCenter();
+          }
+          else
+          {
+            p_central[0]=pk_pnt=ref_tab_view->getCenter();
+            p_central[1]=fk_pnt=rec_tab_view->getCenter();
+          }
+        }
 			}
 
 			points=base_rel->getPoints();
