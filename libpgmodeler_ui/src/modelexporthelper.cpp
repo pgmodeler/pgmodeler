@@ -509,33 +509,33 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
  {
    emit s_progressUpdated(99, trUtf8("Destroying objects created on the server."));
 
-	 //Dropping the database
-	 if(db_created)
-		 conn.executeDDLCommand(drop_cmd.arg(db_model->getSQLName()).arg(db_model->getName(true)));
+   //Dropping the database
+   if(db_created)
+     conn.executeDDLCommand(drop_cmd.arg(db_model->getSQLName()).arg(db_model->getName(true)));
 
-	 //Drop the roles / tablespaces created
-	 for(type_id=1; type_id >=0; type_id--)
-	 {
-		 while(created_objs[types[type_id]] >= 0)
-		 {
-			 object=db_model->getObject(created_objs[types[type_id]], types[type_id]);
+   //Drop the roles / tablespaces created
+   for(type_id=1; type_id >=0; type_id--)
+   {
+     while(created_objs[types[type_id]] >= 0)
+     {
+       object=db_model->getObject(created_objs[types[type_id]], types[type_id]);
 
-			 try
-			 {
-				 if(!object->isSQLDisabled())
-					 conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
-			 }
+       try
+       {
+         if(!object->isSQLDisabled())
+           conn.executeDDLCommand(drop_cmd.arg(object->getSQLName()).arg(object->getName(true)));
+       }
        catch(Exception &){}
 
-			 created_objs[types[type_id]]--;
-		 }
-	 }
- }
+       created_objs[types[type_id]]--;
+     }
+   }
 
- if(use_tmp_names)
- {
-  emit s_progressUpdated(100, trUtf8("Restoring original names of database, roles and tablespaces."));
-  restoreObjectNames();
+   if(use_tmp_names)
+   {
+     emit s_progressUpdated(100, trUtf8("Restoring original names of database, roles and tablespaces."));
+     restoreObjectNames();
+   }
  }
 
  if(db_sql_reenabled)
@@ -630,7 +630,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
   ObjectType obj_type=BASE_OBJECT;
   bool ddl_tk_found=false, is_create=false, is_drop=false;
   unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
-           factor=(db_name.isEmpty() ? 70 : 100);
+           factor=(db_name.isEmpty() ? 70 : 90);
   int pos=0, pos1=0, comm_cnt=0;
 
   //Regexp used to extract the object being created

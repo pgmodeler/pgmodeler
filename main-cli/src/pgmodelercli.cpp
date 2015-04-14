@@ -477,7 +477,7 @@ int PgModelerCLI::exec(void)
 void PgModelerCLI::updateProgress(int progress, QString msg)
 {
   if(progress > 0)
-    out << msg <<  QString("(") << progress << QString("%)") << endl;
+    out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
   else
     out << msg << endl;
 }
