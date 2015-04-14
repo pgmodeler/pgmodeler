@@ -43,7 +43,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
-		void hideEvent(QHideEvent *);
+    void closeEvent(QCloseEvent *);
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);

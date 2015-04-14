@@ -298,62 +298,70 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	{
     item->setIcon(0, QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
-		//Listing the referrer object on output pane
-		refs=val_info.getReferences();
-		while(!refs.empty())
-		{
-			item1=new QTreeWidgetItem(item);
-			label1=new QLabel;
-      label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-			item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
+    if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+    {
+      PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process."),
+                                          QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item, true);
+    }
+    else
+    {
+      //Listing the referrer object on output pane
+      refs=val_info.getReferences();
+      while(!refs.empty())
+      {
+        item1=new QTreeWidgetItem(item);
+        label1=new QLabel;
+        label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        item1->setIcon(0, QPixmap(QString(":/icones/icones/") + refs.back()->getSchemaName() + QString(".png")));
 
-			tab_obj=dynamic_cast<TableObject *>(refs.back());
-			ref_name=refs.back()->getName(true);
+        tab_obj=dynamic_cast<TableObject *>(refs.back());
+        ref_name=refs.back()->getName(true);
 
-			if(tab_obj)
-        ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + QString(".") + ref_name;
+        if(tab_obj)
+          ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + QString(".") + ref_name;
 
-			if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
-			{
-				//If the referrer object is a table object, concatenates the parent table name
-				if(tab_obj)
-				{
-					if(tab_obj->isAddedByRelationship())
-					{
-						QPalette pal;
-						item2=new QTreeWidgetItem(item1);
-						label2=new QLabel;
-            label2->setTextInteractionFlags(Qt::TextSelectableByMouse);
-						pal.setColor(QPalette::Text, QColor(255,0,0));
-						label2->setPalette(pal);
-						label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
-						output_trw->setItemWidget(item2, 0, label2);
-						item1->setExpanded(true);
-					}
-				}
+        if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+        {
+          //If the referrer object is a table object, concatenates the parent table name
+          if(tab_obj)
+          {
+            if(tab_obj->isAddedByRelationship())
+            {
+              QPalette pal;
+              item2=new QTreeWidgetItem(item1);
+              label2=new QLabel;
+              label2->setTextInteractionFlags(Qt::TextSelectableByMouse);
+              pal.setColor(QPalette::Text, QColor(255,0,0));
+              label2->setPalette(pal);
+              label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
+              output_trw->setItemWidget(item2, 0, label2);
+              item1->setExpanded(true);
+            }
+          }
 
-				label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
-                        .arg(ref_name.remove('"'))
-                        .arg(refs.back()->getTypeName()));
-			}
-			else
-			{
-        if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
-          label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
+          label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
                           .arg(ref_name.remove('"'))
-                          .arg(refs.back()->getObjectId()));
+                          .arg(refs.back()->getTypeName()));
+        }
         else
         {
-          label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
-                          .arg(ref_name.remove('"'))
-                          .arg(refs.back()->getTypeName())
-                          .arg(refs.back()->getObjectId()));
+          if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+            label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
+                            .arg(ref_name.remove('"'))
+                            .arg(refs.back()->getObjectId()));
+          else
+          {
+            label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
+                            .arg(ref_name.remove('"'))
+                            .arg(refs.back()->getTypeName())
+                            .arg(refs.back()->getObjectId()));
+          }
         }
-			}
 
-			output_trw->setItemWidget(item1, 0, label1);
-			refs.pop_back();
-		}
+        output_trw->setItemWidget(item1, 0, label1);
+        refs.pop_back();
+      }
+    }
 	}
 
 	output_trw->addTopLevelItem(item);

@@ -6,7 +6,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
     vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
-                                                               OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
+                                                               /*OBJ_RELATIONSHIP,*/ OBJ_COLUMN, OBJ_CONSTRAINT });
     setupUi(this);
 
 		src_object_sel=nullptr;
@@ -147,15 +147,38 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	BaseGraphicObject *graph_src_obj=dynamic_cast<BaseGraphicObject *>(src_obj),
 										*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
+  //Raise an exception if the user try to swap an id of relationship by other object of different kind
+  if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
+     (src_obj->getObjectType() != dst_obj->getObjectType()))
+    throw Exception(ERR_INV_REL_ID_SWAP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+
 	try
 	{    
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
-		if(graph_src_obj)
-			graph_src_obj->setModified(true);
+    //Special id swap for relationship
+    if(src_obj->getObjectType()==OBJ_RELATIONSHIP)
+    {
+      vector<BaseObject *>::iterator itr, itr1;
+      vector<BaseObject *> *list=model->getObjectList(OBJ_RELATIONSHIP);
 
-		if(graph_dst_obj)
-			graph_dst_obj->setModified(true);
+      //Find the relationships in the list and swap the memory position too
+      itr=std::find(list->begin(), list->end(), src_obj);
+      itr1=std::find(list->begin(), list->end(), dst_obj);
+      (*itr)=dst_obj;
+      (*itr1)=src_obj;
+
+      model->validateRelationships();
+    }
+    else
+    {
+      if(graph_src_obj)
+        graph_src_obj->setModified(true);
+
+      if(graph_dst_obj)
+        graph_dst_obj->setModified(true);
+    }
 
     model->setInvalidated(true);
     this->setResult(QDialog::Accepted);
