@@ -644,7 +644,7 @@ void ModelValidationHelper::emitValidationCanceled(void)
   db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
   export_thread->wait();
-	emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
+  emit s_validationInfoGenerated(ValidationInfo(trUtf8("Operation canceled by the user.")));
   emit s_validationCanceled();
 }
 

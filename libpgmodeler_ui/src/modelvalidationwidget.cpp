@@ -204,8 +204,9 @@ bool ModelValidationWidget::isValidationRunning(void)
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
   if(validation_thread &&
-     (!validation_thread->isRunning() ||
-       validation_helper->isValidationCanceled()))
+     val_info.getValidationType()!=ValidationInfo::VALIDATION_ABORTED &&
+     !validation_thread->isRunning() &&
+     validation_helper->isValidationCanceled())
     return;
 
 	QTreeWidgetItem *item=new QTreeWidgetItem, *item1=nullptr, *item2=nullptr;
@@ -268,7 +269,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 
 	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR ||
-		 val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
+     val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
 	{
 		QStringList errors=val_info.getErrors();
 		QFont fnt;

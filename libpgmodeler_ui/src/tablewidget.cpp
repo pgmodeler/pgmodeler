@@ -636,10 +636,10 @@ void TableWidget::applyConfiguration(void)
 		{
 			table->saveRelObjectsIndexes();
 
-			if(model->getRelationship(table, nullptr))
-				model->validateRelationships();
+      if(model->getRelationship(table, nullptr))
+        model->validateRelationships();
 
-			model->updateTableFKRelationships(table);
+      model->updateTableFKRelationships(table);
 		}
 		catch(Exception &e)
 		{
@@ -655,17 +655,17 @@ void TableWidget::applyConfiguration(void)
 		finishConfiguration();
 
 		if(RelationshipView::getLineConnectinMode()==RelationshipView::CONNECT_FK_TO_PK)
-		{
+    {
 			/* Forcing the update of relationships connected to the table in order to reconfigure the line
 			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */
-			rels=model->getRelationships(table);
+      rels=model->getRelationships(table);
       for(auto &rel : rels)
-			{
-				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-					 rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-					 rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
-					rel->setModified(true);
-			}
+      {
+        if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+           rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+           rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+          rel->setModified(true);
+      }
 		}
 	}
 	catch(Exception &e)
