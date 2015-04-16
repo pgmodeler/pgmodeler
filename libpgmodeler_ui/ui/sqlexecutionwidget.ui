@@ -607,6 +607,12 @@
             <property name="sortingEnabled">
              <bool>false</bool>
             </property>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>25</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>25</number>
+            </attribute>
             <row>
              <property name="text">
               <string>...</string>
