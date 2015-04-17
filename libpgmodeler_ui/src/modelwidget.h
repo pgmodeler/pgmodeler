@@ -246,6 +246,8 @@ class ModelWidget: public QWidget {
         the current values was saved on the database model */
     bool saveLastCanvasPosition(void);
 
+    void setUpdatesEnabled(bool value);
+
 private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);

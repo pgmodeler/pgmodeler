@@ -1306,12 +1306,15 @@ void MainWindow::importDatabase(void)
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
   stopTimers(true);
+
+  db_import_form.setModelWidget(current_model);
   db_import_form.exec();
   stopTimers(false);
 
   if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
     this->addModel(db_import_form.getModelWidget());
-
+  else if(current_model)
+    updateDockWidgets();
  #endif
 }
 
