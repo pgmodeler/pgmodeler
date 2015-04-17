@@ -571,6 +571,7 @@ void DatabaseImportHelper::importDatabase(void)
         vector<BaseObject *>::iterator itr, itr_end;
         std::uniform_int_distribution<unsigned> dist(0,255);
         ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+        BaseRelationship *rel=nullptr;
 
         for(unsigned i=0; i < 2; i++)
         {
@@ -580,10 +581,11 @@ void DatabaseImportHelper::importDatabase(void)
 
           while(itr!=itr_end)
           {
-            (*itr)->setCodeInvalidated(true);
-            dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
-                                                                          dist(rand_num_engine),
-                                                                          dist(rand_num_engine)));
+            rel=dynamic_cast<BaseRelationship *>(*itr);
+            rel->setPoints({});
+            rel->setCustomColor(QColor(dist(rand_num_engine),
+                                       dist(rand_num_engine),
+                                       dist(rand_num_engine)));
             itr++;
           }
         }
