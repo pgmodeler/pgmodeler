@@ -10,6 +10,7 @@ One fix that deserves special attention is related to the use of threads. Those 
 
 There are more changes in this version and the key ones are listed below. Please, refer to CHANGELOG.md to a complete set of modifications.<br/>
 
+* [New] Added the ability to import objects from an existent database to a currently working model.
 * [New] Improvements on DatabaseImportHelper to dump the objects attributes in debug mode or to the log file when "ignore errors" is checked.
 * [New] Added a fix step in CLI to fix functions signatures that includes OUT parameters.
 * [Change] Minor adjustment on model validation progress and output.
