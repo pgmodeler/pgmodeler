@@ -1313,6 +1313,8 @@ void MainWindow::importDatabase(void)
 
   if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
     this->addModel(db_import_form.getModelWidget());
+  else if(current_model)
+    updateDockWidgets();
  #endif
 }
 

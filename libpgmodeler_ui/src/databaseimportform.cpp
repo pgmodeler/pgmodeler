@@ -47,6 +47,9 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
   ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
   ignore_errors_ht->setText(ignore_errors_chk->statusTip());
 
+  import_to_model_ht=new HintTextWidget(import_to_model_hint, this);
+  import_to_model_ht->setText(import_to_model_chk->statusTip());
+
   settings_tbw->setTabEnabled(1, false);
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
@@ -89,9 +92,7 @@ DatabaseImportForm::~DatabaseImportForm(void)
 void DatabaseImportForm::setModelWidget(ModelWidget *model)
 {
   model_wgt=model;
-  create_model=(model==nullptr);
-  import_to_model_chk->setChecked(!create_model);
-  import_to_model_chk->setEnabled(!create_model);
+  import_to_model_chk->setEnabled(model!=nullptr);
 }
 
 void DatabaseImportForm::createThread(void)
@@ -167,8 +168,19 @@ void DatabaseImportForm::importDatabase(void)
 {
 	try
 	{
+    Messagebox msg_box;
+
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;   
+
+    if(import_to_model_chk->isChecked())
+    {
+      msg_box.show(trUtf8("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
+                   Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+      if(msg_box.result()==QDialog::Rejected)
+        return;
+    }
 
     output_trw->clear();
     settings_tbw->setTabEnabled(1, true);
@@ -346,6 +358,10 @@ void DatabaseImportForm::captureThreadError(Exception e)
   QPixmap ico;
   QTreeWidgetItem *item=nullptr;
 
+  if(!create_model)
+    model_wgt->rearrangeSchemas(QPointF(origin_sb->value(), origin_sb->value()),
+                                tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+
   destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
 
@@ -438,6 +454,10 @@ void DatabaseImportForm::handleImportCanceled(void)
   QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
   QString msg=trUtf8("Importing process canceled by user!");
 
+  if(!create_model)
+    model_wgt->rearrangeSchemas(QPointF(origin_sb->value(), origin_sb->value()),
+                                tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+
 	destroyModelWidget();
   finishImport(msg);
   ico_lbl->setPixmap(ico);
@@ -479,7 +499,12 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_lbl->repaint();
 
   if(model_wgt)
+  {
     model_wgt->setUpdatesEnabled(true);
+
+    if(!create_model)
+      model_wgt->getOperationList()->removeOperations();
+  }
 }
 
 ModelWidget *DatabaseImportForm::getModelWidget(void)

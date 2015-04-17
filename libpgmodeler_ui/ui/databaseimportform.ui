@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>472</height>
+    <width>701</width>
+    <height>489</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -636,7 +636,7 @@
                 <item>
                  <widget class="QCheckBox" name="import_to_model_chk">
                   <property name="statusTip">
-                   <string>Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.</string>
+                   <string>Create all imported objects in the current working model instead of create a new one.</string>
                   </property>
                   <property name="text">
                    <string>Import objects to the working model</string>
