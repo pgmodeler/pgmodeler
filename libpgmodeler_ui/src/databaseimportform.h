@@ -34,6 +34,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 
+    bool create_model;
+
     HintTextWidget *rand_color_ht, *auto_res_deps_ht, *imp_sys_objs_ht,
     *imp_ext_objs_ht, *debug_mode_ht, *ignore_errors_ht;
 
@@ -83,6 +85,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~DatabaseImportForm(void);
+
+    void setModelWidget(ModelWidget *model);
 
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);

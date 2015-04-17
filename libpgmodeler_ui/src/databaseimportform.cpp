@@ -27,6 +27,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 {
 	setupUi(this);
 	model_wgt=nullptr;
+  create_model=true;
 
   rand_color_ht=new HintTextWidget(rand_color_hint, this);
   rand_color_ht->setText(rand_rel_color_chk->statusTip());
@@ -63,6 +64,9 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 
+  connect(import_to_model_chk, &QCheckBox::toggled,
+          [=](bool checked){ create_model=!checked; });
+
   connect(database_cmb, &QComboBox::currentTextChanged,
           [=]() {
                   if(database_cmb->currentIndex()==0)
@@ -80,6 +84,14 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 DatabaseImportForm::~DatabaseImportForm(void)
 {
   destroyThread();
+}
+
+void DatabaseImportForm::setModelWidget(ModelWidget *model)
+{
+  model_wgt=model;
+  create_model=(model==nullptr);
+  import_to_model_chk->setChecked(!create_model);
+  import_to_model_chk->setEnabled(!create_model);
 }
 
 void DatabaseImportForm::createThread(void)
@@ -165,9 +177,13 @@ void DatabaseImportForm::importDatabase(void)
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[OBJ_DATABASE].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
 
-		model_wgt=new ModelWidget;
-		model_wgt->getDatabaseModel()->createSystemObjects(true);
+    if(create_model)
+    {
+      model_wgt=new ModelWidget;
+      model_wgt->getDatabaseModel()->createSystemObjects(true);
+    }
 
+    model_wgt->setUpdatesEnabled(false);
     import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
@@ -318,7 +334,7 @@ void DatabaseImportForm::closeEvent(QCloseEvent *event)
 		event->ignore();
 	else
 	{
-		if(!model_wgt)
+    if(create_model && !model_wgt)
 			this->setResult(QDialog::Rejected);
 
     import_helper->closeConnection();
@@ -410,7 +426,7 @@ void DatabaseImportForm::cancelImport(void)
 
 void DatabaseImportForm::destroyModelWidget(void)
 {
-	if(model_wgt)
+  if(create_model && model_wgt)
 	{
 		delete(model_wgt);
 		model_wgt=nullptr;
@@ -461,11 +477,17 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
+
+  if(model_wgt)
+    model_wgt->setUpdatesEnabled(true);
 }
 
 ModelWidget *DatabaseImportForm::getModelWidget(void)
 {
-  return(model_wgt);
+  if(create_model)
+    return(model_wgt);
+  else
+    return(nullptr);
 }
 
 void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)

@@ -513,6 +513,12 @@ bool ModelWidget::saveLastCanvasPosition(void)
   return(false);
 }
 
+void ModelWidget::setUpdatesEnabled(bool value)
+{
+  viewport->setUpdatesEnabled(value);
+  QWidget::setUpdatesEnabled(value);
+}
+
 void ModelWidget::restoreLastCanvasPosition(void)
 {
   if(save_restore_pos)
