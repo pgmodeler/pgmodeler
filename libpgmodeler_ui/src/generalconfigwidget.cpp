@@ -249,7 +249,7 @@ void GeneralConfigWidget::saveConfiguration(void)
     map<QString, attribs_map >::iterator itr, itr_end;
     QString file_sch, root_dir, widget_sch;
 
-    root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+    root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
              GlobalAttributes::DIR_SEPARATOR;
 
     file_sch=root_dir +

@@ -95,6 +95,8 @@ class ModelValidationHelper: public QObject {
 		//! \brief Try to resolve the conflict specified by validation info
 		void resolveConflict(ValidationInfo &info);
 
+    bool isValidationCanceled(void);
+
 	private slots:
     void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);

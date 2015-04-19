@@ -320,6 +320,8 @@ void DatabaseImportHelper::createObjects(void)
   //Trying to recreate objects that failed to be created previously
   if(!not_created_objs.empty())
   {
+    unsigned max_tries=10, tries=1;
+
     do
     {
       /* Store the current size of the objects list. If this size is the same after
@@ -361,6 +363,13 @@ void DatabaseImportHelper::createObjects(void)
         progress=(i/static_cast<float>(not_created_objs.size())) * 100;
       }
 
+      tries++;
+
+      if(tries >= max_tries)
+        emit s_progressUpdated(progress,
+                               trUtf8("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
+                               BASE_OBJECT);
+
       if(!import_canceled)
       {
         /* If the previous list size is the same as the not_created_object list means
@@ -374,7 +383,7 @@ void DatabaseImportHelper::createObjects(void)
         aux_errors.clear();
       }
     }
-    while(!not_created_objs.empty() && !import_canceled);
+    while(!not_created_objs.empty() && !import_canceled && tries < max_tries);
   }
 }
 
@@ -562,6 +571,7 @@ void DatabaseImportHelper::importDatabase(void)
         vector<BaseObject *>::iterator itr, itr_end;
         std::uniform_int_distribution<unsigned> dist(0,255);
         ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+        BaseRelationship *rel=nullptr;
 
         for(unsigned i=0; i < 2; i++)
         {
@@ -571,10 +581,11 @@ void DatabaseImportHelper::importDatabase(void)
 
           while(itr!=itr_end)
           {
-            (*itr)->setCodeInvalidated(true);
-            dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
-                                                                          dist(rand_num_engine),
-                                                                          dist(rand_num_engine)));
+            rel=dynamic_cast<BaseRelationship *>(*itr);
+            rel->setPoints({});
+            rel->setCustomColor(QColor(dist(rand_num_engine),
+                                       dist(rand_num_engine),
+                                       dist(rand_num_engine)));
             itr++;
           }
         }

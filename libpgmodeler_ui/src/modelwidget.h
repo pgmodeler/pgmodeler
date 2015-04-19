@@ -196,9 +196,9 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
 
 	public:
-    static constexpr double MINIMUM_ZOOM=0.05f,
-													 MAXIMUM_ZOOM=4.0f,
-													 ZOOM_INCREMENT=0.05f;
+    static constexpr double MINIMUM_ZOOM=0.050000,
+                            MAXIMUM_ZOOM=4.000001,
+                            ZOOM_INCREMENT=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -245,6 +245,8 @@ class ModelWidget: public QWidget {
     /*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
         the current values was saved on the database model */
     bool saveLastCanvasPosition(void);
+
+    void setUpdatesEnabled(bool value);
 
 private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model

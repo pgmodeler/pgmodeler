@@ -477,7 +477,7 @@ int PgModelerCLI::exec(void)
 void PgModelerCLI::updateProgress(int progress, QString msg)
 {
   if(progress > 0)
-    out << msg <<  QString("(") << progress << QString("%)") << endl;
+    out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
   else
     out << msg << endl;
 }
@@ -1011,11 +1011,11 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
   QString str_aux,
 
        //Configures the path to the application logo
-       exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
+       exec_icon=QDir(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
                       GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_logo.png")).absolutePath(),
 
        //Configures the path to the document logo
-       dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
+       dbm_icon=QDir(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
                      GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_dbm.png")).absolutePath(),
 
        //Path to directory that register mime types
@@ -1024,7 +1024,7 @@ void PgModelerCLI::handleMimeDatabase(bool uninstall)
        //Path to the file that associates apps to mimetypes
        mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
 
-       base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
+       base_conf_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
                      GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR,
 
        //Files generated after update file association (application-dbm.xml and pgModeler.desktop)

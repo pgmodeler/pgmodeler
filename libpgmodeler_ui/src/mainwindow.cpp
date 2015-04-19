@@ -1306,12 +1306,15 @@ void MainWindow::importDatabase(void)
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
   stopTimers(true);
+
+  db_import_form.setModelWidget(current_model);
   db_import_form.exec();
   stopTimers(false);
 
   if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
     this->addModel(db_import_form.getModelWidget());
-
+  else if(current_model)
+    updateDockWidgets();
  #endif
 }
 
@@ -1509,9 +1512,9 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
+    action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT));
 		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
+    action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM);
 	}
 }
 

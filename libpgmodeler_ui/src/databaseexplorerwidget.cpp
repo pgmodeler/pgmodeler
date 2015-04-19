@@ -101,6 +101,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), trUtf8("Trunc. cascade"), &handle_menu);
 
   show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
+  show_data_action->setShortcut(QKeySequence(Qt::Key_Space));
   properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
   refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
@@ -136,10 +137,25 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
   {
     QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
+    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 || k_event->key()==Qt::Key_Space)
     {
-     if(k_event->key()==Qt::Key_F5)
-        updateCurrentItem();
+     if(k_event->key()==Qt::Key_Space)
+     {
+       QTreeWidgetItem *item=objects_trw->currentItem();
+       ObjectType obj_type=BASE_OBJECT;
+
+       if(item)
+       {
+         unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+         obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+         if(oid!=0 && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
+           emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+                                        item->text(0), obj_type!=OBJ_VIEW);
+       }
+     }
+     else if(k_event->key()==Qt::Key_F5)
+       updateCurrentItem();
      else
        dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
      return(true);

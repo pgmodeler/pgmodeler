@@ -125,7 +125,8 @@ void Application::createUserConfiguration(void)
   {
     //If the directory not exists or is empty
     if(!config_dir.exists() ||
-        config_dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot).isEmpty())
+        config_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
+                             QDir::Files /*| QDir::Dirs */ | QDir::NoDotAndDotDot).isEmpty())
       copyFilesRecursively(GlobalAttributes::TMPL_CONFIGURATIONS_DIR, GlobalAttributes::CONFIGURATIONS_DIR);
   }
   catch(Exception &e)
@@ -155,7 +156,8 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
       throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(dst_path),
                       __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    filenames = src_dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
+                                  QDir::Files /*| QDir::Dirs*/ | QDir::NoDotAndDotDot);
 
     for(QString filename : filenames)
     {

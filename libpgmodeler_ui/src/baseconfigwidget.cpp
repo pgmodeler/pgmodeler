@@ -49,7 +49,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 						//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::CONFIGURATIONS_DIR +
+  QString	sch_filename=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
 									 GlobalAttributes::SCHEMAS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
@@ -109,7 +109,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 							 GlobalAttributes::CONFIGURATION_EXT;
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::CONFIGURATIONS_DIR +
+  default_file=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 							 GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::DEFAULT_CONFS_DIR+
 							 GlobalAttributes::DIR_SEPARATOR +
@@ -134,7 +134,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	{
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+    xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +

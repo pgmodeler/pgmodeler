@@ -229,12 +229,18 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	if(!ext_attribs->isVisible())
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() - 1);
+    body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+  }
 	else
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() +
 																	ext_attribs_body->boundingRect().height() -2);
+    body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+  }
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,

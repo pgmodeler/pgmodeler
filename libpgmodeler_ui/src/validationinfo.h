@@ -55,7 +55,7 @@ class ValidationInfo {
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
-		ValidationInfo(const QString &msg);
+    ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
 		//! \brief Returns the validation type
