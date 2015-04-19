@@ -1,7 +1,7 @@
 v0.8.1-alpha
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: April 18, 2015</em>
+<em>Release date: April 20, 2015</em>
 <em>Changes since: <strong>v0.8.1-alpha</strong></em><br/>
 
 <strong>Summary:</strong> this release brings a small series of fixes for bugs reported for 0.8.0 and 0.8.1-alpha.

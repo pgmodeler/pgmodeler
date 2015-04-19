@@ -4,7 +4,7 @@ Change Log
 v0.8.1-alpha1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: April 18, 2015</em><br/>
+<em>Release date: April 20, 2015</em><br/>
 
 * [New] Added the ability to import objects from an existent database to a currently working model.
 * [New] Improvements on DatabaseImportHelper to dump the objects attributes in debug mode or to the log file when "ignore errors" is checked.
