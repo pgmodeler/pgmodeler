@@ -1406,9 +1406,10 @@ void PgSQLType::setDimension(unsigned dim)
 {
 	if(dim > 0 && this->isUserType())
 	{
-		int idx=getUserTypeIndex(~(*this), nullptr);
-		if(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
-			 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
+    int idx=getUserTypeIndex(~(*this), nullptr) - (pseudo_end + 1);
+    if(static_cast<unsigned>(idx) < user_types.size() &&
+       (user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
+        user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE))
 			throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 

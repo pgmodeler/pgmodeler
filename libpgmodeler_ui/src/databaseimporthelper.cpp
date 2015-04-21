@@ -1537,8 +1537,11 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         type_name=itr->second[ParsersAttributes::TYPE];
       }
 
-      //Checking if the type used by the column exists (is registered), if not it'll be created when auto_resolve_deps is checked
-      if(auto_resolve_deps && !is_type_registered)
+      /* Checking if the type used by the column exists (is registered),
+         if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+         array types [] that will not be automatically created because they are derivated from
+         the non-array type, this way, if the original type is created there is no need to create the array form */
+      if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
       {
         type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
         unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
