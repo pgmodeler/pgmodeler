@@ -410,7 +410,8 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	validation_prog_pb->setValue(prog);
 
 	if(prog >= 100 &&
-     validation_helper->getErrorCount()==0 && validation_helper->getWarningCount()==0)
+     validation_helper->getErrorCount()==0 &&
+     validation_helper->getWarningCount()==0)
 	{
 		warn_count_lbl->setText(QString("%1").arg(0));
 		error_count_lbl->setText(QString("%1").arg(0));

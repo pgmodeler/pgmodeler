@@ -754,7 +754,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             obj_type=obj_tp;
 
             //Appeding special tokens when the object is an index or view
-            if(lin.startsWith(QString("CREATE")))
+            if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
             {
               if(obj_tp==OBJ_INDEX)
               {
@@ -768,7 +768,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               }
             }
             else if(lin.startsWith(QString("DROP")))
-              lin.remove(QString("IF EXISTS"));
+              lin.remove(QString("IF EXISTS"));             
 
             lin=lin.simplified();
 

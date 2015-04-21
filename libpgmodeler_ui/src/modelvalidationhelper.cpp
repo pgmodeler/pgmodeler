@@ -229,6 +229,7 @@ void ModelValidationHelper::redirectExportProgress(int prog, QString msg, Object
     return;
 
   progress=41 + (prog * 0.55);
+  if(progress > 99) progress=99;
   emit s_progressUpdated(progress, msg, obj_type, cmd, is_code_gen);
 }
 
