@@ -9,11 +9,12 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   QTreeWidgetItem *item=nullptr;
-  QLabel *label=new QLabel;
+  //QLabel *label=new QLabel;
 
   item=new QTreeWidgetItem(parent);
   item->setIcon(0, ico);
-  label->setTextFormat(Qt::AutoText);
+  item->setText(0, text);
+  /*label->setTextFormat(Qt::AutoText);
   label->setText(text);
   label->setWordWrap(word_wrap);
   label->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -22,13 +23,13 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
   {
     label->setMinimumHeight(output_trw->iconSize().height());
     label->setMaximumHeight(label->heightForWidth(label->width()));
-  }
+  } */
 
   if(!parent)
     output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 
   item->setExpanded(expand_item);
-  output_trw->setItemWidget(item, 0, label);
+  //output_trw->setItemWidget(item, 0, label);
   output_trw->setItemHidden(item, false);
   output_trw->scrollToBottom();
 

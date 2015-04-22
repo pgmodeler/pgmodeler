@@ -30,10 +30,13 @@
 #include "modelwidget.h"
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
+#include "htmlitemdelegate.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
   private:
     Q_OBJECT
+
+    HtmlItemDelegate *htmlitem_dgt;
 
     //! \brief Stores the model widget which will be exported
     ModelWidget *model;

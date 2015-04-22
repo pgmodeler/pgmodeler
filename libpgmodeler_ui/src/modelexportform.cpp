@@ -23,9 +23,14 @@
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+  QPalette pal;
+
   model=nullptr;
   viewp=nullptr;
   setupUi(this);
+
+  htmlitem_dgt=new HtmlItemDelegate;
+  output_trw->setItemDelegateForColumn(0,htmlitem_dgt);
 
   export_thread=new QThread(this);
   export_hlp.moveToThread(export_thread);
@@ -142,10 +147,10 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
       QLabel *cmd_label=nullptr;
 
       item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
-      cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(item, 0));
+      /*cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(item, 0));
       fnt=cmd_label->font();
       fnt.setPointSizeF(8.0);
-      cmd_label->setFont(fnt);
+      cmd_label->setFont(fnt);*/
     }
   }
 }
@@ -154,6 +159,9 @@ void ModelExportForm::exportModel(void)
 {
   try
   {
+    QTextStream out(stdout);
+    out << "Started: " << QTime::currentTime().toString() << endl;
+
     output_trw->clear();
     settings_tbw->setTabEnabled(1, true);
     settings_tbw->setCurrentIndex(1);
@@ -320,6 +328,9 @@ void ModelExportForm::finishExport(const QString &msg)
     delete(viewp);
     viewp=nullptr;
   }
+
+  QTextStream out(stdout);
+  out << "Finished: " << QTime::currentTime().toString() << endl;
 }
 
 void ModelExportForm::enableExportModes(bool value)
