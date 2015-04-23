@@ -36,7 +36,8 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
   private:
     Q_OBJECT
 
-    HtmlItemDelegate *htmlitem_dgt;
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
 
     //! \brief Stores the model widget which will be exported
     ModelWidget *model;

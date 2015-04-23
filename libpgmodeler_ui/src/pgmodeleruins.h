@@ -30,11 +30,10 @@
 #include "baseobject.h"
 
 namespace PgModelerUiNS {
-  /*! brief Creates an item in the specified QTreeWidget instance. Using the parameter 'word_wrap' as true then a QLabel widget will
-      be assigned to the item and the 'text' param. will be used as the text of that QLabel instance.
+  /*! brief Creates an item in the specified QTreeWidget instance.
       The new item is automatically inserted on the QTreeWidget object. */
   QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
-                                        QTreeWidgetItem *parent=nullptr, bool word_wrap=false, bool expand_item=true);
+                                        QTreeWidgetItem *parent=nullptr, bool expand_item=true);
 
   /*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
       related to the input object */

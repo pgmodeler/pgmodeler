@@ -31,11 +31,15 @@
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
 #include "syntaxhighlighter.h"
+#include "htmlitemdelegate.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
+
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
 
     //! brief Hint texts used on the diff options
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
