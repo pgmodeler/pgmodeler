@@ -259,9 +259,9 @@ void ModelExportForm::selectOutputFile(void)
 void ModelExportForm::captureThreadError(Exception e)
 {
   QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()),
-                                                            QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr);
+                                                            QPixmap(QString(":/icones/icones/msgbox_erro.png")), nullptr, true, true);
   if(!e.getExtraInfo().isEmpty())
-    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), QPixmap(), item);
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), QPixmap(), item, true, true);
 
   ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
   finishExport(trUtf8("Exporting process aborted!"));

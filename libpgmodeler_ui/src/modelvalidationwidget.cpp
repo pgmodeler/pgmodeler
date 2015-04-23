@@ -51,7 +51,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
     connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
-
     connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 	}
 	catch(Exception &e)

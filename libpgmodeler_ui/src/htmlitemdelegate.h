@@ -39,6 +39,9 @@ class HtmlItemDelegate : public QStyledItemDelegate {
 
   protected:
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    //! brief Overrides the default implementation and set the editor as read only to prevent change the item data
+    virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 };
 
 #endif

@@ -31,9 +31,10 @@
 
 namespace PgModelerUiNS {
   /*! brief Creates an item in the specified QTreeWidget instance.
-      The new item is automatically inserted on the QTreeWidget object. */
+      The new item is automatically inserted on the QTreeWidget object.
+      Setting word_wrap will create a QLabel instance into item's and assign the text to it. */
   QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
-                                        QTreeWidgetItem *parent=nullptr, bool expand_item=true);
+                                        QTreeWidgetItem *parent=nullptr, bool expand_item=true, bool word_wrap=false);
 
   /*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
       related to the input object */

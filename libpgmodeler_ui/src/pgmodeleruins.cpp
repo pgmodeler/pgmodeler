@@ -3,7 +3,7 @@
 #include "databasemodel.h"
 #include <QLabel>
 
-QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item)
+QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 {
   if(!output_trw)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -12,11 +12,25 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
 
   item=new QTreeWidgetItem(parent);
   item->setIcon(0, ico);
-  item->setText(0, text);
 
   if(!parent)
     output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 
+  if(!word_wrap)
+    item->setText(0, text);
+  else
+  {
+    QLabel *label=new QLabel;
+    label->setTextFormat(Qt::AutoText);
+    label->setText(text);
+    label->setWordWrap(true);
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    label->setMinimumHeight(output_trw->iconSize().height());
+    label->setMaximumHeight(label->heightForWidth(label->width()));
+    output_trw->setItemWidget(item, 0, label);
+  }
+
+  item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   item->setExpanded(expand_item);
   output_trw->setItemHidden(item, false);
   output_trw->scrollToBottom();
