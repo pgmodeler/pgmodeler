@@ -100,7 +100,8 @@ SOURCES += src/mainwindow.cpp \
            src/snippetsconfigwidget.cpp \
            src/pgmodeleruins.cpp \
            src/bugreportform.cpp \
-    src/sqlexecutionwidget.cpp
+    src/sqlexecutionwidget.cpp \
+    src/htmlitemdelegate.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -187,7 +188,8 @@ HEADERS += src/mainwindow.h \
            src/snippetsconfigwidget.h \
            src/pgmodeleruins.h \
            src/bugreportform.h \
-    src/sqlexecutionwidget.h
+    src/sqlexecutionwidget.h \
+    src/htmlitemdelegate.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -262,7 +264,8 @@ FORMS += ui/mainwindow.ui \
          ui/databaseexplorerwidget.ui \
          ui/snippetsconfigwidget.ui \
          ui/bugreportform.ui \
-    ui/sqlexecutionwidget.ui
+    ui/sqlexecutionwidget.ui \
+    ui/sourcecodeeditorwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

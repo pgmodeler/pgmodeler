@@ -29,6 +29,9 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	model_wgt=nullptr;
   create_model=true;
 
+  htmlitem_del=new HtmlItemDelegate;
+  output_trw->setItemDelegateForColumn(0, htmlitem_del);
+
   rand_color_ht=new HintTextWidget(rand_color_hint, this);
   rand_color_ht->setText(rand_rel_color_chk->statusTip());
 
@@ -368,10 +371,10 @@ void DatabaseImportForm::captureThreadError(Exception e)
   ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
   ico_lbl->setPixmap(ico);
 
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico);
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, true, true);
 
   if(!e.getExtraInfo().isEmpty())
-   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true);
+   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true, true);
 
   //Destroy the current import thread and helper to avoid reuse
   destroyThread();

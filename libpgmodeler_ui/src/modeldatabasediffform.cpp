@@ -27,6 +27,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   {
     setupUi(this);
 
+    htmlitem_del=new HtmlItemDelegate;
+    output_trw->setItemDelegateForColumn(0, htmlitem_del);
+
     imported_model=nullptr;
     import_helper=nullptr;
     diff_helper=nullptr;
@@ -525,10 +528,10 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true);
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true, true);
 
   if(!e.getExtraInfo().isEmpty())
-    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true);
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true, true);
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
@@ -577,15 +580,15 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 
   item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
-                 export_item, false, false);
+                 export_item, false);
 
   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
-                 item, true, false);
+                 item, false);
 
   PgModelerUiNS::createOutputTreeItem(output_trw, cmd,
                  QPixmap(),
-                 item, true, false);
+                 item, false);
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
@@ -623,10 +626,10 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
     else
       ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
-    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false, false);
+    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false);
 
     if(!cmd.isEmpty())
-      PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
+      PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
   }
 
   progress_lbl->setText(msg);

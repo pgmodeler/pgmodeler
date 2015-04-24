@@ -26,6 +26,9 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
+    htmlitem_del=new HtmlItemDelegate;
+    output_trw->setItemDelegateForColumn(0, htmlitem_del);
+
 		swapobjectsids_wgt=nullptr;
 		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
 
@@ -48,7 +51,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
     connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
-
     connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 	}
 	catch(Exception &e)
@@ -302,7 +304,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
     if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
     {
       PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process."),
-                                          QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item, true);
+                                          QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item);
     }
     else
     {
@@ -404,8 +406,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
      (!validation_thread->isRunning() || validation_helper->isValidationCanceled()))
     return;
 
-	QTreeWidgetItem *item=nullptr, *cmd_item=nullptr;
-  QLabel *cmd_label=nullptr;
+  QTreeWidgetItem *item=nullptr;
 
 	validation_prog_pb->setValue(prog);
 
@@ -446,19 +447,10 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
       ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/codigosql.png")));
       object_lbl->setText(trUtf8("Running SQL commands on server..."));
 
-      item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, nullptr, false, false);
+      item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, nullptr, false);
 
       if(!cmd.isEmpty())
-      {
-        QFont fnt;
-
-        cmd_item=PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
-        cmd_label=qobject_cast<QLabel *>(output_trw->itemWidget(cmd_item, 0));
-
-        fnt=cmd_label->font();
-        fnt.setPointSizeF(8.0);
-        cmd_label->setFont(fnt);
-      }
+        PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
     }
 	}
 }

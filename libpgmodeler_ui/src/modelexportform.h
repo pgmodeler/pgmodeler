@@ -30,10 +30,14 @@
 #include "modelwidget.h"
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
+#include "htmlitemdelegate.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
   private:
     Q_OBJECT
+
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
 
     //! \brief Stores the model widget which will be exported
     ModelWidget *model;

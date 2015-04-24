@@ -28,11 +28,15 @@
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
 #include "hinttextwidget.h"
+#include "htmlitemdelegate.h"
 #include <QTimer>
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
+
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
 
     bool create_model;
 
