@@ -147,13 +147,21 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
          not created by common relationships will be considered on the comparison. Also,
          foreign keys are discarded here, since they will be compared on the main comparison
          at diffModels() */
-      if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
-         ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
-          (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
+      if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT)
       {
-        //If there are some differences on the XML code of the objects
-        if(tab_obj->isCodeDiffersFrom(aux_obj))
-          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
+        //Ignoring check constraints added by generalizations
+        if(constr && constr->isAddedByGeneralization() &&
+           constr->getConstraintType()==ConstraintType::check)
+        {
+          generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+        }
+        else if((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+                (constr && constr->getConstraintType()!=ConstraintType::foreign_key))
+        {
+          //If there are some differences on the XML code of the objects
+          if(tab_obj->isCodeDiffersFrom(aux_obj))
+            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
+        }
       }      
       /* If the object does not exists it will generate a drop info and the original
          one (tab_obj) was not included by generalization (to avoid drop inherited columns) */

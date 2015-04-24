@@ -57,7 +57,12 @@
      %end
 
 
-     [	CASE cs.contype
+     [	CASE cs.coninhcount
+	  WHEN 0 THEN FALSE	  
+	  ELSE TRUE
+	END AS inherited_bool,
+
+	CASE cs.contype
 	  WHEN 'p' THEN 'pk-constr'
 	  WHEN 'u' THEN 'uq-constr'
 	  WHEN 'c' THEN 'ck-constr'

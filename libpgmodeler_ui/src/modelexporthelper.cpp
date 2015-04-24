@@ -722,6 +722,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             pos1=aux_cmd.indexOf(QString("DROP"));
             is_drop=true;
           }
+
           tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
           //Extracting the child object name (column | constraint) the one between
@@ -740,6 +741,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+          is_drop=false;
         }
         //Check if the regex matches the sql command
         else if(obj_reg.exactMatch(sql_cmd))

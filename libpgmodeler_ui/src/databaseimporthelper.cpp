@@ -400,13 +400,19 @@ void DatabaseImportHelper::createConstraints(void)
 
 		try
 		{
-			emit s_progressUpdated(progress,
-                             trUtf8("Creating object `%1' (%2)...")
-														 .arg(attribs[ParsersAttributes::NAME])
-														 .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
-														 OBJ_CONSTRAINT);
+      //Check constraints are created only if they are not inherited, other types are created normally
+      if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::CK_CONSTR ||
+         (attribs[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR &&
+          attribs[ParsersAttributes::INHERITED]!=ParsersAttributes::_TRUE_))
+      {
+        emit s_progressUpdated(progress,
+                               trUtf8("Creating object `%1' (%2)...")
+                               .arg(attribs[ParsersAttributes::NAME])
+                               .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
+                               OBJ_CONSTRAINT);
 
-			createObject(attribs);
+        createObject(attribs);
+      }
 		}
 		catch(Exception &e)
 		{
