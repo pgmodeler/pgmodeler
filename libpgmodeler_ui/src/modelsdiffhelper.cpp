@@ -143,30 +143,32 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
       aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
       constr=dynamic_cast<Constraint *>(tab_obj);
 
-      /* If the current info is ALTER or CREATE, only objects created by generalization or
+      //Ignoring check constraints added by generalizations
+      if(constr && constr->isAddedByGeneralization() &&
+         constr->getConstraintType()==ConstraintType::check)
+      {
+        generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+      }
+      else
+      {
+        /* If the current info is ALTER or CREATE, only objects created by generalization or
          not created by common relationships will be considered on the comparison. Also,
          foreign keys are discarded here, since they will be compared on the main comparison
          at diffModels() */
-      if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT)
-      {
-        //Ignoring check constraints added by generalizations
-        if(constr && constr->isAddedByGeneralization() &&
-           constr->getConstraintType()==ConstraintType::check)
+        if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
+           ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+            (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
         {
-          generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+            //If there are some differences on the XML code of the objects
+            if(tab_obj->isCodeDiffersFrom(aux_obj))
+              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
+
         }
-        else if((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
-                (constr && constr->getConstraintType()!=ConstraintType::foreign_key))
-        {
-          //If there are some differences on the XML code of the objects
-          if(tab_obj->isCodeDiffersFrom(aux_obj))
-            generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
-        }
-      }      
-      /* If the object does not exists it will generate a drop info and the original
+        /* If the object does not exists it will generate a drop info and the original
          one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
-      else if(!aux_obj && !tab_obj->isAddedByGeneralization())
-        generateDiffInfo(diff_type, tab_obj);
+        else if(!aux_obj && !tab_obj->isAddedByGeneralization())
+          generateDiffInfo(diff_type, tab_obj);
+      }
 
       if(diff_canceled)
         break;
@@ -223,7 +225,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Processing object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
                              object->getObjectType());
 
       //Processing objects that are not database, table child object (they are processed further)
@@ -322,7 +324,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     {
       generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Skipping object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
                              object->getObjectType());
 
       if(diff_canceled)
@@ -431,13 +433,9 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         Column *aux_col=new Column;
         Sequence *seq=new Sequence;
         BaseTable *tab=col->getParentTable();
-        //QString seq_name;
 
         //Configures the sequence
         seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
-        //seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
-        //seq->setName(seq_name);
-
         seq->setOwner(tab->getOwner());
         seq->setSchema(tab->getSchema());
 
@@ -543,7 +541,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   Relationship *rel=nullptr;
   map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
   vector<BaseObject *> drop_vect, create_vect, drop_cols;
-  unsigned diff_type, schema_id=0;
+  unsigned diff_type, schema_id=0, idx=0;
   ObjectType obj_type;
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
@@ -552,11 +550,15 @@ void ModelsDiffHelper::processDiffInfos(void)
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
+  Constraint *constr=nullptr;
+  Column *col=nullptr, *aux_col=nullptr;
+  Table *parent_tab=nullptr;
+  bool skip_obj=false;
 
   try
   {
     if(!diff_infos.empty())
-      emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
+      emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
 
     //Separating the base types
     for(ObjectsDiffInfo diff : diff_infos)
@@ -574,8 +576,44 @@ void ModelsDiffHelper::processDiffInfos(void)
     {
       diff_type=diff.getDiffType();
       object=diff.getObject();
-      rel=dynamic_cast<Relationship *>(object);
       obj_type=object->getObjectType();
+      rel=dynamic_cast<Relationship *>(object);
+      constr=dynamic_cast<Constraint *>(object);
+      col=dynamic_cast<Column *>(object);
+
+      emit s_progressUpdated((idx++/static_cast<float>(diff_infos.size())) * 100,
+                             trUtf8("Processing `%1' info for object `%2' (%3)...")
+                             .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
+                             obj_type);
+
+      /* Preliminary verification for check constraints: there is the need to
+         check if the constraint is added by generalization or if this is not the case
+         if it already exists in a ancestor table of its parent, this avoid the generation
+         of commands to create or drop an inherited constraint raising errors when export the diff */
+      if(constr && constr->getConstraintType()==ConstraintType::check)
+      {
+        parent_tab=dynamic_cast<Table *>(constr->getParentTable());
+        skip_obj=constr->isAddedByGeneralization();
+
+        for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
+          skip_obj=(parent_tab->getAncestorTable(i)->getConstraint(constr->getName())!=nullptr);
+
+        if(skip_obj) continue;
+      }
+      //Igoring any operation done over inherited columns
+      else if(col)
+      {
+        parent_tab=dynamic_cast<Table *>(col->getParentTable());
+        skip_obj=col->isAddedByGeneralization();
+
+        for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
+        {
+          aux_col=parent_tab->getAncestorTable(i)->getColumn(col->getName());
+          skip_obj=(aux_col && aux_col->getType().getAliasType()==col->getType());
+        }
+
+        if(skip_obj) continue;
+      }
 
       //Generating the DROP commands
       if(diff_type==ObjectsDiffInfo::DROP_OBJECT)

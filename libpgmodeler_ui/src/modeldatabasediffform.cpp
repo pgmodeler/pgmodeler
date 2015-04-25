@@ -606,7 +606,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	}
   else if(diff_thread && diff_thread->isRunning())
   {
-    if(progress >= 90 && obj_type==BASE_OBJECT)
+    if((progress == 0 || progress == 100) && obj_type==BASE_OBJECT)
     {
       PgModelerUiNS::createOutputTreeItem(output_trw, msg,
                                           QPixmap(QString(":/icones/icones/msgbox_info.png")),

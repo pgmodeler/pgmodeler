@@ -770,13 +770,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               }
             }
             else if(lin.startsWith(QString("DROP")))
-              lin.remove(QString("IF EXISTS"));             
+            {
+              lin.remove(QString("IF EXISTS"));
+              lin.remove(QString("MATERIALIZED"));
+            }
 
             lin=lin.simplified();
 
             //Check if the keyword for the current object exists on string
-            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)")
-                               .arg(BaseObject::getSQLName(obj_tp)));
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
             pos=reg_aux.indexIn(lin);
 
             if(pos >= 0)
