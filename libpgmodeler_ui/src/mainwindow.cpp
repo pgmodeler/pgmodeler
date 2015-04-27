@@ -510,7 +510,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#endif
 }
 
-void MainWindow::resizeEvent(QResizeEvent *e)
+void MainWindow::resizeEvent(QResizeEvent *)
 {
 	if(central_wgt)
 	{

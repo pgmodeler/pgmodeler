@@ -577,7 +577,7 @@ void ModelValidationHelper::applyFixes(void)
 {
 	if(fix_mode)
 	{
-    bool validate_rels=false, found_broken_rels;
+    bool validate_rels=false, found_broken_rels=false;
 
     while(!val_infos.empty() && !valid_canceled && !found_broken_rels)
 		{
