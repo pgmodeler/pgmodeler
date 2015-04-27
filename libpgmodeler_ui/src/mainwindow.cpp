@@ -129,10 +129,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
     control_tb->addAction(action_bug_report);
+    control_tb->addAction(action_donate);
     control_tb->addAction(action_about);
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
+    donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
     #ifdef NO_UPDATE_CHECK
@@ -167,6 +169,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
 	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
+
+  connect(action_donate, SIGNAL(toggled(bool)),this,SLOT(toggleDonateWidget(bool)));
+  connect(donate_wgt, SIGNAL(s_visibilityChanged(bool)), action_donate, SLOT(setChecked(bool)));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -227,6 +232,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
+  donate_wgt->setVisible(false);
 
 	models_tbw_parent->lower();
 	central_wgt->lower();
@@ -501,17 +507,20 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-    //QTimer::singleShot(1200000, qApp, SLOT(quit()));
 	#endif
 }
 
-void MainWindow::resizeEvent(QResizeEvent *)
+void MainWindow::resizeEvent(QResizeEvent *e)
 {
 	if(central_wgt)
 	{
 		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
 											bg_widget->height()/2 - central_wgt->height()/2);
 	}
+
+  action_about->setChecked(false);
+  action_donate->setChecked(false);
+  action_update_found->setChecked(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1571,6 +1580,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
     {
       setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
       action_about->setChecked(false);
+      action_donate->setChecked(false);
     }
 
     update_notifier_wgt->setVisible(show);
@@ -1583,9 +1593,22 @@ void MainWindow::toggleAboutWidget(bool show)
 	{
 		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
 		action_update_found->setChecked(false);
+    action_donate->setChecked(false);
 	}
 
 	about_wgt->setVisible(show);
+}
+
+void MainWindow::toggleDonateWidget(bool show)
+{
+  if(show)
+  {
+    setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+    action_about->setChecked(false);
+    action_update_found->setChecked(false);
+  }
+
+  donate_wgt->setVisible(show);
 }
 
 void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
@@ -1593,11 +1616,15 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 	if(widget && act && toolbar)
 	{
 		QWidget *wgt=toolbar->widgetForAction(act);
-		QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+    QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
 
 		if(map_to_window) pos=wgt->mapTo(this, pos);
-		pos.setX(pos.x() - 9);
-		pos.setY(toolbar->pos().y() + toolbar->height() - 9);
+    pos.setX(pos_orig.x() - 10);
+    pos.setY(toolbar->pos().y() + toolbar->height() - 10);
+
+    if((pos.x() + widget->width()) > this->geometry().right())
+      pos.setX(pos_orig.x() - (widget->width() - 40));
+
 		widget->move(pos);
 	}
 }
