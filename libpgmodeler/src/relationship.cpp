@@ -1029,11 +1029,11 @@ void Relationship::addColumnsRelGen(void)
 			throw Exception(msg, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		//Creates the special primary key if exists
-		this->createSpecialPrimaryKey();
+    //Creates the special primary key if exists
+    this->createSpecialPrimaryKey();
 
-		//Adds the constraint on the receiver table
-		this->addConstraints(getReceiverTable());
+    //Adds the constraint on the receiver table
+    this->addConstraints(getReceiverTable());
 	}
 	catch(Exception &e)
 	{
@@ -1042,7 +1042,48 @@ void Relationship::addColumnsRelGen(void)
 		this->disconnectRelationship();
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+  }
+}
+
+void Relationship::addConstraintsRelGen(void)
+{
+  Table *parent_tab=dynamic_cast<Table *>(getReferenceTable()),
+        *child_tab=dynamic_cast<Table *>(getReceiverTable());
+  vector<TableObject *> *constrs=parent_tab->getObjectList(OBJ_CONSTRAINT);
+  Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
+
+  try
+  {
+    for(auto &obj : *constrs)
+    {
+      constr=dynamic_cast<Constraint *>(obj);
+
+      if(constr->getConstraintType()==ConstraintType::check && !constr->isNoInherit())
+      {
+        aux_constr=dynamic_cast<Constraint *>(child_tab->getObject(constr->getName(), OBJ_CONSTRAINT));
+
+        if(!aux_constr)
+        {
+          ck_constr=new Constraint;
+          (*ck_constr)=(*constr);
+          ck_constr->setParentTable(nullptr);
+          ck_constr->setAddedByGeneralization(true);
+          child_tab->addConstraint(ck_constr);
+          ck_constraints.push_back(ck_constr);
+        }
+        else if(aux_constr->getConstraintType()!=ConstraintType::check ||
+                aux_constr->getExpression().simplified()!=constr->getExpression().simplified())
+          throw Exception(Exception::getErrorMessage(ERR_INCOMP_CONSTRS_INHERIT_REL)
+                          .arg(constr->getName()).arg(parent_tab->getName(false, true))
+                          .arg(aux_constr->getName()).arg(child_tab->getName(false, true)),
+                          ERR_INCOMP_CONSTRS_INHERIT_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Relationship::connectRelationship(void)
@@ -1053,7 +1094,10 @@ void Relationship::connectRelationship(void)
 		{
 			if(rel_type==RELATIONSHIP_GEN)
 			{
-				//Creates the columns on the receiver table following the rules for generalization rules
+        //Copying the CHECK constraints before adding custom constraints like special pk
+        addConstraintsRelGen();
+
+        //Creates the columns on the receiver table following the rules for generalization rules
 				addColumnsRelGen();
 
 				//The reference table is added as parent table on the receiver
@@ -1925,7 +1969,16 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					table->removeObject(pk_special);
 
 				if(rel_type==RELATIONSHIP_GEN)
+        {
 					table->removeObject(getReferenceTable());
+
+          while(!ck_constraints.empty())
+          {
+            table->removeObject(ck_constraints.back());
+            delete(ck_constraints.back());
+            ck_constraints.pop_back();
+          }
+        }
 				else
 					table->setCopyTable(nullptr);
 			}
@@ -2124,7 +2177,7 @@ void Relationship::forceInvalidate(void)
 
 bool Relationship::isInvalidated(void)
 {
-	unsigned rel_cols_count, tab_cols_count, i, count;
+  unsigned rel_cols_count=0, tab_cols_count=0, i=0, count=0;
 	Table *table=nullptr, *table1=nullptr;
 	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
@@ -2241,6 +2294,13 @@ bool Relationship::isInvalidated(void)
 			if this not happen indicates that a reference table column was renamed */
 			for(i=0; i < tab_cols_count && valid; i++)
 				valid=table1->getColumn(table->getColumn(i)->getName(true));
+
+      //Checking if the check constraints were not renamed in the parent table
+      for(i=0; i < ck_constraints.size() && valid; i++)
+      {
+        constr=table->getConstraint(ck_constraints[i]->getName(true));
+        valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::check);
+      }
 		}
 
 		/* For n-n relationships, it is necessary the comparisons:

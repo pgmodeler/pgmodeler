@@ -33,7 +33,7 @@
 #include <deque>
 
 using namespace std;
-static const int ERROR_COUNT=224;
+static const int ERROR_COUNT=225;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -149,6 +149,7 @@ enum ErrorType {
 	ERR_INV_IDENT_RELATIOSHIP,
 	ERR_DUPLIC_COLS_COPY_REL,
 	ERR_INCOMP_COLS_INHERIT_REL,
+  ERR_INCOMP_CONSTRS_INHERIT_REL,
 	ERR_ASG_OBJ_INV_REL_TYPE,
 	ERR_ASG_FOREIGN_KEY_REL,
 	ERR_REF_OBJ_INEXISTS_MODEL,
