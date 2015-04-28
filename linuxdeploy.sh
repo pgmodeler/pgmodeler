@@ -26,6 +26,7 @@ STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
 ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
+DIST_DIR="$PWD/dist"
 INSTALL_ROOT="/opt/pgmodeler"
 INSTALLER_CONF_DIR="$PWD/installer/linux/config"
 INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
@@ -35,15 +36,14 @@ DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
   
 # Detecting current pgModeler version
 DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
-BUILD_NUM=$(date '+%Y%m%d')
-
-WITH_BUILD_NUM='-with-build-num'
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
+BUILD_ALL_OPT='-build-all'
 GEN_INST_PKG=0
 DEMO_VERSION=0
 BUNDLE_QT_LIBS=1
+BUILD_ALL=0
 
 # pgModeler output paths settings
 PREFIX="/opt/pgmodeler"
@@ -74,8 +74,8 @@ QMAKE_ARGS="$QMAKE_ARGS \
             TEMPDIR=$TEMPDIR"
             
 for param in $@; do
- if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
-   PKGNAME="${PKGNAME}_${BUILD_NUM}"
+ if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
+  BUILD_ALL=1
  fi
 
  if [[ "$param" == "$GEN_INSTALLER_OPT" ]]; then
@@ -92,6 +92,12 @@ for param in $@; do
   BUNDLE_QT_LIBS=0
  fi
 done
+
+
+if [ $BUILD_ALL = 1 ]; then
+  DEMO_VERSION=0
+  GEN_INST_PKG=1
+fi
 
 if [ $DEMO_VERSION = 1 ]; then
   PKGNAME="pgmodeler-demo-$ARCH"
@@ -193,7 +199,14 @@ if [ $DEMO_VERSION = 1 ]; then
 fi
 
 echo "Cleaning previous compilation..."
+
 rm -r $BUILD_DIR/* &> $LOG
+mkdir -p $DIST_DIR >> $LOG 2>&1
+
+if [ $BUILD_ALL -eq 1 ]; then
+  rm -r $DIST_DIR/* >> $LOG 2>&1
+fi
+
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
@@ -307,7 +320,16 @@ if [ $DEMO_VERSION = 0 ]; then
     exit 1
   fi
 
-  echo "File created: build/$PKGFILE"
+  mv $BUILD_DIR/$PKGFILE $DIST_DIR  >> $LOG 2>&1
+  
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to move $PKGFILE to $DIST_DIR"
+    echo
+    exit 1
+  fi   
+  
+  echo "File created: dist/$PKGFILE"
 fi
 
 
@@ -324,7 +346,7 @@ if [ $GEN_INST_PKG = 1 ]; then
     exit 1
   fi   
  
-  $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$BUILD_DIR/$PKGNAME.run" >> $LOG 2>&1
+  $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
    echo
@@ -332,10 +354,13 @@ if [ $GEN_INST_PKG = 1 ]; then
    echo
    exit 1
  fi
-
- echo "File created: build/$PKGNAME.run"
+ 
+ echo "File created: dist/$PKGNAME.run"
 fi
-
 
 echo "pgModeler successfully deployed!"
 echo
+
+if [ $BUILD_ALL = 1 ]; then
+ ./linuxdeploy.sh -demo-version
+fi
