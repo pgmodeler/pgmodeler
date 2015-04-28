@@ -22,7 +22,7 @@
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
   QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-  QFile ui_style(GlobalAttributes::CONFIGURATIONS_DIR +
+  QFile ui_style(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
                  GlobalAttributes::DIR_SEPARATOR +
                  GlobalAttributes::UI_STYLE_CONF +
                  GlobalAttributes::CONFIGURATION_EXT);
@@ -126,7 +126,7 @@ void Application::createUserConfiguration(void)
     //If the directory not exists or is empty
     if(!config_dir.exists() ||
         config_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
-                             QDir::Files /*| QDir::Dirs */ | QDir::NoDotAndDotDot).isEmpty())
+                             QDir::Files | QDir::NoDotAndDotDot).isEmpty())
       copyFilesRecursively(GlobalAttributes::TMPL_CONFIGURATIONS_DIR, GlobalAttributes::CONFIGURATIONS_DIR);
   }
   catch(Exception &e)
@@ -157,13 +157,17 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
                       __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
-                                  QDir::Files /*| QDir::Dirs*/ | QDir::NoDotAndDotDot);
+                                  QDir::Files | QDir::NoDotAndDotDot);
 
     for(QString filename : filenames)
     {
-      new_src_path = src_path + src_dir.separator() + filename,
-      new_dst_path = dst_path + dst_dir.separator() + filename;
-      copyFilesRecursively(new_src_path, new_dst_path);
+      //Avoiding the copy of ui-style.conf file
+      if(!filename.contains(GlobalAttributes::UI_STYLE_CONF))
+      {
+        new_src_path = src_path + src_dir.separator() + filename;
+        new_dst_path = dst_path + dst_dir.separator() + filename;
+        copyFilesRecursively(new_src_path, new_dst_path);
+      }
     }
   }
   else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
