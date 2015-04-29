@@ -1622,7 +1622,7 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
     pos.setX(pos_orig.x() - 10);
     pos.setY(toolbar->pos().y() + toolbar->height() - 10);
 
-    if((pos.x() + widget->width()) > this->geometry().right())
+    if((pos.x() + widget->width()) > this->width())
       pos.setX(pos_orig.x() - (widget->width() - 40));
 
 		widget->move(pos);
