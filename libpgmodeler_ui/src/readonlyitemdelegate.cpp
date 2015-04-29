@@ -16,29 +16,28 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup libpgmodeler_ui
-\class HtmlItemDelegate
-\brief Implements a custom item delegate used in treewidget to paint items that contains html as text
-*/
-
-#ifndef HTML_ITEM_DELEGATE_H
-#define HTML_ITEM_DELEGATE_H
-
-#include <QObject>
-#include <QPainter>
 #include "readonlyitemdelegate.h"
+#include <QLineEdit>
 
-class HtmlItemDelegate : public ReadOnlyItemDelegate {
-  private:
-    Q_OBJECT
+ReadOnlyItemDelegate::ReadOnlyItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
+{
 
-  public:
-    HtmlItemDelegate(QObject * parent = 0);
-    ~HtmlItemDelegate(void);
+}
 
-  protected:
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-};
+ReadOnlyItemDelegate::~ReadOnlyItemDelegate(void)
+{
 
-#endif
+}
+
+void ReadOnlyItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
+{
+  QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
+
+  if(line_edt)
+  {
+    line_edt->setReadOnly(true);
+    line_edt->setText(index.data(Qt::DisplayRole).toString());
+  }
+  else
+    QStyledItemDelegate::setEditorData(editor, index);
+}

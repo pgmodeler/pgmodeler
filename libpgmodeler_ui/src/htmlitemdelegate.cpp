@@ -20,7 +20,7 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
+HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : ReadOnlyItemDelegate(parent)
 {
 
 }
@@ -28,19 +28,6 @@ HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : QStyledItemDelegate(parent
 HtmlItemDelegate::~HtmlItemDelegate(void)
 {
 
-}
-
-void HtmlItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
-{
-  QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
-
-  if(line_edt)
-  {
-    line_edt->setReadOnly(true);
-    line_edt->setText(index.data(Qt::DisplayRole).toString());
-  }
-  else
-    QStyledItemDelegate::setEditorData(editor, index);
 }
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

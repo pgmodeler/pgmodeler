@@ -18,27 +18,27 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class HtmlItemDelegate
-\brief Implements a custom item delegate used in treewidget to paint items that contains html as text
+\class ReadOnlyItemDelegate
+\brief Implements a custom item delegate used avoid item modifications by disabling the editor
 */
 
-#ifndef HTML_ITEM_DELEGATE_H
-#define HTML_ITEM_DELEGATE_H
+#ifndef READ_ONLY_ITEM_DELEGATE_H
+#define READ_ONLY_ITEM_DELEGATE_H
 
 #include <QObject>
-#include <QPainter>
-#include "readonlyitemdelegate.h"
+#include <QStyledItemDelegate>
 
-class HtmlItemDelegate : public ReadOnlyItemDelegate {
+class ReadOnlyItemDelegate : public QStyledItemDelegate {
   private:
     Q_OBJECT
 
   public:
-    HtmlItemDelegate(QObject * parent = 0);
-    ~HtmlItemDelegate(void);
+    ReadOnlyItemDelegate(QObject * parent = 0);
+    ~ReadOnlyItemDelegate(void);
 
   protected:
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    //! brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
+    virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 };
 
 #endif

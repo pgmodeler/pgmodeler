@@ -144,7 +144,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	viewport->setRenderHint(QPainter::Antialiasing, !disable_render_smooth);
 	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_render_smooth);
-	viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
+  viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);

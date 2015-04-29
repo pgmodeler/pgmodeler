@@ -53,6 +53,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 
+  ro_item_del=new ReadOnlyItemDelegate(this);
+  results_tbw->setItemDelegate(ro_item_del);
+
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
 	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));

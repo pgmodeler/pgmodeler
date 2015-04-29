@@ -31,12 +31,16 @@
 #include "databaseimportform.h"
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
+#include "readonlyitemdelegate.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 
 		SchemaParser schparser;
+
+    //! brief Custom delegate used to avoid cell edition in result set
+    ReadOnlyItemDelegate *ro_item_del;
 
 		//! brief Syntax highlighter for sql input field
 		SyntaxHighlighter *sql_cmd_hl;
