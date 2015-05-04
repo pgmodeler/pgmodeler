@@ -17,6 +17,8 @@
 */
 
 #include "globalattributes.h"
+#include <QCoreApplication>
+#include <QTextStream>
 
 namespace GlobalAttributes {
   const QString
@@ -67,25 +69,22 @@ namespace GlobalAttributes {
   DEFAULT_QT_STYLE=QString("Fusion"),
   UI_STYLE_OPT=QString("-style"),
 
-  SCHEMAS_ROOT_DIR=getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace('\\','/') : QString(SCHEMASDIR),
-  LANGUAGES_DIR=getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace('\\','/') : QString(LANGDIR),
-  PLUGINS_DIR=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : QString(PLUGINSDIR),
-  TEMPORARY_DIR=getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace('\\','/') : QString(TEMPDIR),
-  SAMPLES_DIR=getenv("PGMODELER_SAMPLES_DIR") ? QString(getenv("PGMODELER_SAMPLES_DIR")).replace('\\','/') : QString(SAMPLESDIR),
-  TMPL_CONFIGURATIONS_DIR=getenv("PGMODELER_TMPL_CONF_DIR") ? QString(getenv("PGMODELER_TMPL_CONF_DIR")).replace('\\','/') : QString(CONFDIR),
+  SCHEMAS_ROOT_DIR=getPathFromEnv(QString("PGMODELER_SCHEMAS_DIR"), QString(SCHEMASDIR), QString("./schemas")),
+  LANGUAGES_DIR=getPathFromEnv(QString("PGMODELER_LANG_DIR"), QString(LANGDIR), QString("./lang")),
+  PLUGINS_DIR=getPathFromEnv(QString("PGMODELER_PLUGINS_DIR"), QString(PLUGINSDIR), QString("./plugins")),
+  TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"), QString(TEMPDIR),  QString("./tmp")),
+  SAMPLES_DIR=getPathFromEnv(QString("PGMODELER_SAMPLES_DIR"), QString(SAMPLESDIR), QString("./samples")),
+  TMPL_CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_TMPL_CONF_DIR"), QString(CONFDIR), QString("./conf")),
 
   #if defined(Q_OS_MAC)
-    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
+    CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
   #elif defined(Q_OS_LINUX)
-    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
+    CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
   #else
-    CONFIGURATIONS_DIR=getenv("PGMODELER_CONF_DIR") ?
-                       QString(getenv("PGMODELER_CONF_DIR")).replace('\\','/') :
-                       QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
+    CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
+                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
   #endif
 
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
@@ -94,46 +93,59 @@ namespace GlobalAttributes {
   #if defined(Q_OS_UNIX)
     #if defined(Q_OS_MAC)
       //For MacOSX the crash handler path is fixed (inside bundle)
-      PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
-                              QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                              QString(BINDIR) + QString("/pgmodeler-ch"),
-
-      PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
-                         QString(getenv("PGMODELER_CLI_PATH")) :
-                         QString(BINDIR) + QString("/pgmodeler-cli"),
-
-      PGMODELER_APP_PATH=getenv("PGMODELER_APP_PATH") ?
-                         QString(getenv("PGMODELER_APP_PATH")) :
-                         QString(BINDIR) + QString("/pgmodeler");
+      PGMODELER_CHANDLER_PATH=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
+                                             QString(BINDIR) + QString("/pgmodeler-ch"),
+                                             QString("./pgmodeler-ch")),
     #else
-      PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
-                         QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                         QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
-
-      PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
-                         QString(getenv("PGMODELER_CLI_PATH")) :
-                         QString(BINDIR) + QString("/pgmodeler-cli"),
-
-      PGMODELER_APP_PATH=getenv("PGMODELER_APP_PATH") ?
-                         QString(getenv("PGMODELER_APP_PATH")) :
-                         QString(BINDIR) + QString("/pgmodeler");
+      PGMODELER_CHANDLER_PATH=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
+                                             QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
+                                             QString("./pgmodeler-ch")),
     #endif
+
+    PGMODELER_CLI_PATH=getPathFromEnv(QString("PGMODELER_CLI_PATH"),
+                                      QString(BINDIR) + QString("/pgmodeler-cli"),
+                                      QString("./pgmodeler-cli")),
+
+    PGMODELER_APP_PATH=getPathFromEnv(QString("PGMODELER_APP_PATH"),
+                                      QString(BINDIR) + QString("/pgmodeler"),
+                                      QString("./pgmodeler"));
+
+
   #else
-    PGMODELER_CHANDLER_PATH=getenv("PGMODELER_CHANDLER_PATH") ?
-                            QString(getenv("PGMODELER_CHANDLER_PATH")) :
-                            QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe"),
+    PGMODELER_CHANDLER_PATH=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
+                                           QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe"),
+                                           QString(".\\pgmodeler-ch.exe")),
 
-    PGMODELER_CLI_PATH=getenv("PGMODELER_CLI_PATH") ?
-                       QString(getenv("PGMODELER_CLI_PATH")) :
-                       QString(PRIVATEBINDIR) + QString("\\pgmodeler-cli.exe"),
+    PGMODELER_CLI_PATH=getPathFromEnv(QString("PGMODELER_CLI_PATH"),
+                                      QString(PRIVATEBINDIR) + QString("\\pgmodeler-cli.exe"),
+                                      QString(".\\pgmodeler-cli.exe")),
 
-    PGMODELER_APP_PATH=getenv("PGMODELER_APP_PATH") ?
-                       QString(getenv("PGMODELER_APP_PATH")) :
-                       QString(BINDIR) + QString("\\pgmodeler.exe");
+    PGMODELER_APP_PATH=getPathFromEnv(QString("PGMODELER_APP_PATH"),
+                                      QString(BINDIR) + QString("\\pgmodeler.exe"),
+                                      QString(".\\pgmodeler.exe"));
+
   #endif
 
   #ifdef DEMO_VERSION
    //Maximum object creation counter for demo version
    static const unsigned MAX_OBJECT_COUNT=8;
   #endif
+
+
+  QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
+  {
+     QFileInfo fi;
+     QStringList paths={ QDir::toNativeSeparators(getenv(varname.toStdString().c_str())),
+                         QDir::toNativeSeparators(default_val) };
+
+     for(int i=0; i < 2; i++)
+     {
+       fi.setFile(paths[i]);
+       if(fi.exists() || (i==1 && fallback_val.isEmpty()))
+         return(paths[i].replace('\\','/'));
+     }
+
+     fi.setFile(fallback_val);
+     return(fi.absoluteFilePath());
+  }
 }
