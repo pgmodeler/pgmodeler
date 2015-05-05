@@ -19,7 +19,8 @@ HEADERS += src/schemaparser.h \
 	   src/parsersattributes.h
 
 SOURCES += src/schemaparser.cpp \
-	   src/xmlparser.cpp
+	   src/xmlparser.cpp \
+    src/parsersattributes.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libutils/ -lutils $$XML_LIB
 

@@ -3,7 +3,9 @@
 #include "databasemodel.h"
 #include <QLabel>
 
-QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
+namespace PgModelerUiNS {
+
+QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 {
   if(!output_trw)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -38,7 +40,7 @@ QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, co
   return(item);
 }
 
-void PgModelerUiNS::disableObjectSQL(BaseObject *object, bool value)
+void disableObjectSQL(BaseObject *object, bool value)
 {
   if(object)
   {
@@ -65,7 +67,7 @@ void PgModelerUiNS::disableObjectSQL(BaseObject *object, bool value)
   }
 }
 
-void PgModelerUiNS::disableReferencesSQL(BaseObject *object)
+void disableReferencesSQL(BaseObject *object)
 {
   if(object && object->getDatabase())
   {
@@ -97,13 +99,13 @@ void PgModelerUiNS::disableReferencesSQL(BaseObject *object)
   }
 }
 
-QString PgModelerUiNS::formatMessage(const QString &msg)
+QString formatMessage(const QString &msg)
 {
   QString fmt_msg=msg;
   QChar start_chrs[2]={'`','('},
-        end_chrs[2]={'\'', ')'};
+      end_chrs[2]={'\'', ')'};
   QStringList start_tags={ QString("<strong>"), QString("<em>(") },
-              end_tags={ QString("</strong>"), QString(")</em>") };
+      end_tags={ QString("</strong>"), QString(")</em>") };
   int pos=-1, pos1=-1;
 
   // Replacing the form `' by <strong></strong> and () by <em></em>
@@ -132,4 +134,6 @@ QString PgModelerUiNS::formatMessage(const QString &msg)
   fmt_msg.replace(QString("\n"), QString("<br/>"));
 
   return(fmt_msg);
+}
+
 }

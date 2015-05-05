@@ -365,7 +365,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 
 QString Index::getSignature(bool format)
 {
-  if(!getParentTable())
+  if(!getParentTable() || !getParentTable()->getSchema())
     return(BaseObject::getSignature(format));
 
   return(QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format)));

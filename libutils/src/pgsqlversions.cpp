@@ -16,28 +16,19 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup libutils
-\namespace PgSQLVersions
-\brief Definition of PgSQLVersions namespace wich stores a series of static strings constants used
- to reference the supported PostgreSQL version.
-*/
-
-#ifndef PGSQL_VERSIONS_H
-#define PGSQL_VERSIONS_H
-
-#include <QStringList>
+#include "pgsqlversions.h"
 
 namespace PgSQLVersions {
-  extern const QString
-  PGSQL_VERSION_90,
-  PGSQL_VERSION_91,
-  PGSQL_VERSION_92,
-  PGSQL_VERSION_93,
-  PGSQL_VERSION_94,
-  DEFAULT_VERSION;
+  const QString
+  PGSQL_VERSION_90=QString("9.0"),
+  PGSQL_VERSION_91=QString("9.1"),
+  PGSQL_VERSION_92=QString("9.2"),
+  PGSQL_VERSION_93=QString("9.3"),
+  PGSQL_VERSION_94=QString("9.4"),
+  DEFAULT_VERSION=PGSQL_VERSION_94;
 
-  extern const QStringList ALL_VERSIONS;
+  const QStringList
+  ALL_VERSIONS={ PGSQL_VERSION_94, PGSQL_VERSION_93,
+                 PGSQL_VERSION_92, PGSQL_VERSION_91,
+                 PGSQL_VERSION_90 };
 }
-
-#endif
