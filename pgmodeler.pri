@@ -117,7 +117,7 @@ macx {
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  QMAKE_RPATHDIR += @executable_path/../Frameworks
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes

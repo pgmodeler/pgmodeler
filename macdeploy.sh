@@ -6,7 +6,7 @@ QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
 WITH_BUILD_NUM='-with-build-num'
