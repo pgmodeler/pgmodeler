@@ -296,14 +296,11 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="append_sql_txt">
+           <widget class="QPlainTextEdit" name="append_sql_txt">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
              </font>
-            </property>
-            <property name="lineWrapMode">
-             <enum>QTextEdit::NoWrap</enum>
             </property>
            </widget>
           </item>
@@ -338,14 +335,11 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="prepend_sql_txt">
+           <widget class="QPlainTextEdit" name="prepend_sql_txt">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
              </font>
-            </property>
-            <property name="lineWrapMode">
-             <enum>QTextEdit::NoWrap</enum>
             </property>
            </widget>
           </item>

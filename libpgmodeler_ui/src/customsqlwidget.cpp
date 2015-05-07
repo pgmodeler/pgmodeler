@@ -190,7 +190,7 @@ void CustomSQLWidget::addCommand(void)
       sel_cmd=QString("SELECT * FROM %1;"),
       del_cmd=QString("DELETE * FROM %1;"),
       upd_cmd=QString("UPDATE %1 SET ;");
-  QTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
+  QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
   if(sender()->objectName().contains(QLatin1String("insert")) ||
      sender()->objectName().contains(QLatin1String("serial")))
@@ -248,7 +248,7 @@ void CustomSQLWidget::addCommand(void)
 
 void CustomSQLWidget::clearCode(void)
 {
-  QTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
+  QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 	QTextCursor tc=sqlcode_txt->textCursor();
 	tc.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
 	tc.movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);

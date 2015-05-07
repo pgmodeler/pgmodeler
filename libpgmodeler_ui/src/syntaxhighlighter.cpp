@@ -20,12 +20,13 @@
 
 QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
 
-SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
   if(!parent)
     throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	parent->setAcceptRichText(true);
+  //parent->setAcceptRichText(true);
+  this->setDocument(parent->document());
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
@@ -68,17 +69,17 @@ void SyntaxHighlighter::configureAttributes(void)
 	current_block=-1;
 	curr_blk_info_count=0;
 
-	if(auto_rehighlight)
+  if(auto_rehighlight)
 	{
-		connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(rehighlight(void)));
-		connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validateTextModification(int,int,int)));
+    connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(rehighlight(void)));
+    //connect(document(), SIGNAL(textChanged()), this, SLOT(validateTextModification(int,int,int)));
 	}
 }
 
 void SyntaxHighlighter::validateTextModification(int, int removed, int added)
 {
-	if(getMultiLineInfoCount(current_block)!=curr_blk_info_count ||
-		 added > 0 || removed > 0)
+  if(getMultiLineInfoCount(current_block)!=curr_blk_info_count ||
+     added > 0 || removed > 0)
 		rehighlight();
 }
 

@@ -596,16 +596,6 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3">
-       <widget class="QTextEdit" name="snippet_txt">
-        <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustIgnored</enum>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QTextEdit::NoWrap</enum>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
@@ -655,6 +645,13 @@
         </property>
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <widget class="QPlainTextEdit" name="snippet_txt">
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
         </property>
        </widget>
       </item>

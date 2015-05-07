@@ -18,7 +18,7 @@
 
 #include "findreplacewidget.h"
 
-FindReplaceWidget::FindReplaceWidget(QTextEdit *txt_edit, QWidget *parent): QWidget(parent)
+FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
 {
 	if(!txt_edit)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

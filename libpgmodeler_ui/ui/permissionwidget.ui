@@ -417,17 +417,11 @@
         <number>4</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTextEdit" name="code_txt">
+        <widget class="QPlainTextEdit" name="code_txt">
          <property name="font">
           <font>
            <family>DejaVu Sans Mono</family>
           </font>
-         </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
          </property>
         </widget>
        </item>

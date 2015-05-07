@@ -25,7 +25,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});
@@ -70,7 +70,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 					[=](){ clear_history_btn->setDisabled(true); });
 
 	connect(cmd_history_lst, &QListWidget::itemDoubleClicked,
-					[=](){ sql_cmd_txt->setText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
+          [=](){ sql_cmd_txt->setPlainText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
 
 	connect(results_tbw, &QTableWidget::itemPressed,
           [=](){ SQLExecutionWidget::copySelection(results_tbw); });
@@ -404,7 +404,7 @@ void SQLExecutionWidget::clearAll(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
-    sql_cmd_txt->setText(QString());
+    sql_cmd_txt->setPlainText(QString());
 		msgoutput_lst->clear();
 		msgoutput_lst->setVisible(true);
 		results_parent->setVisible(false);

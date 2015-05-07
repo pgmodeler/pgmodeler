@@ -151,7 +151,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
-		SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
+    SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -179,7 +179,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Validates the text modification made by the user doing the highlight if needed.
 		This slot is linked with the contentsChanged() of document because is in it that are
 		captured the character count removed and added on the text */
-		void validateTextModification(int, int removed, int added);
+    void validateTextModification(int, int removed, int added);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration(void);
