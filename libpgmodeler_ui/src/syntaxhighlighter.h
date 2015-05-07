@@ -104,7 +104,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-					single_line_mode;
+          single_line_mode;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -177,9 +177,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void highlightBlock(const QString &txt);
 
 		/*! \brief Validates the text modification made by the user doing the highlight if needed.
-		This slot is linked with the contentsChanged() of document because is in it that are
-		captured the character count removed and added on the text */
-    void validateTextModification(int, int removed, int added);
+    The parameter has_changes is used to know if the contents of the document changed
+    (see QPlainTextEdit::modificationChanged) */
+    void validateTextModification(bool has_changes);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration(void);
