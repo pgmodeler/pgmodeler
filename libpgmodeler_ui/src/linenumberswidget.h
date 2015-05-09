@@ -16,15 +16,33 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "linenumberwidget.h"
+/**
+\ingroup libpgmodeler_ui
+\class LineNumbersWidget
+\brief Implements a simple line number widget that expose the current highlighted line in a text editor
+*/
 
-LineNumberWidget::LineNumberWidget(QWidget * parent) : QWidget(parent)
-{
+#ifndef LINE_NUMBERS_WIDGET_H
+#define LINE_NUMBERS_WIDGET_H
 
-}
+#include <QWidget>
 
-LineNumberWidget::~LineNumberWidget(void)
-{
+class LineNumbersWidget : public QWidget {
+  private:
+    Q_OBJECT
 
-}
+    unsigned first_line, line_count;
+    int dy;
 
+  protected:
+    void paintEvent(QPaintEvent *event);
+
+  public:
+    LineNumbersWidget(QWidget * parent = 0);
+    ~LineNumbersWidget(void);
+
+    void drawLineNumbers(unsigned first_line, unsigned line_count);
+
+};
+
+#endif

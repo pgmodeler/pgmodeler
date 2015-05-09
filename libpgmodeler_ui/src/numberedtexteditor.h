@@ -18,33 +18,33 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class SourceCodeEditor
-\brief Implements a simple source code widget with a line number block attached to it
+\class NumberedTextEditor
+\brief Implements a simple text editor with a line number block attached to it
 */
 
-#ifndef SOURCE_CODE_EDITOR_H
-#define SOURCE_CODE_EDITOR_H
+#ifndef NUMBERED_TEXT_EDITOR_H
+#define NUMBERED_TEXT_EDITOR_H
 
-#include <QTextEdit>
-#include "linenumberwidget.h"
+#include <QPlainTextEdit>
+#include "linenumberswidget.h"
 
-class SourceCodeEditor : public QTextEdit {
+class NumberedTextEditor : public QPlainTextEdit {
   private:
     Q_OBJECT
-    LineNumberWidget *line_number_wgt;
+
+    LineNumbersWidget *line_number_wgt;
 
     int getLineNumbersWidth(void);
 
-  protected:
-    void resizeEvent(QResizeEvent *event);
-
   public:
-    SourceCodeEditor(QWidget * parent = 0);
-    ~SourceCodeEditor(void);
+    NumberedTextEditor(QWidget * parent = 0);
+    ~NumberedTextEditor(void);
+
+    void setFont(const QFont &font);
 
   private slots:
     void updateLineNumbersWidth(void);
-    void updateLineNumbers(void);
+    void updateLineNumbers(QRect rect, int dy);
 };
 
 #endif
