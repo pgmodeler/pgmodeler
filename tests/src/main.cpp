@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QTextStream>
+#include "exception.h"
 
 int main(int argc, char **argv)
 {
