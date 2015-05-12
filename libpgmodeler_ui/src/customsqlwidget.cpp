@@ -27,6 +27,14 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
+    append_sql_txt=new NumberedTextEditor(this);
+    append_sql_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    sqlcodes_twg->widget(0)->layout()->addWidget(append_sql_txt);
+
+    prepend_sql_txt=new NumberedTextEditor(this);
+    prepend_sql_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    sqlcodes_twg->widget(1)->layout()->addWidget(prepend_sql_txt);
+
     append_sql_hl=new SyntaxHighlighter(append_sql_txt, false);
     append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
     append_sql_cp=new CodeCompletionWidget(append_sql_txt);

@@ -45,7 +45,8 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
   int y=dy, height=fontMetrics().height();
   unsigned last_line=first_line + line_count;
 
-  painter.fillRect(event->rect(), Qt::lightGray);
+  painter.fillRect(event->rect(), QColor(245,245,245));
+  painter.setPen(QColor(128,128,128));
 
   for(unsigned lin=first_line; lin < last_line; lin++)
   {

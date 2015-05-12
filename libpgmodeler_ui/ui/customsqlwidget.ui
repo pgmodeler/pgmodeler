@@ -295,15 +295,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPlainTextEdit" name="append_sql_txt">
-            <property name="font">
-             <font>
-              <family>DejaVu Sans Mono</family>
-             </font>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
         <widget class="QWidget" name="tab_2">
@@ -331,15 +322,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
             </property>
             <property name="text">
              <string>Prepend at beginning of model definition.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPlainTextEdit" name="prepend_sql_txt">
-            <property name="font">
-             <font>
-              <family>DejaVu Sans Mono</family>
-             </font>
             </property>
            </widget>
           </item>

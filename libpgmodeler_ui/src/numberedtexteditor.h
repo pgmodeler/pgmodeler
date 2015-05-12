@@ -46,6 +46,7 @@ class NumberedTextEditor : public QPlainTextEdit {
   private slots:
     void updateLineNumbersSize(void);
     void updateLineNumbers(QRect, int);
+    void highlightCurrentLine(void);
 };
 
 #endif
