@@ -19,7 +19,8 @@
 /**
 \ingroup libpgmodeler_ui
 \class NumberedTextEditor
-\brief Implements a simple text editor with a line number block attached to it
+\brief Implements a simple text editor with a line number block attached to it. This class is
+based upon the code editor example provided by Qt
 */
 
 #ifndef NUMBERED_TEXT_EDITOR_H
@@ -32,19 +33,19 @@ class NumberedTextEditor : public QPlainTextEdit {
   private:
     Q_OBJECT
 
+    //! brief Widget used to expose document line numbers
     LineNumbersWidget *line_number_wgt;
 
+    //! brief Determines and returns the line numbers widget width
     int getLineNumbersWidth(void);
 
   public:
     NumberedTextEditor(QWidget * parent = 0);
-    ~NumberedTextEditor(void);
-
     void setFont(const QFont &font);
 
   private slots:
-    void updateLineNumbersWidth(void);
-    void updateLineNumbers(QRect rect, int dy);
+    void updateLineNumbersSize(void);
+    void updateLineNumbers(QRect, int);
 };
 
 #endif

@@ -31,7 +31,13 @@ class LineNumbersWidget : public QWidget {
   private:
     Q_OBJECT
 
-    unsigned first_line, line_count;
+    //! brief The first line number that must be drawn
+    unsigned first_line,
+
+    //! brief The amount of lines to be drawn
+    line_count;
+
+    //! brief The y axis increment to start drawn the line number
     int dy;
 
   protected:
@@ -39,10 +45,7 @@ class LineNumbersWidget : public QWidget {
 
   public:
     LineNumbersWidget(QWidget * parent = 0);
-    ~LineNumbersWidget(void);
-
-    void drawLineNumbers(unsigned first_line, unsigned line_count);
-
+    void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
 };
 
 #endif

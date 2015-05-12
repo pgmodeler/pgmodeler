@@ -23,36 +23,34 @@
 LineNumbersWidget::LineNumbersWidget(QWidget * parent) : QWidget(parent)
 {
   first_line=line_count=0;
+  dy=0;
 }
 
-LineNumbersWidget::~LineNumbersWidget(void)
+void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
 {
+  bool update=(first_line!=this->first_line || line_count != this->line_count);
 
-}
-
-void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count)
-{
-  //Validate line numbers!!!
-  this->first_line=first_line;
-  this->line_count=line_count;
-  this->update();
+  if(update)
+  {
+    this->first_line=first_line;
+    this->line_count=line_count;
+    this->dy=dy;
+    this->update();
+  }
 }
 
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
   QPainter painter(this);
-  int y=fontMetrics().height(), dy=fontMetrics().height(), x=0;
+  int y=dy, height=fontMetrics().height();
   unsigned last_line=first_line + line_count;
-  QString str_number;
 
   painter.fillRect(event->rect(), Qt::lightGray);
 
   for(unsigned lin=first_line; lin < last_line; lin++)
   {
-    str_number=QString::number(lin);
-    x=(this->width()/2) - (fontMetrics().width(str_number)/2);
-
-    painter.drawText(x, y, str_number);
-    y+=dy;
+    painter.drawText(0, y, this->width(), fontMetrics().height(),
+                     Qt::AlignHCenter, QString::number(lin));
+    y+=height;
   }
 }

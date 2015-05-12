@@ -19,20 +19,14 @@
 #include "numberedtexteditor.h"
 #include <QTextBlock>
 #include <QTextStream>
-#include <QScrollBar>
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
 {
   line_number_wgt=new LineNumbersWidget(this);
+  setWordWrapMode(QTextOption::NoWrap);  
+  updateLineNumbersSize();
 
-  setWordWrapMode(QTextOption::NoWrap);
-  updateLineNumbersWidth();
   connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(QRect,int)));
-}
-
-NumberedTextEditor::~NumberedTextEditor(void)
-{
-
 }
 
 void NumberedTextEditor::setFont(const QFont &font)
@@ -41,17 +35,19 @@ void NumberedTextEditor::setFont(const QFont &font)
   line_number_wgt->setFont(font);
 }
 
-void NumberedTextEditor::updateLineNumbers(QRect rect, int dy)
+void NumberedTextEditor::updateLineNumbers(QRect, int)
 {
   QTextBlock block = firstVisibleBlock();
   int block_number = block.blockNumber(),
+      //Calculates the first block postion (in widget coordinates)
       top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
-      bottom = top +  static_cast<int>(blockBoundingRect(block).height());
-
+      bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
+      dy = top;
   unsigned first_line=0, line_count=0;
 
-  updateLineNumbersWidth();
+  updateLineNumbersSize();
 
+  // Calculates the visible lines by iterating over the visible/valid text blocks.
   while(block.isValid())
   {
     if(block.isVisible())
@@ -65,18 +61,21 @@ void NumberedTextEditor::updateLineNumbers(QRect rect, int dy)
     top = bottom;
     bottom = top + static_cast<int>(blockBoundingRect(block).height());
     ++block_number;
+
+    /* Check if the line count converted to widget coordinates is higher than the widget height.
+       This is done to avoid draw line numbers that are beyond the widget's height */
+    if((static_cast<int>(line_count) * fontMetrics().height()) > this->height())
+      break;
   }
 
-  line_number_wgt->drawLineNumbers(first_line, line_count);
+  line_number_wgt->drawLineNumbers(first_line, line_count, dy);
 }
 
-void NumberedTextEditor::updateLineNumbersWidth(void)
+void NumberedTextEditor::updateLineNumbersSize(void)
 {
   QRect rect=contentsRect();
-
   setViewportMargins(getLineNumbersWidth(), 0, 0, 0);
-  line_number_wgt->setGeometry(QRect(rect.left(), rect.top(),
-                                    getLineNumbersWidth(), rect.height()));
+  line_number_wgt->setGeometry(QRect(rect.left(), rect.top(), getLineNumbersWidth(), rect.height()));
 }
 
 int NumberedTextEditor::getLineNumbersWidth(void)
@@ -89,5 +88,5 @@ int NumberedTextEditor::getLineNumbersWidth(void)
     ++digits;
   }
 
-  return(10 + fontMetrics().width(QChar('9')) * digits);
+  return(10 + fontMetrics().width(QChar('|')) * digits);
 }
