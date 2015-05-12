@@ -25,7 +25,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent
   line_number_wgt=new LineNumbersWidget(this);
   setWordWrapMode(QTextOption::NoWrap);  
   updateLineNumbersSize();
+  highlightCurrentLine();
 
+  connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
   connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(QRect,int)));
 }
 
@@ -88,5 +90,24 @@ int NumberedTextEditor::getLineNumbersWidth(void)
     ++digits;
   }
 
-  return(10 + fontMetrics().width(QChar('|')) * digits);
+  return(20 + fontMetrics().width(QChar('|')) * digits);
+}
+
+void NumberedTextEditor::highlightCurrentLine(void)
+{
+    QList<QTextEdit::ExtraSelection> extraSelections;
+
+    if (!isReadOnly())
+    {
+        QTextEdit::ExtraSelection selection;
+        QColor hl_color = QColor(Qt::yellow).lighter(160);
+
+        selection.format.setBackground(hl_color);
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.clearSelection();
+        extraSelections.append(selection);
+    }
+
+    setExtraSelections(extraSelections);
 }
