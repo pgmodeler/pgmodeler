@@ -1,6 +1,17 @@
 #include <QApplication>
 
-int main(int, char **)
+int main(int argc, char **argv)
 {
-  return(0);
+  QTextStream out(stdout);
+
+  try
+  {
+    QApplication app(argc, argv);
+    return(app.exec());
+  }
+  catch(Exception &e)
+  {
+    out << endl;
+    out << e.getExceptionsText();
+  }
 }

@@ -86,7 +86,7 @@
        </widget>
       </item>
       <item row="1" column="1" colspan="3">
-       <widget class="QTextEdit" name="check_expr_txt">
+       <widget class="QPlainTextEdit" name="check_expr_txt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -110,21 +110,6 @@
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
-        </property>
-        <property name="tabChangesFocus">
-         <bool>true</bool>
-        </property>
-        <property name="documentTitle">
-         <string notr="true"/>
-        </property>
-        <property name="undoRedoEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QTextEdit::NoWrap</enum>
-        </property>
-        <property name="textInteractionFlags">
-         <set>Qt::TextEditorInteraction</set>
         </property>
        </widget>
       </item>

@@ -41,7 +41,7 @@ class CodeCompletionWidget: public QWidget
 		QCheckBox *persistent_chk;
 
 		//! \brief Input field that is associated with the code completion
-		QTextEdit *code_field_txt;
+    QPlainTextEdit *code_field_txt;
 
 		//! \brief This widget stores the list of completion items
 		QListWidget *name_list;
@@ -100,7 +100,7 @@ class CodeCompletionWidget: public QWidget
 		void setQualifyingLevel(BaseObject *obj);
 
 	public:
-		CodeCompletionWidget(QTextEdit *code_field_txt);
+    CodeCompletionWidget(QPlainTextEdit *code_field_txt);
 
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the

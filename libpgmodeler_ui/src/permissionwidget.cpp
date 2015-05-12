@@ -553,7 +553,7 @@ void PermissionWidget::updateCodePreview(void)
     if(code.isEmpty())
       code=trUtf8("-- No permissions defined for the specified object!");
 
-    code_txt->setText(code);
+    code_txt->setPlainText(code);
   }
   catch(Exception &e)
   {

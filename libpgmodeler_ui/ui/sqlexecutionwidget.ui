@@ -438,12 +438,9 @@
          <property name="childrenCollapsible">
           <bool>false</bool>
          </property>
-         <widget class="QTextEdit" name="sql_cmd_txt">
+         <widget class="QPlainTextEdit" name="sql_cmd_txt">
           <property name="enabled">
            <bool>true</bool>
-          </property>
-          <property name="lineWrapMode">
-           <enum>QTextEdit::NoWrap</enum>
           </property>
          </widget>
          <widget class="QGroupBox" name="cmd_history_gb">

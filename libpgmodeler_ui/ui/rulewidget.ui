@@ -155,55 +155,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QTextEdit" name="cond_expr_txt">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>65</height>
-      </size>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="midLineWidth">
-      <number>0</number>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
-     </property>
-     <property name="undoRedoEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="lineWrapMode">
-      <enum>QTextEdit::NoWrap</enum>
-     </property>
-     <property name="readOnly">
-      <bool>false</bool>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextEditorInteraction</set>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="commands_gb">
      <property name="title">
@@ -245,7 +196,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QTextEdit" name="comando_txt">
+       <widget class="QPlainTextEdit" name="comando_txt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -279,21 +230,46 @@
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
-        <property name="undoRedoEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QTextEdit::NoWrap</enum>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-        <property name="textInteractionFlags">
-         <set>Qt::TextEditorInteraction</set>
-        </property>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPlainTextEdit" name="cond_expr_txt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>65</height>
+      </size>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="midLineWidth">
+      <number>0</number>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
     </widget>
    </item>
   </layout>

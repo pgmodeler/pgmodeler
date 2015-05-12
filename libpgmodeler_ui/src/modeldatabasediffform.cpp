@@ -563,7 +563,7 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
     finishDiff();
 
   if(sqlcode_txt->toPlainText().isEmpty())
-    sqlcode_txt->setText(trUtf8("-- No differences were detected between model and database. --"));
+    sqlcode_txt->setPlainText(trUtf8("-- No differences were detected between model and database. --"));
 }
 
 void ModelDatabaseDiffForm::handleExportFinished(void)

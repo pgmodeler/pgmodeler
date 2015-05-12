@@ -19,7 +19,7 @@
 #include "codecompletionwidget.h"
 #include "generalconfigwidget.h"
 
-CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
+CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

@@ -1723,23 +1723,14 @@
            </widget>
           </item>
           <item row="0" column="0" colspan="2">
-           <widget class="QTextEdit" name="sqlcode_txt">
+           <widget class="QPlainTextEdit" name="sqlcode_txt">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
              </font>
             </property>
-            <property name="undoRedoEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="lineWrapMode">
-             <enum>QTextEdit::NoWrap</enum>
-            </property>
-            <property name="acceptRichText">
+            <property name="readOnly">
              <bool>true</bool>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>

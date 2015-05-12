@@ -112,37 +112,6 @@
          </item>
         </widget>
        </item>
-       <item row="4" column="1" colspan="5">
-        <widget class="QTextEdit" name="expression_txt">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="5">
         <widget class="QLineEdit" name="tab_alias_edt">
          <property name="sizePolicy">
@@ -275,6 +244,34 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="1" colspan="5">
+        <widget class="QPlainTextEdit" name="expression_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
@@ -305,15 +302,12 @@
         <number>4</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTextEdit" name="cte_expression_txt">
+        <widget class="QPlainTextEdit" name="cte_expression_txt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
          </property>
         </widget>
        </item>
@@ -340,17 +334,11 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTextEdit" name="code_txt">
+        <widget class="QPlainTextEdit" name="code_txt">
          <property name="font">
           <font>
            <family>DejaVu Sans Mono</family>
           </font>
-         </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
          </property>
          <property name="readOnly">
           <bool>true</bool>

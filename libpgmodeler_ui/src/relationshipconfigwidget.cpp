@@ -29,19 +29,19 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	Ui_RelationshipConfigWidget::setupUi(this);
 
 	SyntaxHighlighter *pattern_hl=nullptr;
-	QList<QTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+  QList<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																			src_fk_pattern_txt, dst_fk_pattern_txt,
                                       pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
-		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, true);
-		pattern_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																	GlobalAttributes::DIR_SEPARATOR +
-																	GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
-																	GlobalAttributes::CONFIGURATION_EXT);
+    pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, true);
+    pattern_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+                                  GlobalAttributes::DIR_SEPARATOR +
+                                  GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
+                                  GlobalAttributes::CONFIGURATION_EXT);
 
-		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
+    connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
   fk_to_pk_ht=new HintTextWidget(fk_to_pk_hint, this);
@@ -184,7 +184,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 {
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
-	QList<QTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
+  QList<QPlainTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
                               dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
                               pk_col_pattern_txt };
 
@@ -213,20 +213,21 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 
 	for(int i=0; i < inputs.size(); i++)
 	{
-		inputs[i]->blockSignals(true);
-		inputs[i]->clear();
+    inputs[i]->blockSignals(true);
+    inputs[i]->clear();
 
 		if(inputs[i]->isEnabled() && patterns[rel_type].count(pattern_ids[i]))
-			inputs[i]->setPlainText(patterns[rel_type][pattern_ids[i]]);
-		inputs[i]->blockSignals(false);
+      inputs[i]->setPlainText(patterns[rel_type][pattern_ids[i]]);
+
+    inputs[i]->blockSignals(false);
 	}
 }
 
 void RelationshipConfigWidget::updatePattern(void)
 {
-	QTextEdit *input=qobject_cast<QTextEdit *>(sender());
+  QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
-	map<QTextEdit *, QString> inputs_map={ { pk_pattern_txt, ParsersAttributes::PK_PATTERN },
+  map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, ParsersAttributes::PK_PATTERN },
 																				 { uq_pattern_txt, ParsersAttributes::UQ_PATTERN },
 																				 { src_col_pattern_txt, ParsersAttributes::SRC_COL_PATTERN },
 																				 { dst_col_pattern_txt, ParsersAttributes::DST_COL_PATTERN },
