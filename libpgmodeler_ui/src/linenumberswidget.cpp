@@ -20,7 +20,10 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-LineNumbersWidget::LineNumbersWidget(QWidget * parent) : QWidget(parent)
+QColor LineNumbersWidget::font_color=Qt::lightGray;
+QColor LineNumbersWidget::bg_color=Qt::black;
+
+LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 {
   first_line=line_count=0;
   dy=0;
@@ -39,14 +42,20 @@ void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count
   }
 }
 
+void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_color)
+{
+  LineNumbersWidget::font_color=font_color;
+  LineNumbersWidget::bg_color=bg_color;
+}
+
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
   QPainter painter(this);
   int y=dy, height=fontMetrics().height();
   unsigned last_line=first_line + line_count;
 
-  painter.fillRect(event->rect(), QColor(245,245,245));
-  painter.setPen(QColor(128,128,128));
+  painter.fillRect(event->rect(), bg_color);
+  painter.setPen(font_color);
 
   for(unsigned lin=first_line; lin < last_line; lin++)
   {
@@ -55,3 +64,5 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
     y+=height;
   }
 }
+
+

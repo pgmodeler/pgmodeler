@@ -20,10 +20,15 @@
 #include <QTextBlock>
 #include <QTextStream>
 
+bool NumberedTextEditor::line_nums_visible=true;
+bool NumberedTextEditor::highlight_lines=true;
+QColor NumberedTextEditor::line_hl_color=Qt::yellow;
+
 NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
 {
   line_number_wgt=new LineNumbersWidget(this);
-  setWordWrapMode(QTextOption::NoWrap);  
+  setWordWrapMode(QTextOption::NoWrap);
+
   updateLineNumbersSize();
   highlightCurrentLine();
 
@@ -37,8 +42,26 @@ void NumberedTextEditor::setFont(const QFont &font)
   line_number_wgt->setFont(font);
 }
 
+void NumberedTextEditor::setLineNumbersVisible(bool value)
+{
+  line_nums_visible=value;
+}
+
+void NumberedTextEditor::setHighlightLines(bool value)
+{
+  highlight_lines=value;
+}
+
+void NumberedTextEditor::setLineHighlightColor(const QColor &color)
+{
+  line_hl_color=color;
+}
+
 void NumberedTextEditor::updateLineNumbers(QRect, int)
 {
+  line_number_wgt->setVisible(line_nums_visible);
+  if(!line_nums_visible) return;
+
   QTextBlock block = firstVisibleBlock();
   int block_number = block.blockNumber(),
       //Calculates the first block postion (in widget coordinates)
@@ -95,19 +118,19 @@ int NumberedTextEditor::getLineNumbersWidth(void)
 
 void NumberedTextEditor::highlightCurrentLine(void)
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
+  if(!highlight_lines) return;
 
-    if (!isReadOnly())
-    {
-        QTextEdit::ExtraSelection selection;
-        QColor hl_color = QColor(Qt::yellow).lighter(160);
+  QList<QTextEdit::ExtraSelection> extraSelections;
 
-        selection.format.setBackground(hl_color);
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-    }
+  if (!isReadOnly())
+  {
+    QTextEdit::ExtraSelection selection;
+    selection.format.setBackground(line_hl_color);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = textCursor();
+    selection.cursor.clearSelection();
+    extraSelections.append(selection);
+  }
 
-    setExtraSelections(extraSelections);
+  setExtraSelections(extraSelections);
 }

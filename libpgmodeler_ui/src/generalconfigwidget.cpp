@@ -22,6 +22,8 @@
 #include "operationlist.h"
 #include "syntaxhighlighter.h"
 #include "mainwindow.h"
+#include "numberedtexteditor.h"
+#include "linenumberswidget.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 
@@ -36,6 +38,24 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	int count=sizeof(paper_ids)/sizeof(QPrinter::PaperSize);
 
 	Ui_GeneralConfigWidget::setupUi(this);
+
+  line_numbers_cp=new ColorPickerWidget(1, this);
+  line_numbers_cp->setButtonToolTip(0, trUtf8("Line numbers' font color"));
+
+  line_numbers_bg_cp=new ColorPickerWidget(1, this);
+  line_numbers_bg_cp->setButtonToolTip(0, trUtf8("Line numbers' background color"));
+
+  line_highlight_cp=new ColorPickerWidget(1, this);
+  line_highlight_cp->setButtonToolTip(0, trUtf8("Highlighted line color"));
+
+  QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
+  QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
+  layout->addWidget(line_numbers_cp);
+  layout->addWidget(line_numbers_bg_cp);
+  layout->addWidget(line_highlight_cp);
+  layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
+  grid->addLayout(layout, 2, 1);
+
 
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
@@ -71,6 +91,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
 
   simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
   simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -200,6 +225,11 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
     font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble());
+    disp_line_numbers_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]==ParsersAttributes::_TRUE_);
+    hightlight_lines_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]==ParsersAttributes::_TRUE_);
+    line_numbers_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]);
+    line_numbers_bg_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]);
+    line_highlight_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]);
 
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(false);
@@ -298,6 +328,11 @@ void GeneralConfigWidget::saveConfiguration(void)
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]=(disp_line_numbers_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=(hightlight_lines_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]=line_numbers_cp->getColor(0).name();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=line_highlight_cp->getColor(0).name();
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
@@ -374,6 +409,10 @@ void GeneralConfigWidget::applyConfiguration(void)
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);
 	SyntaxHighlighter::setDefaultFont(fnt);
+  NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+  NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+  NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 }
 
 void GeneralConfigWidget::restoreDefaults(void)

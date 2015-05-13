@@ -58,6 +58,11 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   placeholders_ht=new HintTextWidget(placeholders_hint, this);
   placeholders_ht->setText(placeholders_chk->statusTip());
 
+  snippet_txt=new NumberedTextEditor(this);
+
+  QGridLayout *grid=dynamic_cast<QGridLayout *>(frame->layout());
+  grid->addWidget(snippet_txt, grid->count(), 0, 1, 3);
+
   try
   {
     snippet_hl=new SyntaxHighlighter(snippet_txt, false);

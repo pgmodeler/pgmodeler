@@ -29,12 +29,14 @@
 #include "baseconfigwidget.h"
 #include "messagebox.h"
 #include "hinttextwidget.h"
+#include "colorpickerwidget.h"
 
 class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
 
     QWidgetList child_wgts;
+
     static map<QString, attribs_map> config_params;
 
 		static const unsigned UNIT_MILIMETERS=0,
@@ -45,6 +47,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
     HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
     *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
     *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht, *code_completion_ht;
+
+    ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
     void hideEvent(QHideEvent *);
 

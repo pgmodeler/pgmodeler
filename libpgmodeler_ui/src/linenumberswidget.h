@@ -26,6 +26,7 @@
 #define LINE_NUMBERS_WIDGET_H
 
 #include <QWidget>
+#include <QPlainTextEdit>
 
 class LineNumbersWidget : public QWidget {
   private:
@@ -40,12 +41,19 @@ class LineNumbersWidget : public QWidget {
     //! brief The y axis increment to start drawn the line number
     int dy;
 
+    static QColor font_color,
+
+    bg_color;
+
   protected:
     void paintEvent(QPaintEvent *event);
 
   public:
-    LineNumbersWidget(QWidget * parent = 0);
+    explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
+
     void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
+
+    static void setColors(const QColor &font_color, const QColor &bg_color);
 };
 
 #endif

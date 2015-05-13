@@ -33,7 +33,12 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               disable-smoothness="] %if {disable-smoothness} %then true %else false %end ["] $br
 [               simplified-obj-creation="] %if {simplified-obj-creation} %then true %else false %end ["] $br
 [               confirm-validation="] %if {confirm-validation} %then true %else false %end ["] $br
-[               code-completion="] %if {code-completion} %then true %else false %end ["]
+[               code-completion="] %if {code-completion} %then true %else false %end ["] $br
+[               display-line-numbers="] %if {display-line-numbers} %then true %else false %end ["] $br
+[               highlight-lines="] %if {highlight-lines} %then true %else false %end ["] $br
+[               line-numbers-color="] {line-numbers-color} ["] $br
+[               line-numbers-bg-color="] {line-numbers-bg-color} ["] $br
+[               line-highlight-color="] {line-highlight-color} ["]
 [/>] $br
 
 %if {file} %then
