@@ -112,6 +112,8 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
   public slots:
 		void restoreDefaults(void);
+
+    friend class ConfigurationForm;
 };
 
 #endif

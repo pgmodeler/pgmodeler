@@ -32,6 +32,7 @@
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
 #include "readonlyitemdelegate.h"
+#include "numberedtexteditor.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
@@ -69,6 +70,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
     //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
+
+  protected:
+    //! brief Widget that serves as SQL commands input
+    NumberedTextEditor *sql_cmd_txt;
 
   public:
     SQLExecutionWidget(QWidget * parent = 0);
@@ -111,6 +116,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
     void selectSnippet(QAction *act);
 
     void handleSelectedWord(QString word);
+
+    friend class SQLToolWidget;
 };
 
 #endif

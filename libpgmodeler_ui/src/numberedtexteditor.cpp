@@ -19,27 +19,24 @@
 #include "numberedtexteditor.h"
 #include <QTextBlock>
 #include <QTextStream>
+#include "generalconfigwidget.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
+QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
 {
   line_number_wgt=new LineNumbersWidget(this);
   setWordWrapMode(QTextOption::NoWrap);
-
-  updateLineNumbersSize();
-  highlightCurrentLine();
-
   connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
-  connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(QRect,int)));
+  connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(void)));
 }
 
-void NumberedTextEditor::setFont(const QFont &font)
+void NumberedTextEditor::setDefaultFont(const QFont &font)
 {
-  QWidget::setFont(font);
-  line_number_wgt->setFont(font);
+  default_font=font;
 }
 
 void NumberedTextEditor::setLineNumbersVisible(bool value)
@@ -57,10 +54,13 @@ void NumberedTextEditor::setLineHighlightColor(const QColor &color)
   line_hl_color=color;
 }
 
-void NumberedTextEditor::updateLineNumbers(QRect, int)
+void NumberedTextEditor::updateLineNumbers(void)
 {
   line_number_wgt->setVisible(line_nums_visible);
   if(!line_nums_visible) return;
+
+  setFont(default_font);
+  line_number_wgt->setFont(default_font);
 
   QTextBlock block = firstVisibleBlock();
   int block_number = block.blockNumber(),
@@ -116,13 +116,17 @@ int NumberedTextEditor::getLineNumbersWidth(void)
   return(20 + fontMetrics().width(QChar('|')) * digits);
 }
 
+void NumberedTextEditor::resizeEvent(QResizeEvent *)
+{
+  updateLineNumbersSize();
+  highlightCurrentLine();
+}
+
 void NumberedTextEditor::highlightCurrentLine(void)
 {
-  if(!highlight_lines) return;
-
   QList<QTextEdit::ExtraSelection> extraSelections;
 
-  if (!isReadOnly())
+  if(highlight_lines)
   {
     QTextEdit::ExtraSelection selection;
     selection.format.setBackground(line_hl_color);

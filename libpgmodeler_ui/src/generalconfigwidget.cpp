@@ -48,6 +48,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   line_highlight_cp=new ColorPickerWidget(1, this);
   line_highlight_cp->setButtonToolTip(0, trUtf8("Highlighted line color"));
 
+  font_preview_txt=new NumberedTextEditor(this);
+  font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n0123456789\n.()[]{};"));
+  font_preview_txt->setReadOnly(true);
+
   QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
   QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
   layout->addWidget(line_numbers_cp);
@@ -55,7 +60,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   layout->addWidget(line_highlight_cp);
   layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
   grid->addLayout(layout, 2, 1);
-
+  grid->addWidget(font_preview_txt,grid->count(),0,1,5);
 
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
@@ -63,6 +68,20 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
 	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
+  connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateFontPreview()));
+  connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateFontPreview()));
+
+  connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_numbers_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_highlight_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
+  connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -234,6 +253,7 @@ void GeneralConfigWidget::loadConfiguration(void)
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(false);
 
+    updateFontPreview();
 		this->applyConfiguration();
 	}
 	catch(Exception &e)
@@ -270,6 +290,15 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
 map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
 {
   return(config_params);
+}
+
+QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
+{
+  if(config_params.count(section_id) &&
+     config_params[section_id].count(param_name))
+    return(config_params[section_id][param_name]);
+  else
+    return(QString());
 }
 
 void GeneralConfigWidget::saveConfiguration(void)
@@ -408,11 +437,12 @@ void GeneralConfigWidget::applyConfiguration(void)
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);
-	SyntaxHighlighter::setDefaultFont(fnt);
   NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
   NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
   NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  NumberedTextEditor::setDefaultFont(fnt);
   LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
+  SyntaxHighlighter::setDefaultFont(fnt);
 }
 
 void GeneralConfigWidget::restoreDefaults(void)
@@ -421,6 +451,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
 		this->loadConfiguration();
+    this->applyConfiguration();
     setConfigurationChanged(true);
 	}
 	catch(Exception &e)
@@ -449,10 +480,29 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	width_spb->setValue(width * conv_factor[unity_cmb->currentIndex()]);
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
-	prev_unity=unity_cmb->currentIndex();
+  prev_unity=unity_cmb->currentIndex();
 }
 
-void GeneralConfigWidget::selectPaperSize()
+void GeneralConfigWidget::updateFontPreview(void)
+{
+  QFont fnt;
+
+  fnt=font_cmb->currentFont();
+  fnt.setPointSizeF(font_size_spb->value());
+
+  NumberedTextEditor::setDefaultFont(fnt);
+  NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+  NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+  NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
+
+  font_preview_txt->updateLineNumbers();
+  font_preview_txt->highlightCurrentLine();
+
+  setConfigurationChanged(true);
+}
+
+void GeneralConfigWidget::selectPaperSize(void)
 {
 	bool visible=paper_cmb->currentIndex()==paper_cmb->count()-1;
 

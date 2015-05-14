@@ -18,7 +18,7 @@
 
 #include "syntaxhighlighter.h"
 
-QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
+QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
@@ -414,9 +414,12 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				group=identifyWordGroup(word,lookahead_chr, idx, match_idx, match_len);
 
 				if(!group.isEmpty())
-				{
-					start_col=idx + match_idx;
-					setFormat(start_col, match_len, formats[group]);
+        {
+          QTextCharFormat format = formats[group];
+          format.setFontFamily(default_font.family());
+          format.setFontPointSize(default_font.pointSizeF());
+          start_col=idx + match_idx;
+          setFormat(start_col, match_len, format);
 				}
 
 				aux_len=(match_idx + match_len);
@@ -697,5 +700,5 @@ QChar SyntaxHighlighter::getCompletionTrigger(void)
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
 {
-	SyntaxHighlighter::default_font=fnt;
+  SyntaxHighlighter::default_font=fnt;
 }

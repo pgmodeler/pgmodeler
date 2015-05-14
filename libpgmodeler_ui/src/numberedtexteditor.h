@@ -34,7 +34,10 @@ class NumberedTextEditor : public QPlainTextEdit {
     Q_OBJECT
 
     static bool line_nums_visible, highlight_lines;
+
     static QColor line_hl_color;
+
+    static QFont default_font;
 
     //! brief Widget used to expose document line numbers
     LineNumbersWidget *line_number_wgt;
@@ -42,18 +45,20 @@ class NumberedTextEditor : public QPlainTextEdit {
     //! brief Determines and returns the line numbers widget width
     int getLineNumbersWidth(void);
 
+  protected:
+    void resizeEvent(QResizeEvent *);
+
   public:
     NumberedTextEditor(QWidget * parent = 0);
 
-    void setFont(const QFont &font);
-
+    static void setDefaultFont(const QFont &font);
     static void setLineNumbersVisible(bool value);
     static void setHighlightLines(bool value);
     static void setLineHighlightColor(const QColor &color);
 
-  private slots:
+  public slots:
+    void updateLineNumbers(void);
     void updateLineNumbersSize(void);
-    void updateLineNumbers(QRect, int);
     void highlightCurrentLine(void);
 };
 

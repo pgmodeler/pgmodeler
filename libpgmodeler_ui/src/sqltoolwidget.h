@@ -52,6 +52,9 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
+    //! brief Force the update of the sql command input field and the syntax highligter attached to it
+    void updateTabs(void);
+
   public slots:
     void configureSnippets(void);
 

@@ -438,7 +438,7 @@
          <property name="childrenCollapsible">
           <bool>false</bool>
          </property>
-         <widget class="QPlainTextEdit" name="sql_cmd_txt">
+         <widget class="QWidget" name="sql_cmd_wgt">
           <property name="enabled">
            <bool>true</bool>
           </property>

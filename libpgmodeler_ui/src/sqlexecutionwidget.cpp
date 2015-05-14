@@ -25,6 +25,13 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
+  sql_cmd_txt=new NumberedTextEditor(sql_cmd_wgt);
+  sql_cmd_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  QHBoxLayout *hlayout=new QHBoxLayout(sql_cmd_wgt);
+  hlayout->setContentsMargins(0,0,0,0);
+  hlayout->addWidget(sql_cmd_txt);
+  sql_cmd_txt->updateLineNumbers();
+
   sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 

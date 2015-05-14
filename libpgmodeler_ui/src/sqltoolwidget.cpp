@@ -62,6 +62,18 @@ void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
   connect_tb->setEnabled(connections_cmb->count() > 0);
 }
 
+void SQLToolWidget::updateTabs(void)
+{
+  SQLExecutionWidget *sql_exec_wgt=nullptr;
+
+  for(int i=0; i < sql_exec_tbw->count(); i++)
+  {
+    sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
+    sql_exec_wgt-> sql_cmd_txt->updateLineNumbers();
+    sql_exec_wgt->sql_cmd_hl->rehighlight();
+  }
+}
+
 void SQLToolWidget::configureSnippets(void)
 {
   SQLExecutionWidget *sql_exec_wgt=nullptr;
