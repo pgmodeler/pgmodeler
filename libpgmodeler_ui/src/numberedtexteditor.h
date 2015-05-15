@@ -33,10 +33,16 @@ class NumberedTextEditor : public QPlainTextEdit {
   private:
     Q_OBJECT
 
-    static bool line_nums_visible, highlight_lines;
+    //! brief Controls if line numbers must be visible or not
+    static bool line_nums_visible,
 
+    //! brief Controls if current line must be highlighted
+    highlight_lines;
+
+    //! brief Line highlight color
     static QColor line_hl_color;
 
+    //! brief Default font for texts
     static QFont default_font;
 
     //! brief Widget used to expose document line numbers
@@ -57,8 +63,14 @@ class NumberedTextEditor : public QPlainTextEdit {
     static void setLineHighlightColor(const QColor &color);
 
   public slots:
+
+    //! brief Draw the line numbers according to the current visible lines
     void updateLineNumbers(void);
+
+    /*! brief Configures the line numbers widget sizes (w,h) depending on the current
+        visible lines and the text editor height */
     void updateLineNumbersSize(void);
+
     void highlightCurrentLine(void);
 };
 

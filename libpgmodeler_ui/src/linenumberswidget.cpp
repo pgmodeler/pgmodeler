@@ -54,9 +54,11 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
   int y=dy, height=fontMetrics().height();
   unsigned last_line=first_line + line_count;
 
+  //Repaint the widget to clear previous drawn numbers
   painter.fillRect(event->rect(), bg_color);
   painter.setPen(font_color);
 
+  //Draw line numbers
   for(unsigned lin=first_line; lin < last_line; lin++)
   {
     painter.drawText(0, y, this->width(), fontMetrics().height(),
