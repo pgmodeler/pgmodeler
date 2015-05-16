@@ -28,8 +28,16 @@
 #include <QTreeWidget>
 #include <QPixmap>
 #include "baseobject.h"
+#include "numberedtexteditor.h"
 
 namespace PgModelerUiNS {
+
+  /*! brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
+      This method will create a layout if 'parent' doesn't has one. If parent has a layout
+      the method will do nothing. If parent is null creates an orphan object which means the
+      user must take care of the destruction of the object */
+  extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent);
+
   /*! brief Creates an item in the specified QTreeWidget instance.
       The new item is automatically inserted on the QTreeWidget object.
       Setting word_wrap will create a QLabel instance into item's and assign the text to it. */

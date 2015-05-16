@@ -2,8 +2,23 @@
 #include "messagebox.h"
 #include "databasemodel.h"
 #include <QLabel>
+#include "numberedtexteditor.h"
 
 namespace PgModelerUiNS {
+
+NumberedTextEditor *createNumberedTextEditor(QWidget *parent)
+{
+  NumberedTextEditor *editor=new NumberedTextEditor(parent);
+
+  if(parent && !parent->layout())
+  {
+    QHBoxLayout *layout=new QHBoxLayout(parent);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(editor);
+  }
+
+  return(editor);
+}
 
 QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 {

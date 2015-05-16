@@ -18,6 +18,7 @@
 
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
+#include "pgmodeleruins.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
@@ -32,19 +33,11 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		hl_sqlcode=nullptr;
 		hl_xmlcode=nullptr;
 
-    sqlcode_txt=new NumberedTextEditor(this);
+    sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
     sqlcode_txt->setReadOnly(true);
 
-    QHBoxLayout *layout=new QHBoxLayout(sqlcode_wgt);
-    layout->setContentsMargins(0,0,0,0);
-    layout->addWidget(sqlcode_txt);
-
-    xmlcode_txt=new NumberedTextEditor(this);
+    xmlcode_txt=PgModelerUiNS::createNumberedTextEditor(xmlcode_wgt);
     xmlcode_txt->setReadOnly(true);
-
-    layout=new QHBoxLayout(xmlcode_wgt);
-    layout->setContentsMargins(0,0,0,0);
-    layout->addWidget(xmlcode_txt);
 
 		font=name_edt->font();
 		font.setItalic(true);
