@@ -17,9 +17,10 @@
 */
 
 #include "numberedtexteditor.h"
-#include <QTextBlock>
-#include <QTextStream>
 #include "generalconfigwidget.h"
+#include <QTextBlock>
+#include <QScrollBar>
+#include <QDebug>
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -30,8 +31,10 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent
 {
   line_number_wgt=new LineNumbersWidget(this);
   setWordWrapMode(QTextOption::NoWrap);
+
   connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
   connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(void)));
+  connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
 }
 
 void NumberedTextEditor::setDefaultFont(const QFont &font)
@@ -70,8 +73,6 @@ void NumberedTextEditor::updateLineNumbers(void)
       dy = top;
   unsigned first_line=0, line_count=0;
 
-  updateLineNumbersSize();
-
   // Calculates the visible lines by iterating over the visible/valid text blocks.
   while(block.isValid())
   {
@@ -105,7 +106,7 @@ void NumberedTextEditor::updateLineNumbersSize(void)
 
 int NumberedTextEditor::getLineNumbersWidth(void)
 {
-  int digits = 1, max = qMax(1, document()->lineCount());
+  int digits=1, max=qMax(1, blockCount());
 
   while(max >= 10)
   {
@@ -113,13 +114,13 @@ int NumberedTextEditor::getLineNumbersWidth(void)
     ++digits;
   }
 
-  return(20 + fontMetrics().width(QChar('|')) * digits);
+  return(15 + fontMetrics().width(QChar('9')) * digits);
 }
 
-void NumberedTextEditor::resizeEvent(QResizeEvent *)
+void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
+  QPlainTextEdit::resizeEvent(event);
   updateLineNumbersSize();
-  highlightCurrentLine();
 }
 
 void NumberedTextEditor::highlightCurrentLine(void)

@@ -32,6 +32,20 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		hl_sqlcode=nullptr;
 		hl_xmlcode=nullptr;
 
+    sqlcode_txt=new NumberedTextEditor(this);
+    sqlcode_txt->setReadOnly(true);
+
+    QHBoxLayout *layout=new QHBoxLayout(sqlcode_wgt);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(sqlcode_txt);
+
+    xmlcode_txt=new NumberedTextEditor(this);
+    xmlcode_txt->setReadOnly(true);
+
+    layout=new QHBoxLayout(xmlcode_wgt);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(xmlcode_txt);
+
 		font=name_edt->font();
 		font.setItalic(true);
 		comment_edt->setFont(font);
@@ -42,7 +56,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
 		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
-		parent_form->setMinimumSize(650, 550);
+    parent_form->setMinimumSize(720, 580);
 
     code_options_ht=new HintTextWidget(code_options_hint, this);
     code_options_ht->setText(
@@ -56,7 +70,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
     connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 
-		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
+    hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt, false);
 	}
 	catch(Exception &e)
@@ -259,7 +273,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 			comment_edt->setText(object->getTypeName());
 
-			if(!hl_sqlcode->isConfigurationLoaded())
+      if(!hl_sqlcode->isConfigurationLoaded())
         hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 			if(!hl_xmlcode->isConfigurationLoaded())

@@ -52,7 +52,7 @@ class NumberedTextEditor : public QPlainTextEdit {
     int getLineNumbersWidth(void);
 
   protected:
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *event);
 
   public:
     NumberedTextEditor(QWidget * parent = 0);
