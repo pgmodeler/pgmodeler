@@ -496,6 +496,7 @@ void GeneralConfigWidget::updateFontPreview(void)
   NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
   LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
+  font_preview_txt->updateLineNumbersSize();
   font_preview_txt->updateLineNumbers();
   font_preview_txt->highlightCurrentLine();
 

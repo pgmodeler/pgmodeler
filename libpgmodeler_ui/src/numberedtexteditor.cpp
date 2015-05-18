@@ -99,9 +99,14 @@ void NumberedTextEditor::updateLineNumbers(void)
 
 void NumberedTextEditor::updateLineNumbersSize(void)
 {
-  QRect rect=contentsRect();
-  setViewportMargins(getLineNumbersWidth(), 0, 0, 0);
-  line_number_wgt->setGeometry(QRect(rect.left(), rect.top(), getLineNumbersWidth(), rect.height()));
+  if(line_nums_visible)
+  {
+    QRect rect=contentsRect();
+    setViewportMargins(getLineNumbersWidth(), 0, 0, 0);
+    line_number_wgt->setGeometry(QRect(rect.left(), rect.top(), getLineNumbersWidth(), rect.height()));
+  }
+  else
+    setViewportMargins(0, 0, 0, 0);
 }
 
 int NumberedTextEditor::getLineNumbersWidth(void)

@@ -71,6 +71,7 @@ class NumberedTextEditor : public QPlainTextEdit {
         visible lines and the text editor height */
     void updateLineNumbersSize(void);
 
+    //! brief Colors the background of the line where the cursor is
     void highlightCurrentLine(void);
 };
 
