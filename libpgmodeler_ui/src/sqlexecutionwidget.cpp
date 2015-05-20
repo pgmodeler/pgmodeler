@@ -117,7 +117,12 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void SQLExecutionWidget::showEvent(QShowEvent *)
+{
+  sql_cmd_txt->setFocus();
 }
 
 void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)

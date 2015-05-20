@@ -57,6 +57,12 @@ void NumberedTextEditor::setLineHighlightColor(const QColor &color)
   line_hl_color=color;
 }
 
+void NumberedTextEditor::setFocus(void)
+{
+  QPlainTextEdit::setFocus();
+  this->highlightCurrentLine();
+}
+
 void NumberedTextEditor::updateLineNumbers(void)
 {
   line_number_wgt->setVisible(line_nums_visible);

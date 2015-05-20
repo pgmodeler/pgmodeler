@@ -63,6 +63,8 @@ class NumberedTextEditor : public QPlainTextEdit {
     static void setLineHighlightColor(const QColor &color);
 
   public slots:
+    //! brief Grabs the keyboard input and also highlight the current line
+    void setFocus(void);
 
     //! brief Draw the line numbers according to the current visible lines
     void updateLineNumbers(void);

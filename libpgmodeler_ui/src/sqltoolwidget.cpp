@@ -238,7 +238,7 @@ void SQLToolWidget::addSQLExecutionTab(void)
 
     sql_exec_tbw->addTab(sql_exec_wgt, db_name);
     sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
-    sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);    
+    sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
     sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
   }
   catch(Exception &e)

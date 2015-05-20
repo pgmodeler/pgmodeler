@@ -75,6 +75,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
     //! brief Widget that serves as SQL commands input
     NumberedTextEditor *sql_cmd_txt;
 
+    void showEvent(QShowEvent *);
+
   public:
     SQLExecutionWidget(QWidget * parent = 0);
 
