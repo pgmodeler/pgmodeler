@@ -17,6 +17,7 @@
 */
 
 #include "baseobject.h"
+#include "pgmodelerns.h"
 #include <QApplication>
 
 /* CAUTION: If both amount and order of the enumerations are modified
@@ -211,9 +212,9 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
         needs_fmt=true;
 			}
 
-		}
+		}    
 
-    if(needs_fmt)
+    if(needs_fmt || PgModelerNS::isReservedKeyword(name))
       frmt_name=QString("\"%1\"").arg(name);
 		else
 			frmt_name=name;
