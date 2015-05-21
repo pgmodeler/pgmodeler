@@ -8,4 +8,4 @@
 # refactored code, containing almost all changes done by the refactoring author.
 TEMPLATE = subdirs
 SUBDIRS = src/main \
-          src/testkeywordquotes
+          src/baseobjecttest
