@@ -273,7 +273,8 @@ FORMS += ui/mainwindow.ui \
          ui/snippetsconfigwidget.ui \
          ui/bugreportform.ui \
          ui/sqlexecutionwidget.ui \
-         ui/donatewidget.ui
+         ui/donatewidget.ui \
+    ui/sourcecodeeditorform.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

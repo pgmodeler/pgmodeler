@@ -32,11 +32,14 @@
 #include "hinttextwidget.h"
 #include "syntaxhighlighter.h"
 #include "htmlitemdelegate.h"
+#include "numberedtexteditor.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
+
+    NumberedTextEditor *sqlcode_txt;
 
     //! brief Custom delegate used to paint html texts in output tree
     HtmlItemDelegate *htmlitem_del;
