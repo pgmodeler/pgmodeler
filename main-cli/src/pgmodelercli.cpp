@@ -117,6 +117,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
       if(parsed_opts.count(EXPORT_TO_PNG))
       {
         connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
+        connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
         //Creates a scene to
         scene=new ObjectsScene;
@@ -521,6 +522,23 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
       dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
   }
 }
+
+
+void PgModelerCLI::handleObjectRemoval(BaseObject *object)
+{
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
+  if(graph_obj)
+  {
+    scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
+
+    //Updates the parent schema if the removed object were a table or view
+    if(graph_obj->getSchema() &&
+       (graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
+      dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
+  }
+}
+
 
 void PgModelerCLI::extractObjectXML(void)
 {
