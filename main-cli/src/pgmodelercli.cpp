@@ -297,11 +297,6 @@ accepted structure. All available options are described below.") << endl;
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
-  QString orig_work_dir=QDir::current().absolutePath();
-
-  //Changing the current working dir to the executable's directory in
-  QDir::setCurrent(this->applicationDirPath());
-
   //Loading connections
   if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
   {
@@ -367,13 +362,8 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
       throw Exception(trUtf8("Invalid action specified to update mime option!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-    QDir::setCurrent(orig_work_dir);
     opts[INPUT]=input_fi.absoluteFilePath();
     opts[OUTPUT]=output_fi.absoluteFilePath();
-
-    //Changing the current working dir to the executable's directory in
-    QDir::setCurrent(this->applicationDirPath());
-
     parsed_opts=opts;
   }
 }
