@@ -242,9 +242,6 @@
                 <height>20</height>
                </size>
               </property>
-              <property name="shortcut">
-               <string>Shift+Del</string>
-              </property>
              </widget>
             </item>
             <item>

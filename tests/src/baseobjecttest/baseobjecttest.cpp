@@ -32,7 +32,7 @@ void BaseObjectTest::quoteNameIfKeyword(void)
 {
   QString name = "objectname", kw_name="table";
   QCOMPARE(BaseObject::formatName(name), name);
-  QCOMPARE(BaseObject::formatName(kw_name), QString("\%1\"").arg(kw_name));
+  QCOMPARE(BaseObject::formatName(kw_name), QString("\"%1\"").arg(kw_name));
 }
 
 QTEST_MAIN(BaseObjectTest)

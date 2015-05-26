@@ -504,7 +504,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-                             trUtf8("Update relationships of `%1' (%2)...")
+                             trUtf8("Updating relationships of `%1' (%2)...")
 														 .arg(tab->getName())
 														 .arg(BaseObject::getTypeName(OBJ_TABLE)),
 														 OBJ_TABLE);

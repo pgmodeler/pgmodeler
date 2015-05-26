@@ -66,7 +66,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     force_recreation_ht->setText(force_recreation_chk->statusTip());
 
     recreate_unmod_ht=new HintTextWidget(recreate_unmod_hint, this);
-    recreate_unmod_ht->setText("Recreates only objects can't be changed through ALTER commands according to pgModeler implementation not PostgreSQL.\
+    recreate_unmod_ht->setText("Recreates only objects that can't be changed through ALTER commands according to pgModeler implementation not the PostgreSQL one.\
 Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, conversion, language, operator, operator class, operator family, rule, trigger and view.");
 
     cascade_mode_ht=new HintTextWidget(drop_cascade_hint, this);
