@@ -84,6 +84,9 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
     reuse_sequences_ht=new HintTextWidget(reuse_sequences_hint, this);
     reuse_sequences_ht->setText(reuse_sequences_chk->statusTip());
 
+    preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
+    preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -358,13 +361,14 @@ void ModelDatabaseDiffForm::diffModels(void)
 
   diff_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-  diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(),
-                              cascade_mode_chk->isChecked(),
-                              trunc_tables_chk->isChecked(),
-                              force_recreation_chk->isChecked(),
-                              recreate_unmod_chk->isChecked(),
-                              keep_obj_perms_chk->isChecked(),
-                              reuse_sequences_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_CLUSTER_OBJS, keep_cluster_objs_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_CASCADE_MODE, cascade_mode_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_TRUCANTE_TABLES, trunc_tables_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_FORCE_RECREATION, force_recreation_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_RECREATE_UNCHANGEBLE, recreate_unmod_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, reuse_sequences_chk->isChecked());
 
   diff_helper->setModels(source_model, imported_model);
 

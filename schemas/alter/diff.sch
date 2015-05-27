@@ -21,6 +21,12 @@
     [-- ddl-end --] $br
   %end
 
+  %if {search-path} %then
+    $br
+    [SET search_path=] {search-path} ; $br
+    [-- ddl-end --] $br
+  %end
+
   %if {unset-perms} %then
     $br $br
     [-- ] $ob [ Undone permissions ] $cb [ --] $br
@@ -32,7 +38,7 @@
     [-- ] $ob [ Dropped objects ] $cb [ --] $br
     {drop-cmds}
   %end
-
+ 
   %if {create-cmds} %then
     $br $br
     [-- ] $ob [ Created objects ] $cb [ --] $br
