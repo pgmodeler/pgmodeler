@@ -65,8 +65,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     //! brief Disconnect from server and close any opened database explorer or sql execution tab
     void disconnectFromServer(void);
 
-		//! brief Drop the current selected database
-		void dropDatabase(void);
+    //! brief Drop the named database
+    void dropDatabase(const QString &dbname);
 
 		//! brief Show the widget to handle data in tables
     void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);

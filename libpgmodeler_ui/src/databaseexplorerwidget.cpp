@@ -129,6 +129,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
                                                    (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0)); });
+
+  connect(drop_db_tb, &QToolButton::clicked,
+          [=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)

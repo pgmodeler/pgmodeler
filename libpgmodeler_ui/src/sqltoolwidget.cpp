@@ -32,13 +32,11 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromServer(void)));
   connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromServer()));
   connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
-	connect(drop_db_tb, SIGNAL(clicked(void)), this, SLOT(dropDatabase(void)));
   connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
   connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
 
   connect(database_cmb, &QComboBox::currentTextChanged,
-          [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0);
-									drop_db_tb->setEnabled(database_cmb->currentIndex() > 0); });
+          [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0); });
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -137,12 +135,12 @@ void SQLToolWidget::disconnectFromServer(void)
 	}
 }
 
-void SQLToolWidget::dropDatabase(void)
+void SQLToolWidget::dropDatabase(const QString &dbname)
 {
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Warning"),
-               trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(database_cmb->currentText()),
+               trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
 							 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -155,7 +153,7 @@ void SQLToolWidget::dropDatabase(void)
       //Closing tabs related to the database to be dropped
       for(int i=0; i < databases_tbw->count(); i++)
       {
-        if(databases_tbw->tabText(i)==database_cmb->currentText())
+        if(databases_tbw->tabText(i)==dbname)
         {
           closeDatabaseExplorer(i);
           i=-1;
@@ -163,7 +161,7 @@ void SQLToolWidget::dropDatabase(void)
       }
 
 			aux_conn.connect();
-			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(database_cmb->currentText()));
+      aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
 			aux_conn.close();
       connectToServer();
 		}
@@ -211,6 +209,7 @@ void SQLToolWidget::browseDatabase(void)
     databases_tbw->setCurrentWidget(db_explorer_wgt);
 
     connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
+    connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
     connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
     connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 
