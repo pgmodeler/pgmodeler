@@ -55,7 +55,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
-	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
+  connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(retrieveData()));
+  connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
 	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addColumnToList()));
 	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeColumnFromList()));
 	connect(ord_columns_lst, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(changeOrderMode(QListWidgetItem*)));
@@ -116,8 +117,8 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		table_cmb->setCurrentText(curr_table);
 		disableControlButtons();
 
-		if(!curr_table.isEmpty())
-			retrieveData();
+    if(!curr_table.isEmpty())
+      retrieveData();
 	}
 	catch(Exception &e)
 	{
@@ -172,6 +173,9 @@ void DataManipulationForm::listColumns(void)
 
 void DataManipulationForm::retrieveData(void)
 {
+  if(table_cmb->currentIndex() <= 0)
+    return;
+
 	try
 	{
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
