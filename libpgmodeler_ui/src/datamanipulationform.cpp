@@ -554,7 +554,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 
 		if(item->data(Qt::UserRole)==OP_INSERT)
 			ins_rows.push_back(row);
-		else if(!pk_col_ids.empty())
+    else
 			markOperationOnRow(OP_DELETE, row);
 	}
 
