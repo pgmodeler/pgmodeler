@@ -174,7 +174,7 @@ void SQLToolWidget::dropDatabase(void)
 	}
 }
 
-void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
+void SQLToolWidget::openDataGrid(const QString &dbname, const QString &schema, const QString &table, bool hide_views)
 {
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: data manipulation feature disabled warning."
@@ -190,7 +190,7 @@ void SQLToolWidget::openDataGrid(const QString &schema, const QString &table, bo
       data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
       data_manip->hide_views_chk->setChecked(hide_views);
 
-      conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, (dbname.isEmpty() ? database_cmb->currentText() : dbname));
       data_manip->setAttributes(conn, schema, table);
       data_manip->show();
 #endif
@@ -210,7 +210,7 @@ void SQLToolWidget::browseDatabase(void)
     databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
     databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-    connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,bool)));
+    connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
     connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
     connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 

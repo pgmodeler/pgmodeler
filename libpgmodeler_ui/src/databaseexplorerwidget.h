@@ -150,7 +150,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
-    void s_dataGridOpenRequested(QString schema="", QString table="", bool hide_views=true);
+    void s_dataGridOpenRequested(QString dbname="", QString schema="", QString table="", bool hide_views=true);
 
     //! brief This signal is emmited to indicate that a sql execution widget need to be opened
     void s_sqlExecutionRequested(void);
