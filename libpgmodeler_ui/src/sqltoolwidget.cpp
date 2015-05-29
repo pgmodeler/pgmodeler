@@ -27,37 +27,17 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	setupUi(this);
   h_splitter->setSizes({0, 10000});
 
-  connect(connect_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+  connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(connectToServer(void)));
   connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
-  connect(disconnect_tb, SIGNAL(clicked(void)), this, SLOT(disconnectFromServer(void)));
-  connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disconnectFromServer()));
-  connect(browse_tb, SIGNAL(clicked(void)), this, SLOT(browseDatabase(void)));
   connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
   connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
-
-  connect(database_cmb, &QComboBox::currentTextChanged,
-          [=](){ 	browse_tb->setEnabled(database_cmb->currentIndex() > 0); });
+  connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
 }
 
 SQLToolWidget::~SQLToolWidget(void)
 {
   while(databases_tbw->count() > 0)
     closeDatabaseExplorer(0);
-}
-
-void SQLToolWidget::updateConnections(map<QString, Connection *> &conns)
-{
-	map<QString, Connection *>::iterator itr=conns.begin();
-	connections_cmb->clear();
-
-	//Add the connections to the combo
-	while(itr!=conns.end())
-	{
-		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-		itr++;
-	}
-
-  connect_tb->setEnabled(connections_cmb->count() > 0);
 }
 
 void SQLToolWidget::updateTabs(void)
@@ -90,20 +70,22 @@ void SQLToolWidget::connectToServer(void)
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-		import_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(import_helper, database_cmb);
-		database_cmb->setEnabled(database_cmb->count() > 1);
-		import_helper.closeConnection();
+    if(sender()==connections_cmb)
+      disconnectFromServer();
 
-		connections_cmb->setEnabled(false);
-		connect_tb->setEnabled(false);
-		disconnect_tb->setEnabled(true);
-    refresh_tb->setEnabled(true);
-
-    if(sender()==connect_tb && conn->isAutoBrowseDB())
+    if(conn)
     {
-      database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
-      browseDatabase();
+      import_helper.setConnection(*conn);
+      DatabaseImportForm::listDatabases(import_helper, database_cmb);
+      database_cmb->setEnabled(database_cmb->count() > 1);
+      import_helper.closeConnection();
+      refresh_tb->setEnabled(true);
+
+      if(sender()==connections_cmb && conn->isAutoBrowseDB())
+      {
+        database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
+        browseDatabase();
+      }
     }
 	}
 	catch(Exception &e)
@@ -118,8 +100,6 @@ void SQLToolWidget::disconnectFromServer(void)
 	{
 		database_cmb->clear();
 		connections_cmb->setEnabled(true);
-		connect_tb->setEnabled(true);
-		disconnect_tb->setEnabled(false);
     refresh_tb->setEnabled(false);
 
     while(databases_tbw->count() > 0)
@@ -197,25 +177,30 @@ void SQLToolWidget::openDataGrid(const QString &dbname, const QString &schema, c
 void SQLToolWidget::browseDatabase(void)
 {
   try
-  {
-    Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
-    DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
+  {    
+    //If the selected database is already being browse do not create another explorer instance
+    if(database_cmb->currentIndex() > 0 && !databases_tbw->findChild<DatabaseExplorerWidget *>(database_cmb->currentText()))
+    {
+      Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+      DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
 
-    conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-    db_explorer_wgt->setConnection(conn);
-    db_explorer_wgt->listObjects();
+      db_explorer_wgt->setObjectName(database_cmb->currentText());
+      conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+      db_explorer_wgt->setConnection(conn);
+      db_explorer_wgt->listObjects();
 
-    databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
-    databases_tbw->setCurrentWidget(db_explorer_wgt);
+      databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
+      databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-    connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
-    connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
-    connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
-    connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
+      connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
+      connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
+      connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
+      connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 
-    /* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
+      /* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
        new tab on the map of sql panes related to the database explorer */
-    db_explorer_wgt->runsql_tb->click();
+      db_explorer_wgt->runsql_tb->click();
+    }
   }
   catch(Exception &e)
   {

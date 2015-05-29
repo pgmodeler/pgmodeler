@@ -497,8 +497,13 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
   getConnections(connections);
 	combo->clear();
 
-  if(incl_placeholder && !connections.empty())
-    combo->addItem(trUtf8("Found %1 connection(s)").arg(connections.size()));
+  if(incl_placeholder)
+  {
+    if(!connections.empty())
+      combo->addItem(trUtf8("Found %1 connection(s)").arg(connections.size()));
+    else
+      combo->addItem(trUtf8("No connections found"));
+  }
 
   for(auto &itr : connections)
 		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));

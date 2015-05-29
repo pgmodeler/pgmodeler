@@ -652,18 +652,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-  map<QString, Connection *> connections;
   ConnectionsConfigWidget *conn_cfg_wgt=
       dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-
-  conn_cfg_wgt->getConnections(connections);
 
   if(conn_cfg_wgt->isConfigurationChanged() ||
      model_valid_wgt->connections_cmb->count()==0 ||
      sql_tool_wgt->connections_cmb->count()==0 )
-  {
-    model_valid_wgt->updateConnections(connections);
-    sql_tool_wgt->updateConnections(connections);
+  {   
+    ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, false);
   }
 }
 

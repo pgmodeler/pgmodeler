@@ -540,14 +540,13 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
       map<QString, unsigned> oids;
 
       db_attribs=import_helper.getObjects(OBJ_DATABASE);
+      dbcombo->blockSignals(true);
       dbcombo->clear();
 
       if(db_attribs.empty())
 				dbcombo->addItem(trUtf8("No databases found"));
       else
       {
-        dbcombo->blockSignals(true);
-
         itr=db_attribs.begin();
         while(itr!=db_attribs.end())
         {
@@ -566,9 +565,10 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
         }
 
 				dbcombo->insertItem(0, trUtf8("Found %1 database(s)").arg(db_attribs.size()));
-        dbcombo->setCurrentIndex(0);
-        dbcombo->blockSignals(false);
       }
+
+      dbcombo->setCurrentIndex(0);
+      dbcombo->blockSignals(false);
     }
     catch(Exception &e)
     {

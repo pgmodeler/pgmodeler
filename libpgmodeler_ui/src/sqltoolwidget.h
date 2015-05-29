@@ -49,9 +49,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		SQLToolWidget(QWidget * parent = 0);
     ~SQLToolWidget(void);
 
-		//! \brief Updates the connections combo
-		void updateConnections(map<QString, Connection *> &conns);
-
     //! brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
     void updateTabs(void);
 
