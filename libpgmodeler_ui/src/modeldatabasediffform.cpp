@@ -94,7 +94,7 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
 
     connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
     connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
-    connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
+    connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
     connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
     connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
     connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
@@ -135,8 +135,7 @@ void ModelDatabaseDiffForm::resetForm(void)
 {
   ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
   connections_cmb->setEnabled(connections_cmb->count() > 0);
-  connection_lbl->setEnabled(connections_cmb->isEnabled());
-  connect_tb->setEnabled(connections_cmb->isEnabled());
+  connection_lbl->setEnabled(connections_cmb->isEnabled());  
   enableDiffMode();
   settings_tbw->setTabEnabled(1, false);
   settings_tbw->setTabEnabled(2, false);
@@ -259,16 +258,24 @@ void ModelDatabaseDiffForm::listDatabases(void)
 	try
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		DatabaseImportHelper imp_helper;
 
-		imp_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(imp_helper, database_cmb);
+    if(conn)
+    {
+      DatabaseImportHelper imp_helper;
+      imp_helper.setConnection(*conn);
+      DatabaseImportForm::listDatabases(imp_helper, database_cmb);
+    }
+    else
+      database_cmb->clear();
 
 		database_cmb->setEnabled(database_cmb->count() > 0);
 		database_lbl->setEnabled(database_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
+    database_cmb->clear();
+    database_cmb->setEnabled(false);
+    database_lbl->setEnabled(false);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
