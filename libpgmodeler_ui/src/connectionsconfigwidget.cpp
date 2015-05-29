@@ -487,7 +487,7 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 	}
 }
 
-void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder)
 {
 	map<QString, Connection *> connections;
 
@@ -496,6 +496,9 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo)
 
   getConnections(connections);
 	combo->clear();
+
+  if(incl_placeholder && !connections.empty())
+    combo->addItem(trUtf8("Found %1 connection(s)").arg(connections.size()));
 
   for(auto &itr : connections)
 		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
+    <width>737</width>
     <height>489</height>
    </rect>
   </property>
@@ -387,26 +387,6 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QToolButton" name="connect_tb">
-                  <property name="toolTip">
-                   <string>Connect and list available databases</string>
-                  </property>
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/conexaobd.png</normaloff>:/icones/icones/conexaobd.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -1302,7 +1282,6 @@
  </widget>
  <tabstops>
   <tabstop>connections_cmb</tabstop>
-  <tabstop>connect_tb</tabstop>
   <tabstop>origin_sb</tabstop>
   <tabstop>tabs_per_row_sb</tabstop>
   <tabstop>obj_spacing_sb</tabstop>

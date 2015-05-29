@@ -55,8 +55,12 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
   settings_tbw->setTabEnabled(1, false);
 
+  objs_parent_wgt->setEnabled(false);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
+  createThread();
+
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-	connect(connect_tb, SIGNAL(clicked(bool)), this, SLOT(listDatabases(void)));
+  connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases(void)));
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
 	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
 	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
@@ -81,10 +85,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
                   import_btn->setEnabled(database_cmb->currentIndex() > 0);
                   objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
                 });
-
-  objs_parent_wgt->setEnabled(false);
-  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
-  createThread();
 }
 
 DatabaseImportForm::~DatabaseImportForm(void)
@@ -206,7 +206,8 @@ void DatabaseImportForm::importDatabase(void)
     import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 		import_thread->start();
 		cancel_btn->setEnabled(true);
-		import_btn->setEnabled(false);
+    import_btn->setEnabled(false);
+    database_gb->setEnabled(false);
     options_gb->setEnabled(false);
 	}
 	catch(Exception &e)
@@ -328,15 +329,23 @@ void DatabaseImportForm::listDatabases(void)
     //Close a previous connection opened by the import helper
     import_helper->closeConnection();
 
-    //List the available databases using the selected connection
-    import_helper->setConnection(*conn);
-    DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+    if(conn)
+    {
+      //List the available databases using the selected connection
+      import_helper->setConnection(*conn);
+      DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+    }
+    else
+      database_cmb->clear();
 
     db_objects_tw->clear();
     database_cmb->setEnabled(database_cmb->count() > 1);
   }
   catch(Exception &e)
   {
+    db_objects_tw->clear();
+    database_cmb->clear();
+    database_cmb->setEnabled(false);
     throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
@@ -497,6 +506,7 @@ void DatabaseImportForm::finishImport(const QString &msg)
 
 	cancel_btn->setEnabled(false);
 	options_gb->setEnabled(true);
+  database_gb->setEnabled(true);
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();

@@ -133,7 +133,7 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 
 void ModelDatabaseDiffForm::resetForm(void)
 {
-  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
   connections_cmb->setEnabled(connections_cmb->count() > 0);
   connection_lbl->setEnabled(connections_cmb->isEnabled());
   connect_tb->setEnabled(connections_cmb->isEnabled());
