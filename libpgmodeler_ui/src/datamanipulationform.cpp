@@ -99,16 +99,14 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		connection=conn;
 		catalog.setConnection(conn);
 
-		db_name=QString("%1@%2:%3").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
+    db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
 															 .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
 																		conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
 															 .arg(conn.getConnectionParam(Connection::PARAM_PORT));
 
-    this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
-    db_name=QString("<strong>") + db_name;
-    db_name=db_name.replace(QString("@"),QString("</strong><em>@"));
-    db_name+=QString("</em>");
 		db_name_lbl->setText(db_name);
+    db_name.remove(QRegExp("<(/)?(strong|em)>"));
+    this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { OBJ_SCHEMA });
