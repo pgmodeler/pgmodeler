@@ -32,6 +32,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
   connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
   connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
   connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
+  connect(disconnect_tb, SIGNAL(clicked()), this, SLOT(disconnectFromDatabases()));
+
+  connect(databases_tbw, &QTabWidget::currentChanged,
+          [=](){ disconnect_tb->setEnabled(databases_tbw->count() > 0); });
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -70,16 +74,13 @@ void SQLToolWidget::connectToServer(void)
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-    if(sender()==connections_cmb)
-      disconnectFromServer();
+    database_cmb->clear();
 
     if(conn)
     {
       import_helper.setConnection(*conn);
       DatabaseImportForm::listDatabases(import_helper, database_cmb);
-      database_cmb->setEnabled(database_cmb->count() > 1);
       import_helper.closeConnection();
-      refresh_tb->setEnabled(true);
 
       if(sender()==connections_cmb && conn->isAutoBrowseDB())
       {
@@ -87,6 +88,9 @@ void SQLToolWidget::connectToServer(void)
         browseDatabase();
       }
     }
+
+    database_cmb->setEnabled(database_cmb->count() > 1);
+    refresh_tb->setEnabled(database_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -94,19 +98,31 @@ void SQLToolWidget::connectToServer(void)
 	}
 }
 
-void SQLToolWidget::disconnectFromServer(void)
+void SQLToolWidget::disconnectFromDatabases(void)
 {
 	try
 	{
-		database_cmb->clear();
-		connections_cmb->setEnabled(true);
-    refresh_tb->setEnabled(false);
+    Messagebox msg_box;
 
-    while(databases_tbw->count() > 0)
+    msg_box.show(trUtf8("Warning"),
+                 trUtf8("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
+                 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+    if(msg_box.result()==QDialog::Accepted)
     {
-      databases_tbw->blockSignals(true);
-      closeDatabaseExplorer(0);
-      databases_tbw->blockSignals(false);
+      database_cmb->clear();
+      connections_cmb->setEnabled(true);
+      refresh_tb->setEnabled(false);
+
+      while(databases_tbw->count() > 0)
+      {
+        databases_tbw->blockSignals(true);
+        closeDatabaseExplorer(0);
+        databases_tbw->blockSignals(false);
+      }
+
+      connections_cmb->setCurrentIndex(0);
+      disconnect_tb->setEnabled(false);
     }
 	}
 	catch(Exception &e)
@@ -179,7 +195,7 @@ void SQLToolWidget::browseDatabase(void)
   try
   {    
     //If the selected database is already being browse do not create another explorer instance
-    if(database_cmb->currentIndex() > 0 && !databases_tbw->findChild<DatabaseExplorerWidget *>(database_cmb->currentText()))
+    if(database_cmb->currentIndex() > 0 /* && !databases_tbw->findChild<DatabaseExplorerWidget *>(database_cmb->currentText())*/)
     {
       Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
       DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
@@ -240,6 +256,7 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
     sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
 
   sql_exec_wgts.remove(db_explorer);
+  databases_tbw->removeTab(idx);
 
   if(db_explorer)
     delete(db_explorer);

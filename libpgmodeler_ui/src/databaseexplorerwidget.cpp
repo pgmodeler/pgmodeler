@@ -857,7 +857,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     {
       handle_menu.addSeparator();
       handle_menu.addAction(drop_action);
-      handle_menu.addAction(drop_cascade_action);
+
+      if(obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+        handle_menu.addAction(drop_cascade_action);
 
       if(obj_type==OBJ_TABLE)
       {
@@ -947,6 +949,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
       QString msg;
+
+      //Roles and tablespaces can't be removed in cascade mode
+      if(cascade && (obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE))
+        return;
 
       if(!cascade)
         msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")

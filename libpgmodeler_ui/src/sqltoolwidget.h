@@ -60,7 +60,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void connectToServer(void);
 
     //! brief Disconnect from server and close any opened database explorer or sql execution tab
-    void disconnectFromServer(void);
+    void disconnectFromDatabases(void);
 
     //! brief Drop the named database
     void dropDatabase(const QString &dbname);

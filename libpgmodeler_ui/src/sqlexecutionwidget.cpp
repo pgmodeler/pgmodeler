@@ -91,6 +91,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 void SQLExecutionWidget::setConnection(Connection conn)
 {
   sql_cmd_conn=conn;
+  db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
+                       .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
+                       .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
+                            conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
+                       .arg(conn.getConnectionParam(Connection::PARAM_PORT)));
 }
 
 void SQLExecutionWidget::enableCommandButtons(void)
