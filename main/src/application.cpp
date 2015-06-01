@@ -28,7 +28,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
                  GlobalAttributes::CONFIGURATION_EXT);
   QString plugin_name, plug_lang_dir, plug_lang_file;
   QStringList dir_list;
-  QDir dir=QDir(GlobalAttributes::PLUGINS_DIR);
+  QDir dir;
 
   //Creating the initial user's configuration
   createUserConfiguration();
@@ -41,13 +41,24 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
   this->addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
   //Try to create plugins dir if it does not exists
-  if(!dir.exists())
+  if(!dir.exists(GlobalAttributes::PLUGINS_DIR))
   {
     if(!dir.mkdir(GlobalAttributes::PLUGINS_DIR))
     {
       Messagebox msg;
       msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(GlobalAttributes::PLUGINS_DIR),
                          ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+    }
+  }
+
+  //Check if the temporary dir exists, if not, creates it.
+  if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
+  {
+    if(!dir.mkdir(GlobalAttributes::TEMPORARY_DIR))
+    {
+      Messagebox msg;
+      msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(GlobalAttributes::TEMPORARY_DIR),
+                      ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
     }
   }
 

@@ -72,19 +72,19 @@ namespace GlobalAttributes {
   SCHEMAS_ROOT_DIR=getPathFromEnv(QString("PGMODELER_SCHEMAS_DIR"), QString(SCHEMASDIR), QString("./schemas")),
   LANGUAGES_DIR=getPathFromEnv(QString("PGMODELER_LANG_DIR"), QString(LANGDIR), QString("./lang")),
   PLUGINS_DIR=getPathFromEnv(QString("PGMODELER_PLUGINS_DIR"), QString(PLUGINSDIR), QString("./plugins")),
-  TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"), QString(TEMPDIR),  QString("./tmp")),
   SAMPLES_DIR=getPathFromEnv(QString("PGMODELER_SAMPLES_DIR"), QString(SAMPLESDIR), QString("./samples")),
   TMPL_CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_TMPL_CONF_DIR"), QString(CONFDIR), QString("./conf")),
+  TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"), QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler-tmp")),
 
   #if defined(Q_OS_MAC)
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
                                       QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
   #elif defined(Q_OS_LINUX)
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")), 
   #else
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
+                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),  
   #endif
 
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,
