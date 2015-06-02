@@ -276,7 +276,7 @@ fi
 echo "pgModeler successfully deployed!"
 echo
 
-if [ $BUILD_ALL = 1 ]; then
+if [ $BUILD_ALL -eq 1 ]; then
  sh windeploy.sh -demo-version
  sh windeploy.sh -x64-build
  sh windeploy.sh -x64-build -demo-version
