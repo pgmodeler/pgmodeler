@@ -95,6 +95,7 @@ class Connection {
                           SERVER_PID;
 
     Connection(void);
+    Connection(const attribs_map &params);
 		~Connection(void);
 
 		//! \brief Toggles the notice output for connections. By default any notice are omitted
