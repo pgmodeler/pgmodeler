@@ -26,7 +26,6 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	zoom_factor=1;
 	curr_resize_factor=RESIZE_FACTOR;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void ModelOverviewWidget::show(ModelWidget *model)

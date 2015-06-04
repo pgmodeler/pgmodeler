@@ -103,17 +103,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
-
-    //Check if the temporary dir exists, if not, creates it.
-    QDir dir;
-    if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
-    {
-      if(!dir.mkdir(GlobalAttributes::TEMPORARY_DIR))
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN)
-                        .arg(GlobalAttributes::TEMPORARY_DIR),
-                        ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-    }
-
 	}
 	catch(Exception &e)
 	{

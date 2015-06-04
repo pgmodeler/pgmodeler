@@ -152,6 +152,9 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 											!conn_db_edt->text().isEmpty());
 	add_tb->setEnabled(test_tb->isEnabled());
   update_tb->setEnabled(test_tb->isEnabled());
+
+  if(!isConfigurationChanged())
+    setConfigurationChanged(true);
 }
 
 void ConnectionsConfigWidget::newConnection(void)
@@ -425,7 +428,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
     {
       Messagebox msg_box;
 
-      msg_box.show(trUtf8("There is an unsaved connection! Want to save it?"),
+      msg_box.show(trUtf8("There is a connection being created or edited! Do you want to save it?"),
                    Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msg_box.result()==QDialog::Accepted)

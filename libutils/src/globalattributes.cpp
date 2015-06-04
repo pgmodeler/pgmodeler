@@ -24,6 +24,7 @@ namespace GlobalAttributes {
   const QString
   PGMODELER_APP_NAME=QString("pgmodeler"),
   PGMODELER_URI=QString("pgmodeler.com.br"),
+  PGMODELER_REVERSE_URI=QString("br.com.pgmodeler"),
   PGMODELER_VERSION=QString("0.8.1-beta"),
   PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
   PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
@@ -71,20 +72,31 @@ namespace GlobalAttributes {
 
   SCHEMAS_ROOT_DIR=getPathFromEnv(QString("PGMODELER_SCHEMAS_DIR"), QString(SCHEMASDIR), QString("./schemas")),
   LANGUAGES_DIR=getPathFromEnv(QString("PGMODELER_LANG_DIR"), QString(LANGDIR), QString("./lang")),
-  PLUGINS_DIR=getPathFromEnv(QString("PGMODELER_PLUGINS_DIR"), QString(PLUGINSDIR), QString("./plugins")),
-  TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"), QString(TEMPDIR),  QString("./tmp")),
   SAMPLES_DIR=getPathFromEnv(QString("PGMODELER_SAMPLES_DIR"), QString(SAMPLESDIR), QString("./samples")),
   TMPL_CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_TMPL_CONF_DIR"), QString(CONFDIR), QString("./conf")),
 
+  //Currently, plugins folder is auto-created when missing so it can't be resolved by getPathFromEnv()
+  PLUGINS_DIR=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : QString(PLUGINSDIR),
+
   #if defined(Q_OS_MAC)
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/br.com.pgmodeler")),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PGMODELER_REVERSE_URI)),
+
+    TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
+                                 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)  + QString("/%1/tmp").arg(PGMODELER_REVERSE_URI)),
+
   #elif defined(Q_OS_LINUX)
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/pgmodeler")),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PGMODELER_APP_NAME)),
+
+    TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
+                                 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PGMODELER_APP_NAME)),
   #else
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/pgmodeler")),
+                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +  QString("/%1").arg(PGMODELER_APP_NAME)),
+
+    TEMPORARY_DIR=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
+                                 QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PGMODELER_APP_NAME)),
   #endif
 
   SQL_HIGHLIGHT_CONF_PATH=CONFIGURATIONS_DIR + DIR_SEPARATOR + SQL_HIGHLIGHT_CONF + CONFIGURATION_EXT,

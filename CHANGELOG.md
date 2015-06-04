@@ -4,7 +4,7 @@ Change Log
 v0.8.1-beta
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: June ??, 2015</em><br/>
+<em>Release date: June 04, 2015</em><br/>
 
 * [New] Added the ability to handle databases in different connections at once without the need to disconnect from a server and connect to another.
 * [New] Added an option to preserve database name (do not rename) in diff process.
@@ -19,6 +19,14 @@ v0.8.1-beta
 * [New] Created a new class NumberedTextEdit which goal is to display source code with line numbering and highlight color.
 * [New] Created a html based delegate item in order to render tree items with html format.
 * [New] Added a fallback value for environment values not set during startup.
+* [Change] Minor improvement on ConnectionsConfigWidget when user left a connection open for editing and don't save it. The software will ask for save the connection.
+* [Change] Improvements done to DataManipulationForm in order to avoid let connections open leading to application crash when the connection timeout is reached.
+* [Change] Added a new constructor to Connection class that accepts a map of connection params.
+* [Change] Removed the installation of PGMODELER_TMP_DIR environment variable in installer.
+* [Change] Removed the usage of TEMPDIR variable in pgmodeler.pri
+* [Change] Moved the code to create temp dir to Application class.
+* [Change] Temporary folder now is isolated in pgModeler's configuration dir at user's home (platform specific) to avoid a user to see temp files from another.
+* [Change] Removed the "stay on top" behavior on ModelOverviewWidget to avoid the blocking of application dialogs is some systems.
 * [Change] Minor improvement on DataManipulationForm when creating the window title based upon the connected database.
 * [Change] Disabled the cascade drop for roles and tablespaces (not supported) in DatabaseExplorerWidget.
 * [Change] Minor improvement on SQLToolWidget to remove the excessive usage of buttons to connect and browse databases.
@@ -36,6 +44,7 @@ v0.8.1-beta
 * [Change] Minor improvement on linuxdeploy.sh to build demo and full versions at once.
 * [Change] Avoiding the copy of ui-style.conf during startup.
 * [Change] Attributes and general functions in namespaces are now declared as extern in .h and defined in .cpp to force them to be initialized once.
+* [Fix] Minor fix on windeploy.sh when building all releases at once.
 * [Fix] Fixed the demo version build error.
 * [Fix] Fix a crash when recreating Views that have child objects (rules or triggers) in DatabaseModel::storeSpecialObjectsXML.
 * [Fix] Fixed a typo when displaying column default values as nextval(seqname).
