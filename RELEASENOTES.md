@@ -4,19 +4,13 @@ v0.8.1-alpha1
 <em>Release date: June 04, 2015</em>
 <em>Changes since: <strong>v0.8.1-alpha1</strong></em><br/>
 
-<strong>Summary:</strong> this release brings a another series of fixes for the majority of bugs reported for 0.8.1-alpha1.
+<strong>Summary:</strong> this release brings a another series of fixes for the majority of bugs reported for 0.8.1-alpha1. Several fixes and improvements were done to import, diff and export processes producing better results.
 
-Several fixes and improvements where done to import, diff and export processes producing better results.
+There are some UI improvements mainly related to usability in SQL tool to avoid the excessive use of button clicks to manage databases. One long awaited feature is now fully operational: the automatic keywords quotation when they are used as object's name. This feature is still under tests but will be improved until final release of this series.
 
-There are some UI improvements mainly related to usability in SQL tool to avoid the excessive use of button clicks to manage databases.
+The user's privacy was improved in this version too. Now the pgModeler's temp folder - were logs and security copies of working models are stored - is isolated in current user's home avoiding other users to see the contents of that folder.
 
-One long awaited feature is now fully operational: the automatic keywords quotation when they are used as object's name. This feature is still under tests but will be improved until final release of this series.
-
-The user's privacy was improved in this version too. Now the pgModeler's temp folder - where logs and security copies of working models are stored - is isolated in current user's home avoiding other users to see the contents of that folder.
-
-Finally, several crashes where fixed and the application is more reliable. <br/>
-
-There are more fixes/changes/new features in this version and only the key ones are listed below. Please, refer to CHANGELOG.md to check the complete set of modifications.<br/>
+Finally, several crashes were fixed and the application is more reliable. There are more fixes/changes/new features in this version and only the key ones are listed below. Please, refer to CHANGELOG.md to check the complete set of modifications.
 
 * [New] Added the ability to handle databases in different connections at once without the need to disconnect from a server and connect to another.
 * [New] Added an option to preserve database name (do not rename) in diff process.
