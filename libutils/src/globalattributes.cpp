@@ -72,9 +72,11 @@ namespace GlobalAttributes {
 
   SCHEMAS_ROOT_DIR=getPathFromEnv(QString("PGMODELER_SCHEMAS_DIR"), QString(SCHEMASDIR), QString("./schemas")),
   LANGUAGES_DIR=getPathFromEnv(QString("PGMODELER_LANG_DIR"), QString(LANGDIR), QString("./lang")),
-  PLUGINS_DIR=getPathFromEnv(QString("PGMODELER_PLUGINS_DIR"), QString(PLUGINSDIR), QString("./plugins")),
   SAMPLES_DIR=getPathFromEnv(QString("PGMODELER_SAMPLES_DIR"), QString(SAMPLESDIR), QString("./samples")),
   TMPL_CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_TMPL_CONF_DIR"), QString(CONFDIR), QString("./conf")),
+
+  //Currently, plugins folder is auto-created when missing so it can't be resolved by getPathFromEnv()
+  PLUGINS_DIR=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : QString(PLUGINSDIR),
 
   #if defined(Q_OS_MAC)
     CONFIGURATIONS_DIR=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
